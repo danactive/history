@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="inc/xslt/gallery.xslt"?>
+<gallery>
+	<album>
+		<gallery_id>1</gallery_id>
+		<album_name>sample</album_name>
+		<album_version>1.7</album_version>
+		<sort>1</sort>
+		<album_h1>Sample</album_h1>
+		<album_h2>British Columbia</album_h2>
+		<year>2001-2005</year>
+		<filename>2004-01-04-01.jpg</filename>
+	</album>
+</gallery>

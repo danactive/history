@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="inc/xslt/album.xslt"?>
+<album>
+	<album_meta>
+		<album_name>sample</album_name>
+		<album_version>1.7</album_version>
+		<geo>
+			<google_zoom>11</google_zoom>
+		</geo>
+	</album_meta>
+	<photo id="1">
+		<filename>2001-03-21-01.jpg</filename>
+		<geo>
+			<lat>49.25</lat>
+			<lon>-123.1</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Granville Island</photo_loc>
+		<thumb_caption>Lunch</thumb_caption>
+	</photo>
+	<photo id="2">
+		<filename>2004-01-04-01.jpg</filename>
+		<geo>
+			<lat>49.3</lat>
+			<lon>-123.016667</lon>
+		</geo>
+		<photo_city>North Vancouver, BC</photo_city>
+		<photo_loc>Home</photo_loc>
+		<thumb_caption>Gingerbread</thumb_caption>
+	</photo>
+	<photo id="3">
+		<filename>2005-07-30-01.jpg</filename>
+		<geo>
+			<lat>49.15</lat>
+			<lon>-123.733</lon>
+		</geo>
+		<photo_city>Gabriola Island, BC</photo_city>
+		<photo_loc>Camping</photo_loc>
+		<thumb_caption>Starfish</thumb_caption>
+	</photo>
+</album>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<character_association>
+<!-- c_a is character_association; a = album_name; p = photo_id; char_id = c -->
+<c_a><a>sample</a><p>2</p><c>3</c></c_a>
+<c_a><a>sample</a><p>3</p><c>1</c></c_a>
+<c_a><a>sample</a><p>1</p><c>3</c></c_a>
+</character_association>
