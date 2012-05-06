@@ -3,7 +3,6 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
 
-	<xsl:variable name="gallery" select="document('../../gallery.xml')/gallery"/>
 	<xsl:variable name="char_ass" select="document('../../character_ass.xml')/character_association"/>
 	<xsl:variable name="char" select="document('../../characters.xml')/history/characters"/>
 	<xsl:variable name="photo__album_name">
@@ -86,7 +85,7 @@
 							<!-- ___________ Characters ________________ -->
 							<!-- remember variable scope inside for loop -->
 							<xsl:variable name="photo__photo_id">
-								<xsl:value-of select="photo_id"/>
+								<xsl:value-of select="@id"/>
 							</xsl:variable>
 							
 							<xsl:variable name="characters">
@@ -183,6 +182,7 @@
 												<xsl:text>media/thumbs/</xsl:text>
 												<xsl:value-of select="$media_path"/>
 											</xsl:attribute>
+											<!--
 											<xsl:attribute name="title">
 												<xsl:choose>
 													<xsl:when test="photo_id != ''">
@@ -193,6 +193,7 @@
 													</xsl:otherwise>
 												</xsl:choose>
 											</xsl:attribute>
+											-->
 										</img>
 									</a>
 								</div>

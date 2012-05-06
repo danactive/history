@@ -25,8 +25,11 @@ function serveStaticPages(param) {
 		response = param.response,
 		filePath = '.' + request.url;
 
-    if (filePath == './')
+    if (filePath == './') {
         filePath = './index.htm';
+	} else if (filePath == './admin') {
+		filePath = './admin/index.htm';
+	}
 		
 	var extname = path.extname(filePath);
 	
