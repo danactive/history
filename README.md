@@ -3,6 +3,18 @@ history
 
 For the privacy-minded users: it's your personal history as a photo/video gallery for static inexpensive web hosting (ie portable USB flash drive or localhost)
 
+Requirements
+------
+Included in this project
+* [jQuery](http://jquery.com/) v1.7.2
+* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) v1.3.19
+* [Mapstraction (mapping)](http://mapstraction.com/) build 2.0.18
+* [Google Maps (map provider)](https://developers.google.com/maps/) v3
+
+To use the administration tools
+* [Node.js](http://nodejs.org/)
+* [Express (node plugin)](http://expressjs.com/)
+
 Photo album XML schemas
 -------
 ### Current schema (1.7)
