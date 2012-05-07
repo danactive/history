@@ -24,6 +24,7 @@ function serveStaticPages(param) {
 	var request = param.request,
 		response = param.response,
 		filePath = '.' + request.url;
+	filePath = filePath.split('?')[0];
 
     if (filePath == './') {
         filePath = './index.htm';
@@ -33,9 +34,7 @@ function serveStaticPages(param) {
 		
 	var extname = path.extname(filePath);
 	
-	console.log('requesting ' + filePath + ' as ' + extname);
-	
-    var contentType = 'text/html';
+	var contentType = 'text/html';
     switch (extname) {
         case '.js':
             contentType = 'text/javascript';
@@ -56,7 +55,15 @@ function serveStaticPages(param) {
 		case '.png':
             contentType = 'image/png';
             break;
+		case '.webm':
+            contentType = 'video/webm';
+            break;	
+		case '.mp4':
+            contentType = 'video/mp4';
+            break;	
     }
+	
+	console.log('Requesting ' + extname + ' from ' + filePath + ' as ' + contentType);
      
     path.exists(filePath, function(exists) {
      

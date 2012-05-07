@@ -28,6 +28,19 @@
 		<photo_loc>Home</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
 	</photo>
+	<video id="4">
+		<filename>2012-fireplace.mp4</filename>
+		<filename>2012-fireplace.webm</filename>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Home</photo_loc>
+		<thumb_caption>Video: Fireplace</thumb_caption>
+		<photo_desc>A sample HTML5 video in both MP4 and WebM formats</photo_desc>
+		<size><w>1280</w><h>720</h></size>
+		<geo>
+			<lat>49.25</lat>
+			<lon>-123.1</lon>
+		</geo>
+	</video>
 	<photo id="3">
 		<filename>2005-07-30-01.jpg</filename>
 		<geo>

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Watch Video</title>
+    <script src="inc/js/jquery-1.7.2.min.js"></script>
+    <script>
+    	function QSHandler() { // v1.1; 2003-10-07; req:; like:;
+    		fullQS = location.search.substr(1);
+    		if (fullQS.indexOf("&") >= 0)
+    			var qs = fullQS.split("&");
+    		else
+    			var qs = fullQS.split("%26");
+    		this.data = [];
+    		for (var i = 0; i < qs.length; i++) this.data[qs[i].split("=")[0]] = qs[i].split("=")[1];
+
+    		this.QueryString = function(x) {
+    			return this.data[x];
+    		};
+    	} var Request = new QSHandler();
+    	
+		$(window).ready(function () {
+    		var arrQs = Request.QueryString('videos').split(',');
+			var download = [];
+			var html5Vid = ['<video controls="true" width="', Request.QueryString('w'), '" height="', Request.QueryString('h'), '">'];
+  			$.each(arrQs, function (i, vidSrc) {
+				var vidType = vidSrc.substr(vidSrc.lastIndexOf('.')+1).toLowerCase();
+				vidSrc = 'media/videos/' + vidSrc;
+				switch (vidType) {
+					case 'mp4':
+						html5Vid.push('<source src="', vidSrc, '"  type=\'video/mp4; codecs="avc1.42E01E, mp4a.40.2"\'>');
+						break;
+					case 'webm':
+						html5Vid.push('<source src="', vidSrc, '"  type=\'video/webm; codecs="vp8, vorbis"\'>');
+						break;
+					case 'ogv':
+						html5Vid.push('<source src="', vidSrc, '"  type=\'video/ogg; codecs="theora, vorbis"\'>');
+						break;
+				}
+				download.push('<div><a href="media/videos/', arrQs[i], '">Download Video</a></div>');
+			});
+			html5Vid.push('</video>');
+			$('body').html(html5Vid.join('') + download.join(''));
+    	});
+    </script>
+</head>
+<body style="margin:0; padding: 0;">
+</body>
+</html>
