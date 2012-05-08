@@ -3,7 +3,7 @@ history
 
 For the privacy-minded users: it's your personal history as a photo/video gallery for static inexpensive web hosting (ie portable USB flash drive or localhost)
 
-[Demo site 0.6](http://history.staticloud.com/)
+[Demo site 0.6.1](http://history.staticloud.com/)
 
 Changelog
 ------

@@ -1,54 +1,62 @@
-<link rel="stylesheet" href="../inc/css/leaflet.css">
-<!-- Attach Leaflet mapping API -->
-<script src="../inc/js/leaflet.js"></script>
-<script src="../inc/js/jquery-1.7.2.min.js"></script>
-<script>
-	/*jslint browser: true, sloppy: true, white: true, maxerr: 50, indent: 4 */
-	/*global $, L*/
-	$(window).ready(function() {
-		var cities = {
-				"London": {
-					"lat": 51.5,
-					"lon": -0.1
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>History Admin - Get Geocode via map.html</title>
+	<link rel="stylesheet" href="../inc/css/leaflet.css">
+	<style>
+		#map { height: 400px;}
+	</style>
+</head>
+<body>
+	<div id="cities"><input type="text" id="geo_lat"/><input type="text" id="geo_lon"/>Quick Links: </div>
+	<div id="map"></div>
+	
+	<!-- Attach Leaflet mapping API -->
+	<script src="../inc/js/leaflet.js"></script>
+	<script src="../inc/js/jquery-1.7.2.min.js"></script>
+	<script>
+		/*jslint browser: true, sloppy: true, white: true, maxerr: 50, indent: 4 */
+		/*global $, L*/
+		$(window).ready(function() {
+			var cities = {
+					"London": {
+						"lat": 51.5,
+						"lon": -0.1
+					},
+					"Vancouver": {
+						"lat": 49.3,
+						"lon": -123.1
+					}
 				},
-				"Vancouver": {
-					"lat": 49.3,
-					"lon": -123.1
-				}
-			},
-			map = new L.Map('map'),
-			apiKey = '40a6c8d43e044fe6b29280aeabbd0a4f',
-			mapStyleId = '997', // fresh map style
-			cloudmadeTiles = new L.TileLayer('http://{s}.tile.cloudmade.com/' + apiKey + '/' + mapStyleId + '/256/{z}/{x}/{y}.png', {"subdomains":['a','b','c']}),
-			openstreetmapTiles = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
-			mapquestTiles = new L.TileLayer('http://oatile{s}.mqcdn.com/naip/{z}/{x}/{y}.png', {"subdomains":['1','2','3','4'], "maxZoom": 11}),
-			onMapClick = function (e) {
-				$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
-				$('#geo_lon').val(e.latlng.lng)
-			},
-			plotCity = function () {
-				var geoData = $(this).data('geo');
-				map.setView(new L.LatLng(geoData.lat, geoData.lon), 13);
-			};
+				map = new L.Map('map'),
+				apiKey = '40a6c8d43e044fe6b29280aeabbd0a4f',
+				mapStyleId = '997', // fresh map style
+				cloudmadeTiles = new L.TileLayer('http://{s}.tile.cloudmade.com/' + apiKey + '/' + mapStyleId + '/256/{z}/{x}/{y}.png', {"subdomains":['a','b','c']}),
+				openstreetmapTiles = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+				mapquestTiles = new L.TileLayer('http://oatile{s}.mqcdn.com/naip/{z}/{x}/{y}.png', {"subdomains":['1','2','3','4'], "maxZoom": 11}),
+				onMapClick = function (e) {
+					$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
+					$('#geo_lon').val(e.latlng.lng)
+				},
+				plotCity = function () {
+					var geoData = $(this).data('geo');
+					map.setView(new L.LatLng(geoData.lat, geoData.lon), 13);
+				};
 
-		map.addLayer(cloudmadeTiles).on('click', onMapClick);
-		
-		if ($('#geo_lat').val() !== '' && $('#geo_lon').val() !== '') { // load map based on XML fields
-			map.setView(new L.LatLng(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);
-		}
+			map.addLayer(cloudmadeTiles).on('click', onMapClick);
+			
+			if ($('#geo_lat').val() !== '' && $('#geo_lon').val() !== '') { // load map based on XML fields
+				map.setView(new L.LatLng(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);
+			}
 
-		$.each(cities, function(city,json) { // build quick links
-			$('<a class="a"/>').
-				text(' ' + city).
-				data('geo',json).
-				click(plotCity).
-				appendTo('#cities');
+			$.each(cities, function(city,json) { // build quick links
+				$('<a class="a"/>').
+					text(' ' + city).
+					data('geo',json).
+					click(plotCity).
+					appendTo('#cities');
+			});
 		});
-	});
-</script>
-<style>
-	#map { height: 95%; /* less Quick Links */ }
-</style>
-
-<div id="cities"><input type="text" id="geo_lat"/><input type="text" id="geo_lon"/>Quick Links: </div>
-<div id="map"></div>
+	</script>
+</body></html>

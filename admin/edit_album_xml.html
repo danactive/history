@@ -1,0 +1,108 @@
+<!doctype html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../inc/css/fluid960gs-reset.css"><!-- 960 CSS framework -->
+	<link rel="stylesheet" href="../inc/css/fluid960gs-text.css"/><!-- 960 CSS framework -->
+	<link rel="stylesheet" href="../inc/css/fluid960gs-grid.css"/><!-- 960 CSS framework -->
+	<script src="../inc/js/jquery-1.7.2.min.js"></script><!-- jQuery framework -->
+	<script src="../inc/js/json_to_xml.js"></script><!-- jQuery XML to JSON Plugin (also used in Generate Journal) -->
+	<script src="../inc/js/jquery.quicksand.js"></script><!-- Reorder and filter items with a nice shuffling animation. -->
+	<script src="../inc/js/global.js"></script><!-- global JS -->
+	<script src="../inc/js/edit_admin_xml.js"></script><!-- custom JS -->
+	<style>
+		.a { border-bottom: 1px dashed #595959; cursor: pointer; }
+		#listPhotos > div { float: left; width: 25%; cursor: pointer; }
+		#listPhotos > span { float: left; margin-left: -200px; margin-top: 10px; background-color: yellow; }
+		#listPhotos img { width: 98%; margin: 2%; opacity: 0.4; }
+		#listPhotos > .selected > img { opacity: 1; }
+		#rawAlbumJson { display: none; }
+		#right { position: fixed; height: 100%; }
+		
+		.suggestions { display: block; /*force line wrap*/ }
+		.suggestions > a { margin: 0 4px; padding: 2px; background: yellow; }
+		
+		textarea { width: 100%; height: 15%; }
+		#mapOrPhoto { width: 100%; height: 45%; }
+		#mapOrPhoto > img { max-width; 100%; max-height: 100%;  }
+		
+		fieldset { border:1px solid #bbb; padding:10px; background:#e9e9e9; margin-bottom:10px; }
+		legend { font-size:1.1em; padding:.4em .8em; background:#fff; border:1px solid #bbb; }
+		fieldset > p label { display: inline-block; line-height:2em; margin-right:3%; text-align:right; width:28%; }
+		fieldset > p input[type=text] { width:60%; }
+		fieldset > p input[type=text].half { width:29.4%; }
+		fieldset > input { margin-left:35%; }
+	</style>
+</head>
+<body>
+	<div class="container_16">
+		<div class="grid_8">
+			<div>
+				Gallery
+				<select id="editGalleries" tabindex="1"><option value="">Edit these gallery photos</option></select><!--JS populated-->
+				<input type="button" id="changeGallery" value="View"/>
+			</div>
+			<div>
+				Sort by
+				<select id="sortGallery" tabindex="2">
+					<option value="">XML</option>
+					<option>City</option>
+					<option>Location</option>
+					<option value="filename">Date</option>
+				</select>
+				<input type="button" id="changeSort" value="Sort"/>
+			</div>
+			<div id="listPhotos"></div><!--JS clears & overwrites-->
+		</div>
+		<div id="right" class="grid_8">
+			<fieldset>
+				<legend>Edit Photo Meta Data</legend>
+				<p><b>Generate XML then copy to album XML document.</b></p>
+				<p>
+					<label for="filename">Filename</label>
+					<input type="text" id="filename" disabled="disabled">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label for="city">City</label>
+					<input type="text" id="city" tabindex="3">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label for="location">Location</label>
+					<input type="text" id="location" tabindex="4">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label for="caption">Caption</label>
+					<input type="text" id="caption" tabindex="5">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label for="description">Description</label>
+					<input type="text" id="description" tabindex="6">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label><select id="ref_src" tabindex="7"><option></option><option value="google">Google</option><option value="wikipedia">Wikipedia</option></select></label>
+					<input type="text" id="ref_name" tabindex="8" title="Keywords">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<p>
+					<label><a class="a">Geolocation</a></label>
+					<input type="text" id="geo_lat" class="half" tabindex="9" title="Latitude">
+					<input type="text" id="geo_lon" class="half" tabindex="10" title="Longitude">
+					<input type="checkbox" title="Check to disable editability">
+					<span class="suggestions"></span>
+				</p>
+				<input type="submit" value="Save" id="saveToJson" tabindex="11">
+			</fieldset>
+			<textarea id="rawAlbumJson"></textarea><textarea id="rawAlbumJsonToXml"></textarea>
+			<div id="mapOrPhoto"><img/></div>
+		</div>
+	</div>
+</body></html>
