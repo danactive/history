@@ -5,6 +5,17 @@ For the privacy-minded users: it's your personal history as a photo/video galler
 
 [Demo site 0.6.1](http://history.staticloud.com/)
 
+Technologies
+------
+####Viewing
+* XML databases for photo/video galleries
+* XSLT to transform XML to HTML/CSS/JavaScript/jQuery
+* JavaScript/jQuery for the pagination & lightbox
+
+####Administration
+* Node.js to support AJAX & image manipulation
+* AJAX to read the XML gallery data
+
 Changelog
 ------
 ####0.6 - 2012-May-06 - added ability for viewing of HTML5 videos
