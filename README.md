@@ -1,7 +1,7 @@
 history
 =======
 
-For the privacy-minded users: it's your personal history as a photo/video gallery for static inexpensive web hosting (ie portable USB flash drive or localhost)
+Your personal history as a photo/video gallery which is viewable on portable USB flash drive or file system.
 
 [Demo site 0.6.1](http://history.staticloud.com/)
 
@@ -18,14 +18,14 @@ Technologies
 
 Changelog
 ------
-####0.6 - 2012-May-06 - added ability for viewing of HTML5 videos
+####0.6.0 - 2012-May-06 - added ability for viewing of HTML5 videos
 
-####0.5 - 2012-May-06 - added Node.js for admin section
+####0.5.0 - 2012-May-06 - added Node.js for admin section
 * (Fix) Character association 
 * (Add) Node.js modules Express & GraphicsMagick
 * (Add) Admin: Get getcode from map
 
-####0.4 - 2012-May-03 - viewing of photos
+####0.4.0 - 2012-May-03 - viewing of photos
 * Sample album with three Vancouver markers on map
 * jQuery v1.7.2
 * Mapstraction Build 2.0.18 - pre-release using Google Maps v3
@@ -82,3 +82,11 @@ Example
 			</geo>
 		</video>
     </album>
+    
+License
+-------
+History is open-source and released under the [BSD License.](http://www.opensource.org/licenses/bsd-license.php)
+
+Versioning
+-------
+http://semver.org/
