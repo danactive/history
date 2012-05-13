@@ -43,7 +43,7 @@ To use the administration tools
 * [Node.js](http://nodejs.org/)
 * [Express (node plugin)](http://expressjs.com/)
 
-Photo album XML schemas
+Photo/video album XML schemas
 -------
 ### Current schema (1.7)
 
