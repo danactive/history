@@ -1,7 +1,7 @@
 history
 =======
 
-For the privacy-minded users: it's your personal history as a photo/video gallery for static inexpensive web hosting (ie portable USB flash drive or localhost)
+Your personal history as a photo/video gallery which is viewable on portable USB flash drive or file system.
 
 [Demo site 0.6.1](http://history.staticloud.com/)
 
