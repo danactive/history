@@ -18,6 +18,10 @@ Technologies
 
 Changelog
 ------
+####0.8.0 - 2012-May-20 - New admin page: Image manipulation to produce thumbnails 185x45 and move images to photos folder
+
+####0.7.0 - 2012-May-07 - New admin page: edit existing albums (XML generation)
+
 ####0.6.0 - 2012-May-06 - added ability for viewing of HTML5 videos
 
 ####0.5.0 - 2012-May-06 - added Node.js for admin section
@@ -38,10 +42,13 @@ Included in this project
 * [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) v1.3.19
 * [Mapstraction (mapping)](http://mapstraction.com/) build 2.0.18
 * [Google Maps (map provider)](https://developers.google.com/maps/) v3
+* [Twitter Bootstrap (admin)](http://twitter.github.com/bootstrap/) v2.0.3
+* [Fluid 960 Grid System (admin)](http://www.designinfluences.com/fluid960gs/)
 
 To use the administration tools
 * [Node.js](http://nodejs.org/)
 * [Express (node plugin)](http://expressjs.com/)
+* [GraphicsMagick (node plugin)](https://github.com/aheckmann/gm) release 1.3.0
 
 Photo/video album XML schemas
 -------
