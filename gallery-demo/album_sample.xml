@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="inc/xslt/album.xslt"?>
-<album>
+<?xml-stylesheet type="text/xsl" href="../inc/xslt/album.xslt"?>
+<album gallery="demo">
 	<album_meta>
 		<album_name>sample</album_name>
 		<album_version>1.7</album_version>

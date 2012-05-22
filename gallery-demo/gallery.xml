@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="inc/xslt/gallery.xslt"?>
+<?xml-stylesheet type="text/xsl" href="../inc/xslt/gallery.xslt"?>
 <gallery>
 	<album>
 		<gallery_id>1</gallery_id>
 		<album_name>sample</album_name>
-		<album_version>1.7</album_version>
+		<album_version>1.8</album_version>
 		<sort>1</sort>
 		<album_h1>Sample</album_h1>
 		<album_h2>British Columbia</album_h2>

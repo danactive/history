@@ -3,7 +3,7 @@ history
 
 Your personal history as a photo/video gallery which is viewable on portable USB flash drive or file system.
 
-[Demo site 0.6.1](http://history.staticloud.com/)
+[Demo site 0.9.0](http://history.staticloud.com/)
 
 Technologies
 ------
@@ -18,6 +18,11 @@ Technologies
 
 Changelog
 ------
+####0.9.0 - 2012-May-21 - Support multiple galleries (Major update)
+* This structure change makes it easier to seperate the history application from the personal content
+* Demo gallery moved to the gallery-demo folder
+* Album XML schema updated (1.8) to reflect folder name
+
 ####0.8.0 - 2012-May-20 - New admin page: Image manipulation to produce thumbnails 185x45 and move images to photos folder
 
 ####0.7.0 - 2012-May-07 - New admin page: edit existing albums (XML generation)
@@ -52,19 +57,19 @@ To use the administration tools
 
 Photo/video album XML schemas
 -------
-### Current schema (1.7)
+### Current schema (1.8)
 
 Example
 
-    <album>
+    <album gallery="demo"> <!-- gallery directory name excluding 'gallery-'; new in schema 1.8 -->
     	<album_meta>
     		<album_name>sample</album_name> <!--Filename is album_sample.xml-->
-    		<album_version>1.7</album_version> <!--Reference schema version-->
+    		<album_version>1.8</album_version> <!--Reference schema version-->
     		<geo>
     			<google_zoom>11</google_zoom> <!-- Initial zoom level when viewing Google map via Mapstraction -->
     		</geo>
     	</album_meta>
-    	<photo id="1"> <!-- id attribute must be unique for this album; used by JavaScript -->
+    	<photo id="1"> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
     		<filename>2001-03-21-01.jpg</filename> <!-- must start with YYYY year; photos and thumbs must be places in this folder too -->
     		<geo> <!-- geocode -->
     			<lat>49.25</lat> <!-- latitude -->

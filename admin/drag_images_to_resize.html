@@ -120,7 +120,7 @@
 			});
 			
 			$('<a href="#">Upload above</a>').click(function() {
-				uploadFiles("/img",e.dataTransfer.files);
+				uploadFiles("/resizeImages/",e.dataTransfer.files);
 			}).appendTo(preview);
 		}
 		window.addEventListener("load", bindEvents, true);

@@ -2,9 +2,11 @@
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
-
-	<xsl:variable name="char_ass" select="document('../../character_ass.xml')/character_association"/>
-	<xsl:variable name="char" select="document('../../characters.xml')/history/characters"/>
+	<xsl:variable name="galleryDir" select="/album/@gallery" />
+	<xsl:variable name="charAssPath" select="concat('/gallery-', $galleryDir, '/character_ass.xml')" />
+	<xsl:variable name="charsPath" select="concat('/gallery-', $galleryDir, '/characters.xml')" />
+	<xsl:variable name="char_ass" select="document($charAssPath)/character_association"/>
+	<xsl:variable name="chars" select="document($charsPath)/characters"/>
 	<xsl:variable name="photo__album_name">
 		<xsl:value-of select="/album/album_meta/album_name"/>
 	</xsl:variable>
@@ -13,19 +15,19 @@
 			<head>
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
-				<script src="inc/js/jquery-1.7.2.min.js"></script>
+				<script src="../inc/js/jquery-1.7.2.min.js"></script>
 				<!-- Photo -->
-				<script src="inc/js/jquery.colorbox-min.js"></script>
-				<link  href="inc/css/colorbox.css" rel="stylesheet" media="screen" />
+				<script src="../inc/js/jquery.colorbox-min.js"></script>
+				<link  href="../inc/css/colorbox.css" rel="stylesheet" media="screen" />
 				<!-- Map -->
 				<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 				<script>strMapEngine = 'googlev3';</script>
-				<script src="inc/js/mxn-min.js"></script>
-				<script src="inc/js/mxn.core-min.js"></script>
-				<script src="inc/js/mxn.googlev3.core-min.js"></script>
-				<!--script src="inc/js/mapstraction.js"></script-->
-				<script src="inc/js/global.js"></script>
-				<script src="inc/js/album.js"></script>
+				<script src="../inc/js/mxn-min.js"></script>
+				<script src="../inc/js/mxn.core-min.js"></script>
+				<script src="../inc/js/mxn.googlev3.core-min.js"></script>
+				<!--script src="../inc/js/mapstraction.js"></script-->
+				<script src="../inc/js/global.js"></script>
+				<script src="../inc/js/album.js"></script>
 
 				<style>
 					<![CDATA[
@@ -64,7 +66,7 @@
 			</head>
 
 			<body>
-				<!-- XML version 1.5 thru 2 had geo tag in this format -->
+				<!-- XML schema 1.5 thru 2.0 had geo tag in this format -->
 				<xsl:if test="number(/album/album_meta/album_version) &gt;= '1.5' and number(/album/album_meta/album_version) &lt; '2'">
 					<div id="divToolbox">
 						<a href="javascript:;" id="linkMap">
@@ -93,13 +95,13 @@
 									<xsl:variable name="char_ass__char_id">
 										<xsl:value-of select="c"/>
 									</xsl:variable>
-
+									
 									<xsl:choose>
-										<xsl:when test="$char//char[@id=$char_ass__char_id]/nick != ''">
-											<xsl:value-of select="$char//char[@id=$char_ass__char_id]/nick"/>
+										<xsl:when test="$chars//char[@id=$char_ass__char_id]/nick != ''">
+											<xsl:value-of select="$chars//char[@id=$char_ass__char_id]/nick"/>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="$char//char[@id=$char_ass__char_id]/first"/>
+											<xsl:value-of select="$chars//char[@id=$char_ass__char_id]/first"/>
 										</xsl:otherwise>
 									</xsl:choose>
 									<xsl:text> </xsl:text>
@@ -172,7 +174,7 @@
 												</xsl:when>
 												<xsl:when test="name(.) = 'video'">
 													&lt;div class="meta"&gt;
-														&lt;a href="javascript:;" onclick="fOpenWin('video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>',<xsl:value-of select="size/w"/>,<xsl:value-of select="size/h"/>);"&gt;Watch Video&lt;/a&gt;
+														&lt;a href="javascript:;" onclick="fOpenWin('../video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w"/>,<xsl:value-of select="size/h"/>);"&gt;Watch Video&lt;/a&gt;
 													&lt;/div&gt;
 												</xsl:when>
 											</xsl:choose>

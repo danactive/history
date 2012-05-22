@@ -38,12 +38,17 @@
 		<div class="grid_8">
 			<div>
 				Gallery
-				<select id="editGalleries" tabindex="1"><option value="">Edit these gallery photos</option></select><!--JS populated-->
+				<select id="editGalleries" tabindex="1"><option value="">Loopup these galleries</option></select><!--JS populated-->
 				<input type="button" id="changeGallery" value="View"/>
 			</div>
 			<div>
+				Album
+				<select id="editAlbums" tabindex="2"><option value="">Edit these album photos</option></select><!--JS populated-->
+				<input type="button" id="changeAlbum" value="View"/>
+			</div>
+			<div>
 				Sort by
-				<select id="sortGallery" tabindex="2">
+				<select id="sortGallery" tabindex="3">
 					<option value="">XML</option>
 					<option>City</option>
 					<option>Location</option>
@@ -64,42 +69,42 @@
 				</p>
 				<p>
 					<label for="city">City</label>
-					<input type="text" id="city" tabindex="3">
+					<input type="text" id="city" tabindex="4">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
 				<p>
 					<label for="location">Location</label>
-					<input type="text" id="location" tabindex="4">
+					<input type="text" id="location" tabindex="5">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
 				<p>
 					<label for="caption">Caption</label>
-					<input type="text" id="caption" tabindex="5">
+					<input type="text" id="caption" tabindex="6">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
 				<p>
 					<label for="description">Description</label>
-					<input type="text" id="description" tabindex="6">
+					<input type="text" id="description" tabindex="7">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
 				<p>
-					<label><select id="ref_src" tabindex="7"><option></option><option value="google">Google</option><option value="wikipedia">Wikipedia</option></select></label>
-					<input type="text" id="ref_name" tabindex="8" title="Keywords">
+					<label><select id="ref_src" tabindex="8"><option></option><option value="google">Google</option><option value="wikipedia">Wikipedia</option></select></label>
+					<input type="text" id="ref_name" tabindex="9" title="Keywords">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
 				<p>
 					<label><a class="a">Geolocation</a></label>
-					<input type="text" id="geo_lat" class="half" tabindex="9" title="Latitude">
-					<input type="text" id="geo_lon" class="half" tabindex="10" title="Longitude">
+					<input type="text" id="geo_lat" class="half" tabindex="10" title="Latitude">
+					<input type="text" id="geo_lon" class="half" tabindex="11" title="Longitude">
 					<input type="checkbox" title="Check to disable editability">
 					<span class="suggestions"></span>
 				</p>
-				<input type="submit" value="Save" id="saveToJson" tabindex="11">
+				<input type="submit" value="Save" id="saveToJson" tabindex="12">
 			</fieldset>
 			<textarea id="rawAlbumJson"></textarea><textarea id="rawAlbumJsonToXml"></textarea>
 			<div id="mapOrPhoto"><img/></div>
