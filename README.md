@@ -1,7 +1,12 @@
 history
 =======
 
-Your personal history as a photo/video gallery which is viewable on portable USB flash drive or file system.
+Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.
+* Plot thumbnails on a map
+* Code runs on static web hosts
+* Includes administration tools for XML generation
+* Free & open source (dependant on other open source projects see indiviual licenses)
+
 
 [Demo site 0.9.0](http://history.staticloud.com/)
 
@@ -18,6 +23,8 @@ Technologies
 
 Changelog
 ------
+####0.10.0 - 2012-May-22 - Documentation improvements
+
 ####0.9.0 - 2012-May-21 - Support multiple galleries (Major update)
 * This structure change makes it easier to seperate the history application from the personal content
 * Demo gallery moved to the gallery-demo folder
@@ -51,9 +58,23 @@ Included in this project
 * [Fluid 960 Grid System (admin)](http://www.designinfluences.com/fluid960gs/)
 
 To use the administration tools
-* [Node.js](http://nodejs.org/)
+* [Node.js](http://nodejs.org/) v0.6.18
 * [Express (node plugin)](http://expressjs.com/)
 * [GraphicsMagick (node plugin)](https://github.com/aheckmann/gm) release 1.3.0
+
+Folder structures
+-------
+* admin/ - administration files for generating XML.  Copy and paste the XML structure into the albums
+* gallery-demo/ - demonstration of a gallery with the sample album inside
+* inc/ - CSS, JS, XSLT, and images for application
+* node_modules/ - Backup of installed modules for Node.js
+* .gitignore - blacklist files/folders for GitHub
+* README.md - this file
+* index.htm - Home page when avoiding Node.js
+* video.htm - Reads a query string and generates the HTML5 video tags
+* webserver_node START.lnk - Executes the Node.js web server for localhost viewing and administration image manipulation
+* webserver_node VIEW.url - Opens http://localhost in default browser
+* webserver_node.js - Node.js code for creating a web host
 
 Photo/video album XML schemas
 -------

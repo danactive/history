@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../inc/xslt/album.xslt"?>
+<!-- This XML associates photos and videos with meta data: geocode, caption, friends (characters)... -->
 <album gallery="demo">
 	<album_meta>
 		<album_name>sample</album_name>
-		<album_version>1.7</album_version>
+		<album_version>1.8</album_version>
 		<geo>
 			<google_zoom>11</google_zoom>
 		</geo>
