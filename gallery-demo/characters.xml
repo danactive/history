@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet type="text/xsl" href="inc/xslt/characters.xslt"?>
-<history>
-  <characters>
+<?xml-stylesheet type="text/xsl" href="../inc/xslt/characters.xslt"?>
+<characters>
 	<a>
 	  <char name="a_friend" id="1">
 		<first>A</first>
@@ -19,5 +18,4 @@
 		<active>2010Q2</active>
 	  </char>
 	</h>
-  </characters>
-</history>
+</characters>

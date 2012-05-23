@@ -149,7 +149,7 @@ var album = {
 			}
 		},
 		"Preview": function(filename) {
-			$('#mapOrPhoto > img').attr('src',['../media/photos/', filename.substr(0,filename.indexOf('-')), '/', filename].join(''));
+			$('#mapOrPhoto > img').attr('src',['../gallery-', $('#editGalleries').val(), '/media/photos/', filename.substr(0,filename.indexOf('-')), '/', filename].join(''));
 		},
 		"Sort": function() {
 			$('#listPhotos span').remove(); // clear previous sort labels
@@ -200,45 +200,70 @@ var album = {
 			$('<div>').
 				click(album.photo.Invoke).
 				data('photo',photo).
-				html(['<img src="../media/thumbs/', photo.filename.substr(0,photo.filename.indexOf('-')), '/', photo.filename, '"/>'].join('')).
+				html(['<img src="../gallery-', $('#editGalleries').val(), '/media/thumbs/', photo.filename.substr(0,photo.filename.indexOf('-')), '/', photo.filename, '"/>'].join('')).
 				appendTo('#listPhotos');
 		});
 	}
-};
-var ConvertXmlToJson = function(xmlData) {
+},
+ConvertXmlToJson = function(xmlData) {
 	album.json = jQuery.parseJSON(xml2json(xmlData,''));
 	$('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
 	album.Generate();
-};
-var GetAlbumXml = function() { // both <select> and btn call this function
-	var isGalleryChangable = $('#listPhotos').html() === ''; // rule1 must be empty
-	if (!isGalleryChangable) {
-		isGalleryChangable = confirm('Change photo gallery?'); // otherwise confirm before clearing
+},
+GetAlbumXml = function() { // both <select> and btn call this function
+	var isAlbumChangable = ($('#listPhotos').html() === ''); // rule1 must be empty
+	if (!isAlbumChangable) {
+		isAlbumChangable = confirm('Change photo album?'); // otherwise confirm before clearing
 	}
-	if (isGalleryChangable) {
-		$.get('../album_' + $('#editGalleries').val() + '.xml').
+	if (isAlbumChangable) {
+		$.get('../gallery-' + $('#editGalleries').val() + '/album_' + $('#editAlbums').val() + '.xml').
 			error(ajaxError).
 			success(ConvertXmlToJson);
 			
 		$("#sortGallery")[0].selectedIndex = 0; // reset sort dropdown
 	}
-};
-var PopulateGalleries = function(xmlData) { // complete gallery xml
+},
+GetGalleryNames = function() { // both <select> and btn call this function
+	var isGalleryChangable = $('#listPhotos').html() === ''; // rule1 must be empty
+	if (!isGalleryChangable) {
+		isGalleryChangable = confirm('Change photo gallery?'); // otherwise confirm before clearing
+	}
+	if (isGalleryChangable) {
+		$.get('../gallery-' + $('#editGalleries').val() + '/gallery.xml').
+			error(ajaxError).
+			success(PopulateAlbums);
+			
+		$("#editAlbums").get(0).length = 0; // clear albums dropdown
+		$("#editAlbums").html('<option value="">Edit these album photos</option>');
+		$("#sortGallery")[0].selectedIndex = 0; // reset sort dropdown
+		$('#listPhotos').html(''); // clear previous gallery
+	}
+},
+PopulateGalleries = function(jsonData) { // list of gallery names
+	var options = [];
+	$.each(jsonData.galleries, function(i, gallery) {
+		options.push( '<option>', gallery, '</option>');
+	});
+	$('#editGalleries').
+		change(GetGalleryNames).
+		append( options.join('') );
+},
+PopulateAlbums = function(xmlData) { // complete gallery xml
 	var options = [];
 	$('album', xmlData).each(function(i, gallery) {
 		options.push( '<option>', $('album_name',gallery).text(), '</option>');
 	});
-	$('#editGalleries').
-		change(GetAlbumXml).
+
+	$('#editAlbums').
 		append( options.join('') );
-};
-var ToggleDisable = function() {
+},
+ToggleDisable = function() {
 	$(this).
 		parent().
 		find('input[type=text], select').
 		prop('disabled',$(this).prop('checked')); // disable text field if checkbox is checked
-};
-var GetGeoFromMap = function () {
+},
+GetGeoFromMap = function () {
 	$.ajax({ "url": 'get_latlon_via_map.html' }).
 	error(ajaxError).
 	success(function(page2) {
@@ -246,11 +271,13 @@ var GetGeoFromMap = function () {
 	});
 };
 $(window).ready(function() {
-	$.get('../gallery.xml').
+	$.get('../getGalleries/').
 		error(ajaxError).
 		success(PopulateGalleries);
 		
-	$('#changeGallery').click(GetAlbumXml);
+	$('#changeGallery').click(GetGalleryNames);
+	$('#changeAlbum').click(GetAlbumXml);
+	$('#editAlbums').change(GetAlbumXml);
 	$('#sortGallery').change(album.photo.Sort);
 	$('#changeSort').click(album.photo.Sort);
 	$('#saveToJson').click(album.form.SaveToJson);

@@ -21,5 +21,18 @@ var buildHtml = function(arr) { // input arr is an array of objects
 			}
 		});
 	});
-}
-var ajaxError = function(jqXHR, textStatus, errorThrown) { debugger; /* run as localhost */ }
+},
+ajaxError = function(jqXHR, textStatus, errorThrown) { debugger; /* run as localhost */ },
+util = {
+	dateObjFormat: function (date) {
+		// in - JS date object
+		// out - yyyy-mm-dd
+		var yyyy = date.getFullYear().toString(),
+		m = (date.getMonth() + 1).toString(),
+		mm = (m.length === 1) ? '0' + m : m,
+		d = date.getDate().toString(),
+		dd = (d.length === 1) ? '0' + d : d;
+
+		return [yyyy, mm, dd].join('-');
+	}
+};
