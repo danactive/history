@@ -23,6 +23,8 @@ Technologies
 
 Changelog
 ------
+####0.11.0 - 2012-Jun-09 - Simplify webserver
+
 ####0.10.0 - 2012-May-22 - Documentation improvements
 
 ####0.9.0 - 2012-May-21 - Support multiple galleries (Major update)

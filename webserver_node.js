@@ -1,3 +1,4 @@
+/*jslint node: true, sloppy: true, white: true */
 var path = require('path'),
 	fs = require('fs'),
 	expressPort = 80,
@@ -15,7 +16,7 @@ var path = require('path'),
 				response.writeHead(200, {'Content-Type': 'text/html'});
 				response.write("<h1>Photo Galleries</h1><ul>");
 
-				for (i = 0; i < len; i++) {
+				for (i = 0; i < len; i+=1) {
 					response.write('<li><a href="gallery-' + galleries[i] + '/gallery.xml">' + galleries[i] + '</li>');
 				}
 				response.write("</ul>");
@@ -34,47 +35,6 @@ var path = require('path'),
 			filePath = filePath + '/gallery.xml';
 		}
 			
-		var extname = path.extname(filePath),
-		contentType = 'text/plain';
-		
-		switch (extname) {
-			case '.css':
-				contentType = 'text/css';
-				break;
-			case '.html':
-			case '.htm':
-				contentType = 'text/html';
-				break;
-			case '.ico':
-				contentType = 'image/vnd.microsoft.icon';
-				break;
-			case '.jpg':
-			case '.jpeg':
-				contentType = 'image/jpeg';
-				break;
-			case '.js':
-				contentType = 'text/javascript';
-				break;
-			case '.mp4':
-				contentType = 'video/mp4';
-				break;
-			case '.png':
-				contentType = 'image/png';
-				break;
-			case '.webm':
-				contentType = 'video/webm';
-				break;	
-			case '.xml':
-				contentType = 'text/xml';
-				break;
-			case '.xsl':
-			case '.xslt':
-				contentType = 'text/xsl';
-				break;
-		}
-		
-		console.log('Requesting ' + extname + ' from ' + filePath + ' as ' + contentType);
-		 
 		path.exists(filePath, function(exists) {
 			if (exists) {
 				fs.readFile(filePath, function(error, content) {
@@ -82,7 +42,7 @@ var path = require('path'),
 						response.writeHead(500);
 						response.end();
 					} else {
-						response.writeHead(200, { 'Content-Type': contentType });
+						response.contentType(path.extname(filePath));
 						response.end(content, 'utf-8');
 					}
 				});
