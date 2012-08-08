@@ -9,6 +9,7 @@
 	</style>
 </head>
 <body>
+	<p>Learn a geocode by clicking on the map below</p>
 	<div id="cities"><input type="text" id="geo_lat"/><input type="text" id="geo_lon"/>Quick Links: </div>
 	<div id="map"></div>
 	
@@ -28,23 +29,30 @@
 						"lat": 49.3,
 						"lon": -123.1
 					}
-				},
-				map = new L.Map('map'),
-				apiKey = '40a6c8d43e044fe6b29280aeabbd0a4f',
-				mapStyleId = '997', // fresh map style
-				cloudmadeTiles = new L.TileLayer('http://{s}.tile.cloudmade.com/' + apiKey + '/' + mapStyleId + '/256/{z}/{x}/{y}.png', {"subdomains":['a','b','c']}),
-				openstreetmapTiles = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
-				mapquestTiles = new L.TileLayer('http://oatile{s}.mqcdn.com/naip/{z}/{x}/{y}.png', {"subdomains":['1','2','3','4'], "maxZoom": 11}),
-				onMapClick = function (e) {
-					$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
-					$('#geo_lon').val(e.latlng.lng)
-				},
-				plotCity = function () {
-					var geoData = $(this).data('geo');
-					map.setView(new L.LatLng(geoData.lat, geoData.lon), 13);
 				};
-
+				
+			var map = new L.Map('map');
+			var apiKey = '40a6c8d43e044fe6b29280aeabbd0a4f';
+			var mapStyleId = '997'; // fresh map style
+			
+			// setup Leaflet tiles
+			var cloudmadeTiles = new L.TileLayer('http://{s}.tile.cloudmade.com/' + apiKey + '/' + mapStyleId + '/256/{z}/{x}/{y}.png', {"subdomains":['a','b','c']});
+			var openstreetmapTiles = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+			var mapquestTiles = new L.TileLayer('http://oatile{s}.mqcdn.com/naip/{z}/{x}/{y}.png', {"subdomains":['1','2','3','4'], "maxZoom": 11});
+			
+			// bind click event to map
+			var onMapClick = function (e) {
+				$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
+				$('#geo_lon').val(e.latlng.lng)
+			};
 			map.addLayer(cloudmadeTiles).on('click', onMapClick);
+			
+			// changes map view to city
+			var plotCity = function () {
+				var geoData = $(this).data('geo');
+				map.setView(new L.LatLng(geoData.lat, geoData.lon), 13);
+			};
+
 			
 			if ($('#geo_lat').val() !== '' && $('#geo_lon').val() !== '') { // load map based on XML fields
 				map.setView(new L.LatLng(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);
@@ -57,6 +65,9 @@
 					click(plotCity).
 					appendTo('#cities');
 			});
+			
+			// change map to Vancouver
+			map.setView(new L.LatLng(cities.Vancouver.lat, cities.Vancouver.lon), 13)
 		});
 	</script>
 </body></html>
