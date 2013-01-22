@@ -23,6 +23,8 @@ Technologies
 
 Changelog
 ------
+####0.12.0 - 2013-Jan-21 - Upgrade admin map to mapstraction
+
 ####0.11.0 - 2012-Jun-09 - Simplify webserver
 
 ####0.10.0 - 2012-May-22 - Documentation improvements

@@ -6,7 +6,7 @@
 		<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us">
 			<head>
 				<title>History - Photo Album Galleries</title>
-				<script type="text/javascript" src="inc/js/global.js"></script>
+				<script type="text/javascript" src="../inc/js/global.js"></script>
 				<style type="text/css">
 					.album { float: left; width: 185px; height: 170px; padding: 10px; }
 					.even { background-color: peachpuff; }

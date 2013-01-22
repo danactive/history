@@ -3,19 +3,23 @@
 <head>
     <meta charset="utf-8">
     <title>History Admin - Get Geocode via map.html</title>
-	<link rel="stylesheet" href="../inc/css/leaflet.css">
 	<style>
 		#map { height: 400px;}
 	</style>
 </head>
 <body>
-	<p>Learn a geocode by clicking on the map below</p>
 	<div id="cities"><input type="text" id="geo_lat"/><input type="text" id="geo_lon"/>Quick Links: </div>
 	<div id="map"></div>
-	
+
+	<!-- Attach Google Maps API -->
+	<script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+    <!-- Attach Mapstraction with the Google translate support -->    
+    <script src="../inc/js/mxn-2.0.18/mxn.js?(googlev3)"></script>
+    
 	<!-- Attach Leaflet mapping API -->
-	<script src="../inc/js/leaflet.js"></script>
 	<script src="../inc/js/jquery-1.7.2.min.js"></script>
+
 	<script>
 		/*jslint browser: true, sloppy: true, white: true, maxerr: 50, indent: 4 */
 		/*global $, L*/
@@ -29,33 +33,30 @@
 						"lat": 49.3,
 						"lon": -123.1
 					}
+				},
+				map = new mxn.Mapstraction('map','googlev3'),
+				onMapClick = function (e) {
+					$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
+					$('#geo_lon').val(e.latlng.lng);
+				},
+				plotCity = function () {
+					var geoData = $(this).data('geo');
+					map.setCenterAndZoom(new mxn.LatLonPoint(geoData.lat, geoData.lon), 13);
 				};
-				
-			var map = new L.Map('map');
-			var apiKey = '40a6c8d43e044fe6b29280aeabbd0a4f';
-			var mapStyleId = '997'; // fresh map style
-			
-			// setup Leaflet tiles
-			var cloudmadeTiles = new L.TileLayer('http://{s}.tile.cloudmade.com/' + apiKey + '/' + mapStyleId + '/256/{z}/{x}/{y}.png', {"subdomains":['a','b','c']});
-			var openstreetmapTiles = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-			var mapquestTiles = new L.TileLayer('http://oatile{s}.mqcdn.com/naip/{z}/{x}/{y}.png', {"subdomains":['1','2','3','4'], "maxZoom": 11});
-			
-			// bind click event to map
-			var onMapClick = function (e) {
-				$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
-				$('#geo_lon').val(e.latlng.lng)
-			};
-			map.addLayer(cloudmadeTiles).on('click', onMapClick);
-			
-			// changes map view to city
-			var plotCity = function () {
-				var geoData = $(this).data('geo');
-				map.setView(new L.LatLng(geoData.lat, geoData.lon), 13);
-			};
 
-			
+			map.addLargeControls(); // zoom slidebar & pan arrows
+
+			//map.addLayer(cloudmadeTiles).on('click', onMapClick);
+			//map.addTileLayer("http://tile.openstreetmap.org/{Z}/{X}/{Y}.png"); 			
+
+			map.click.addHandler(function(event_name, event_source, event_args){ 
+				var coords = event_args.location;
+				$('#geo_lat').val(coords.lat.toFixed(10));
+				$('#geo_lon').val(coords.lon.toFixed(10));
+			});
+
 			if ($('#geo_lat').val() !== '' && $('#geo_lon').val() !== '') { // load map based on XML fields
-				map.setView(new L.LatLng(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);
+				map.setCenterAndZoom(new mxn.LatLonPoint(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);
 			}
 
 			$.each(cities, function(city,json) { // build quick links
@@ -65,9 +66,6 @@
 					click(plotCity).
 					appendTo('#cities');
 			});
-			
-			// change map to Vancouver
-			map.setView(new L.LatLng(cities.Vancouver.lat, cities.Vancouver.lon), 13)
 		});
 	</script>
 </body></html>
