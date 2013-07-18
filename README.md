@@ -8,7 +8,7 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Free & open source (dependant on other open source projects see indiviual licenses)
 
 
-[Demo site 0.9.0](http://history.staticloud.com/)
+[Demo site 0.12.2](http://danactive.github.io/history/)
 
 Technologies
 ------
@@ -76,9 +76,9 @@ Folder structures
 * README.md - this file
 * index.htm - Home page when avoiding Node.js
 * video.htm - Reads a query string and generates the HTML5 video tags
-* webserver_node START.lnk - Executes the Node.js web server for localhost viewing and administration image manipulation
+* server.js - Node.js code for creating a web host
+* webserver_node START.bat - Executes the Node.js web server for localhost viewing and administration image manipulation
 * webserver_node VIEW.url - Opens http://localhost in default browser
-* webserver_node.js - Node.js code for creating a web host
 
 Photo/video album XML schemas
 -------
