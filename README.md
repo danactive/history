@@ -10,6 +10,16 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 
 [Demo site 0.12.2](http://danactive.github.io/history/)
 
+
+Basic Demo Usage
+------
+
+* Clone.
+* Open Index.htm in Firefox.
+* Click View Photo Galleries.
+* Click Sample.
+* From there it becomes more obvious. 
+
 Technologies
 ------
 ####Viewing
