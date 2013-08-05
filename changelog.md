@@ -1,41 +1,42 @@
 Changelog
 ------
 
-# 0.13.0 - Admin - drag to resize many photo and thumbs
-## 2013-Aug-05
+### 0.13.0 - Admin - drag to resize many photo and thumbs
+#### 2013-Aug-05
+* Works in Firefox
 
-# 0.12.0 - Upgrade admin map to mapstraction
-## 2013-Jan-21
+### 0.12.0 - Upgrade admin map to mapstraction
+#### 2013-Jan-21
 
-# 0.11.0 - Simplify webserver
-## 2012-Jun-09
+### 0.11.0 - Simplify webserver
+#### 2012-Jun-09
 
-# 0.10.0 - Documentation improvements
-## 2012-May-22
+### 0.10.0 - Documentation improvements
+#### 2012-May-22
 
-# 0.9.0 - Support multiple galleries (Major update)
-## 2012-May-21
+### 0.9.0 - Support multiple galleries (Major update)
+#### 2012-May-21
 * This structure change makes it easier to seperate the history application from the personal content
 * Demo gallery moved to the gallery-demo folder
 * Album XML schema updated (1.8) to reflect folder name
 
-# 0.8.0 - New admin page: Image manipulation to produce thumbnails 185x45 and move images to photos folder
-## 2012-May-20
+### 0.8.0 - New admin page: Image manipulation to produce thumbnails 185x45 and move images to photos folder
+#### 2012-May-20
 
-# 0.7.0 - New admin page: edit existing albums (XML generation)
-## 2012-May-07
+### 0.7.0 - New admin page: edit existing albums (XML generation)
+#### 2012-May-07
 
-# 0.6.0 - added ability for viewing of HTML5 videos
-## 2012-May-06
+### 0.6.0 - added ability for viewing of HTML5 videos
+#### 2012-May-06
 
-#0.5.0 - added Node.js for admin section
-## 2012-May-06
+###0.5.0 - added Node.js for admin section
+#### 2012-May-06
 * (Fix) Character association 
 * (Add) Node.js modules Express & GraphicsMagick
 * (Add) Admin: Get getcode from map
 
-# 0.4.0 - viewing of photos
-## 2012-May-03
+### 0.4.0 - viewing of photos
+#### 2012-May-03
 * Sample album with three Vancouver markers on map
 * jQuery v1.7.2
 * Mapstraction Build 2.0.18 - pre-release using Google Maps v3
