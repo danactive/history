@@ -31,35 +31,6 @@ Technologies
 * Node.js to support AJAX & image manipulation
 * AJAX to read the XML gallery data
 
-Changelog
-------
-####0.12.0 - 2013-Jan-21 - Upgrade admin map to mapstraction
-
-####0.11.0 - 2012-Jun-09 - Simplify webserver
-
-####0.10.0 - 2012-May-22 - Documentation improvements
-
-####0.9.0 - 2012-May-21 - Support multiple galleries (Major update)
-* This structure change makes it easier to seperate the history application from the personal content
-* Demo gallery moved to the gallery-demo folder
-* Album XML schema updated (1.8) to reflect folder name
-
-####0.8.0 - 2012-May-20 - New admin page: Image manipulation to produce thumbnails 185x45 and move images to photos folder
-
-####0.7.0 - 2012-May-07 - New admin page: edit existing albums (XML generation)
-
-####0.6.0 - 2012-May-06 - added ability for viewing of HTML5 videos
-
-####0.5.0 - 2012-May-06 - added Node.js for admin section
-* (Fix) Character association 
-* (Add) Node.js modules Express & GraphicsMagick
-* (Add) Admin: Get getcode from map
-
-####0.4.0 - 2012-May-03 - viewing of photos
-* Sample album with three Vancouver markers on map
-* jQuery v1.7.2
-* Mapstraction Build 2.0.18 - pre-release using Google Maps v3
-* ColorBox v1.3.19
 
 Dependancies
 ------

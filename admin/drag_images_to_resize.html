@@ -68,27 +68,28 @@
 			);
 		}
 		function uploadFiles(url, files) {
-		  var formData = new FormData();
+			var formData = new FormData();
 
-		  var filenames = calcPhotoFilenames(files.length);
-		  for (var i = 0, file; file = files[i]; ++i) {
-			formData.append('draggedFile', file);
-			formData.append('filenames', filenames[i]);
-		  }
-		  
-		  
-		  
+			var filenames = calcPhotoFilenames(files.length);
+			for (var i = 0, file; file = files[i]; ++i) {
+				formData.append('draggedFile', file);
+				formData.append('filename', filenames[i]);
+			}
 
-		  var xhr = new XMLHttpRequest();
-		  xhr.open('POST', url, true);
-		  xhr.onload = function(e) { 
-			/* If we got an error display it. */
-					if (xhr.responseText) {
-						alert(xhr.responseText);
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.onload = function(e) { 
+				/* If we got an error display it. */
+				if (xhr.responseText) {
+					if (document.getElementById('js-error')) {
+						document.getElementById('js-error').innerHTML = xhr.responseText;
+					} else {
+						window.alert(xhr.responseText);
 					}
-		  };
+				}
+			};
 
-		  xhr.send(formData);  // multipart/form-data
+			xhr.send(formData);  // multipart/form-data
 		}
 		function buildPhotos(e) {
 			var dt = e.dataTransfer;
@@ -133,7 +134,10 @@
 			spread = [],
 			increment = maxRange / photosInDay,
 			incrementInt = parseInt(increment, 10),
-			incrementFloat = increment - incrementInt;
+			incrementFloat = increment - incrementInt,
+			output = [],
+			xml = '',
+			filename;
 
 			for (var i = 1, photoIncrement, buildUp, prevBuildUp, possibleLast; i <= photosInDay; i += 1) {
 				buildUp = parseInt(incrementFloat * i);
@@ -154,9 +158,7 @@
 				prevBuildUp = buildUp;
 				spread.push(photoIncrement);
 			}
-			var output = [];
-			var xml = '';
-			var filename;
+
 			for (var i = 0, idLoop = idStart; i < spread.length; i += 1) {
 				filename = date + '-' + ((spread[i] < 10) ? '0' + spread[i] : spread[i]).toString() + '.jpg';
 				output.push(filename);
@@ -181,5 +183,6 @@
 	<div id="dropbox"><h1>Drag photos here</h1></div>
 	<textarea id="rawAlbumXml"></textarea>
 	<ul id="preview"></ul>
+	<div id="js-error"></div>
 </body>
 </html>
