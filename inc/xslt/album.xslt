@@ -20,15 +20,19 @@
 				<script src="../inc/js/jquery.colorbox-min.js"></script>
 				<link  href="../inc/css/colorbox.css" rel="stylesheet" media="screen" />
 				<!-- Map -->
-				<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
-				<script>strMapEngine = 'googlev3';</script>
-				<script src="../inc/js/mxn-min.js"></script>
-				<script src="../inc/js/mxn.core-min.js"></script>
-				<script src="../inc/js/mxn.googlev3.core-min.js"></script>
+				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+				<script>strMapEngine = 'leaflet';</script>
+				<script src="../inc/js/mxn-3.0.0-RC5/mxn.js"></script>
+				<script src="../inc/js/mxn-3.0.0-RC5/mxn.core.js"></script>
+				<script src="../inc/js/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
 				<!--script src="../inc/js/mapstraction.js"></script-->
 				<script src="../inc/js/global.js"></script>
 				<script src="../inc/js/album.js"></script>
 
+				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+				<!--[if lte IE 8]>
+				    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+				<![endif]-->
 				<style>
 					<![CDATA[
 					#divAlbum, #divMapBubble, #divToolbox { float: left; font-family:verdana; font-size:11px; font-weight:bold; }

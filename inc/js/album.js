@@ -122,6 +122,7 @@ function fMap(strAlbumName) {
 						strBubble += '</div>';
 						marker.setInfoBubble(strBubble);
 						mapstraction.addMarker(marker);
+						marker.openBubble();
 					}
 
 					if (i != arrBubbles.length) { // open bubble
@@ -154,7 +155,6 @@ function fMap(strAlbumName) {
 					}
 				}
 			} // end loop
-
 
 			// display the map centered on a latitude and longitude (Google zoom levels)
 			var pointCentre = new mxn.LatLonPoint((Array.max(arrLat) + Array.min(arrLat)) / 2, (Array.max(arrLon) + Array.min(arrLon)) / 2);
