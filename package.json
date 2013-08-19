@@ -5,7 +5,7 @@
   "main": "webserver_node.js",
   "dependencies": {
     "express": "~2.5.6",
-    "gm": "~1.10",
+    "gm": "~1",
     "mkdirp": "~0.3"
   },
   "devDependencies": {},

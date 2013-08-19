@@ -12,54 +12,73 @@ exports.init = function (param) {
 		responseOutput = [],
 		renameMakeFolder = function (param) {
 			var newFileStream,
-				photoTargetPath,
+				originalPaths,
 				tempFileStream,
 				newFilename = param.newFilename,
-				draggedFile = param.draggedFile;
+				draggedFile = param.draggedFile,
+				year = newFilename.substring(0, 4);
 
-			mkdirp(path.dirname(__dirname) + '/resizeImages/' + newFilename.substring(0, 4), function (errDir) {
-				if (errDir) throw errDir;
-				photoTargetPath = [path.dirname(__dirname), '/resizeImages/', newFilename.substring(0, 4), '/', newFilename].join('');
-				tempFileStream = fs.createReadStream(draggedFile.path);
-				newFileStream = fs.createWriteStream(photoTargetPath);
+			mkdirp(path.dirname(__dirname) + '/resizeImages/originals/' + year, function (errOrigDir) {
+				if (errOrigDir) throw errOrigDir;
 
-				tempFileStream.pipe(newFileStream);
-				tempFileStream.on('end', function(errRename) {
-					if (errRename) throw errRename;
-					responseOutput.push('renamed complete to ', photoTargetPath);
-					fs.unlinkSync(draggedFile.path);
-					resizeImages(photoTargetPath);
+				mkdirp(path.dirname(__dirname) + '/resizeImages/photos/' + year, function (errPhotoDir) {
+					if (errPhotoDir) throw errPhotoDir;
 
-					i+=1;
-					if (param.lastFile === true) {
-						response.writeHead(200, {'Content-Type': 'text/html'});
-						response.write(responseOutput.join('<br>'));
-						response.end();
-					}
+					mkdirp(path.dirname(__dirname) + '/resizeImages/thumbs/' + year , function (errThumbDir) {
+						if (errThumbDir) throw errThumbDir;
+
+						originalPaths = [path.dirname(__dirname), '/resizeImages/', 'originals', '/', year, '/', newFilename];
+						tempFileStream = fs.createReadStream(draggedFile.path);
+						newFileStream = fs.createWriteStream(originalPaths.join(''));
+
+						tempFileStream.pipe(newFileStream);
+						tempFileStream.on('end', function(errRename) {
+							if (errRename) throw errRename;
+							responseOutput.push('renamed complete to ', originalPaths.join(''));
+							fs.unlinkSync(draggedFile.path);
+							resizeImages(originalPaths);
+
+							i+=1;
+							if (param.lastFile === true) {
+								response.writeHead(200, {'Content-Type': 'text/html'});
+								response.write(responseOutput.join('<br>'));
+								response.end();
+							}
+						});
+					});
 				});
 			});
 		},
-		resizeImages = function (photoFile) {
-			gm(photoFile)
-			.autoOrient()
-			.stream(function (errOrient, stdout, stderr) {
-				gm(stdout)
-				.resize(photo.width, photo.height)
-				.write(photoFile+'-photo.jpg', function (errResize) {
-					if (errResize) {
-						console.error('Photo resize write error: ' + errResize);
-					}
-				});
+		resizeImages = function (originalPaths) {
+			gm(originalPaths.join(''))
+				.autoOrient()
+				.stream(function (errOrient, stdout, stderr) {
+					var photoPaths = originalPaths.concat([]),
+						thumbPaths = originalPaths.concat([]);
 
-				gm(stdout)
-				.resize(thumb.width, thumb.height, "!")
-				.noProfile()
-				.write(photoFile+'-thumb.jpg', function (errResize) {
-					if (errResize) {
-						console.error('Thumb resize write error: ' + errResize);
-					}
-				});
-			});
+					photoPaths[2] = 'photos';
+					thumbPaths[2] = 'thumbs';
+console.log(photoPaths.join(''));
+					gm(stdout)
+						.resize(photo.width, photo.height)
+						.write(photoPaths.join(''), function (errResize) {
+							if (errResize) {
+								console.error('Photo resize write error: ' + errResize);
+							}
+						})
+					;
+
+					gm(stdout)
+						.resize(thumb.width, thumb.height, "!")
+						.noProfile()
+						.write(thumbPaths.join(''), function (errResize) {
+							if (errResize) {
+								console.error('Thumb resize write error: ' + errResize);
+							}
+						})
+					;
+				})
+			;
 		};
 
 	if (request.files.draggedFile.length) { // more than 1 image
