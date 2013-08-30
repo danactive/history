@@ -35,7 +35,8 @@
 				<![endif]-->
 				<style>
 					<![CDATA[
-					#divAlbum, #divMapBubble, #divToolbox { float: left; font-family:verdana; font-size:11px; font-weight:bold; }
+					#divAlbum, #divMapBubble, #divToolbox { font-family:verdana; font-size:11px; font-weight:bold; }
+					#divAlbum, #divToolbox { float: left; }
 					#divAlbum {
 						background-color: #323232;
 						width: 100%;

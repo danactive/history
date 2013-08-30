@@ -1,6 +1,10 @@
 Changelog
 ------
 
+### 0.14.0 - Upgrade gallery map from Google to Leaflet with Mapstraction
+#### 2013-Aug-29
+* Works in Firefox, Chrome
+
 ### 0.13.0 - Admin - drag to resize many photo and thumbs
 #### 2013-Aug-05
 * Works in Firefox

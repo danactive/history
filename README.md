@@ -8,7 +8,7 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Free & open source (dependant on other open source projects see indiviual licenses)
 
 
-[Demo site 0.12.2](http://danactive.github.io/history/)
+[Demo site 0.13.0](http://danactive.github.io/history/)
 
 
 Basic Demo Usage
