@@ -25,7 +25,7 @@ var path = require('path'),
 			isHomePage = filePath === './',
 			isAdminLandingPage = (filePath === './admin' || filePath === './admin/'),
 			isGalleryLandingPage = (filePath.indexOf('./gallery-') === 0 && filePath.lastIndexOf('/') === filePath.length - 1); // match gallery-xxx/ but not gallery-xxx; use this code to match without ending slash filePath.substr(filePath.indexOf('gallery-') + 'gallery-'.length).indexOf('/') === -1
-
+		filePath = decodeURI(filePath); // handle spaces in path
 		if (isHomePage) {
 			loadHomePage();
 			return;
@@ -68,6 +68,11 @@ app.post('/resizeImages/', function(req, res){
 app.get('/getGalleries/', function(req, res){
 	var getGalleries = require('./admin/get_gallery_directories.js');
 	getGalleries.init({request: req, response: res, forNode: false});
+});
+
+app.get('/admin/walk-todo-photos/', function(req, res){
+	var getGalleries = require('./admin/walk-todo-photos.js');
+	getGalleries.init({request: req, response: res});
 });
 
 app.get('*', function(req, res){
