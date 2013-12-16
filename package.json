@@ -1,14 +1,13 @@
 ﻿{
   "name": "history",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
-  "main": "webserver_node.js",
-  "dependencies": {
+  "main": "server.js",
+  "devDependencies": {
     "express": "~2.5.6",
     "gm": "~1",
     "mkdirp": "~0.3"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,6 +20,5 @@
   ],
   "author": "Dan BROOKS",
   "license": "BSD",
-  "readmeFilename": "README.md",
-  "gitHead": "f8ef97a337c54b26a3cd1b02c6f50addbe4d081b"
+  "readmeFilename": "README.md"
 }

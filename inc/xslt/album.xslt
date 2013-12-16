@@ -17,8 +17,10 @@
 				<title>History - Photo Album</title>
 				<script src="../inc/js/jquery-1.7.2.min.js"></script>
 				<!-- Photo -->
-				<script src="../inc/js/jquery.colorbox-min.js"></script>
-				<link  href="../inc/css/colorbox.css" rel="stylesheet" media="screen" />
+				<script src="../public/lib/colorbox/jquery.colorbox-min.js"></script>
+				<link  href="../public/lib/colorbox/colorbox.css" rel="stylesheet" media="screen" />
+				<!--script src="../public/lib/adaptive-background/rgbaster.js"></script-->
+				<script src="../public/lib/adaptive-background/custom.jquery.adaptive-background.min.js"></script>
 				<!-- Map -->
 				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 				<script>strMapEngine = 'leaflet';</script>

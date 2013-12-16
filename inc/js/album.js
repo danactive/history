@@ -3,8 +3,9 @@ jQuery.noConflict();
 /* ALBUM */
 jQuery(function() {
 	jQuery('#divAlbum a').colorbox({
-		transition: 'none',
-		onComplete: fnLighboxShowedPhoto
+		"onComplete": fnLighboxShowedPhoto,
+		"preloading": true,
+		"transition": 'none'
 	});
 });
 /* MAP */
@@ -210,6 +211,10 @@ function fnMedium(strType) { // create class
 	this.getSrc = function() { return this.src; };
 }
 function fnLighboxShowedPhoto() {
+	jQuery.adaptiveBackground.run({
+		"parent": '#cboxOverlay',
+		"selector": 'img.cboxPhoto'
+	});
 	jQuery(this).parents('li').addClass('imgViewed'); //  change thumb to white
 }
 function fnSelectPhoto(objMapLink, strPhotoId) {
