@@ -1,36 +1,51 @@
-var fs = require('fs');
-
 exports.init = function (param) {
-	var currentFolder,
-		generateHtml,
+	var action = 'list',
+		currentFolder = '',
 		files,
 		response = param.response,
 		request = param.request;
 
-	(function () {
-		var paramsWithValue = require('querystring').parse(require('url').parse(request.url).query);
+	(function () { // set variables
+		var fs = require('fs'),
+			paramsWithValue = require('querystring').parse(require('url').parse(request.url).query);
 
-		if (paramsWithValue && paramsWithValue.folder) {
-			files = fs.readdirSync('./' + paramsWithValue.folder);
-			currentFolder = paramsWithValue.folder + '/';
-		} else {
+		if (paramsWithValue) {
+			if (paramsWithValue.action) {
+				action = paramsWithValue.action;
+			}
+			if (paramsWithValue.folder) {
+				currentFolder = paramsWithValue.folder + '/';
+				files = fs.readdirSync('./' + paramsWithValue.folder);
+			}
+		}
+		if (!files) {
 			files = fs.readdirSync('.');
-			currentFolder = '';
 		}
 	})();
 
 	generateHtml = function () {
-		var html = [],
+		var file,
+			html = [],
 			i = 0,
-			len = files.length,
-			isThumb;
+			isFolder,
+			isRasterFile,
+			len = files.length;
 
 		html.push('<ol>');
 		for (i; i < len; i++) {
-			isThumb = (files[i].toLowerCase().indexOf('.jpg') !== -1);
-			html.push('<li><a href=".?folder=', currentFolder, encodeURIComponent(files[i]), '">', files[i], '</a>');
-			if (isThumb) {
-				html.push('<img src="../../', currentFolder, encodeURIComponent(files[i]), '">');
+			file = files[i];
+			isFolder = (file.lastIndexOf(".") === -1);
+			isRasterFile = (file.toLowerCase().indexOf('.jpg') !== -1);
+			html.push('<li><a href=".?folder=', currentFolder, encodeURIComponent(file), '&action=list">', file, '</a>');
+			if (isRasterFile) {
+				if (action === 'list') {
+					html.push('<img src="../../', currentFolder, encodeURIComponent(file), '">');
+				} else if (action === 'preview') {
+					html.push('<img src="../../', currentFolder, encodeURIComponent(file), '" width="30" height="20">');
+				}
+			}
+			if (isFolder) {
+				html.push(' <a href=".?folder=', currentFolder, encodeURIComponent(file), '&action=preview">Preview inside this folder</a>');
 			}
 			html.push('</li>');
 		}

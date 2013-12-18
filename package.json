@@ -4,9 +4,9 @@
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
   "main": "server.js",
   "devDependencies": {
-    "express": "~2.5.6",
-    "gm": "~1",
-    "mkdirp": "~0.3"
+    "express": "3.4",
+    "gm": "1.14",
+    "mkdirp": "0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

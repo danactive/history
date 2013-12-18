@@ -56,21 +56,21 @@ var path = require('path'),
 	},
 	
 	express = require('express'),
-	app = express.createServer();
+	app = express();
 
 app.use(express.bodyParser());
 
-app.post('/resizeImages/', function(req, res){
+app.post(/resizeImages/, function(req, res){
 	var imgResize = require('./admin/drag_images_to_resize.js');
 	imgResize.init({request: req, response: res});
 });
 
-app.get('/getGalleries/', function(req, res){
+app.get(/getGalleries/, function(req, res){
 	var getGalleries = require('./admin/get_gallery_directories.js');
 	getGalleries.init({request: req, response: res, forNode: false});
 });
 
-app.get('/admin/walk-todo-photos/', function(req, res){
+app.get(/(admin\/walk-todo-photos)/, function(req, res){
 	var getGalleries = require('./admin/walk-todo-photos.js');
 	getGalleries.init({request: req, response: res});
 });
