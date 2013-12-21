@@ -71,8 +71,8 @@ app.get(/getGalleries/, function(req, res){
 });
 
 app.get(/(admin\/walk-todo-photos)/, function(req, res){
-	var getGalleries = require('./admin/walk-todo-photos.js');
-	getGalleries.init({request: req, response: res});
+	var files = require('./admin/directory-contents-api.js');
+	files.list({"request": req, "response": res});
 });
 
 app.get('*', function(req, res){
