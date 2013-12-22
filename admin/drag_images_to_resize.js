@@ -1,3 +1,5 @@
+/*global __dirname, console, exports, require */
+
 var fs = require('fs'),
 	gm = require('gm'), // img manipulation
 	mkdirp = require('mkdirp'), // create folder
@@ -19,21 +21,28 @@ exports.init = function (param) {
 				year = newFilename.substring(0, 4);
 
 			mkdirp(path.dirname(__dirname) + '/resizeImages/originals/' + year, function (errOrigDir) {
-				if (errOrigDir) throw errOrigDir;
+				if (errOrigDir) {
+					throw errOrigDir;
+				}
 
 				mkdirp(path.dirname(__dirname) + '/resizeImages/photos/' + year, function (errPhotoDir) {
-					if (errPhotoDir) throw errPhotoDir;
+					if (errPhotoDir) {
+						throw errPhotoDir;
+					}
 
 					mkdirp(path.dirname(__dirname) + '/resizeImages/thumbs/' + year , function (errThumbDir) {
-						if (errThumbDir) throw errThumbDir;
-
+						if (errThumbDir) {
+							throw errThumbDir;
+						}
 						originalPaths = [path.dirname(__dirname), '/resizeImages/', 'originals', '/', year, '/', newFilename];
 						tempFileStream = fs.createReadStream(draggedFile.path);
 						newFileStream = fs.createWriteStream(originalPaths.join(''));
 
 						tempFileStream.pipe(newFileStream);
 						tempFileStream.on('end', function(errRename) {
-							if (errRename) throw errRename;
+							if (errRename) {
+								throw errRename;
+							}
 							responseOutput.push('renamed complete to ', originalPaths.join(''));
 							fs.unlinkSync(draggedFile.path);
 							resizeImages(originalPaths);
@@ -82,7 +91,8 @@ console.log(photoPaths.join(''));
 		};
 
 	if (request.files.draggedFile.length) { // more than 1 image
-		for ( var i = 0, len = request.files.draggedFile.length, requestObject; i < len; i+=1 ) {
+		i = 0;
+		for ( var len = request.files.draggedFile.length, requestObject; i < len; i+=1 ) {
 			requestObject = {
 				"draggedFile": request.files.draggedFile[i],
 				"newFilename": request.body.filename[i]

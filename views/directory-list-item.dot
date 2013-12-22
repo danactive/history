@@ -1,0 +1,5 @@
+{{? it.ext === ""}}
+	<div><a href="{{=it.path.nav}}">{{=it.name}}{{=it.ext}}</a></div>
+{{??}}
+	<div>{{=it.name}}{{=it.ext}}</div>
+{{?}}

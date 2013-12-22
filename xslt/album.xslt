@@ -15,21 +15,21 @@
 			<head>
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
-				<script src="../inc/js/jquery-1.7.2.min.js"></script>
+				<script src="../lib/jquery-1.7.2.min.js"></script>
 				<!-- Photo -->
-				<script src="../public/lib/colorbox/jquery.colorbox-min.js"></script>
-				<link  href="../public/lib/colorbox/colorbox.css" rel="stylesheet" media="screen" />
-				<!--script src="../public/lib/adaptive-background/rgbaster.js"></script-->
-				<script src="../public/lib/adaptive-background/custom.jquery.adaptive-background.min.js"></script>
+				<script src="../lib/colorbox/jquery.colorbox-min.js"></script>
+				<link  href="../lib/colorbox/colorbox.css" rel="stylesheet" media="screen" />
+				<!--script src="../lib/adaptive-background/rgbaster.js"></script-->
+				<script src="../lib/adaptive-background/custom.jquery.adaptive-background.min.js"></script>
 				<!-- Map -->
 				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 				<script>strMapEngine = 'leaflet';</script>
-				<script src="../inc/js/mxn-3.0.0-RC5/mxn.js"></script>
-				<script src="../inc/js/mxn-3.0.0-RC5/mxn.core.js"></script>
-				<script src="../inc/js/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
-				<!--script src="../inc/js/mapstraction.js"></script-->
-				<script src="../inc/js/global.js"></script>
-				<script src="../inc/js/album.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.core.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
+				<!--script src="../lib/mapstraction.js"></script-->
+				<script src="../js/global.js"></script>
+				<script src="../js/album.js"></script>
 
 				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
 				<!--[if lte IE 8]>

@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>Admin section</title></head><body>
+
+{{? it.scripts }}
+	{{~it.scripts :value:index}} 
+		<script src="{{=value}}"></script>
+	{{~}} 
+{{?}}
+{{? it.page === 'directory-list' }}
+	{{#def.include('directory-list.node.dot')}}
+{{?}}
+
+</body></html>

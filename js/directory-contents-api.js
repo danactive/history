@@ -1,11 +1,10 @@
+/*global exports, require*/
+
 exports.list = function (param) {
 	var currentFolder = "",
 		filenames,
 		response = param.response,
 		request = param.request;
-
-	response.writeHead(200, {'Content-Type': 'application/json'});
-	response.end(JSON.stringify(init(generateJson)));
 
 	function init(callback) { // set variables
 		var filePath = '.',
@@ -53,17 +52,12 @@ exports.list = function (param) {
 		}
 		*/
 
-		function extension(filename) {
-			var extname = path.extname(safeFilename);
-			return (extname.charAt(0) === ".") ? extname.substring(1) : extname;
-		}
-
 		filenames.forEach(function (filename) {
 			var jsonItem = {};
-			safeFilename = encodeURIComponent(filename);
-			jsonItem.ext = extension(safeFilename);
-			jsonItem.name = path.basename(safeFilename, "." + jsonItem.ext);
+			jsonItem.ext = path.extname(filename);
+			jsonItem.name = path.basename(filename, jsonItem.ext);
 			jsonItem.path = {};
+			safeFilename = encodeURIComponent(filename);
 			jsonItem.path.abs = currentFolder + safeFilename;
 			jsonItem.path.nav = ".?folder=" + currentFolder + safeFilename;
 			jsonItem.path.rel = safeFilename;
@@ -71,4 +65,7 @@ exports.list = function (param) {
 		});
 		return jsonPackage;
 	}
-}
+
+	response.writeHead(200, {'Content-Type': 'application/json'});
+	response.end(JSON.stringify(init(generateJson)));
+};

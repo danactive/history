@@ -1,3 +1,5 @@
+/*global exports, require */
+
 var fs = require('fs');
 
 exports.init = function (param) {
@@ -23,4 +25,4 @@ exports.init = function (param) {
 		response.writeHead(200, {'Content-Type': 'application/json'});
 		response.end(JSON.stringify( json ));
 	}
-}
+};
