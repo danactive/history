@@ -1,4 +1,6 @@
-﻿/* GALLERY */
+﻿/*global jQuery*/
+
+/* GALLERY */
 jQuery.noConflict();
 /* ALBUM */
 jQuery(function() {
@@ -25,7 +27,7 @@ function fMap(strAlbumName) {
 		url: 'album_' + strAlbumName + '.xml',
 		dataType: "xml",
 		timeout: 1000,
-		error: function() { alert('Error loading XML document'); },
+		error: function() { window.alert('Error loading XML document'); },
 		success: function(objXml) {
 			if (strMapEngine === 'google') {
 				intZoom = parseInt(jQuery('album_meta>geo>google_zoom', objXml).text(), 10);

@@ -8,7 +8,7 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Free & open source (dependant on other open source projects see indiviual licenses)
 
 
-[Demo site 0.13.0](http://danactive.github.io/history/)
+[Demo site 0.15.0](http://danactive.github.io/history/)
 
 
 Basic Demo Usage
@@ -36,7 +36,7 @@ Dependancies
 ------
 Included in this project
 * [jQuery](http://jquery.com/) v1.7.2
-* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) v1.3.19
+* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) v1.4.33
 * [Mapstraction (mapping)](http://mapstraction.com/) build 2.0.18
 * [Google Maps (map provider)](https://developers.google.com/maps/) v3
 * [Twitter Bootstrap (admin)](http://twitter.github.com/bootstrap/) v2.0.3
@@ -44,22 +44,23 @@ Included in this project
 
 To use the administration tools
 * [Node.js](http://nodejs.org/) v0.6.18
-* [Express (node plugin)](http://expressjs.com/)
-* [GraphicsMagick (node plugin)](https://github.com/aheckmann/gm) release 1.3.0
+* [Express](http://expressjs.com/) v3.4.7
+* [GraphicsMagick](https://github.com/aheckmann/gm) v1.14.1
+* [Grunt.js](http://gruntjs.com/) v0.4.2
+    * npm install -g grunt-cli
 
 Folder structures
 -------
 * admin/ - administration files for generating XML.  Copy and paste the XML structure into the albums
 * gallery-demo/ - demonstration of a gallery with the sample album inside
-* inc/ - CSS, JS, XSLT, and images for application
 * node_modules/ - Backup of installed modules for Node.js
 * .gitignore - blacklist files/folders for GitHub
 * README.md - this file
 * index.htm - Home page when avoiding Node.js
 * video.htm - Reads a query string and generates the HTML5 video tags
-* server.js - Node.js code for creating a web host
-* webserver_node START.bat - Executes the Node.js web server for localhost viewing and administration image manipulation
-* webserver_node VIEW.url - Opens http://localhost in default browser
+* app.js - Node.js code for creating a web host
+* webserver_node START.bat - (Windows) Executes the Node.js web server for localhost viewing and administration image manipulation
+* webserver_node VIEW.url - (Windows) Opens http://localhost in default browser
 
 Photo/video album XML schemas
 -------

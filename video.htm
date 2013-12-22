@@ -5,7 +5,7 @@
     <title>Watch Video</title>
 </head>
 <body style="margin:0; padding: 0;">
-    <script src="inc/js/jquery-1.7.2.min.js"></script>
+    <script src="lib/jquery-1.7.2.min.js"></script>
     <script>
         var QSHandler = function () {
             var fullQS = location.search.substr(1),
@@ -38,7 +38,7 @@
                         html5Vid.push('<source src="', vidSrc, '"  type=\'video/ogg; codecs="theora, vorbis"\'>');
                         break;
                 }
-                download.push('<div><a href="media/videos/', arrQs[i], '">Download Video</a></div>');
+                download.push('<div><a href="', vidSrc, '">Download Video</a></div>');
             });
             html5Vid.push('</video>');
             $('body').html(html5Vid.join('') + download.join(''));

@@ -1,7 +1,12 @@
-/*jslint node: true, sloppy: true, white: true */
-var path = require('path'),
-	fs = require('fs'),
+/*global __dirname, console, require*/
+var doT = require('doT'),
+	express = require('express'),
+	app = express(),
 	expressPort = 80,
+	fs = require('fs'),
+	path = require('path'),
+	pub = __dirname + '/public',
+	view =  __dirname + '/views',
 	serveStaticPages = function (param) {
 		var request = param.request,
 			response = param.response,
@@ -53,12 +58,15 @@ var path = require('path'),
 				response.end("The page you were looking for: " + filePath + " can not be found");
 			}
 		});
-	},
-	
-	express = require('express'),
-	app = express();
+	};
 
 app.use(express.bodyParser());
+
+app.configure(function(){
+	app.set("views", path.join(__dirname, "views"));
+	app.engine("dot", require("dot-emc").init({app: app}).__express);
+	app.set("view engine", "dot");
+});
 
 app.post(/resizeImages/, function(req, res){
 	var imgResize = require('./admin/drag_images_to_resize.js');
@@ -67,12 +75,26 @@ app.post(/resizeImages/, function(req, res){
 
 app.get(/getGalleries/, function(req, res){
 	var getGalleries = require('./admin/get_gallery_directories.js');
-	getGalleries.init({request: req, response: res, forNode: false});
+	getGalleries.init({"request": req, "response": res, "forNode": false});
 });
 
-app.get(/(admin\/walk-todo-photos)/, function(req, res){
-	var files = require('./admin/directory-contents-api.js');
-	files.list({"request": req, "response": res});
+app.get(/(admin\/walk-path)/, function(req, res){
+	res.render(
+		'admin.node.dot',
+		{
+			"page": 'directory-list',
+			"scripts": [
+				'http://code.jquery.com/jquery-2.0.3.min.js',
+				'/js/global.js',
+				'/js/directory-contents.js',
+				'/public/views.js'
+			]
+		}
+	);
+});
+app.get(/(api\/walk-path)/, function(req, res){
+	var api = require('./js/directory-contents-api.js');
+	api.list({"request": req, "response": res});
 });
 
 app.get('*', function(req, res){

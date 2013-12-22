@@ -1,6 +1,12 @@
 Changelog
 ------
 
+### 0.15.0 - Grunt.js workflow
+#### 2014-Jan-04
+* Change front-end folder structure to tech languages
+* Admin use Node.js Grunt.js to control front-end and admin workflow
+* Add admin walk todo photo directories
+
 ### 0.14.0 - Upgrade gallery map from Google to Leaflet with Mapstraction
 #### 2013-Aug-29
 * Works in Firefox, Chrome

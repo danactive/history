@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?xml-stylesheet type="text/xsl" href="../inc/xslt/album.xslt"?>
+<?xml-stylesheet type="text/xsl" href="../xslt/album.xslt"?>
 <!-- This XML associates photos and videos with meta data: geocode, caption, friends (characters)... -->
 <album gallery="demo">
 	<album_meta>
