@@ -48,6 +48,8 @@ To use the administration tools
 * [GraphicsMagick](https://github.com/aheckmann/gm) v1.14.1
 * [Grunt.js](http://gruntjs.com/) v0.4.2
     * npm install -g grunt-cli
+* [mocha](http://visionmedia.github.io/mocha/) v1.16.x
+    * npm install -g mocha
 
 Folder structures
 -------

@@ -60,7 +60,7 @@ var doT = require('doT'),
 		});
 	};
 
-app.use(express.bodyParser());
+app.use(express.bodyParser()); // POST data
 
 app.configure(function(){
 	app.set("views", path.join(__dirname, "views"));
@@ -68,18 +68,17 @@ app.configure(function(){
 	app.set("view engine", "dot");
 });
 
-app.post(/resizeImages/, function(req, res){
-	var imgResize = require('./admin/drag_images_to_resize.js');
-	imgResize.init({request: req, response: res});
+app.post(/resizeImages/, function(request, response){
+	require('./admin/drag_images_to_resize.js').init({"request": request, "response": response});
 });
 
-app.get(/getGalleries/, function(req, res){
+app.get(/getGalleries/, function(request, response){
 	var getGalleries = require('./admin/get_gallery_directories.js');
-	getGalleries.init({"request": req, "response": res, "forNode": false});
+	getGalleries.init({"request": request, "response": response, "forNode": false});
 });
 
-app.get(/(admin\/walk-path)/, function(req, res){
-	res.render(
+app.get(/(admin\/walk-path)/, function(request, response){
+	response.render(
 		'admin.node.dot',
 		{
 			"page": 'directory-list',
@@ -92,13 +91,15 @@ app.get(/(admin\/walk-path)/, function(req, res){
 		}
 	);
 });
-app.get(/(api\/walk-path)/, function(req, res){
-	var api = require('./js/directory-contents-api.js');
-	api.list({"request": req, "response": res});
+app.get(/(api\/walk-path)/, function(request, response){
+	require('./js/admin-directory-contents-api.js').list({"request": request, "response": response});
+});
+app.post(/(admin\/thumb-generator)/, function(request, response){
+	require('./js/admin-thumb-generator.js').init({"request": request, "response": response});
 });
 
-app.get('*', function(req, res){
-	serveStaticPages({request: req, response: res});
+app.get('*', function(request, response){
+	serveStaticPages({"request": request, "response": response});
 });
 
 app.listen(expressPort);
