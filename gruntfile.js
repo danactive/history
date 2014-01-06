@@ -58,7 +58,7 @@ module.exports = function (grunt) {
 					'<%= develop.history.file %>',
 					'<%= dot.browser.src %>',
 					'<%= dot.node.src %>',
-					'js/directory-contents-api.js'
+					'js/admin-*.js'
 				],
 				tasks: ['develop', 'dot:browser'],
 				options: { nospawn: true }

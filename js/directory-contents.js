@@ -15,16 +15,16 @@ function callThumbGenerator (folder) {
 $.ajax({
 	"url": '/api/walk-path' + window.location.search,
 	"success": function (response) {
-		var args = {},
+		var arg = {},
 			out = [];
-		args.qs = util.queryObj();
+		arg.qs = util.queryObj();
 
-		if (args.qs.preview === "true") {
-			callThumbGenerator(args.qs.folder);
+		if (arg.qs.preview === "true") {
+			callThumbGenerator(arg.qs.folder);
 		}
 
 		$.each(response.items, function (x, item) {
-			out.push(doT["directory-list-item"](item, args));
+			out.push(doT["directory-list-item"](item, arg));
 		});
 		$('#directory-list').html(out.join(''));
 	},
