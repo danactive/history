@@ -39,7 +39,7 @@ function getContents(arg, callback) {
 	} else {
 		return { "error": error.missingPath + filePath };
 	}
-	if (!filenames || filenames.length === 0) {
+	if (!filenames || filenames.length === 0 || (filenames.length === 1 && filenames[0] === ".gitkeep")) { // git workaround
 		return { "error": error.missingFiles + filePath };
 	}
 	return (callback) ? callback({"currentFolder": currentFolder, "filenames": filenames}) : { "error": error.missingCallback };
