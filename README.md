@@ -14,7 +14,7 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 Basic Demo Usage
 ------
 
-* Clone.
+* Clone this repository.
 * Open Index.htm in Firefox.
 * Click View Photo Galleries.
 * Click Sample.
