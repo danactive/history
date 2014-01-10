@@ -1,10 +1,10 @@
 {{ var qs = util.queryObj(); }}
 {{? it.content.type === "folder" }}
-	<div>{{=it.name}}{{=it.ext}} <a href="{{=it.path.nav}}&amp;preview=false">Directory list</a> <a href="{{=it.path.nav}}&amp;preview=true">Thumbnail preview</a></div>
+	<div>{{=it.name}}{{=it.ext}} <a href="{{=it.path.nav}}{{=it.name}}{{=it.ext}}&amp;preview=false">Directory list</a> <a href="{{=it.path.nav}}{{=it.name}}{{=it.ext}}&amp;preview=true">Thumbnail preview</a></div>
 {{?? it.content.type === "image" && qs.preview === "true" }}
-	<div>{{=it.name}}{{=it.ext}} <img src="/img/spinner.gif" data-src="historyThumbs/{{=it.name}}{{=it.ext}}" class="directory-thumb-wait"></div>
+	<div>{{=it.name}}{{=it.ext}} <img src="/img/spinner.gif" data-src="_historyThumb/{{=it.name}}{{=it.ext}}" class="directory-thumb-wait"></div>
 {{?? it.content.type === "image" && qs.preview === "false" }}
-	<div>{{=it.name}}{{=it.ext}} <img src="{{=it.path.rel}}" class="directory-thumb"></div>
+	<div>{{=it.name}}{{=it.ext}} <img src="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" class="directory-thumb"></div>
 {{??}}
 	<div>{{=it.name}}{{=it.ext}}</div>
 {{?}}

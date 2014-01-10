@@ -7,7 +7,10 @@ function callThumbGenerator (folder) {
 			"folder": folder
 		},
 		"success": function (response) {
-			
+			var qs = util.queryObj();
+			$(".directory-thumb-wait").each(function (i) {
+				this.src = "../../" + qs.folder + "/" + response.thumbnails[i];
+			});
 		},
 		"error": ajaxError
 	});

@@ -1,6 +1,10 @@
 Changelog
 ------
 
+### 0.17.0 - Generate thumbs
+
+### 0.16.0 - Add unit test
+
 ### 0.15.0 - Grunt.js workflow
 #### 2014-Jan-04
 * Change front-end folder structure to tech languages

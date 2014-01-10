@@ -76,7 +76,7 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should emit JSON', function (done) {
+			it('should emit JSON with exact structure', function (done) {
 				var json,
 					path = "test/fixture/cjt";
 				json = page.getContents({"folder": path}, page.generateJson);
@@ -88,6 +88,24 @@ describe('Admin:', function () {
 				expect(json.items[1].ext).to.be('.js');
 				expect(json.items[2].path).to.only.have.keys('abs', 'nav', 'rel');
 				expect(json.items[2].content).to.only.have.keys('type');
+				done();
+			});
+			it('should emit JSON and match content type', function (done) {
+				var json,
+					path = "test/fixture/image";
+				json = page.getContents({"folder": path}, page.generateJson);
+				expect(json).to.have.key('items');
+				expect(json.items).to.be.an('array');
+				expect(json.items).to.have.length(3);
+				expect(json.items[0].name).to.be('g3');
+				expect(json.items[1].name).to.be('j1');
+				expect(json.items[2].name).to.be('p2');
+				expect(json.items[0].ext).to.be('.gif');
+				expect(json.items[1].ext).to.be('.jpeg');
+				expect(json.items[2].ext).to.be('.png');
+				expect(json.items[0].content.type).to.be('image');
+				expect(json.items[1].content.type).to.be('image');
+				expect(json.items[2].content.type).to.be('image');
 				done();
 			});
 		});

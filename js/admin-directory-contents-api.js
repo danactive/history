@@ -113,9 +113,9 @@ function generateJson(arg) {
 		jsonItem.name = path.basename(filename, jsonItem.ext);
 		jsonItem.path = {};
 		safeFilename = encodeURIComponent(filename);
-		jsonItem.path.abs = '/' + currentFolder + safeFilename;
-		jsonItem.path.nav = ".?folder=" + currentFolder + safeFilename;
-		jsonItem.path.rel = '../../' + currentFolder + safeFilename;
+		jsonItem.path.abs = '/' + currentFolder;
+		jsonItem.path.nav = ".?folder=" + currentFolder;
+		jsonItem.path.rel = '../../' + currentFolder;
 		jsonItem.content = {};
 		jsonItem.content.type = getType(jsonItem.ext);
 		jsonPackage.items.push(jsonItem);

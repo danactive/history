@@ -3,14 +3,15 @@ var doT = require('doT'),
 	express = require('express'),
 	app = express(),
 	expressPort = 80,
-	fs = require('fs'),
+	constant = {
+		"tempThumbFolder": '_historyThumb'
+	},
 	path = require('path'),
-	pub = __dirname + '/public',
-	view =  __dirname + '/views',
 	serveStaticPages = function (param) {
 		var request = param.request,
 			response = param.response,
 			filePath = '.' + request.url.split('?')[0],
+			fs = require('fs'),
 			loadHomePage = function () { // learn all the gallery folders
 				var getGalleries = require('./admin/get_gallery_directories.js'),
 				galleriesJson = getGalleries.init({ request: request, response: response, forNode: true }),
@@ -64,7 +65,7 @@ app.use(express.bodyParser()); // POST data
 
 app.configure(function(){
 	app.set("views", path.join(__dirname, "views"));
-	app.engine("dot", require("dot-emc").init({app: app}).__express);
+	app.engine("dot", require("dot-emc").init({"app": app}).__express);
 	app.set("view engine", "dot");
 });
 
@@ -92,10 +93,10 @@ app.get(/(admin\/walk-path)/, function(request, response){
 	);
 });
 app.get(/(api\/walk-path)/, function(request, response){
-	require('./js/admin-directory-contents-api.js').list({"request": request, "response": response});
+	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
 });
 app.post(/(admin\/thumb-generator)/, function(request, response){
-	require('./js/admin-thumb-generator.js').init({"request": request, "response": response});
+	require('./js/admin-thumb-generator.js').init({"constant": constant, "request": request, "response": response});
 });
 
 app.get('*', function(request, response){
