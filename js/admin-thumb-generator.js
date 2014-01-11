@@ -12,12 +12,9 @@ exports.init = function (arg) {
 				"imageLoop": 0,
 				"thumbCreated": 0
 			},
-			fs = require('fs'),
-			gm = require('gm'), // image processer
-			json,
-			mkdirp = require('mkdirp'), // create folder,
-			path = require('path'),
-			out = [];
+			json = directory.generateJson(arg),
+			out = [],
+			queue;
 		if (arg.error) {
 			throw arg.error;
 		}
@@ -33,42 +30,51 @@ exports.init = function (arg) {
 				response.end(JSON.stringify({"thumbnails":out}));
 			}
 		}
-		function createThumb(item) {
-			var sourcePath = path.dirname(__dirname) + "/" + item.path.abs,
-				outputPath = sourcePath + constant.tempThumbFolder + "/",
-				filename = item.name + item.ext;
+		function ifImage(item) {
+			function createThumb(item) {
+				var sourcePath = require('path').dirname(__dirname) + "/" + item.path.abs,
+					outputPath = sourcePath + constant.tempThumbFolder + "/",
+					filename = item.name + item.ext;
 
-			mkdirp(outputPath, function (errorNewPath) {
-				if (errorNewPath) {
-					throw errorNewPath;
-				}
+				require('mkdirp')(outputPath, function (errorNewPath) {
+					if (errorNewPath) {
+						throw errorNewPath;
+					}
 
-				if (fs.existsSync(outputPath + filename)) { // file exists
-					count.thumbCreated++;
-					possibleOutput();
-					return;
-				}
-				gm(sourcePath + filename)
-					.resize(dimension.width, dimension.height + ">")
-					.gravity('Center')
-					.extent(dimension.width, dimension.height)
-					.write(outputPath + filename, function (errorWriting) {
-						if (errorWriting) {
-							throw errorWriting;
-						}
+					if (require('fs').existsSync(outputPath + filename)) { // file exists
 						count.thumbCreated++;
 						possibleOutput();
-					});
-			});
-		}
-		json = directory.generateJson(arg);
-		json.items.forEach(function (item) {
+						return;
+					}
+					require('gm')(sourcePath + filename)
+						.resize(dimension.width, dimension.height + ">")
+						.gravity('Center')
+						.extent(dimension.width, dimension.height)
+						.write(outputPath + filename, function (errorWriting) {
+							if (errorWriting) {
+								throw errorWriting;
+							}
+							count.thumbCreated++;
+							possibleOutput();
+						});
+				});
+			}
 			if (item.content.type === "image") {
+				count.imageLoop++;
 				createThumb(item);
 				out.push(constant.tempThumbFolder + "/" + item.name + item.ext);
-				count.imageLoop++;
+			}
+		}
+		queue = require("async").queue(function (item, callback) {
+			ifImage(item);
+			callback();
+		}, 1);
+
+		queue.push(json.items, function(errorEach){
+			if (errorEach) {
+				throw errorEach;
 			}
 		});
-		possibleOutput();
+		queue.drain = possibleOutput;
 	});
 };

@@ -1,9 +1,10 @@
-{{ var qs = util.queryObj(); }}
-{{? it.content.type === "folder" }}
+{{ var arg = arguments[1],
+	tempThumbFolder = "_historyThumb";}}
+{{? it.content.type === "folder" && it.name !== tempThumbFolder }}
 	<div>{{=it.name}}{{=it.ext}} <a href="{{=it.path.nav}}{{=it.name}}{{=it.ext}}&amp;preview=false">Directory list</a> <a href="{{=it.path.nav}}{{=it.name}}{{=it.ext}}&amp;preview=true">Thumbnail preview</a></div>
-{{?? it.content.type === "image" && qs.preview === "true" }}
-	<div>{{=it.name}}{{=it.ext}} <img src="/img/spinner.gif" data-src="_historyThumb/{{=it.name}}{{=it.ext}}" class="directory-thumb-wait"></div>
-{{?? it.content.type === "image" && qs.preview === "false" }}
+{{?? it.content.type === "image" && arg.qs.preview === "true" }}
+	<div>{{=it.name}}{{=it.ext}} <img src="/img/spinner.gif" data-src="{{=tempThumbFolder}}/{{=it.name}}{{=it.ext}}" class="directory-thumb-wait"></div>
+{{?? it.content.type === "image" && arg.qs.preview === "false" }}
 	<div>{{=it.name}}{{=it.ext}} <img src="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" class="directory-thumb"></div>
 {{??}}
 	<div>{{=it.name}}{{=it.ext}}</div>

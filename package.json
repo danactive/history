@@ -4,6 +4,7 @@
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
   "dependencies": {},
   "devDependencies": {
+    "async": "~0.2",
     "expect.js": "~0.2",
     "express": "~3.4",
     "dot": "~1.0",
