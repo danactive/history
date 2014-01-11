@@ -87,7 +87,12 @@ app.get(/(admin\/walk-path)/, function(request, response){
 				'http://code.jquery.com/jquery-2.0.3.min.js',
 				'/js/global.js',
 				'/js/directory-contents.js',
+				'/lib/jquery-ui-1.10.3.datepicker.sortable/jquery-ui-1.10.3.custom.min.js',
 				'/public/views.js'
+			],
+			"css": [
+				'/lib/jquery-ui-1.10.3.datepicker.sortable/humanity/jquery-ui-1.10.3.custom.min.css',
+				'/css/directory-contents.css'
 			]
 		}
 	);

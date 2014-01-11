@@ -10,6 +10,7 @@ function callThumbGenerator (folder) {
 			var qs = util.queryObj();
 			$(".directory-thumb-wait").each(function (i) {
 				this.src = "../../" + decodeURIComponent(qs.folder) + "/" + response.thumbnails[i];
+				this.className = "directory-thumb";
 			});
 		},
 		"error": ajaxError
@@ -29,7 +30,7 @@ $.ajax({
 		$.each(response.items, function (x, item) {
 			out.push(doT["directory-list-item"](item, arg));
 		});
-		$('#directory-list').html(out.join(''));
+		$('#directory-list').html(out.join('')).sortable();
 	},
 	"error": ajaxError
 });
