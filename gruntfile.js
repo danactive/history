@@ -23,6 +23,12 @@ module.exports = function (grunt) {
 				src: ['views/*.node.dot']
 			}
 		},
+		githooks: {
+			all: {
+				// Will run the jshint and test:unit tasks at every commit
+				'pre-commit': 'validate'
+			}
+		},
 		jshint: {
 			options: {
 				curly: true,
@@ -42,6 +48,15 @@ module.exports = function (grunt) {
 				},
 				files: {
 					src: ['js/global.js']
+				}
+			}
+		},
+		shell: {
+			test: {
+				command: 'mocha',
+				options: {
+					stdout: true,
+					failOnError: true
 				}
 			}
 		},
@@ -71,8 +86,12 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-develop');
 	grunt.loadNpmTasks('grunt-dot-compiler');
+	grunt.loadNpmTasks('grunt-githooks');
+	grunt.loadNpmTasks('grunt-shell');
 
-	grunt.registerTask('validate', ['jshint']);
+	grunt.registerTask('setup', ['githooks']);
+
+	grunt.registerTask('validate', ['jshint', 'shell:test']);
 
 	grunt.registerTask('dev', ['jshint', 'develop', 'watch']);
 

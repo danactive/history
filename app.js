@@ -102,10 +102,10 @@ app.get(/(api\/walk-path)/, function(request, response){
 	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
 });
 app.post(/(admin\/thumb-generator)/, function(request, response){
-	require('./js/admin-thumb-generator.js').preview({"constant": constant, "request": request, "response": response});
+	require('./js/admin-image-manipulation.js').preview({"constant": constant, "request": request, "response": response});
 });
 app.post(/(admin\/resize-photos)/, function(request, response){
-	require('./js/admin-thumb-generator.js').resize({"constant": constant, "request": request, "response": response});
+	require('./js/admin-image-manipulation.js').resize({"constant": constant, "request": request, "response": response});
 });
 
 app.get('*', function(request, response){

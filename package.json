@@ -9,16 +9,17 @@
     "express": "~3.4",
     "dot": "~1.0",
     "dot-emc": "~0.1",
-    "gm": "1.14",
-    "mkdirp": "0.3",
-    "mocha": "~1.16",
     "grunt": "~0.4",
     "grunt-contrib-jshint": "~0.6",
     "grunt-contrib-nodeunit": "~0.2",
     "grunt-contrib-uglify": "~0.2",
     "grunt-contrib-watch": "~0.5",
     "grunt-develop": "~0.3",
-    "grunt-dot-compiler": "~0.5"
+    "grunt-dot-compiler": "~0.5",
+    "grunt-githooks": "~0.3",
+    "grunt-shell": "~0.6",
+    "gm": "1.14",
+    "mkdirp": "0.3"
   },
   "main": "app.js",
   "scripts": {
