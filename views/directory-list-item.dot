@@ -1,9 +1,9 @@
 {{ var arg = arguments[1],
 	tempThumbFolder = "_historyThumb";}}
 {{? it.content.type === "folder" && it.name !== tempThumbFolder }}
-	<li><span>{{=it.name}}{{=it.ext}}</span><a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}{{=it.ext}}&amp;preview=false">Directory list</a> <a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}{{=it.ext}}&amp;preview=true">Thumbnail preview</a></li>
+	<li><span>{{=it.name}}{{=it.ext}}</span><!--a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}{{=it.ext}}&amp;preview=false">Directory list</a--> <a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}{{=it.ext}}&amp;preview=true">Thumbnail preview</a></li>
 {{?? it.content.type === "image" && arg.qs.preview === "true" }}
-	<li><span>{{=it.name}}{{=it.ext}}</span><img src="/img/spinner.gif" data-src="{{=tempThumbFolder}}/{{=it.name}}{{=it.ext}}" class="directory-thumb-wait"></li>
+	<li data-file="{{=it.name}}" data-ext="{{=it.ext}}" data-type="{{=it.content.type}}"><span>{{=it.name}}{{=it.ext}}</span><img src="/img/spinner.gif" class="directory-thumb-wait"></li>
 {{?? it.content.type === "image" && arg.qs.preview === "false" }}
 	<li><span>{{=it.name}}{{=it.ext}}</span><img src="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" class="directory-thumb"></li>
 {{??}}

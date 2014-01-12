@@ -7,13 +7,13 @@
 {{?}}
 </head><body>
 
+{{? it.page === 'directory-list' }}
+	{{#def.include('directory-list.node.dot')}}
+{{?}}
 {{? it.scripts }}
 	{{~it.scripts :value:index}} 
 		<script src="{{=value}}"></script>
 	{{~}} 
-{{?}}
-{{? it.page === 'directory-list' }}
-	{{#def.include('directory-list.node.dot')}}
 {{?}}
 
 </body></html>

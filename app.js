@@ -88,7 +88,8 @@ app.get(/(admin\/walk-path)/, function(request, response){
 				'/js/global.js',
 				'/js/directory-contents.js',
 				'/lib/jquery-ui-1.10.3.datepicker.sortable/jquery-ui-1.10.3.custom.min.js',
-				'/public/views.js'
+				'/public/views.js',
+				'/js/rename-photos.js'
 			],
 			"css": [
 				'/lib/jquery-ui-1.10.3.datepicker.sortable/humanity/jquery-ui-1.10.3.custom.min.css',
@@ -101,7 +102,10 @@ app.get(/(api\/walk-path)/, function(request, response){
 	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
 });
 app.post(/(admin\/thumb-generator)/, function(request, response){
-	require('./js/admin-thumb-generator.js').init({"constant": constant, "request": request, "response": response});
+	require('./js/admin-thumb-generator.js').preview({"constant": constant, "request": request, "response": response});
+});
+app.post(/(admin\/resize-photos)/, function(request, response){
+	require('./js/admin-thumb-generator.js').resize({"constant": constant, "request": request, "response": response});
 });
 
 app.get('*', function(request, response){

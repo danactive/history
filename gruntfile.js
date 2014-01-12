@@ -72,6 +72,8 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-develop');
 	grunt.loadNpmTasks('grunt-dot-compiler');
 
+	grunt.registerTask('validate', ['jshint']);
+
 	grunt.registerTask('dev', ['jshint', 'develop', 'watch']);
 
 	grunt.registerTask('compile', ['jshint', 'uglify', 'dot:browser']);

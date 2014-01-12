@@ -1,14 +1,14 @@
-/*global exports, require*/
+/*global module, require*/
 
 var error = {
 	"missingArg": "Missing required argument",
-	"missingCallback": "Missing a display method callback",
-	"missingCurrentFolder": "Missing current folder",
+	"missingArgCallback": "Missing a display method callback (required argument)",
+	"missingArgCurrentFolder": "Missing required argument current folder",
 	"missingFiles": "No files found in this path: ",
-	"missingFilenames": "Missing filenames array",
+	"missingArgFilenames": "Missing required argument filenames array",
 	"missingPath": "Path does not exist: "
 };
-exports.error = error;
+module.exports.error = error;
 
 /**
 Read the directory contents: files or folders
@@ -31,7 +31,7 @@ function getContents(arg, callback) {
 		fs = require('fs');
 
 	if (callback === undefined) {
-		throw new ReferenceError(error.missingCallback);
+		throw new ReferenceError(error.missingArgCallback);
 	}
 
 	if (arg && arg.folder) {
@@ -48,7 +48,7 @@ function getContents(arg, callback) {
 	}
 	return callback({ "currentFolder": currentFolder, "filenames": filenames });
 }
-exports.getContents = getContents;
+module.exports.getContents = getContents;
 
 /**
 Format directory contents: files or folders as JSON
@@ -71,10 +71,10 @@ function generateJson(arg) {
 		throw arg.error;
 	}
 	if (arg.currentFolder === undefined) {
-		throw new ReferenceError(error.missingCurrentFolder);
+		throw new ReferenceError(error.missingArgCurrentFolder);
 	}
 	if (arg.filenames === undefined) {
-		throw new ReferenceError(error.missingFilenames);
+		throw new ReferenceError(error.missingArgFilenames);
 	}
 	currentFolder = arg.currentFolder;
 	filenames = arg.filenames;
@@ -120,7 +120,7 @@ function generateJson(arg) {
 	});
 	return jsonPackage;
 }
-exports.generateJson = generateJson;
+module.exports.generateJson = generateJson;
 
 /**
 List and emit the directory contents: files or folders as JSON
@@ -132,7 +132,7 @@ List and emit the directory contents: files or folders as JSON
 @param {object} arg.request express request
 @param {object} arg.request.query.folder query-string variable folder path
 **/
-exports.list = function (arg) {
+module.exports.list = function (arg) {
 	var json,
 		folder,
 		response = arg.response,

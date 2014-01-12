@@ -1,6 +1,6 @@
-/*global __dirname, exports, require*/
+/*global __dirname, module, require*/
 
-exports.init = function (arg) {
+module.exports.preview = function (arg) {
 	var constant = arg.constant,
 		directory = require("../js/admin-directory-contents-api.js"),
 		response = arg.response,
@@ -77,4 +77,13 @@ exports.init = function (arg) {
 		});
 		queue.drain = possibleOutput;
 	});
+};
+
+module.exports.resize = function (arg) {
+	var constant = arg.constant,
+		response = arg.response,
+		request = arg.request;
+
+	response.writeHead(200, {'Content-Type': 'application/json'});
+	response.end(JSON.stringify({}));
 };

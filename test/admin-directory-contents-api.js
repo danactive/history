@@ -51,7 +51,7 @@ describe('Admin:', function () {
 				page.getContents({"folder": path}, callback);
 			});
 		});
-		describe('list()', function () {
+		describe('generateJson()', function () {
 			it('should fail without argument', function (done) {
 				var arg;
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
@@ -64,7 +64,7 @@ describe('Admin:', function () {
 				var arg = {};
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.generateJson).withArgs(arg).to.throwException(new RegExp(page.error.missingCurrentFolder));
+					expect(page.generateJson).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFolder));
 					done();
 				});
 			});
@@ -72,7 +72,7 @@ describe('Admin:', function () {
 				var arg = {"currentFolder":""};
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.generateJson).withArgs(arg).to.throwException(new RegExp(page.error.missingFilenames));
+					expect(page.generateJson).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFilenames));
 					done();
 				});
 			});

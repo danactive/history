@@ -1,4 +1,4 @@
-/*global $, ajaxError, doT, util, window */
+/*global $, ajaxError, console, doT, util, window */
 function callThumbGenerator (folder) {
 	$.ajax({
 		"url": '/admin/thumb-generator',
@@ -30,7 +30,36 @@ $.ajax({
 		$.each(response.items, function (x, item) {
 			out.push(doT["directory-list-item"](item, arg));
 		});
-		$('#directory-list').html(out.join('')).sortable();
+		$('#directory-list').html(out.join('')).sortable({ "axis": 'y', "items": "> li[data-type=image]" });
 	},
 	"error": ajaxError
+});
+$("#btnFinalize").click(function ($event) {
+	var $datepicker;
+	function getSelectedDate (formattedDate) {
+		var photoCount = $('#directory-list > li[data-type=image]').length,
+			newFiles = window.resizeRenamePhotos.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": photoCount}),
+			currentFiles = $('#directory-list').sortable( "toArray", {"attribute": 'data-file'} );
+		$datepicker.datepicker( "destroy" );
+
+		$.ajax({
+			"url": '/admin/resize-photos',
+			"method": 'post',
+			"data": {
+				"currentFiles": currentFiles,
+				"newFiles": newFiles.filenames
+			},
+			"success": function (response) {
+				console.log(response); // todo
+			},
+			"error": ajaxError
+		});
+	}
+	$datepicker = $('<div id="vacationDate"></div>')
+		.insertAfter(this)
+		.datepicker({
+			"dateFormat": 'yy-mm-dd',
+			"onSelect": getSelectedDate
+		});
+	$event.preventDefault();
 });
