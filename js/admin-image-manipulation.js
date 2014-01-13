@@ -96,7 +96,7 @@ Create directory or use existing directory
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @return {string[]} paths to verified directories
 **/
-module.exports.ensureDestinationFolder = function (arg) {
+function ensureDestinationFolder(arg) {
 	var destinationPath,
 		mkdrip = require('mkdirp'),
 		out = [];
@@ -122,28 +122,36 @@ module.exports.ensureDestinationFolder = function (arg) {
 	out.push(createOrVerifyFolder("thumbs"));
 	
 	return out;
-};
+}
+module.exports.ensureDestinationFolder = ensureDestinationFolder;
 /**
 Move source photo to destination originals folder
 
-@method movePhotosToDestinationOriginal
+@method movePhotos
 @param {object} arg arguments
 @param {string} arg.sourceFolderPath Original photo path excluding filename
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
+@param {string} arg.folderName Destination folder's name for this photo batch inside the originals, photos, or thumbs folders
 @param {string[]} arg.newFiles Ordered list of new renamed files (extension excluded)
 @param {string[]} arg.currentFiles Ordered list of current files (extension excluded)
-@return {undefined}
+@return {object} arg arguments
+@return {string[]} arg.files Collection of before and after filename
 **/
-module.exports.movePhotosToDestinationOriginal = function (arg, callback) {
+function movePhotos(arg, callback) {
 	var callbackCount = 0,
 		destinationPath,
 		files = [],
-		queue;
+		folderName,
+		queue,
+		sourceFolderPath;
 	if (arg === undefined) {
 		throw new ReferenceError(error.missingArg);
 	}
 	if (arg.sourceFolderPath === undefined) {
 		throw new ReferenceError(error.missingArgSourcePath);
+	}
+	if (arg.folderName === undefined) {
+		throw new ReferenceError(error.missingArgFolderName);
 	}
 	if (arg.currentFiles === undefined || arg.currentFiles.length === 0) {
 		throw new ReferenceError(error.missingArgCurrentFiles);
@@ -151,12 +159,15 @@ module.exports.movePhotosToDestinationOriginal = function (arg, callback) {
 	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
 		throw new ReferenceError(error.missingArgNewFiles);
 	}
-	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/');
+	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
+	destinationPath = decodeURIComponent(destinationPath);
+	folderName = (arg.folderName === "") ? "" : arg.folderName + "/";
+	sourceFolderPath = decodeURIComponent(arg.sourceFolderPath);
 
-	arg.currentFiles.forEach(function (file, index) {
+	arg.currentFiles.forEach(function (filename, index) {
 		files.push({
-			"current": destinationPath + file,
-			"rename": destinationPath + arg.newFiles[index]
+			"beforeRename": sourceFolderPath + filename,
+			"afterRename": destinationPath + folderName + arg.newFiles[index]
 		});
 	});
 
@@ -164,14 +175,14 @@ module.exports.movePhotosToDestinationOriginal = function (arg, callback) {
 		callbackCount++;
 		
 		if (callbackCount === (files.length + 1)) { // +1 for drain
-			callback();
+			callback({"files": files});
 		}
 	}
 
 	queue = require("async").queue(function (file, errorCallback) {
-		require('fs').rename(file.current, file.rename, function (err) {
-			if (err) {
-				throw err;
+		require('fs').rename(file.beforeRename, file.afterRename, function (errorRename) {
+			if (errorRename) {
+				throw errorRename;
 			}
 			possibleCallback();
 		});
@@ -184,13 +195,23 @@ module.exports.movePhotosToDestinationOriginal = function (arg, callback) {
 		}
 	});
 	queue.drain = possibleCallback;
-};
+}
+module.exports.movePhotos = movePhotos;
 
 module.exports.resize = function (arg) {
 	var constant = arg.constant,
 		response = arg.response,
 		request = arg.request;
 
-	response.writeHead(200, {'Content-Type': 'application/json'});
-	response.end(JSON.stringify({}));
+	ensureDestinationFolder({"folderName": request.body.folderName});
+
+	movePhotos({
+		"currentFiles": request.body.currentFiles,
+		"folderName": request.body.folderName,
+		"newFiles": request.body.newFiles,
+		"sourceFolderPath": request.body.sourceFolderPath
+	}, function (arg) {
+		response.writeHead(200, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify({"files": arg.files}));
+	});
 };

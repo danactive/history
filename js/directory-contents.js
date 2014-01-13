@@ -39,14 +39,16 @@ $("#btnFinalize").click(function ($event) {
 	function getSelectedDate (formattedDate) {
 		var photoCount = $('#directory-list > li[data-type=image]').length,
 			newFiles = window.resizeRenamePhotos.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": photoCount}),
-			currentFiles = $('#directory-list').sortable( "toArray", {"attribute": 'data-file'} ),
-			qs = util.queryObj();
+			currentFiles = $('#directory-list').sortable( "toArray", {"attribute": 'data-filename'} ),
+			qs = util.queryObj(),
+			year = formattedDate.substring(0, 4);
 		$datepicker.datepicker( "destroy" );
 
 		$.ajax({
 			"url": '/admin/resize-photos',
 			"method": 'post',
 			"data": {
+				"folderName": year,
 				"currentFiles": currentFiles,
 				"newFiles": newFiles.filenames,
 				"sourceFolderPath": qs.folder

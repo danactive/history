@@ -43,6 +43,7 @@ function getRenamedFiles(arg) {
 		idStart = 1,
 		firstPhotoNum = 10, // 1-9 are reserved for future photo additions
 		lastPhotoNum = 90, // 91-99 are reserved for future photo additions
+		file,
 		filename,
 		i,
 		maxRange = lastPhotoNum - firstPhotoNum + 1, //  +1 to include both #s in the range
@@ -55,6 +56,7 @@ function getRenamedFiles(arg) {
 		photoIncrement,
 		possibleLast,
 		prevBuildUp,
+		files = [],
 		filenames = [],
 		xml = '';
 
@@ -78,12 +80,14 @@ function getRenamedFiles(arg) {
 		spread.push(photoIncrement);
 	}
 	for (i = 0, idLoop = idStart; i < spread.length; i += 1) {
-		filename = prefix + '-' + ((spread[i] < 10) ? '0' + spread[i] : spread[i]).toString();
+		file = prefix + '-' + ((spread[i] < 10) ? '0' + spread[i] : spread[i]).toString();
+		files.push(file);
+		filename = file + ".jpg";
 		filenames.push(filename);
-		xml += '<photo id="' + idLoop + '"><filename>' + filename + '.jpg</filename></photo>';
+		xml += '<photo id="' + idLoop + '"><filename>' + filename + '</filename></photo>';
 		idLoop += 1;
 	}
-	return {"filenames": filenames, "xml": xml};
+	return {"filenames": filenames, "files": files, "xml": xml};
 }
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {

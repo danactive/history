@@ -29,26 +29,26 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should return an array of renamed filenames with a photo count of 1', function (done) {
+			it('should return an array of renamed files with a photo count of 1', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 1},
-					renamedFiles = page.getRenamedFiles(arg).filenames;
+					renamedFiles = page.getRenamedFiles(arg).files;
 				expect(renamedFiles).to.be.an('array');
 				expect(renamedFiles.length).to.be(arg.photosInDay);
 				expect(renamedFiles[0]).to.be(arg.filePrefix + "-50");
 				done();
 			});
-			it('should return an array of renamed filenames with a photo count of 2', function (done) {
+			it('should return an array of renamed files with a photo count of 2', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 2},
-					renamedFiles = page.getRenamedFiles(arg).filenames;
+					renamedFiles = page.getRenamedFiles(arg).files;
 				expect(renamedFiles).to.be.an('array');
 				expect(renamedFiles.length).to.be(arg.photosInDay);
 				expect(renamedFiles[0]).to.be(arg.filePrefix + "-50");
 				expect(renamedFiles[1]).to.be(arg.filePrefix + "-90");
 				done();
 			});
-			it('should return an array of renamed filenames with a photo count of 3', function (done) {
+			it('should return an array of renamed files with a photo count of 3', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 3},
-					renamedFiles = page.getRenamedFiles(arg).filenames;
+					renamedFiles = page.getRenamedFiles(arg).files;
 				expect(renamedFiles).to.be.an('array');
 				expect(renamedFiles.length).to.be(arg.photosInDay);
 				expect(renamedFiles[0]).to.be(arg.filePrefix + "-37");
@@ -56,9 +56,9 @@ describe('Admin:', function () {
 				expect(renamedFiles[2]).to.be(arg.filePrefix + "-90");
 				done();
 			});
-			it('should return an array of renamed filenames with a photo count of 4', function (done) {
+			it('should return an array of renamed files with a photo count of 4', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 4},
-					renamedFiles = page.getRenamedFiles(arg).filenames;
+					renamedFiles = page.getRenamedFiles(arg).files;
 				expect(renamedFiles).to.be.an('array');
 				expect(renamedFiles.length).to.be(arg.photosInDay);
 				expect(renamedFiles[0]).to.be(arg.filePrefix + "-30");
@@ -67,9 +67,9 @@ describe('Admin:', function () {
 				expect(renamedFiles[3]).to.be(arg.filePrefix + "-90");
 				done();
 			});
-			it('should return an array of renamed filenames with a photo count of 5', function (done) {
+			it('should return an array of renamed files with a photo count of 5', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 5},
-					renamedFiles = page.getRenamedFiles(arg).filenames;
+					renamedFiles = page.getRenamedFiles(arg).files;
 				expect(renamedFiles).to.be.an('array');
 				expect(renamedFiles.length).to.be(arg.photosInDay);
 				expect(renamedFiles[0]).to.be(arg.filePrefix + "-26");

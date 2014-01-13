@@ -35,7 +35,7 @@ function getContents(arg, callback) {
 	}
 
 	if (arg && arg.folder) {
-		currentFolder = arg.folder + '/';
+		currentFolder = arg.folder;
 		filePath = './' + currentFolder;
 	}
 	if (fs.existsSync(filePath)) {

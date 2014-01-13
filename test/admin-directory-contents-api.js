@@ -20,7 +20,7 @@ describe('Admin:', function () {
 				page.getContents(undefined, callback);
 			});
 			it('should fail with missing path', function (done) {
-				var path = "fail_test_path";
+				var path = "fail_test_path/";
 				function callback (arg) {
 					expect(arg.error).to.contain(page.error.missingPath);
 					done();
@@ -28,7 +28,7 @@ describe('Admin:', function () {
 				page.getContents({"folder": path}, callback);
 			});
 			it('should fail with missing files', function (done) {
-				var path = "test/fixture/childless";
+				var path = "test/fixture/childless/";
 				function callback (arg) {
 					expect(arg.error).to.contain(page.error.missingFiles);
 					done();
@@ -36,7 +36,7 @@ describe('Admin:', function () {
 				page.getContents({"folder": path}, callback);
 			});
 			it('should match current folder and filenames', function (done) {
-				var path = "test/fixture/cjt";
+				var path = "test/fixture/cjt/";
 				function callback (arg) {
 					expect(arg).to.be.an('object');
 					expect(arg.currentFolder).to.be.a('string');

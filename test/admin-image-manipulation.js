@@ -38,36 +38,44 @@ describe('Admin:', function () {
 				done();
 			});
 		});
-		describe('movePhotosToDestinationOriginal()', function () {
+		describe('movePhotos()', function () {
 			it('should fail without argument', function (done) {
 				var arg;
-				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
 					done();
 				});
 			});
 			it('should fail without sourceFolderPath argument', function (done) {
 				var arg = {};
-				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
+					done();
+				});
+			});
+			it('should fail without folder name argument', function (done) {
+				var arg = {"sourceFolderPath": ''};
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFolderName));
 					done();
 				});
 			});
 			it('should fail without currentFiles argument', function (done) {
-				var arg = {"sourceFolderPath": ''};
-				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				var arg = {"sourceFolderPath": '',"folderName": ""};
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
 					done();
 				});
 			});
 			it('should fail without newFiles argument', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"]};
-				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "folderName": ""};
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
 					done();
 				});
 			});
@@ -76,19 +84,21 @@ describe('Admin:', function () {
 						"destinationRootPath": "test/fixture/",
 						"sourceFolderPath": 'test/fixture/',
 						"currentFiles": ["renamable.txt"],
-						"newFiles": ["warning-mocha-test-failed-during-rename.txt"]
+						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
+						"folderName": ""
 					},
 					arg2,
 					fs = require('fs');
 				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
+				arg2.sourceFolderPath = arg1.sourceFolderPath;
 				arg2.currentFiles = arg1.newFiles;
 				arg2.newFiles = arg1.currentFiles;
 				
-				page.movePhotosToDestinationOriginal(arg1, function () {
+				page.movePhotos(arg1, function () {
 					var filename1 = arg1.destinationRootPath + arg1.newFiles[0];
 						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
 
-					page.movePhotosToDestinationOriginal(arg2, function () {
+					page.movePhotos(arg2, function () {
 						var filename2 = arg2.destinationRootPath + arg2.newFiles[0];
 						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
 						done();
