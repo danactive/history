@@ -1,7 +1,9 @@
 /*global __dirname, module, require*/
 var error = {
 	"missingArg": "Missing required argument",
+	"missingArgCurrentFiles": "Missing required argument current files",
 	"missingArgFolderName": "Missing required argument folder name",
+	"missingArgNewFiles": "Missing required argument new files",
 	"missingArgSourcePath": "Missing required argument source path"
 };
 module.exports.error = error;
@@ -88,14 +90,13 @@ module.exports.preview = function (arg) {
 /**
 Create directory or use existing directory
 
-@method ensureDestinationDirectory
-@private
+@method ensureDestinationFolder
 @param {object} arg arguments
 @param {string} arg.folderName Destination folder's name for this photo batch
-@param {string} [arg.destinationRootPath] Destination photo path excluding filename
-@return {undefined}
+@param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
+@return {string[]} paths to verified directories
 **/
-module.exports.ensureDestinationDirectory = function (arg) {
+module.exports.ensureDestinationFolder = function (arg) {
 	var destinationPath,
 		mkdrip = require('mkdirp'),
 		out = [];
@@ -122,15 +123,68 @@ module.exports.ensureDestinationDirectory = function (arg) {
 	
 	return out;
 };
-/*
+/**
+Move source photo to destination originals folder
 
-	if (arg.sourcePath === undefined) {
-		throw new ReferenceError(error.missingArgSourcePath);
-	}
-@param {string} arg.sourcePath Original photo path including filename
+@method movePhotosToDestinationOriginal
+@param {object} arg arguments
+@param {string} arg.sourceFolderPath Original photo path excluding filename
+@param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @param {string[]} arg.newFiles Ordered list of new renamed files (extension excluded)
 @param {string[]} arg.currentFiles Ordered list of current files (extension excluded)
-*/
+@return {undefined}
+**/
+module.exports.movePhotosToDestinationOriginal = function (arg, callback) {
+	var callbackCount = 0,
+		destinationPath,
+		files = [],
+		queue;
+	if (arg === undefined) {
+		throw new ReferenceError(error.missingArg);
+	}
+	if (arg.sourceFolderPath === undefined) {
+		throw new ReferenceError(error.missingArgSourcePath);
+	}
+	if (arg.currentFiles === undefined || arg.currentFiles.length === 0) {
+		throw new ReferenceError(error.missingArgCurrentFiles);
+	}
+	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
+		throw new ReferenceError(error.missingArgNewFiles);
+	}
+	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/');
+
+	arg.currentFiles.forEach(function (file, index) {
+		files.push({
+			"current": destinationPath + file,
+			"rename": destinationPath + arg.newFiles[index]
+		});
+	});
+
+	function possibleCallback() { // calculate if all async calls are complete
+		callbackCount++;
+		
+		if (callbackCount === (files.length + 1)) { // +1 for drain
+			callback();
+		}
+	}
+
+	queue = require("async").queue(function (file, errorCallback) {
+		require('fs').rename(file.current, file.rename, function (err) {
+			if (err) {
+				throw err;
+			}
+			possibleCallback();
+		});
+		errorCallback();
+	}, 1);
+
+	queue.push(files, function(errorEach){
+		if (errorEach) {
+			throw errorEach;
+		}
+	});
+	queue.drain = possibleCallback;
+};
 
 module.exports.resize = function (arg) {
 	var constant = arg.constant,

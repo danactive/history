@@ -39,7 +39,8 @@ $("#btnFinalize").click(function ($event) {
 	function getSelectedDate (formattedDate) {
 		var photoCount = $('#directory-list > li[data-type=image]').length,
 			newFiles = window.resizeRenamePhotos.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": photoCount}),
-			currentFiles = $('#directory-list').sortable( "toArray", {"attribute": 'data-file'} );
+			currentFiles = $('#directory-list').sortable( "toArray", {"attribute": 'data-file'} ),
+			qs = util.queryObj();
 		$datepicker.datepicker( "destroy" );
 
 		$.ajax({
@@ -47,7 +48,8 @@ $("#btnFinalize").click(function ($event) {
 			"method": 'post',
 			"data": {
 				"currentFiles": currentFiles,
-				"newFiles": newFiles.filenames
+				"newFiles": newFiles.filenames,
+				"sourceFolderPath": qs.folder
 			},
 			"success": function (response) {
 				console.log(response); // todo

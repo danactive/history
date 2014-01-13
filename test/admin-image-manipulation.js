@@ -4,20 +4,20 @@ var expect = require("expect.js");
 describe('Admin:', function () {
 	describe('Image manipulation:', function () {
 		var page = require("../js/admin-image-manipulation.js");
-		describe('ensureDestinationDirectory()', function () {
+		describe('ensureDestinationFolder()', function () {
 			it('should fail without argument', function (done) {
 				var arg;
-				expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
+					expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
 					done();
 				});
 			});
 			it('should fail without prefix argument', function (done) {
 				var arg = {};
-				expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(function (exception) { // get the exception object
+				expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFolderName));
+					expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFolderName));
 					done();
 				});
 			});
@@ -27,7 +27,7 @@ describe('Admin:', function () {
 					testFolder = "/test/fixture/galleries/",
 					verifiedPaths;
 				arg = {"folderName": 'testAlbum', "destinationRootPath": require('path').dirname(__dirname) + testFolder};
-				verifiedPaths = page.ensureDestinationDirectory(arg);
+				verifiedPaths = page.ensureDestinationFolder(arg);
 				expect(verifiedPaths).to.be.an('array');
 				expect(verifiedPaths[0]).to.contain(testFolder + 'originals/' + arg.folderName);
 				expect(verifiedPaths[1]).to.contain(testFolder + 'photos/' + arg.folderName);
@@ -37,16 +37,64 @@ describe('Admin:', function () {
 				expect(fs.existsSync(verifiedPaths[2])).to.be(true);
 				done();
 			});
-		});/*
-		describe('future', function () {
-			it('should fail without day count argument', function (done) {
-				var arg = {"folderName": ""};
-				expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(function (exception) { // get the exception object
+		});
+		describe('movePhotosToDestinationOriginal()', function () {
+			it('should fail without argument', function (done) {
+				var arg;
+				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
-					expect(page.ensureDestinationDirectory).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
+					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
 					done();
 				});
 			});
-		});*/
+			it('should fail without sourceFolderPath argument', function (done) {
+				var arg = {};
+				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
+					done();
+				});
+			});
+			it('should fail without currentFiles argument', function (done) {
+				var arg = {"sourceFolderPath": ''};
+				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
+					done();
+				});
+			});
+			it('should fail without newFiles argument', function (done) {
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"]};
+				expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotosToDestinationOriginal).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
+					done();
+				});
+			});
+			it('should pass', function (done) {
+				var arg1 = {
+						"destinationRootPath": "test/fixture/",
+						"sourceFolderPath": 'test/fixture/',
+						"currentFiles": ["renamable.txt"],
+						"newFiles": ["warning-mocha-test-failed-during-rename.txt"]
+					},
+					arg2,
+					fs = require('fs');
+				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
+				arg2.currentFiles = arg1.newFiles;
+				arg2.newFiles = arg1.currentFiles;
+				
+				page.movePhotosToDestinationOriginal(arg1, function () {
+					var filename1 = arg1.destinationRootPath + arg1.newFiles[0];
+						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+
+					page.movePhotosToDestinationOriginal(arg2, function () {
+						var filename2 = arg2.destinationRootPath + arg2.newFiles[0];
+						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
+						done();
+					});
+				});
+			});
+		});
 	});
 });
