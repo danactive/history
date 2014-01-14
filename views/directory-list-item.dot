@@ -6,6 +6,8 @@
 	<li data-file="{{=it.name}}" data-ext="{{=it.ext}}" data-filename="{{=it.name}}{{=it.ext}}" data-type="{{=it.content.type}}"><span>{{=it.name}}{{=it.ext}}</span><img src="/img/spinner.gif" class="directory-thumb-wait"></li>
 {{?? it.content.type === "image" && arg.qs.preview === "false" }}
 	<li><span>{{=it.name}}{{=it.ext}}</span><img src="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" class="directory-thumb"></li>
+{{?? it.content.type === "folder" && it.name === tempThumbFolder }}
+	<li><span>{{=it.name}}{{=it.ext}} (todo delete action)</span></li>
 {{??}}
 	<li><span>{{=it.name}}{{=it.ext}}</span></li>
 {{?}}

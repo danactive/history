@@ -40,7 +40,7 @@ function getRenamedFiles(arg) {
 	}
 	var prefix = arg.filePrefix,
 		photosInDay = arg.photosInDay,
-		idStart = 1,
+		idStart = arg.xmlStartPhotoId || 1,
 		firstPhotoNum = 10, // 1-9 are reserved for future photo additions
 		lastPhotoNum = 90, // 91-99 are reserved for future photo additions
 		file,
@@ -59,6 +59,7 @@ function getRenamedFiles(arg) {
 		files = [],
 		filenames = [],
 		xml = '';
+	idStart = parseInt(idStart, 10);
 
 	for (i = 1; i <= photosInDay; i += 1) {
 		buildUp = parseInt(incrementFloat * i, 10);
