@@ -182,7 +182,7 @@ function movePhotos(arg, callback) {
 	queue = require("async").queue(function (file, errorCallback) {
 		require('fs').rename(file.beforeRename, file.afterRename, function (errorRename) {
 			if (errorRename) {
-				throw errorRename;
+				throw "Image renaming error: " + errorRename + "; Before filename=" + file.beforeRename + "; After filename=" + file.afterRename + ";";
 			}
 			possibleCallback();
 		});

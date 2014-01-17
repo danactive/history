@@ -79,6 +79,34 @@ describe('Admin:', function () {
 				expect(renamedFiles[4]).to.be(arg.filePrefix + "-90");
 				done();
 			});
+			it('should return an array of renamed files with a photo count of 34', function (done) {
+				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 34, "xmlStartPhotoId": 4},
+					renamedFiles = page.getRenamedFiles(arg).files;
+				expect(renamedFiles).to.be.an('array');
+				expect(renamedFiles.length).to.be(arg.photosInDay);
+				expect(renamedFiles[0]).to.be(arg.filePrefix + "-12");
+				expect(renamedFiles[1]).to.be(arg.filePrefix + "-14");
+				expect(renamedFiles[2]).to.be(arg.filePrefix + "-17");
+				expect(renamedFiles[3]).to.be(arg.filePrefix + "-19");
+				expect(renamedFiles[4]).to.be(arg.filePrefix + "-21");
+				expect(renamedFiles[5]).to.be(arg.filePrefix + "-24");
+				expect(renamedFiles[6]).to.be(arg.filePrefix + "-26");
+				expect(renamedFiles[7]).to.be(arg.filePrefix + "-29");
+				expect(renamedFiles[8]).to.be(arg.filePrefix + "-31");
+				expect(renamedFiles[9]).to.be(arg.filePrefix + "-33");
+				expect(renamedFiles[10]).to.be(arg.filePrefix + "-36");
+				expect(renamedFiles[11]).to.be(arg.filePrefix + "-38");
+				expect(renamedFiles[12]).to.be(arg.filePrefix + "-40");
+				expect(renamedFiles[13]).to.be(arg.filePrefix + "-43");
+				expect(renamedFiles[14]).to.be(arg.filePrefix + "-45");
+				expect(renamedFiles[15]).to.be(arg.filePrefix + "-48");
+				expect(renamedFiles[16]).to.be(arg.filePrefix + "-50");
+				expect(renamedFiles[17]).to.be(arg.filePrefix + "-52");
+				expect(renamedFiles[18]).to.be(arg.filePrefix + "-55");
+				expect(renamedFiles[19]).to.be(arg.filePrefix + "-57");
+				expect(renamedFiles[20]).to.be(arg.filePrefix + "-60");
+				done();
+			});
 			it('should return XML with a photo count of 1', function (done) {
 				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 1},
 					xml = page.getRenamedFiles(arg).xml;
