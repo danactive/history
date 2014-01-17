@@ -84,12 +84,12 @@ app.get(/(admin\/walk-path)/, function(request, response){
 		{
 			"page": 'directory-list',
 			"scripts": [
-				'http://code.jquery.com/jquery-2.0.3.min.js',
+				'/lib/jquery-2.0.3.min.js',
 				'/js/global.js',
+				'/js/walk-path-tested.js',
 				'/js/directory-contents.js',
 				'/lib/jquery-ui-1.10.3.datepicker.sortable/jquery-ui-1.10.3.custom.min.js',
-				'/public/views.js',
-				'/js/rename-photos.js'
+				'/public/views.js'
 			],
 			"css": [
 				'/lib/jquery-ui-1.10.3.datepicker.sortable/humanity/jquery-ui-1.10.3.custom.min.css',

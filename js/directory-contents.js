@@ -1,6 +1,7 @@
 /*global $, ajaxError, console, doT, util, window */
 (function () {
-	var qs = util.queryObj();
+	var qs = util.queryObj(),
+		parent = window.walkPath.setParentFolderLink({"querystring": qs});
 	function callThumbGenerator (folder) {
 		$.ajax({
 			"url": '/admin/thumb-generator',
@@ -17,27 +18,6 @@
 			"error": ajaxError
 		});
 	}
-	(function setParentFolderLink() {
-		var name = "",
-			newQs = [],
-			path = qs.folder.split("/");
-		name = path.pop();
-		if (name === "") {
-			path.pop();
-		}
-		name = path[path.length-1];
-		$.each(qs, function (key, value) {
-			if (key === "folder") {
-				newQs.push(key + "=" + path.join("/") + "/");
-			} else {
-				newQs.push(key + "=" + value);
-			}
-		});
-		$("#btnParentFolder")
-			.attr("href", "?" + newQs.join("&"))
-			.find("#parentFolderName")
-			.text(decodeURIComponent(name));
-	})();
 	$.ajax({
 		"url": '/api/walk-path' + window.location.search,
 		"success": function (response) {
@@ -93,4 +73,13 @@
 			});
 		$event.preventDefault();
 	});
+	if (parent.text === "") {
+		$("#btnParentFolder").addClass("hide");
+	} else {
+		$("#btnParentFolder")
+			.removeClass("hide")
+			.attr("href", parent.href)
+			.find("#parentFolderName")
+			.text(parent.text);
+	}
 })();

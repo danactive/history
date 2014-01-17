@@ -3,7 +3,7 @@ var expect = require("expect.js");
 
 describe('Admin:', function () {
 	describe('Resize & rename photos:', function () {
-		var page = require("../js/rename-photos.js");
+		var page = require("../js/walk-path-tested.js");
 		describe('getRenamedFiles()', function () {
 			it('should fail without argument', function (done) {
 				var arg;
@@ -91,6 +91,63 @@ describe('Admin:', function () {
 					xml = page.getRenamedFiles(arg).xml;
 				expect(xml).to.be.an('string');
 				expect(xml).to.be("<photo id=\"1\"><filename>" + arg.filePrefix + "-50.jpg</filename></photo><photo id=\"2\"><filename>" + arg.filePrefix + "-90.jpg</filename></photo>");
+				done();
+			});
+		});
+		describe('setParentFolderLink()', function () {
+			it('should fail without argument', function (done) {
+				var arg;
+				expect(page.setParentFolderLink).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.setParentFolderLink).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
+					done();
+				});
+			});
+			it('should fail without prefix argument', function (done) {
+				var arg = {};
+				expect(page.setParentFolderLink).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.setParentFolderLink).withArgs(arg).to.throwException(new RegExp(page.error.missingArgQuerystring));
+					done();
+				});
+			});
+			it('should return blank values', function (done) {
+				var arg = {"querystring": {}},
+					out = page.setParentFolderLink(arg);
+				expect(out).to.be.an("object");
+				expect(out.href).to.be("");
+				expect(out.text).to.be("");
+				done();
+			});
+			it('should return blank folder when folder querystring is blank', function (done) {
+				var arg = {"querystring": {"folder": ""}},
+					out = page.setParentFolderLink(arg);
+				expect(out).to.be.an("object");
+				expect(out.href).to.be("?folder=");
+				expect(out.text).to.be("");
+				done();
+			});
+			it('should return blank folder when folder querystring contains name', function (done) {
+				var arg,
+					prevFolderName = "gallery-demo",
+					out;
+				arg = {"querystring": {"folder": prevFolderName + "/"}};
+				out = page.setParentFolderLink(arg);
+				expect(out).to.be.an("object");
+				expect(out.href).to.be("?folder=");
+				expect(out.text).to.be("/");
+				done();
+			});
+			it('should return folder name when folder querystring contains name', function (done) {
+				var arg,
+					prevFolderName = "gallery-demo",
+					lastFolderName = "/media",
+					out;
+				arg = {"querystring": {"folder": prevFolderName + lastFolderName + "/"}};
+				out = page.setParentFolderLink(arg);
+				expect(out).to.be.an("object");
+				expect(out.href).to.be("?folder=" + prevFolderName + "/");
+				expect(out.text).to.be(prevFolderName);
 				done();
 			});
 		});

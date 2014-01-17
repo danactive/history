@@ -1,21 +1,22 @@
 /*global define, module, window*/
-var error = {
+var _error = {
 	"missingArg": "Missing required argument",
 	"missingArgDayCount": "Missing required argument photos in a day count",
-	"missingArgPrefix": "Missing required argument file prefix"
+	"missingArgPrefix": "Missing required argument file prefix",
+	"missingArgQuerystring": "Missing required argument query-string"
 };
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-	module.exports.error = error;
+	module.exports.error = _error;
 } else {
 	if (typeof define === 'function' && define.amd) {
 		define([], function() {
-			return error;
+			return _error;
 		});
 	} else {
-		if (!window.resizeRenamePhotos) {
-			window.resizeRenamePhotos = {};
+		if (!window.walkPath) {
+			window.walkPath = {};
 		}
-		window.resizeRenamePhotos.error = error;
+		window.walkPath.error = _error;
 	}
 }
 
@@ -28,15 +29,15 @@ Generate renamed files
 @param {integer} arg.photosInDay Root of filename with increment added before extension
 @return {undefined}
 **/
-function getRenamedFiles(arg) {
+function _getRenamedFiles(arg) {
 	if (arg === undefined) {
-		throw new ReferenceError(error.missingArg);
+		throw new ReferenceError(_error.missingArg);
 	}
 	if (arg.filePrefix === undefined) {
-		throw new ReferenceError(error.missingArgPrefix);
+		throw new ReferenceError(_error.missingArgPrefix);
 	}
 	if (arg.photosInDay === undefined || arg.photosInDay === 0) {
-		throw new ReferenceError(error.missingArgDayCount);
+		throw new ReferenceError(_error.missingArgDayCount);
 	}
 	var prefix = arg.filePrefix,
 		photosInDay = arg.photosInDay,
@@ -90,18 +91,73 @@ function getRenamedFiles(arg) {
 	}
 	return {"filenames": filenames, "files": files, "xml": xml};
 }
-
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-	module.exports.getRenamedFiles = getRenamedFiles;
+	module.exports.getRenamedFiles = _getRenamedFiles;
 } else {
 	if (typeof define === 'function' && define.amd) {
 		define([], function() {
-			return getRenamedFiles;
+			return _getRenamedFiles;
 		});
 	} else {
-		if (!window.resizeRenamePhotos) {
-			window.resizeRenamePhotos = {};
+		if (!window.walkPath) {
+			window.walkPath = {};
 		}
-		window.resizeRenamePhotos.getRenamedFiles = getRenamedFiles;
+		window.walkPath.getRenamedFiles = _getRenamedFiles;
+	}
+}
+
+function _setParentFolderLink(arg) {
+	var key,
+		href = "",
+		isFolderEmpty,
+		name = "",
+		newQs = [],
+		out = {"href": '', "text": ''},
+		path = [];
+	if (arg === undefined) {
+		throw new ReferenceError(_error.missingArg);
+	}
+	if (arg.querystring === undefined) {
+		throw new ReferenceError(_error.missingArgQuerystring);
+	}
+	isFolderEmpty = (arg.querystring.folder === undefined || arg.querystring.folder === "");
+	if (!isFolderEmpty) {
+		path = arg.querystring.folder.split("/");
+		name = path.pop();
+		if (name === "") {
+			path.pop();
+		}
+		if (path[path.length - 1] === undefined) {
+			//name = (path.length === 0) ? "/" : "";
+			name = "/";
+		} else {
+			name = path[path.length - 1];
+		}
+	}
+	out.text = decodeURIComponent(name);
+	for (key in arg.querystring) {
+		if (key === "folder") {
+			newQs.push(key + "=" + path.join("/") + ((path.length > 0) ? "/" : ""));
+		} else {
+			newQs.push(key + "=" + arg.querystring[key]);
+		}
+	}
+	if (newQs.length > 0) {
+		out.href = "?" + newQs.join("&");
+	}
+	return out;
+}
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+	module.exports.setParentFolderLink = _setParentFolderLink;
+} else {
+	if (typeof define === 'function' && define.amd) {
+		define([], function() {
+			return _setParentFolderLink;
+		});
+	} else {
+		if (!window.walkPath) {
+			window.walkPath = {};
+		}
+		window.walkPath.setParentFolderLink = _setParentFolderLink;
 	}
 }

@@ -13,9 +13,12 @@ util = {
 		return [yyyy, mm, dd].join('-');
 	},
 	queryObj: function () { // usage var myParam = queryObj()["myParam"];
-		var result = {}, keyValuePairs = window.location.search.slice(1).split('&');
-
-		keyValuePairs.forEach(function(keyValuePair) {
+		var keyValuePairs,
+			result = {};
+		if (window.location.search === "") {
+			return {};
+		}
+		window.location.search.slice(1).split('&').forEach(function(keyValuePair) {
 			keyValuePair = keyValuePair.split('=');
 			result[keyValuePair[0]] = keyValuePair[1] || '';
 		});
