@@ -105,6 +105,39 @@ describe('Admin:', function () {
 				expect(renamedFiles[18]).to.be(arg.filePrefix + "-55");
 				expect(renamedFiles[19]).to.be(arg.filePrefix + "-57");
 				expect(renamedFiles[20]).to.be(arg.filePrefix + "-60");
+
+				expect(renamedFiles[33]).to.be(arg.filePrefix + "-90");
+				done();
+			});
+			it('should return an array of renamed files with a photo count of 62', function (done) {
+				var arg = {"filePrefix": 'photo_prefix', "photosInDay": 62, "xmlStartPhotoId": 100},
+					renamedFiles = page.getRenamedFiles(arg).files;
+				expect(renamedFiles).to.be.an('array');
+				expect(renamedFiles.length).to.be(arg.photosInDay);
+				expect(renamedFiles[0]).to.be(arg.filePrefix + "-11");
+				expect(renamedFiles[1]).to.be(arg.filePrefix + "-12");
+				expect(renamedFiles[2]).to.be(arg.filePrefix + "-13");
+				expect(renamedFiles[3]).to.be(arg.filePrefix + "-15");
+				expect(renamedFiles[4]).to.be(arg.filePrefix + "-16");
+				expect(renamedFiles[5]).to.be(arg.filePrefix + "-17");
+				expect(renamedFiles[6]).to.be(arg.filePrefix + "-19");
+				expect(renamedFiles[7]).to.be(arg.filePrefix + "-20");
+				expect(renamedFiles[8]).to.be(arg.filePrefix + "-21");
+				expect(renamedFiles[9]).to.be(arg.filePrefix + "-23");
+				expect(renamedFiles[10]).to.be(arg.filePrefix + "-24");
+				expect(renamedFiles[11]).to.be(arg.filePrefix + "-25");
+				expect(renamedFiles[12]).to.be(arg.filePrefix + "-26");
+				expect(renamedFiles[13]).to.be(arg.filePrefix + "-28");
+				expect(renamedFiles[14]).to.be(arg.filePrefix + "-29");
+				expect(renamedFiles[15]).to.be(arg.filePrefix + "-30");
+				expect(renamedFiles[16]).to.be(arg.filePrefix + "-32");
+				expect(renamedFiles[17]).to.be(arg.filePrefix + "-33");
+				expect(renamedFiles[18]).to.be(arg.filePrefix + "-34");
+				expect(renamedFiles[19]).to.be(arg.filePrefix + "-36");
+				expect(renamedFiles[20]).to.be(arg.filePrefix + "-37");
+
+				expect(renamedFiles[60]).to.be(arg.filePrefix + "-89");
+				expect(renamedFiles[61]).to.be(arg.filePrefix + "-90");
 				done();
 			});
 			it('should return XML with a photo count of 1', function (done) {

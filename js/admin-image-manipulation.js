@@ -1,12 +1,13 @@
-/*global __dirname, module, require*/
-var error = {
+/*global __dirname, console, module, require*/
+var _error = {
+	"emptyRenameFile": "Empty filename found, cannot rename file",
 	"missingArg": "Missing required argument",
 	"missingArgCurrentFiles": "Missing required argument current files",
 	"missingArgFolderName": "Missing required argument folder name",
 	"missingArgNewFiles": "Missing required argument new files",
 	"missingArgSourcePath": "Missing required argument source path"
 };
-module.exports.error = error;
+module.exports.error = _error;
 
 module.exports.preview = function (arg) {
 	var constant = arg.constant,
@@ -101,10 +102,10 @@ function ensureDestinationFolder(arg) {
 		mkdrip = require('mkdirp'),
 		out = [];
 	if (arg === undefined) {
-		throw new ReferenceError(error.missingArg);
+		throw new ReferenceError(_error.missingArg);
 	}
 	if (arg.folderName === undefined) {
-		throw new ReferenceError(error.missingArgFolderName);
+		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/');
 
@@ -138,26 +139,28 @@ Move source photo to destination originals folder
 @return {string[]} arg.files Collection of before and after filename
 **/
 function movePhotos(arg, callback) {
-	var callbackCount = 0,
+	var afterRename,
+		beforeRename,
+		callbackCount = 0,
 		destinationPath,
 		files = [],
 		folderName,
 		queue,
 		sourceFolderPath;
 	if (arg === undefined) {
-		throw new ReferenceError(error.missingArg);
+		throw new ReferenceError(_error.missingArg);
 	}
 	if (arg.sourceFolderPath === undefined) {
-		throw new ReferenceError(error.missingArgSourcePath);
+		throw new ReferenceError(_error.missingArgSourcePath);
 	}
 	if (arg.folderName === undefined) {
-		throw new ReferenceError(error.missingArgFolderName);
+		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	if (arg.currentFiles === undefined || arg.currentFiles.length === 0) {
-		throw new ReferenceError(error.missingArgCurrentFiles);
+		throw new ReferenceError(_error.missingArgCurrentFiles);
 	}
 	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
-		throw new ReferenceError(error.missingArgNewFiles);
+		throw new ReferenceError(_error.missingArgNewFiles);
 	}
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
 	destinationPath = decodeURIComponent(destinationPath);
@@ -165,9 +168,14 @@ function movePhotos(arg, callback) {
 	sourceFolderPath = decodeURIComponent(arg.sourceFolderPath);
 
 	arg.currentFiles.forEach(function (filename, index) {
+		beforeRename = sourceFolderPath + filename;
+		afterRename = destinationPath + folderName + arg.newFiles[index];
+		if (beforeRename ===  undefined || beforeRename === "" || afterRename ===  undefined || afterRename === "") {
+			throw new TypeError(_error.emptyRenameFile);
+		}
 		files.push({
-			"beforeRename": sourceFolderPath + filename,
-			"afterRename": destinationPath + folderName + arg.newFiles[index]
+			"beforeRename": beforeRename,
+			"afterRename": afterRename
 		});
 	});
 
@@ -180,9 +188,9 @@ function movePhotos(arg, callback) {
 	}
 
 	queue = require("async").queue(function (file, errorCallback) {
-		require('fs').rename(file.beforeRename, file.afterRename, function (errorRename) {
-			if (errorRename) {
-				throw "Image renaming error: " + errorRename + "; Before filename=" + file.beforeRename + "; After filename=" + file.afterRename + ";";
+		require('fs').rename(file.beforeRename, file.afterRename, function (warningRename) {
+			if (warningRename) {
+				console.log("Image renaming warning: " + warningRename + "; Before filename=" + file.beforeRename + "; After filename=" + file.afterRename + ";");
 			}
 			possibleCallback();
 		});

@@ -22,25 +22,29 @@
 		"url": '/api/walk-path' + window.location.search,
 		"success": function (response) {
 			var arg = {},
-				itemHalf,
+				itemThird,
 				out1 = [],
-				out2 = [];
+				out2 = [],
+				out3 = [];
 			arg.qs = qs;
 
 			if (qs.preview === "true") {
 				callThumbGenerator(qs.folder);
 			}
 
-			itemHalf = response.items.length / 2;
+			itemThird = response.items.length / 3;
 			$.each(response.items, function (i, item) {
-				if (i < itemHalf) {
+				if (i < itemThird) {
 					out1.push(doT["directory-list-item"](item, arg));
-				} else {
+				} else if (i >= itemThird && i < (itemThird * 2)) {
 					out2.push(doT["directory-list-item"](item, arg));
+				} else {
+					out3.push(doT["directory-list-item"](item, arg));
 				}
 			});
-			$('#directory-list-1').html(out1.join('')).sortable({ "connectWith": '#directory-list-2', "items": "> li[data-type=image]" });
-			$('#directory-list-2').html(out2.join('')).sortable({ "connectWith": '#directory-list-1', "items": "> li[data-type=image]" });
+			$('#directory-list-1').html(out1.join('')).sortable({ "connectWith": '.ui-sortable', "items": "> li[data-type=image]" });
+			$('#directory-list-2').html(out2.join('')).sortable({ "connectWith": '.ui-sortable', "items": "> li[data-type=image]" });
+			$('#directory-list-3').html(out3.join('')).sortable({ "connectWith": '.ui-sortable', "items": "> li[data-type=image]" });
 		},
 		"error": ajaxError
 	});
@@ -50,14 +54,17 @@
 		function getSelectedDate (formattedDate) {
 			var photoCount1 = $('#directory-list-1 > li[data-type=image]').length,
 				photoCount2 = $('#directory-list-2 > li[data-type=image]').length,
-				newFiles = window.walkPath.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": (photoCount1 + photoCount2), "xmlStartPhotoId": window.prompt("Starting XML photo ID?", 1)}),
+				photoCount3 = $('#directory-list-3 > li[data-type=image]').length,
+				newFiles = window.walkPath.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": (photoCount1 + photoCount2 + photoCount3), "xmlStartPhotoId": window.prompt("Starting XML photo ID?", 1)}),
 				currentFiles = [],
 				currentFiles1 = $('#directory-list-1').sortable( "toArray", {"attribute": 'data-filename'} ),
 				currentFiles2 = $('#directory-list-2').sortable( "toArray", {"attribute": 'data-filename'} ),
+				currentFiles3 = $('#directory-list-3').sortable( "toArray", {"attribute": 'data-filename'} ),
 				year = formattedDate.substring(0, 4);
-			currentFiles = currentFiles1.concat(currentFiles2);
+			currentFiles = currentFiles1.concat(currentFiles2).concat(currentFiles3);
 			currentFiles1 = undefined;
 			currentFiles2 = undefined;
+			currentFiles3 = undefined;
 			$datepicker.datepicker( "destroy" );
 
 			$.ajax({
