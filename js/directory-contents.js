@@ -4,7 +4,7 @@
 		parent = window.walkPath.setParentFolderLink({"querystring": qs});
 	function callThumbGenerator (folder) {
 		$.ajax({
-			"url": '/admin/thumb-generator',
+			"url": '/admin/preview-generator',
 			"method": 'post',
 			"data": {
 				"folder": folder
@@ -68,7 +68,7 @@
 			$datepicker.datepicker( "destroy" );
 
 			$.ajax({
-				"url": '/admin/resize-photos',
+				"url": '/admin/rename-photos',
 				"method": 'post',
 				"data": {
 					"folderName": year,

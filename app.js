@@ -63,22 +63,22 @@ var doT = require('doT'),
 
 app.use(express.bodyParser()); // POST data
 
-app.configure(function(){
+app.configure(function () {
 	app.set("views", path.join(__dirname, "views"));
 	app.engine("dot", require("dot-emc").init({"app": app}).__express);
 	app.set("view engine", "dot");
 });
 
-app.post(/resizeImages/, function(request, response){
+app.post(/resizeImages/, function (request, response) {
 	require('./admin/drag_images_to_resize.js').init({"request": request, "response": response});
 });
 
-app.get(/getGalleries/, function(request, response){
+app.get(/getGalleries/, function (request, response) {
 	var getGalleries = require('./admin/get_gallery_directories.js');
 	getGalleries.init({"request": request, "response": response, "forNode": false});
 });
 
-app.get(/(admin\/walk-path)/, function(request, response){
+app.get(/(admin\/walk-path)/, function(request, response) {
 	response.render(
 		'admin.node.dot',
 		{
@@ -98,17 +98,20 @@ app.get(/(admin\/walk-path)/, function(request, response){
 		}
 	);
 });
-app.get(/(api\/walk-path)/, function(request, response){
+app.get(/(api\/walk-path)/, function(request, response) {
 	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
 });
-app.post(/(admin\/thumb-generator)/, function(request, response){
+app.post(/(admin\/preview-generator)/, function(request, response) {
 	require('./js/admin-image-manipulation.js').preview({"constant": constant, "request": request, "response": response});
 });
-app.post(/(admin\/resize-photos)/, function(request, response){
+app.post(/(admin\/rename-photos)/, function(request, response) {
+	require('./js/admin-image-manipulation.js').rename({"constant": constant, "request": request, "response": response});
+});
+app.get(/(admin\/resize-photos)/, function(request, response) {
 	require('./js/admin-image-manipulation.js').resize({"constant": constant, "request": request, "response": response});
 });
 
-app.get('*', function(request, response){
+app.get('*', function(request, response) {
 	serveStaticPages({"request": request, "response": response});
 });
 

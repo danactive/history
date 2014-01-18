@@ -3,30 +3,41 @@ var _error = {
 	"emptyRenameFile": "Empty filename found, cannot rename file",
 	"missingArg": "Missing required argument",
 	"missingArgCurrentFiles": "Missing required argument current files",
+	"missingArgFilename": "Missing required argument filename",
 	"missingArgFolderName": "Missing required argument folder name",
 	"missingArgNewFiles": "Missing required argument new files",
 	"missingArgSourcePath": "Missing required argument source path"
 };
 module.exports.error = _error;
 
+/**
+Generate preview sized thumbnail photos for directory viewing
+
+@method preview
+@param {object} arg arguments
+@param {object} arg.body Express POST variables
+@param {string} arg.body.folder Path to directory
+@return {undefined}
+**/
 module.exports.preview = function (arg) {
 	var constant = arg.constant,
 		directory = require("../js/admin-directory-contents-api.js"),
 		response = arg.response,
 		request = arg.request;
 
-	directory.getContents({"folder": decodeURIComponent(request.body.folder)}, function (arg) {
+	function initShrinkImages(directoryContentsArg) {
 		var dimension = {"width": 200, "height": 200},
 			count = {
 				"imageLoop": 0,
 				"thumbCreated": 0
 			},
-			json = directory.generateJson(arg),
+			json,
 			out = [],
 			queue;
-		if (arg.error) {
-			throw arg.error;
+		if (directoryContentsArg.error) {
+			throw directoryContentsArg.error;
 		}
+		json = directory.generateJson(directoryContentsArg);
 		function possibleOutput() {
 			var done = false;
 			if (count.imageLoop === 0) { // no images in this directory
@@ -85,7 +96,9 @@ module.exports.preview = function (arg) {
 			}
 		});
 		queue.drain = possibleOutput;
-	});
+	}
+
+	directory.getContents({"folder": decodeURIComponent(request.body.folder)}, initShrinkImages);
 };
 
 /**
@@ -97,7 +110,7 @@ Create directory or use existing directory
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @return {string[]} paths to verified directories
 **/
-function ensureDestinationFolder(arg) {
+function _ensureDestinationFolder(arg) {
 	var destinationPath,
 		mkdrip = require('mkdirp'),
 		out = [];
@@ -124,7 +137,7 @@ function ensureDestinationFolder(arg) {
 	
 	return out;
 }
-module.exports.ensureDestinationFolder = ensureDestinationFolder;
+module.exports.ensureDestinationFolder = _ensureDestinationFolder;
 /**
 Move source photo to destination originals folder
 
@@ -138,7 +151,7 @@ Move source photo to destination originals folder
 @return {object} arg arguments
 @return {string[]} arg.files Collection of before and after filename
 **/
-function movePhotos(arg, callback) {
+function _movePhotos(arg, callback) {
 	var afterRename,
 		beforeRename,
 		callbackCount = 0,
@@ -204,22 +217,111 @@ function movePhotos(arg, callback) {
 	});
 	queue.drain = possibleCallback;
 }
-module.exports.movePhotos = movePhotos;
+module.exports.movePhotos = _movePhotos;
 
 module.exports.resize = function (arg) {
+	var path = require('path'),
+		constant = arg.constant,
+		gm = require('gm'),
+		filename,
+		folderName,
+		photo = { width: 800, height: 600 },
+		thumb = { width: 185, height: 45 },
+		response = arg.response,
+		request = arg.request;
+	folderName = (request.query && request.query.folderName) || arg.folderName; // query-string or direct variable
+	filename = (request.query && request.query.filename) || arg.filename; // query-string or direct variable
+	if (arg === undefined) {
+		throw new ReferenceError(_error.missingArg);
+	}
+	if (folderName === undefined) {
+		throw new ReferenceError(_error.missingArgFolderName);
+	}
+	if (filename === undefined) {
+		throw new ReferenceError(_error.missingArgFilename);
+	}
+
+	function transformImage (originalPaths) {
+		gm(originalPaths.join(''))
+			.autoOrient()
+			.stream(function (errOrient, stdout, stderr) {
+				var callbackCount = 0,
+					callbackTotal = 2,
+					errors = [],
+					photoPaths = originalPaths.concat([]),
+					thumbPaths = originalPaths.concat([]);
+				photoPaths[2] = 'photos';
+				thumbPaths[2] = 'thumbs';
+
+				if (errOrient) {
+					errors.push('Original orientation write error: ' + errOrient);
+				}
+
+				function possibleCompletion () {
+					callbackCount++;
+					if (callbackCount === callbackTotal) {
+						response.writeHead(200, {'Content-Type': 'application/json'});
+						response.end(JSON.stringify(
+							{
+								"meta": {
+									"error": {
+										"count": errors.length,
+										"message": errors.join('; ')
+									},
+								},
+								"result": {
+									"paths": {
+										"original": originalPaths.join(''),
+										"photo": photoPaths.join(''),
+										"thumb": thumbPaths.join('')
+									}
+								}
+							}
+						));
+					}
+				}
+
+				gm(stdout)
+					.resize(photo.width, photo.height)
+					.write(photoPaths.join(''), function (errResize) {
+						if (errResize) {
+							errors.push('Photo resize write error: ' + errResize);
+						}
+						possibleCompletion();
+					})
+				;
+
+				gm(stdout)
+					.resize(thumb.width, thumb.height, "!")
+					.noProfile()
+					.write(thumbPaths.join(''), function (errResize) {
+						if (errResize) {
+							errors.push('Thumbnail resize write error: ' + errResize);
+						}
+						possibleCompletion();
+					})
+				;
+			})
+		;
+	}
+
+	transformImage([path.dirname(__dirname), '/resizeImages/', 'originals', '/', folderName, '/', filename]);
+};
+
+module.exports.rename = function (arg) {
 	var constant = arg.constant,
 		response = arg.response,
 		request = arg.request;
 
-	ensureDestinationFolder({"folderName": request.body.folderName});
+	_ensureDestinationFolder({"folderName": request.body.folderName});
 
-	movePhotos({
+	_movePhotos({
 		"currentFiles": request.body.currentFiles,
 		"folderName": request.body.folderName,
 		"newFiles": request.body.newFiles,
 		"sourceFolderPath": request.body.sourceFolderPath
-	}, function (arg) {
+	}, function (moveArg) {
 		response.writeHead(200, {'Content-Type': 'application/json'});
-		response.end(JSON.stringify({"files": arg.files}));
+		response.end(JSON.stringify({"files": moveArg.files}));
 	});
 };
