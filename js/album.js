@@ -3,7 +3,9 @@
 /* GALLERY */
 jQuery.noConflict();
 /* ALBUM */
+var colorThief;
 jQuery(function() {
+	colorThief = new ColorThief();
 	jQuery('#divAlbum a').colorbox({
 		"onComplete": fnLighboxShowedPhoto,
 		"preloading": true,
@@ -213,10 +215,10 @@ function fnMedium(strType) { // create class
 	this.getSrc = function() { return this.src; };
 }
 function fnLighboxShowedPhoto() {
-	jQuery.adaptiveBackground.run({
-		"parent": '#cboxOverlay',
-		"selector": 'img.cboxPhoto'
-	});
+	var dominateColour,
+		sourceImage = jQuery("img.cboxPhoto").get(0);
+	dominateColour = colorThief.getColor(sourceImage);
+	jQuery("#cboxOverlay").css("background-color", "rgb(" + dominateColour[0] + "," + dominateColour[1] + "," + dominateColour[2] + ")");
 	jQuery(this).parents('li').addClass('imgViewed'); //  change thumb to white
 }
 function fnSelectPhoto(objMapLink, strPhotoId) {

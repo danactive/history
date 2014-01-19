@@ -19,8 +19,7 @@
 				<!-- Photo -->
 				<script src="../lib/colorbox/jquery.colorbox-min.js"></script>
 				<link  href="../lib/colorbox/colorbox.css" rel="stylesheet" media="screen" />
-				<!--script src="../lib/adaptive-background/rgbaster.js"></script-->
-				<script src="../lib/adaptive-background/custom.jquery.adaptive-background.min.js"></script>
+				<script src="../lib/color-thief.js"></script>
 				<!-- Map -->
 				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 				<script>strMapEngine = 'leaflet';</script>

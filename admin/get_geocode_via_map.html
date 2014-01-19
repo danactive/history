@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>History Admin - Get Geocode via map.html</title>
 	<style>
-		#map { height: 400px;}
+		#map { height: 900px;}
 	</style>
 </head>
 <body>
@@ -35,9 +35,10 @@
 					}
 				},
 				map = new mxn.Mapstraction('map','googlev3'),
-				onMapClick = function (e) {
-					$('#geo_lat').val(e.latlng.lat); /* elements available after AJAX merge */
-					$('#geo_lon').val(e.latlng.lng);
+				onMapClick = function(event_name, event_source, event_args){ 
+					var coords = event_args.location;
+					$('#geo_lat').val(coords.lat.toFixed(10));
+					$('#geo_lon').val(coords.lon.toFixed(10));
 				},
 				plotCity = function () {
 					var geoData = $(this).data('geo');
@@ -45,15 +46,9 @@
 				};
 
 			map.addLargeControls(); // zoom slidebar & pan arrows
-
-			//map.addLayer(cloudmadeTiles).on('click', onMapClick);
-			//map.addTileLayer("http://tile.openstreetmap.org/{Z}/{X}/{Y}.png"); 			
-
-			map.click.addHandler(function(event_name, event_source, event_args){ 
-				var coords = event_args.location;
-				$('#geo_lat').val(coords.lat.toFixed(10));
-				$('#geo_lon').val(coords.lon.toFixed(10));
-			});
+			map.enableScrollWheelZoom();
+			map.setMapType(mxn.Mapstraction.HYBRID);
+			map.click.addHandler(onMapClick);
 
 			if ($('#geo_lat').val() !== '' && $('#geo_lon').val() !== '') { // load map based on XML fields
 				map.setCenterAndZoom(new mxn.LatLonPoint(parseFloat($('#geo_lat').val()), parseFloat($('#geo_lon').val())), 13);

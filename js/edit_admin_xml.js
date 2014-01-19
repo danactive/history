@@ -118,6 +118,14 @@ var album = {
 			
 			$('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
 			$('#rawAlbumJsonToXml').val(fncFormatXml(json2xml(album.json, "")));
+		},
+		"SplitGeoOnPaste": function () {
+			var geocode = [];
+			if (this.value.indexOf(",") !== -1) {
+				geocode = this.value.split(",");
+				$('#geo_lat').val(geocode[0].trim());
+				$('#geo_lon').val(geocode[1].trim());
+			}
 		}
 	},
 	"photo": {
@@ -262,13 +270,6 @@ ToggleDisable = function() {
 		parent().
 		find('input[type=text], select').
 		prop('disabled',$(this).prop('checked')); // disable text field if checkbox is checked
-},
-GetGeoFromMap = function () {
-	$.ajax({ "url": 'get_latlon_via_map.html' }).
-	error(ajaxError).
-	success(function(page2) {
-		$('#mapOrPhoto').html(page2);
-	});
 };
 $(window).ready(function() {
 	$.get('../getGalleries/').
@@ -282,7 +283,7 @@ $(window).ready(function() {
 	$('#changeSort').click(album.photo.Sort);
 	$('#saveToJson').click(album.form.SaveToJson);
 	$('input[type=checkbox]').click(ToggleDisable);
-	$('#geo_lat').prev().find('a').click(GetGeoFromMap);
+	$('#geo_lat').change(album.form.SplitGeoOnPaste);
 	
 	album.form.schema.GetDom().add('textarea#rawAlbumJsonToXml').keydown(function($e) {
 		$e.stopPropagation(); // allow text selction, not photo pagination
