@@ -203,12 +203,22 @@ var album = {
 	},
 	"json":{}, //current album data
 	"Generate": function() { // output album.xml
+		var galleryName = $('#editGalleries').val(),
+			filename,
+			year;
 		$('#listPhotos').html(''); // clear previous gallery
 		$.each(album.json.album.photo, function(i, photo) {
+			if (photo.filename instanceof Array) {
+				filename = photo.filename[0];
+				filename = filename.substr(0, filename.lastIndexOf(".")) + ".jpg";
+			} else {
+				filename = photo.filename;
+			}
+			year = filename.substr(0,filename.indexOf('-'));
 			$('<div>').
 				click(album.photo.Invoke).
 				data('photo',photo).
-				html(['<img src="../gallery-', $('#editGalleries').val(), '/media/thumbs/', photo.filename.substr(0,photo.filename.indexOf('-')), '/', photo.filename, '"/>'].join('')).
+				html(['<img src="../gallery-', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join('')).
 				appendTo('#listPhotos');
 		});
 	}
