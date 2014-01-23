@@ -23,7 +23,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 /**
 Generate renamed files
 
-@method getRenamedFiles
+@method _getRenamedFiles
 @param {object} arg arguments
 @param {string} arg.filePrefix Root of filename with increment added before extension
 @param {integer} arg.photosInDay Root of filename with increment added before extension

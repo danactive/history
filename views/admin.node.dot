@@ -9,7 +9,10 @@
 
 {{? it.page === 'directory-list' }}
 	{{#def.include('directory-list.node.dot')}}
+{{?? it.page === 'diff-xml' }}
+	{{#def.include('diff-xml.node.dot')}}
 {{?}}
+
 {{? it.scripts }}
 	{{~it.scripts :value:index}} 
 		<script src="{{=value}}"></script>

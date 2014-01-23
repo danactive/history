@@ -101,6 +101,22 @@ app.get(/(admin\/walk-path)/, function(request, response) {
 app.get(/(api\/walk-path)/, function(request, response) {
 	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
 });
+app.get(/(admin\/diff-album-path)/, function(request, response) {
+	response.render(
+		'admin.node.dot',
+		{
+			"page": 'diff-xml',
+			"scripts": [
+				'/lib/jquery-2.0.3.min.js',
+				'/js/global.js',
+				'/lib/json_to_xml.js',
+				'/js/album-xml.js'
+			],
+			"css": [
+			]
+		}
+	);
+});
 app.post(/(admin\/preview-generator)/, function(request, response) {
 	require('./js/admin-image-manipulation.js').preview({"constant": constant, "request": request, "response": response});
 });
