@@ -42,6 +42,7 @@ var album = {
 				var noSuggestions = $field.siblings('.suggestions').length === 0 || $field.siblings('.suggestions').html().length === 0;
 				var emptyOrSameVal = $field.val() === "" || $field.val() === mergeDatum;
 				if ((noSuggestions && emptyOrSameVal) || $field.prop('disabled')) { // update form field based on thumb selection
+					mergeDatum = mergeDatum.replace(/&amp;/gi, "&"); // XML format to normal
 					$field.val( mergeDatum );
 				} else { // build suggestion
 					var wasVal = $field.val();
@@ -61,7 +62,9 @@ var album = {
 						click(function($e) { // click on .suggestion <div>
 							var txt = $(this).text();
 							var originDom = $(this).data('origin');
-							originDom.val(txt); // move clicked txt to input val
+							if (originDom) {
+								originDom.val(txt); // move clicked txt to input val
+							}
 							$(this).remove(); // remove suggestion
 							$e.preventDefault();
 						}).
@@ -78,40 +81,54 @@ var album = {
 			};
 			
 			$.each(album.form.schema.fields, function(elementId, xmlName) { // loop thru all form fields to display XML data
-				var datum;
+				var fieldValue;
 				if (xmlName.indexOf('.') === -1) {
-					datum = data[xmlName];
+					fieldValue = data[xmlName];
 				} else { // dot syntax found
 					var xmlNameArray = xmlName.split('.');
 					if (data[xmlNameArray[0]]) {
-						datum = data[xmlNameArray[0]][xmlNameArray[1]];
+						fieldValue = data[xmlNameArray[0]][xmlNameArray[1]];
 					}
 				}
-				if (!datum) {
+				if (!fieldValue) {
 					return true; // continue
 				}
-				UpdateFieldOrDiv($('#'+elementId), datum);
+				UpdateFieldOrDiv($('#'+elementId), fieldValue);
 			});
 			
 			album.photo.Preview(data.filename);
 		},
 		"SaveToJson": function() {
 			$('#listPhotos .selected').each(function(i, photo) {
-				var jsonPhoto = $(photo).data('photo') || {};
+				var $field,
+					fieldValue,
+					jsonPhoto = $(photo).data('photo') || {},
+					xmlNameArray;
 				$.each(album.form.schema.fields, function(elementId, xmlName) {
-					var $field = $('#'+elementId);
-					if ($field.prop('disabled') || $field.val() === '') { // do NOT generate if disabled or empty
-						return true; // continue
+					$field = $('#'+elementId);
+					if ($field.prop('disabled')) { // do NOT generate if field disabled
+						return true; // continue to next selected thumb
+					}
+					fieldValue = $field.val();
+					fieldValue = fieldValue.replace(/&/g, "&amp;"); // XML safe
+					if (fieldValue === "") {
+						fieldValue = undefined;
 					}
 					
 					if (xmlName.indexOf('.') === -1) {
-						jsonPhoto[xmlName] = $field.val();
+						jsonPhoto[xmlName] = fieldValue;
 					} else { // dot syntax found
-						var xmlNameArray = xmlName.split('.');
-						if (!jsonPhoto[xmlNameArray[0]]) {
+						xmlNameArray = xmlName.split('.');
+						if (!jsonPhoto[xmlNameArray[0]]) { // create object if missing from JSON
 							jsonPhoto[xmlNameArray[0]] = {};
 						}
-						jsonPhoto[xmlNameArray[0]][xmlNameArray[1]] = $field.val();
+						jsonPhoto[xmlNameArray[0]][xmlNameArray[1]] = fieldValue;
+						if (fieldValue === undefined) {
+							delete jsonPhoto[xmlNameArray[0]][xmlNameArray[1]];
+						}
+						if (JSON.stringify(jsonPhoto[xmlNameArray[0]]) === JSON.stringify({})) {
+							delete jsonPhoto[xmlNameArray[0]];
+						}
 					}
 				});
 			});

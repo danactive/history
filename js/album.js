@@ -141,12 +141,18 @@ function fMap(strAlbumName) {
 					intPrevLat = _strLat; intPrevLon = _strLon; // update prev coords
 
 					if (_strName != '') {
-						if (_strSource == 'wikipedia') {
+						if (_strSource === 'wikipedia') {
 							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://en.wikipedia.org/wiki/' + _strName + '">Popup Wikipedia</a></div>';
-						} else if (_strSource == 'google')
+						} else if (_strSource === 'google') {
 							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://www.google.com/search?q=' + _strName + '">Popup Google</a></div>';
-					} else
+						} else if (_strSource === 'facebook') {
+							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="https://www.facebook.com/' + _strName + '">Popup Facebook</a></div>';
+						} else if (_strSource === "") {
+							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="' + _strName + '">Popup Web</a></div>';
+						}
+					} else {
 						strDivExtRef = '';
+					}
 
 					if (_strType == 'photo') {
 						intYear = _strFilename.substring(0, 4);
