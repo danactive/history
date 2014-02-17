@@ -1,6 +1,7 @@
 backup
 # danactive's personal gallery
 gallery-dan
+todo
 node_modules
 npm-debug.log
 resizeImages

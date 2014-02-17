@@ -2,20 +2,9 @@
 var album = {
 	"form": {
 		"schema": { // HTML element ID, XML node name
-			"fields": {
-				"filename": "filename",
-				"city": "photo_city",
-				"location": "photo_loc",
-				"caption": "thumb_caption",
-				"description": "photo_desc",
-				"ref_name": "ref.name",
-				"ref_src": "ref.source",
-				"geo_lat": "geo.lat",
-				"geo_lon": "geo.lon"
-			},
 			"Init": function() { // loop thru fields and get jQuery elements
 				var ids = [];
-				$.each(album.form.schema.fields, function(elementId) {
+				$.each(schema, function(elementId) {
 					ids.push('#',elementId,',');
 				});
 				ids.push(); // remove trailing comma delimiter
@@ -80,7 +69,7 @@ var album = {
 				}
 			};
 			
-			$.each(album.form.schema.fields, function(elementId, xmlName) { // loop thru all form fields to display XML data
+			$.each(schema, function(elementId, xmlName) { // loop thru all form fields to display XML data
 				var fieldValue;
 				if (xmlName.indexOf('.') === -1) {
 					fieldValue = data[xmlName];
@@ -97,44 +86,6 @@ var album = {
 			});
 			
 			album.photo.Preview(data.filename);
-		},
-		"SaveToJson": function() {
-			$('#listPhotos .selected').each(function(i, photo) {
-				var $field,
-					fieldValue,
-					jsonPhoto = $(photo).data('photo') || {},
-					xmlNameArray;
-				$.each(album.form.schema.fields, function(elementId, xmlName) {
-					$field = $('#'+elementId);
-					if ($field.prop('disabled')) { // do NOT generate if field disabled
-						return true; // continue to next selected thumb
-					}
-					fieldValue = $field.val();
-					fieldValue = fieldValue.replace(/&/g, "&amp;"); // XML safe
-					if (fieldValue === "") {
-						fieldValue = undefined;
-					}
-					
-					if (xmlName.indexOf('.') === -1) {
-						jsonPhoto[xmlName] = fieldValue;
-					} else { // dot syntax found
-						xmlNameArray = xmlName.split('.');
-						if (!jsonPhoto[xmlNameArray[0]]) { // create object if missing from JSON
-							jsonPhoto[xmlNameArray[0]] = {};
-						}
-						jsonPhoto[xmlNameArray[0]][xmlNameArray[1]] = fieldValue;
-						if (fieldValue === undefined) {
-							delete jsonPhoto[xmlNameArray[0]][xmlNameArray[1]];
-						}
-						if (JSON.stringify(jsonPhoto[xmlNameArray[0]]) === JSON.stringify({})) {
-							delete jsonPhoto[xmlNameArray[0]];
-						}
-					}
-				});
-			});
-			
-			$('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
-			$('#rawAlbumJsonToXml').val(fncFormatXml(json2xml(album.json, "")));
 		},
 		"SplitGeoOnPaste": function () {
 			var geocode = [];
@@ -186,13 +137,13 @@ var album = {
 				return ((x === y) ? 0 : ((x > y) ? 1 : -1 ));
 			},
 			SortByCity = function (x,y) {
-				return AlphaSort(x,y,album.form.schema.fields.city);
+				return AlphaSort(x,y,schema.city);
 			},
 			SortByLocation = function (x,y) {
-				return AlphaSort(x,y,album.form.schema.fields.location);
+				return AlphaSort(x,y,schema.location);
 			},
 			SortByDate = function (x,y) {
-				return AlphaSort(x,y,album.form.schema.fields.filename);
+				return AlphaSort(x,y,schema.filename);
 			},
 			SortByXml = function (x,y) {
 				x = $(x).data('photo').id;
@@ -208,7 +159,7 @@ var album = {
 				default: sortBy = SortByXml; break;
 			}
 			$.each($('#listPhotos > div').get().sort(sortBy), function(i, newDiv) { // reposition based on sort
-				var xmlNode = album.form.schema.fields[sortVal];
+				var xmlNode = schema[sortVal];
 				var sortLabel = $(newDiv).data("photo")[xmlNode];
 				if (sortLabel === undefined) {
 					$('#listPhotos').append(newDiv);
@@ -308,7 +259,7 @@ $(window).ready(function() {
 	$('#editAlbums').change(GetAlbumXml);
 	$('#sortGallery').change(album.photo.Sort);
 	$('#changeSort').click(album.photo.Sort);
-	$('#saveToJson').click(album.form.SaveToJson);
+	$('#saveToJson').click(SaveToJson);
 	$('input[type=checkbox]').click(ToggleDisable);
 	$('#geo_lat').change(album.form.SplitGeoOnPaste);
 	
