@@ -106,5 +106,104 @@ describe('Admin:', function () {
 				});
 			});
 		});
+		describe('preview()', function () {
+			it('should fail without argument', function (done) {
+				var arg;
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
+					done();
+				});
+			});
+			it('should fail without constant argument', function (done) {
+				var arg = {
+					"isTest": true
+				};
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
+					done();
+				});
+			});
+			it('should fail without response argument', function (done) {
+				var arg = {
+					"constant": {
+
+					},
+					"isTest": true
+				};
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgResponse));
+					done();
+				});
+			});
+			it('should fail without request argument', function (done) {
+				var arg = {
+					"constant": {},
+					"isTest": true,
+					"response": {}
+				};
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgRequest));
+					done();
+				});
+			});
+			it('should fail without folder in request argument', function (done) {
+				var arg = {
+					"constant": {},
+					"isTest": true,
+					"response": {},
+					"request": {}
+				};
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgRequestBodyFolder));
+					done();
+				});
+			});
+			it('should fail with invalid folder', function (done) {
+				var arg;
+				arg = {
+					"constant": {},
+					"isTest": true,
+					"response": {},
+					"request": {
+						"body": {
+							"folder": "test/fixture/fake/"
+						}
+					}
+				};
+				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be("Path does not exist: ./" + arg.request.body.folder);
+					done();
+				});
+			});
+			it('should verify test folders', function (done) {
+				var arg;
+				arg = {
+					"constant": {
+						"debug": false
+					},
+					"isTest": true,
+					"response": {
+						"end": function (outJSON) {
+							expect(outJSON).to.be('{"thumbnails":["g3.gif","j1.jpeg","p2.png"]}');
+							done();
+						},
+						"writeHead": function (okay) {
+							expect(okay).to.be(200);
+						}
+					},
+					"request": {
+						"body": {
+							"folder": "test/fixture/image/"
+						}
+					}
+				};
+				page.preview(arg);
+			});
+		});
 	});
 });

@@ -4,6 +4,7 @@ var doT = require('doT'),
 	app = express(),
 	expressPort = 80,
 	constant = {
+		"debug": false,
 		"tempThumbFolder": '_historyThumb'
 	},
 	path = require('path'),

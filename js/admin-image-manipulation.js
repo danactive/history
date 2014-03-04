@@ -2,33 +2,63 @@
 var _error = {
 	"emptyRenameFile": "Empty filename found, cannot rename file",
 	"missingArg": "Missing required argument",
+	"missingArgConstant": "Missing required argument global constant",
 	"missingArgCurrentFiles": "Missing required argument current files",
 	"missingArgFilename": "Missing required argument filename",
 	"missingArgFolderName": "Missing required argument folder name",
 	"missingArgNewFiles": "Missing required argument new files",
+	"missingArgResponse": "Missing required response object",
+	"missingArgRequest": "Missing required request object",
+	"missingArgRequestBodyFolder": "Missing required folder in request object",
 	"missingArgSourcePath": "Missing required argument source path"
 };
 module.exports.error = _error;
+
 
 /**
 Generate preview sized thumbnail photos for directory viewing
 
 @method preview
 @param {object} arg arguments
+@param {object} arg.constant global variables
 @param {object} arg.body Express POST variables
 @param {string} arg.body.folder Path to directory
+@param {object} arg.response
+@param {object} arg.request
+@param {boolean} [arg.isTest]
 @return {undefined}
 **/
 module.exports.preview = function (arg) {
-	var constant = arg.constant,
+	var constant,
 		directory = require("../js/admin-directory-contents-api.js"),
-		response = arg.response,
-		request = arg.request;
+		isTest,
+		response,
+		request;
+	if (arg === undefined) {
+		throw new ReferenceError(_error.missingArg);
+	}
+	if (arg.constant === undefined) {
+		throw new ReferenceError(_error.missingArgConstant);
+	}
+	if (arg.response === undefined) {
+		throw new ReferenceError(_error.missingArgResponse);
+	}
+	if (arg.request === undefined) {
+		throw new ReferenceError(_error.missingArgRequest);
+	}
+	if (arg.request.body === undefined || arg.request.body.folder === undefined) {
+		throw new ReferenceError(_error.missingArgRequestBodyFolder);
+	}
+	constant = arg.constant;
+	isTest = arg.isTest || false;
+	response = arg.response;
+	request = arg.request;
 
-	function initShrinkImages(directoryContentsArg) {
+	function ensureShrunkImages(directoryContentsArg) {
 		var dimension = {"width": 200, "height": 200},
 			count = {
-				"imageLoop": 0,
+				"imageInitiated": 0,
+				"imageLength": 0,
 				"thumbCreated": 0
 			},
 			json,
@@ -38,11 +68,15 @@ module.exports.preview = function (arg) {
 			throw directoryContentsArg.error;
 		}
 		json = directory.generateJson(directoryContentsArg);
-		function possibleOutput() {
+		count.imageLength = json.items.length;
+		function possibleOutput(callee) {
 			var done = false;
-			if (count.imageLoop === 0) { // no images in this directory
+			if (constant.debug && constant.debug === true) {
+				console.log("possibleOutput: count.thumbCreated="+count.thumbCreated+"; count.imageLength="+count.imageLength+"; callee="+callee+";");
+			}
+			if (count.imageLength === 0) { // no images in this directory
 				done = true;
-			} else if (count.thumbCreated === count.imageLoop) {
+			} else if (count.thumbCreated === count.imageLength) {
 				done = true;
 			}
 			if (done === true) {
@@ -50,11 +84,28 @@ module.exports.preview = function (arg) {
 				response.end(JSON.stringify({"thumbnails":out}));
 			}
 		}
+		function afterThumbCreated(errorWriting) {
+			if (errorWriting) {
+				throw errorWriting;
+			}
+			count.thumbCreated++;
+			possibleOutput("afterThumbCreated");
+			count.imageInitiated++;
+			addToQueue();
+		}
 		function ifImage(item) {
 			function createThumb(item) {
-				var sourcePath = require('path').dirname(__dirname) + "/" + item.path.abs,
-					outputPath = sourcePath + constant.tempThumbFolder + "/",
+				var sourcePath = require('path').dirname(__dirname) + item.path.abs,
+					outputPath,
 					filename = item.name + item.ext;
+				if (constant.tempThumbFolder) {
+					outputPath = sourcePath + constant.tempThumbFolder + "/";
+				} else {
+					outputPath = sourcePath;
+				}
+				if (constant.debug && constant.debug === true) {
+					console.log("ifImage: filename="+filename+"; outputPath="+outputPath+";");
+				}
 
 				require('mkdirp')(outputPath, function (errorNewPath) {
 					if (errorNewPath) {
@@ -62,44 +113,70 @@ module.exports.preview = function (arg) {
 					}
 
 					if (require('fs').existsSync(outputPath + filename)) { // file exists
-						count.thumbCreated++;
-						possibleOutput();
+						afterThumbCreated();
 						return;
 					}
-					require('gm')(sourcePath + filename)
-						.resize(dimension.width, dimension.height + ">")
-						.gravity('Center')
-						.extent(dimension.width, dimension.height)
-						.write(outputPath + filename, function (errorWriting) {
-							if (errorWriting) {
-								throw errorWriting;
-							}
-							count.thumbCreated++;
-							possibleOutput();
-						});
+					if (constant.debug && constant.debug === true) {
+						console.log("ifImage resize image: filename="+filename+";");
+					}
+					if (isTest) {
+						afterThumbCreated();
+					} else {
+						require('gm')(sourcePath + filename)
+							.resize(dimension.width, dimension.height + ">")
+							.gravity('Center')
+							.extent(dimension.width, dimension.height)
+							.write(outputPath + filename, afterThumbCreated);
+					}
 				});
 			}
 			if (item.content.type === "image") {
-				count.imageLoop++;
+				if (constant.debug && constant.debug === true) {
+					console.log("ifImage; start create thumb");
+				}
 				createThumb(item);
-				out.push(constant.tempThumbFolder + "/" + item.name + item.ext);
+				if (constant.tempThumbFolder) {
+					out.push(constant.tempThumbFolder + "/" + item.name + item.ext);
+				} else {
+					out.push(item.name + item.ext);
+				}
+			} else {
+				if (constant.debug && constant.debug === true) {
+					console.log("ifImage; file type="+item.content.type+";");
+				}
+				afterThumbCreated();
 			}
 		}
+		function addToQueue() {
+			var item = json.items[count.imageInitiated];
+			if (item === undefined) {
+				if (constant.debug && constant.debug === true) {
+					console.log("addToQueue; item="+item+";");
+				}
+				return;
+			}
+			queue.push(item, function (errorEach) {
+				if (errorEach) {
+					throw errorEach;
+				}
+				var filename = item.name + item.ext;
+				console.log("Processed image: " + filename + ";");
+			});
+		}
 		queue = require("async").queue(function (item, callback) {
+			var filename = item.name + item.ext;
+			if (constant.debug && constant.debug === true) {
+				console.log("Asynce queue item:"+filename+";");
+			}
 			ifImage(item);
 			callback();
-		}, 1);
-
-		queue.push(json.items, function(errorEach){
-			if (errorEach) {
-				throw errorEach;
-			}
-		});
-		queue.drain = possibleOutput;
+		}, 3);
+		addToQueue();
 	}
 
-	directory.getContents({"folder": decodeURIComponent(request.body.folder)}, initShrinkImages);
+	directory.getContents({"folder": decodeURIComponent(request.body.folder)}, ensureShrunkImages);
 };
+
 
 /**
 Create directory or use existing directory
@@ -138,6 +215,8 @@ function _ensureDestinationFolder(arg) {
 	return out;
 }
 module.exports.ensureDestinationFolder = _ensureDestinationFolder;
+
+
 /**
 Move source photo to destination originals folder
 
