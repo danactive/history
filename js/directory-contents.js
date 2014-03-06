@@ -75,7 +75,19 @@
 						"sourceFolderPath": qs.folder
 					},
 					"success": function (response) {
-						console.log(response); // todo
+						function resizeImage(postData) {
+							$.ajax({
+								"url": '/admin/resize-photo',
+								"method": 'post',
+								"data": postData,
+								"error": ajaxError
+							});
+						}
+
+						$.each(response.files, function (x, file) {
+							resizeImage(file.destination);
+						});
+
 						// kill photos
 						// display XML
 						$("<textarea/>")

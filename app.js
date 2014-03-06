@@ -5,6 +5,7 @@ var doT = require('doT'),
 	expressPort = 80,
 	constant = {
 		"debug": false,
+		"resizeFolder": "resizeImages",
 		"tempThumbFolder": '_historyThumb'
 	},
 	path = require('path'),
@@ -124,7 +125,7 @@ app.post(/(admin\/preview-generator)/, function(request, response) {
 app.post(/(admin\/rename-photos)/, function(request, response) {
 	require('./js/admin-image-manipulation.js').rename({"constant": constant, "request": request, "response": response});
 });
-app.get(/(admin\/resize-photos)/, function(request, response) {
+app.post(/(admin\/resize-photo)/, function(request, response) {
 	require('./js/admin-image-manipulation.js').resize({"constant": constant, "request": request, "response": response});
 });
 
