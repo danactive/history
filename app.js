@@ -86,7 +86,7 @@ app.get(/(admin\/walk-path)/, function(request, response) {
 		{
 			"page": 'directory-list',
 			"scripts": [
-				'/lib/jquery-2.0.3.min.js',
+				'/lib/jquery.min.js',
 				'/js/global.js',
 				'/js/walk-path-tested.js',
 				'/js/directory-contents.js',
@@ -109,7 +109,7 @@ app.get(/(admin\/diff-album-path)/, function(request, response) {
 		{
 			"page": 'diff-xml',
 			"scripts": [
-				'/lib/jquery-2.0.3.min.js',
+				'/lib/jquery.min.js',
 				'/js/global.js',
 				'/lib/json_to_xml.js',
 				'/js/album-xml.js'

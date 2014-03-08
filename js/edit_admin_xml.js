@@ -5,7 +5,10 @@ var album = {
 			"Init": function() { // loop thru fields and get jQuery elements
 				var ids = [];
 				$.each(schema, function(elementId) {
-					ids.push('#',elementId,',');
+					if (ids.length !== 0) {
+						ids.push(',');
+					}
+					ids.push('#',elementId);
 				});
 				ids.push(); // remove trailing comma delimiter
 				album.form.schema.dom = $(ids.join(''));

@@ -35,8 +35,8 @@ Technologies
 Dependancies
 ------
 Included in this project
-* [jQuery](http://jquery.com/) v1.7.2
-* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) v1.4.33
+* [jQuery](http://jquery.com/) via bower
+* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) via bower
 * [Mapstraction (mapping)](http://mapstraction.com/) build 2.0.18
 * [Google Maps (map provider)](https://developers.google.com/maps/) v3
 * [Twitter Bootstrap (admin)](http://twitter.github.com/bootstrap/) v2.0.3
@@ -46,10 +46,12 @@ To use the administration tools
 * [Node.js](http://nodejs.org/) v0.6.18
 * [Express](http://expressjs.com/) v3.4.7
 * [GraphicsMagick](https://github.com/aheckmann/gm) v1.14.1
-* [Grunt.js](http://gruntjs.com/) v0.4.2
+* [Grunt.js](http://gruntjs.com/) via npm
     * npm install -g grunt-cli
-* [mocha](http://visionmedia.github.io/mocha/) v1.16.x
+* [mocha](http://visionmedia.github.io/mocha/) via npm
     * npm install -g mocha
+* [bower](http://bower.io/) via npm
+    * npm install -g bower
 
 Folder structures
 -------
@@ -60,7 +62,7 @@ Folder structures
 * README.md - this file
 * index.htm - Home page when avoiding Node.js
 * video.htm - Reads a query string and generates the HTML5 video tags
-* app.js - Node.js code for creating a web host
+* app.js - Node.js code for creating a web server
 * webserver_node START.bat - (Windows) Executes the Node.js web server for localhost viewing and administration image manipulation
 * webserver_node VIEW.url - (Windows) Opens http://localhost in default browser
 

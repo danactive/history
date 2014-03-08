@@ -15,10 +15,10 @@
 			<head>
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
-				<script src="../lib/jquery-1.7.2.min.js"></script>
+				<script src="../lib/jquery/dist/jquery.min.js"></script><!-- jQuery framework -->
 				<!-- Photo -->
-				<script src="../lib/colorbox/jquery.colorbox-min.js"></script>
-				<link  href="../lib/colorbox/colorbox.css" rel="stylesheet" media="screen" />
+				<script src="../lib/jquery-colorbox/jquery.colorbox-min.js"></script>
+				<link  href="../lib/jquery-colorbox/example1/colorbox.css" rel="stylesheet" media="screen" />
 				<script src="../lib/color-thief.js"></script>
 				<!-- Map -->
 				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
@@ -36,13 +36,14 @@
 				<![endif]-->
 				<style>
 					<![CDATA[
+					body { margin: 0; padding: 0; }
 					#divAlbum, #divMapBubble, #divToolbox { font-family:verdana; font-size:11px; font-weight:bold; }
 					#divAlbum, #divToolbox { float: left; }
 					#divAlbum {
 						background-color: #323232;
 						width: 100%;
 					}
-					#divAlbum > ul { list-style: none; padding-left: 1em; }
+					#divAlbum > ul { list-style: none; padding-left: 2px; }
 					#divAlbum .liAlbumPhoto {
 						float: left;
 						margin: 6px;
@@ -67,6 +68,7 @@
 						border: 5px solid white;
 						border-width: 5px 5px 20px;
 					}
+					#cboxOverlay { background-image: none; } /* allows colortheif */
 					]]>
 				</style>
 			</head>
