@@ -96,9 +96,9 @@ function generateJson(arg) {
 	}
 	*/
 	function getType (extension) {
-		if (extension.toLowerCase().match(/\.(png|jpg|jpeg|gif)$/)) {
+		if (extension.toLowerCase().match(/\.(gif|jpg|jpeg|png)$/)) {
 			return "image";
-		} else if (extension.toLowerCase().match(/\.(mov)$/)) {
+		} else if (extension.toLowerCase().match(/\.(avi|mov|mp4|mts|qt|webm)$/)) {
 			return "video";
 		} else if (extension === "") {
 			return "folder";

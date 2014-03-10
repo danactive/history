@@ -142,7 +142,7 @@
 											<xsl:value-of select="$media_path"/>
 										</xsl:attribute>
 										<!-- jQuery lightbox uses as photo caption -->
-										<xsl:attribute name="title">
+										<xsl:attribute name="data-caption">
 											<xsl:choose>
 												<xsl:when test="photo_loc != '' and photo_city != '' and photo_desc != ''">
 													<xsl:value-of select="photo_loc"/> (<xsl:value-of select="photo_city"/>): <xsl:value-of select="photo_desc"/>
@@ -170,28 +170,26 @@
 												<xsl:text> with </xsl:text>
 												<xsl:value-of select="$characters"/>
 											</xsl:if>
-											<xsl:choose>
-												<xsl:when test="ref != ''">
-													&lt;div class="meta"&gt;
-														<xsl:choose>
-															<xsl:when test="ref/source = 'facebook'">
-																&lt;a href="javascript:;" onclick="fOpenWin('https://www.facebook.com/<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
-															</xsl:when>
-															<xsl:when test="ref/source = 'google'">
-																&lt;a href="javascript:;" onclick="fOpenWin('http://www.google.com/search?q=<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
-															</xsl:when>
-															<xsl:when test="ref/source = 'wikipedia'">
-																&lt;a href="javascript:;" onclick="fOpenWin('http://en.wikipedia.org/wiki/<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
-															</xsl:when>
-														</xsl:choose>
-													&lt;/div&gt;
-												</xsl:when>
-												<xsl:when test="name(.) = 'video'">
-													&lt;div class="meta"&gt;
-														&lt;a href="javascript:;" onclick="fOpenWin('../video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w"/>,<xsl:value-of select="size/h"/>);"&gt;Watch Video&lt;/a&gt;
-													&lt;/div&gt;
-												</xsl:when>
-											</xsl:choose>
+											<xsl:if test="ref != ''">
+												&lt;div class="meta"&gt;
+													<xsl:choose>
+														<xsl:when test="ref/source = 'facebook'">
+															&lt;a href="javascript:;" onclick="fOpenWin('https://www.facebook.com/<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
+														</xsl:when>
+														<xsl:when test="ref/source = 'google'">
+															&lt;a href="javascript:;" onclick="fOpenWin('http://www.google.com/search?q=<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
+														</xsl:when>
+														<xsl:when test="ref/source = 'wikipedia'">
+															&lt;a href="javascript:;" onclick="fOpenWin('http://en.wikipedia.org/wiki/<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
+														</xsl:when>
+													</xsl:choose>
+												&lt;/div&gt;
+											</xsl:if>
+											<xsl:if test="name(.) = 'video'">
+												&lt;div class="meta"&gt;
+													&lt;a href="javascript:;" onclick="fOpenWin('../video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w"/>,<xsl:value-of select="size/h"/>);"&gt;Watch Video&lt;/a&gt;
+												&lt;/div&gt;
+											</xsl:if>
 										</xsl:attribute>
 										<img>
 											<xsl:attribute name="src">
@@ -214,6 +212,7 @@
 									</a>
 								</div>
 								<div class="divAlbumPhotoCaption">
+									<xsl:if test="name(.) = 'video'">Video: </xsl:if>
 									<xsl:value-of select="thumb_caption"/>
 								</div>
 								<div class="divAlbumPhotoChar">

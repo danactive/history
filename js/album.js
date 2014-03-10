@@ -7,8 +7,15 @@ var colorThief;
 jQuery(function() {
 	colorThief = new ColorThief();
 	jQuery('#divAlbum a').colorbox({
-		"onComplete": fnLighboxShowedPhoto,
+		"onComplete": photoViewed,
 		"preloading": true,
+		"title": function () {
+			if (this && this.dataset && this.dataset.caption) {
+				return this.dataset.caption;
+			} else {
+				return jQuery(this).data('caption');
+			}
+		},
 		"transition": 'none'
 	});
 });
@@ -156,13 +163,13 @@ function fMap(strAlbumName) {
 
 					if (_strType == 'photo') {
 						intYear = _strFilename.substring(0, 4);
-						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="fnSelectPhoto(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">' + _strCaption + '</div>' + strDivExtRef;
+						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">' + _strCaption + '</div>' + strDivExtRef;
 					} else if (_strType == 'link') {
 						strBubble += '<div class="divMapThumb"></div><div class="divMapCaption">' + _strName + '</div>' + strDivExtRef;
 					} else if (_strType == 'video') {
 						intYear = _strFilename.substring(0, 4);
 						_strFilename = _strFilename.substr(0, _strFilename.indexOf('.')) + '.jpg'; // replace AVI with JPG
-						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="fnSelectPhoto(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">' + _strCaption + '</div>' + strDivExtRef;
+						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">Video: ' + _strCaption + '</div>' + strDivExtRef;
 					}
 				}
 			} // end loop
@@ -175,37 +182,37 @@ function fMap(strAlbumName) {
 			mapstraction.setMapType(1); // Google 1 = Street, 2 Satellite
 			mapstraction.enableScrollWheelZoom();
 		} // close success
-	});                                  //close ajax(
+	}); //close ajax(
 }
-	function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
-		v = 'v1.6.0 2006-11-04; like:; req:;';
-		iXPos = 0, iYPos = 15;
-		if (window.outerWidth) { /* outerWidth for frameset use; otherwise innerWidth works; (NN4, NN6, O7-O9) */
-			iXPos = (window.outerWidth - iW) / 2;
-			iYPos = (window.outerHeight - iH) / 2;
-			iXPos += window.screenX; iYPos += window.screenY;
-		} else { /* screen width (1 600) not used because I want centred in window on screen */
-			iXPos = (document.body.clientWidth - iW) / 2; /* [current browser chrome width (800) - new window width (400)] / 2 = 200 on each side */
-			iBrowserHeight = (document.compatMode == "CSS1Compat") ? document.documentElement.clientHeight : document.body.clientHeight;
-			iYPos = (iBrowserHeight - iH) / 2;
-			iXPos += window.screenLeft; iYPos += window.screenTop; /* current position of window (400) + iXPos (200) = 600 is left pos */
-		} /* left space (600) + new width (400) + right space (600) = screen res (1 600) */
+function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
+	v = 'v1.6.0 2006-11-04; like:; req:;';
+	iXPos = 0, iYPos = 15;
+	if (window.outerWidth) { /* outerWidth for frameset use; otherwise innerWidth works; (NN4, NN6, O7-O9) */
+		iXPos = (window.outerWidth - iW) / 2;
+		iYPos = (window.outerHeight - iH) / 2;
+		iXPos += window.screenX; iYPos += window.screenY;
+	} else { /* screen width (1 600) not used because I want centred in window on screen */
+		iXPos = (document.body.clientWidth - iW) / 2; /* [current browser chrome width (800) - new window width (400)] / 2 = 200 on each side */
+		iBrowserHeight = (document.compatMode == "CSS1Compat") ? document.documentElement.clientHeight : document.body.clientHeight;
+		iYPos = (iBrowserHeight - iH) / 2;
+		iXPos += window.screenLeft; iYPos += window.screenTop; /* current position of window (400) + iXPos (200) = 600 is left pos */
+	} /* left space (600) + new width (400) + right space (600) = screen res (1 600) */
 
-		if (typeof bScrollBars == 'boolean')
-			bScrollBars = (bScrollBars == true) ? 'yes' : 'no';
-		else
-			bScrollBars = 'yes'; /* not defined set to default */
+	if (typeof bScrollBars == 'boolean')
+		bScrollBars = (bScrollBars == true) ? 'yes' : 'no';
+	else
+		bScrollBars = 'yes'; /* not defined set to default */
 
-		sArgs = 'width=' + iW + ',height=' + iH + ',resizable=yes,scrollbars=' + bScrollBars + ',status=yes,screenx=' + iXPos + ',screeny=' + iYPos + ',left=' + iXPos + ',top=' + iYPos
-		if (!sName) sName = 'popup';
-		oWin = window.open(sURL, sName, sArgs);
+	sArgs = 'width=' + iW + ',height=' + iH + ',resizable=yes,scrollbars=' + bScrollBars + ',status=yes,screenx=' + iXPos + ',screeny=' + iYPos + ',left=' + iXPos + ',top=' + iYPos
+	if (!sName) sName = 'popup';
+	oWin = window.open(sURL, sName, sArgs);
 
-		if (oWin != null) {
-			if (oWin.opener == null) /* give orphan child window this parent */
-				oWin.opener = self;
-			oWin.focus();
-		}
+	if (oWin != null) {
+		if (oWin.opener == null) /* give orphan child window this parent */
+			oWin.opener = self;
+		oWin.focus();
 	}
+}
 function fnMedium(strType) { // create class
 	this.type = strType;
 	this.id = 0;
@@ -220,16 +227,22 @@ function fnMedium(strType) { // create class
 	this.getCaption = function() { return this.caption; };
 	this.getSrc = function() { return this.src; };
 }
-function fnLighboxShowedPhoto() {
+function photoViewed() {
 	var dominateColour,
 		sourceImage = jQuery("img.cboxPhoto").get(0);
 	dominateColour = colorThief.getColor(sourceImage);
-	jQuery("#cboxOverlay").css("background-color", "rgb(" + dominateColour[0] + "," + dominateColour[1] + "," + dominateColour[2] + ")");
+
 	jQuery(this).parents('li').addClass('imgViewed'); //  change thumb to white
+
+	// lightbox
+	jQuery("#cboxOverlay").css("background-color", "rgb(" + dominateColour[0] + "," + dominateColour[1] + "," + dominateColour[2] + ")"); // change background colour
+	jQuery("#cboxTitle").hide();
+	jQuery("#cboxLoadedContent").append(jQuery("#cboxTitle").html()).css({color: jQuery("#cboxTitle").css("color")});
+	jQuery.fn.colorbox.resize();
 }
-function fnSelectPhoto(objMapLink, strPhotoId) {
-	jQueryobjLiPhoto = jQuery('li#photo' + strPhotoId + '');
-	if (jQueryobjLiPhoto.hasClass('imgViewed') == false)
-		jQueryobjLiPhoto.addClass('imgViewed'); //  change thumb to white
-	jQuery('a', jQueryobjLiPhoto).trigger('click');
+function triggerLightboxOpen(objMapLink, strPhotoId) {
+	jQuery('li#photo' + strPhotoId + '')
+		.addClass('imgViewed') //  change thumb to white
+		.find('a')
+		.trigger('click');
 }
