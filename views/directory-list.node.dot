@@ -1,5 +1,6 @@
 <div><a href="#" id="btnParentFolder">Back to <b id="parentFolderName"></b> folder</a></div>
-<div id="controls"><a href="#" id="btnFinalize">Rename and resize photos</a></div>
+<div id="controls"><a href="#" id="btnRename">Rename photos</a></div>
+<div id="controls"><a href="#" id="btnResize">Rename AND Resize photos</a></div>
 <ul id="directory-list-1"></ul>
 <ul id="directory-list-2"></ul>
 <ul id="directory-list-3"></ul>

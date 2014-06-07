@@ -46,35 +46,48 @@
 		}
 	}
 	function bindEvents() {
-		$("#btnFinalize").click(function ($event) {
-			var $datepicker;
+		$("#btnRename, #btnResize").click(function ($event) {
+			var $datepicker
+				moveToResize = this.id === "btnResize";
 			$event.preventDefault();
 			function getSelectedDate (formattedDate) {
-				var photoCount1 = $('#directory-list-1 > li[data-type=image]').length,
-					photoCount2 = $('#directory-list-2 > li[data-type=image]').length,
-					photoCount3 = $('#directory-list-3 > li[data-type=image]').length,
-					newFiles = window.walkPath.getRenamedFiles({"filePrefix": formattedDate, "photosInDay": (photoCount1 + photoCount2 + photoCount3), "xmlStartPhotoId": window.prompt("Starting XML photo ID?", 1)}),
+				var $uiCol1 = $('#directory-list-1'),
+					$uiCol2 = $('#directory-list-2'),
+					$uiCol3 = $('#directory-list-3'),
+					photoSelector = 'li[data-type=image]',
+					photoCount1 = $uiCol1.children(photoSelector).length,
+					photoCount2 = $uiCol2.children(photoSelector).length,
+					photoCount3 = $uiCol3.children(photoSelector).length,
+					newFiles = window.walkPath.getRenamedFiles({
+						"filePrefix": formattedDate,
+						"photosInDay": (photoCount1 + photoCount2 + photoCount3),
+						"xmlStartPhotoId": (this.id === "btnResize") ? window.prompt("Starting XML photo ID?", 1) : 1
+					}),
 					currentFiles = [],
-					currentFiles1 = $('#directory-list-1').sortable( "toArray", {"attribute": 'data-filename'} ),
-					currentFiles2 = $('#directory-list-2').sortable( "toArray", {"attribute": 'data-filename'} ),
-					currentFiles3 = $('#directory-list-3').sortable( "toArray", {"attribute": 'data-filename'} ),
+					sortArgs = {"attribute": 'data-filename'},
+					currentFiles1 = $uiCol1.sortable( "toArray", sortArgs),
+					currentFiles2 = $uiCol2.sortable( "toArray", sortArgs),
+					currentFiles3 = $uiCol3.sortable( "toArray", sortArgs),
 					year = formattedDate.substring(0, 4);
 				currentFiles = currentFiles1.concat(currentFiles2).concat(currentFiles3);
 				currentFiles1 = undefined;
 				currentFiles2 = undefined;
 				currentFiles3 = undefined;
+
 				$datepicker.datepicker( "destroy" );
 
 				$.ajax({
 					"url": '/admin/rename-photos',
 					"method": 'post',
 					"data": {
-						"folderName": year,
+						"targetFolderName": year,
 						"currentFiles": currentFiles,
+						"moveToResize": moveToResize,
 						"newFiles": newFiles.filenames,
 						"sourceFolderPath": qs.folder
 					},
 					"success": function (response) {
+						var output = "";
 						function resizeImage(postData) {
 							$.ajax({
 								"url": '/admin/resize-photo',
@@ -84,15 +97,19 @@
 							});
 						}
 
-						$.each(response.files, function (x, file) {
-							resizeImage(file.destination);
-						});
-
-						// kill photos
-						// display XML
-						$("<textarea/>")
-							.val(newFiles.xml)
-							.insertBefore("#directory-list-1");
+						if (this.id === "btnResize") {
+							$.each(response.files, function (x, file) {
+								resizeImage(file.destination);
+							});
+							output = newFiles.xml;
+						} else if (this.id === "btnRename") {
+							output = "Rename successfull";
+						}
+						
+						$uiCol1
+							.before("<textarea/>")
+							.children("textarea")
+							.val(output);
 					},
 					"error": ajaxError
 				});
@@ -101,7 +118,9 @@
 				.insertAfter(this)
 				.datepicker({
 					"dateFormat": 'yy-mm-dd',
-					"onSelect": getSelectedDate
+					"onSelect": getSelectedDate,
+					"changeMonth": true,
+					"changeYear": true
 				});
 		});
 	}

@@ -7,6 +7,7 @@ var _error = {
 	"missingArgCurrentFiles": "Missing required argument current files",
 	"missingArgFilename": "Missing required argument filename",
 	"missingArgFolderName": "Missing required argument folder name",
+	"missingArgMove": "Missing required argument move to resize boolean",
 	"missingArgNewFiles": "Missing required argument new files",
 	"missingArgResponse": "Missing required response object",
 	"missingArgRequest": "Missing required request object",
@@ -185,7 +186,7 @@ Create directory or use existing directory
 @method ensureDestinationFolder
 @param {object} arg arguments
 @param {object} arg.constant Global variables
-@param {string} arg.folderName Destination folder's name for this photo batch
+@param {string} arg.targetFolderName Destination folder's name for this photo batch
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @return {string[]} paths to verified directories
 **/
@@ -202,13 +203,13 @@ function _ensureDestinationFolder(arg) {
 	if (arg.constant.resizeFolder === undefined) {
 		throw new ReferenceError(_error.missingArgConstantResizeFolder);
 	}
-	if (arg.folderName === undefined) {
+	if (arg.targetFolderName === undefined) {
 		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/' + arg.constant.resizeFolder + '/');
 
 	function createOrVerifyFolder(folder) {
-		var folderPath = destinationPath + folder + '/' + arg.folderName;
+		var folderPath = destinationPath + folder + '/' + arg.targetFolderName;
 		try {
 			mkdrip.sync(folderPath);
 		} catch (err) {
@@ -232,7 +233,7 @@ Move source photo to destination originals folder
 @param {object} arg arguments
 @param {string} arg.sourceFolderPath Original photo path excluding filename
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
-@param {string} arg.folderName Destination folder's name for this photo batch inside the originals, photos, or thumbs folders
+@param {string} arg.targetFolderName Destination folder's name for this photo batch inside the originals, photos, or thumbs folders
 @param {string[]} arg.newFiles Ordered list of new renamed files (extension excluded)
 @param {string[]} arg.currentFiles Ordered list of current files (extension excluded)
 @return {object} arg arguments
@@ -244,7 +245,8 @@ function _movePhotos(arg, callback) {
 		callbackCount = 0,
 		destinationPath,
 		files = [],
-		folderName,
+		moveToResize,
+		targetFolderName,
 		queue,
 		sourceFolderPath;
 	if (arg === undefined) {
@@ -253,25 +255,35 @@ function _movePhotos(arg, callback) {
 	if (arg.sourceFolderPath === undefined) {
 		throw new ReferenceError(_error.missingArgSourcePath);
 	}
-	if (arg.folderName === undefined) {
+	if (arg.targetFolderName === undefined) {
 		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	if (arg.currentFiles === undefined || arg.currentFiles.length === 0) {
 		throw new ReferenceError(_error.missingArgCurrentFiles);
+	}
+	if (arg.moveToResize === undefined) {
+		throw new ReferenceError(_error.missingArgMove);
 	}
 	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
 		throw new ReferenceError(_error.missingArgNewFiles);
 	}
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
 	destinationPath = decodeURIComponent(destinationPath);
-	folderName = arg.folderName;
+	moveToResize = arg.moveToResize;
+	targetFolderName = arg.targetFolderName;
 	sourceFolderPath = decodeURIComponent(arg.sourceFolderPath);
 
 	arg.currentFiles.forEach(function (filename, index) {
 		beforeRename = sourceFolderPath + filename;
-		afterRename = destinationPath;
-		if (folderName !== "") {
-			afterRename += folderName + "/";
+		if (moveToResize === true) {
+			afterRename = destinationPath;
+			if (targetFolderName === "") {
+				afterRename += "/";
+			} else {
+				afterRename += targetFolderName + "/";
+			}
+		} else {
+			afterRename = sourceFolderPath;
 		}
 		afterRename += arg.newFiles[index];
 		if (beforeRename ===  undefined || beforeRename === "" || afterRename ===  undefined || afterRename === "") {
@@ -285,7 +297,7 @@ function _movePhotos(arg, callback) {
 				}
 			},
 			"destination": {
-				"folderName": folderName,
+				"targetFolderName": targetFolderName,
 				"filename": arg.newFiles[index],
 				"path": {
 					"type": "absolute",
@@ -328,24 +340,24 @@ Resize solo photo into originals, photos, thumbs folder
 
 @method resize
 @param {object} arg arguments
-@param {string} arg.folderName Folder to become child of originals, photos, and thumbs
+@param {string} arg.targetFolderName Folder to become child of originals, photos, and thumbs
 **/
 module.exports.resize = function (arg) {
 	var path = require('path'),
 		constant = arg.constant,
 		gm = require('gm'),
 		filename,
-		folderName,
+		targetFolderName,
 		photo = { width: 800, height: 600 },
 		thumb = { width: 185, height: 45 },
 		response = arg.response,
 		request = arg.request;
-	folderName = (request.body && request.body.folderName) || arg.folderName; // POST or direct variable
+	targetFolderName = (request.body && request.body.targetFolderName) || arg.targetFolderName; // POST or direct variable
 	filename = (request.body && request.body.filename) || arg.filename; // POST or direct variable
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
-	if (folderName === undefined) {
+	if (targetFolderName === undefined) {
 		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	if (filename === undefined) {
@@ -416,7 +428,7 @@ module.exports.resize = function (arg) {
 		;
 	}
 
-	transformImage([path.dirname(__dirname), '/' + constant.resizeFolder + '/', 'originals', '/', folderName, '/', filename]);
+	transformImage([path.dirname(__dirname), '/' + constant.resizeFolder + '/', 'originals', '/', targetFolderName, '/', filename]);
 };
 
 
@@ -429,8 +441,9 @@ Rename and move images
 @param {object} arg.response Express response object
 @param {object} arg.request Express request object
 @param {object} arg.request.body Express POST object
-@param {string} arg.request.body.folderName _ensureDestinationFolder
+@param {string} arg.request.body.targetFolderName _ensureDestinationFolder
 @param {string[]} arg.request.body.currentFiles See movePhotos
+@param {string[]} arg.request.body.moveToResize See movePhotos
 @param {string[]} arg.request.body.newFiles See movePhotos
 @param {string} arg.request.body.sourceFolderPath See movePhotos
 @param {boolean} [arg.isTest]
@@ -438,7 +451,7 @@ Rename and move images
 module.exports.rename = function (arg) {
 	var constant,
 		isTest,
-		folderName,
+		targetFolderName,
 		response,
 		request;
 	if (arg === undefined) {
@@ -453,7 +466,7 @@ module.exports.rename = function (arg) {
 	if (arg.request === undefined) {
 		throw new ReferenceError(_error.missingArgRequest);
 	}
-	if (arg.request.body === undefined || arg.request.body.folderName === undefined) {
+	if (arg.request.body === undefined || arg.request.body.targetFolderName === undefined) {
 		throw new ReferenceError(_error.missingArgFolderName);
 	}
 	if (arg.request.body.sourceFolderPath === undefined) {
@@ -462,6 +475,9 @@ module.exports.rename = function (arg) {
 	if (arg.request.body.currentFiles === undefined || arg.request.body.currentFiles.length === 0) {
 		throw new ReferenceError(_error.missingArgCurrentFiles);
 	}
+	if (arg.request.body.moveToResize === undefined) {
+		throw new ReferenceError(_error.missingArgMove);
+	}
 	if (arg.request.body.newFiles === undefined || arg.request.body.newFiles === 0) {
 		throw new ReferenceError(_error.missingArgNewFiles);
 	}
@@ -469,17 +485,18 @@ module.exports.rename = function (arg) {
 	isTest = arg.isTest || false;
 	response = arg.response;
 	request = arg.request;
-	folderName = request.body.folderName;
+	targetFolderName = request.body.targetFolderName;
 
 	if (isTest) {
 		return "tested";
 	}
 
-	_ensureDestinationFolder({"constant": constant, "folderName": folderName});
+	_ensureDestinationFolder({"constant": constant, "targetFolderName": targetFolderName});
 
 	_movePhotos({
 		"currentFiles": request.body.currentFiles,
-		"folderName": folderName,
+		"targetFolderName": targetFolderName,
+		"moveToResize": request.body.moveToResize,
 		"newFiles": request.body.newFiles,
 		"sourceFolderPath": request.body.sourceFolderPath
 	}, function (moveArg) {

@@ -52,14 +52,14 @@ describe('Admin:', function () {
 					"constant": {
 						"resizeFolder": "test"
 					},
-					"folderName": 'testAlbum',
+					"targetFolderName": 'testAlbum',
 					"destinationRootPath": require('path').dirname(__dirname) + testFolder
 				};
 				verifiedPaths = page.ensureDestinationFolder(arg);
 				expect(verifiedPaths).to.be.an('array');
-				expect(verifiedPaths[0]).to.contain(testFolder + 'originals/' + arg.folderName);
-				expect(verifiedPaths[1]).to.contain(testFolder + 'photos/' + arg.folderName);
-				expect(verifiedPaths[2]).to.contain(testFolder + 'thumbs/' + arg.folderName);
+				expect(verifiedPaths[0]).to.contain(testFolder + 'originals/' + arg.targetFolderName);
+				expect(verifiedPaths[1]).to.contain(testFolder + 'photos/' + arg.targetFolderName);
+				expect(verifiedPaths[2]).to.contain(testFolder + 'thumbs/' + arg.targetFolderName);
 				expect(fs.existsSync(verifiedPaths[0])).to.be(true);
 				expect(fs.existsSync(verifiedPaths[1])).to.be(true);
 				expect(fs.existsSync(verifiedPaths[2])).to.be(true);
@@ -92,28 +92,64 @@ describe('Admin:', function () {
 				});
 			});
 			it('should fail without currentFiles argument (b4)', function (done) {
-				var arg = {"sourceFolderPath": '',"folderName": ""};
+				var arg = {"sourceFolderPath": '',"targetFolderName": ""};
 				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
 					done();
 				});
 			});
-			it('should fail without newFiles argument (b5)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "folderName": ""};
+			it('should fail without moveToResize argument (b5)', function (done) {
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": ""};
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgMove));
+					done();
+				});
+			});
+			it('should fail without newFiles argument (b6)', function (done) {
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": true};
 				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
 					done();
 				});
 			});
-			it('should pass (b6)', function (done) {
+			it('should pass by moving files (b7)', function (done) {
 				var arg1 = {
 						"destinationRootPath": "test/fixture/",
 						"sourceFolderPath": 'test/fixture/',
 						"currentFiles": ["renamable.txt"],
+						"moveToResize": true,
 						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
-						"folderName": ""
+						"targetFolderName": ""
+					},
+					arg2,
+					fs = require('fs');
+				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
+				arg2.sourceFolderPath = arg1.sourceFolderPath;
+				arg2.currentFiles = arg1.newFiles;
+				arg2.newFiles = arg1.currentFiles;
+				
+				page.movePhotos(arg1, function () {
+					var filename1 = arg1.destinationRootPath + arg1.newFiles[0];
+						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+
+					page.movePhotos(arg2, function () {
+						var filename2 = arg2.destinationRootPath + arg2.newFiles[0];
+						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
+						done();
+					});
+				});
+			});
+			it('should pass by renaming files (b8)', function (done) {
+				var arg1 = {
+						"destinationRootPath": "test/fixture/",
+						"sourceFolderPath": 'test/fixture/',
+						"currentFiles": ["renamable.txt"],
+						"moveToResize": false,
+						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
+						"targetFolderName": ""
 					},
 					arg2,
 					fs = require('fs');
@@ -298,7 +334,7 @@ describe('Admin:', function () {
 					"response": {},
 					"request": {
 						"body": {
-							"folderName": ""
+							"targetFolderName": ""
 						}
 					}
 				};
@@ -315,7 +351,7 @@ describe('Admin:', function () {
 					"response": {},
 					"request": {
 						"body": {
-							"folderName": "",
+							"targetFolderName": "",
 							"sourceFolderPath": ""
 						}
 					}
@@ -326,16 +362,36 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should fail without newFiles argument (d8)', function (done) {
+			it('should fail without moveToResize argument (d8)', function (done) {
 				var arg = {
 					"constant": {},
 					"isTest": true,
 					"response": {},
 					"request": {
 						"body": {
-							"folderName": "",
+							"targetFolderName": "",
 							"sourceFolderPath": "",
 							"currentFiles": ["fake"]
+						}
+					}
+				};
+				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgMove));
+					done();
+				});
+			});
+			it('should fail without newFiles argument (d9)', function (done) {
+				var arg = {
+					"constant": {},
+					"isTest": true,
+					"response": {},
+					"request": {
+						"body": {
+							"targetFolderName": "",
+							"sourceFolderPath": "",
+							"currentFiles": ["fake"],
+							"moveToResize": false
 						}
 					}
 				};
@@ -345,16 +401,17 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should pass (d9)', function (done) {
+			it('should pass by renaming (d10)', function (done) {
 				var arg = {
 					"constant": {},
 					"isTest": true,
 					"response": {},
 					"request": {
 						"body": {
-							"folderName": "",
+							"targetFolderName": "",
 							"sourceFolderPath": "",
 							"currentFiles": ["fake"],
+							"moveToResize": false,
 							"newFiles": ["fake"]
 						}
 					}
