@@ -12,7 +12,8 @@ var _error = {
 	"missingArgResponse": "Missing required response object",
 	"missingArgRequest": "Missing required request object",
 	"missingArgRequestBodyFolder": "Missing required folder in request object",
-	"missingArgSourcePath": "Missing required argument source path"
+	"missingArgSourcePath": "Missing required argument source path",
+	"missingArgTargetPath": "Missing required argument target path"
 };
 module.exports.error = _error;
 
@@ -162,7 +163,7 @@ module.exports.preview = function (arg) {
 					throw errorEach;
 				}
 				var filename = item.name + item.ext;
-				console.log("Processed image: " + filename + ";");
+				console.log("Thumbnail processed: " + filename + ";");
 			});
 		}
 		queue = require("async").queue(function (item, callback) {
@@ -225,12 +226,45 @@ function _ensureDestinationFolder(arg) {
 }
 module.exports.ensureDestinationFolder = _ensureDestinationFolder;
 
+/**
+Delete path (file or folder)
+
+@method deletePath
+@param {object} arg arguments
+@param {string} arg.path
+@param {boolean} [arg.isTest]
+**/
+function _deletePath(arg) {
+	var isTest,
+		targetPath;
+	if (arg === undefined) {
+		throw new ReferenceError(_error.missingArg);
+	}
+	if (arg.path === undefined) {
+		throw new ReferenceError(_error.missingArgTargetPath);
+	}
+	isTest = arg.isTest || false;
+	targetPath = arg.path;
+
+	if (isTest) {
+		return "tested";
+	}
+
+	require('rimraf')(targetPath, function(err) {
+		if (err) {
+			console.log("Delete failed on this path: " + targetPath + "; with this error message:" + err + ";");
+		}
+	});
+}
+module.exports.deletePath = _deletePath;
+
 
 /**
 Move source photo to destination originals folder
 
 @method movePhotos
 @param {object} arg arguments
+
 @param {string} arg.sourceFolderPath Original photo path excluding filename
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @param {string} arg.targetFolderName Destination folder's name for this photo batch inside the originals, photos, or thumbs folders
@@ -243,8 +277,10 @@ function _movePhotos(arg, callback) {
 	var afterRename,
 		beforeRename,
 		callbackCount = 0,
+		constant,
 		destinationPath,
 		files = [],
+		fs = require('fs'),
 		moveToResize,
 		targetFolderName,
 		queue,
@@ -264,9 +300,13 @@ function _movePhotos(arg, callback) {
 	if (arg.moveToResize === undefined) {
 		throw new ReferenceError(_error.missingArgMove);
 	}
+	if (arg.constant === undefined) {
+		throw new ReferenceError(_error.missingArgConstant);
+	}
 	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
 		throw new ReferenceError(_error.missingArgNewFiles);
 	}
+	constant = arg.constant;
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
 	destinationPath = decodeURIComponent(destinationPath);
 	moveToResize = arg.moveToResize;
@@ -313,16 +353,24 @@ function _movePhotos(arg, callback) {
 		if (callbackCount === (files.length + 1)) { // +1 for drain
 			callback({"files": files});
 		}
+
+		_deletePath({"path": sourceFolderPath + constant.tempThumbFolder});
 	}
 
 	queue = require("async").queue(function (file, errorCallback) {
-		require('fs').rename(file.source.path.value, file.destination.path.value, function (warningRename) {
-			if (warningRename) {
-				console.log("Image renaming warning: " + warningRename + "; Before filename=" + file.destination.path.value + "; After filename=" + file.source.path.value + ";");
+		fs.exists(file.source.path.value, function (exists) {
+			if (exists) {
+				fs.rename(file.source.path.value, file.destination.path.value, function (warningRename) {
+					if (warningRename) {
+						console.log("Image renaming warning: " + warningRename + "; Before filename=" + file.destination.path.value + "; After filename=" + file.source.path.value + ";");
+					}
+					possibleCallback();
+				});
+				errorCallback();
+			} else {
+				console.log("Image does not exist: " + file.source.path.value + ";");
 			}
-			possibleCallback();
 		});
-		errorCallback();
 	}, 1);
 
 	queue.push(files, function(errorEach){
@@ -340,6 +388,7 @@ Resize solo photo into originals, photos, thumbs folder
 
 @method resize
 @param {object} arg arguments
+@param {object} arg.constant Global variables
 @param {string} arg.targetFolderName Folder to become child of originals, photos, and thumbs
 **/
 module.exports.resize = function (arg) {
@@ -494,6 +543,7 @@ module.exports.rename = function (arg) {
 	_ensureDestinationFolder({"constant": constant, "targetFolderName": targetFolderName});
 
 	_movePhotos({
+		"constant": constant,
 		"currentFiles": request.body.currentFiles,
 		"targetFolderName": targetFolderName,
 		"moveToResize": request.body.moveToResize,

@@ -47,7 +47,7 @@
 	}
 	function bindEvents() {
 		$("#btnRename, #btnResize").click(function ($event) {
-			var $datepicker
+			var $datepicker,
 				moveToResize = this.id === "btnResize";
 			$event.preventDefault();
 			function getSelectedDate (formattedDate) {

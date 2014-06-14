@@ -24,7 +24,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha"
+    "test": "grunt validate"
   },
   "repository": {
     "type": "git",

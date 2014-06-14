@@ -107,16 +107,25 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should fail without newFiles argument (b6)', function (done) {
+			it('should fail without constant argument (b6)', function (done) {
 				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": true};
+				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
+					done();
+				});
+			});
+			it('should fail without newFiles argument (b7)', function (done) {
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": true, "constant": {}};
 				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
 					done();
 				});
 			});
-			it('should pass by moving files (b7)', function (done) {
+			it('should pass by moving files (b8)', function (done) {
 				var arg1 = {
+						"constant": {},
 						"destinationRootPath": "test/fixture/",
 						"sourceFolderPath": 'test/fixture/',
 						"currentFiles": ["renamable.txt"],
@@ -142,8 +151,9 @@ describe('Admin:', function () {
 					});
 				});
 			});
-			it('should pass by renaming files (b8)', function (done) {
+			it('should pass by renaming files (b9)', function (done) {
 				var arg1 = {
+						"constant": {},
 						"destinationRootPath": "test/fixture/",
 						"sourceFolderPath": 'test/fixture/',
 						"currentFiles": ["renamable.txt"],
@@ -191,9 +201,7 @@ describe('Admin:', function () {
 			});
 			it('should fail without response argument (c3)', function (done) {
 				var arg = {
-					"constant": {
-
-					},
+					"constant": {},
 					"isTest": true
 				};
 				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
