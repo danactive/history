@@ -108,7 +108,7 @@ describe('Admin:', function () {
 				});
 			});
 			it('should fail without constant argument (b6)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": true};
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": "true"};
 				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
@@ -116,20 +116,48 @@ describe('Admin:', function () {
 				});
 			});
 			it('should fail without newFiles argument (b7)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": true, "constant": {}};
+				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": "true", "constant": {}};
 				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
 					done();
 				});
 			});
-			it('should pass by moving files (b8)', function (done) {
+			it('should pass by avoiding to move files (b8)', function (done) {
+				var arg1 = {
+						"constant": {},
+						"destinationRootPath": "test/fixture/bad/",
+						"sourceFolderPath": 'test/fixture/',
+						"currentFiles": ["renamable.txt"],
+						"moveToResize": "false",
+						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
+						"targetFolderName": ""
+					},
+					arg2,
+					fs = require('fs');
+				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
+				arg2.sourceFolderPath = arg1.sourceFolderPath;
+				arg2.currentFiles = arg1.newFiles;
+				arg2.newFiles = arg1.currentFiles;
+				
+				page.movePhotos(arg1, function () {
+					var filename1 = arg1.sourceFolderPath + arg1.newFiles[0];
+						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+
+					page.movePhotos(arg2, function () {
+						var filename2 = arg2.sourceFolderPath + arg2.newFiles[0];
+						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
+						done();
+					});
+				});
+			});
+			it('should pass by moving files (b9)', function (done) {
 				var arg1 = {
 						"constant": {},
 						"destinationRootPath": "test/fixture/",
 						"sourceFolderPath": 'test/fixture/',
 						"currentFiles": ["renamable.txt"],
-						"moveToResize": true,
+						"moveToResize": "true",
 						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
 						"targetFolderName": ""
 					},
@@ -151,7 +179,7 @@ describe('Admin:', function () {
 					});
 				});
 			});
-			it('should pass by renaming files (b9)', function (done) {
+			it('should pass by renaming files (b10)', function (done) {
 				var arg1 = {
 						"constant": {},
 						"destinationRootPath": "test/fixture/",

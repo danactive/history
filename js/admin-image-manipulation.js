@@ -281,7 +281,7 @@ function _movePhotos(arg, callback) {
 		destinationPath,
 		files = [],
 		fs = require('fs'),
-		moveToResize,
+		isMoveToResize,
 		targetFolderName,
 		queue,
 		sourceFolderPath;
@@ -309,13 +309,13 @@ function _movePhotos(arg, callback) {
 	constant = arg.constant;
 	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
 	destinationPath = decodeURIComponent(destinationPath);
-	moveToResize = arg.moveToResize;
+	isMoveToResize = (arg.moveToResize === "true");
 	targetFolderName = arg.targetFolderName;
 	sourceFolderPath = decodeURIComponent(arg.sourceFolderPath);
 
 	arg.currentFiles.forEach(function (filename, index) {
 		beforeRename = sourceFolderPath + filename;
-		if (moveToResize === true) {
+		if (isMoveToResize) {
 			afterRename = destinationPath;
 			if (targetFolderName === "") {
 				afterRename += "/";
@@ -337,12 +337,13 @@ function _movePhotos(arg, callback) {
 				}
 			},
 			"destination": {
-				"targetFolderName": targetFolderName,
 				"filename": arg.newFiles[index],
+				"moved": isMoveToResize,
 				"path": {
 					"type": "absolute",
 					"value": afterRename
-				}
+				},
+				"targetFolderName": targetFolderName
 			}
 		});
 	});
@@ -392,15 +393,16 @@ Resize solo photo into originals, photos, thumbs folder
 @param {string} arg.targetFolderName Folder to become child of originals, photos, and thumbs
 **/
 module.exports.resize = function (arg) {
-	var path = require('path'),
-		constant = arg.constant,
-		gm = require('gm'),
+	var constant = arg.constant,
 		filename,
-		targetFolderName,
+		fs = require('fs'),
+		gm = require('gm'),
+		path = require('path'),
 		photo = { width: 800, height: 600 },
-		thumb = { width: 185, height: 45 },
 		response = arg.response,
-		request = arg.request;
+		request = arg.request,
+		targetFolderName,
+		thumb = { width: 185, height: 45 };
 	targetFolderName = (request.body && request.body.targetFolderName) || arg.targetFolderName; // POST or direct variable
 	filename = (request.body && request.body.filename) || arg.filename; // POST or direct variable
 	if (arg === undefined) {
@@ -414,7 +416,7 @@ module.exports.resize = function (arg) {
 	}
 
 	function transformImage (originalPaths) {
-		gm(originalPaths.join(''))
+		gm(originalPaths.join(""))
 			.autoOrient()
 			.stream(function (errOrient, stdout, stderr) {
 				var callbackCount = 0,
@@ -441,7 +443,7 @@ module.exports.resize = function (arg) {
 										"message": errors.join('; ')
 									},
 								},
-								"result": {
+								"payload": {
 									"paths": {
 										"original": originalPaths.join(''),
 										"photo": photoPaths.join(''),

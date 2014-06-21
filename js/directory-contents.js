@@ -97,19 +97,18 @@
 							});
 						}
 
-						if (this.id === "btnResize") {
+						if (moveToResize === true) {
 							$.each(response.files, function (x, file) {
 								resizeImage(file.destination);
 							});
 							output = newFiles.xml;
-						} else if (this.id === "btnRename") {
+						} else {
 							output = "Rename successfull";
 						}
 						
-						$uiCol1
-							.before("<textarea/>")
-							.children("textarea")
-							.val(output);
+						$("<textarea/>")
+							.val(output)
+							.prependTo($uiCol1);
 					},
 					"error": ajaxError
 				});
