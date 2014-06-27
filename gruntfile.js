@@ -95,5 +95,5 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('dev', ['jshint', 'develop', 'watch']);
 
-	grunt.registerTask('compile', ['jshint', 'uglify', 'dot:browser']);
+	grunt.registerTask('compile', ['jshint', 'dot:browser']);
 };

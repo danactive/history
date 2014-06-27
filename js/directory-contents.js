@@ -48,7 +48,7 @@
 	function bindEvents() {
 		$("#btnRename, #btnResize").click(function ($event) {
 			var $datepicker,
-				moveToResize = this.id === "btnResize";
+				isMoveToResize = this.id === "btnResize";
 			$event.preventDefault();
 			function getSelectedDate (formattedDate) {
 				var $uiCol1 = $('#directory-list-1'),
@@ -61,7 +61,7 @@
 					newFiles = window.walkPath.getRenamedFiles({
 						"filePrefix": formattedDate,
 						"photosInDay": (photoCount1 + photoCount2 + photoCount3),
-						"xmlStartPhotoId": (this.id === "btnResize") ? window.prompt("Starting XML photo ID?", 1) : 1
+						"xmlStartPhotoId": (isMoveToResize === true) ? window.prompt("Starting XML photo ID?", 1) : 1
 					}),
 					currentFiles = [],
 					sortArgs = {"attribute": 'data-filename'},
@@ -82,7 +82,7 @@
 					"data": {
 						"targetFolderName": year,
 						"currentFiles": currentFiles,
-						"moveToResize": moveToResize,
+						"moveToResize": isMoveToResize,
 						"newFiles": newFiles.filenames,
 						"sourceFolderPath": qs.folder
 					},
@@ -97,7 +97,7 @@
 							});
 						}
 
-						if (moveToResize === true) {
+						if (isMoveToResize === true) {
 							$.each(response.files, function (x, file) {
 								resizeImage(file.destination);
 							});
