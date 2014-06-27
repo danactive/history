@@ -4,10 +4,8 @@
 		parent = window.walkPath.setParentFolderLink({"querystring": qs});
 	function loadImages(response) {
 		var arg = {},
-			itemThird,
-			out1 = [],
-			out2 = [],
-			out3 = [],
+			columns,
+			html = [],
 			sortArgs = { "connectWith": '.ui-sortable', "items": "> li[data-type=image]" };
 		function generateThumbs(folder) {
 			$.ajax({
@@ -25,21 +23,33 @@
 				"error": ajaxError
 			});
 		}
-		arg.qs = qs;
-
-		itemThird = response.items.length / 3;
-		$.each(response.items, function (i, item) {
-			if (i < itemThird) {
-				out1.push(doT["directory-list-item"](item, arg));
-			} else if (i >= itemThird && i < (itemThird * 2)) {
-				out2.push(doT["directory-list-item"](item, arg));
-			} else {
-				out3.push(doT["directory-list-item"](item, arg));
+		function distributeIntoColumns(items) {
+			var columns = [[], [], []],
+				i = 0,
+				len = items.length;
+			for (i; i < len; i++) {
+				columns[Math.floor(i * columns.length / items.length)].push(items[i]);
 			}
+			return columns;
+		}
+		arg.qs = qs;
+		columns = distributeIntoColumns(response.items);
+
+		// Build HTML
+		$.each(columns, function (i, column) {
+			html.push("");
+			$.each(column, function (j, item) {
+				html[i] += doT["directory-list-item"](item, arg);
+			});
 		});
-		$('#directory-list-1').html(out1.join('')).sortable(sortArgs);
-		$('#directory-list-2').html(out2.join('')).sortable(sortArgs);
-		$('#directory-list-3').html(out3.join('')).sortable(sortArgs);
+		
+		//Push HTML to DOM
+		$.each(html, function (i, htm) {
+			$('.js-directory-list')
+				.eq(i)
+				.html(htm)
+				.sortable(sortArgs);
+		});
 
 		if (qs.preview === "true") {
 			generateThumbs(qs.folder);
@@ -51,28 +61,23 @@
 				isMoveToResize = this.id === "btnResize";
 			$event.preventDefault();
 			function getSelectedDate (formattedDate) {
-				var $uiCol1 = $('#directory-list-1'),
-					$uiCol2 = $('#directory-list-2'),
-					$uiCol3 = $('#directory-list-3'),
-					photoSelector = 'li[data-type=image]',
-					photoCount1 = $uiCol1.children(photoSelector).length,
-					photoCount2 = $uiCol2.children(photoSelector).length,
-					photoCount3 = $uiCol3.children(photoSelector).length,
+				var currentFiles = [],
 					newFiles = window.walkPath.getRenamedFiles({
 						"filePrefix": formattedDate,
-						"photosInDay": (photoCount1 + photoCount2 + photoCount3),
+						"photosInDay": $(".js-directory-list").children('li[data-type=image]').length,
 						"xmlStartPhotoId": (isMoveToResize === true) ? window.prompt("Starting XML photo ID?", 1) : 1
 					}),
-					currentFiles = [],
-					sortArgs = {"attribute": 'data-filename'},
-					currentFiles1 = $uiCol1.sortable( "toArray", sortArgs),
-					currentFiles2 = $uiCol2.sortable( "toArray", sortArgs),
-					currentFiles3 = $uiCol3.sortable( "toArray", sortArgs),
 					year = formattedDate.substring(0, 4);
-				currentFiles = currentFiles1.concat(currentFiles2).concat(currentFiles3);
-				currentFiles1 = undefined;
-				currentFiles2 = undefined;
-				currentFiles3 = undefined;
+
+				// list of ordered filenames
+				$('.js-directory-list').each(function (i, dom) {
+					var $element = $(dom)
+						filenames = [];
+					if ($element.children().length !== 0) {
+						filenames = $element.sortable( "toArray", {"attribute": 'data-filename'});
+						currentFiles = currentFiles.concat(filenames);
+					}
+				});
 
 				$datepicker.datepicker( "destroy" );
 
@@ -108,7 +113,7 @@
 						
 						$("<textarea/>")
 							.val(output)
-							.prependTo($uiCol1);
+							.appendTo("#controls");
 					},
 					"error": ajaxError
 				});
