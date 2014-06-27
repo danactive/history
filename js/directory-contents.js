@@ -24,7 +24,7 @@
 			});
 		}
 		function distributeIntoColumns(items) {
-			var columns = [[], [], []],
+			var columns = [[], [], [], []],
 				i = 0,
 				len = items.length;
 			for (i; i < len; i++) {
