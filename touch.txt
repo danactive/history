@@ -1,10 +1,11 @@
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Untitled Document</title>
-</head>
+Hello World
 
-<body>
-</body>
-</html>
+<<<<<<<HEAD
+Edited in Dreameaver 1057
+Edited in Dreameaver 1059
+
+===========
+
+Edited via Github.com 1059
+>>>>>>>>>origin/master
+
