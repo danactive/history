@@ -1,2 +1,2 @@
 
-https://svn.vancouverwebschool.com/svn/aliefe/webblog/admin
+2nd Hello world
