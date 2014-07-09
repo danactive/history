@@ -1,19 +1,4 @@
 Hello World
 
-<<<<<<< HEAD
-
-
-Edited in Dreameaver 1057
-Edited in Dreameaver 1059
-
-
-
-Edited via Github.com 1059
-
-
 Edited via Github.com 1115
-
-=======
-Edited via Github.com 1115
->>>>>>> 208a3d5aeeff75bcbfdfcd8a20af529165f50f7e
 
