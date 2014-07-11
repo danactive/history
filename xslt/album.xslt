@@ -37,14 +37,14 @@
 				<style>
 					<![CDATA[
 					body { margin: 0; padding: 0; }
-					#divAlbum, #divMapBubble, #divToolbox { font-family:verdana; font-size:11px; font-weight:bold; }
-					#divAlbum, #divToolbox { float: left; }
-					#divAlbum {
+					#albumBox, #divMapBubble, #divToolbox { font-family:verdana; font-size:11px; font-weight:bold; }
+					#albumBox, #divToolbox { float: left; }
+					#albumBox {
 						background-color: #323232;
 						width: 100%;
 					}
-					#divAlbum > ul { list-style: none; padding-left: 2px; }
-					#divAlbum .liAlbumPhoto {
+					#albumBox > ul { list-style: none; padding-left: 2px; }
+					#albumBox .liAlbumPhoto {
 						float: left;
 						margin: 6px;
 						background-color: #545454;
@@ -52,23 +52,25 @@
 						width: 195px; /* wrap friend characters */
 						height: 110px;
 					}
-					#divAlbum a { display: block; }
-					#divAlbum img { border-color: #545454; border-style: solid; border-width: 5px 5px 20px; }
-					#divAlbum .divAlbumPhotoImg a:hover img {
+					#albumBox a { display: block; }
+					#albumBox img { border-color: #545454; border-style: solid; border-width: 5px 5px 20px; }
+					#albumBox .albumBoxPhotoImg a:hover img {
 						border: 5px solid orange;
 						border-width: 5px 5px 20px;
 					}
-					#divAlbum .divAlbumPhotoCaption, #divAlbum .divAlbumPhotoChar {
+					#albumBox .albumBoxPhotoCaption, #albumBox .albumBoxPhotoChar {
 						margin: 0px 5px;
 					}
-					#divAlbum .divAlbumPhotoCaption { color: silver; }
-					#divAlbum .divAlbumPhotoChar { color: gray; }
+					#albumBox .albumBoxPhotoCaption { color: silver; }
+					#albumBox .albumBoxPhotoChar { color: gray; }
 					
-					#divAlbum .liAlbumPhoto.imgViewed img {
+					#albumBox .liAlbumPhoto.imgViewed img {
 						border: 5px solid white;
 						border-width: 5px 5px 20px;
 					}
-					#cboxOverlay { background-image: none; } /* allows colortheif */
+					#cboxOverlay { background-image: none; /* allows colortheif */ width: 75%; }
+					#mapBox { position: absolute; float: right; height: 100%; left: 75%; width: 25%; }
+					#albumBox.splitMode { width: 75%; }
 					]]>
 				</style>
 			</head>
@@ -89,7 +91,7 @@
 				</xsl:if>
 				<div style="clear: left;"></div>
 
-				<div id="divAlbum">
+				<div id="albumBox">
 					<ul>
 						<xsl:for-each select="album/photo|album/video">
 							<!-- ___________ Characters ________________ -->
@@ -135,7 +137,7 @@
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
-								<div class="divAlbumPhotoImg">
+								<div class="albumBoxPhotoImg">
 									<a rel="set">
 										<xsl:attribute name="href">
 											<xsl:text>media/photos/</xsl:text>
@@ -211,11 +213,11 @@
 										</img>
 									</a>
 								</div>
-								<div class="divAlbumPhotoCaption">
+								<div class="albumBoxPhotoCaption">
 									<xsl:if test="name(.) = 'video'">Video: </xsl:if>
 									<xsl:value-of select="thumb_caption"/>
 								</div>
-								<div class="divAlbumPhotoChar">
+								<div class="albumBoxPhotoChar">
 									<xsl:value-of select="$characters"/>
 								</div>
 							</li>

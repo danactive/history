@@ -3,6 +3,32 @@ A customizable lightbox plugin for jQuery.  See the [project page](http://jacklm
 
 ## Changelog:
 
+### Version 1.5.10 - 2014/6/26
+
+* Minor misc. tweaks (merging pull requests #611, #612, #615, #619, #620).
+
+### Version 1.5.9 - 2014/4/25
+
+* Fixed inline content bug when using child selectors.  Fixes #599
+
+### Version 1.5.8 - 2014/4/15
+
+* Fixed accidental leak of global variable.  References #591
+* Enabled strict mode. Fixes #597
+
+### Version 1.5.7 - 2014/4/15
+
+* Fix potential error when calling Colorbox directly. References #591
+* Potentially worked around browser limitation of reporting that an image height and width is 0 immediately after onload.  Fixes #535
+
+### Version 1.5.6 - 2014/4/4
+
+* Applied maxWidth and maxHeight to the initialWidth and initialHeight.  Fixes #391
+
+### Version 1.5.5 - 2014/3/13
+
+* Allow setting the overlay opacity through CSS, rather than having to use Colorbox's opacity property.  Fixes #580
+
 ### Version 1.5.4 - 2014/3/7
 
 * Fixed potential issue where IE9+ wouldn't close the modal when clicking on the overlay.  Fixes #576

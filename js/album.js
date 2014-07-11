@@ -6,7 +6,8 @@ jQuery.noConflict();
 var colorThief;
 jQuery(function() {
 	colorThief = new ColorThief();
-	jQuery('#divAlbum a').colorbox({
+	jQuery('#albumBox a').colorbox({
+		"right": '25%',
 		"onComplete": photoViewed,
 		"preloading": true,
 		"title": function () {
@@ -28,8 +29,9 @@ Array.min = function( array ){
 };
 function fMap(strAlbumName) {
 	var arrBubbles = [], arrLat = [], arrLon = [], arrMedia = [], intMediumCount = 0;
-	var themap = jQuery('<div id="divMap"></div>').css({'width':'100%','height':'500px'}).insertBefore('#divAlbum'); // create a div to host the map
-	var mapstraction = new mxn.Mapstraction('divMap', strMapEngine); // initialise the map with your choice of API
+	var themap = jQuery('<div id="mapBox"></div>').insertBefore('#albumBox'); // create a div to host the map
+	jQuery("#albumBox").addClass("splitMode");
+	var mapstraction = new mxn.Mapstraction('mapBox', strMapEngine); // initialise the map with your choice of API
 	
 	jQuery.ajax({
 		type: "GET",
@@ -141,7 +143,7 @@ function fMap(strAlbumName) {
 						intPrevLat = _strLat; intPrevLon = _strLon;
 
 						var marker = new mxn.Marker(new mxn.LatLonPoint(_strLat, _strLon));
-						strBubble = '<div id="divMapBubble">';
+						strBubble = '<div id="mapBoxBubble">';
 					}
 				}
 				if (intPrevLat == _strLat && intPrevLon == _strLon && i != arrBubbles.length) { // fill bubble
@@ -163,13 +165,13 @@ function fMap(strAlbumName) {
 
 					if (_strType == 'photo') {
 						intYear = _strFilename.substring(0, 4);
-						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">' + _strCaption + '</div>' + strDivExtRef;
+						strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">' + _strCaption + '</div>' + strDivExtRef;
 					} else if (_strType == 'link') {
-						strBubble += '<div class="divMapThumb"></div><div class="divMapCaption">' + _strName + '</div>' + strDivExtRef;
+						strBubble += '<div class="mapBoxThumb"></div><div class="mapBoxCaption">' + _strName + '</div>' + strDivExtRef;
 					} else if (_strType == 'video') {
 						intYear = _strFilename.substring(0, 4);
 						_strFilename = _strFilename.substr(0, _strFilename.indexOf('.')) + '.jpg'; // replace AVI with JPG
-						strBubble += '<div class="divMapThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="divMapCaption">Video: ' + _strCaption + '</div>' + strDivExtRef;
+						strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">Video: ' + _strCaption + '</div>' + strDivExtRef;
 					}
 				}
 			} // end loop

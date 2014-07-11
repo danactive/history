@@ -24,7 +24,7 @@
 			});
 		}
 		function distributeIntoColumns(items) {
-			var columns = [[], [], [], []],
+			var columns = [[], [], [], [], [], []],
 				i = 0,
 				len = items.length;
 			for (i; i < len; i++) {
@@ -71,7 +71,7 @@
 
 				// list of ordered filenames
 				$('.js-directory-list').each(function (i, dom) {
-					var $element = $(dom)
+					var $element = $(dom),
 						filenames = [];
 					if ($element.children().length !== 0) {
 						filenames = $element.sortable( "toArray", {"attribute": 'data-filename'});
