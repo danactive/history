@@ -26,3 +26,30 @@ util = {
 		return result;
 	}
 };
+function requireArg(params) {
+	function testType() {
+		switch (params.type) {
+			case "array":
+				if (typeof params.args[params.name] === "object" && params.args[params.name].length) {
+					return;
+				}
+				break;
+			case "function":
+				if (typeof params.args[params.name] === "function") {
+					return;
+				}
+				break;
+			case "string":
+				if (typeof params.args[params.name] === "string") {
+					return;
+				}
+				break;
+		}
+		throw new TypeError("Type mismatch '" + params.name + "' must be a '" + params.type + "';");
+	}
+	if (params.args[params.name] === undefined || params.args[params.name] === null) {
+		throw new ReferenceError("Required argument '" + params.name + "';");
+	}
+	testType();
+	return params.args[params.name];
+}

@@ -1,4 +1,4 @@
-/*global window*/
+/*global requireArg, window*/
 function map(options) {
 	"use strict";
 	function init() {
@@ -32,30 +32,8 @@ function map(options) {
 		mapstraction.setMapType(1); // 1 = Street, 2 Satellite
 		mapstraction.enableScrollWheelZoom();
 	}
-	function requireArg(argName, type) {
-		function testType() {
-			switch (type) {
-				case "array":
-					if (typeof options[argName] === "object" && options[argName].length) {
-						return;
-					}
-					break;
-				case "string":
-					if (typeof options[argName] === "string") {
-						return;
-					}
-					break;
-			}
-			throw new TypeError("Type mismatch '" + argName + "' must be a '" + type + "';");
-		}
-		if (options[argName] === undefined || options[argName] === null) {
-			throw new ReferenceError("Required argument '" + argName + "';");
-		}
-		testType();
-		return options[argName];
-	}
-	var centreGeoCode = requireArg("centre", "array"),
-		mapContainer = requireArg("container", "string"),
+	var centreGeoCode = requireArg({"args": options, "name": "centre", "type": "array"}),
+		mapContainer = requireArg({"args": options, "name": "container", "type": "string"}),
 		mapProvider = "leaflet",
 		mapstraction;
 

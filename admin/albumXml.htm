@@ -5,12 +5,23 @@
 		<title>Album XML</title>
 	</head>
 	<body>
-		<div id="mapBox"></div>
+		<column id="xml"></column>
+		<column id="json"></column>
+		<!-- Attach jQuery library -->
+		<script src="../lib/jquery/dist/jquery.min.js"></script>
+		<!-- Attach XML and JSON converter library -->
+		<script src="../lib/json_to_xml.js"></script>
+		<!-- Attach global utilities -->
+		<script src="../js/global.js"></script>
 		<!-- Attach XML utilities -->
 		<script src="../js/xml.js"></script>
 		<!-- Implementation -->
 		<script>
-			
+			function displayAlbum(response) {
+				jQuery("#xml").text(response.xmlText);
+				jQuery("#json").text(response.jsonText);
+			}
+			var xml = new xml({"gallery": 'demo', "album": 'sample', "callback": displayAlbum});
 		</script>
 	</body>
 </html>
