@@ -1,4 +1,4 @@
-/*global ajaxError, jQuery, JSON, fncFormatXml, requireArg, xmlToString, xml2json */
+/*global ajaxError, jQuery, JSON, util, requireArg, util */
 function xml(options) {
 	var album = requireArg({"args": options, "name": "album", "type": "string"}),
 		callback = requireArg({"args": options, "name": "callback", "type": "function"}),
@@ -7,10 +7,10 @@ function xml(options) {
 	jQuery.get('../gallery-' + gallery + '/album_' + album + '.xml')
 		.error(ajaxError)
 		.success(function (response) {
-			var json = jQuery.parseJSON(xml2json(response,''));
+			var json = jQuery.parseJSON(util.xml.convertToJsonString(response,''));
 			callback({
 				"jsonPretty": JSON.stringify(json, undefined, 2),
-				"xmlPretty": fncFormatXml(xmlToString(response)),
+				"xmlPretty": util.xml.formatPretty(util.xml.convertToString(response)),
 				"json": json,
 				"xml": response
 			});

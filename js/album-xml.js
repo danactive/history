@@ -1,4 +1,4 @@
-/*global __dirname, ajaxError, console, jQuery, require, xml2json, window */
+/*global __dirname, ajaxError, console, jQuery, require, util, window */
 var _error = {
 	"missingArg": "Missing required argument",
 	"missingArgAlbum": "Missing required argument album filename",
@@ -37,7 +37,7 @@ function _getAlbumXmlAsJson(arg) {
 	}
 
 	function ConvertXmlToJson(xmlData) {
-		var jsonAlbum = jQuery.parseJSON(xml2json(xmlData,'')),
+		var jsonAlbum = jQuery.parseJSON(util.xml.convertToJsonString(xmlData,'')),
 			xml = {};
 
 		jQuery.each(jsonAlbum.album.photo, function (x, photo) {

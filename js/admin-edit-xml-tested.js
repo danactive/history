@@ -1,4 +1,4 @@
-/*global $, album, fncFormatXml, json2xml*/
+/*global $, album, util*/
 var schema = {
 	"filename": "filename",
 	"city": "photo_city",
@@ -46,5 +46,5 @@ function SaveToJson() {
 	}
 	$('#listPhotos .selected').each(examineThumbs);
 	$('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
-	$('#rawAlbumJsonToXml').val(fncFormatXml(json2xml(album.json, "")));
+	$('#rawAlbumJsonToXml').val(util.xml.formatPretty(util.json.convertToXml(album.json, "")));
 }

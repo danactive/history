@@ -195,7 +195,7 @@ var album = {
 	}
 },
 ConvertXmlToJson = function(xmlData) {
-	album.json = jQuery.parseJSON(xml2json(xmlData,''));
+	album.json = jQuery.parseJSON(util.xml.convertToJsonString(xmlData,''));
 	$('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
 	album.Generate();
 },
