@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Album XML</title>
+		<link rel="stylesheet" href="../css/xml.css">
 	</head>
 	<body>
 		<column id="xml"></column>
@@ -18,8 +19,8 @@
 		<!-- Implementation -->
 		<script>
 			function displayAlbum(response) {
-				jQuery("#xml").text(response.xmlText);
-				jQuery("#json").text(response.jsonText);
+				jQuery("#xml").text(response.xmlPretty);
+				jQuery("#json").text(response.jsonPretty);
 			}
 			var xml = new xml({"gallery": 'demo', "album": 'sample', "callback": displayAlbum});
 		</script>

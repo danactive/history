@@ -1,4 +1,4 @@
-/*global ajaxError, jQuery, JSON, requireArg, xml2json*/
+/*global ajaxError, jQuery, JSON, fncFormatXml, requireArg, xmlToString, xml2json */
 function xml(options) {
 	var album = requireArg({"args": options, "name": "album", "type": "string"}),
 		callback = requireArg({"args": options, "name": "callback", "type": "function"}),
@@ -9,8 +9,8 @@ function xml(options) {
 		.success(function (response) {
 			var json = jQuery.parseJSON(xml2json(response,''));
 			callback({
-				"jsonText": JSON.stringify(json),
-				"xmlText": fncFormatXml(xmlToString(response)),
+				"jsonPretty": JSON.stringify(json, undefined, 2),
+				"xmlPretty": fncFormatXml(xmlToString(response)),
 				"json": json,
 				"xml": response
 			});

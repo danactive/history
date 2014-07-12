@@ -1,0 +1,3 @@
+body { margin: 0; padding: 0; }
+column { float: left; padding: 1%; width: 47%; white-space: pre; }
+column:first-child { background-color: silver; margin-right: 2%; }
