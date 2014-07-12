@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Slippy map</title>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+		<link rel="stylesheet" href="../css/map.css">
+	</head>
+	<body>
+		<div id="mapBox"></div>
+		<!-- Attach slippy map -->
+		<script src="../js/map.js"></script>
+		<!-- Attach XML utilities -->
+		<script src="../js/xml.js"></script>
+		<!-- Implementation -->
+		<script>
+			var centroid = [-123.1, 49.25],
+				map = new map({"centre": centroid, "container": 'mapBox'});
+		</script>
+	</body>
+</html>

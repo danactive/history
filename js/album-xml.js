@@ -1,10 +1,12 @@
 /*global __dirname, ajaxError, console, jQuery, require, xml2json, window */
 var _error = {
 	"missingArg": "Missing required argument",
-	"missingArgAlbum": "Missing required argument album filename"
+	"missingArgAlbum": "Missing required argument album filename",
+	"missingArgGallery": "Missing required argument gallery name"
 };
 
 function _getAlbumXmlAsJson(arg) {
+	"use strict";
 	var xmlJsonClass;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
@@ -13,7 +15,7 @@ function _getAlbumXmlAsJson(arg) {
 		throw new ReferenceError(_error.missingArgAlbum);
 	}
 	if (arg.gallery === undefined) {
-		throw new ReferenceError(_error.missingArgAlbum);
+		throw new ReferenceError(_error.missingArgGallery);
 	}
 
 	function comparePhotoFilename (xml, file) {
@@ -45,7 +47,7 @@ function _getAlbumXmlAsJson(arg) {
 		});
 
 		jQuery.ajax({
-			"url": '/api/walk-path?folder=gallery-dan/media/originals/2013/',
+			"url": '/api/walk-path?folder=gallery-' + arg.gallery + '/media/originals/2013/',
 			"success": function (response) {
 				var file = {};
 				jQuery.each(response.items, function (x, photo) {
