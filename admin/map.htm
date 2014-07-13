@@ -28,7 +28,11 @@
 		<script>
 			function displayAlbum(response) {
 				$.each(response.json.album.photo, function (i, photo) {
-					map.pin.add({"coordinates": [photo.geo.lon, photo.geo.lat], "open": (i === 0) });
+					map.pin.add({
+						"coordinates": [photo.geo.lon, photo.geo.lat],
+						"id": photo.filename,
+						"selected": (i === 0)
+					});
 				});
 			}
 			function bind() {
