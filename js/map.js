@@ -1,4 +1,13 @@
 /*global mxn, requireArg, window*/
+window.historyApp = {
+	"current": {
+		"locationIndex": 0
+	},
+	"map": {
+		"location": []
+	}
+};
+
 function Map(options) {
 	"use strict";
 	function init() {
@@ -9,12 +18,9 @@ function Map(options) {
 		slippyMap.addControls({ zoom: 'large', map_type: true });
 		slippyMap.setMapType(1); // 1 = Street, 2 Satellite
 		slippyMap.enableScrollWheelZoom();
-
-		window.historyMap = {};
-		window.historyMap.pins = [];
-		window.historyMap.current = { "pinIndex": 0 };
 	}
-	var centreGeoCode = requireArg({"args": options, "name": "centre", "type": "array"}),
+	var cache = window.historyApp,
+		centreGeoCode = requireArg({"args": options, "name": "centre", "type": "array"}),
 		mapContainer = requireArg({"args": options, "name": "container", "type": "string"}),
 		mapProvider = "leaflet",
 		slippyMap;
@@ -22,23 +28,26 @@ function Map(options) {
 	this.pin = {};
 	this.pin.add = function (args) {
 		var coordinates = requireArg({"args": args, "name": "coordinates", "type": "array"}),
-			marker = new mxn.Marker(new mxn.LatLonPoint(coordinates[1], coordinates[0])),
-			open = requireArg({"args": args, "name": "open", "type": "boolean"});
-		marker.setInfoBubble(coordinates[1]);
-		window.historyMap.pins.push({ "mxn": marker });
-		slippyMap.addMarker(marker);
+			open = requireArg({"args": args, "name": "open", "type": "boolean"}),
+			pushpin;
+
+		pushpin = new mxn.Marker(new mxn.LatLonPoint(coordinates[1], coordinates[0]));
+		pushpin.setInfoBubble(coordinates[1]);		
+		slippyMap.addMarker(pushpin);
+
+		cache.map.location.push({ "pin": pushpin });
 
 		if (open === true) {
-			marker.openBubble();
+			pushpin.openBubble();
 		}
 	};
 	this.pin.next = function () {
-		if (window.historyMap.pins.length - 1 === window.historyMap.current.pinIndex) {
-			window.historyMap.current.pinIndex = 0;
-		} else {
-			window.historyMap.current.pinIndex++;
+		var carouselBeginAgain = (cache.map.location.length - 1 === cache.current.locationIndex);
+		cache.current.locationIndex++;
+		if (carouselBeginAgain) {
+			cache.current.locationIndex = 0;
 		}
-		window.historyMap.pins[window.historyMap.current.pinIndex].mxn.openBubble();
+		cache.map.location[cache.current.locationIndex].pin.openBubble();
 	};
 
 	init();
