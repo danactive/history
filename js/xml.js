@@ -1,4 +1,4 @@
-/*global ajaxError, jQuery, JSON, util, requireArg, util */
+/*global ajaxError, jQuery, JSON, requireArg, util */
 function xml(options) {
 	var album = requireArg({"args": options, "name": "album", "type": "string"}),
 		callback = requireArg({"args": options, "name": "callback", "type": "function"}),
@@ -15,4 +15,6 @@ function xml(options) {
 				"xml": response
 			});
 		});
+
+	return this;
 }

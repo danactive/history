@@ -34,6 +34,11 @@ function requireArg(params) {
 					return;
 				}
 				break;
+			case "boolean":
+				if (typeof params.args[params.name] === "boolean") {
+					return;
+				}
+				break;
 			case "function":
 				if (typeof params.args[params.name] === "function") {
 					return;

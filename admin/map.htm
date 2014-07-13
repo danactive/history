@@ -7,7 +7,17 @@
 		<link rel="stylesheet" href="../css/map.css">
 	</head>
 	<body>
+		<div id="controls"><button id="next">Next pin</button></div>
 		<div id="mapBox"></div>
+		<!-- Attach Leaflet & Mapstraction -->
+		<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+		<script src="../lib/mxn-3.0.0-RC5/mxn.js"></script>
+		<script src="../lib/mxn-3.0.0-RC5/mxn.core.js"></script>
+		<script src="../lib/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
+		<!-- Attach jQuery library -->
+		<script src="../lib/jquery/dist/jquery.min.js"></script>
+		<!-- Attach XML and JSON converter library -->
+		<script src="../lib/json_to_xml.js"></script>
 		<!-- Attach global utilities -->
 		<script src="../js/global.js"></script>
 		<!-- Attach slippy map -->
@@ -16,8 +26,20 @@
 		<script src="../js/xml.js"></script>
 		<!-- Implementation -->
 		<script>
+			function displayAlbum(response) {
+				$.each(response.json.album.photo, function (i, photo) {
+					map.pin.add({"coordinates": [photo.geo.lon, photo.geo.lat], "open": (i === 0) });
+				});
+			}
+			function bind() {
+				$("#next").click(function () {
+					map.pin.next();
+				});
+			}
 			var centroid = [-123.1, 49.25],
-				map = new map({"centre": centroid, "container": 'mapBox'});
+				map = new map({"centre": centroid, "container": 'mapBox'}),
+				xml = new xml({"gallery": 'demo', "album": 'sample', "callback": displayAlbum});
+			bind();
 		</script>
 	</body>
 </html>
