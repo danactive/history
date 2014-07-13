@@ -1,5 +1,5 @@
 /*global ajaxError, jQuery, JSON, requireArg, util */
-function xml(options) {
+function Xml(options) {
 	var album = requireArg({"args": options, "name": "album", "type": "string"}),
 		callback = requireArg({"args": options, "name": "callback", "type": "function"}),
 		gallery = requireArg({"args": options, "name": "gallery", "type": "string"});

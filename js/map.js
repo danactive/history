@@ -1,5 +1,5 @@
 /*global mxn, requireArg, window*/
-function map(options) {
+function Map(options) {
 	"use strict";
 	function init() {
 		var centrePoint = new mxn.LatLonPoint(centreGeoCode[1], centreGeoCode[0]);
