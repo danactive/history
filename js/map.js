@@ -30,6 +30,11 @@ function MapProvider(options) {
 		return pushpin;
 	};
 
+	this.pin.centre = function (pushpin) {
+		var point = new mxn.LatLonPoint(pushpin.location.lat, pushpin.location.lon);
+		slippyMap.setCenter(point);
+	};
+
 	this.pin.select = function (pushpin) {
 		pushpin.openBubble();
 	};
@@ -71,14 +76,33 @@ function Map(options) {
 	};
 
 	this.pin.next = function () {
-		var carouselBeginAgain = (cache.items.length - 1 === cache.current.itemIndex),
-			currentId;
+		var carouselEndReached = (cache.items.length - 1 === cache.current.itemIndex),
+			currentId,
+			pushpin;
 		cache.current.itemIndex++;
-		if (carouselBeginAgain) {
+		if (carouselEndReached) {
 			cache.current.itemIndex = 0;
 		}
 		currentId = cache.items[cache.current.itemIndex];
-		mapProvider.pin.select(cache.lookup[currentId].pin);
+		pushpin = cache.lookup[currentId].pin;
+
+		mapProvider.pin.select(pushpin);
+		mapProvider.pin.centre(pushpin);
+	};
+
+	this.pin.prev = function () {
+		var carouselBeginReached = (0 === cache.current.itemIndex),
+			currentId,
+			pushpin;
+		cache.current.itemIndex--;
+		if (carouselBeginReached) {
+			cache.current.itemIndex = cache.items.length - 1;
+		}
+		currentId = cache.items[cache.current.itemIndex];
+		pushpin = cache.lookup[currentId].pin;
+
+		mapProvider.pin.select(pushpin);
+		mapProvider.pin.centre(pushpin);
 	};
 
 	return this;

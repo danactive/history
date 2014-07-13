@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="../css/map.css">
 	</head>
 	<body>
-		<div id="controls"><button id="next">Next pin</button></div>
+		<div id="controls"><button id="next">Next pin</button><button id="prev">Prev pin</button></div>
 		<div id="mapBox"></div>
 		<!-- Attach Leaflet & Mapstraction -->
 		<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
@@ -36,9 +36,8 @@
 				});
 			}
 			function bind() {
-				$("#next").click(function () {
-					map.pin.next();
-				});
+				$("#next").click(map.pin.next);
+				$("#prev").click(map.pin.prev);
 			}
 			var centroid = [-123.1, 49.25],
 				map = new Map({"centre": centroid, "container": 'mapBox'}),
