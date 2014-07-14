@@ -28,18 +28,22 @@
 		<script>
 			function displayAlbum(response) {
 				$.each(response.json.album.photo, function (i, photo) {
-					map.pin.add({
-						"coordinates": [photo.geo.lon, photo.geo.lat],
-						"id": photo.filename,
-						"selected": (i === 0)
-					});
+					var addOptions = {};
+					addOptions.id = photo.filename || i;
+					
+					if (photo.geo) {
+						addOptions.coordinates = [photo.geo.lon, photo.geo.lat];
+					}
+					
+					map.pin.add(addOptions);
 				});
+				map.pin.next();
 			}
 			function bind() {
 				$("#next").click(map.pin.next);
 				$("#prev").click(map.pin.prev);
 			}
-			var centroid = [-123.1, 49.25],
+			var centroid = [0, 0],
 				map = new Map({"centre": centroid, "container": 'mapBox'}),
 				xml = new Xml({"gallery": 'demo', "album": 'sample', "callback": displayAlbum});
 			bind();

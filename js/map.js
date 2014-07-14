@@ -57,22 +57,21 @@ function Map(options) {
 
 	this.pin = {};
 	this.pin.add = function (args) {
-		var coordinates = requireArg({"args": args, "name": "coordinates", "type": "array"}),
-			id = requireArg({"args": args, "name": "id", "type": "string"}),
-			selected = requireArg({"args": args, "name": "selected", "type": "boolean"}),
+		var id = requireArg({"args": args, "name": "id", "type": "string"}),
+			lookupOptions = {},
 			pushpin;
 
-		pushpin = mapProvider.pin.add({
-			"coordinates": coordinates,
-			"id": id
-		});
-		
-		cache.lookup[id] = { "pin": pushpin };
-		cache.items.push(id);
+		if (args.coordinates && args.coordinates.length) {
+			pushpin = mapProvider.pin.add({
+				"coordinates": args.coordinates,
+				"id": id
+			});
 
-		if (selected === true) {
-			mapProvider.pin.select(pushpin);
+			lookupOptions.pin = pushpin;
 		}
+		
+		cache.lookup[id] = lookupOptions;
+		cache.items.push(id);
 	};
 
 	this.pin.next = function () {
