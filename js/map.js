@@ -26,7 +26,7 @@ function MapProvider(options) {
 	me.pin = {};
 	me.pin.add = function (args) {
 		var pushpin = new mxn.Marker(new mxn.LatLonPoint(args.coordinates[1], args.coordinates[0]));
-		pushpin.setInfoBubble(args.id);
+		pushpin.setInfoBubble(args.html);
 		slippyMap.addMarker(pushpin);
 		return pushpin;
 	};
@@ -48,6 +48,7 @@ function Map(options) {
 
 	var cache = window.historyApp,
 		centreCoordinates = requireArg({"args": options, "name": "centre", "type": "array"}),
+		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
 		mapContainer = requireArg({"args": options, "name": "container", "type": "string"}),
 		mapProvider,
 		me = this;
@@ -59,13 +60,15 @@ function Map(options) {
 
 	me.pin = {};
 	me.pin.add = function (args) {
-		var id = requireArg({"args": args, "name": "id", "type": "string"}),
+		var html = requireArg({"args": args, "name": "html", "type": "string"}),
+			id = requireArg({"args": args, "name": "id", "type": "string"}),
 			lookupOptions = {},
 			pushpin;
 
 		if (args.coordinates && args.coordinates.length) {
 			pushpin = mapProvider.pin.add({
 				"coordinates": args.coordinates,
+				"html": html,
 				"id": id
 			});
 
@@ -80,6 +83,7 @@ function Map(options) {
 		var currentId,
 			isCarouselEndReached = (cache.items.length - 1 === cache.current.itemIndex),
 			pushpin;
+
 		cache.current.itemIndex++;
 		if (isCarouselEndReached) {
 			cache.current.itemIndex = 0;
@@ -100,6 +104,7 @@ function Map(options) {
 		var currentId,
 			isCarouselBeginReached = (0 === cache.current.itemIndex),
 			pushpin;
+
 		cache.current.itemIndex--;
 		if (isCarouselBeginReached) {
 			cache.current.itemIndex = cache.items.length - 1;
@@ -114,6 +119,12 @@ function Map(options) {
 
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
+	};
+
+	me.util = {}
+	me.util.filenamePath = function (filename) {
+		var year = filename.substring(0, 4);
+		return "../gallery-" + galleryName + "/media/thumbs/" + year + "/" + filename;
 	};
 
 	return me;
