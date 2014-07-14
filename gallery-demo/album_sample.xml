@@ -21,13 +21,19 @@
 	</photo>
 	<photo id="2">
 		<filename>2004-01-04-01.jpg</filename>
-		<geo>
-			<lat>49.3</lat>
-			<lon>-123.016667</lon>
-		</geo>
 		<photo_city>North Vancouver, BC</photo_city>
-		<photo_loc>Home</photo_loc>
+		<photo_loc>Dining Room</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
+	</photo>
+	<photo id="3">
+		<filename>2005-07-30-01.jpg</filename>
+		<geo>
+			<lat>49.15</lat>
+			<lon>-123.733</lon>
+		</geo>
+		<photo_city>Gabriola Island, BC</photo_city>
+		<photo_loc>Camping</photo_loc>
+		<thumb_caption>Starfish</thumb_caption>
 	</photo>
 	<video id="4">
 		<filename>2012-fireplace.mp4</filename>
@@ -42,14 +48,14 @@
 			<lon>-123.1</lon>
 		</geo>
 	</video>
-	<photo id="3">
-		<filename>2005-07-30-01.jpg</filename>
+	<photo id="5">
+		<filename>2014-02-08-14</filename>
 		<geo>
-			<lat>49.15</lat>
-			<lon>-123.733</lon>
+			<lat>49.194722</lat>
+			<lon>-123.183889</lon>
 		</geo>
-		<photo_city>Gabriola Island, BC</photo_city>
-		<photo_loc>Camping</photo_loc>
-		<thumb_caption>Starfish</thumb_caption>
+		<photo_city>Vancouver International Airport, BC</photo_city>
+		<photo_loc>YVR</photo_loc>
+		<thumb_caption>Airport</thumb_caption>
 	</photo>
 </album>

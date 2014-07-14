@@ -20,22 +20,23 @@ function MapProvider(options) {
 		slippyMap.enableScrollWheelZoom();
 	}
 
-	var slippyMap;
+	var me = this,
+		slippyMap;
 
-	this.pin = {};
-	this.pin.add = function (args) {
+	me.pin = {};
+	me.pin.add = function (args) {
 		var pushpin = new mxn.Marker(new mxn.LatLonPoint(args.coordinates[1], args.coordinates[0]));
 		pushpin.setInfoBubble(args.id);
 		slippyMap.addMarker(pushpin);
 		return pushpin;
 	};
 
-	this.pin.centre = function (pushpin) {
+	me.pin.centre = function (pushpin) {
 		var point = new mxn.LatLonPoint(pushpin.location.lat, pushpin.location.lon);
 		slippyMap.setCenter(point);
 	};
 
-	this.pin.select = function (pushpin) {
+	me.pin.select = function (pushpin) {
 		pushpin.openBubble();
 	};
 
@@ -48,15 +49,16 @@ function Map(options) {
 	var cache = window.historyApp,
 		centreCoordinates = requireArg({"args": options, "name": "centre", "type": "array"}),
 		mapContainer = requireArg({"args": options, "name": "container", "type": "string"}),
-		mapProvider;
+		mapProvider,
+		me = this;
 
 	mapProvider = new MapProvider({
 		"centreCoordinates": centreCoordinates,
 		"mapContainer": mapContainer
 	});
 
-	this.pin = {};
-	this.pin.add = function (args) {
+	me.pin = {};
+	me.pin.add = function (args) {
 		var id = requireArg({"args": args, "name": "id", "type": "string"}),
 			lookupOptions = {},
 			pushpin;
@@ -74,35 +76,45 @@ function Map(options) {
 		cache.items.push(id);
 	};
 
-	this.pin.next = function () {
-		var carouselEndReached = (cache.items.length - 1 === cache.current.itemIndex),
-			currentId,
+	me.pin.next = function () {
+		var currentId,
+			isCarouselEndReached = (cache.items.length - 1 === cache.current.itemIndex),
 			pushpin;
 		cache.current.itemIndex++;
-		if (carouselEndReached) {
+		if (isCarouselEndReached) {
 			cache.current.itemIndex = 0;
 		}
 		currentId = cache.items[cache.current.itemIndex];
 		pushpin = cache.lookup[currentId].pin;
 
+		if (pushpin === undefined) {
+			me.pin.next();
+			return;
+		}
+
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
 
-	this.pin.prev = function () {
-		var carouselBeginReached = (0 === cache.current.itemIndex),
-			currentId,
+	me.pin.prev = function () {
+		var currentId,
+			isCarouselBeginReached = (0 === cache.current.itemIndex),
 			pushpin;
 		cache.current.itemIndex--;
-		if (carouselBeginReached) {
+		if (isCarouselBeginReached) {
 			cache.current.itemIndex = cache.items.length - 1;
 		}
 		currentId = cache.items[cache.current.itemIndex];
 		pushpin = cache.lookup[currentId].pin;
 
+		if (pushpin === undefined) {
+			me.pin.prev();
+			return;
+		}
+
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
 
-	return this;
+	return me;
 }
