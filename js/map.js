@@ -4,16 +4,21 @@ window.historyApp = {
 		"itemIndex": 0
 	},
 	"items": [],
-	"lookup": {}
+	"lookup": {},
+	"map": {},
+	"previous": {
+		"itemIndex": 0
+	}
 };
 
 function MapProvider(options) {
 	"use strict";
 
 	function init() {
-		var centrePoint = new mxn.LatLonPoint(options.centreCoordinates[1], options.centreCoordinates[0]);
+		var cache = window.historyApp,
+			centrePoint = new mxn.LatLonPoint(options.centreCoordinates[1], options.centreCoordinates[0]);
 		
-		slippyMap = new mxn.Mapstraction(options.mapContainer, "leaflet");
+		slippyMap = new mxn.Mapstraction(cache.map.containerId, "leaflet");
 		slippyMap.setCenterAndZoom(centrePoint, 10);
 		slippyMap.addControls({ zoom: 'large', map_type: true });
 		slippyMap.setMapType(1); // 1 = Street, 2 Satellite
@@ -47,15 +52,16 @@ function Map(options) {
 	"use strict";
 
 	var cache = window.historyApp,
-		centreCoordinates = requireArg({"args": options, "name": "centre", "type": "array"}),
+		centreCoordinates = requireArg({"args": options.map, "name": "centre", "type": "array"}),
 		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
-		mapContainer = requireArg({"args": options, "name": "container", "type": "string"}),
+		mapContainerId = requireArg({"args": options.map, "name": "containerId", "type": "string"}),
 		mapProvider,
 		me = this;
 
+	cache.map.containerId = mapContainerId;
+
 	mapProvider = new MapProvider({
-		"centreCoordinates": centreCoordinates,
-		"mapContainer": mapContainer
+		"centreCoordinates": centreCoordinates
 	});
 
 	me.pin = {};
@@ -92,10 +98,15 @@ function Map(options) {
 		pushpin = cache.lookup[currentId].pin;
 
 		if (pushpin === undefined) {
-			me.pin.next();
+			if (options.events.highlightOmittedPin) {
+				options.events.highlightOmittedPin();
+			}
 			return;
 		}
 
+		if (options.events.highlightPlottedPin) {
+			options.events.highlightPlottedPin();
+		}
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
@@ -113,15 +124,20 @@ function Map(options) {
 		pushpin = cache.lookup[currentId].pin;
 
 		if (pushpin === undefined) {
-			me.pin.prev();
+			if (options.events.highlightOmittedPin) {
+				options.events.highlightOmittedPin();
+			}
 			return;
 		}
 
+		if (options.events.highlightPlottedPin) {
+			options.events.highlightPlottedPin();
+		}
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
 
-	me.util = {}
+	me.util = {};
 	me.util.filenamePath = function (filename) {
 		var year = filename.substring(0, 4);
 		return "../gallery-" + galleryName + "/media/thumbs/" + year + "/" + filename;

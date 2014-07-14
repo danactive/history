@@ -48,7 +48,22 @@
 					"gallery": 'demo',
 					"album": 'sample'
 				},
-				map = new Map({"centre": [0, 0], "container": 'mapBox',"gallery": galleryAlbum.gallery, "album": galleryAlbum.album}),
+				map = new Map({
+					"album": galleryAlbum.album,
+					"gallery": galleryAlbum.gallery,
+					"events": {
+						"highlightPlottedPin": function () {
+							jQuery("#mapBox").removeClass("subtle");
+						},
+						"highlightOmittedPin": function () {
+							jQuery("#mapBox").addClass("subtle");	
+						}
+					},
+					"map": {
+						"centre": [0, 0],
+						"containerId": 'mapBox'
+					}
+				}),
 				xml = new Xml({"gallery": galleryAlbum.gallery, "album": galleryAlbum.album, "callback": displayAlbum});
 			bind();
 		</script>
