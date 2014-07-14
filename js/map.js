@@ -45,6 +45,10 @@ function MapProvider(options) {
 		pushpin.openBubble();
 	};
 
+	me.pin.unselect = function (pushpin) {
+		pushpin.closeBubble();
+	};
+
 	init();
 }
 
@@ -88,7 +92,16 @@ function Map(options) {
 	me.pin.next = function () {
 		var currentId,
 			isCarouselEndReached = (cache.items.length - 1 === cache.current.itemIndex),
+			previousId,
+			previousPushpin,
 			pushpin;
+
+		cache.previous.itemIndex = cache.current.itemIndex;
+		previousId = cache.items[cache.previous.itemIndex];
+		previousPushpin = cache.lookup[previousId].pin;
+		if (previousPushpin !== undefined) {
+			mapProvider.pin.unselect(previousPushpin);
+		}
 
 		cache.current.itemIndex++;
 		if (isCarouselEndReached) {
@@ -107,6 +120,7 @@ function Map(options) {
 		if (options.events.highlightPlottedPin) {
 			options.events.highlightPlottedPin();
 		}
+
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
@@ -114,7 +128,16 @@ function Map(options) {
 	me.pin.prev = function () {
 		var currentId,
 			isCarouselBeginReached = (0 === cache.current.itemIndex),
+			previousId,
+			previousPushpin,
 			pushpin;
+
+		cache.previous.itemIndex = cache.current.itemIndex;
+		previousId = cache.items[cache.previous.itemIndex];
+		previousPushpin = cache.lookup[previousId].pin;
+		if (previousPushpin !== undefined) {
+			mapProvider.pin.unselect(previousPushpin);
+		}
 
 		cache.current.itemIndex--;
 		if (isCarouselBeginReached) {
@@ -133,6 +156,7 @@ function Map(options) {
 		if (options.events.highlightPlottedPin) {
 			options.events.highlightPlottedPin();
 		}
+
 		mapProvider.pin.select(pushpin);
 		mapProvider.pin.centre(pushpin);
 	};
