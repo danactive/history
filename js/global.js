@@ -44,6 +44,11 @@ function requireArg(params) {
 					return;
 				}
 				break;
+			case "number":
+				if (typeof params.args[params.name] === "number") {
+					return;
+				}
+				break;
 			case "string":
 				if (typeof params.args[params.name] === "string") {
 					return;
