@@ -27,164 +27,139 @@ Array.max = function( array ){
 Array.min = function( array ){
 	return Math.min.apply( Math, array );
 };
-function fMap(strAlbumName) {
+function fMap(args) {
 	var arrBubbles = [], arrLat = [], arrLon = [], arrMedia = [], intMediumCount = 0;
 	var themap = jQuery('<div id="mapBox"></div>').insertBefore('#albumBox'); // create a div to host the map
 	jQuery("#albumBox").addClass("splitMode");
-	var mapstraction = new mxn.Mapstraction('mapBox', strMapEngine); // initialise the map with your choice of API
-	
-	jQuery.ajax({
-		type: "GET",
-		url: 'album_' + strAlbumName + '.xml',
-		dataType: "xml",
-		timeout: 1000,
-		error: function() { window.alert('Error loading XML document'); },
-		success: function(objXml) {
-			if (strMapEngine === 'google') {
-				intZoom = parseInt(jQuery('album_meta>geo>google_zoom', objXml).text(), 10);
-			} else {
-				intZoom = parseInt(jQuery('album_meta>geo>google_zoom', objXml).text(), 10); // currently Google exclusive
+
+	var mapstraction = new mxn.Mapstraction('mapBox', "leaflet"); // initialise the map with your choice of API
+
+	function displayAlbum (response) {
+		intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
+
+		// build MARKER for photo
+		jQuery.each(response.json.album.photo, function(x, item) {
+			var strCaption = item.photo_loc;
+			if (strCaption === '' || strCaption == null) {
+				strCaption = item.thumb_caption;
+			}
+			var strId = item.photo_id; // old node
+			if (strId === '' || strId === null || strId === undefined) {
+				strId = item['@id']; // new attr
 			}
 
-			// build MARKER for photo
-			jQuery('photo>geo', objXml).each(function() {
-				var objTagGeo = jQuery(this);
-				var objTagMedium = objTagGeo.parent();
-				var strCaption = jQuery('photo_loc', objTagMedium).text();
-				if (strCaption === '' || strCaption == null) {
-					strCaption = jQuery('thumb_caption', objTagMedium).text();
-				}
-				var strId = jQuery('photo_id', objTagMedium).text(); // old node
-				if (strId == '' || strId == null)
-					strId = jQuery(objTagMedium).attr('id'); // new attr
+			var objMedium = new fnMedium('photo');
+			objMedium.id = strId;
+			objMedium.name = item.name;
+			objMedium.src = item.source;
+			objMedium.filename = item.filename;
+			objMedium.caption = strCaption;
 
-				var objMedium = new fnMedium('photo');
-				objMedium.id = strId;
-				objMedium.name = jQuery('name', objTagMedium).text();
-				objMedium.src = jQuery('source', objTagMedium).text();
-				objMedium.filename = jQuery('filename', objTagMedium).text();
-				objMedium.caption = strCaption;
-
-				arrLat.push(jQuery('lat', objTagGeo).text()); arrLon.push(jQuery('lon', objTagGeo).text()); // set latitude and longitude in array for centring map
+			if (item.geo) {
+				arrLat.push(item.geo.lat); arrLon.push(item.geo.lon); // set latitude and longitude in array for centring map
 				// lat and lon used for sorting markers; marker type, photo filename, photo id for lightbox ref, lightbox caption
-				arrBubbles.push(jQuery('lat', objTagGeo).text() + '|^|' + jQuery('lon', objTagGeo).text() + '|^|' + intMediumCount);
-				arrMedia.push(objMedium);
-				intMediumCount += 1;
-			}); //close each(
+				arrBubbles.push(item.geo.lat + '|^|' + item.geo.lon + '|^|' + intMediumCount);
+			}
+			arrMedia.push(objMedium);
+			intMediumCount += 1;
+		}); //close each(
 
-			// build MARKER for link
-			jQuery('link>geo', objXml).each(function() {
-				var objTagGeo = jQuery(this);
-				var objTagMedium = objTagGeo.parent();
-				var strId = jQuery('photo_id', objTagMedium).text(); // old node
-				if (strId == '' || strId == null)
-					strId = jQuery(objTagMedium).attr('id'); // new attr
+		// build MARKER for video
+		jQuery.each(response.json.album.video, function(x, item) {
+			var strCaption = item.photo_loc;
+			if (strCaption == '' || strCaption == null) {
+				strCaption = item.thumb_caption;
+			}
+			var strId = item.photo_id; // old node
+			if (strId === '' || strId === null || strId === undefined) {
+				strId = item['@id']; // new attr
+			}
 
-				var objMedium = new fnMedium('link');
-				objMedium.id = strId;
-				objMedium.name = jQuery('name', objTagMedium).text();
-				objMedium.src = jQuery('source', objTagMedium).text();
+			var objMedium = new fnMedium('video');
+			objMedium.id = strId;
+			objMedium.name = item.name;
+			objMedium.src = item.source;
+			objMedium.filename = item.filename;
+			objMedium.caption = strCaption;
 
-				arrLat.push(jQuery('lat', objTagGeo).text()); arrLon.push(jQuery('lon', objTagGeo).text()); // set latitude and longitude in array for centring map
+			if (item.geo) {
+				arrLat.push(item.geo.lat); arrLon.push(item.geo.lon); // set latitude and longitude in array for centring map
 				// lat and lon used for sorting markers; marker type, wikipedia article name
-				arrBubbles.push(jQuery('lat', objTagGeo).text() + '|^|' + jQuery('lon', objTagGeo).text() + '|^|' + intMediumCount);
-				arrMedia.push(objMedium);
-				intMediumCount += 1;
-			}); //close each(
+				arrBubbles.push(item.geo.lat + '|^|' + item.geo.lon + '|^|' + intMediumCount);
+			}
+			arrMedia.push(objMedium);
+			intMediumCount += 1;
+		}); //close each(
 
-			// build MARKER for video
-			jQuery('video>geo', objXml).each(function() {
-				var objTagGeo = jQuery(this);
-				var objTagMedium = objTagGeo.parent();
-				var strCaption = jQuery('photo_loc', objTagMedium).text();
-				if (strCaption == '' || strCaption == null)
-					strCaption = jQuery('thumb_caption', objTagMedium).text();
-				var strId = jQuery('photo_id', objTagMedium).text(); // old node
-				if (strId == '' || strId == null)
-					strId = jQuery(objTagMedium).attr('id'); // new attr
+		arrBubbles.sort();
 
-				var objMedium = new fnMedium('video');
-				objMedium.id = strId;
-				objMedium.name = jQuery('name', objTagMedium).text();
-				objMedium.src = jQuery('source', objTagMedium).text();
-				objMedium.filename = jQuery('filename', objTagMedium).text();
-				objMedium.caption = strCaption;
+		// start loop; output markers
+		var intPrevLat = '', intPrevLon = '';
+		for (i = 0; i <= arrBubbles.length; i++) {
+			if (i != arrBubbles.length) arrBubble = arrBubbles[i].split('|^|');
+			// local var from array
+			_strLat = arrBubble[0]; _strLon = arrBubble[1];
+			_intMediumCount = arrBubble[2];
+			_strType = arrMedia[_intMediumCount].getType();
+			_strId = arrMedia[_intMediumCount].getId();
+			_strName = arrMedia[_intMediumCount].getName(); _strSource = arrMedia[_intMediumCount].getSrc();
+			_strFilename = arrMedia[_intMediumCount].getFilename(); _strCaption = arrMedia[_intMediumCount].getCaption();
 
-				arrLat.push(jQuery('lat', objTagGeo).text()); arrLon.push(jQuery('lon', objTagGeo).text()); // set latitude and longitude in array for centring map
-				// lat and lon used for sorting markers; marker type, wikipedia article name
-				arrBubbles.push(jQuery('lat', objTagGeo).text() + '|^|' + jQuery('lon', objTagGeo).text() + '|^|' + intMediumCount);
-				arrMedia.push(objMedium);
-				intMediumCount += 1;
-			}); //close each(
-
-			arrBubbles.sort();
-
-			// start loop; output markers
-			var intPrevLat = '', intPrevLon = '';
-			for (i = 0; i <= arrBubbles.length; i++) {
-				if (i != arrBubbles.length) arrBubble = arrBubbles[i].split('|^|');
-				// local var from array
-				_strLat = arrBubble[0]; _strLon = arrBubble[1];
-				_intMediumCount = arrBubble[2];
-				_strType = arrMedia[_intMediumCount].getType();
-				_strId = arrMedia[_intMediumCount].getId();
-				_strName = arrMedia[_intMediumCount].getName(); _strSource = arrMedia[_intMediumCount].getSrc();
-				_strFilename = arrMedia[_intMediumCount].getFilename(); _strCaption = arrMedia[_intMediumCount].getCaption();
-
-				if (intPrevLat != _strLat || intPrevLon != _strLon || i == 0 || i == arrBubbles.length) { // open/close bubble
-					if (i != 0 || i == arrBubbles.length) {
-						strBubble += '</div>';
-						marker.setInfoBubble(strBubble);
-						mapstraction.addMarker(marker);
-						marker.openBubble();
-					}
-
-					if (i != arrBubbles.length) { // open bubble
-						intPrevLat = _strLat; intPrevLon = _strLon;
-
-						var marker = new mxn.Marker(new mxn.LatLonPoint(_strLat, _strLon));
-						strBubble = '<div id="mapBoxBubble">';
-					}
+			if (intPrevLat != _strLat || intPrevLon != _strLon || i == 0 || i == arrBubbles.length) { // open/close bubble
+				if (i != 0 || i == arrBubbles.length) {
+					strBubble += '</div>';
+					marker.setInfoBubble(strBubble);
+					mapstraction.addMarker(marker);
+					marker.openBubble();
 				}
-				if (intPrevLat == _strLat && intPrevLon == _strLon && i != arrBubbles.length) { // fill bubble
-					intPrevLat = _strLat; intPrevLon = _strLon; // update prev coords
 
-					if (_strName != '') {
-						if (_strSource === 'wikipedia') {
-							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://en.wikipedia.org/wiki/' + _strName + '">Popup Wikipedia</a></div>';
-						} else if (_strSource === 'google') {
-							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://www.google.com/search?q=' + _strName + '">Popup Google</a></div>';
-						} else if (_strSource === 'facebook') {
-							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="https://www.facebook.com/' + _strName + '">Popup Facebook</a></div>';
-						} else if (_strSource === "") {
-							strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="' + _strName + '">Popup Web</a></div>';
-						}
-					} else {
-						strDivExtRef = '';
-					}
+				if (i != arrBubbles.length) { // open bubble
+					intPrevLat = _strLat; intPrevLon = _strLon;
 
-					if (_strType == 'photo') {
-						intYear = _strFilename.substring(0, 4);
-						strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">' + _strCaption + '</div>' + strDivExtRef;
-					} else if (_strType == 'link') {
-						strBubble += '<div class="mapBoxThumb"></div><div class="mapBoxCaption">' + _strName + '</div>' + strDivExtRef;
-					} else if (_strType == 'video') {
-						intYear = _strFilename.substring(0, 4);
-						_strFilename = _strFilename.substr(0, _strFilename.indexOf('.')) + '.jpg'; // replace AVI with JPG
-						strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">Video: ' + _strCaption + '</div>' + strDivExtRef;
-					}
+					var marker = new mxn.Marker(new mxn.LatLonPoint(_strLat, _strLon));
+					strBubble = '<div id="mapBoxBubble">';
 				}
-			} // end loop
+			}
+			if (intPrevLat == _strLat && intPrevLon == _strLon && i != arrBubbles.length) { // fill bubble
+				intPrevLat = _strLat; intPrevLon = _strLon; // update prev coords
 
-			// display the map centered on a latitude and longitude (Google zoom levels)
-			var pointCentre = new mxn.LatLonPoint((Array.max(arrLat) + Array.min(arrLat)) / 2, (Array.max(arrLon) + Array.min(arrLon)) / 2);
+				if (_strName !== '' && _strName !== undefined) {
+					if (_strSource === 'wikipedia') {
+						strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://en.wikipedia.org/wiki/' + _strName + '">Popup Wikipedia</a></div>';
+					} else if (_strSource === 'google') {
+						strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="http://www.google.com/search?q=' + _strName + '">Popup Google</a></div>';
+					} else if (_strSource === 'facebook') {
+						strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="https://www.facebook.com/' + _strName + '">Popup Facebook</a></div>';
+					} else if (_strSource === "") {
+						strDivExtRef = '<div><a href="javascript:;" onclick="fOpenWin(this.title,1000,900);" title="' + _strName + '">Popup Web</a></div>';
+					}
+				} else {
+					strDivExtRef = '';
+				}
 
-			mapstraction.setCenterAndZoom(pointCentre, intZoom);
-			mapstraction.addControls({ zoom: 'large', map_type: true });
-			mapstraction.setMapType(1); // Google 1 = Street, 2 Satellite
-			mapstraction.enableScrollWheelZoom();
-		} // close success
-	}); //close ajax(
+				if (_strType == 'photo') {
+					intYear = _strFilename.substring(0, 4);
+					strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">' + _strCaption + '</div>' + strDivExtRef;
+				} else if (_strType == 'link') {
+					strBubble += '<div class="mapBoxThumb"></div><div class="mapBoxCaption">' + _strName + '</div>' + strDivExtRef;
+				} else if (_strType == 'video') {
+					intYear = _strFilename.substring(0, 4);
+					_strFilename = _strFilename.substr(0, _strFilename.indexOf('.')) + '.jpg'; // replace AVI with JPG
+					strBubble += '<div class="mapBoxThumb"><a href="javascript:;" onclick="triggerLightboxOpen(this,\'' + _strId + '\');"><img src="media/thumbs/' + intYear + '/' + _strFilename + '" /></a></div><div class="mapBoxCaption">Video: ' + _strCaption + '</div>' + strDivExtRef;
+				}
+			}
+		} // end loop
+
+		// display the map centered on a latitude and longitude (Google zoom levels)
+		var pointCentre = new mxn.LatLonPoint((Array.max(arrLat) + Array.min(arrLat)) / 2, (Array.max(arrLon) + Array.min(arrLon)) / 2);
+
+		mapstraction.setCenterAndZoom(pointCentre, intZoom);
+		mapstraction.addControls({ zoom: 'large', map_type: true });
+		mapstraction.setMapType(1); // Google 1 = Street, 2 Satellite
+		mapstraction.enableScrollWheelZoom();
+	} // close displayAlbum
+
+	xml = new Xml({"gallery": args.gallery, "album": args.album, "callback": displayAlbum});
 }
 function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
 	v = 'v1.6.0 2006-11-04; like:; req:;';
@@ -231,10 +206,11 @@ function fnMedium(strType) { // create class
 }
 function photoViewed() {
 	var dominateColour,
-		sourceImage = jQuery("img.cboxPhoto").get(0);
-	dominateColour = colorThief.getColor(sourceImage);
+		photoImage = jQuery("img.cboxPhoto").get(0),
+		thumbImage = this;
+	dominateColour = colorThief.getColor(photoImage);
 
-	jQuery(this).parents('li').addClass('imgViewed'); //  change thumb to white
+	jQuery(thumbImage).parents('li').addClass('imgViewed'); //  change thumb to white
 
 	// lightbox
 	jQuery("#cboxOverlay").css("background-color", "rgb(" + dominateColour[0] + "," + dominateColour[1] + "," + dominateColour[2] + ")"); // change background colour
@@ -248,3 +224,15 @@ function triggerLightboxOpen(objMapLink, strPhotoId) {
 		.find('a')
 		.trigger('click');
 }
+
+(function () { // bind
+	var $albumBox = jQuery("#albumBox"),
+		album = $albumBox.attr("data-album"),
+		gallery = $albumBox.attr("data-gallery");
+	jQuery("#linkMap").click(function () {
+		fMap({
+			"album": album,
+			"gallery": gallery
+		});
+	});
+})();

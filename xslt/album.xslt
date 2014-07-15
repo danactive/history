@@ -15,21 +15,7 @@
 			<head>
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
-				<script src="../lib/jquery/dist/jquery.min.js"></script><!-- jQuery framework -->
-				<!-- Photo -->
-				<script src="../lib/jquery-colorbox/jquery.colorbox-min.js"></script>
 				<link  href="../lib/jquery-colorbox/example1/colorbox.css" rel="stylesheet" media="screen" />
-				<script src="../lib/color-thief.js"></script>
-				<!-- Map -->
-				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-				<script>strMapEngine = 'leaflet';</script>
-				<script src="../lib/mxn-3.0.0-RC5/mxn.js"></script>
-				<script src="../lib/mxn-3.0.0-RC5/mxn.core.js"></script>
-				<script src="../lib/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
-				<!--script src="../lib/mapstraction.js"></script-->
-				<script src="../js/global.js"></script>
-				<script src="../js/album.js"></script>
-
 				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
 				<!--[if lte IE 8]>
 				    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
@@ -79,19 +65,18 @@
 				<!-- XML schema 1.5 thru 2.0 had geo tag in this format -->
 				<xsl:if test="number(/album/album_meta/album_version) &gt;= '1.5' and number(/album/album_meta/album_version) &lt; '2'">
 					<div id="divToolbox">
-						<a href="javascript:;" id="linkMap">
-							<xsl:attribute name="onclick">
-								<xsl:text>fMap('</xsl:text>
-								<xsl:value-of select="$photo__album_name" />
-								<xsl:text>');</xsl:text>
-							</xsl:attribute>
-							Map this album
-						</a>
+						<a href="javascript:;" id="linkMap">Map this album</a>
 					</div>
 				</xsl:if>
 				<div style="clear: left;"></div>
 
 				<div id="albumBox">
+					<xsl:attribute name="data-album">
+						<xsl:value-of select="$photo__album_name" />
+					</xsl:attribute>
+					<xsl:attribute name="data-gallery">
+						<xsl:value-of select="$galleryDir"/>
+					</xsl:attribute>
 					<ul>
 						<xsl:for-each select="album/photo|album/video">
 							<!-- ___________ Characters ________________ -->
@@ -224,6 +209,26 @@
 						</xsl:for-each>
 					</ul>
 				</div>
+				<!-- Attach jQuery library -->
+				<script src="../lib/jquery/dist/jquery.min.js"></script>
+				<!-- Photo -->
+				<script src="../lib/jquery-colorbox/jquery.colorbox-min.js"></script>
+				<script src="../lib/color-thief.js"></script>
+				<!-- Attach Leaflet & Mapstraction -->
+				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.core.js"></script>
+				<script src="../lib/mxn-3.0.0-RC5/mxn.leaflet.core.js"></script>
+				<!-- Attach XML and JSON converter library -->
+				<script src="../lib/json_to_xml.js"></script>
+				<!-- Attach global utilities -->
+				<script src="../js/global.js"></script>
+				<!-- Attach slippy map -->
+				<script src="../js/map.js"></script>
+				<!-- Attach XML utilities -->
+				<script src="../js/xml.js"></script>
+				<!-- Attach album -->
+				<script src="../js/album.js"></script>
 			</body>
 		</html>
 	</xsl:template>
