@@ -29,7 +29,7 @@
 			function displayAlbum(response) {
 				$.each(response.json.album.photo, function (i, photo) {
 					var addOptions = {};
-					addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(photo.filename) + "'></div>";
+					addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(photo.filename) + "'></div><div class='caption'>" + photo.thumb_caption + "</div>";
 					addOptions.id = photo.filename || i;
 					
 					if (photo.geo) {
@@ -44,27 +44,30 @@
 				$("#next").click(map.pin.next);
 				$("#prev").click(map.pin.prev);
 			}
-			var galleryAlbum = {
+			var map,
+				meta = {
 					"gallery": 'demo',
 					"album": 'sample'
 				},
-				map = new Map({
-					"album": galleryAlbum.album,
-					"gallery": galleryAlbum.gallery,
-					"events": {
-						"highlightPlottedPin": function () {
-							jQuery("#mapBox").removeClass("subtle");
-						},
-						"highlightOmittedPin": function () {
-							jQuery("#mapBox").addClass("subtle");	
-						}
+				xml;
+			map = new Map({
+				"album": meta.album,
+				"gallery": meta.gallery,
+				"events": {
+					"highlightPlottedPin": function () {
+						jQuery("#mapBox").removeClass("subtle");
 					},
-					"map": {
-						"centre": [0, 0],
-						"containerId": 'mapBox'
+					"highlightOmittedPin": function () {
+						jQuery("#mapBox").addClass("subtle");	
 					}
-				}),
-				xml = new Xml({"gallery": galleryAlbum.gallery, "album": galleryAlbum.album, "callback": displayAlbum});
+				},
+				"map": {
+					"centre": [0, 0],
+					"containerId": 'mapBox',
+					"zoom": 10
+				}
+			});
+			xml = new Xml({"gallery": meta.gallery, "album": meta.album, "callback": displayAlbum});
 			bind();
 		</script>
 	</body>

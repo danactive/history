@@ -19,7 +19,7 @@ function MapProvider(options) {
 			centrePoint = new mxn.LatLonPoint(options.centreCoordinates[1], options.centreCoordinates[0]);
 		
 		slippyMap = new mxn.Mapstraction(cache.map.containerId, "leaflet");
-		slippyMap.setCenterAndZoom(centrePoint, 10);
+		slippyMap.setCenterAndZoom(centrePoint, options.zoom || 10);
 		slippyMap.addControls({ zoom: 'large', map_type: true });
 		slippyMap.setMapType(1); // 1 = Street, 2 Satellite
 		slippyMap.enableScrollWheelZoom();
@@ -101,13 +101,17 @@ function Map(options) {
 		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
 		mapContainerId = requireArg({"args": options.map, "name": "containerId", "type": "string"}),
 		mapProvider,
+		mapProviderOptions = {
+			"centreCoordinates": centreCoordinates
+		},
 		me = this;
 
 	cache.map.containerId = mapContainerId;
+	if (options.map && options.map.zoom) {
+		mapProviderOptions.zoom = options.map.zoom;
+	}
 
-	mapProvider = new MapProvider({
-		"centreCoordinates": centreCoordinates
-	});
+	mapProvider = new MapProvider(mapProviderOptions);
 
 	me.pin = {};
 	me.pin.add = function (args) {

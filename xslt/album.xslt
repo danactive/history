@@ -69,7 +69,7 @@
 					</div>
 				</xsl:if>
 				<div style="clear: left;"></div>
-
+				<div id="mapBox" class="hide"></div>
 				<div id="albumBox">
 					<xsl:attribute name="data-album">
 						<xsl:value-of select="$photo__album_name" />

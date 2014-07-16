@@ -41,7 +41,7 @@ module.exports = function (grunt) {
 				undef: true
 			},
 			adminJs: ['gruntfile.js', 'package.json', 'app.js', 'admin/*.js', 'test/*.js', 'lib/json_to_xml.js'],
-			viewJs: ['js/*.js', '!js/album.js', '!js/edit_admin_xml.js', '!<%= jshint.viewJsDebug.files.src %>'],
+			viewJs: ['js/*.js', '!js/edit_admin_xml.js', '!<%= jshint.viewJsDebug.files.src %>'],
 			viewJsDebug: {
 				options: {
 					debug: true
