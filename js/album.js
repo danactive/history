@@ -8,11 +8,14 @@ var colorThief,
 	xml;
 function photoViewed() {
 	var dominateColour,
+		index,
 		photoImage = jQuery("img.cboxPhoto").get(0),
-		thumbImage = this;
+		$thumbBox,
+		$thumbImage = jQuery(this);
 	dominateColour = colorThief.getColor(photoImage);
+	$thumbBox = $thumbImage.parents('.liAlbumPhoto');
 
-	jQuery(thumbImage).parents('li').addClass('imgViewed'); //  change thumb to white
+	$thumbBox.addClass('imgViewed'); //  change thumb to white
 
 	// lightbox
 	jQuery("#cboxOverlay").css("background-color", "rgb(" + dominateColour[0] + "," + dominateColour[1] + "," + dominateColour[2] + ")"); // change background colour
@@ -20,7 +23,8 @@ function photoViewed() {
 	jQuery("#cboxLoadedContent").append(jQuery("#cboxTitle").html()).css({color: jQuery("#cboxTitle").css("color")});
 	jQuery.fn.colorbox.resize();
 	if (map) {
-		map.pin.next();
+		index = parseInt($thumbBox.attr("id").replace("photo", ""), 10);
+		map.pin.go(index - 1);
 	}
 }
 jQuery(function() {
@@ -104,36 +108,40 @@ function displayAlbum (response) {
 	var intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
 
 	// build MARKER for photo
-	jQuery.each(response.json.album.photo, function(i, item) {
-		var addOptions = {};
-		addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(item.filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
-		addOptions.id = item.filename || i;
-		
-		if (item.geo) {
-			addOptions.coordinates = [item.geo.lon, item.geo.lat];
-		}
-		
-		map.pin.add(addOptions);
-	}); //close each
+	if (response.json.album.photo) {
+		jQuery.each(response.json.album.photo, function(i, item) {
+			var addOptions = {};
+			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(item.filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
+			addOptions.id = item.filename || i;
+			
+			if (item.geo) {
+				addOptions.coordinates = [item.geo.lon, item.geo.lat];
+			}
+			
+			map.pin.add(addOptions);
+		}); //close each
+	}
 
 	// build MARKER for video
-	jQuery.each(response.json.album.video, function(i, item) {
-		var addOptions = {},
-			filename = item.filename || "";
+	if (response.json.album.video) {
+		jQuery.each(response.json.album.video, function(i, item) {
+			var addOptions = {},
+				filename = item.filename || "";
 
-		if (item.filename.length) {
-			filename = item.filename[0];
-		}
+			if (item.filename.length) {
+				filename = item.filename[0];
+			}
 
-		addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
-		addOptions.id = filename || i;
-		
-		if (item.geo) {
-			addOptions.coordinates = [item.geo.lon, item.geo.lat];
-		}
-		
-		map.pin.add(addOptions);
-	}); //close each
+			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
+			addOptions.id = filename || i;
+			
+			if (item.geo) {
+				addOptions.coordinates = [item.geo.lon, item.geo.lat];
+			}
+			
+			map.pin.add(addOptions);
+		}); //close each
+	}
 } // close displayAlbum
 
 (function () { // bind

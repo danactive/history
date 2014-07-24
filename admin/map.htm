@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="../css/map.css">
 	</head>
 	<body>
-		<div id="controls"><button id="next">Next pin</button><button id="prev">Prev pin</button></div>
+		<div id="controls"><button id="next">Next pin</button><button id="prev">Prev pin</button><button id="three">Third pin</button></div>
 		<div id="mapBox"></div>
 		<!-- Attach Leaflet & Mapstraction -->
 		<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
@@ -43,6 +43,9 @@
 			function bind() {
 				$("#next").click(map.pin.next);
 				$("#prev").click(map.pin.prev);
+				$("#three").click(function () {
+					map.pin.go(3);
+				});
 			}
 			var map,
 				meta = {
