@@ -55,7 +55,7 @@
 						border-width: 5px 5px 20px;
 					}
 					#cboxOverlay { background-image: none; /* allows colortheif */ width: 75%; }
-					#mapBox { position: absolute; float: right; height: 100%; left: 75%; width: 25%; }
+					#mapBox { position: fixed; float: right; height: 100%; left: 75%; width: 25%; }
 					#albumBox.splitMode { width: 75%; }
 					]]>
 				</style>
