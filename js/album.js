@@ -3,8 +3,15 @@
 /* GALLERY */
 jQuery.noConflict();
 /* ALBUM */
-var colorThief,
+var $albumBox = jQuery("#albumBox"),
+	colorThief,
 	map,
+	mapBoxId = 'mapBox',
+	$mapBox = jQuery("#"+mapBoxId),
+	meta = {
+		"album": $albumBox.attr("data-album"),
+		"gallery": $albumBox.attr("data-gallery")
+	},
 	xml;
 function photoViewed() {
 	var dominateColour,
@@ -24,7 +31,7 @@ function photoViewed() {
 	jQuery.fn.colorbox.resize();
 	if (map) {
 		index = parseInt($thumbBox.attr("id").replace("photo", ""), 10);
-		map.pin.go(index - 1);
+		map.pin.go(index);
 	}
 }
 jQuery(function() {
@@ -107,12 +114,31 @@ function triggerLightboxOpen(objMapLink, strPhotoId) {
 function displayAlbum (response) {
 	var intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
 
+	map = new Map({
+		"album": meta.album,
+		"gallery": meta.gallery,
+		"events": {
+			"highlightPlottedPin": function () {
+				$mapBox.removeClass("subtle");
+			},
+			"highlightOmittedPin": function () {
+				$mapBox.addClass("subtle");	
+			}
+		},
+		"map": {
+			"centre": [0, 0],
+			"containerId": mapBoxId,
+			"itemCount": response.json.album.photo.length + ((response.json.album.video && Array.isArray(response.json.album.video)) ? response.json.album.video.length : 0),
+		}
+	});
+
 	// build MARKER for photo
 	if (response.json.album.photo) {
 		jQuery.each(response.json.album.photo, function(i, item) {
 			var addOptions = {};
 			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(item.filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
 			addOptions.id = item.filename || i;
+			addOptions.index = parseInt(item["@id"], 10);
 			
 			if (item.geo) {
 				addOptions.coordinates = [item.geo.lon, item.geo.lat];
@@ -134,6 +160,7 @@ function displayAlbum (response) {
 
 			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
 			addOptions.id = filename || i;
+			addOptions.index = parseInt(item["@id"], 10);
 			
 			if (item.geo) {
 				addOptions.coordinates = [item.geo.lon, item.geo.lat];
@@ -144,34 +171,9 @@ function displayAlbum (response) {
 	}
 } // close displayAlbum
 
-(function () { // bind
-	var $albumBox = jQuery("#albumBox"),
-		mapBoxId = 'mapBox',
-		$mapBox = jQuery("#"+mapBoxId),
-		meta = {
-			"album": $albumBox.attr("data-album"),
-			"gallery": $albumBox.attr("data-gallery")
-		};
-	jQuery("#linkMap").click(function () {
-		map = new Map({
-			"album": meta.album,
-			"gallery": meta.gallery,
-			"events": {
-				"highlightPlottedPin": function () {
-					$mapBox.removeClass("subtle");
-				},
-				"highlightOmittedPin": function () {
-					$mapBox.addClass("subtle");	
-				}
-			},
-			"map": {
-				"centre": [0, 0],
-				"containerId": mapBoxId
-			}
-		});
-		xml = new Xml({"gallery": meta.gallery, "album": meta.album, "callback": displayAlbum});
+jQuery("#linkMap").click(function () {
+	xml = new Xml({"gallery": meta.gallery, "album": meta.album, "callback": displayAlbum});
 
-		$albumBox.addClass("splitMode");
-		$mapBox.removeClass("hide");
-	});
-})();
+	$albumBox.addClass("splitMode");
+	$mapBox.removeClass("hide");
+});

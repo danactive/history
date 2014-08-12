@@ -19,13 +19,13 @@
 		<photo_loc>Granville Island</photo_loc>
 		<thumb_caption>Lunch</thumb_caption>
 	</photo>
-	<photo id="2">
+	<photo id="30">
 		<filename>2004-01-04-01.jpg</filename>
 		<photo_city>North Vancouver, BC</photo_city>
 		<photo_loc>Dining Room</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
 	</photo>
-	<photo id="3">
+	<photo id="2">
 		<filename>2005-07-30-01.jpg</filename>
 		<geo>
 			<lat>49.15</lat>

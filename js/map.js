@@ -3,7 +3,6 @@ window.historyApp = {
 	"current": {
 		"itemIndex": 0
 	},
-	"items": [],
 	"lookup": {},
 	"map": {},
 	"previous": {
@@ -55,6 +54,15 @@ function MapProvider(options) {
 function Map(options) {
 	"use strict";
 
+	function init() {
+		cache.items = new Array(itemCount);
+		cache.map.containerId = mapContainerId;
+		if (options.map && options.map.zoom) {
+			mapProviderOptions.zoom = options.map.zoom;
+		}
+
+		mapProvider = new MapProvider(mapProviderOptions);
+	}
 	function nextPrevPin(args) {
 		var addOrSubtract = requireArg({"args": args, "name": "addOrSubtract", "type": "number"}),
 			index,
@@ -73,6 +81,7 @@ function Map(options) {
 
 	var cache = window.historyApp,
 		centreCoordinates = requireArg({"args": options.map, "name": "centre", "type": "array"}),
+		itemCount = requireArg({"args": options.map, "name": "itemCount", "type": "number"}),
 		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
 		mapContainerId = requireArg({"args": options.map, "name": "containerId", "type": "string"}),
 		mapProvider,
@@ -81,17 +90,11 @@ function Map(options) {
 		},
 		me = this;
 
-	cache.map.containerId = mapContainerId;
-	if (options.map && options.map.zoom) {
-		mapProviderOptions.zoom = options.map.zoom;
-	}
-
-	mapProvider = new MapProvider(mapProviderOptions);
-
 	me.pin = {};
 	me.pin.add = function (args) {
 		var html = requireArg({"args": args, "name": "html", "type": "string"}),
 			id = requireArg({"args": args, "name": "id", "type": "string"}),
+			index = requireArg({"args": args, "name": "index", "type": "number"}),
 			lookupOptions = {},
 			pushpin;
 
@@ -106,7 +109,7 @@ function Map(options) {
 		}
 		
 		cache.lookup[id] = lookupOptions;
-		cache.items.push(id);
+		cache.items[index] = id;
 	};
 
 	me.pin.next = function () {
@@ -125,7 +128,9 @@ function Map(options) {
 
 		cache.previous.itemIndex = cache.current.itemIndex;
 		previousId = cache.items[cache.previous.itemIndex];
-		previousPushpin = cache.lookup[previousId].pin;
+		if (previousId !== undefined) {
+			previousPushpin = cache.lookup[previousId].pin;
+		}
 		if (previousPushpin !== undefined) {
 			mapProvider.pin.unselect(previousPushpin);
 		}
@@ -155,6 +160,8 @@ function Map(options) {
 		var year = filename.substring(0, 4);
 		return "../gallery-" + galleryName + "/media/thumbs/" + year + "/" + filename;
 	};
+
+	init();
 
 	return me;
 }

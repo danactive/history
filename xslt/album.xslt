@@ -57,6 +57,7 @@
 					#cboxOverlay { background-image: none; /* allows colortheif */ width: 75%; }
 					#mapBox { position: fixed; float: right; height: 100%; left: 75%; width: 25%; }
 					#albumBox.splitMode { width: 75%; }
+					#mapBox.subtle { opacity: 0.35; }
 					]]>
 				</style>
 			</head>
