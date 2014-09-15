@@ -156,9 +156,14 @@ function Map(options) {
 	};
 
 	me.util = {};
-	me.util.filenamePath = function (filename) {
-		var year = filename.substring(0, 4);
-		return "../gallery-" + galleryName + "/media/thumbs/" + year + "/" + filename;
+	me.util.filenamePath = function (filename, removeFileType) {
+		var path,
+			year = filename.substring(0, 4);
+		path = "../gallery-" + galleryName + "/media/thumbs/" + year + "/" + filename;
+		if (removeFileType === true) {
+			path = path.replace(/\.[^/.]+$/, "");
+		}
+		return path;
 	};
 
 	init();

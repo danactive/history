@@ -158,7 +158,7 @@ function displayAlbum (response) {
 				filename = item.filename[0];
 			}
 
-			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
+			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename, true) + ".jpg'></div><div class='caption'>" + item.thumb_caption + "</div>";
 			addOptions.id = filename || i;
 			addOptions.index = parseInt(item["@id"], 10);
 			

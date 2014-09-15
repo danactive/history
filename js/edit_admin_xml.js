@@ -128,7 +128,8 @@ var album = {
 			}
 		},
 		"Preview": function(filename) {
-			$('#mapOrPhoto > img').attr('src',['../gallery-', $('#editGalleries').val(), '/media/photos/', filename.substr(0,filename.indexOf('-')), '/', filename].join(''));
+			var photoPath = ['../gallery-', $('#editGalleries').val(), '/media/photos/', filename.substr(0,filename.indexOf('-')), '/', filename].join('');
+			$('#photoPreview').css('background-image', "url(" + photoPath + ")");
 		},
 		"Sort": function() {
 			$('#listPhotos span').remove(); // clear previous sort labels

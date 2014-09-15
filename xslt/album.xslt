@@ -175,7 +175,7 @@
 											</xsl:if>
 											<xsl:if test="name(.) = 'video'">
 												&lt;div class="meta"&gt;
-													&lt;a href="javascript:;" onclick="fOpenWin('../video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w"/>,<xsl:value-of select="size/h"/>);"&gt;Watch Video&lt;/a&gt;
+													&lt;a href="javascript:;" onclick="fOpenWin('../video.htm?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w + 20"/>,<xsl:value-of select="size/h + 20"/>);"&gt;Watch Video&lt;/a&gt;
 												&lt;/div&gt;
 											</xsl:if>
 										</xsl:attribute>
