@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>justifiedGallery</title>
+    <link rel="stylesheet" href="lib/jquery.justifiedGallery/justifiedGallery.min.css" />
+</head>
+
+<body>
+    <div id="galleryBox"></div>
+
+    <script src="js/global.js"></script>
+    <script src="js/credentials.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="lib/jquery.justifiedGallery/justifiedGallery.js"></script>
+    <script>
+        var displayPhotos = function (response) {
+                var origPath = "",
+                    $galleryBox = jQuery("#galleryBox"),
+                    html = "",
+                    thumbPath = "";
+
+                jQuery.each(response.photos.photo, function (x, photo) {
+                    origPath = "https://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_b.jpg";
+                    thumbPath = "https://farm" + photo.farm + ".staticflickr.com/" + photo.server + "/" + photo.id + "_" + photo.secret + "_t.jpg";
+                    html = '<a href="' + origPath + '"><img alt="' + photo.title + '" src="' + thumbPath + '"></a>';
+                    $galleryBox.append(html);
+                });
+                $galleryBox.justifiedGallery();
+            },
+            flickrArgs = {
+                "method": 'flickr.photos.search',
+                "api_key": credentials.flickr.apiKey,
+                "format": 'json'
+            },
+            flickrUrl = "https://api.flickr.com/services/rest/",
+            getPhotos = function (lat, lon) {
+                if (lat === undefined || lon === undefined) {
+                    return;
+                }
+                flickrArgs.lat = lat;
+                flickrArgs.lon = lon;
+
+                $.ajax({
+                    "url": flickrUrl,
+                    "data": flickrArgs,
+                    "dataType": 'jsonp', // tell jQuery our expected response format JSON with padding
+                    "jsonpCallback": "jsonFlickrApi", //execute Flickr function that contains the response JSON
+                    "success": displayPhotos
+                });
+            },
+            qs = util.queryObj();
+        getPhotos(qs["lat"], qs["lon"]);
+    </script>
+</body>
+</html>

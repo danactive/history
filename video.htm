@@ -5,44 +5,38 @@
     <title>Watch Video</title>
 </head>
 <body style="margin:0; padding: 0;">
+    <script src="js/global.js"></script>
     <script src="lib/jquery-1.7.2.min.js"></script>
     <script>
-        var QSHandler = function () {
-            var fullQS = location.search.substr(1),
-            qs = (fullQS.indexOf("&") >= 0) ? fullQS.split("&") : fullQS.split("%26"),
-            i,  len = qs.length;
-            this.data = [];
-            for (i = 0; i < len; i++) this.data[qs[i].split("=")[0]] = qs[i].split("=")[1];
-            this.QueryString = function(x) {
-                return this.data[x];
-            };
-        }, Request = new QSHandler();
-        
-        $(window).ready(function () {
-            var arrQs = Request.QueryString('videos').split(','),
+        var arrQs,
             download = [],
-            html5Vid = ['<video controls="true" width="', Request.QueryString('w'), '" height="', Request.QueryString('h'), '">'],
-            gallery = Request.QueryString('gallery');
-            
-            $.each(arrQs, function (i, vidSrc) {
-                var vidType = vidSrc.substr(vidSrc.lastIndexOf('.')+1).toLowerCase();
-                vidSrc = 'gallery-' + gallery + '/media/videos/' + vidSrc;
-                switch (vidType) {
-                    case 'mp4':
-                        html5Vid.push('<source src="', vidSrc, '"  type=\'video/mp4; codecs="avc1.4D401E, mp4a.40.2"\'>');
-                        break;
-                    case 'webm':
-                        html5Vid.push('<source src="', vidSrc, '"  type=\'video/webm; codecs="vp8, vorbis"\'>');
-                        break;
-                    case 'ogv':
-                        html5Vid.push('<source src="', vidSrc, '"  type=\'video/ogg; codecs="theora, vorbis"\'>');
-                        break;
-                }
-                download.push('<div><a href="', vidSrc, '">Download Video</a></div>');
-            });
-            html5Vid.push('</video>');
-            $('body').html(html5Vid.join('') + download.join(''));
+            gallery,
+            html5Vid,
+            qs = util.queryObj();
+
+        arrQs = qs["videos"].split(',');
+        gallery = qs["gallery"];
+        html5Vid = ['<video controls="true" width="', qs["w"], '" height="', qs["h"], '">'];
+        
+        
+        $.each(arrQs, function (i, vidSrc) {
+            var vidType = vidSrc.substr(vidSrc.lastIndexOf('.')+1).toLowerCase();
+            vidSrc = 'gallery-' + gallery + '/media/videos/' + vidSrc;
+            switch (vidType) {
+                case 'mp4':
+                    html5Vid.push('<source src="', vidSrc, '"  type=\'video/mp4; codecs="avc1.4D401E, mp4a.40.2"\'>');
+                    break;
+                case 'webm':
+                    html5Vid.push('<source src="', vidSrc, '"  type=\'video/webm; codecs="vp8, vorbis"\'>');
+                    break;
+                case 'ogv':
+                    html5Vid.push('<source src="', vidSrc, '"  type=\'video/ogg; codecs="theora, vorbis"\'>');
+                    break;
+            }
+            download.push('<div><a href="', vidSrc, '">Download Video</a></div>');
         });
+        html5Vid.push('</video>');
+        $('body').html(html5Vid.join('') + download.join(''));
     </script>
 </body>
 </html>
