@@ -25,7 +25,7 @@ var doT = require('doT'),
 				response.write("<h1>Photo Galleries</h1><ul>");
 
 				for (i = 0; i < len; i+=1) {
-					response.write('<li><a href="gallery-' + galleries[i] + '/gallery.xml">' + galleries[i] + '</li>');
+					response.write('<li><a href="gallery-' + galleries[i] + '/xml/gallery.xml">' + galleries[i] + '</li>');
 				}
 				response.write("</ul>");
 				response.end('<a href="/admin/">Admin</a>');

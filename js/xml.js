@@ -4,7 +4,7 @@ function Xml(options) {
 		callback = requireArg({"args": options, "name": "callback", "type": "function"}),
 		gallery = requireArg({"args": options, "name": "gallery", "type": "string"});
 
-	jQuery.get('../gallery-' + gallery + '/album_' + album + '.xml')
+	jQuery.get('../gallery-' + gallery + '/xml/album_' + album + '.xml')
 		.error(ajaxError)
 		.success(function (response) {
 			var json = jQuery.parseJSON(util.xml.convertToJsonString(response,''));
