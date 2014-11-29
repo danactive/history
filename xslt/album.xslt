@@ -3,8 +3,8 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
 	<xsl:variable name="galleryDir" select="/album/@gallery" />
-	<xsl:variable name="charAssPath" select="concat('/gallery-', $galleryDir, '/character_ass.xml')" />
-	<xsl:variable name="charsPath" select="concat('/gallery-', $galleryDir, '/characters.xml')" />
+	<xsl:variable name="charAssPath" select="concat('/gallery-', $galleryDir, '/xml/character_ass.xml')" />
+	<xsl:variable name="charsPath" select="concat('/gallery-', $galleryDir, '/xml/characters.xml')" />
 	<xsl:variable name="char_ass" select="document($charAssPath)/character_association"/>
 	<xsl:variable name="chars" select="document($charsPath)/characters"/>
 	<xsl:variable name="photo__album_name">
@@ -15,7 +15,8 @@
 			<head>
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
-				<link  href="../lib/jquery-colorbox/example1/colorbox.css" rel="stylesheet" media="screen" />
+				<base href="../"/>
+				<link href="../lib/jquery-colorbox/example1/colorbox.css" rel="stylesheet" media="screen" />
 				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
 				<!--[if lte IE 8]>
 				    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />

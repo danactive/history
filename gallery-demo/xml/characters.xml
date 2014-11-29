@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="../../xslt/characters.xslt"?>
+<!-- This XML lists all characters seen in the albums -->
+<characters>
+	<a>
+	  <char name="a_friend" id="1"> <!-- name is unique for use in filename (name + active); id is unique for character association -->
+		<first>A</first> <!-- given name -->
+		<last>Friend</last> <!-- surname -->
+		<known>grade1</known> <!-- Optional one word. Where did you meet your friend? -->
+		<active>2006Q2</active> <!-- Year Quarter is when your friends was active for use in filename (i.e. a_friend2006Q2.jpg) -->
+	  </char>
+	</a>
+	<h>
+	  <char name="hurray_more" id="3">
+		<first>Hurray</first>
+		<last>More</last>
+		<nick>Best Friend</nick>
+		<known>Canadian</known>
+		<active>2010Q2</active>
+	  </char>
+	</h>
+</characters>
