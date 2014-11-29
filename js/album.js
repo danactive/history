@@ -174,6 +174,6 @@ function displayAlbum (response) {
 jQuery("#linkMap").click(function () {
 	xml = new Xml({"gallery": meta.gallery, "album": meta.album, "callback": displayAlbum});
 
-	$albumBox.addClass("splitMode");
+	jQuery("body").addClass("splitMode");
 	$mapBox.removeClass("hide");
 });

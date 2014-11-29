@@ -25,10 +25,7 @@
 					body { margin: 0; padding: 0; }
 					#albumBox, #divMapBubble, #divToolbox { font-family:verdana; font-size:11px; font-weight:bold; }
 					#albumBox, #divToolbox { float: left; }
-					#albumBox {
-						background-color: #323232;
-						width: 100%;
-					}
+					#albumBox { background-color: #323232; width: 100%; }
 					#albumBox > ul { list-style: none; padding-left: 2px; }
 					#albumBox .liAlbumPhoto {
 						float: left;
@@ -54,9 +51,10 @@
 						border: 5px solid white;
 						border-width: 5px 5px 20px;
 					}
-					#cboxOverlay { background-image: none; /* allows colortheif */ width: 75%; }
-					#mapBox { position: fixed; float: right; height: 100%; left: 75%; width: 25%; }
-					#albumBox.splitMode { width: 75%; }
+					#cboxOverlay { background-image: none; /* allows colortheif */ width: 100%; }
+					.splitMode #cboxOverlay { width: 75%; }
+					.splitMode #mapBox { position: fixed; float: right; height: 100%; left: 75%; width: 25%; }
+					.splitMode #albumBox { width: 75%; }
 					#mapBox.subtle { opacity: 0.35; }
 					]]>
 				</style>
