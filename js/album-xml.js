@@ -61,7 +61,7 @@ function _getAlbumXmlAsJson(arg) {
 		});
 	}
 
-	jQuery.get('../../gallery-' + arg.gallery + '/album_' + arg.album + '.xml')
+	jQuery.get('../../gallery-' + arg.gallery + '/xml/album_' + arg.album + '.xml')
 			.error(ajaxError)
 			.success(ConvertXmlToJson);
 }

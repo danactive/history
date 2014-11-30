@@ -73,7 +73,7 @@ app.post(/resizeImages/, function (request, response) {
 
 app.get(/getGalleries/, function (request, response) {
 	var getGalleries = require('./admin/get_gallery_directories.js');
-	getGalleries.init({"request": request, "response": response, "forNode": false});
+	getGalleries({"response": response, "jsonHeader": true});
 });
 
 app.get(/(admin\/walk-path)/, function(request, response) {
