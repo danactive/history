@@ -15,18 +15,14 @@ var doT = require('doT'),
 			filePath = '.' + request.url.split('?')[0],
 			fs = require('fs'),
 			loadHomePage = function () { // learn all the gallery folders
-				var getGalleries = require('./admin/get_gallery_directories.js'),
-				galleriesJson = getGalleries.init({ request: request, response: response, forNode: true }),
-				galleries = galleriesJson.galleries,
-				i,
-				len = galleries.length;
-
+				var getGalleries = require('./admin/get_gallery_directories.js');
+				
 				response.writeHead(200, {'Content-Type': 'text/html'});
 				response.write("<h1>Photo Galleries</h1><ul>");
 
-				for (i = 0; i < len; i+=1) {
-					response.write('<li><a href="gallery-' + galleries[i] + '/xml/gallery.xml">' + galleries[i] + '</li>');
-				}
+				getGalleries().galleries.forEach(function (name) {
+					response.write('<li><a href="gallery-' + name + '/xml/gallery.xml">' + name + '</li>');
+				});
 				response.write("</ul>");
 				response.end('<a href="/admin/">Admin</a>');
 			},

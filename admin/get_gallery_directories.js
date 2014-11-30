@@ -1,15 +1,12 @@
-/*global exports, require */
+/*global module, require */
 
-var fs = require('fs');
-
-exports.init = function (param) {
-	var response = param.response,
-		request = param.request,
-		files = fs.readdirSync('.'),
-		i,
-		len = files.length,
+module.exports = function (param) {
+	var files = require('fs').readdirSync('.'),
 		galleries = [],
-		json;
+		i,
+		json,
+		len = files.length,
+		response;
 
 	for (i = 0; i < len; i++) {
 		if (files[i].indexOf('gallery-') === 0) {
@@ -19,10 +16,11 @@ exports.init = function (param) {
 
 	json = { "galleries": galleries };
 
-	if (param.forNode === true) {
-		return json;
-	} else {
+	if (param && param.jsonHeader && param.jsonHeader === true) {
+		response = param.response;
 		response.writeHead(200, {'Content-Type': 'application/json'});
 		response.end(JSON.stringify( json ));
+	} else {
+		return json;
 	}
 };
