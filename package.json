@@ -1,12 +1,13 @@
 ﻿{
   "name": "history",
-  "version": "0.14.1",
+  "version": "0.19.0",
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
-  "dependencies": {},
+  "dependencies": {
+    "express": "3.4.x"
+  },
   "devDependencies": {
     "async": "0.2.x",
-    "expect.js": "0.2.x",
-    "express": "3.4.x",
+    "expect.js": "0.3.x",
     "dot": "1.0.x",
     "dot-emc": "0.1.x",
     "grunt": "0.4.x",
@@ -19,12 +20,13 @@
     "grunt-githooks": "0.3.x",
     "grunt-shell": "0.6.x",
     "gm": "1.14.x",
-    "mkdirp": "0.3.x"
+    "mkdirp": "0.3.x",
+    "rimraf": "2.2.x"
   },
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "grunt validate"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-/*global $, ajaxError, console, doT, util, window */
+/*global $, ajaxError, doT, util, window */
 (function () {
 	var qs = util.queryObj(),
 		parent = window.walkPath.setParentFolderLink({"querystring": qs});
@@ -58,75 +58,112 @@
 	function bindEvents() {
 		$("#btnRename, #btnResize").click(function ($event) {
 			var $datepicker,
-				isMoveToResize = this.id === "btnResize";
+				isMoveToResize = (this.id === "btnResize"),
+				generateFilenames,
+				xmlOutput = "";
 			$event.preventDefault();
-			function getSelectedDate (formattedDate) {
-				var currentFiles = [],
-					newFiles = window.walkPath.getRenamedFiles({
-						"filePrefix": formattedDate,
-						"photosInDay": $(".js-directory-list").children('li[data-type=image]').length,
-						"xmlStartPhotoId": (isMoveToResize === true) ? window.prompt("Starting XML photo ID?", 1) : 1
-					}),
-					year = formattedDate.substring(0, 4);
-
-				// list of ordered filenames
-				$('.js-directory-list').each(function (i, dom) {
-					var $element = $(dom),
-						filenames = [];
-					if ($element.children().length !== 0) {
-						filenames = $element.sortable( "toArray", {"attribute": 'data-filename'});
-						currentFiles = currentFiles.concat(filenames);
-					}
-				});
-
-				$datepicker.datepicker( "destroy" );
-
-				$.ajax({
-					"url": '/admin/rename-photos',
-					"method": 'post',
-					"data": {
-						"targetFolderName": year,
-						"currentFiles": currentFiles,
-						"moveToResize": isMoveToResize,
-						"newFiles": newFiles.filenames,
-						"sourceFolderPath": qs.folder
-					},
-					"success": function (response) {
-						var output = "";
-						function resizeImage(postData) {
-							$.ajax({
-								"url": '/admin/resize-photo',
-								"method": 'post',
-								"data": postData,
-								"error": ajaxError
-							});
-						}
-
-						if (isMoveToResize === true) {
-							$.each(response.files, function (x, file) {
-								resizeImage(file.destination);
-							});
-							output = newFiles.xml;
-						} else {
-							output = "Rename successfull";
-						}
-						
-						$("<textarea/>")
-							.val(output)
-							.appendTo("#controls");
-					},
-					"error": ajaxError
-				});
-			}
+		
 			$datepicker = $('<div id="vacationDate"></div>')
 				.insertAfter(this)
 				.datepicker({
-					"dateFormat": 'yy-mm-dd',
-					"onSelect": getSelectedDate,
 					"changeMonth": true,
-					"changeYear": true
+					"changeYear": true,
+					"dateFormat": 'yy-mm-dd',
+					"onSelect": function (formattedDate) {
+						$datepicker.datepicker( "destroy" );
+
+						$.ajax({
+							"url": '/admin/rename-photos',
+							"method": 'post',
+							"data": {
+								"mediaType": "image",
+								"moveToResize": isMoveToResize,
+								"assets": generateFilenames(formattedDate)
+							},
+							"success": function (response) {
+								var deleteTempThumb = function () {
+										$.ajax({
+											"url": '/admin/delete-path',
+											"method": 'post',
+											"data": {
+												"tempThumbFolder": qs.folder
+											},
+											"error": ajaxError
+										});
+									},
+									output = "",
+									resizeImage = function (postData) {
+										$.ajax({
+											"url": '/admin/resize-photo',
+											"method": 'post',
+											"data": postData,
+											"error": ajaxError
+										});
+									};
+
+								if (isMoveToResize === true) {
+									$.each(response.files, function (x, file) {
+										resizeImage(file);
+									});
+									deleteTempThumb();
+									output = xmlOutput;
+								} else {
+									output = "Rename successfull";
+								}
+								
+								$("<textarea/>")
+									.val(output)
+									.appendTo("#controls");
+							},
+							"error": ajaxError
+						});
+					}
+				}); // datepicker
+
+			generateFilenames = function (datePrefix) {
+				var generated,
+					out = {
+						"sort": []
+					},
+					photoCount = $(".js-directory-list").children('li[data-type=image]').length,
+					photoIndex = -1,
+					targetFolder = datePrefix.substring(0, 4);
+
+				generated = window.walkPath.getRenamedFiles({
+					"filePrefix": datePrefix,
+					"photosInDay": photoCount,
+					"xmlStartPhotoId": (isMoveToResize === true) ? window.prompt("Starting XML photo ID?", 1) : 1
 				});
-		});
+
+				xmlOutput = generated.xml;
+
+				// list of ordered filenames
+				$('.js-directory-list').each(function (x, dom) {
+					var $element = $(dom),
+						filenames = [], // sortable image filenames
+						id;
+					if ($element.children().length <= 0) {
+						return true; // continue
+					}
+					filenames = $element.sortable( "toArray", {"attribute": 'data-filename'});
+					$.each(filenames, function (i) {
+						photoIndex++;
+						id = generated.files[photoIndex];
+						out.sort.push(id);
+						out[id] = {
+							"files": [
+								{
+									"moved": targetFolder + "/" + generated.filenames[photoIndex],
+									"raw": qs.folder + filenames[i],
+									"renamed": qs.folder + generated.filenames[photoIndex]
+								}
+							]
+						};
+					});
+				});
+				return out;
+			};
+		}); // click
 	}
 	function loadNav() {
 		if (parent.text === "") {

@@ -1,13 +1,8 @@
 /*global __dirname, console, require*/
-var doT = require('doT'),
+var adminImageManipulation = require('./js/admin-image-manipulation.js'),
 	express = require('express'),
 	app = express(),
 	expressPort = 80,
-	constant = {
-		"debug": false,
-		"resizeFolder": "resizeImages",
-		"tempThumbFolder": '_historyThumb'
-	},
 	path = require('path'),
 	serveStaticPages = function (param) {
 		var request = param.request,
@@ -90,18 +85,18 @@ app.get(/(admin\/walk-path)/, function(request, response) {
 				'/js/global.js',
 				'/js/walk-path-tested.js',
 				'/js/directory-contents.js',
-				'/lib/jquery-ui-1.10.3.datepicker.sortable/jquery-ui-1.10.3.custom.min.js',
+				'/lib/jquery-ui-1.11.2.custom/jquery-ui.min.js',
 				'/public/views.js'
 			],
 			"css": [
-				'/lib/jquery-ui-1.10.3.datepicker.sortable/humanity/jquery-ui-1.10.3.custom.min.css',
+				'/lib/jquery-ui-1.11.2.custom/jquery-ui.min.css',
 				'/css/directory-contents.css'
 			]
 		}
 	);
 });
 app.get(/(api\/walk-path)/, function(request, response) {
-	require('./js/admin-directory-contents-api.js').list({"constant": constant, "request": request, "response": response});
+	require('./js/admin-directory-contents-api.js').list({"request": request, "response": response});
 });
 app.get(/(admin\/diff-album-path)/, function(request, response) {
 	response.render(
@@ -120,13 +115,16 @@ app.get(/(admin\/diff-album-path)/, function(request, response) {
 	);
 });
 app.post(/(admin\/preview-generator)/, function(request, response) {
-	require('./js/admin-image-manipulation.js').preview({"constant": constant, "request": request, "response": response});
+	adminImageManipulation.preview({"request": request, "response": response});
 });
 app.post(/(admin\/rename-photos)/, function(request, response) {
-	require('./js/admin-image-manipulation.js').rename({"constant": constant, "request": request, "response": response});
+	adminImageManipulation.rename({"request": request, "response": response});
 });
 app.post(/(admin\/resize-photo)/, function(request, response) {
-	require('./js/admin-image-manipulation.js').resize({"constant": constant, "request": request, "response": response});
+	adminImageManipulation.resize({"request": request, "response": response});
+});
+app.post(/(admin\/delete-path)/, function(request, response) {
+	adminImageManipulation.deletePath({"request": request, "response": response});
 });
 
 app.get('*', function(request, response) {

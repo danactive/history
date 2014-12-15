@@ -9,5 +9,5 @@
 {{?? it.content.type === "folder" && it.name === tempThumbFolder }}
 	<li><span>{{=it.name}}{{=it.ext}}</span></li>
 {{??}}
-	<li><span>{{=it.name}}{{=it.ext}}</span></li>
+	<li data-file="{{=it.name}}" data-ext="{{=it.ext}}" data-filename="{{=it.name}}{{=it.ext}}" data-type="{{=it.content.type}}"><span>{{=it.name}}{{=it.ext}}</span></li>
 {{?}}

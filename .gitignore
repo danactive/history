@@ -5,4 +5,3 @@ todo
 node_modules
 npm-debug.log
 resizeImages
-!node_modules/expect.js/index.js

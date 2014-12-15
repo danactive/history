@@ -1,4 +1,4 @@
-/*global console, describe, it, require*/
+/*global describe, it, require*/
 var expect = require("expect.js");
 
 describe('Admin:', function () {

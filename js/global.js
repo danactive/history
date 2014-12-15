@@ -1,5 +1,6 @@
 /*global window*/
-var ajaxError = function(jqXHR, textStatus, errorThrown) { debugger; /* run as localhost */ },
+/*exported ajaxError, requireArg*/
+var ajaxError = function(jqXHR, textStatus, errorThrown) {/*jshint unused:false */ debugger; /* run as localhost */ },
 	util = window.util || {};
 
 util.dateObjFormat = function (date) {
@@ -14,8 +15,7 @@ util.dateObjFormat = function (date) {
 	return [yyyy, mm, dd].join('-');
 };
 util.queryObj = function () { // usage var myParam = queryObj()["myParam"];
-	var keyValuePairs,
-		result = {};
+	var result = {};
 	if (window.location.search === "") {
 		return {};
 	}

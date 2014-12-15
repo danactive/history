@@ -31,14 +31,19 @@ module.exports = function (grunt) {
 		},
 		jshint: {
 			options: {
-				curly: true,
-				eqnull: true,
-				immed: true,
-				latedef: true,
-				loopfunc: true,
-				noarg: true,
-				sub: true,
-				undef: true
+				"curly": true,
+				"debug": false,
+				"eqeqeq": true,
+				"globals": {
+					"browser": true
+				},
+				"immed": true,
+				"latedef": true,
+				"loopfunc": true,
+				"noarg": true,
+				"sub": true,
+				"undef": true,
+				"unused": true
 			},
 			adminJs: ['gruntfile.js', 'package.json', 'app.js', 'admin/*.js', 'test/*.js', 'lib/json_to_xml.js'],
 			viewJs: ['js/*.js', '!js/edit_admin_xml.js', '!<%= jshint.viewJsDebug.files.src %>'],

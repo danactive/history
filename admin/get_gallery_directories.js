@@ -4,7 +4,6 @@ var fs = require('fs');
 
 exports.init = function (param) {
 	var response = param.response,
-		request = param.request,
 		files = fs.readdirSync('.'),
 		i,
 		len = files.length,

@@ -1,5 +1,5 @@
 ﻿/*global ColorThief, jQuery, Map, Xml, window*/
-
+/*exported fOpenWin, fnMedium, triggerLightboxOpen*/
 /* GALLERY */
 jQuery.noConflict();
 /* ALBUM */
@@ -66,13 +66,13 @@ function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
 		iYPos += window.screenY;
 	} else { /* screen width (1 600) not used because I want centred in window on screen */
 		iXPos = (window.document.body.clientWidth - iW) / 2; /* [current browser chrome width (800) - new window width (400)] / 2 = 200 on each side */
-		iBrowserHeight = (window.document.compatMode == "CSS1Compat") ? window.document.documentElement.clientHeight : window.document.body.clientHeight;
+		iBrowserHeight = (window.document.compatMode === "CSS1Compat") ? window.document.documentElement.clientHeight : window.document.body.clientHeight;
 		iYPos = (iBrowserHeight - iH) / 2;
 		iXPos += window.screenLeft;
 		iYPos += window.screenTop; /* current position of window (400) + iXPos (200) = 600 is left pos */
 	} /* left space (600) + new width (400) + right space (600) = screen res (1 600) */
 
-	if (typeof bScrollBars == 'boolean') {
+	if (typeof bScrollBars === 'boolean') {
 		bScrollBars = (bScrollBars === true) ? 'yes' : 'no';
 	} else {
 		bScrollBars = 'yes'; /* not defined set to default */
@@ -84,8 +84,8 @@ function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
 	}
 	oWin = window.open(sURL, sName, sArgs);
 
-	if (oWin != null) {
-		if (oWin.opener == null) { /* give orphan child window this parent */
+	if (oWin !== null && oWin !== undefined) {
+		if (oWin.opener === null || oWin.opener === undefined) { /* give orphan child window this parent */
 			oWin.opener = window.self;
 		}
 		oWin.focus();
@@ -112,7 +112,7 @@ function triggerLightboxOpen(objMapLink, strPhotoId) {
 		.trigger('click');
 }
 function displayAlbum (response) {
-	var intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
+	//var intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
 
 	map = new Map({
 		"album": meta.album,

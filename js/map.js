@@ -1,4 +1,5 @@
 /*global mxn, requireArg, window*/
+/*exported Map*/
 window.historyApp = {
 	"current": {
 		"itemIndex": 0

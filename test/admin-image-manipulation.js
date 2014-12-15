@@ -1,5 +1,8 @@
 /*global __dirname, console, describe, it, require*/
-var expect = require("expect.js");
+var constant = require("../js/global-constant.js"),
+	expect = require("expect.js"),
+	fs = require('fs'),
+	path = require("path");
 
 describe('Admin:', function () {
 	describe('Image manipulation:', function () {
@@ -13,17 +16,8 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should fail without constant argument (a2)', function (done) {
-				var arg = {};
-				expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
-					done();
-				});
-			});
 			it('should fail without resize folder in constant argument (a3)', function (done) {
 				var arg = {
-					"constant": {}
 				};
 				expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
@@ -33,9 +27,6 @@ describe('Admin:', function () {
 			});
 			it('should fail without prefix argument (a4)', function (done) {
 				var arg = {
-					"constant": {
-						"resizeFolder": "test"
-					}
 				};
 				expect(page.ensureDestinationFolder).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
@@ -45,15 +36,11 @@ describe('Admin:', function () {
 			});
 			it('should verify test folders (a5)', function (done) {
 				var arg,
-					fs = require('fs'),
 					testFolder = "/test/fixture/galleries/",
 					verifiedPaths;
 				arg = {
-					"constant": {
-						"resizeFolder": "test"
-					},
 					"targetFolderName": 'testAlbum',
-					"destinationRootPath": require('path').dirname(__dirname) + testFolder
+					"destinationRootPath": path.dirname(__dirname) + testFolder
 				};
 				verifiedPaths = page.ensureDestinationFolder(arg);
 				expect(verifiedPaths).to.be.an('array');
@@ -66,214 +53,119 @@ describe('Admin:', function () {
 				done();
 			});
 		});
+		/***
+		*     #     #                         ######                                    
+		*     ##   ##  ####  #    # ######    #     # #    #  ####  #####  ####   ####  
+		*     # # # # #    # #    # #         #     # #    # #    #   #   #    # #      
+		*     #  #  # #    # #    # #####     ######  ###### #    #   #   #    #  ####  
+		*     #     # #    # #    # #         #       #    # #    #   #   #    #      # 
+		*     #     # #    #  #  #  #         #       #    # #    #   #   #    # #    # 
+		*     #     #  ####    ##   ######    #       #    #  ####    #    ####   ####  
+		*                                                                               
+		*/
 		describe('movePhotos()', function () {
+			var arg,
+				expectError = function (done, errorMessage) {
+					expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
+						expect(exception).to.be.a(ReferenceError);
+						expect(page.movePhotos).withArgs(arg).to.throwException(page.error[errorMessage]);
+						done();
+					});
+				};
+
 			it('should fail without argument (b1)', function (done) {
-				var arg;
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
-					done();
-				});
+				expectError(done, "missingArg");
 			});
-			it('should fail without sourceFolderPath argument (b2)', function (done) {
-				var arg = {};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
-					done();
-				});
+			it('should fail without assets argument (b2)', function (done) {
+				arg = {};
+				expectError(done, "missingArgAssets");
 			});
-			it('should fail without folder name argument (b3)', function (done) {
-				var arg = {"sourceFolderPath": ''};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFolderName));
-					done();
-				});
+			it('should fail without moveToResize argument (b3)', function (done) {
+				arg.assets = {
+					"sort": ["renamable"],
+					"renamable": {
+						"files": [{
+							"raw": path.dirname(__dirname) + "\\test\\fixture\\image\\j1.jpeg",
+							"moved": "\\renamed.jpeg"
+						}]
+					}
+				};
+				arg.destinationRootPath = path.dirname(__dirname) + "\\test\\fixture\\childless";
+				expectError(done, "missingArgMove");
 			});
-			it('should fail without currentFiles argument (b4)', function (done) {
-				var arg = {"sourceFolderPath": '',"targetFolderName": ""};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
-					done();
-				});
-			});
-			it('should fail without moveToResize argument (b5)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": ""};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgMove));
-					done();
-				});
-			});
-			it('should fail without constant argument (b6)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": "true"};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
-					done();
-				});
-			});
-			it('should fail without newFiles argument (b7)', function (done) {
-				var arg = {"sourceFolderPath": '', "currentFiles": ["j1.jpeg"], "targetFolderName": "", "moveToResize": "true", "constant": {}};
-				expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.movePhotos).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
-					done();
-				});
-			});
-			it('should pass by avoiding to move files (b8)', function (done) {
-				var arg1 = {
-						"constant": {},
-						"destinationRootPath": "test/fixture/bad/",
-						"sourceFolderPath": 'test/fixture/',
-						"currentFiles": ["renamable.txt"],
-						"moveToResize": "false",
-						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
-						"targetFolderName": ""
-					},
-					arg2,
-					fs = require('fs');
-				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
-				arg2.sourceFolderPath = arg1.sourceFolderPath;
-				arg2.currentFiles = arg1.newFiles;
-				arg2.newFiles = arg1.currentFiles;
-				
-				page.movePhotos(arg1, function () {
-					var filename1 = arg1.sourceFolderPath + arg1.newFiles[0];
-						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+			it('should pass by moving files (b4)', function (done) {
+				var verifyPath = arg.destinationRootPath + arg.assets.renamable.files[0].moved;
+				arg.moveToResize = true;
 
-					page.movePhotos(arg2, function () {
-						var filename2 = arg2.sourceFolderPath + arg2.newFiles[0];
-						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
-						done();
-					});
+				if (constant.config.debug === true) {
+					console.log("movePhotos b4:" + verifyPath);
+				}
+
+				page.movePhotos(arg, function () {
+					expect(fs.existsSync(verifyPath)).to.be(true);
+					done();
 				});
 			});
-			it('should pass by moving files (b9)', function (done) {
-				var arg1 = {
-						"constant": {},
-						"destinationRootPath": "test/fixture/",
-						"sourceFolderPath": 'test/fixture/',
-						"currentFiles": ["renamable.txt"],
-						"moveToResize": "true",
-						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
-						"targetFolderName": ""
-					},
-					arg2,
-					fs = require('fs');
-				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
-				arg2.sourceFolderPath = arg1.sourceFolderPath;
-				arg2.currentFiles = arg1.newFiles;
-				arg2.newFiles = arg1.currentFiles;
-				
-				page.movePhotos(arg1, function () {
-					var filename1 = arg1.destinationRootPath + arg1.newFiles[0];
-						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+			it('should pass by move restoring files (b5)', function (done) {
+				var verifyPath;
+				arg.moveToResize = true;
+				arg.assets.renamable = {
+					"files": [{
+						"raw": path.dirname(__dirname) + "\\test\\fixture\\childless\\renamed.jpeg",
+						"moved": "\\j1.jpeg"
+					}]
+				};
+				arg.destinationRootPath = path.dirname(__dirname) + "\\test\\fixture\\image";
+				verifyPath = arg.destinationRootPath + arg.assets.renamable.files[0].moved;
 
-					page.movePhotos(arg2, function () {
-						var filename2 = arg2.destinationRootPath + arg2.newFiles[0];
-						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
-						done();
-					});
-				});
-			});
-			it('should pass by renaming files (b10)', function (done) {
-				var arg1 = {
-						"constant": {},
-						"destinationRootPath": "test/fixture/",
-						"sourceFolderPath": 'test/fixture/',
-						"currentFiles": ["renamable.txt"],
-						"moveToResize": false,
-						"newFiles": ["warning-mocha-test-failed-during-rename.txt"],
-						"targetFolderName": ""
-					},
-					arg2,
-					fs = require('fs');
-				arg2 = JSON.parse(JSON.stringify(arg1)); // clone
-				arg2.sourceFolderPath = arg1.sourceFolderPath;
-				arg2.currentFiles = arg1.newFiles;
-				arg2.newFiles = arg1.currentFiles;
-				
-				page.movePhotos(arg1, function () {
-					var filename1 = arg1.destinationRootPath + arg1.newFiles[0];
-						expect(fs.existsSync(filename1).toString() + "-first").to.be("true-first");
+				if (constant.config.debug === true) {
+					console.log("movePhotos b5:" + verifyPath);
+					console.log("movePhotos b5:" + arg);
+				}
 
-					page.movePhotos(arg2, function () {
-						var filename2 = arg2.destinationRootPath + arg2.newFiles[0];
-						expect(fs.existsSync(filename2).toString() + "-second").to.be("true-second");
-						done();
-					});
+				page.movePhotos(arg, function () {
+					expect(fs.existsSync(verifyPath)).to.be(true);
+					done();
 				});
 			});
 		});
+		/***
+		*     ######                                       
+		*     #     # #####  ###### #    # # ###### #    # 
+		*     #     # #    # #      #    # # #      #    # 
+		*     ######  #    # #####  #    # # #####  #    # 
+		*     #       #####  #      #    # # #      # ## # 
+		*     #       #   #  #       #  #  # #      ##  ## 
+		*     #       #    # ######   ##   # ###### #    # 
+		*                                                  
+		*/
 		describe('preview()', function () {
-			it('should fail without argument (c1)', function (done) {
-				var arg;
-				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
-					done();
-				});
-			});
-			it('should fail without constant argument (c2)', function (done) {
-				var arg = {
-					"isTest": true
+			var arg,
+				expectError = function (done, errorMessage) {
+					expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
+						expect(exception).to.be.a(ReferenceError);
+						expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error[errorMessage]));
+						done();
+					});
 				};
-				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
-					done();
-				});
+			it('should fail without argument (c1)', function (done) {
+				expectError(done, "missingArg");
 			});
 			it('should fail without response argument (c3)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true
-				};
-				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgResponse));
-					done();
-				});
+				arg = {};
+				expectError(done, "missingArgResponse");
 			});
 			it('should fail without request argument (c4)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {}
-				};
-				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgRequest));
-					done();
-				});
+				arg.response = {};
+				expectError(done, "missingArgRequest");
 			});
 			it('should fail without folder in request argument (c5)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {}
-				};
-				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.preview).withArgs(arg).to.throwException(new RegExp(page.error.missingArgRequestBodyFolder));
-					done();
-				});
+				arg.request = {};
+				expectError(done, "missingArgRequestBodyFolder");
 			});
 			it('should fail with invalid folder (c6)', function (done) {
-				var arg;
-				arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"folder": "test/fixture/fake/"
-						}
-					}
+				arg.request.body = {
+					"folder": "test/fixture/fake/"
 				};
 				expect(page.preview).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be("Path does not exist: ./" + arg.request.body.folder);
@@ -281,179 +173,143 @@ describe('Admin:', function () {
 				});
 			});
 			it('should verify test folders (c7)', function (done) {
-				var arg;
-				arg = {
-					"constant": {
-						"debug": false
+				arg.response = {
+					"end": function (payload) {
+						expect(payload).to.be('{"thumbnails":["' + constant.config.tempThumbFolder + "/" + 'g3.gif","' + constant.config.tempThumbFolder + "/" + 'j1.jpeg","' + constant.config.tempThumbFolder + "/" + 'p2.png"]}');
+						done();
 					},
-					"isTest": true,
-					"response": {
-						"end": function (outJSON) {
-							expect(outJSON).to.be('{"thumbnails":["g3.gif","j1.jpeg","p2.png"]}');
-							done();
-						},
-						"writeHead": function (okay) {
-							expect(okay).to.be(200);
-						}
-					},
-					"request": {
-						"body": {
-							"folder": "test/fixture/image/"
-						}
+					"writeHead": function (okay) {
+						expect(okay).to.be(200);
+					}
+				};
+				arg.request = {
+					"body": {
+						"folder": "test/fixture/image/"
 					}
 				};
 				page.preview(arg);
 			});
 		});
-		
-		describe('rename()', function () {
-			it('should fail without argument (d1)', function (done) {
-				var arg;
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArg));
+		/***
+		*     ######                                       ######                      
+		*     #     # ###### #      ###### ##### ######    #     #   ##   ##### #    # 
+		*     #     # #      #      #        #   #         #     #  #  #    #   #    # 
+		*     #     # #####  #      #####    #   #####     ######  #    #   #   ###### 
+		*     #     # #      #      #        #   #         #       ######   #   #    # 
+		*     #     # #      #      #        #   #         #       #    #   #   #    # 
+		*     ######  ###### ###### ######   #   ######    #       #    #   #   #    # 
+		*                                                                              
+		*/
+		describe('deletePath()', function () {
+			var arg,
+				expectError = function (done, errorMessage) {
+					expect(page.deletePath).withArgs(arg).to.throwException(function (exception) { // get the exception object
+						expect(exception).to.be.a(ReferenceError);
+						expect(page.deletePath).withArgs(arg).to.throwException(new RegExp(page.error[errorMessage]));
+						done();
+					});
+				};
+			it('should fail without argument (e1)', function (done) {
+				expectError(done, "missingArg");
+			});
+			it('should fail without a path (e2)', function (done) {
+				arg = {};
+				expectError(done, "missingArgTargetPath");
+			});
+			it('should fail without request argument (e3)', function (done) {
+				arg.request = {
+					"body": {}
+				};
+				expectError(done, "missingArgTargetPath");
+			});
+			it('should pass (e4)', function (done) {
+				var verifyPath;
+				arg.request.body.tempThumbFolder = "\\test\\fixture\\image";
+				verifyPath = path.join(path.dirname(__dirname), arg.request.body.tempThumbFolder, constant.config.tempThumbFolder);
+
+				if (constant.config.debug === true) {
+					console.log("deletePath e4:" + verifyPath);
+				}
+
+				arg.response = {
+					"end": function (payload) {
+						expect(payload).to.contain(JSON.stringify({"message": verifyPath + " folder successfully deleted."}));
+					},
+					"writeHead": function (okay) {
+						expect(okay).to.be(200);
+					}
+				};
+
+				page.deletePath(arg, function () {
+					expect(fs.existsSync(verifyPath)).to.be(false);
 					done();
 				});
 			});
-			it('should fail without constant argument (d2)', function (done) {
-				var arg = {
-					"isTest": true
+		});
+		/***
+		*     ######                                     
+		*     #     # ###### #    #   ##   #    # ###### 
+		*     #     # #      ##   #  #  #  ##  ## #      
+		*     ######  #####  # #  # #    # # ## # #####  
+		*     #   #   #      #  # # ###### #    # #      
+		*     #    #  #      #   ## #    # #    # #      
+		*     #     # ###### #    # #    # #    # ###### 
+		*                                                
+		*/
+		describe('rename()', function () {
+			var arg,
+				expectError = function (done, errorMessage) {
+					expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
+						expect(exception).to.be.a(ReferenceError);
+						expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error[errorMessage]));
+						done();
+					});
 				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgConstant));
-					done();
-				});
+			it('should fail without argument (d1)', function (done) {
+				expectError(done, "missingArg");
 			});
 			it('should fail without response argument (d3)', function (done) {
-				var arg = {
-					"constant": {
-
-					},
-					"isTest": true
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgResponse));
-					done();
-				});
+				arg = {};
+				expectError(done, "missingArgResponse");
 			});
 			it('should fail without request argument (d4)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {}
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgRequest));
-					done();
-				});
+				arg.response = {};
+				expectError(done, "missingArgRequest");
 			});
-			it('should fail without folder in request argument (d5)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {}
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgFolderName));
-					done();
-				});
+			it('should fail without assets in request argument (d5)', function (done) {
+				arg.request = {};
+				expectError(done, "missingArgAssets");
 			});
-			it('should fail without sourceFolderPath argument (d6)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"targetFolderName": ""
-						}
+			it('should fail without move or rename in request argument (d6)', function (done) {
+				arg.request.body = {};
+				arg.request.body.assets = {
+					"sort": ["renamable"],
+					"renamable": {
+						"files": [{
+							"raw": path.dirname(__dirname) + "\\test\\fixture\\renamable.txt",
+							"renamed": path.dirname(__dirname) + "\\test\\fixture\\warning-mocha-test-failed-during-rename.txt"
+						}]
 					}
 				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgSourcePath));
+				expectError(done, "missingArgMove");
+			});
+			it('should pass by renaming (d7)', function (done) {
+				arg.request.body.moveToResize = false;
+
+				page.rename(arg, function (result) {
+					expect(result.files[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
 					done();
 				});
 			});
-			it('should fail without currentFiles argument (d7)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"targetFolderName": "",
-							"sourceFolderPath": ""
-						}
-					}
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgCurrentFiles));
+			it('should pass by restoring filename (d8)', function (done) {
+				var tempName = arg.request.body.assets.renamable.files[0].raw;
+				arg.request.body.assets.renamable.files[0].raw = arg.request.body.assets.renamable.files[0].renamed;
+				arg.request.body.assets.renamable.files[0].renamed = tempName;
+
+				page.rename(arg, function (result) {
+					expect(result.files[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
 					done();
 				});
-			});
-			it('should fail without moveToResize argument (d8)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"targetFolderName": "",
-							"sourceFolderPath": "",
-							"currentFiles": ["fake"]
-						}
-					}
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgMove));
-					done();
-				});
-			});
-			it('should fail without newFiles argument (d9)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"targetFolderName": "",
-							"sourceFolderPath": "",
-							"currentFiles": ["fake"],
-							"moveToResize": false
-						}
-					}
-				};
-				expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-					expect(exception).to.be.a(ReferenceError);
-					expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error.missingArgNewFiles));
-					done();
-				});
-			});
-			it('should pass by renaming (d10)', function (done) {
-				var arg = {
-					"constant": {},
-					"isTest": true,
-					"response": {},
-					"request": {
-						"body": {
-							"targetFolderName": "",
-							"sourceFolderPath": "",
-							"currentFiles": ["fake"],
-							"moveToResize": false,
-							"newFiles": ["fake"]
-						}
-					}
-				};
-				expect(page.rename(arg)).to.be("tested");
-				done();
 			});
 		});
 	});

@@ -1,47 +1,48 @@
 /*global __dirname, console, module, require*/
 var _error = {
-	"emptyRenameFile": "Empty filename found, cannot rename file",
-	"missingArg": "Missing required argument",
-	"missingArgConstant": "Missing required argument global constant",
-	"missingArgConstantResizeFolder": "Missing required argument resize folder in global constant",
-	"missingArgCurrentFiles": "Missing required argument current files",
-	"missingArgFilename": "Missing required argument filename",
-	"missingArgFolderName": "Missing required argument folder name",
-	"missingArgMove": "Missing required argument move to resize boolean",
-	"missingArgNewFiles": "Missing required argument new files",
-	"missingArgResponse": "Missing required response object",
-	"missingArgRequest": "Missing required request object",
-	"missingArgRequestBodyFolder": "Missing required folder in request object",
-	"missingArgSourcePath": "Missing required argument source path",
-	"missingArgTargetPath": "Missing required argument target path"
-};
+		"emptyRenameFile": "Empty filename found, cannot rename file",
+		"missingArg": "Missing required argument",
+		"missingArgDestination": "Missing required argument file destination",
+		"missingArgAssets": "Missing required argument assets",
+		"missingArgFolderName": "Missing required argument folder name",
+		"missingArgMove": "Missing required argument move to resize boolean",
+		"missingArgResponse": "Missing required response object",
+		"missingArgRequest": "Missing required request object",
+		"missingArgRequestBodyFolder": "Missing required folder in request object",
+		"missingArgSource": "Missing required argument file source",
+		"missingArgTargetPath": "Missing required argument target path"
+	},
+	constant = require("../js/global-constant.js"),
+	path = require('path');
 module.exports.error = _error;
 
-
+/***
+*     ######                                       
+*     #     # #####  ###### #    # # ###### #    # 
+*     #     # #    # #      #    # # #      #    # 
+*     ######  #    # #####  #    # # #####  #    # 
+*     #       #####  #      #    # # #      # ## # 
+*     #       #   #  #       #  #  # #      ##  ## 
+*     #       #    # ######   ##   # ###### #    # 
+*                                                  
+*/
 /**
 Generate preview sized thumbnail photos for directory viewing
 
 @method preview
 @param {object} arg arguments
-@param {object} arg.constant global variables
 @param {object} arg.body Express POST variables
 @param {string} arg.body.folder Path to directory
 @param {object} arg.response
 @param {object} arg.request
-@param {boolean} [arg.isTest]
 @return {undefined}
 **/
 module.exports.preview = function (arg) {
-	var constant,
-		directory = require("../js/admin-directory-contents-api.js"),
-		isTest,
+	var directory = require("../js/admin-directory-contents-api.js"),
 		response,
 		request;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
-	}
-	if (arg.constant === undefined) {
-		throw new ReferenceError(_error.missingArgConstant);
 	}
 	if (arg.response === undefined) {
 		throw new ReferenceError(_error.missingArgResponse);
@@ -52,8 +53,6 @@ module.exports.preview = function (arg) {
 	if (arg.request.body === undefined || arg.request.body.folder === undefined) {
 		throw new ReferenceError(_error.missingArgRequestBodyFolder);
 	}
-	constant = arg.constant;
-	isTest = arg.isTest || false;
 	response = arg.response;
 	request = arg.request;
 
@@ -74,7 +73,7 @@ module.exports.preview = function (arg) {
 		count.imageLength = json.items.length;
 		function possibleOutput(callee) {
 			var done = false;
-			if (constant.debug && constant.debug === true) {
+			if (constant.config.debug && constant.config.debug === true) {
 				console.log("possibleOutput: count.thumbCreated="+count.thumbCreated+"; count.imageLength="+count.imageLength+"; callee="+callee+";");
 			}
 			if (count.imageLength === 0) { // no images in this directory
@@ -98,15 +97,15 @@ module.exports.preview = function (arg) {
 		}
 		function ifImage(item) {
 			function createThumb(item) {
-				var sourcePath = require('path').dirname(__dirname) + item.path.abs,
+				var sourcePath = path.dirname(__dirname) + item.path.abs,
 					outputPath,
 					filename = item.name + item.ext;
-				if (constant.tempThumbFolder) {
-					outputPath = sourcePath + constant.tempThumbFolder + "/";
+				if (constant.config.tempThumbFolder) {
+					outputPath = sourcePath + constant.config.tempThumbFolder + "/";
 				} else {
 					outputPath = sourcePath;
 				}
-				if (constant.debug && constant.debug === true) {
+				if (constant.config.debug && constant.config.debug === true) {
 					console.log("ifImage: filename="+filename+"; outputPath="+outputPath+";");
 				}
 
@@ -116,35 +115,35 @@ module.exports.preview = function (arg) {
 					}
 
 					if (require('fs').existsSync(outputPath + filename)) { // file exists
+						if (constant.config.debug && constant.config.debug === true) {
+							console.log("createThumb: file exists:" + outputPath + filename + ";");
+						}
 						afterThumbCreated();
 						return;
 					}
-					if (constant.debug && constant.debug === true) {
+					if (constant.config.debug && constant.config.debug === true) {
 						console.log("ifImage resize image: filename="+filename+";");
 					}
-					if (isTest) {
-						afterThumbCreated();
-					} else {
-						require('gm')(sourcePath + filename)
-							.resize(dimension.width, dimension.height + ">")
-							.gravity('Center')
-							.extent(dimension.width, dimension.height)
-							.write(outputPath + filename, afterThumbCreated);
-					}
+
+					require('gm')(sourcePath + filename)
+						.resize(dimension.width, dimension.height + ">")
+						.gravity('Center')
+						.extent(dimension.width, dimension.height)
+						.write(outputPath + filename, afterThumbCreated);
 				});
 			}
 			if (item.content.type === "image") {
-				if (constant.debug && constant.debug === true) {
+				if (constant.config.debug && constant.config.debug === true) {
 					console.log("ifImage; start create thumb");
 				}
 				createThumb(item);
-				if (constant.tempThumbFolder) {
-					out.push(constant.tempThumbFolder + "/" + item.name + item.ext);
+				if (constant.config.tempThumbFolder) {
+					out.push(constant.config.tempThumbFolder + "/" + item.name + item.ext);
 				} else {
 					out.push(item.name + item.ext);
 				}
 			} else {
-				if (constant.debug && constant.debug === true) {
+				if (constant.config.debug && constant.config.debug === true) {
 					console.log("ifImage; file type="+item.content.type+";");
 				}
 				afterThumbCreated();
@@ -153,7 +152,7 @@ module.exports.preview = function (arg) {
 		function addToQueue() {
 			var item = json.items[count.imageInitiated];
 			if (item === undefined) {
-				if (constant.debug && constant.debug === true) {
+				if (constant.config.debug && constant.config.debug === true) {
 					console.log("addToQueue; item="+item+";");
 				}
 				return;
@@ -168,7 +167,7 @@ module.exports.preview = function (arg) {
 		}
 		queue = require("async").queue(function (item, callback) {
 			var filename = item.name + item.ext;
-			if (constant.debug && constant.debug === true) {
+			if (constant.config.debug && constant.config.debug === true) {
 				console.log("Asynce queue item:"+filename+";");
 			}
 			ifImage(item);
@@ -177,7 +176,12 @@ module.exports.preview = function (arg) {
 		addToQueue();
 	}
 
-	directory.getContents({"folder": decodeURIComponent(request.body.folder)}, ensureShrunkImages);
+	directory.getContents(
+		{
+			"folder": decodeURIComponent(request.body.folder)
+		},
+		ensureShrunkImages
+	);
 };
 
 
@@ -186,7 +190,6 @@ Create directory or use existing directory
 
 @method ensureDestinationFolder
 @param {object} arg arguments
-@param {object} arg.constant Global variables
 @param {string} arg.targetFolderName Destination folder's name for this photo batch
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
 @return {string[]} paths to verified directories
@@ -198,16 +201,10 @@ function _ensureDestinationFolder(arg) {
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
-	if (arg.constant === undefined) {
-		throw new ReferenceError(_error.missingArgConstant);
-	}
-	if (arg.constant.resizeFolder === undefined) {
-		throw new ReferenceError(_error.missingArgConstantResizeFolder);
-	}
 	if (arg.targetFolderName === undefined) {
 		throw new ReferenceError(_error.missingArgFolderName);
 	}
-	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/' + arg.constant.resizeFolder + '/');
+	destinationPath = arg.destinationRootPath || (path.dirname(__dirname) + '/' + constant.config.resizeFolder + '/');
 
 	function createOrVerifyFolder(folder) {
 		var folderPath = destinationPath + folder + '/' + arg.targetFolderName;
@@ -226,50 +223,91 @@ function _ensureDestinationFolder(arg) {
 }
 module.exports.ensureDestinationFolder = _ensureDestinationFolder;
 
+/***
+*     ######                                       ######                      
+*     #     # ###### #      ###### ##### ######    #     #   ##   ##### #    # 
+*     #     # #      #      #        #   #         #     #  #  #    #   #    # 
+*     #     # #####  #      #####    #   #####     ######  #    #   #   ###### 
+*     #     # #      #      #        #   #         #       ######   #   #    # 
+*     #     # #      #      #        #   #         #       #    #   #   #    # 
+*     ######  ###### ###### ######   #   ######    #       #    #   #   #    # 
+*                                                                              
+*/
 /**
 Delete path (file or folder)
 
 @method deletePath
 @param {object} arg arguments
-@param {string} arg.path
-@param {boolean} [arg.isTest]
+@param {string} arg.request.body.path || arg.request.body.tempThumbFolder
 **/
-function _deletePath(arg) {
-	var isTest,
+function _deletePath(arg, unitTestCallback) {
+	var errors = [],
+		response,
+		request,
 		targetPath;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
-	if (arg.path === undefined) {
+	if (arg.request === undefined || arg.request.body === undefined) {
 		throw new ReferenceError(_error.missingArgTargetPath);
 	}
-	isTest = arg.isTest || false;
-	targetPath = arg.path;
-
-	if (isTest) {
-		return "tested";
+	if (arg.request.body.path === undefined) {
+		if (arg.request.body.tempThumbFolder === undefined) {
+			throw new ReferenceError(_error.missingArgTargetPath);
+		} else {
+			targetPath = path.join(arg.request.body.tempThumbFolder, constant.config.tempThumbFolder);
+		}
+	} else {
+		targetPath = path.join(arg.request.body.path);
 	}
+	response = arg.response;
+	request = arg.request;
+	targetPath = path.join(path.dirname(__dirname), targetPath);
 
 	require('rimraf')(targetPath, function(err) {
 		if (err) {
-			console.log("Delete failed on this path: " + targetPath + "; with this error message:" + err + ";");
+			errors.push("Delete failed on this path: " + targetPath + "; with this error message:" + err + ";");
+		}
+		response.writeHead(200, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify(
+			{
+				"meta": {
+					"error": {
+						"count": errors.length,
+						"message": errors.join('; ')
+					},
+					"success": {
+						"message": targetPath + " folder successfully deleted."
+					}
+				}
+			}
+		));
+		if (unitTestCallback) {
+			unitTestCallback();
 		}
 	});
 }
 module.exports.deletePath = _deletePath;
 
 
+/***
+*     #     #                         ######                                    
+*     ##   ##  ####  #    # ######    #     # #    #  ####  #####  ####   ####  
+*     # # # # #    # #    # #         #     # #    # #    #   #   #    # #      
+*     #  #  # #    # #    # #####     ######  ###### #    #   #   #    #  ####  
+*     #     # #    # #    # #         #       #    # #    #   #   #    #      # 
+*     #     # #    #  #  #  #         #       #    # #    #   #   #    # #    # 
+*     #     #  ####    ##   ######    #       #    #  ####    #    ####   ####  
+*                                                                               
+*/
 /**
 Move source photo to destination originals folder
 
 @method movePhotos
 @param {object} arg arguments
-
-@param {string} arg.sourceFolderPath Original photo path excluding filename
 @param {string} [arg.destinationRootPath=resizeImages] Destination photo path excluding filename
-@param {string} arg.targetFolderName Destination folder's name for this photo batch inside the originals, photos, or thumbs folders
-@param {string[]} arg.newFiles Ordered list of new renamed files (extension excluded)
-@param {string[]} arg.currentFiles Ordered list of current files (extension excluded)
+@param {object} arg.assets { sort: ["2014-12-18"], "2014-12-18": { files: [ {moved: "", raw: "", renamed: "" } ] } }
+@param {boolean} arg.moveToResize Change directory
 @return {object} arg arguments
 @return {string[]} arg.files Collection of before and after filename
 **/
@@ -277,56 +315,34 @@ function _movePhotos(arg, callback) {
 	var afterRename,
 		beforeRename,
 		callbackCount = 0,
-		constant,
 		destinationPath,
 		files = [],
 		fs = require('fs'),
 		isMoveToResize,
-		targetFolderName,
-		queue,
-		sourceFolderPath;
+		queue;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
-	if (arg.sourceFolderPath === undefined) {
-		throw new ReferenceError(_error.missingArgSourcePath);
-	}
-	if (arg.targetFolderName === undefined) {
-		throw new ReferenceError(_error.missingArgFolderName);
-	}
-	if (arg.currentFiles === undefined || arg.currentFiles.length === 0) {
-		throw new ReferenceError(_error.missingArgCurrentFiles);
+	if (arg.assets === undefined) {
+		throw new ReferenceError(_error.missingArgAssets);
 	}
 	if (arg.moveToResize === undefined) {
 		throw new ReferenceError(_error.missingArgMove);
 	}
-	if (arg.constant === undefined) {
-		throw new ReferenceError(_error.missingArgConstant);
-	}
-	if (arg.newFiles === undefined || arg.newFiles.length === 0) {
-		throw new ReferenceError(_error.missingArgNewFiles);
-	}
-	constant = arg.constant;
-	destinationPath = arg.destinationRootPath || (require('path').dirname(__dirname) + '/resizeImages/originals/');
-	destinationPath = decodeURIComponent(destinationPath);
-	isMoveToResize = (arg.moveToResize === "true");
-	targetFolderName = arg.targetFolderName;
-	sourceFolderPath = decodeURIComponent(arg.sourceFolderPath);
 
-	arg.currentFiles.forEach(function (filename, index) {
-		beforeRename = sourceFolderPath + filename;
-		if (isMoveToResize) {
-			afterRename = destinationPath;
-			if (targetFolderName === "") {
-				afterRename += "/";
-			} else {
-				afterRename += targetFolderName + "/";
-			}
-		} else {
-			afterRename = sourceFolderPath;
+	destinationPath = arg.destinationRootPath || (path.dirname(__dirname) + '/' + constant.config.resizeFolder + '/originals/');
+	destinationPath = decodeURIComponent(destinationPath);
+	isMoveToResize = (arg.moveToResize === "true" || arg.moveToResize === true);
+
+	arg.assets.sort.forEach(function (id) {
+		beforeRename = decodeURIComponent(arg.assets[id].files[0].raw);
+		afterRename = (isMoveToResize) ? destinationPath + arg.assets[id].files[0].moved : arg.assets[id].files[0].renamed;
+
+		if (constant.config.debug === true) {
+			console.log("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + ")");
 		}
-		afterRename += arg.newFiles[index];
-		if (beforeRename ===  undefined || beforeRename === "" || afterRename ===  undefined || afterRename === "") {
+
+		if (beforeRename === undefined || beforeRename === "" || afterRename === undefined || afterRename === "") {
 			throw new TypeError(_error.emptyRenameFile);
 		}
 		files.push({
@@ -337,13 +353,11 @@ function _movePhotos(arg, callback) {
 				}
 			},
 			"destination": {
-				"filename": arg.newFiles[index],
 				"moved": isMoveToResize,
 				"path": {
 					"type": "absolute",
 					"value": afterRename
-				},
-				"targetFolderName": targetFolderName
+				}
 			}
 		});
 	});
@@ -352,10 +366,8 @@ function _movePhotos(arg, callback) {
 		callbackCount++;
 		
 		if (callbackCount === (files.length + 1)) { // +1 for drain
-			callback({"files": files});
+			callback({"assets": files});
 		}
-
-		_deletePath({"path": sourceFolderPath + constant.tempThumbFolder});
 	}
 
 	queue = require("async").queue(function (file, errorCallback) {
@@ -363,13 +375,13 @@ function _movePhotos(arg, callback) {
 			if (exists) {
 				fs.rename(file.source.path.value, file.destination.path.value, function (warningRename) {
 					if (warningRename) {
-						console.log("Image renaming warning: " + warningRename + "; Before filename=" + file.destination.path.value + "; After filename=" + file.source.path.value + ";");
+						console.log("Image renaming warning (_movePhotos): " + warningRename + "; Before filename=" + file.destination.path.value + "; After filename=" + file.source.path.value + ";");
 					}
 					possibleCallback();
 				});
 				errorCallback();
 			} else {
-				console.log("Image does not exist: " + file.source.path.value + ";");
+				console.log("Image does not exist (_movePhotos): " + file.source.path.value + ";");
 			}
 		});
 	}, 1);
@@ -383,49 +395,46 @@ function _movePhotos(arg, callback) {
 }
 module.exports.movePhotos = _movePhotos;
 
-
+/***
+*     ######                                
+*     #     # ######  ####  # ###### ###### 
+*     #     # #      #      #     #  #      
+*     ######  #####   ####  #    #   #####  
+*     #   #   #           # #   #    #      
+*     #    #  #      #    # #  #     #      
+*     #     # ######  ####  # ###### ###### 
+*                                           
+*/
 /**
 Resize solo photo into originals, photos, thumbs folder
 
 @method resize
 @param {object} arg arguments
-@param {object} arg.constant Global variables
 @param {string} arg.targetFolderName Folder to become child of originals, photos, and thumbs
 **/
 module.exports.resize = function (arg) {
-	var constant = arg.constant,
-		filename,
-		fs = require('fs'),
+	var filename,
 		gm = require('gm'),
-		path = require('path'),
 		photo = { width: 800, height: 600 },
 		response = arg.response,
 		request = arg.request,
-		targetFolderName,
 		thumb = { width: 185, height: 45 };
-	targetFolderName = (request.body && request.body.targetFolderName) || arg.targetFolderName; // POST or direct variable
-	filename = (request.body && request.body.filename) || arg.filename; // POST or direct variable
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
-	if (targetFolderName === undefined) {
-		throw new ReferenceError(_error.missingArgFolderName);
-	}
-	if (filename === undefined) {
-		throw new ReferenceError(_error.missingArgFilename);
+	if (request.body === undefined || request.body.destination === undefined) {
+		throw new ReferenceError(_error.missingArgDestination);
 	}
 
-	function transformImage (originalPaths) {
-		gm(originalPaths.join(""))
+	function transformImage (originalPath) {
+		gm(originalPath)
 			.autoOrient()
-			.stream(function (errOrient, stdout, stderr) {
+			.stream(function (errOrient, stdout) { // stderr is third param
 				var callbackCount = 0,
 					callbackTotal = 2,
 					errors = [],
-					photoPaths = originalPaths.concat([]),
-					thumbPaths = originalPaths.concat([]);
-				photoPaths[2] = 'photos';
-				thumbPaths[2] = 'thumbs';
+					photoPath = originalPath.replace("/originals/", '/photos/'),
+					thumbPath = originalPath.replace("/originals/", '/thumbs/');
 
 				if (errOrient) {
 					errors.push('Original orientation write error: ' + errOrient);
@@ -441,13 +450,13 @@ module.exports.resize = function (arg) {
 									"error": {
 										"count": errors.length,
 										"message": errors.join('; ')
-									},
+									}
 								},
 								"payload": {
 									"paths": {
-										"original": originalPaths.join(''),
-										"photo": photoPaths.join(''),
-										"thumb": thumbPaths.join('')
+										"original": originalPath,
+										"photo": photoPath,
+										"thumb": thumbPath
 									}
 								}
 							}
@@ -457,7 +466,7 @@ module.exports.resize = function (arg) {
 
 				gm(stdout)
 					.resize(photo.width, photo.height)
-					.write(photoPaths.join(''), function (errResize) {
+					.write(photoPath, function (errResize) {
 						if (errResize) {
 							errors.push('Photo resize write error: ' + errResize);
 						}
@@ -468,7 +477,7 @@ module.exports.resize = function (arg) {
 				gm(stdout)
 					.resize(thumb.width, thumb.height, "!")
 					.noProfile()
-					.write(thumbPaths.join(''), function (errResize) {
+					.write(thumbPath, function (errResize) {
 						if (errResize) {
 							errors.push('Thumbnail resize write error: ' + errResize);
 						}
@@ -479,37 +488,36 @@ module.exports.resize = function (arg) {
 		;
 	}
 
-	transformImage([path.dirname(__dirname), '/' + constant.resizeFolder + '/', 'originals', '/', targetFolderName, '/', filename]);
+	filename = request.body.destination.path.value;
+	transformImage(filename);
 };
 
-
+/***
+*     ######                                     
+*     #     # ###### #    #   ##   #    # ###### 
+*     #     # #      ##   #  #  #  ##  ## #      
+*     ######  #####  # #  # #    # # ## # #####  
+*     #   #   #      #  # # ###### #    # #      
+*     #    #  #      #   ## #    # #    # #      
+*     #     # ###### #    # #    # #    # ###### 
+*                                                
+*/
 /**
 Rename and move images
 
 @method rename
 @param {object} arg arguments
-@param {object} arg.constant Global variables
 @param {object} arg.response Express response object
 @param {object} arg.request Express request object
 @param {object} arg.request.body Express POST object
-@param {string} arg.request.body.targetFolderName _ensureDestinationFolder
-@param {string[]} arg.request.body.currentFiles See movePhotos
-@param {string[]} arg.request.body.moveToResize See movePhotos
-@param {string[]} arg.request.body.newFiles See movePhotos
-@param {string} arg.request.body.sourceFolderPath See movePhotos
-@param {boolean} [arg.isTest]
+@param {} arg.request.body.assets See movePhotos
+@param {boolean} arg.request.body.moveToResize See movePhotos
 **/
-module.exports.rename = function (arg) {
-	var constant,
-		isTest,
-		targetFolderName,
-		response,
+module.exports.rename = function (arg, unitTestCallback) {
+	var response,
 		request;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
-	}
-	if (arg.constant === undefined) {
-		throw new ReferenceError(_error.missingArgConstant);
 	}
 	if (arg.response === undefined) {
 		throw new ReferenceError(_error.missingArgResponse);
@@ -517,42 +525,26 @@ module.exports.rename = function (arg) {
 	if (arg.request === undefined) {
 		throw new ReferenceError(_error.missingArgRequest);
 	}
-	if (arg.request.body === undefined || arg.request.body.targetFolderName === undefined) {
-		throw new ReferenceError(_error.missingArgFolderName);
-	}
-	if (arg.request.body.sourceFolderPath === undefined) {
-		throw new ReferenceError(_error.missingArgSourcePath);
-	}
-	if (arg.request.body.currentFiles === undefined || arg.request.body.currentFiles.length === 0) {
-		throw new ReferenceError(_error.missingArgCurrentFiles);
+	if (arg.request.body === undefined || arg.request.body.assets === undefined || arg.request.body.assets.sort === undefined) {
+		throw new ReferenceError(_error.missingArgAssets);
 	}
 	if (arg.request.body.moveToResize === undefined) {
 		throw new ReferenceError(_error.missingArgMove);
 	}
-	if (arg.request.body.newFiles === undefined || arg.request.body.newFiles === 0) {
-		throw new ReferenceError(_error.missingArgNewFiles);
-	}
-	constant = arg.constant;
-	isTest = arg.isTest || false;
 	response = arg.response;
 	request = arg.request;
-	targetFolderName = request.body.targetFolderName;
 
-	if (isTest) {
-		return "tested";
-	}
+	_movePhotos(
+		request.body,
+		function (payload) {
+			var out = {"files": payload.assets};
 
-	_ensureDestinationFolder({"constant": constant, "targetFolderName": targetFolderName});
-
-	_movePhotos({
-		"constant": constant,
-		"currentFiles": request.body.currentFiles,
-		"targetFolderName": targetFolderName,
-		"moveToResize": request.body.moveToResize,
-		"newFiles": request.body.newFiles,
-		"sourceFolderPath": request.body.sourceFolderPath
-	}, function (moveArg) {
-		response.writeHead(200, {'Content-Type': 'application/json'});
-		response.end(JSON.stringify({"files": moveArg.files}));
-	});
+			if (unitTestCallback) {
+				unitTestCallback(out);
+			} else {
+				response.writeHead(200, {'Content-Type': 'application/json'});
+				response.end(JSON.stringify(out));
+			}
+		}
+	);
 };

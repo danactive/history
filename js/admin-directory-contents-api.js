@@ -59,8 +59,6 @@ Format directory contents: files or folders as JSON
 function generateJson(arg) {
 	var currentFolder,
 		filenames,
-		isFolder,
-		isRasterFile,
 		jsonPackage = { "items": [] },
 		len,
 		path = require('path');
@@ -98,6 +96,8 @@ function generateJson(arg) {
 	function getType (extension) {
 		if (extension.toLowerCase().match(/\.(gif|jpg|jpeg|png)$/)) {
 			return "image";
+		} else if (extension.toLowerCase().match(/\.(arw|raw|psd)$/)) {
+			return "source";
 		} else if (extension.toLowerCase().match(/\.(avi|mov|mp4|mts|qt|webm)$/)) {
 			return "video";
 		} else if (extension === "") {

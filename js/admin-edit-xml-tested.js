@@ -1,4 +1,5 @@
 /*global $, album, util*/
+/*exported SaveToJson*/
 var schema = {
 	"filename": "filename",
 	"city": "photo_city",

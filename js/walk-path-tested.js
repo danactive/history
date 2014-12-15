@@ -108,7 +108,6 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
 
 function _setParentFolderLink(arg) {
 	var key,
-		href = "",
 		isFolderEmpty,
 		name = "",
 		newQs = [],

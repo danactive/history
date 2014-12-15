@@ -1,4 +1,4 @@
-/*global __dirname, ajaxError, console, jQuery, require, util, window */
+/*global ajaxError, console, jQuery, util, window */
 var _error = {
 	"missingArg": "Missing required argument",
 	"missingArgAlbum": "Missing required argument album filename",
@@ -7,7 +7,6 @@ var _error = {
 
 function _getAlbumXmlAsJson(arg) {
 	"use strict";
-	var xmlJsonClass;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
@@ -21,12 +20,12 @@ function _getAlbumXmlAsJson(arg) {
 	function comparePhotoFilename (xml, file) {
 		var idLoop = window.prompt("Starting XML photo ID?", 1),
 			xmlOutput = [];
-		jQuery.each(xml, function (key, value) {
+		jQuery.each(xml, function (key) {
 			if (xml[key] !== file[key]) {
 				console.log(xml[key] + " XML filename missing from file. Delete the XML photo element");
 			}
 		});
-		jQuery.each(file, function (key, value) {
+		jQuery.each(file, function (key) {
 			if (xml[key] !== file[key]) {
 				xmlOutput.push('<photo id="' + idLoop + '"><filename>' + file[key] + '</filename></photo>');
 				idLoop++;

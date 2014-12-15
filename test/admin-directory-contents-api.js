@@ -1,17 +1,17 @@
-/*global console, describe, it, require*/
+/*global describe, it, require*/
 var expect = require("expect.js");
 
 describe('Admin:', function () {
 	describe('Directory contents API:', function () {
 		var page = require("../js/admin-directory-contents-api.js");
 		describe('getContents()', function () {
-			it('should fail with missing callback', function (done) {
+			it('should fail with missing callback (a1)', function (done) {
 				expect(page.getContents).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
 					done();
 				});
 			});
-			it('should display the root directory contents', function (done) {
+			it('should display the root directory contents (a2)', function (done) {
 				function callback (arg) {
 					expect(arg.currentFolder).to.be.a('string');
 					expect(arg.currentFolder).to.be('');
@@ -19,7 +19,7 @@ describe('Admin:', function () {
 				}
 				page.getContents(undefined, callback);
 			});
-			it('should fail with missing path', function (done) {
+			it('should fail with missing path (a3)', function (done) {
 				var path = "fail_test_path/";
 				function callback (arg) {
 					expect(arg.error).to.contain(page.error.missingPath);
@@ -27,7 +27,7 @@ describe('Admin:', function () {
 				}
 				page.getContents({"folder": path}, callback);
 			});
-			it('should fail with missing files', function (done) {
+			it('should fail with missing files (a4)', function (done) {
 				var path = "test/fixture/childless/";
 				function callback (arg) {
 					expect(arg.error).to.contain(page.error.missingFiles);
@@ -35,7 +35,7 @@ describe('Admin:', function () {
 				}
 				page.getContents({"folder": path}, callback);
 			});
-			it('should match current folder and filenames', function (done) {
+			it('should match current folder and filenames (a5)', function (done) {
 				var path = "test/fixture/cjt/";
 				function callback (arg) {
 					expect(arg).to.be.an('object');
@@ -52,7 +52,7 @@ describe('Admin:', function () {
 			});
 		});
 		describe('generateJson()', function () {
-			it('should fail without argument', function (done) {
+			it('should fail without argument (b1)', function (done) {
 				var arg;
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
@@ -60,7 +60,7 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should fail without current folder', function (done) {
+			it('should fail without current folder (b2)', function (done) {
 				var arg = {};
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
@@ -68,7 +68,7 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should fail without filenames', function (done) {
+			it('should fail without filenames (b3)', function (done) {
 				var arg = {"currentFolder":""};
 				expect(page.generateJson).withArgs(arg).to.throwException(function (exception) { // get the exception object
 					expect(exception).to.be.a(ReferenceError);
@@ -76,7 +76,7 @@ describe('Admin:', function () {
 					done();
 				});
 			});
-			it('should emit JSON with exact structure', function (done) {
+			it('should emit JSON with exact structure (b4)', function (done) {
 				var json,
 					path = "test/fixture/cjt";
 				json = page.getContents({"folder": path}, page.generateJson);
@@ -90,7 +90,7 @@ describe('Admin:', function () {
 				expect(json.items[2].content).to.only.have.keys('type');
 				done();
 			});
-			it('should emit JSON and match content type', function (done) {
+			it('should emit JSON and match content type (b5)', function (done) {
 				var json,
 					path = "test/fixture/image";
 				json = page.getContents({"folder": path}, page.generateJson);
