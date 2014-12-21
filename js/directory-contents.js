@@ -45,7 +45,7 @@
 		
 		//Push HTML to DOM
 		$.each(html, function (i, htm) {
-			$('.js-directory-list')
+			$('.js-directory-column')
 				.eq(i)
 				.html(htm)
 				.sortable(sortArgs);
@@ -73,10 +73,9 @@
 						$datepicker.datepicker( "destroy" );
 
 						$.ajax({
-							"url": '/admin/rename-photos',
+							"url": '/admin/rename-assets',
 							"method": 'post',
 							"data": {
-								"mediaType": "image",
 								"moveToResize": isMoveToResize,
 								"assets": generateFilenames(formattedDate)
 							},
@@ -102,8 +101,10 @@
 									};
 
 								if (isMoveToResize === true) {
-									$.each(response.files, function (x, file) {
-										resizeImage(file);
+									$.each(response.assets, function (x, asset) {
+										if (asset.mediaType === "image") {
+											resizeImage(asset);
+										}
 									});
 									deleteTempThumb();
 									output = xmlOutput;
@@ -122,12 +123,8 @@
 
 			generateFilenames = function (datePrefix) {
 				var generated,
-					out = {
-						"sort": []
-					},
-					photoCount = $(".js-directory-list").children('li[data-type=image]').length,
-					photoIndex = -1,
-					targetFolder = datePrefix.substring(0, 4);
+					photoCount = $(".js-directory-column").children('li[data-type=image]').length,
+					targetFolder = datePrefix.substring(0, 4) + "/";
 
 				generated = window.walkPath.getRenamedFiles({
 					"filePrefix": datePrefix,
@@ -137,33 +134,47 @@
 
 				xmlOutput = generated.xml;
 
-				// list of ordered filenames
-				$('.js-directory-list').each(function (x, dom) {
-					var $element = $(dom),
-						filenames = [], // sortable image filenames
-						id;
-					if ($element.children().length <= 0) {
-						return true; // continue
-					}
-					filenames = $element.sortable( "toArray", {"attribute": 'data-filename'});
-					$.each(filenames, function (i) {
-						photoIndex++;
-						id = generated.files[photoIndex];
-						out.sort.push(id);
-						out[id] = {
-							"files": [
-								{
-									"moved": targetFolder + "/" + generated.filenames[photoIndex],
-									"raw": qs.folder + filenames[i],
-									"renamed": qs.folder + generated.filenames[photoIndex]
-								}
-							]
-						};
-					});
-				});
-				return out;
+				return getSortedAssets(generated.files, generated.filenames, targetFolder, qs.folder);
 			};
 		}); // click
+	}
+	function getSortedAssets(renamedFiles, renamedFilenames, targetFolder, sourceFolder) {
+		var draggableIndex = -1,
+			out = {
+				"sort": []
+			};
+		// list of ordered filenames
+		$('.js-directory-column').each(function (x, column) {
+			var $asset,
+				$column = $(column),
+				$photo,
+				rawIds = [], // sortable image filenames
+				renamedId;
+			if ($column.children().length <= 0) {
+				return true; // continue
+			}
+			rawIds = $column.sortable( "toArray");
+
+			$.each(rawIds, function (i) {
+				draggableIndex++;
+				renamedId = renamedFiles[draggableIndex];
+				$photo = $("#" + rawIds[i]);
+				out.sort.push(renamedId);
+				out[renamedId] = {
+					"files": []
+				};
+				$('.js-directory-column > li[data-file=' + $photo.attr("data-file") + ']').each(function (xx, asset) {
+					$asset = $(asset);
+					out[renamedId].files.push({
+						"mediaType": $asset.attr("data-type"),
+						"moved": targetFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext"),
+						"raw": sourceFolder + $asset.attr("data-filename"),
+						"renamed": sourceFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext")
+					});
+				});
+			});
+		});
+		return out;
 	}
 	function loadNav() {
 		if (parent.text === "") {

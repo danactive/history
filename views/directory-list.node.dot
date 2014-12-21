@@ -3,9 +3,9 @@
 	<li><a href="#" id="btnRename">Rename photos</a></li>
 	<li><a href="#" id="btnResize">Rename AND Resize photos</a></li>
 </ul>
-<ul class="js-directory-list"></ul>
-<ul class="js-directory-list"></ul>
-<ul class="js-directory-list"></ul>
-<ul class="js-directory-list"></ul>
-<ul class="js-directory-list"></ul>
-<ul class="js-directory-list"></ul>
+<ul class="js-directory-column"></ul>
+<ul class="js-directory-column"></ul>
+<ul class="js-directory-column"></ul>
+<ul class="js-directory-column"></ul>
+<ul class="js-directory-column"></ul>
+<ul class="js-directory-column"></ul>

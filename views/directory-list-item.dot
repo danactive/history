@@ -1,13 +1,15 @@
 {{ var arg = arguments[1],
+	id = it.name.replace(/[\.\s\(\)]/g, "_") + it.ext.replace(/[\.\s\(\)]/g, "_"),
+	name = it.name.replace(/[\.\s\(\)]/g, "_"),
 	tempThumbFolder = "_historyThumb";}}
 {{? it.content.type === "folder" && it.name !== tempThumbFolder }}
-	<li><span>{{=it.name}}{{=it.ext}}</span><!--a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}{{=it.ext}}&amp;preview=false">Directory list</a--> <a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}/&amp;preview=true">Thumbnail preview</a></li>
+	<li><span>{{=it.name}}{{=it.ext}}</span> <a href="{{=it.path.nav}}{{=encodeURIComponent(it.name)}}/&amp;preview=true">Thumbnail preview</a></li>
 {{?? it.content.type === "image" && arg.qs.preview === "true" }}
-	<li data-file="{{=it.name}}" data-ext="{{=it.ext}}" data-filename="{{=it.name}}{{=it.ext}}" data-type="{{=it.content.type}}"><a href="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" target="_blank">{{=it.name}}{{=it.ext}}</a><img src="/img/spinner.gif" class="directory-thumb-wait"></li>
+	<li id="{{=id}}" data-file="{{=name}}" data-filename="{{=it.name}}{{=it.ext}}" data-ext="{{=it.ext}}" data-type="{{=it.content.type}}"><a href="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" target="_blank">{{=it.name}}{{=it.ext}}</a><img src="/img/spinner.gif" class="directory-thumb-wait"></li>
 {{?? it.content.type === "image" && arg.qs.preview === "false" }}
 	<li><a href="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" target="_blank">{{=it.name}}{{=it.ext}}</a><img src="{{=it.path.rel}}{{=it.name}}{{=it.ext}}" class="directory-thumb"></li>
 {{?? it.content.type === "folder" && it.name === tempThumbFolder }}
 	<li><span>{{=it.name}}{{=it.ext}}</span></li>
 {{??}}
-	<li data-file="{{=it.name}}" data-ext="{{=it.ext}}" data-filename="{{=it.name}}{{=it.ext}}" data-type="{{=it.content.type}}"><span>{{=it.name}}{{=it.ext}}</span></li>
+	<li id="{{=id}}" data-file="{{=name}}" data-ext="{{=it.ext}}" data-filename="{{=it.name}}{{=it.ext}}" data-type="{{=it.content.type}}"><span>{{=it.name}}{{=it.ext}}</span></li>
 {{?}}

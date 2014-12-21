@@ -152,9 +152,6 @@ module.exports.preview = function (arg) {
 		function addToQueue() {
 			var item = json.items[count.imageInitiated];
 			if (item === undefined) {
-				if (constant.config.debug && constant.config.debug === true) {
-					console.log("addToQueue; item="+item+";");
-				}
 				return;
 			}
 			queue.push(item, function (errorEach) {
@@ -184,7 +181,16 @@ module.exports.preview = function (arg) {
 	);
 };
 
-
+/***
+*     #######                                    
+*     #       #    #  ####  #    # #####  ###### 
+*     #       ##   # #      #    # #    # #      
+*     #####   # #  #  ####  #    # #    # #####  
+*     #       #  # #      # #    # #####  #      
+*     #       #   ## #    # #    # #   #  #      
+*     ####### #    #  ####   ####  #    # ###### 
+*                                                
+*/
 /**
 Create directory or use existing directory
 
@@ -263,25 +269,28 @@ function _deletePath(arg, unitTestCallback) {
 	response = arg.response;
 	request = arg.request;
 	targetPath = path.join(path.dirname(__dirname), targetPath);
+	targetPath = decodeURIComponent(targetPath);
 
 	require('rimraf')(targetPath, function(err) {
+		var out;
 		if (err) {
 			errors.push("Delete failed on this path: " + targetPath + "; with this error message:" + err + ";");
 		}
-		response.writeHead(200, {'Content-Type': 'application/json'});
-		response.end(JSON.stringify(
-			{
-				"meta": {
-					"error": {
-						"count": errors.length,
-						"message": errors.join('; ')
-					},
-					"success": {
-						"message": targetPath + " folder successfully deleted."
-					}
+		out = {
+			"meta": {
+				"error": {
+					"count": errors.length,
+					"message": errors.join('; ')
 				}
 			}
-		));
+		};
+		if (errors.length === 0) {
+			out.meta.success = {
+				"message": targetPath + " folder successfully deleted."
+			};
+		}
+		response.writeHead(200, {'Content-Type': 'application/json'});
+		response.end(JSON.stringify(out));
 		if (unitTestCallback) {
 			unitTestCallback();
 		}
@@ -316,10 +325,11 @@ function _movePhotos(arg, callback) {
 		beforeRename,
 		callbackCount = 0,
 		destinationPath,
-		files = [],
+		assets = [],
 		fs = require('fs'),
 		isMoveToResize,
-		queue;
+		queue,
+		year;
 	if (arg === undefined) {
 		throw new ReferenceError(_error.missingArg);
 	}
@@ -334,59 +344,69 @@ function _movePhotos(arg, callback) {
 	destinationPath = decodeURIComponent(destinationPath);
 	isMoveToResize = (arg.moveToResize === "true" || arg.moveToResize === true);
 
+	if (isMoveToResize === true) {
+		year = arg.assets.sort[0].substring(0, 4);
+		_ensureDestinationFolder({"targetFolderName": year});
+	}
+
 	arg.assets.sort.forEach(function (id) {
-		beforeRename = decodeURIComponent(arg.assets[id].files[0].raw);
-		afterRename = (isMoveToResize) ? destinationPath + arg.assets[id].files[0].moved : arg.assets[id].files[0].renamed;
+		arg.assets[id].files.forEach(function (file) {
+			beforeRename = decodeURIComponent(file.raw);
+			afterRename = (isMoveToResize) ? destinationPath + file.moved : file.renamed;
 
-		if (constant.config.debug === true) {
-			console.log("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + ")");
-		}
-
-		if (beforeRename === undefined || beforeRename === "" || afterRename === undefined || afterRename === "") {
-			throw new TypeError(_error.emptyRenameFile);
-		}
-		files.push({
-			"source": {
-				"path": {
-					"type": "relative",
-					"value": beforeRename
-				}
-			},
-			"destination": {
-				"moved": isMoveToResize,
-				"path": {
-					"type": "absolute",
-					"value": afterRename
-				}
+			if (constant.config.debug === true) {
+				console.log("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + ")");
 			}
+
+			if (beforeRename === undefined || beforeRename === "" || afterRename === undefined || afterRename === "") {
+				throw new TypeError(_error.emptyRenameFile);
+			}
+			assets.push({
+				"destination": {
+					"moved": isMoveToResize,
+					"path": {
+						"type": "absolute",
+						"value": afterRename
+					}
+				},
+				"mediaType": file.mediaType,
+				"source": {
+					"path": {
+						"type": "relative",
+						"value": beforeRename
+					}
+				}
+			});
 		});
 	});
 
 	function possibleCallback() { // calculate if all async calls are complete
 		callbackCount++;
 		
-		if (callbackCount === (files.length + 1)) { // +1 for drain
-			callback({"assets": files});
+		if (callbackCount === (assets.length + 1)) { // +1 for drain
+			callback({"assets": assets});
 		}
 	}
 
 	queue = require("async").queue(function (file, errorCallback) {
-		fs.exists(file.source.path.value, function (exists) {
+		var destinationPath = file.destination.path.value,
+			sourcePath = file.source.path.value;
+		fs.exists(sourcePath, function (exists) {
 			if (exists) {
-				fs.rename(file.source.path.value, file.destination.path.value, function (warningRename) {
+				fs.rename(sourcePath, destinationPath, function (warningRename) {
 					if (warningRename) {
-						console.log("Image renaming warning (_movePhotos): " + warningRename + "; Before filename=" + file.destination.path.value + "; After filename=" + file.source.path.value + ";");
+						console.log("Image renaming warning (_movePhotos): " + warningRename + "; Before filename=" + sourcePath + "; After filename=" + destinationPath + ";");
 					}
 					possibleCallback();
 				});
 				errorCallback();
 			} else {
-				console.log("Image does not exist (_movePhotos): " + file.source.path.value + ";");
+				console.log("Image does not exist (_movePhotos): " + sourcePath + ";");
 			}
 		});
 	}, 1);
 
-	queue.push(files, function(errorEach){
+	queue.push(assets, function(errorEach){
 		if (errorEach) {
 			throw errorEach;
 		}
@@ -537,13 +557,11 @@ module.exports.rename = function (arg, unitTestCallback) {
 	_movePhotos(
 		request.body,
 		function (payload) {
-			var out = {"files": payload.assets};
-
 			if (unitTestCallback) {
-				unitTestCallback(out);
+				unitTestCallback(payload);
 			} else {
 				response.writeHead(200, {'Content-Type': 'application/json'});
-				response.end(JSON.stringify(out));
+				response.end(JSON.stringify(payload));
 			}
 		}
 	);

@@ -117,7 +117,7 @@ app.get(/(admin\/diff-album-path)/, function(request, response) {
 app.post(/(admin\/preview-generator)/, function(request, response) {
 	adminImageManipulation.preview({"request": request, "response": response});
 });
-app.post(/(admin\/rename-photos)/, function(request, response) {
+app.post(/(admin\/rename-assets)/, function(request, response) {
 	adminImageManipulation.rename({"request": request, "response": response});
 });
 app.post(/(admin\/resize-photo)/, function(request, response) {

@@ -297,7 +297,7 @@ describe('Admin:', function () {
 				arg.request.body.moveToResize = false;
 
 				page.rename(arg, function (result) {
-					expect(result.files[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
+					expect(result.assets[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
 					done();
 				});
 			});
@@ -307,7 +307,7 @@ describe('Admin:', function () {
 				arg.request.body.assets.renamable.files[0].renamed = tempName;
 
 				page.rename(arg, function (result) {
-					expect(result.files[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
+					expect(result.assets[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
 					done();
 				});
 			});
