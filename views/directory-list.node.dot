@@ -1,4 +1,5 @@
 <ul id="controls">
+	<li id="spinner" class="hide"><img src="/img/spinner.gif"></li>
 	<li><a href="#" id="btnParentFolder">Back to <b id="parentFolderName"></b> folder</a></li>
 	<li><a href="#" id="btnRename">Rename photos</a></li>
 	<li><a href="#" id="btnResize">Rename AND Resize photos</a></li>

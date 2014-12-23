@@ -353,6 +353,7 @@ function _movePhotos(arg, callback) {
 		arg.assets[id].files.forEach(function (file) {
 			beforeRename = decodeURIComponent(file.raw);
 			afterRename = (isMoveToResize) ? destinationPath + file.moved : file.renamed;
+			afterRename = decodeURIComponent(afterRename);
 
 			if (constant.config.debug === true) {
 				console.log("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + ")");

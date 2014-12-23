@@ -80,29 +80,42 @@
 								"assets": generateFilenames(formattedDate)
 							},
 							"success": function (response) {
-								var deleteTempThumb = function () {
+								var $spinner = $("#spinner"),
+									ajaxCounter = 0,
+									deleteTempThumb = function () {
 										$.ajax({
 											"url": '/admin/delete-path',
 											"method": 'post',
 											"data": {
 												"tempThumbFolder": qs.folder
 											},
-											"error": ajaxError
+											"error": ajaxError,
+											"complete": spinner
 										});
 									},
+									photoCount = 1,
 									output = "",
 									resizeImage = function (postData) {
 										$.ajax({
 											"url": '/admin/resize-photo',
 											"method": 'post',
 											"data": postData,
-											"error": ajaxError
+											"error": ajaxError,
+											"complete": spinner
 										});
+									},
+									spinner = function () {
+										ajaxCounter++;
+										if (photoCount === ajaxCounter) {
+											$spinner.addClass("hide");
+										}
 									};
 
 								if (isMoveToResize === true) {
+									$spinner.removeClass("hide");
 									$.each(response.assets, function (x, asset) {
 										if (asset.mediaType === "image") {
+											photoCount++;
 											resizeImage(asset);
 										}
 									});
