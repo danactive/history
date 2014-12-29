@@ -206,7 +206,7 @@ GetAlbumXml = function() { // both <select> and btn call this function
 		isAlbumChangable = confirm('Change photo album?'); // otherwise confirm before clearing
 	}
 	if (isAlbumChangable) {
-		$.get('../gallery-' + $('#editGalleries').val() + '/album_' + $('#editAlbums').val() + '.xml').
+		$.get('../gallery-' + $('#editGalleries').val() + '/xml/album_' + $('#editAlbums').val() + '.xml').
 			error(ajaxError).
 			success(ConvertXmlToJson);
 			
@@ -219,7 +219,7 @@ GetGalleryNames = function() { // both <select> and btn call this function
 		isGalleryChangable = confirm('Change photo gallery?'); // otherwise confirm before clearing
 	}
 	if (isGalleryChangable) {
-		$.get('../gallery-' + $('#editGalleries').val() + '/gallery.xml').
+		$.get('../gallery-' + $('#editGalleries').val() + '/xml/gallery.xml').
 			error(ajaxError).
 			success(PopulateAlbums);
 			
