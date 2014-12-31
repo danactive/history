@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'>
+<title>History - Admin section</title>
+{#css}
+	<link href="{.}" media="screen" rel="stylesheet" type="text/css" />
+{/css}
+</head><body>
+
+{+body/}
+{?view}{>"{view}"/}{/view}
+
+{#scripts}
+	<script src="{.}"></script>
+{/scripts}
+
+</body></html>

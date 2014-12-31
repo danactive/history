@@ -1,45 +1,68 @@
-﻿{
+{
   "name": "history",
-  "version": "0.19.0",
+  "version": "0.22.0",
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
+  "main": "index.js",
   "dependencies": {
-    "express": "3.4.x"
+    "app-root-path": "1.0.x",
+    "async": "0.9.x",
+    "boom": "2.6.x",
+    "dustjs-helpers": "1.5.x",
+    "dustjs-linkedin": "2.5.x",
+    "es6-promise": "2.0.x",
+    "extend": "2.0.x",
+    "gm": "1.17.x",
+    "hapi": "8.2.x",
+    "hapi-dust": "1.0.x",
+    "joi": "5.1.x",
+    "lout": "6.1.x",
+    "mkdirp": "0.5.x",
+    "rimraf": "2.2.x",
+    "tuxharness": "1.x.x"
   },
   "devDependencies": {
-    "async": "0.2.x",
     "expect.js": "0.3.x",
-    "dot": "1.0.x",
-    "dot-emc": "0.1.x",
-    "grunt": "0.4.x",
-    "grunt-contrib-jshint": "0.6.x",
-    "grunt-contrib-nodeunit": "0.2.x",
-    "grunt-contrib-uglify": "0.2.x",
-    "grunt-contrib-watch": "0.5.x",
-    "grunt-develop": "0.3.x",
-    "grunt-dot-compiler": "0.5.x",
-    "grunt-githooks": "0.3.x",
-    "grunt-shell": "0.6.x",
-    "gm": "1.14.x",
-    "mkdirp": "0.3.x",
-    "rimraf": "2.2.x"
+    "gulp": "3.8.x",
+    "gulp-concat": "2.4.x",
+    "gulp-develop-server": "0.2.x",
+    "gulp-dust": "1.0.x",
+    "gulp-expect-file": "0.0.x",
+    "gulp-jshint": "1.9.x",
+    "gulp-load-plugins": "0.8.x",
+    "gulp-mocha": "2.0.x",
+    "gulp-plumber": "0.6.x",
+    "gulp-rename": "1.2.x",
+    "jshint-stylish": "1.0.x",
+    "node-notifier": "4.1.x"
   },
-  "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "mocha test"
+    "dev": "./node_modules/.bin/gulp develop",
+    "debug": "node-debug index.js",
+    "harness": "node ./node_modules/tuxharness/index.js",
+    "lint": "./node_modules/.bin/gulp lint",
+    "start": "node .",
+    "test": "./node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/danactive/history.git"
   },
   "keywords": [
-    "photo", "gallery", "localhost"
+    "photo",
+    "gallery",
+    "geocode",
+    "slippy",
+    "map"
   ],
-  "author": [{ "name" : "Dan BROOKS"}],
-  "contributors" : [],
-  "bugs": { "url" : "http://github.com/danactive/history/issues"},
-  "homepage": "http://danactive.github.io/history/",
-  "engines" : { "express" : "3" },
+  "author": "Dan BROOKS",
   "license": "BSD",
-  "readmeFilename": "README.md"
+  "bugs": {
+    "url": "https://github.com/danactive/history/issues"
+  },
+  "homepage": "https://github.com/danactive/history",
+  "engines": {
+    "node": ">=0.10.35"
+  },
+  "readmeFilename": "README.md",
+  "tuxharness": "./tuxharness.js"
 }

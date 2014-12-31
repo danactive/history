@@ -1,9 +1,25 @@
-Changelog
-------
+# Changelog
+
+### 1.0.0 - Replace express.js for hapi.js
+#### 2015-Feb-15
+* Replace grunt.js with gulp.js 
+* Mostly async using callbacks and promises
+* Restructure folders to public and src
+
+### 0.20.0 - Rename and move meta files like RAW and movies
+#### 2014-Dec-21
+
+### 0.19.0 - Isolate XML for future JSON
+#### 2014-Dec-20
+
+### 0.18.0 - Add Flickr full justified gallery
+#### 2014-Sep-14
 
 ### 0.17.0 - Generate thumbs
+#### 2014-Jan-10
 
 ### 0.16.0 - Add unit test
+#### 2014-Jan-05
 
 ### 0.15.0 - Grunt.js workflow
 #### 2014-Jan-04

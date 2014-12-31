@@ -1,0 +1,16 @@
+{>"layout.dust"/}
+
+{<body}
+	<ul id="controls">
+		<li id="spinner" class="hide"><img src="/static/img/spinner.gif"></li>
+		<li><a href="#" id="btnParentFolder">Back to <b id="parentFolderName"></b> folder</a></li>
+		<li><a href="#" id="btnRename">Rename photos</a></li>
+		<li><a href="#" id="btnResize">Rename AND Resize photos</a></li>
+	</ul>
+	<ul class="js-directory-column"></ul>
+	<ul class="js-directory-column"></ul>
+	<ul class="js-directory-column"></ul>
+	<ul class="js-directory-column"></ul>
+	<ul class="js-directory-column"></ul>
+	<ul class="js-directory-column"></ul>
+{/body}

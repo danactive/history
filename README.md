@@ -7,6 +7,9 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Includes administration tools for XML generation
 * Free & open source (dependant on other open source projects see indiviual licenses)
 
+[![npm version](https://badge.fury.io/js/history.svg)](http://badge.fury.io/js/history)
+[![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+
 
 [Demo site 0.15.0](http://danactive.github.io/history/)
 
@@ -43,13 +46,9 @@ Included in this project
 * [Fluid 960 Grid System (admin)](http://www.designinfluences.com/fluid960gs/)
 
 To use the administration tools
-* [Node.js](http://nodejs.org/) v0.6.18
-* [Express](http://expressjs.com/) v3.4.7
-* [GraphicsMagick](https://github.com/aheckmann/gm) v1.14.1
-* [Grunt.js](http://gruntjs.com/) via npm
-    * npm install -g grunt-cli
-* [mocha](http://visionmedia.github.io/mocha/) via npm
-    * npm install -g mocha
+* [node.js](http://nodejs.org/)
+* [hapi.js](http://hapijs.org/)
+* [GraphicsMagick](https://www.npmjs.com/package/gm) Install GraphicsMagick before npm
 * [bower](http://bower.io/) via npm
     * npm install -g bower
 
