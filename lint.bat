@@ -1,1 +1,1 @@
-grunt jshint
+gulp lint
