@@ -1,11 +1,11 @@
 # Links
-* My camera [[https://panasonic.ca/english/audiovideo/camerascamcorders/digitalstill/high_zoom_specs.asp|Panasonic Lumix DMC-ZS3]] creates AVCHD video (.MTS)
-* Encode using free open-source [[http://www.ffmpeg.org|FFMPEG]] ([[http://ffmpeg.zeranoe.com/builds/|download latest static 64-bit build]])
-* Dive into HTML5 [[http://diveintohtml5.info/video.html|HTML5 video reference]]
-* Willus.com [[http://www.willus.com/author/streaming2.shtml|Conversion syntax]]
-* FFMPEG [[http://ffmpeg.org/ffmpeg.html#SEC11|Official conversion documentation]]
-* CatsWhoCode.com [[http://www.catswhocode.com/blog/19-ffmpeg-commands-for-all-needs|19 ffmpeg commands for all needs]]
-* Node.js [[https://github.com/xonecas/ffmpeg-node|Batch convert]]
+* My camera [Panasonic Lumix DMC-ZS3](https://panasonic.ca/english/audiovideo/camerascamcorders/digitalstill/high_zoom_specs.asp) creates AVCHD video (.MTS)
+* Encode using free open-source [FFMPEG](http://www.ffmpeg.org) - [download latest static 64-bit build](http://ffmpeg.zeranoe.com/builds/)
+* Dive into HTML5 [HTML5 video reference](http://diveintohtml5.info/video.html)
+* Willus.com [Conversion syntax](http://www.willus.com/author/streaming2.shtml)
+* FFMPEG [Official conversion documentation](http://ffmpeg.org/ffmpeg.html#SEC11)
+* CatsWhoCode.com [19 ffmpeg commands for all needs](http://www.catswhocode.com/blog/19-ffmpeg-commands-for-all-needs)
+* Node.js [Batch convert](https://github.com/xonecas/ffmpeg-node)
 
 # FFMPEG encode to...
 * -t [sec] stop duration
