@@ -30,6 +30,9 @@ var album = {
 			$('#filename').prop('checked',true); // keep filename disabled
 		},
 		"PopulateFromPhoto": function(data) {
+			if (typeof data.filename === "object") {
+				data.filename = data.filename[0];
+			}
 			var UpdateFieldOrDiv = function($field,mergeDatum) {
 				var noSuggestions = $field.siblings('.suggestions').length === 0 || $field.siblings('.suggestions').html().length === 0;
 				var emptyOrSameVal = $field.val() === "" || $field.val() === mergeDatum;
@@ -128,6 +131,7 @@ var album = {
 			}
 		},
 		"Preview": function(filename) {
+			filename = filename.substr(0, filename.lastIndexOf(".")) + ".jpg";
 			var photoPath = ['../static/gallery-', $('#editGalleries').val(), '/media/photos/', filename.substr(0,filename.indexOf('-')), '/', filename].join('');
 			$('#photoPreview').css('background-image', "url(" + photoPath + ")");
 		},
@@ -179,17 +183,17 @@ var album = {
 			filename,
 			year;
 		$('#listPhotos').html(''); // clear previous gallery
-		$.each(album.json.album.photo, function(i, photo) {
-			if (photo.filename instanceof Array) {
-				filename = photo.filename[0];
+		$.each(album.json.album.item, function(i, item) {
+			if (item.filename instanceof Array) {
+				filename = item.filename[0];
 				filename = filename.substr(0, filename.lastIndexOf(".")) + ".jpg";
 			} else {
-				filename = photo.filename;
+				filename = item.filename;
 			}
 			year = filename.substr(0,filename.indexOf('-'));
 			$('<div>').
 				click(album.photo.Invoke).
-				data('photo',photo).
+				data('photo',item).
 				html(['<img src="../static/gallery-', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join('')).
 				appendTo('#listPhotos');
 		});

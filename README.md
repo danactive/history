@@ -63,19 +63,18 @@ Folder structures
 
 Photo/video album XML schemas
 -------
-### Current schema (1.8)
+### Current schema (2.0)
 
 Example
 
-    <album gallery="demo"> <!-- gallery directory name excluding 'gallery-'; new in schema 1.8 -->
-    	<album_meta>
-    		<album_name>sample</album_name> <!--Filename is album_sample.xml-->
-    		<album_version>1.8</album_version> <!--Reference schema version-->
-    		<geo>
-    			<google_zoom>11</google_zoom> <!-- Initial zoom level when viewing Google map via Mapstraction -->
-    		</geo>
-    	</album_meta>
-    	<photo id="1"> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
+    <album>
+    	<meta>
+            <gallery>demo</gallery> <!-- gallery directory name excluding 'gallery-'; new in schema 2.0 -->
+    		<id>sample</id> <!--Filename is album_sample.xml; new in schema 2.0-->
+    		<version>1.8</version> <!--Reference schema version; new in schema 2.0-->
+    	</meta>
+    	<item><!-- photo -->
+            <id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
     		<filename>2001-03-21-01.jpg</filename> <!-- must start with YYYY year; photos and thumbs must be places in this folder too -->
     		<geo> <!-- geocode -->
     			<lat>49.25</lat> <!-- latitude -->
@@ -85,8 +84,9 @@ Example
     		<photo_loc>Granville Island</photo_loc> <!-- General location name often neighourhood or building -->
 			<photo_desc>An oversized avocado</photo_desc> <!-- The photo description only viewable in the lightbox view -->
     		<thumb_caption>Lunch</thumb_caption> <!-- Less than three words to descibe the thumbnail in gallery view -->
-    	</photo>
-		<video id="4">
+    	</item>
+		<item><!-- video -->
+            <id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
 			<filename>2012-fireplace.mp4</filename> <!-- History supports both HTML5 video formats for best browser support; must start with YYYY year; photos and thumbs must be places in this folder too -->
 			<filename>2012-fireplace.webm</filename>
 			<photo_city>Vancouver, BC</photo_city>
@@ -98,7 +98,7 @@ Example
 				<lat>49.25</lat>
 				<lon>-123.1</lon>
 			</geo>
-		</video>
+		</item>
     </album>
     
 License

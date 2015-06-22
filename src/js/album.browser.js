@@ -131,39 +131,21 @@ function displayAlbum (response) {
 		"map": {
 			"centre": [0, 0],
 			"containerId": mapBoxId,
-			"itemCount": response.json.album.photo.length + ((response.json.album.video && Array.isArray(response.json.album.video)) ? response.json.album.video.length : 0),
+			"itemCount": response.json.album.item.length,
 		}
 	});
 
-	// build MARKER for photo
-	if (response.json.album.photo) {
-		jQuery.each(response.json.album.photo, function(i, item) {
-			var addOptions = {};
-			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(item.filename) + "'></div><div class='caption'>" + item.thumb_caption + "</div>";
-			addOptions.id = item.filename || i;
-			addOptions.index = parseInt(item["@id"], 10);
-			
-			if (item.geo) {
-				addOptions.coordinates = [item.geo.lon, item.geo.lat];
-			}
-			
-			map.pin.add(addOptions);
-		}); //close each
-	}
-
-	// build MARKER for video
-	if (response.json.album.video) {
-		jQuery.each(response.json.album.video, function(i, item) {
+	if (response.json.album.item) {
+		jQuery.each(response.json.album.item, function(i, item) {
 			var addOptions = {},
 				filename = item.filename || "";
 
-			if (item.filename.length) {
+			if (typeof filename === "object") {
 				filename = item.filename[0];
 			}
-
 			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename, true) + ".jpg'></div><div class='caption'>" + item.thumb_caption + "</div>";
 			addOptions.id = filename || i;
-			addOptions.index = parseInt(item["@id"], 10);
+			addOptions.index = parseInt(item.sort, 10);
 			
 			if (item.geo) {
 				addOptions.coordinates = [item.geo.lon, item.geo.lat];

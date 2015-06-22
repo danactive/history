@@ -22,7 +22,8 @@ exports.register = function(plugin, options, next) {
 	routes.push({ "method": 'GET',  "path": '/static/{path*}', "config": files.static });
 	routes.push({ "method": 'GET',  "path": '/static/gallery-{gallery}/{files*}', "config": files.gallery });
 	routes.push({ "method": 'GET',  "path": '/public/{files*}', "config": files.public });
-	
+	routes.push({ "method": 'GET',  "path": '/favicon.ico', "handler": { "file": './favicon.ico' } });
+		
 	routes.push({ "method": 'GET',  "path": '/flickr-gallery', "config": root.flickrGallery });
 	routes.push({ "method": 'GET',  "path": '/watch-video', "config": root.watchVideo });
 	routes.push({ "method": 'GET',  "path": '/', "config": root.home });

@@ -2,13 +2,13 @@
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" doctype-system="about:legacy-compat" />
-	<xsl:variable name="galleryDir" select="/album/@gallery" />
+	<xsl:variable name="galleryDir" select="/album/meta/gallery" />
 	<xsl:variable name="charAssPath" select="concat('../gallery-', $galleryDir, '/xml/character_ass.xml')" />
 	<xsl:variable name="charsPath" select="concat('../gallery-', $galleryDir, '/xml/characters.xml')" />
 	<xsl:variable name="char_ass" select="document($charAssPath)/character_association"/>
 	<xsl:variable name="chars" select="document($charsPath)/characters"/>
-	<xsl:variable name="photo__album_name">
-		<xsl:value-of select="/album/album_meta/album_name"/>
+	<xsl:variable name="photo__album_id">
+		<xsl:value-of select="/album/meta/id"/>
 	</xsl:variable>
 	<xsl:template match="/">
 		<html>
@@ -63,7 +63,7 @@
 
 			<body>
 				<!-- XML schema 1.5 thru 2.0 had geo tag in this format -->
-				<xsl:if test="number(/album/album_meta/album_version) &gt;= '1.5' and number(/album/album_meta/album_version) &lt; '2'">
+				<xsl:if test="number(/album/meta/version) &gt;= '1.5'">
 					<div id="divToolbox">
 						<a href="javascript:;" id="linkMap">Map this album</a>
 					</div>
@@ -72,21 +72,21 @@
 				<div id="mapBox" class="hide"></div>
 				<div id="albumBox">
 					<xsl:attribute name="data-album">
-						<xsl:value-of select="$photo__album_name" />
+						<xsl:value-of select="$photo__album_id" />
 					</xsl:attribute>
 					<xsl:attribute name="data-gallery">
 						<xsl:value-of select="$galleryDir"/>
 					</xsl:attribute>
 					<ul>
-						<xsl:for-each select="album/photo|album/video">
+						<xsl:for-each select="album/item">
 							<!-- ___________ Characters ________________ -->
 							<!-- remember variable scope inside for loop -->
-							<xsl:variable name="photo__photo_id">
-								<xsl:value-of select="@id"/>
+							<xsl:variable name="photo__photo_sort">
+								<xsl:value-of select="sort"/>
 							</xsl:variable>
 
 							<xsl:variable name="characters">
-								<xsl:for-each select="$char_ass/c_a[a = $photo__album_name][p = $photo__photo_id]">
+								<xsl:for-each select="$char_ass/c_a[a = $photo__album_id][p = $photo__photo_sort]">
 									<xsl:variable name="char_ass__char_id">
 										<xsl:value-of select="c"/>
 									</xsl:variable>
@@ -118,7 +118,7 @@
 											<xsl:value-of select="photo_id" />
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of select="@id" />
+											<xsl:value-of select="sort" />
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:attribute>
@@ -172,7 +172,7 @@
 													</xsl:choose>
 												&lt;/div&gt;
 											</xsl:if>
-											<xsl:if test="name(.) = 'video'">
+											<xsl:if test="type = 'video'">
 												&lt;div class="meta"&gt;
 													&lt;a href="javascript:;" onclick="fOpenWin('/watch-video?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w + 20"/>,<xsl:value-of select="size/h + 20"/>);"&gt;Watch Video&lt;/a&gt;
 												&lt;/div&gt;
@@ -195,7 +195,7 @@
 														<xsl:value-of select="photo_id" />
 													</xsl:when>
 													<xsl:otherwise>
-														<xsl:value-of select="@id" />
+														<xsl:value-of select="sort" />
 													</xsl:otherwise>
 												</xsl:choose>
 											</xsl:attribute>
@@ -204,7 +204,7 @@
 									</a>
 								</div>
 								<div class="albumBoxPhotoCaption">
-									<xsl:if test="name(.) = 'video'">Video: </xsl:if>
+									<xsl:if test="type = 'video'">Video: </xsl:if>
 									<xsl:value-of select="thumb_caption"/>
 								</div>
 								<div class="albumBoxPhotoChar">
