@@ -1,6 +1,6 @@
 {
   "name": "history",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
   "main": "index.js",
   "dependencies": {
@@ -9,7 +9,6 @@
     "boom": "^2.6.1",
     "dustjs-helpers": "^1.5.0",
     "dustjs-linkedin": "^2.5.1",
-    "es6-promise": "^2.0.1",
     "extend": "^2.0.0",
     "gm": "^1.17.0",
     "hapi": "^8.2.0",
@@ -26,13 +25,12 @@
     "gulp-concat": "^2.4.3",
     "gulp-develop-server": "^0.2.5",
     "gulp-dust": "^1.1.0",
+    "gulp-eslint": "^1.1.1",
     "gulp-expect-file": "^0.0.7",
-    "gulp-jshint": "^1.9.4",
-    "gulp-load-plugins": "^0.8.1",
-    "gulp-mocha": "^2.1.1",
+    "gulp-load-plugins": "^1.2.0",
+    "gulp-mocha": "^2.2.0",
     "gulp-plumber": "^0.6.6",
     "gulp-rename": "^1.2.0",
-    "jshint-stylish": "^1.0.2",
     "node-notifier": "^4.1.2"
   },
   "scripts": {
@@ -54,10 +52,12 @@
     "gallery",
     "geocode",
     "slippy",
-    "map"
+    "map",
+    "video",
+    "showcase"
   ],
   "author": "Dan BROOKS",
-  "license": "BSD",
+  "license": "Unlicense",
   "bugs": {
     "url": "https://github.com/danactive/history/issues"
   },

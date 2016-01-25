@@ -1,11 +1,10 @@
-/*global window*/
+/*global console, window*/
 /*exported ajaxError, requireArg*/
 'use strict';
 var ajaxError = function(jqXHR, textStatus, errorThrown) {
-		/*jshint unused:false*/
-		/*jshint ignore:start*/
-		debugger;
-		/*jshint ignore:end*/
+		console.log(jqXHR);
+		console.log(textStatus);
+		console.log(errorThrown);
 	},
 	util = window.util || {};
 

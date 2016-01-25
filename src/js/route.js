@@ -1,7 +1,7 @@
 /*global exports, require*/
+'use strict';
 
 exports.register = function(plugin, options, next) {
-	'use strict';
 	var admin = require("./controllers/admin.js"),
 		files = require("./controllers/static.js"),
 		root = require("./controllers/root.js"),

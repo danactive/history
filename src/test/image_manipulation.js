@@ -32,20 +32,22 @@ describe('Admin:', function () {
 				page.folderExists(testFolder)
 					.then(function (result) {
 						expect(result.verified).to.be(true);
-						expect(result.verifiedPath).to.be(testFolder);
+						expect(result.path).to.be(testFolder);
 						done();
-					}, function () {
+					})
+					.catch(function () {
 						done(false);
 					});
 			});
 			it('should fail verification folder exists (02)', function (done) {
-				var testFolder = "FAKE";
+				var testFolder = "expectFail";
 				page.folderExists(testFolder)
 					.then(function () {
 						done(false);
-					}, function (result) {
+					})
+					.catch(function (result) {
 						expect(result.verified).to.be(false);
-						expect(result.verifiedPath).to.be(testFolder);
+						expect(result.path).to.be(testFolder);
 						done();
 					});
 			});
@@ -122,8 +124,8 @@ describe('Admin:', function () {
 					});
 				};
 			arg.assets = {
-				"sort": ["renamable"],
-				"renamable": {
+				"sort": ["1900-01-02"],
+				"1900-01-02": {
 					"files": [{
 						"raw": "/src/test/fixture/image/j1.jpeg",
 						"moved": "renamed.jpeg"
@@ -133,7 +135,7 @@ describe('Admin:', function () {
 			arg.destinationRootPath = "/src/test/fixture/childless";
 
 			it('should pass by moving files (b1)', function (done) {
-				var verifyPath = path.join(appRoot.path, arg.destinationRootPath, arg.assets.renamable.files[0].moved);
+				var verifyPath = path.join(appRoot.path, arg.destinationRootPath, arg.assets["1900-01-02"].files[0].moved);
 				arg.moveToResize = true;
 
 				debugMsg("movePhotos b1:" + verifyPath);
@@ -149,14 +151,14 @@ describe('Admin:', function () {
 			it('should pass by move restoring files (b2)', function (done) {
 				var verifyPath;
 				arg.moveToResize = true;
-				arg.assets.renamable = {
+				arg.assets["1900-01-02"] = {
 					"files": [{
 						"raw": "/src/test/fixture/childless/renamed.jpeg",
 						"moved": "j1.jpeg"
 					}]
 				};
 				arg.destinationRootPath = "/src/test/fixture/image";
-				verifyPath = path.join(appRoot.path, arg.destinationRootPath, arg.assets.renamable.files[0].moved);
+				verifyPath = path.join(appRoot.path, arg.destinationRootPath, arg.assets["1900-01-02"].files[0].moved);
 
 				if (constant.config.debug === true) {
 					console.log("movePhotos b2:" + arg.destinationRootPath);

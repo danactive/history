@@ -5,7 +5,7 @@ var gulp   = require('gulp'),
 	pkg = require('./package.json'),
 	plugins = require('gulp-load-plugins')({"camelize": true});
 
-paths.root = ['*.js', '*.json', '.bowerrc', '.jshintrc'];
+paths.root = ['*.js'];
 paths.source = ['src/js/**/*.js', '!src/js/edit_admin_xml.browser.js'];
 paths.jsBrowser = ['src/js/**/*.browser.js'];
 paths.jsLint = paths.root.concat(paths.source);
@@ -16,8 +16,13 @@ paths.watch = paths.lint;
 gulp.task('lint', function () {
 	return gulp.src(paths.jsLint)
 		.pipe(plugins.expectFile(paths.jsLint))
-		.pipe(plugins.jshint({lookup: true}))
-		.pipe(plugins.jshint.reporter('jshint-stylish'));
+		.pipe(plugins.eslint({
+			extends: 'eslint:recommended',
+			globals: { require: true, module: true},
+			rules: { "no-console": 0 }
+		}))
+		.pipe(plugins.eslint.format())
+		.pipe(plugins.eslint.failAfterError());
 });
 
 gulp.task('js', function () {
@@ -32,7 +37,7 @@ gulp.task('js', function () {
 gulp.task('test', ['lint'], function () {
 	return gulp.src(paths.test)
 		.pipe(plugins.expectFile(paths.test))
-		.pipe(plugins.mocha());
+		.pipe(plugins.mocha({reporter: 'nyan'}));
 });
 
 gulp.task('view', function () {

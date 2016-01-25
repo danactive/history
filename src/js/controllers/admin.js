@@ -1,4 +1,5 @@
-/*global module*/
+/*global console*/
+
 'use strict';
 
 var directoryContents = require('../directory_contents.js'),

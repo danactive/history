@@ -6,7 +6,6 @@ var appRoot = require('app-root-path'),
 	debugMsg,
 	fs = require('fs'),
 	path = require('path'),
-	Promise = require('es6-promise').Promise,
 	util = require("./util.js");
 debugMsg = function (msg) {
 	if (constant.config.debug && constant.config.debug === true) {
@@ -376,6 +375,9 @@ function _movePhotos(arg, callback) {
 	isMoveToResize = (arg.moveToResize === "true" || arg.moveToResize === true);
 
 	arg.assets.sort.forEach(function (id) {
+		if (arg.assets[id] === undefined) {
+			throw new Error("_movePhotos: Missing files for '" + id + "'");
+		}
 		arg.assets[id].files.forEach(function (file) {
 			beforeRename = decodeURIComponent(file.raw);
 			afterRename = decodeURIComponent((isMoveToResize) ? path.join(destinationPath, file.moved) : file.renamed);
@@ -423,7 +425,7 @@ function _movePhotos(arg, callback) {
 				queue.drain = possibleCallback;
 			});
 		} else {
-			return callback(util.setError(null, "_movePhotos: Destination directories (phtotos, thumbs) are not created as '" + yearStr + "' is not a year."));
+			return callback(util.setError(null, "_movePhotos: Destination directories (photos, thumbs) are not created as '" + yearStr + "' is not a year."));
 		}
 	}
 }

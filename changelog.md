@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.1.0 - Up-to-date and passes
+#### 2016-Jan-24
+* All tests pass
+* Update dependencies
+
 ### 1.0.0 - Replace express.js for hapi.js
 #### 2015-Feb-15
 * Replace grunt.js with gulp.js 

@@ -1,5 +1,6 @@
 /*global mxn, requireArg, window*/
 /*exported Map*/
+'use strict';
 window.historyApp = {
 	"current": {
 		"itemIndex": 0
@@ -12,7 +13,8 @@ window.historyApp = {
 };
 
 function MapProvider(options) {
-	"use strict";
+	var me = this,
+		slippyMap;
 
 	function init() {
 		var cache = window.historyApp,
@@ -24,9 +26,6 @@ function MapProvider(options) {
 		slippyMap.setMapType(1); // 1 = Street, 2 Satellite
 		slippyMap.enableScrollWheelZoom();
 	}
-
-	var me = this,
-		slippyMap;
 
 	me.pin = {};
 	me.pin.add = function (args) {
@@ -53,7 +52,16 @@ function MapProvider(options) {
 }
 
 function Map(options) {
-	"use strict";
+	var cache = window.historyApp,
+		centreCoordinates = requireArg({"args": options.map, "name": "centre", "type": "array"}),
+		itemCount = requireArg({"args": options.map, "name": "itemCount", "type": "number"}),
+		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
+		mapContainerId = requireArg({"args": options.map, "name": "containerId", "type": "string"}),
+		mapProvider,
+		mapProviderOptions = {
+			"centreCoordinates": centreCoordinates
+		},
+		me = this;
 
 	function init() {
 		cache.items = new Array(itemCount);
@@ -79,17 +87,6 @@ function Map(options) {
 
 		me.pin.go(index);
 	}
-
-	var cache = window.historyApp,
-		centreCoordinates = requireArg({"args": options.map, "name": "centre", "type": "array"}),
-		itemCount = requireArg({"args": options.map, "name": "itemCount", "type": "number"}),
-		galleryName = requireArg({"args": options, "name": "gallery", "type": "string"}),
-		mapContainerId = requireArg({"args": options.map, "name": "containerId", "type": "string"}),
-		mapProvider,
-		mapProviderOptions = {
-			"centreCoordinates": centreCoordinates
-		},
-		me = this;
 
 	me.pin = {};
 	me.pin.add = function (args) {

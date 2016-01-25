@@ -1,4 +1,4 @@
-/*global module, require*/
+/*global console, module, require*/
 'use strict';
 var boom = require("boom"),
 	constant = require("./global-constant.js"),
@@ -90,7 +90,6 @@ function generateJson(arg) {
 	var folder,
 		filenames,
 		out = { "meta": {}, "result": { "items": [] }},
-		len,
 		path = require('path');
 	if (arg === undefined) {
 		throw new ReferenceError(error.missingArg);
@@ -103,7 +102,6 @@ function generateJson(arg) {
 	}
 	folder = arg.folder;
 	filenames = arg.filenames;
-	len = filenames.length;
 	/*
 	{
 		name: string

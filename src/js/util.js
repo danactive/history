@@ -1,4 +1,5 @@
 /*global module*/
+'use strict';
 
 /**
 * Error handling for JSON output
@@ -11,7 +12,6 @@
 * @return {object} Returns JSON of error details
 */
 function _setError(error, message, data, serviceAddress) {
-	'use strict';
 	var boom = require("boom"),
 		boomError,
 		hasError = (error !== undefined && error !== null),
@@ -27,7 +27,7 @@ function _setError(error, message, data, serviceAddress) {
 
 	out.meta = {
 		"error": boomError,
-		"version": require("../package.json").version
+		"version": require("../../package.json").version
 	};
 	if (serviceAddress) {
 		out.meta.serviceAddress = serviceAddress;

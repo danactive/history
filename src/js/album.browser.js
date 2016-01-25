@@ -1,6 +1,5 @@
 ﻿/*global ColorThief, jQuery, Map, Xml, window*/
-/*exported fOpenWin, fnMedium, triggerLightboxOpen*/
-'use strict';
+/*exported fOpenWin, fnMedium, triggerLightboxOpen, xml*/
 /* GALLERY */
 jQuery.noConflict();
 /* ALBUM */
@@ -16,6 +15,7 @@ var $albumBox = jQuery("#albumBox"),
 	xml;
 function photoViewed() {
 	/*jshint validthis:true */
+	'use strict';
 	var dominateColour,
 		index,
 		photoImage = jQuery("img.cboxPhoto").get(0),
@@ -37,6 +37,7 @@ function photoViewed() {
 	}
 }
 jQuery(function() {
+	'use strict';
 	colorThief = new ColorThief();
 	jQuery('#albumBox a').colorbox({
 		"right": '25%',
@@ -54,12 +55,15 @@ jQuery(function() {
 });
 /* MAP */
 Array.max = function( array ){
+	'use strict';
 	return Math.max.apply( Math, array );
 };
 Array.min = function( array ){
+	'use strict';
 	return Math.min.apply( Math, array );
 };
 function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
+	'use strict';
 	var iXPos = 0, iYPos = 15, sArgs, oWin, iBrowserHeight;
 	if (window.outerWidth) { /* outerWidth for frameset use; otherwise innerWidth works; (NN4, NN6, O7-O9) */
 		iXPos = (window.outerWidth - iW) / 2;
@@ -94,6 +98,7 @@ function fOpenWin(sURL, iW, iH, sName, bScrollBars) {
 	}
 }
 function fnMedium(strType) { // create class
+	'use strict';
 	/*jshint validthis:true */
 	this.type = strType;
 	this.id = 0;
@@ -109,12 +114,14 @@ function fnMedium(strType) { // create class
 	this.getSrc = function() { return this.src; };
 }
 function triggerLightboxOpen(objMapLink, strPhotoId) {
+	'use strict';
 	jQuery('li#photo' + strPhotoId + '')
 		.addClass('imgViewed') //  change thumb to white
 		.find('a')
 		.trigger('click');
 }
 function displayAlbum (response) {
+	'use strict';
 	//var intZoom = parseInt(response.json.album.album_meta.geo.google_zoom, 10);
 
 	map = new Map({
@@ -131,7 +138,7 @@ function displayAlbum (response) {
 		"map": {
 			"centre": [0, 0],
 			"containerId": mapBoxId,
-			"itemCount": response.json.album.item.length,
+			"itemCount": response.json.album.item.length
 		}
 	});
 
@@ -157,6 +164,7 @@ function displayAlbum (response) {
 } // close displayAlbum
 
 jQuery("#linkMap").click(function () {
+	'use strict';
 	xml = new Xml({"gallery": meta.gallery, "album": meta.album, "callback": displayAlbum});
 
 	jQuery("body").addClass("splitMode");

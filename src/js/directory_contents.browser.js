@@ -61,6 +61,45 @@
 			generateThumbs(qs.folder);
 		}
 	}
+	function getSortedAssets(renamedFiles, renamedFilenames, targetFolder, sourceFolder) {
+		var draggableIndex = -1,
+			out = {
+				"sort": []
+			};
+		sourceFolder = (sourceFolder.charAt(sourceFolder.length-1) === "/") ? sourceFolder : sourceFolder + "/"; // ensure trailing slash
+		// list of ordered filenames
+		$('.js-directory-column').each(function (x, column) {
+			var $asset,
+				$column = $(column),
+				$photo,
+				rawIds = [], // sortable image filenames
+				renamedId;
+			if ($column.children().length <= 0) {
+				return true; // continue
+			}
+			rawIds = $column.sortable( "toArray");
+
+			$.each(rawIds, function (i) {
+				draggableIndex++;
+				renamedId = renamedFiles[draggableIndex];
+				$photo = $("#" + rawIds[i]);
+				out.sort.push(renamedId);
+				out[renamedId] = {
+					"files": []
+				};
+				$('.js-directory-column > li[data-file=' + $photo.attr("data-file") + ']').each(function (xx, asset) {
+					$asset = $(asset);
+					out[renamedId].files.push({
+						"mediaType": $asset.attr("data-type"),
+						"moved": targetFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext"),
+						"raw": sourceFolder + $asset.attr("data-filename"),
+						"renamed": sourceFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext")
+					});
+				});
+			});
+		});
+		return out;
+	}
 	function bindEvents() {
 		$("#btnRename, #btnResize").click(function ($event) {
 			var $datepicker,
@@ -88,6 +127,14 @@
 							"success": function (response) {
 								var $spinner = $("#spinner"),
 									ajaxCounter = 0,
+									photoCount = 1,
+									output = "",
+									spinner = function () {
+										ajaxCounter++;
+										if (photoCount === ajaxCounter) {
+											$spinner.addClass("hide");
+										}
+									},
 									deleteTempThumb = function () {
 										$.ajax({
 											"url": '/admin/delete-path',
@@ -99,8 +146,6 @@
 											"complete": spinner
 										});
 									},
-									photoCount = 1,
-									output = "",
 									resizeImage = function (postData) {
 										$.ajax({
 											"url": '/admin/resize-photo',
@@ -109,12 +154,6 @@
 											"error": ajaxError,
 											"complete": spinner
 										});
-									},
-									spinner = function () {
-										ajaxCounter++;
-										if (photoCount === ajaxCounter) {
-											$spinner.addClass("hide");
-										}
 									};
 
 								if (isMoveToResize === true) {
@@ -156,45 +195,6 @@
 				return getSortedAssets(generated.files, generated.filenames, targetFolder, qs.folder);
 			};
 		}); // click
-	}
-	function getSortedAssets(renamedFiles, renamedFilenames, targetFolder, sourceFolder) {
-		var draggableIndex = -1,
-			out = {
-				"sort": []
-			};
-		sourceFolder = (sourceFolder.charAt(sourceFolder.length-1) === "/") ? sourceFolder : sourceFolder + "/"; // ensure trailing slash
-		// list of ordered filenames
-		$('.js-directory-column').each(function (x, column) {
-			var $asset,
-				$column = $(column),
-				$photo,
-				rawIds = [], // sortable image filenames
-				renamedId;
-			if ($column.children().length <= 0) {
-				return true; // continue
-			}
-			rawIds = $column.sortable( "toArray");
-
-			$.each(rawIds, function (i) {
-				draggableIndex++;
-				renamedId = renamedFiles[draggableIndex];
-				$photo = $("#" + rawIds[i]);
-				out.sort.push(renamedId);
-				out[renamedId] = {
-					"files": []
-				};
-				$('.js-directory-column > li[data-file=' + $photo.attr("data-file") + ']').each(function (xx, asset) {
-					$asset = $(asset);
-					out[renamedId].files.push({
-						"mediaType": $asset.attr("data-type"),
-						"moved": targetFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext"),
-						"raw": sourceFolder + $asset.attr("data-filename"),
-						"renamed": sourceFolder + renamedFiles[draggableIndex] + $asset.attr("data-ext")
-					});
-				});
-			});
-		});
-		return out;
 	}
 	function loadNav() {
 		if (parent.text === "") {
