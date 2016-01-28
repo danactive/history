@@ -336,6 +336,14 @@ function _movePhotos(arg, callback) {
 		yearStr,
 		yearInt;
 
+	(function verifyArgs() {
+		arg.assets.sort.forEach(function (id) {
+			if (arg.assets[id] === undefined) {
+				throw new ReferenceError("_movePhotos: Missing files for '" + id + "'");
+			}
+		});
+	})();
+
 	worker = function (file, nextCallback) {
 		var sourceFilename = path.join(appRoot.path, file.source.path.value),
 			targetFilename = path.join(appRoot.path, file.destination.path.value),
@@ -375,9 +383,6 @@ function _movePhotos(arg, callback) {
 	isMoveToResize = (arg.moveToResize === "true" || arg.moveToResize === true);
 
 	arg.assets.sort.forEach(function (id) {
-		if (arg.assets[id] === undefined) {
-			throw new Error("_movePhotos: Missing files for '" + id + "'");
-		}
 		arg.assets[id].files.forEach(function (file) {
 			beforeRename = decodeURIComponent(file.raw);
 			afterRename = decodeURIComponent((isMoveToResize) ? path.join(destinationPath, file.moved) : file.renamed);

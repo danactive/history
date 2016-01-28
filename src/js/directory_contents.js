@@ -135,6 +135,7 @@ function generateJson(arg) {
 		var jsonItem = {};
 		jsonItem.ext = path.extname(filename); // case-insensitive
 		jsonItem.name = path.basename(filename, jsonItem.ext);
+		jsonItem.name_safe = path.basename(filename, jsonItem.ext).replace(/[\.\s\(\)]/g, "_");
 		jsonItem.path = {};
 		jsonItem.path.abs = folder;
 		jsonItem.path.nav = "?folder=" + ((folder === "/") ? "" : folder);
@@ -157,7 +158,7 @@ module.exports.generateJson = generateJson;
 *      #####  ######   #      #     # ######   #   #    #
 *
 */
- /**
+/**
 List and emit the directory contents: files or folders as JSON
 
 @method getMeta

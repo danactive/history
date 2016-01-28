@@ -40,8 +40,7 @@
 			html.push("");
 			$.each(column, function (j, item) {
 				item.arg = arg;
-				// item.name = item.name.replace(/[\.\s\(\)]/g, "_");
-				item.id = item.name + item.ext.replace(/[\.\s\(\)]/g, "_");
+				item.id = item.name_safe + item.ext.replace(/[\.\s\(\)]/g, "_");
 				item.tempThumbFolder = "_historyThumb";
 				dust.render("admin-walk_path-item.dust", item, function (err, out) {
 					html[i] += out;

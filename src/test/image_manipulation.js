@@ -115,25 +115,26 @@ describe('Admin:', function () {
 		*
 		*/
 		describe('movePhotos()', function () {
-			var arg = {},
-				expectError = function (done, errorMessage) {
-					expect(page.movePhotos).withArgs(arg).to.throwException(function (exception) { // get the exception object
-						expect(exception).to.be.a(ReferenceError);
-						expect(page.movePhotos).withArgs(arg).to.throwException(page.error[errorMessage]);
-						done();
-					});
-				};
-			arg.assets = {
-				"sort": ["1900-01-02"],
-				"1900-01-02": {
-					"files": [{
-						"raw": "/src/test/fixture/image/j1.jpeg",
-						"moved": "renamed.jpeg"
-					}]
-				}
+			var arg = {};
+			arg.assets = { "sort": ["1900-01-02"] };
+			arg.assets["1900-01-02"] = {
+				"files": [{
+					"raw": "/src/test/fixture/image/j1.jpeg",
+					"moved": "renamed.jpeg"
+				}]
 			};
 			arg.destinationRootPath = "/src/test/fixture/childless";
+			
+			it('should fail with missing arguments (b0)', function (done) {
+				var incompleteArg = {
+						assets: { "sort": ["need_match_key"] }
+					};
 
+				expect(page.movePhotos).withArgs(incompleteArg).to.throwException(function (exception) { // get the exception object
+					expect(exception).to.be.a(ReferenceError);
+					done();
+				});
+			});
 			it('should pass by moving files (b1)', function (done) {
 				var verifyPath = path.join(appRoot.path, arg.destinationRootPath, arg.assets["1900-01-02"].files[0].moved);
 				arg.moveToResize = true;
