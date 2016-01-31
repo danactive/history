@@ -1,0 +1,20 @@
+{
+  "name": "history_rename",
+  "version": "0.1.0",
+  "description": "Rename files",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rename",
+    "files",
+    "file",
+    "path"
+  ],
+  "author": "danactive",
+  "license": "UNLICENSED"
+}

@@ -6,7 +6,7 @@ var gulp   = require('gulp'),
 	plugins = require('gulp-load-plugins')({"camelize": true});
 
 paths.root = ['*.js'];
-paths.source = ['src/js/**/*.js', '!src/js/edit_admin_xml.browser.js'];
+paths.source = ['src/js/**/*.js', 'plugins/**/**.js', '!src/js/edit_admin_xml.browser.js'];
 paths.jsBrowser = ['src/js/**/*.browser.js'];
 paths.jsLint = paths.root.concat(paths.source);
 paths.views = ['src/views/**/*.dust'];
@@ -19,7 +19,10 @@ gulp.task('lint', function () {
 		.pipe(plugins.eslint({
 			extends: 'eslint:recommended',
 			globals: { require: true, module: true},
-			rules: { "no-console": 0 }
+			rules: { "no-console": 0 },
+			"ecmaFeatures": {
+				"blockBindings": true
+			}
 		}))
 		.pipe(plugins.eslint.format())
 		.pipe(plugins.eslint.failAfterError());

@@ -1,7 +1,7 @@
 /*global exports, require*/
 'use strict';
 
-exports.register = function(plugin, options, next) {
+exports.register = function(server, options, next) {
 	var admin = require("./controllers/admin.js"),
 		files = require("./controllers/static.js"),
 		root = require("./controllers/root.js"),
@@ -15,7 +15,6 @@ exports.register = function(plugin, options, next) {
 	routes.push({ "method": 'GET',  "path": '/admin/diff-album-path', "config": admin.adminDiffAlbumPath });
 	routes.push({ "method": 'GET',  "path": '/admin/preview-generator', "config": admin.previewGenerator });
 	routes.push({ "method": 'POST', "path": '/admin/rename-assets', "config": admin.renameAssets });
-	routes.push({ "method": 'POST', "path": '/admin/resize-photo', "config": admin.resizePhoto });
 	routes.push({ "method": 'POST', "path": '/admin/delete-path', "config": admin.deletePath });
 
 	routes.push({ "method": 'GET',  "path": '/admin/{files*}', "config": files.admin });
@@ -29,7 +28,7 @@ exports.register = function(plugin, options, next) {
 	routes.push({ "method": 'GET',  "path": '/', "config": root.home });
 	routes.push({ "method": '*',    "path": '/{p*}', "config": root.notFound });
 
-	plugin.route(routes);
+	server.route(routes);
 
 	next();
 };

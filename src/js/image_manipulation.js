@@ -387,7 +387,7 @@ function _movePhotos(arg, callback) {
 			beforeRename = decodeURIComponent(file.raw);
 			afterRename = decodeURIComponent((isMoveToResize) ? path.join(destinationPath, file.moved) : file.renamed);
 
-			debugMsg("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + ")");
+			debugMsg("_movePhotos: beforeRename(" + beforeRename + "); afterRename(" + afterRename + "); isMoveToResize(" + isMoveToResize + ")");
 
 			if (beforeRename === undefined || beforeRename === "" || afterRename === undefined || afterRename === "") {
 				return callback(util.setError(null, "Empty filename found, cannot rename file"));
@@ -412,26 +412,29 @@ function _movePhotos(arg, callback) {
 	});
 
 
-	if (isMoveToResize) {
-		yearStr = arg.assets.sort[0].substring(0, 4);
-		yearInt = parseInt(yearStr, 10);
-		if (typeof yearInt === "number" && /\d{4}/.test(yearInt)) {
-			_ensureDestinationFolder({"targetFolderName": yearStr}, function(err) {
-				if (err) {
-					return callback(util.setError(err));
-				}
-				queue = require("async").queue(worker, 1);
+	if (!isMoveToResize) {
+		debugMsg("_movePhotos: assets is" + JSON.stringify(assets, null, 4));
+		return callback(util.setError(null, "_movePhotos: isMoveToResize is false"));
+	}
+	yearStr = arg.assets.sort[0].substring(0, 4);
+	yearInt = parseInt(yearStr, 10);
+	if (typeof yearInt === "number" && /\d{4}/.test(yearInt)) {
+		debugMsg("_movePhotos: yearStr(" + yearStr + ")");
+		_ensureDestinationFolder({"targetFolderName": yearStr}, function(err) {
+			if (err) {
+				return callback(util.setError(err));
+			}
+			queue = require("async").queue(worker, 1);
 
-				queue.push(assets, function(errorEach){
-					if (errorEach) {
-						return callback(util.setError(errorEach));
-					}
-				});
-				queue.drain = possibleCallback;
+			queue.push(assets, function(errorEach){
+				if (errorEach) {
+					return callback(util.setError(errorEach));
+				}
 			});
-		} else {
-			return callback(util.setError(null, "_movePhotos: Destination directories (photos, thumbs) are not created as '" + yearStr + "' is not a year."));
-		}
+			queue.drain = possibleCallback;
+		});
+	} else {
+		return callback(util.setError(null, "_movePhotos: Destination directories (photos, thumbs) are not created as '" + yearStr + "' is not a year."));
 	}
 }
 module.exports.movePhotos = _movePhotos;
