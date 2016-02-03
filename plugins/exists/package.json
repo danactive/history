@@ -1,15 +1,17 @@
 {
-  "name": "history-rename",
-  "version": "0.1.0",
-  "description": "Rename files",
+  "name": "history-exists",
+  "version": "0.2.0",
+  "description": "Verify if folder path exists",
   "main": "index.js",
   "scripts": {
     "build": "eslint lib/**/*.js test/**/*.js && npm test",
     "test": "tape test/**/*.js"
   },
   "keywords": [
-    "rename",
-    "files",
+    "verify",
+    "exist",
+    "exists",
+    "folder",
     "file",
     "path"
   ],

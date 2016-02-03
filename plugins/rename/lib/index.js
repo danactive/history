@@ -1,23 +1,42 @@
-/* global exports */
-
 'use strict';
 
-exports.register = function (server, options, next) {
-    server.route({
-        method: 'POST',
-        path: '/rename',
-        config: {
-            handler: function (request, reply) {
-                reply('test passed');
-            },
-            tags: ["api"]
-        }
-    });
+exports.register = (server, options, next) => {
+  const joi = require('joi');
 
-    next();
+  server.route({
+    method: 'POST',
+    path: '/rename',
+    config: {
+      handler: (request, reply) => {
+        const exists = require('../../exists/lib');
+        const rename = require('./rename');
+        const filenames = require('./filenames');
+
+        exists.folderExists(request.query.source_folder)
+          .then(filenames.getFutureFilenames(request.query.prefix, request.query.filenames.length))
+          .then((futureFilenames) => {
+            rename.renamePaths();
+            reply(futureFilenames);
+          })
+          .catch(() => {
+            reply(`Source Folder does not exist in the file system (${request.query.source_folder})`);
+          });
+      },
+      tags: ['api'],
+      validate: {
+        query: {
+          filenames: joi.array().items(joi.string().regex(/^[-\w^&'@{}[\],$=!#().%+~ ]+$/)).min(1).max(80).required(),
+          prefix: joi.string().isoDate().required(),
+          source_folder: joi.string().trim().required(),
+          target_folder: joi.string().trim(),
+        },
+      },
+    },
+  });
+
+  next();
 };
 
 exports.register.attributes = {
-    name: 'rename',
-    version: '0.1.0'
+  pkg: require('../package.json'),
 };

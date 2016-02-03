@@ -6,7 +6,7 @@ var gulp   = require('gulp'),
 	plugins = require('gulp-load-plugins')({"camelize": true});
 
 paths.root = ['*.js'];
-paths.source = ['src/js/**/*.js', 'plugins/**/**.js', '!src/js/edit_admin_xml.browser.js'];
+paths.source = ['src/js/**/*.js', '!src/js/edit_admin_xml.browser.js'];
 paths.jsBrowser = ['src/js/**/*.browser.js'];
 paths.jsLint = paths.root.concat(paths.source);
 paths.views = ['src/views/**/*.dust'];
@@ -15,6 +15,7 @@ paths.watch = paths.lint;
 
 gulp.task('lint', function () {
 	return gulp.src(paths.jsLint)
+    .pipe(plugins.plumber())
 		.pipe(plugins.expectFile(paths.jsLint))
 		.pipe(plugins.eslint({
 			extends: 'eslint:recommended',

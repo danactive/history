@@ -86,7 +86,7 @@
 				out[renamedId] = {
 					"files": []
 				};
-				$('.js-directory-column > li[data-file=' + $photo.attr("data-file") + ']').each(function (xx, asset) {
+				$('.js-directory-column > li[id=' + $photo.attr("id") + ']').each(function (xx, asset) {
 					$asset = $(asset);
 					out[renamedId].files.push({
 						"mediaType": $asset.attr("data-type"),
@@ -117,13 +117,14 @@
 						$datepicker.datepicker( "destroy" );
 
 						$.ajax({
-							"url": '/admin/rename-assets',
-							"method": 'post',
-							"data": {
-								"moveToResize": isMoveToResize,
-								"assets": generateFilenames(formattedDate)
+							url: '/admin/rename',
+							method: 'post',
+							data: {
+								moveToResize: isMoveToResize,
+                date: formattedDate,
+                filenames: generateFilenames(formattedDate)
 							},
-							"success": function (response) {
+							success: function (response) {
 								var $spinner = $("#spinner"),
 									ajaxCounter = 0,
 									photoCount = 1,

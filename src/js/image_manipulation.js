@@ -148,41 +148,6 @@ module.exports.preview = function (meta, arg, cb) {
 };
 
 /***
-*     #######                              
-*     #       #    # #  ####  #####  ####  
-*     #        #  #  # #        #   #      
-*     #####     ##   #  ####    #    ####  
-*     #         ##   #      #   #        # 
-*     #        #  #  # #    #   #   #    # 
-*     ####### #    # #  ####    #    ####  
-*                                          
-*/
-/**
-Verify if a path exists on the file system
-
-@method _folderExists
-@param {string} path absolute path (file or folder) on the file system
-@param {promise} function(obj)
-**/
-function _folderExists(verifyPath) {
-	return new Promise(function(resolve, reject) {
-		fs.exists(verifyPath, function (exists) {
-			if (exists) {
-				resolve({
-					"path": verifyPath,
-					"verified": true
-				});
-			} else {
-				reject({
-					"path": verifyPath,
-					"verified": false
-				});
-			}
-		});
-	});
-}
-module.exports.folderExists = _folderExists;
-/***
 *     #######
 *     #       #    #  ####  #    # #####  ######
 *     #       ##   # #      #    # #    # #
@@ -223,7 +188,7 @@ function _ensureDestinationFolder(arg, callback) {
 			});
 		});
 	};
-	
+
 	createOrVerifyFolder("originals")
 	.then(function (path) {
 		out.push(path);
@@ -262,7 +227,8 @@ Delete path (file or folder)
 @param {callback}
 **/
 function _deletePath(arg, callback) {
-	var targetPath;
+	var targetPath,
+    exists = require('/plugins/exists/lib');
 	if (arg.path === undefined) {
 		if (arg.tempThumbFolder === undefined) {
 			return callback(util.setError(null, "Missing required argument target path"));
@@ -286,7 +252,7 @@ function _deletePath(arg, callback) {
 		if (err) {
 			return callback(util.setError(err, "Delete failed on this path (" + targetPath + ")"));
 		}
-		_folderExists(targetPath)
+		exists(targetPath)
 			.then(function (result) {
 				return callback(util.setError(err, "Delete failed on this path (" + result.path + ")"));
 			})
@@ -347,14 +313,15 @@ function _movePhotos(arg, callback) {
 	worker = function (file, nextCallback) {
 		var sourceFilename = path.join(appRoot.path, file.source.path.value),
 			targetFilename = path.join(appRoot.path, file.destination.path.value),
-			targetPath;
+			targetPath,
+      exists = require('/plugins/exists/lib');
 		targetPath = targetFilename.replace(path.basename(targetFilename), "");
 
 		debugMsg("Worker file.source.path.value(" + file.source.path.value + "); file.destination.path.value(" + file.destination.path.value + ");");
 		debugMsg("Worker sourceFilename(" + sourceFilename + "); targetFilename(" + targetFilename + "); targetPath(" + targetPath + ");");
-		_folderExists(sourceFilename)
+		exists(sourceFilename)
 			.then(function () {
-				return _folderExists(targetPath);
+				return exists(targetPath);
 			})
 			.then(function () {
 				fs.rename(sourceFilename, targetFilename, function (errRename) {
