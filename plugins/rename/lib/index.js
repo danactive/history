@@ -8,23 +8,20 @@ exports.register = (server, options, next) => {
     path: '/rename',
     config: {
       handler: (request, reply) => {
-        const exists = require('../../exists/lib');
-        const rename = require('./rename');
-        const filenames = require('./filenames');
-
-        exists.folderExists(request.query.source_folder)
-          .then(filenames.getFutureFilenames(request.query.prefix, request.query.filenames.length))
+        const filenames = request.payload.filenames;
+        require('../../exists/lib').folderExists(request.payload.source_folder)
+          .then(() => require('./filenames').getFutureFilenames(request.payload.prefix, filenames.length))
           .then((futureFilenames) => {
-            rename.renamePaths();
-            reply(futureFilenames);
+            require('./rename').renamePaths(request.payload.source_folder, filenames, futureFilenames.filenames);
+            reply(futureFilenames.xml);
           })
           .catch(() => {
-            reply(`Source Folder does not exist in the file system (${request.query.source_folder})`);
+            reply(`Source Folder does not exist in the file system (${request.payload.source_folder})`);
           });
       },
       tags: ['api'],
       validate: {
-        query: {
+        payload: {
           filenames: joi.array().items(joi.string().regex(/^[-\w^&'@{}[\],$=!#().%+~ ]+$/)).min(1).max(80).required(),
           prefix: joi.string().isoDate().required(),
           source_folder: joi.string().trim().required(),

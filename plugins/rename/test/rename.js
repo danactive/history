@@ -12,7 +12,7 @@ test('Rename real source folder', (assert) => {
       assert.equal(result, true, 'No errors');
       assert.end();
     })
-    .catch((error) => {
+    .catch(() => {
       assert.fail('Rename failed');
       assert.end();
     });
@@ -29,7 +29,7 @@ test('Restore real source folder', (assert) => {
       assert.equal(result, true, 'No errors');
       assert.end();
     })
-    .catch((error) => {
+    .catch(() => {
       assert.fail('Rename failed');
       assert.end();
     });
@@ -42,28 +42,28 @@ test('Caught fake source folder', (assert) => {
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)
-    .then((result) => {
+    .then(() => {
       assert.fail('Code incorrectly found a fake folder');
       assert.end();
     })
-    .catch((error) => {
+    .catch(() => {
       assert.pass('Fake folder not found');
       assert.end();
     });
 });
 
 test('Caught fake filenames', (assert) => {
-  const filenames = ['cee.css', 'jay.js', 'FAKE.txt'];
+  const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEtee.txt'];
   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
   const sourceFolder = './test/fixtures/renameable';
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)
-    .then((result) => {
+    .then(() => {
       assert.fail('Code incorrectly found a fake filename');
       assert.end();
     })
-    .catch((error) => {
+    .catch(() => {
       assert.pass('Fake filename not found');
       assert.end();
     });

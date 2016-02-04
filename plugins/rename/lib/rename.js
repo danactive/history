@@ -11,9 +11,10 @@ Renamed file paths
 function renamePaths(sourceFolder, filenames, futureFilenames) {
   return new Promise((resolve, reject) => {
     const fs = require('fs');
+    const exists = require('../../exists/lib');
     const q = require('async').queue((rename, next) => {
-      require('../../exists/lib').folderExists(rename.oldName)
-        .then((result) => {
+      exists.folderExists(rename.oldName)
+        .then(() => {
           fs.rename(rename.oldName, rename.newName, (error) => {
             if (error) {
               reject(`Expected path fails to rename (${rename.oldName})`);
@@ -21,15 +22,13 @@ function renamePaths(sourceFolder, filenames, futureFilenames) {
             next();
           });
         })
-        .catch((result) => {
-          reject(`Expected path does not exist (${rename.oldName})`)
+        .catch(() => {
+          reject(`Expected path does not exist (${rename.oldName})`);
         });
     }, 2);
 
     // assign a callback
-    q.drain = () => {
-      return resolve(true);
-    };
+    q.drain = () => resolve(true);
 
     const path = require('path');
     filenames.forEach((filename, index) => {
