@@ -13,7 +13,7 @@
     "gm": "^1.17.0",
     "hapi": "^12.1.0",
     "hapi-dust": "^1.0.0",
-    "hapi-swagger": "^3.3.0",
+    "hapi-swagger": "^4.0.0",
     "hoek": "^3.0.4",
     "inert": "^3.2.0",
     "joi": "^7.2.3",
@@ -23,7 +23,7 @@
     "vision": "^4.0.1"
   },
   "devDependencies": {
-    "eslint-config-airbnb": "^4.0.0",
+    "eslint-config-airbnb": "^5.0.0",
     "expect.js": "^0.3.0",
     "gulp": "^3.8.0",
     "gulp-concat": "^2.4.3",

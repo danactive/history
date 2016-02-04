@@ -19,7 +19,7 @@
   "license": "UNLICENSED",
   "devDependencies": {
     "eslint": "^1.10.3",
-    "eslint-config-airbnb": "^4.0.0",
+    "eslint-config-airbnb": "^5.0.0",
     "tape": "^4.4.0"
   }
 }
