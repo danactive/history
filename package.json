@@ -61,7 +61,7 @@
     "showcase"
   ],
   "author": "Dan BROOKS",
-  "license": "Unlicense",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/danactive/history/issues"
   },
@@ -70,5 +70,6 @@
     "node": ">=0.10.35"
   },
   "readmeFilename": "README.md",
-  "tuxharness": "./tuxharness.js"
+  "tuxharness": "./tuxharness.js",
+  "engines" : { "npm" : ">3" }
 }

@@ -19,7 +19,7 @@ test('Verify /rename route', (assert) => {
         payload: {
           filenames: ['cee.css', 'jay.js', 'tee.txt'],
           prefix,
-          source_folder: './test/fixtures/renameable',
+          source_folder: '../../test/fixtures/renameable',
         },
       };
       server.inject(request, (response) => {
@@ -36,7 +36,7 @@ test('Verify /rename route', (assert) => {
     setTimeout(() => {
       const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
       const futureFilenames = ['cee.css', 'jay.js', 'tee.txt'];
-      const sourceFolder = './test/fixtures/renameable';
+      const sourceFolder = '../../test/fixtures/renameable';
       const module = require('../lib/rename');
 
       module.renamePaths(sourceFolder, filenames, futureFilenames)

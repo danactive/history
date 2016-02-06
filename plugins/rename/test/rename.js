@@ -1,10 +1,10 @@
 'use strict';
-const test = require('tape-catch');
+const test = require('tape');
 
 test('Rename real source folder', (assert) => {
   const filenames = ['cee.css', 'jay.js', 'tee.txt'];
   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-  const sourceFolder = './test/fixtures/renameable';
+  const sourceFolder = '../../test/fixtures/renameable';
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -21,7 +21,7 @@ test('Rename real source folder', (assert) => {
 test('Restore real source folder', (assert) => {
   const filenames = ['changed.css', 'renamed.js', 'temp.txt'];
   const futureFilenames = ['cee.css', 'jay.js', 'tee.txt'];
-  const sourceFolder = './test/fixtures/renameable';
+  const sourceFolder = '../../test/fixtures/renameable';
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -38,7 +38,7 @@ test('Restore real source folder', (assert) => {
 test('Caught fake source folder', (assert) => {
   const filenames = ['cee.css', 'jay.js', 'tee.txt'];
   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-  const sourceFolder = './test/fixtures/FAKE';
+  const sourceFolder = '../../test/fixtures/FAKE';
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -55,7 +55,7 @@ test('Caught fake source folder', (assert) => {
 test('Caught fake filenames', (assert) => {
   const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEtee.txt'];
   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-  const sourceFolder = './test/fixtures/renameable';
+  const sourceFolder = '../../test/fixtures/renameable';
   const module = require('../lib/rename');
 
   module.renamePaths(sourceFolder, filenames, futureFilenames)

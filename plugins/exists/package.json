@@ -1,11 +1,14 @@
 {
   "name": "history-exists",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Verify if folder path exists",
   "main": "index.js",
   "scripts": {
-    "build": "eslint lib/**/*.js test/**/*.js && npm test",
-    "test": "tape test/**/*.js"
+    "dev": "gulp --gulpfile ./node_modules/dev-mode/shared-gulpfile.js",
+    "test": "gulp --gulpfile ./node_modules/dev-mode/shared-gulpfile.js test"
+  },
+  "devDependencies": {
+    "dev-mode": "file:../dev-mode"
   },
   "keywords": [
     "verify",
@@ -15,11 +18,11 @@
     "file",
     "path"
   ],
-  "author": "danactive",
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "eslint": "^1.10.3",
-    "eslint-config-airbnb": "^5.0.0",
-    "tape": "^4.4.0"
-  }
+  "author": { "name" : "danactive", "url" : "http://twitter.com/danactive" },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danactive/history.git"
+  },
+  "engines" : { "npm" : ">3" }
 }

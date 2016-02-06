@@ -3,7 +3,7 @@ const test = require('tape');
 
 test('Real relative file exists', (assert) => {
   const module = require('../lib');
-  const testFolder = './test/fixtures/exists.txt';
+  const testFolder = '../../test/fixtures/exists.txt';
 
   module.folderExists(testFolder)
     .then((result) => {
@@ -19,7 +19,7 @@ test('Real relative file exists', (assert) => {
 
 test('Real relative folder exists', (assert) => {
   const module = require('../lib');
-  const testFolder = './test/fixtures';
+  const testFolder = '../../test/fixtures';
 
   module.folderExists(testFolder)
     .then((result) => {
