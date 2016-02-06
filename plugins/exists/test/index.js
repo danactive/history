@@ -3,12 +3,11 @@ const test = require('tape');
 
 test('Real relative file exists', (assert) => {
   const module = require('../lib');
-  const testFolder = '../../test/fixtures/exists.txt';
+  const testFolder = './plugins/exists/test/fixtures/exists.txt';
 
   module.folderExists(testFolder)
-    .then((result) => {
-      assert.equal(result.verified, true, 'Verified');
-      assert.equal(result.path, testFolder, 'Path matches');
+    .then(() => {
+      assert.pass('Resolved promise is returned');
       assert.end();
     })
     .catch(() => {
@@ -19,12 +18,11 @@ test('Real relative file exists', (assert) => {
 
 test('Real relative folder exists', (assert) => {
   const module = require('../lib');
-  const testFolder = '../../test/fixtures';
+  const testFolder = './plugins/exists/test/fixtures';
 
   module.folderExists(testFolder)
-    .then((result) => {
-      assert.equal(result.verified, true, 'Verified');
-      assert.equal(result.path, testFolder, 'Path matches');
+    .then(() => {
+      assert.pass('Resolved promise is returned');
       assert.end();
     })
     .catch(() => {
@@ -39,9 +37,8 @@ test('Real absolute file exists', (assert) => {
   const testFolder = path.join(__dirname, './fixtures/exists.txt');
 
   module.folderExists(testFolder)
-    .then((result) => {
-      assert.equal(result.verified, true, 'Verified');
-      assert.equal(result.path, testFolder, 'Path matches');
+    .then((verifiedPath) => {
+      assert.equal(verifiedPath, testFolder, 'Resolved path matches');
       assert.end();
     })
     .catch(() => {
@@ -56,9 +53,8 @@ test('Real absolute folder exists', (assert) => {
   const testFolder = path.join(__dirname, './fixtures');
 
   module.folderExists(testFolder)
-    .then((result) => {
-      assert.equal(result.verified, true, 'Verified');
-      assert.equal(result.path, testFolder, 'Path matches');
+    .then((verifiedPath) => {
+      assert.equal(verifiedPath, testFolder, 'Resolved path matches');
       assert.end();
     })
     .catch(() => {
@@ -77,9 +73,8 @@ test('Fake absolute path does not exists', (assert) => {
       assert.fail(`File system found a fake folder (${testFolder})`);
       assert.end();
     })
-    .catch((result) => {
-      assert.equal(result.verified, false, 'Verified');
-      assert.equal(result.path, testFolder, 'Path matches');
+    .catch((error) => {
+      assert.equal(error.isBoom, true, 'Rejected promise is a boom error');
       assert.end();
     });
 });

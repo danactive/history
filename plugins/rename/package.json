@@ -1,6 +1,6 @@
 {
   "name": "history-rename",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Rename files",
   "main": "index.js",
   "scripts": {
@@ -16,11 +16,19 @@
     "file",
     "path"
   ],
-  "author": { "name" : "danactive", "url" : "http://twitter.com/danactive" },
+  "author": {
+    "name": "danactive",
+    "url": "http://twitter.com/danactive"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/danactive/history.git"
   },
-  "engines" : { "npm" : ">3" }
+  "engines": {
+    "npm": ">3"
+  },
+  "dependencies": {
+    "app-root-path": "^1.0.0"
+  }
 }

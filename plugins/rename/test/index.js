@@ -6,6 +6,29 @@ test('Verify /rename route', (assert) => {
   const hapi = require('hapi');
   const prefix = '2016-04-05';
 
+  assert.test('-Caught fake source folder', (st) => {
+    const server = new hapi.Server();
+    server.connection({ port: 8000 });
+    server.register(plugins, (error) => {
+      if (error) {
+        return st.fail(error);
+      }
+      const request = {
+        method: 'POST',
+        url: '/rename',
+        payload: {
+          filenames: ['aitch.html', 'gee.gif', 'pee.png'],
+          prefix,
+          source_folder: '/rename/test/fixtures/renameable',
+        },
+      };
+      server.inject(request, (result) => {
+        st.equal(result.statusCode, 404);
+        st.end();
+      });
+    });
+  });
+
   assert.test('-Rename filename based on prefix', (st) => {
     const server = new hapi.Server();
     server.connection({ port: 8000 });
@@ -17,9 +40,9 @@ test('Verify /rename route', (assert) => {
         method: 'POST',
         url: '/rename',
         payload: {
-          filenames: ['cee.css', 'jay.js', 'tee.txt'],
+          filenames: ['aitch.html', 'gee.gif', 'pee.png'],
           prefix,
-          source_folder: '../../test/fixtures/renameable',
+          source_folder: '/plugins/rename/test/fixtures/renameable',
         },
       };
       server.inject(request, (response) => {
@@ -35,8 +58,8 @@ test('Verify /rename route', (assert) => {
   assert.test('-Restore filenames to original', (st) => {
     setTimeout(() => {
       const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
-      const futureFilenames = ['cee.css', 'jay.js', 'tee.txt'];
-      const sourceFolder = '../../test/fixtures/renameable';
+      const futureFilenames = ['aitch.html', 'gee.gif', 'pee.png'];
+      const sourceFolder = './plugins/rename/test/fixtures/renameable';
       const module = require('../lib/rename');
 
       module.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -44,10 +67,10 @@ test('Verify /rename route', (assert) => {
           st.equal(result, true, 'No errors');
           st.end();
         })
-        .catch(() => {
-          st.fail('Rename failed');
+        .catch((error) => {
+          st.fail(`Rename failed ${error}`);
           st.end();
         });
-    }, 1000);
+    }, 1100);
   });
 });

@@ -15,8 +15,15 @@ exports.register = (server, options, next) => {
             require('./rename').renamePaths(request.payload.source_folder, filenames, futureFilenames.filenames);
             reply(futureFilenames.xml);
           })
-          .catch(() => {
-            reply(`Source Folder does not exist in the file system (${request.payload.source_folder})`);
+          .catch((error) => {
+            let boomError;
+            if (error.isBoom) {
+              boomError = error;
+            } else {
+              boomError = require('boom').notFound(`Source Folder does not exist in the file system ` +
+                `(${request.payload.source_folder}) with error (${error})`);
+            }
+            reply(boomError);
           });
       },
       tags: ['api'],

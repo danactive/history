@@ -24,4 +24,4 @@ gulp.task('test', () => {
     .pipe(tape());
 });
 
-gulp.task('dev', ['lint', 'test']);
+gulp.task('build', ['lint', 'test']);

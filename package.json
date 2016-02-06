@@ -11,7 +11,7 @@
     "dustjs-linkedin": "^2.5.1",
     "extend": "^2.0.0",
     "gm": "^1.17.0",
-    "hapi": "^12.1.0",
+    "hapi": "^13.0.0",
     "hapi-dust": "^1.0.0",
     "hapi-swagger": "^4.0.0",
     "hoek": "^3.0.4",
@@ -38,14 +38,14 @@
     "node-notifier": "^4.1.2"
   },
   "scripts": {
-    "dev": "./node_modules/.bin/gulp develop",
+    "dev": "gulp develop",
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
-    "lint": "./node_modules/.bin/gulp lint",
+    "lint": "gulp lint",
     "postinstall": "npm outdated --depth=0",
     "postupdate": "npm outdated --depth=0",
     "start": "node .",
-    "test": "./node_modules/.bin/gulp test"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
