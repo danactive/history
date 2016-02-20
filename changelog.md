@@ -1,5 +1,14 @@
 # Changelog
 
+### 1.3.0 - hapi plugins for exists and rename
+#### 2016-Feb-09
+* Exist green code coverage
+* Rename green code coverage
+* Dev-mode no gulp
+
+### 1.2.0 - hapi.js v12
+#### 2016-Jan-30
+
 ### 1.1.0 - Up-to-date and passes
 #### 2016-Jan-24
 * All tests pass

@@ -104,7 +104,8 @@
               data: {
                 filenames: JSON.stringify(getSortedAssets()),
                 prefix: formattedDate,
-                source_folder: "." + qs.folder
+                source_folder: "." + qs.folder,
+                rename_associated: true
               },
               success: function (response) {
                 var $spinner = $("#spinner"),

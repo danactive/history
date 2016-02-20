@@ -100,11 +100,3 @@ Example
 			</geo>
 		</item>
     </album>
-    
-License
--------
-History is open-source and released under the [BSD License.](http://www.opensource.org/licenses/bsd-license.php)
-
-Versioning
--------
-http://semver.org/

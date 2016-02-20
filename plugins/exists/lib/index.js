@@ -1,35 +1,23 @@
 'use strict';
-/*
-*     #######
-*     #       #    # #  ####  #####  ####
-*     #        #  #  # #        #   #
-*     #####     ##   #  ####    #    ####
-*     #         ##   #      #   #        #
-*     #        #  #  # #    #   #   #    #
-*     ####### #    # #  ####    #    ####
-*
-*/
 /**
 Verify if a path exists on the file system
 
-@method folderExists
-@param {string} path absolute path (file or folder) on the file system
+@method pathExists
+@param {string} path relative/absolute path (file or folder) on the file system
 @param {promise}
 **/
-function folderExists(verifyPath) {
+function pathExists(verifyPath) {
   return new Promise((resolve, reject) => {
-    const fs = require('fs');
-    const appRoot = require('app-root-path');
-    let verifiedPath = verifyPath;
-
-    if (verifyPath.charAt(0) === '.' || verifyPath.charAt(0) === '/') { // convert relative to absolute
-      verifiedPath = appRoot.resolve(verifyPath);
+    const boom = require('boom');
+    if (verifyPath === undefined) {
+      reject(boom.notFound(`pathExists module: is missing a path to verify`));
     }
+    const verifiedPath = require('path').isAbsolute(verifyPath) ?
+      verifyPath : require('app-root-path').resolve(verifyPath);
 
-    fs.stat(verifiedPath, (error, type) => {
-      const boom = require('boom');
+    require('fs').stat(verifiedPath, (error, type) => {
       if (error) {
-        return reject(boom.notFound(`File system path is missing ${error}`));
+        return reject(boom.notFound(`pathExists module: File system path is missing ${error}`));
       }
       if (type.isFile() || type.isDirectory()) {
         return resolve(verifiedPath);
@@ -37,4 +25,4 @@ function folderExists(verifyPath) {
     });
   });
 }
-exports.folderExists = folderExists;
+exports.pathExists = pathExists;
