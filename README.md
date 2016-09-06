@@ -46,7 +46,7 @@ To use the administration tools
 * [hapi.js](http://hapijs.org/)
 * [GraphicsMagick](https://www.npmjs.com/package/gm) Install GraphicsMagick before npm
 * [bower](http://bower.io/) via npm
-    * npm install -g bower
+	* npm install -g bower
 
 Folder structures
 -------
@@ -67,26 +67,27 @@ Photo/video album XML schemas
 
 Example
 
-    <album>
-    	<meta>
-            <gallery>demo</gallery> <!-- gallery directory name excluding 'gallery-'; new in schema 2.0 -->
-    		<id>sample</id> <!--Filename is album_sample.xml; new in schema 2.0-->
-    		<version>1.8</version> <!--Reference schema version; new in schema 2.0-->
-    	</meta>
-    	<item><!-- photo -->
-            <id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
-    		<filename>2001-03-21-01.jpg</filename> <!-- must start with YYYY year; photos and thumbs must be places in this folder too -->
-    		<geo> <!-- geocode -->
-    			<lat>49.25</lat> <!-- latitude -->
-    			<lon>-123.1</lon> <!-- longitude -->
-    		</geo>
-    		<photo_city>Vancouver, BC</photo_city> <!-- Political location name often City, Province/State -->
-    		<photo_loc>Granville Island</photo_loc> <!-- General location name often neighourhood or building -->
+	<album>
+		<meta>
+			<gallery>demo</gallery> <!-- gallery directory name excluding 'gallery-'; new in schema 2.0 -->
+			<id>sample</id> <!--Filename is album_sample.xml; new in schema 2.0-->
+			<version>1.8</version> <!--Reference schema version; new in schema 2.0-->
+		</meta>
+		<item><!-- photo -->
+			<id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
+			<filename>2001-03-21-01.jpg</filename> <!-- must start with YYYY year; photos and thumbs must be places in this folder too -->
+			<geo> <!-- geocode -->
+				<lat>49.25</lat> <!-- latitude -->
+				<lon>-123.1</lon> <!-- longitude -->
+			</geo>
+			<photo_city>Vancouver, BC</photo_city> <!-- Political location name often City, Province/State -->
+			<photo_loc>Granville Island</photo_loc> <!-- General location name often neighourhood or building -->
 			<photo_desc>An oversized avocado</photo_desc> <!-- The photo description only viewable in the lightbox view -->
-    		<thumb_caption>Lunch</thumb_caption> <!-- Less than three words to descibe the thumbnail in gallery view -->
-    	</item>
+			<thumb_caption>Lunch</thumb_caption> <!-- Less than three words to descibe the thumbnail in gallery view -->
+		</item>
 		<item><!-- video -->
-            <id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
+			<type>video</type>
+			<id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
 			<filename>2012-fireplace.mp4</filename> <!-- History supports both HTML5 video formats for best browser support; must start with YYYY year; photos and thumbs must be places in this folder too -->
 			<filename>2012-fireplace.webm</filename>
 			<photo_city>Vancouver, BC</photo_city>
@@ -99,4 +100,4 @@ Example
 				<lon>-123.1</lon>
 			</geo>
 		</item>
-    </album>
+	</album>

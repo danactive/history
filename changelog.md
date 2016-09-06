@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.3.1 - XML v2.0 continuation
+#### 2016-Sep-05
+* (Fix) Video playback
+* (Fix) sample XML and README documentation
+
 ### 1.3.0 - hapi plugins for exists and rename
 #### 2016-Feb-09
 * Exist green code coverage

@@ -1,15 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../../xslt/album.xslt"?>
 <!-- This XML associates photos and videos with meta data: geocode, caption, friends (characters)... -->
-<album gallery="demo">
-	<album_meta>
+<album>
+	<meta>
+		<gallery>demo</gallery>
 		<album_name>sample</album_name>
-		<album_version>1.8</album_version>
+		<album_version>2.0</album_version>
 		<geo>
 			<google_zoom>11</google_zoom>
 		</geo>
-	</album_meta>
-	<photo id="1">
+	</meta>
+	<item id="1">
 		<filename>2001-03-21-01.jpg</filename>
 		<geo>
 			<lat>49.25</lat>
@@ -18,14 +19,14 @@
 		<photo_city>Vancouver, BC</photo_city>
 		<photo_loc>Granville Island</photo_loc>
 		<thumb_caption>Lunch</thumb_caption>
-	</photo>
-	<photo id="30">
+	</item>
+	<item id="30">
 		<filename>2004-01-04-01.jpg</filename>
 		<photo_city>North Vancouver, BC</photo_city>
 		<photo_loc>Dining Room</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
-	</photo>
-	<photo id="2">
+	</item>
+	<item id="2">
 		<filename>2005-07-30-01.jpg</filename>
 		<geo>
 			<lat>49.15</lat>
@@ -34,8 +35,9 @@
 		<photo_city>Gabriola Island, BC</photo_city>
 		<photo_loc>Camping</photo_loc>
 		<thumb_caption>Starfish</thumb_caption>
-	</photo>
-	<video id="4">
+	</item>
+	<item id="4">
+		<type>video</type>
 		<filename>2012-fireplace.mp4</filename>
 		<filename>2012-fireplace.webm</filename>
 		<photo_city>Vancouver, BC</photo_city>
@@ -47,8 +49,8 @@
 			<lat>49.25</lat>
 			<lon>-123.1</lon>
 		</geo>
-	</video>
-	<photo id="5">
+	</item>
+	<item id="5">
 		<filename>2014-02-08-14.jpg</filename>
 		<geo>
 			<lat>49.194722</lat>
@@ -57,5 +59,5 @@
 		<photo_city>Vancouver International Airport, BC</photo_city>
 		<photo_loc>YVR</photo_loc>
 		<thumb_caption>Airport</thumb_caption>
-	</photo>
+	</item>
 </album>
