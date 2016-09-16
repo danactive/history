@@ -1,4 +1,11 @@
-'use strict';
+const appRoot = require('app-root-path');
+const async = require('async');
+const boom = require('boom');
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
+
+const exists = require('../../exists/lib');
 
 /**
 Find associated path and filename based on file without extension
@@ -10,15 +17,15 @@ Find associated path and filename based on file without extension
 **/
 function findAssociated(sourceFolder, filename) {
   return new Promise((resolve, reject) => {
-    const path = require('path');
     const absolutePath = path.isAbsolute(sourceFolder) ? path.join(sourceFolder, filename) :
-      require('app-root-path').resolve(path.join('../../', sourceFolder, filename));
+      appRoot.resolve(path.join('../', sourceFolder, filename));
     const file = absolutePath.substr(0, absolutePath.length - path.extname(absolutePath).length); // strip extension
 
-    require('glob')(`${file}.*`, (error, files) => {
+    glob(`${file}.*`, (error, files) => {
       if (error) {
-        reject(require('boom').wrap(error));
+        reject(boom.wrap(error));
       }
+
       resolve(files);
     });
   });
@@ -35,9 +42,9 @@ Reassign associated filename based on file without extension
 **/
 function reassignAssociated(absoluteFolderFilenames, futureFile) {
   return new Promise((resolve) => {
-    const path = require('path');
-    resolve(absoluteFolderFilenames.map(filename => {
+    resolve(absoluteFolderFilenames.map((filename) => {
       const fileParts = path.parse(filename);
+
       return path.join(fileParts.dir, futureFile + fileParts.ext);
     }));
   });
@@ -57,11 +64,7 @@ Renamed file paths
 **/
 function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
   return new Promise((resolve, reject) => {
-    const fs = require('fs');
-    const exists = require('../../exists/lib');
-    const boom = require('boom');
     const options = _options || {};
-    const async = require('async');
 
     const q = async.queue((rename, next) => {
       function renameFile() {
@@ -69,9 +72,11 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
           if (error) {
             reject(boom.wrap(error));
           }
+
           next();
         });
       }
+
       exists.pathExists(rename.oldName)
         .then(renameFile)
         .catch((error) => {
@@ -80,37 +85,38 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
     }, 2);
 
     {
-      const path = require('path');
-      const fullPath = require('app-root-path').resolve(path.join('../../', sourceFolder, '/'));
-      const filenamePairs = filenames.map((filename, index) => {
-        return { current: filename, future: futureFilenames[index] };
-      });
+      const fullPath = path.resolve(path.join('../', sourceFolder));
+
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {
           let oldNames;
+
           findAssociated(fullPath, pair.current)
-            .then(associatedFilenames => {
+            .then((associatedFilenames) => {
               oldNames = associatedFilenames;
               const endWithoutExt = pair.future.length - path.extname(pair.future).length;
               const futureFile = pair.future.substr(0, endWithoutExt); // strip extension
+
               return reassignAssociated(associatedFilenames, futureFile);
             })
-            .then(reassignFilenames => {
-              const reassignPairs = oldNames.map((oldName, index) => {
-                return { oldName, newName: reassignFilenames[index] };
-              });
-              return cb(null, reassignPairs);
+            .then((reassignFilenames) => {
+              const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }));
+
+              cb(null, reassignPairs);
             });
         } else {
-          const oldName = fullPath + pair.current;
-          const newName = fullPath + pair.future;
+          const oldName = path.join(fullPath, pair.current);
+          const newName = path.join(fullPath, pair.future);
 
-          return cb(null, { oldName, newName });
+          cb(null, { oldName, newName });
         }
       };
+
+      const filenamePairs = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }));
+
       async.map(filenamePairs, transformFilenames, (error, transformedPairs) => {
         if (error) {
-          throw boom.wrap(error);
+          return reject(error);
         }
 
         if (Array.isArray(transformedPairs)) {
@@ -120,6 +126,8 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
         } else {
           q.push(transformedPairs);
         }
+
+        return undefined;
       });
     }
 

@@ -9,12 +9,12 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.md]
+[*.{eslintrc,md}]
 trim_trailing_whitespace = false
 indent_style = tab
 indent_size = 4
 
-[*.xml]
+[*.{html,xml}]
 trim_trailing_whitespace = false
 indent_style = tab
 indent_size = 2

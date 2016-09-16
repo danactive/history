@@ -1,80 +1,77 @@
-'use strict';
-const test = require('tape');
+const tape = require('tape-catch');
 
-test('Real relative file exists', (assert) => {
-  const module = require('../lib');
-  const testPath = './plugins/exists/test/fixtures/exists.txt';
-
-  module.pathExists(testPath)
-    .then(() => {
-      assert.pass('Resolved promise is returned');
-      assert.end();
-    })
-    .catch(() => {
-      assert.fail(`File system is missing folder (${testPath})`);
-      assert.end();
-    });
-});
-
-test('Real relative folder exists', (assert) => {
-  const module = require('../lib');
-  const testPath = './plugins/exists/test/fixtures';
-
-  module.pathExists(testPath)
-    .then(() => {
-      assert.pass('Resolved promise is returned');
-      assert.end();
-    })
-    .catch(() => {
-      assert.fail(`File system is missing folder (${testPath})`);
-      assert.end();
-    });
-});
-
-test('Real absolute file exists', (assert) => {
-  const module = require('../lib');
+tape('Index', { skip: false }, (describe) => {
   const path = require('path');
-  const testPath = path.join(__dirname, './fixtures/exists.txt');
 
-  module.pathExists(testPath)
-    .then((verifiedPath) => {
-      assert.equal(verifiedPath, testPath, 'Resolved path matches');
-      assert.end();
-    })
-    .catch(() => {
-      assert.fail(`File system is missing folder (${testPath})`);
-      assert.end();
-    });
-});
+  const lib = require('../lib');
 
-test('Real absolute folder exists', (assert) => {
-  const module = require('../lib');
-  const path = require('path');
-  const testPath = path.join(__dirname, './fixtures');
+  describe.test('* Real relative file exists', (assert) => {
+    const testPath = './plugins/exists/test/fixtures/exists.txt';
 
-  module.pathExists(testPath)
-    .then((verifiedPath) => {
-      assert.equal(verifiedPath, testPath, 'Resolved path matches');
-      assert.end();
-    })
-    .catch(() => {
-      assert.fail(`File system is missing folder (${testPath})`);
-      assert.end();
-    });
-});
+    lib.pathExists(testPath)
+      .then(() => {
+        assert.pass('Resolved promise is returned');
+        assert.end();
+      })
+      .catch((error) => {
+        assert.fail(error);
+        assert.end();
+      });
+  });
 
-test('Fake absolute path does not exists', (assert) => {
-  const module = require('../lib');
-  const path = require('path');
-  const testPath = path.join(__dirname, './fixtures/fakeFolder');
+  describe.test('* Real relative folder exists', (assert) => {
+    const testPath = './plugins/exists/test/fixtures';
 
-  module.pathExists(testPath)
-    .then(() => {
-      assert.fail(`File system found a fake folder (${testPath})`);
-      assert.end();
-    })
-    .catch((error) => {
-      assert.equal(error.isBoom, true, 'Rejected promise is a boom error');
-      assert.end();
-    });
+    lib.pathExists(testPath)
+      .then(() => {
+        assert.pass('Resolved promise is returned');
+        assert.end();
+      })
+      .catch((error) => {
+        assert.fail(error);
+        assert.end();
+      });
+  });
+
+  describe.test('* Real absolute file exists', (assert) => {
+    const testPath = path.join(__dirname, './fixtures/exists.txt');
+
+    lib.pathExists(testPath)
+      .then((verifiedPath) => {
+        assert.equal(verifiedPath, testPath, 'Resolved path matches');
+        assert.end();
+      })
+      .catch((error) => {
+        assert.fail(error);
+        assert.end();
+      });
+  });
+
+  describe.test('* Real absolute folder exists', (assert) => {
+    const testPath = path.join(__dirname, './fixtures');
+
+    lib.pathExists(testPath)
+      .then((verifiedPath) => {
+        assert.equal(verifiedPath, testPath, 'Resolved path matches');
+        assert.end();
+      })
+      .catch((error) => {
+        assert.fail(error);
+        assert.end();
+      });
+  });
+
+  describe.test('* Fake absolute path does not exists', (assert) => {
+    const testPath = path.join(__dirname, './fixtures/fakeFolder');
+
+    lib.pathExists(testPath)
+      .then(() => {
+        assert.fail(`File system found a fake folder (${testPath})`);
+        assert.end();
+      })
+      .catch((error) => {
+        assert.equal(error.isBoom, true, 'Rejected promise is a boom error');
+        assert.end();
+      });
+  });
 });
