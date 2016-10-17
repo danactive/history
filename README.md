@@ -5,19 +5,13 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Plot thumbnails on a map
 * Code runs on static web hosts
 * Includes administration tools for XML generation
-* Free & open source (dependant on other open source projects see indiviual licenses)
+* Free & open source (dependent on other open source projects see individual licenses)
 
-[Demo site 0.15.0](http://danactive.github.io/history/)
-
-
-Basic Demo Usage
+Installation
 ------
-
-* Clone this repository.
-* Open Index.htm in Firefox.
-* Click View Photo Galleries.
-* Click Sample.
-* From there it becomes more obvious. 
+1. Node.js
+1. `npm run dev`
+1. View address in browser
 
 Technologies
 ------
@@ -31,7 +25,7 @@ Technologies
 * AJAX to read the XML gallery data
 
 
-Dependancies
+Dependencies
 ------
 Included in this project
 * [jQuery](http://jquery.com/) via bower

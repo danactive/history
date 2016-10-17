@@ -11,8 +11,8 @@ route.flickrGallery = {
 	},
 	validate: {
 		query: {
-			lat: joi.number().min(-180).max(180),
-			lon: joi.number().min(-90).max(90)
+			lat: joi.number().min(-90).max(90),
+			lon: joi.number().min(-180).max(180)
 		}
 	}
 };
