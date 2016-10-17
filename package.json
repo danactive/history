@@ -1,6 +1,6 @@
 {
   "name": "history",
-  "version": "1.2.1",
+  "version": "1.3.2",
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
   "main": "index.js",
   "dependencies": {

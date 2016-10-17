@@ -1,5 +1,10 @@
 # Changelog
 
+### 1.3.2 - Plugins linted
+#### 2016-Oct-16
+* (Fix) All tests pass - both `npm test` and individually
+* (Fix) Plugin dependencies updated 
+
 ### 1.3.1 - XML v2.0 continuation
 #### 2016-Sep-05
 * (Fix) Video playback
