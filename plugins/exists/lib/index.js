@@ -17,7 +17,7 @@ function pathExists(verifyPath) {
       reject(boom.notFound(`${moduleName} module: File system path is missing (${verifyPath})`));
     }
 
-    const verifiedPath = path.isAbsolute(verifyPath) ? verifyPath : path.resolve('../', verifyPath);
+    const verifiedPath = path.isAbsolute(verifyPath) ? verifyPath : path.resolve(__dirname, '../../../', verifyPath);
 
     fs.stat(verifiedPath, (error, type) => {
       if (error) {

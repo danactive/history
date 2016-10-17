@@ -58,8 +58,8 @@ Renamed file paths
 @param {string} [sourceFolder] Folder that contains the raw camera photo files
 @param {string[]} [filenames] Current filenames (file and extension) of raw camera photo files
 @param {string[]} [futureFilenames] Future filenames (file and extension) of renamed camera photo files
-@param {object} options Additional optional options
-@param {bool} options.renameAssociated Find matching files with different extensions, then rename them
+@param {object} _options Additional optional options
+@param {bool} _options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 **/
 function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
@@ -85,7 +85,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
     }, 2);
 
     {
-      const fullPath = path.resolve(path.join('../', sourceFolder));
+      const fullPath = path.resolve(path.resolve(__dirname, '../../../', sourceFolder));
 
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {
