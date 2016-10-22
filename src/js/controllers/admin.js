@@ -1,5 +1,3 @@
-/*global console*/
-
 'use strict';
 
 var directoryContents = require('../directory_contents.js'),
@@ -146,45 +144,6 @@ route.previewGenerator = {
 			folder: joi.string().trim(),
 			preview: joi.boolean()
 		}
-	}
-};
-
-route.renameAssets = {
-	description: 'Rename and/or move assets based on calendar date',
-	tags: ['hapi', 'callback'],
-	handler: function (request, reply) {
-		imageManipulation.rename(
-			request.payload,
-			function (err, result) {
-				if (err) {
-					if (err.isBoom) {
-						console.log(err.message);
-					}
-					return reply(err);
-				}
-				return reply(result);
-			}
-		);
-	},
-	validate: {
-		payload: {
-			assets: joi.object(),
-			moveToResize: joi.boolean()
-		}
-	}
-};
-
-route.resizePhoto = {
-	description: 'Resize single photo into originals, photos, thumbs folder',
-	tags: ['hapi', 'callback'],
-	handler: function (request, reply) {
-		imageManipulation.resize(request.payload, function (result) {
-			var err = result.meta.error;
-			if (err) {
-				return reply(err);
-			}
-			return reply(result);
-		});
 	}
 };
 

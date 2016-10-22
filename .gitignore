@@ -5,6 +5,6 @@ todo
 node_modules
 npm-debug.log
 resizeImages
-*.sublime-project
-*.sublime-workspace
 public/js/
+plugins/resize/test/fixtures/photos/
+plugins/resize/test/fixtures/thumbs/

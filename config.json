@@ -1,0 +1,11 @@
+{
+  "port": 8000,
+  "resizeDimensions": {
+    "photo": { "width": 800, "height": 600 },
+    "thumb": { "width": 185, "height": 45 }
+  },
+  "supportedFileTypes": {
+    "photo": ["jpg", "jpeg"],
+    "video": ["mp4", "webm"]
+  }
+}

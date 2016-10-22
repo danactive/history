@@ -1,7 +1,9 @@
+/* global require */
 const tape = require('tape-catch');
 
 tape('Verify rename library', { skip: false }, (describe) => {
   const appRoot = require('app-root-path');
+  const path = require('path');
 
   const exist = require('../../exists/lib/');
   const plugin = require('../lib/rename');
@@ -16,7 +18,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   *     #       # #    # #####     #     #  ####   ####   ####   ####  # #    #   #   ###### #####
   *
   */
-  describe.test('* Find many associated relative filenames', (assert) => {
+  describe.test('* Find many associated relative filenames', { skip: false }, (assert) => {
     const sourceFolder = './plugins/rename/test/fixtures/renameable/';
     const file = 'bee';
     const associatedFilenames = [`${file}.bat`, `${file}.bin`, `${file}.bmp`];
@@ -35,10 +37,10 @@ tape('Verify rename library', { skip: false }, (describe) => {
             `Found associated filenames with path ${associatedFilename}`);
         });
       })
-      .catch(error => assert.fail(`Associated files is not found (${error})`));
+      .catch(error => assert.fail(`Associated files is not found (${error})`) && assert.end());
   });
 
-  describe.test('* Find many associated absolute filenames', (assert) => {
+  describe.test('* Find many associated absolute filenames', { skip: false }, (assert) => {
     const sourceFolder = appRoot.resolve('./rename/test/fixtures/renameable/');
     const file = 'bee';
     const associatedFilenames = [`${file}.bat`, `${file}.bin`, `${file}.bmp`];
@@ -56,10 +58,10 @@ tape('Verify rename library', { skip: false }, (describe) => {
             `Found associated filenames with path ${associatedFilename}`);
         });
       })
-      .catch(error => assert.fail(`Associated files are not found (${error})`));
+      .catch(error => assert.fail(`Associated files are not found (${error})`) && assert.end());
   });
 
-  describe.test('* Find no associated filenames', (assert) => {
+  describe.test('* Find no associated filenames', { skip: false }, (assert) => {
     const sourceFolder = './plugins/rename/test/fixtures/renameable/';
     const filename = 'FAKE';
     const associatedFilenames = [];
@@ -80,7 +82,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   *#     # ###### #    #  ####   ####  #  ####  #    #    #     #  ####   ####   ####   ####  # #    #   #   ###### #####
   *
   */
-  describe.test('* Reassign many associated absolute filenames', (assert) => {
+  describe.test('* Reassign many associated absolute filenames', { skip: false }, (assert) => {
     const filepath = appRoot.resolve('./plugins/rename/test/fixtures/renameable/');
     const absoluteAssociatedFilenames = [`${filepath}bee.bat`, `${filepath}bee.bin`, `${filepath}bee.bmp`];
     const futureFile = 'future';
@@ -98,6 +100,49 @@ tape('Verify rename library', { skip: false }, (describe) => {
   });
 
   /*
+  *      #####                                                            #     #
+  *     #     # #    # #####  #####   ####  #####  ##### ###### #####     ##   ## ###### #####  #   ##
+  *     #       #    # #    # #    # #    # #    #   #   #      #    #    # # # # #      #    # #  #  #
+  *      #####  #    # #    # #    # #    # #    #   #   #####  #    #    #  #  # #####  #    # # #    #
+  *           # #    # #####  #####  #    # #####    #   #      #    #    #     # #      #    # # ######
+  *     #     # #    # #      #      #    # #   #    #   #      #    #    #     # #      #    # # #    #
+  *      #####   ####  #      #       ####  #    #   #   ###### #####     #     # ###### #####  # #    #
+  *
+  */
+  describe.test('* Failing supported browser media', { skip: false }, (assert) => {
+    const file = '2016-12-31';
+    const filenames = [
+      `${file}.arw`,
+      `${file}.bmp`,
+      `${file}.psd`,
+      `${file}.pdf`,
+      `${file}.raw`,
+    ];
+
+    assert.plan(filenames.length);
+    filenames.forEach((filename) => {
+      plugin.supportedBrowserMedia(filename)
+        .then(supported => assert.notOk(supported));
+    });
+  });
+
+  describe.test('* Passing supported browser media', { skip: false }, (assert) => {
+    const file = '2016-12-31';
+    const filenames = [
+      `${file}.jpg`,
+      `${file}.jpeg`,
+      `${file}.mp4`,
+      `${file}.webm`,
+    ];
+
+    assert.plan(filenames.length);
+    filenames.forEach((filename) => {
+      plugin.supportedBrowserMedia(filename)
+        .then(supported => assert.ok(supported));
+    });
+  });
+
+  /*
   *     ######                                        ######
   *     #     # ###### #    #   ##   #    # ######    #     #   ##   ##### #    #  ####
   *     #     # #      ##   #  #  #  ##  ## #         #     #  #  #    #   #    # #
@@ -107,29 +152,41 @@ tape('Verify rename library', { skip: false }, (describe) => {
   *     #     # ###### #    # #    # #    # ######    #       #    #   #   #    #  ####
   *
   */
-  describe.test('* Rename real source folder', (assert) => {
+  describe.test('* Rename real source folder', { skip: false }, (assert) => {
     const filenames = ['cee.css', 'jay.js', 'el.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
 
-    assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
-      .then(success => assert.equal(success, true, 'No errors'))
-      .catch(error => assert.fail(`Rename failed ${error}`));
+      .then((result) => {
+        assert.plan(result.length);
+        const uniqueResult = new Set(result);
+        futureFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+        });
+      })
+      .catch(error => assert.fail(`Rename failed ${error}`) && assert.end());
   });
 
-  describe.test('* Restore real source folder', (assert) => {
+  describe.test('* Restore real source folder', { skip: false }, (assert) => {
     const filenames = ['changed.css', 'renamed.js', 'temp.txt'];
     const futureFilenames = ['cee.css', 'jay.js', 'el.log'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
 
-    assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
-      .then(success => assert.equal(success, true, 'No errors'))
-      .catch(error => assert.fail(`Rename failed ${error}`));
+      .then((result) => {
+        assert.plan(result.length);
+        const uniqueResult = new Set(result);
+        futureFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+        });
+      })
+      .catch(error => assert.fail(`Rename failed ${error}`) && assert.end());
   });
 
-  describe.test('* Caught fake source folder', (assert) => {
+  describe.test('* Caught fake source folder', { skip: false }, (assert) => {
     const filenames = ['cee.css', 'jay.js', 'el.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
     const sourceFolder = './plugins/rename/test/fixtures/FAKE';
@@ -140,7 +197,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
       .catch(() => assert.pass('Fake folder not found'));
   });
 
-  describe.test('* Caught fake source filenames', (assert) => {
+  describe.test('* Caught fake source filenames', { skip: false }, (assert) => {
     const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
@@ -151,15 +208,20 @@ tape('Verify rename library', { skip: false }, (describe) => {
       .catch(() => assert.pass('Fake filename not found'));
   });
 
-  describe.test('* Rename associated is false so one filename', (assert) => {
+  describe.test('* Rename associated is false so one filename', { skip: false }, (assert) => {
     const filenames = ['bee.bat'];
     const futureFilenames = ['rename_grouped.bat'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
-      .then((success) => {
-        assert.plan(3);
-        assert.equal(success, true, 'No errors');
+      .then((result) => {
+        assert.plan(result.length + 2);
+
+        const uniqueResult = new Set(result);
+        futureFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+        });
 
         exist.pathExists(`${sourceFolder}/bee.bin`)
           .then(() => assert.pass('Associated bee.bin file remains untouched'))
@@ -168,62 +230,64 @@ tape('Verify rename library', { skip: false }, (describe) => {
           .then(() => assert.pass('Associated bee.bmp file remains untouched'))
           .catch(error => assert.fail(`Bee.bmp file does not exist ${error}`));
       })
-      .catch(error => assert.fail(`Rename failed ${error}`));
+      .catch(error => assert.fail(`Rename failed ${error}`) && assert.end());
   });
 
-  describe.test('* Restore associated is false so one filename', (assert) => {
+  describe.test('* Restore associated is false so one filename', { skip: false }, (assert) => {
     const filenames = ['rename_grouped.bat'];
     const futureFilenames = ['bee.bat'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
 
-    assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
-      .then(success => assert.equal(success, true, 'No errors'))
-      .catch(error => assert.fail(`Rename failed ${error}`));
+      .then((result) => {
+        assert.plan(result.length);
+        const uniqueResult = new Set(result);
+        futureFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+        });
+      })
+      .catch(error => assert.fail(`Rename failed ${error}`) && assert.end());
   });
 
-  describe.test('* Rename associated is true so six filenames', (assert) => {
+  describe.test('* Rename associated is true so six filenames', { skip: false }, (assert) => {
     const filenames = ['bee.bat', 'tee.txt'];
     const futureFilenames = ['rename_grouped.bat', 'rename_associated.txt'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const expectedFilenames = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
+      'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt'];
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: true })
-      .then((success) => {
-        assert.plan(7);
-        assert.equal(success, true, 'No errors');
+      .then((result) => {
+        assert.plan(result.length * 2);
+        const uniqueResult = new Set(result);
+        expectedFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
 
-        exist.pathExists(`${sourceFolder}/rename_grouped.bat`)
-          .then(() => assert.pass('Associated rename_grouped.bat file renamed with associated'))
-          .catch(error => assert.fail(`Rename_grouped.bin file does not exist ${error}`));
-        exist.pathExists(`${sourceFolder}/rename_grouped.bin`)
-          .then(() => assert.pass('Associated rename_grouped.bin file renamed with associated'))
-          .catch(error => assert.fail(`Rename_grouped.bin file does not exist ${error}`));
-        exist.pathExists(`${sourceFolder}/rename_grouped.bmp`)
-          .then(() => assert.pass('Associated rename_grouped.bmp file remains with associated'))
-          .catch(error => assert.fail(`Rename_grouped.bmp file does not exist ${error}`));
-        exist.pathExists(`${sourceFolder}/rename_associated.txt`)
-          .then(() => assert.pass('Associated rename_associated.txt file renamed with associated'))
-          .catch(error => assert.fail(`Rename_associated.tar file does not exist ${error}`));
-        exist.pathExists(`${sourceFolder}/rename_associated.tar`)
-          .then(() => assert.pass('Associated rename_associated.tar file renamed with associated'))
-          .catch(error => assert.fail(`Rename_associated.tar file does not exist ${error}`));
-        exist.pathExists(`${sourceFolder}/rename_associated.tar`)
-          .then(() => assert.pass('Associated rename_associated.tar file remains with associated'))
-          .catch(error => assert.fail(`Rename_associated.tar file does not exist ${error}`));
+          exist.pathExists(`${sourceFolder}/${filename}`)
+            .then(() => assert.pass(`Associated ${filename} file renamed with associated`))
+            .catch(error => assert.fail(`${filename} file does not exist ${error}`));
+        });
       })
-      .catch((error) => {
-        assert.fail(`Rename failed (${error})`);
-      });
+      .catch(error => assert.fail(`Rename failed (${error})`) && assert.end());
   });
 
-  describe.test('* Restore associated is true so six filenames', (assert) => {
+  describe.test('* Restore associated is true so six filenames', { skip: false }, (assert) => {
     const filenames = ['rename_grouped.bat', 'rename_associated.txt'];
     const futureFilenames = ['bee.bat', 'tee.txt'];
     const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const expectedFilenames = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt'];
 
-    assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: true })
-      .then(success => assert.equal(success, true, 'No errors'))
-      .catch(error => assert.fail(`Rename failed ${error}`));
+      .then((result) => {
+        assert.plan(result.length);
+        const uniqueResult = new Set(result);
+        expectedFilenames.forEach((filename) => {
+          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+        });
+      })
+      .catch(error => assert.fail(`Rename failed ${error}`) && assert.end());
   });
 });

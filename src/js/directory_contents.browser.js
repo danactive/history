@@ -107,7 +107,7 @@
                 source_folder: "." + qs.folder,
                 rename_associated: true
               },
-              success: function (response) {
+              success: function () {
                 var $spinner = $("#spinner"),
                   ajaxCounter = 0,
                   photoCount = 1,
@@ -129,11 +129,13 @@
                       "complete": spinner
                     });
                   },
-                  resizeImage = function (postData) {
+                  resizeImage = function () {
                     $.ajax({
-                      "url": '/admin/resize-photo',
+                      "url": '/admin/resize',
                       "method": 'post',
-                      "data": postData,
+                      "data": {
+                        source_path: `.${qs.folder}`
+                      },
                       "error": ajaxError,
                       "complete": spinner
                     });
@@ -141,12 +143,7 @@
 
                 if (isMoveToResize === true) {
                   $spinner.removeClass("hide");
-                  $.each(response.assets, function (x, asset) {
-                    if (asset.mediaType === "image") {
-                      photoCount++;
-                      resizeImage(asset);
-                    }
-                  });
+                  resizeImage();
                   deleteTempThumb();
                   output = xmlOutput;
                 } else {

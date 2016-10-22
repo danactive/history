@@ -12,20 +12,25 @@
     "app-root-path": "^2.0.1",
     "async": "^2.1.2",
     "boom": "^4.0.0",
+    "calipers": "^2.0.0",
+    "calipers-jpeg": "^2.0.0",
+    "dot-prop": "^4.0.0",
     "glob": "^7.0.0",
-    "joi": "^9.1.1"
+    "gm": "^1.23.0",
+    "joi": "^9.1.1",
+    "mime-types": "^2.1.12"
   },
   "devDependencies": {
     "eslint": "^3.4.0",
-    "eslint-config-airbnb-base": "^8.0.0",
-    "eslint-plugin-import": "^1.16.0",
+    "eslint-config-airbnb-base": "^9.0.0",
+    "eslint-plugin-import": "^2.0.1",
     "gulp": "^3.9.0",
     "gulp-eslint": "^3.0.1",
     "gulp-expect-file": "0.0.7",
     "gulp-print": "^2.0.1",
     "gulp-tape": "0.0.9",
     "hapi": "^15.0.3",
-    "tape": "4.6.0",
+    "tape": "^4.6.0",
     "tape-catch": "^1.0.6"
   },
   "author": {

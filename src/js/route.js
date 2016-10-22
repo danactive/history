@@ -14,7 +14,6 @@ exports.register = function(server, options, next) {
 	routes.push({ "method": 'GET',  "path": '/template/walk-path', "config": admin.templateWalkPath });
 	routes.push({ "method": 'GET',  "path": '/admin/diff-album-path', "config": admin.adminDiffAlbumPath });
 	routes.push({ "method": 'GET',  "path": '/admin/preview-generator', "config": admin.previewGenerator });
-	routes.push({ "method": 'POST', "path": '/admin/rename-assets', "config": admin.renameAssets });
 	routes.push({ "method": 'POST', "path": '/admin/delete-path', "config": admin.deletePath });
 
 	routes.push({ "method": 'GET',  "path": '/admin/{files*}', "config": files.admin });
@@ -22,7 +21,7 @@ exports.register = function(server, options, next) {
 	routes.push({ "method": 'GET',  "path": '/static/gallery-{gallery}/{files*}', "config": files.gallery });
 	routes.push({ "method": 'GET',  "path": '/public/{files*}', "config": files.public });
 	routes.push({ "method": 'GET',  "path": '/favicon.ico', "handler": { "file": './favicon.ico' } });
-		
+
 	routes.push({ "method": 'GET',  "path": '/flickr-gallery', "config": root.flickrGallery });
 	routes.push({ "method": 'GET',  "path": '/watch-video', "config": root.watchVideo });
 	routes.push({ "method": 'GET',  "path": '/', "config": root.home });

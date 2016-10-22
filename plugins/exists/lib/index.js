@@ -9,7 +9,7 @@ Verify if a path exists on the file system
 
 @method pathExists
 @param {string} verifyPath relative/absolute path (file or folder) on the file system
-@returns {promise}
+@returns {Promise}
 **/
 function pathExists(verifyPath) {
   return new Promise((resolve, reject) => {

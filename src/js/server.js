@@ -4,6 +4,8 @@
 const hapi = require('hapi'),
   server = new hapi.Server(),
   pkg = require('../../package');
+const libRename = require('../../plugins/rename/lib');
+const libResize = require('../../plugins/resize/lib');
 
 server.connection({ "port": 8000 });
 
@@ -11,10 +13,8 @@ server.register([
   { register: require('inert') },
   { register: require('vision') },
   { register: require('./route.js') },
-  {
-    register: require('../../plugins/rename/lib'),
-    routes: { prefix: '/admin' }
-  },
+  { register: libRename, routes: { prefix: '/admin' } },
+  { register: libResize, routes: { prefix: '/admin' } },
   {
     register: require('hapi-swagger'),
     options: { info: { title: 'history API', version: pkg.version } }

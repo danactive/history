@@ -17,42 +17,6 @@ describe('Admin:', function () {
 	describe('Image manipulation:', function () {
 		var page = require(appRoot + "/src/js/image_manipulation.js");
 		/***
-		*     #######                              
-		*     #       #    # #  ####  #####  ####  
-		*     #        #  #  # #        #   #      
-		*     #####     ##   #  ####    #    ####  
-		*     #         ##   #      #   #        # 
-		*     #        #  #  # #    #   #   #    # 
-		*     ####### #    # #  ####    #    ####  
-		*                                          
-		*/
-		describe('folderExists()', function () {
-			it('should pass verification folder exists (01)', function (done) {
-				var testFolder = "test/fixture/galleries";
-				page.folderExists(testFolder)
-					.then(function (result) {
-						expect(result.verified).to.be(true);
-						expect(result.path).to.be(testFolder);
-						done();
-					})
-					.catch(function () {
-						done(false);
-					});
-			});
-			it('should fail verification folder exists (02)', function (done) {
-				var testFolder = "expectFail";
-				page.folderExists(testFolder)
-					.then(function () {
-						done(false);
-					})
-					.catch(function (result) {
-						expect(result.verified).to.be(false);
-						expect(result.path).to.be(testFolder);
-						done();
-					});
-			});
-		});
-		/***
 		*     #######
 		*     #       #    #  ####  #    # #####  ######
 		*     #       ##   # #      #    # #    # #
@@ -68,7 +32,7 @@ describe('Admin:', function () {
 				var testFolder = constant.config.resizeFolder,
 					verifiedPaths;
 				arg.targetFolderName = 'testAlbum';
-				
+
 				page.ensureDestinationFolder(arg, function (err, verifiedPaths) {
 					if (err) {
 						return done(err);
@@ -87,7 +51,7 @@ describe('Admin:', function () {
 				var testFolder = "test/fixture/galleries",
 					verifiedPaths;
 				arg.destinationRootPath = path.join(appRoot.path, testFolder);
-				
+
 				// copied from a1
 				page.ensureDestinationFolder(arg, function (err, verifiedPaths) {
 					if (err) {
@@ -124,7 +88,7 @@ describe('Admin:', function () {
 				}]
 			};
 			arg.destinationRootPath = "/src/test/fixture/childless";
-			
+
 			it('should fail with missing arguments (b0)', function (done) {
 				var incompleteArg = {
 						assets: { "sort": ["need_match_key"] }
@@ -288,72 +252,6 @@ describe('Admin:', function () {
 
 		// 		page.deletePath(arg, function () {
 		// 			expect(fs.existsSync(verifyPath)).to.be(false);
-		// 			done();
-		// 		});
-		// 	});
-		// });
-		/***
-		*     ######
-		*     #     # ###### #    #   ##   #    # ######
-		*     #     # #      ##   #  #  #  ##  ## #
-		*     ######  #####  # #  # #    # # ## # #####
-		*     #   #   #      #  # # ###### #    # #
-		*     #    #  #      #   ## #    # #    # #
-		*     #     # ###### #    # #    # #    # ######
-		*
-		*/
-		// describe('rename()', function () {
-		// 	var arg,
-		// 		expectError = function (done, errorMessage) {
-		// 			expect(page.rename).withArgs(arg).to.throwException(function (exception) { // get the exception object
-		// 				expect(exception).to.be.a(ReferenceError);
-		// 				expect(page.rename).withArgs(arg).to.throwException(new RegExp(page.error[errorMessage]));
-		// 				done();
-		// 			});
-		// 		};
-		// 	it('should fail without argument (d1)', function (done) {
-		// 		expectError(done, "missingArg");
-		// 	});
-		// 	it('should fail without response argument (d3)', function (done) {
-		// 		arg = {};
-		// 		expectError(done, "missingArgResponse");
-		// 	});
-		// 	it('should fail without request argument (d4)', function (done) {
-		// 		arg.response = {};
-		// 		expectError(done, "missingArgRequest");
-		// 	});
-		// 	it('should fail without assets in request argument (d5)', function (done) {
-		// 		arg.request = {};
-		// 		expectError(done, "missingArgAssets");
-		// 	});
-		// 	it('should fail without move or rename in request argument (d6)', function (done) {
-		// 		arg.request.body = {};
-		// 		arg.request.body.assets = {
-		// 			"sort": ["renamable"],
-		// 			"renamable": {
-		// 				"files": [{
-		// 					"raw": path.dirname(__dirname) + "/test/fixture/renamable.txt",
-		// 					"renamed": path.dirname(__dirname) + "/test/fixture/warning-mocha-test-failed-during-rename.txt"
-		// 				}]
-		// 			}
-		// 		};
-		// 		expectError(done, "missingArgMove");
-		// 	});
-		// 	it('should pass by renaming (d7)', function (done) {
-		// 		arg.request.body.moveToResize = false;
-
-		// 		page.rename(arg, function (result) {
-		// 			expect(result.assets[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
-		// 			done();
-		// 		});
-		// 	});
-		// 	it('should pass by restoring filename (d8)', function (done) {
-		// 		var tempName = arg.request.body.assets.renamable.files[0].raw;
-		// 		arg.request.body.assets.renamable.files[0].raw = arg.request.body.assets.renamable.files[0].renamed;
-		// 		arg.request.body.assets.renamable.files[0].renamed = tempName;
-
-		// 		page.rename(arg, function (result) {
-		// 			expect(result.assets[0].destination.value).to.be(arg.request.body.assets.renamable.files.renamed);
 		// 			done();
 		// 		});
 		// 	});

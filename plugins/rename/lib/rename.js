@@ -6,6 +6,7 @@ const glob = require('glob');
 const path = require('path');
 
 const exists = require('../../exists/lib');
+const utils = require('../../utils/lib');
 
 /**
 Find associated path and filename based on file without extension
@@ -52,25 +53,45 @@ function reassignAssociated(absoluteFolderFilenames, futureFile) {
 exports.reassignAssociated = reassignAssociated;
 
 /**
+Viewing files in a browser should exclude source files
+
+@method supportedBrowserMedia
+@param {string} filename Filename path
+@return {Promise} publicly viewable file
+**/
+function supportedBrowserMedia(filename) {
+  return new Promise((resolve) => {
+    const findType = utils.file.getType(filename);
+    const matchingTypes = utils.config.get('supportedFileTypes.photo')
+      .concat(utils.config.get('supportedFileTypes.video'));
+    resolve(matchingTypes.find(supportedType => supportedType === findType));
+  });
+}
+exports.supportedBrowserMedia = supportedBrowserMedia;
+
+/**
 Renamed file paths
 
 @method renamePaths
-@param {string} [sourceFolder] Folder that contains the raw camera photo files
-@param {string[]} [filenames] Current filenames (file and extension) of raw camera photo files
-@param {string[]} [futureFilenames] Future filenames (file and extension) of renamed camera photo files
-@param {object} _options Additional optional options
-@param {bool} _options.renameAssociated Find matching files with different extensions, then rename them
+@param {string} sourceFolder Folder that contains the raw camera photo files
+@param {string[]} filenames Current filenames (file and extension) of raw camera photo files
+@param {string[]} futureFilenames Future filenames (file and extension) of renamed camera photo files
+@param {object} [options] Additional optional options
+@param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 **/
-function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
+function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
   return new Promise((resolve, reject) => {
-    const options = _options || {};
-
+    const renamedFilenames = [];
     const q = async.queue((rename, next) => {
       function renameFile() {
         fs.rename(rename.oldName, rename.newName, (error) => {
           if (error) {
             reject(boom.wrap(error));
+          }
+
+          if (supportedBrowserMedia(rename.newName)) {
+            renamedFilenames.push(rename.newName);
           }
 
           next();
@@ -85,7 +106,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
     }, 2);
 
     {
-      const fullPath = path.resolve(path.resolve(__dirname, '../../../', sourceFolder));
+      const fullPath = path.resolve(__dirname, '../../../', sourceFolder);
 
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {
@@ -132,7 +153,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, _options) {
     }
 
     // assign a callback
-    q.drain = () => resolve(true);
+    q.drain = () => resolve(renamedFilenames);
   });
 }
 exports.renamePaths = renamePaths;

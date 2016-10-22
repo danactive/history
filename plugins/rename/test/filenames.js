@@ -9,7 +9,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
     assert.equal(result.filenames[0], `${prefix}-50.jpg`, 'Filename');
     assert.equal(result.files[0], `${prefix}-50`, 'File');
-    assert.equal(result.xml, `<photo id="1"><filename>${prefix}-50.jpg</filename></photo>`, 'XML');
+    assert.equal(result.xml, `<photo id="100"><filename>${prefix}-50.jpg</filename></photo>`, 'XML');
     assert.end();
   });
 
@@ -22,8 +22,8 @@ tape('Filenames', { skip: false }, (describe) => {
     assert.equal(result.files[0], `${prefix}-50`, 'File');
     assert.equal(result.files[1], `${prefix}-90`, 'File');
     assert.equal(result.xml,
-      `<photo id="1"><filename>${prefix}-50.jpg</filename></photo>` +
-      `<photo id="2"><filename>${prefix}-90.jpg</filename></photo>`,
+      `<photo id="100"><filename>${prefix}-50.jpg</filename></photo>` +
+      `<photo id="101"><filename>${prefix}-90.jpg</filename></photo>`,
       'XML');
     assert.end();
   });
@@ -39,9 +39,9 @@ tape('Filenames', { skip: false }, (describe) => {
     assert.equal(result.files[1], `${prefix}-64`, 'File');
     assert.equal(result.files[2], `${prefix}-90`, 'File');
     assert.equal(result.xml,
-      `<photo id="1"><filename>${prefix}-37.jpg</filename></photo>` +
-      `<photo id="2"><filename>${prefix}-64.jpg</filename></photo>` +
-      `<photo id="3"><filename>${prefix}-90.jpg</filename></photo>`,
+      `<photo id="100"><filename>${prefix}-37.jpg</filename></photo>` +
+      `<photo id="101"><filename>${prefix}-64.jpg</filename></photo>` +
+      `<photo id="102"><filename>${prefix}-90.jpg</filename></photo>`,
       'XML');
     assert.end();
   });

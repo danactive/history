@@ -1,9 +1,20 @@
 # Changelog
 
+### 1.4.1 - Admin resize folder
+#### todo
+* (Fix) Walk photos - rename and move success
+
+### 1.4.0 - Admin resize file
+#### 2016-Oct-22
+* (Add) Resize plugin
+* (Add) Log plugin
+* (Add) Utilities plugin
+* (Add) Yarn v1 lock file added
+
 ### 1.3.2 - Plugins linted
 #### 2016-Oct-16
 * (Fix) All tests pass - both `npm test` and individually
-* (Fix) Plugin dependencies updated 
+* (Fix) Plugin dependencies updated
 
 ### 1.3.1 - XML v2.0 continuation
 #### 2016-Sep-05
