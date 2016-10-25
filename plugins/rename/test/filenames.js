@@ -5,7 +5,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('One photo per day', (assert) => {
     const prefix = '2016-01-01';
-    const result = plugin.getFutureFilenames(prefix, 1);
+    const result = plugin.calculateFutureFilenames(prefix, 1);
 
     assert.equal(result.filenames[0], `${prefix}-50.jpg`, 'Filename');
     assert.equal(result.files[0], `${prefix}-50`, 'File');
@@ -15,7 +15,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Two photos per day', (assert) => {
     const prefix = '2016-02-02';
-    const result = plugin.getFutureFilenames(prefix, 2);
+    const result = plugin.calculateFutureFilenames(prefix, 2);
 
     assert.equal(result.filenames[0], `${prefix}-50.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-90.jpg`, 'Filename');
@@ -30,7 +30,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Three photos per day', (assert) => {
     const prefix = '2016-03-03';
-    const result = plugin.getFutureFilenames(prefix, 3);
+    const result = plugin.calculateFutureFilenames(prefix, 3);
 
     assert.equal(result.filenames[0], `${prefix}-37.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-64.jpg`, 'Filename');
@@ -48,7 +48,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Four photos per day', (assert) => {
     const prefix = '2016-04-04';
-    const result = plugin.getFutureFilenames(prefix, 4);
+    const result = plugin.calculateFutureFilenames(prefix, 4);
 
     assert.equal(result.filenames[0], `${prefix}-30.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-50.jpg`, 'Filename');
@@ -63,7 +63,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Five photos per day', (assert) => {
     const prefix = '2016-04-04';
-    const result = plugin.getFutureFilenames(prefix, 5);
+    const result = plugin.calculateFutureFilenames(prefix, 5);
 
     assert.equal(result.filenames[0], `${prefix}-26.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-42.jpg`, 'Filename');
@@ -80,7 +80,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('34 photos per day', (assert) => {
     const prefix = '2016-06-15';
-    const result = plugin.getFutureFilenames(prefix, 34);
+    const result = plugin.calculateFutureFilenames(prefix, 34);
 
     assert.equal(result.files[0], `${prefix}-12`, 'File');
     assert.equal(result.files[1], `${prefix}-14`, 'File');
@@ -110,7 +110,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('62 photos per day', (assert) => {
     const prefix = '2016-12-31';
-    const result = plugin.getFutureFilenames(prefix, 62);
+    const result = plugin.calculateFutureFilenames(prefix, 62);
 
     assert.equal(result.files[0], `${prefix}-11`, 'File');
     assert.equal(result.files[1], `${prefix}-12`, 'File');
@@ -141,7 +141,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('One photo per day with a XML starting point', (assert) => {
     const prefix = '2016-01-01';
-    const result = plugin.getFutureFilenames(prefix, 1, 10);
+    const result = plugin.calculateFutureFilenames(prefix, 1, 10);
 
     assert.equal(result.filenames[0], `${prefix}-50.jpg`, 'Filename');
     assert.equal(result.files[0], `${prefix}-50`, 'File');
@@ -151,7 +151,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Two photos per day with a XML starting point', (assert) => {
     const prefix = '2016-02-02';
-    const result = plugin.getFutureFilenames(prefix, 2, 20);
+    const result = plugin.calculateFutureFilenames(prefix, 2, 20);
 
     assert.equal(result.filenames[0], `${prefix}-50.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-90.jpg`, 'Filename');
@@ -166,7 +166,7 @@ tape('Filenames', { skip: false }, (describe) => {
 
   describe.test('Three photos per day with a XML starting point', (assert) => {
     const prefix = '2016-03-03';
-    const result = plugin.getFutureFilenames(prefix, 3, 30);
+    const result = plugin.calculateFutureFilenames(prefix, 3, 30);
 
     assert.equal(result.filenames[0], `${prefix}-37.jpg`, 'Filename');
     assert.equal(result.filenames[1], `${prefix}-64.jpg`, 'Filename');

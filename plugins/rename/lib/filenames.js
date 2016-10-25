@@ -1,13 +1,13 @@
 /**
 Generate renamed files
 
-@method getFutureFilenames
+@method calculateFutureFilenames
 @param {string} [prefix] Root of filename with increment added before extension
 @param {integer} [photosInDay] Total photos distributed over one day (max 80)
 @param {string} xmlStartPhotoId initial position
 @return {json}
 **/
-function getFutureFilenames(prefix, photosInDay, xmlStartPhotoId) {
+function calculateFutureFilenames(prefix, photosInDay, xmlStartPhotoId) {
   const DEFAULT_START_COUNT = 100;
   const FIRST_PHOTO_NUMBER = 10; // 1-9 are reserved for future photo additions
   const LAST_PHOTO_NUMBER = 90; // 91-99 are reserved for future photo additions
@@ -51,4 +51,4 @@ function getFutureFilenames(prefix, photosInDay, xmlStartPhotoId) {
   return { filenames, files, xml };
 }
 
-exports.getFutureFilenames = getFutureFilenames;
+exports.calculateFutureFilenames = calculateFutureFilenames;

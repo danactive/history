@@ -23,7 +23,7 @@ const handler = (request, reply) => {
     reply(boomError);
   };
 
-  const lookupFilenames = () => filenamesMod.getFutureFilenames(prefix, fromFilenames.length);
+  const lookupFilenames = () => filenamesMod.calculateFutureFilenames(prefix, fromFilenames.length);
 
   const renamePaths = (futureFilenames) => {
     const toFilenames = futureFilenames.filenames;

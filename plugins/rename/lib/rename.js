@@ -1,37 +1,10 @@
-const appRoot = require('app-root-path');
 const async = require('async');
 const boom = require('boom');
 const fs = require('fs');
-const glob = require('glob');
 const path = require('path');
 
 const exists = require('../../exists/lib');
 const utils = require('../../utils/lib');
-
-/**
-Find associated path and filename based on file without extension
-
-@method findAssociated
-@param {string} [sourceFolder] Folder that contains the raw camera photo files
-@param {string} [filename] path and filename with or without extension
-@return {Promise} array of string associated filenames with absolute path
-**/
-function findAssociated(sourceFolder, filename) {
-  return new Promise((resolve, reject) => {
-    const absolutePath = path.isAbsolute(sourceFolder) ? path.join(sourceFolder, filename) :
-      appRoot.resolve(path.join('../', sourceFolder, filename));
-    const file = absolutePath.substr(0, absolutePath.length - path.extname(absolutePath).length); // strip extension
-
-    glob(`${file}.*`, (error, files) => {
-      if (error) {
-        reject(boom.wrap(error));
-      }
-
-      resolve(files);
-    });
-  });
-}
-exports.findAssociated = findAssociated;
 
 /**
 Reassign associated filename based on file without extension
@@ -112,7 +85,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
         if (options.renameAssociated) {
           let oldNames;
 
-          findAssociated(fullPath, pair.current)
+          utils.file.glob(path.join(fullPath, pair.current), '.*', { ignoreExtension: true })
             .then((associatedFilenames) => {
               oldNames = associatedFilenames;
               const endWithoutExt = pair.future.length - path.extname(pair.future).length;

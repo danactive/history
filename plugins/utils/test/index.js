@@ -2,6 +2,7 @@ const tape = require('tape-catch');
 
 tape('Utilities', { skip: false }, (describe) => {
   const lib = require('../lib');
+  const path = require('path');
 
   describe.test('* Config - Get', (assert) => {
     const value = lib.config.get('supportedFileTypes.photo');
@@ -34,5 +35,56 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.equal(lib.file.getMimeType('folder/file.mp4'), 'video/mp4', 'Video type with relative path (forward slash)');
     assert.equal(lib.file.getMimeType('folder\file.webm'), 'video/webm', 'Video type with relative path (back slash)');
     assert.end();
+  });
+
+  describe.test('* File - Ensure absolute path', (assert) => {
+    const test = lib.file.absolutePath;
+    assert.equal(test('./plugins/utils/test'), __dirname,
+      'Relative resolved to Absolute folder');
+    assert.equal(test('./plugins/utils/test/fixtures/aitch.html'), path.join(__dirname, './fixtures/aitch.html'),
+      'Relative resolved to Absolute file');
+    assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '/'),
+      'Relative resolved to Absolute folder trailing slash');
+    assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '\\'),
+      'Relative resolved to Absolute folder trailing backslash');
+    assert.equal(test(__dirname), __dirname,
+      'Absolute resolved to folder');
+    assert.equal(test(path.join(__dirname, './fixtures/aitch.html')), path.join(__dirname, './fixtures/aitch.html'),
+      'Absolute to file');
+    assert.end();
+  });
+
+  describe.test('* File - Glob', (assert) => {
+    assert.plan(8);
+
+    lib.file.glob('./plugins/utils/test/fixtures', '*.fake')
+      .then(files => assert.equal(files.length, [].length, 'Find nothing (*.fake)'))
+      .catch(error => assert.fail(error));
+
+    lib.file.glob('./plugins/utils/test/fixtures', '*.htm')
+      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.htm)'))
+      .catch(error => assert.fail(error));
+
+    lib.file.glob('./plugins/utils/test/fixtures', '*.html')
+      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.html)'))
+      .catch(error => assert.fail(error));
+
+    lib.file.glob('./plugins/utils/test/fixtures', '*.htm*')
+      .then((files) => {
+        assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.htm*)');
+        assert.equal(path.resolve(files[1]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.htm*)');
+      })
+      .catch(error => assert.fail(error));
+
+    lib.file.glob('./plugins/utils/test/fixtures', '*.*')
+      .then((files) => {
+        assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.*)');
+        assert.equal(path.resolve(files[1]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.*)');
+      })
+      .catch(error => assert.fail(error));
+
+    lib.file.glob('./plugins/utils/test/fixtures/aitch.html', '.htm', { ignoreExtension: true })
+      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (.htm)'))
+      .catch(error => assert.fail(error));
   });
 });
