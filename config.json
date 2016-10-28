@@ -7,5 +7,9 @@
   "supportedFileTypes": {
     "photo": ["jpg", "jpeg"],
     "video": ["mp4", "webm"]
+  },
+  "rawFileTypes": {
+    "photo": ["arw", "raw"],
+    "video": ["avi", "mov", "m2ts", "mts"]
   }
 }

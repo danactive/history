@@ -8,7 +8,12 @@
 	<xsl:variable name="char_ass" select="document($charAssPath)/character_association"/>
 	<xsl:variable name="chars" select="document($charsPath)/characters"/>
 	<xsl:variable name="photo__album_id">
-		<xsl:value-of select="/album/meta/id"/>
+    <xsl:if test="/album/meta/album_name">
+      <xsl:value-of select="/album/meta/album_name"/>
+    </xsl:if>
+    <xsl:if test="/album/meta/id">
+		  <xsl:value-of select="/album/meta/id"/>
+    </xsl:if>
 	</xsl:variable>
 	<xsl:template match="/">
 		<html>
@@ -63,7 +68,7 @@
 
 			<body>
 				<!-- XML schema 1.5 thru 2.0 had geo tag in this format -->
-				<xsl:if test="number(/album/meta/version) &gt;= '1.5'">
+				<xsl:if test="number(/album/meta/version) &gt;= '1.5' or number(/album/meta/album_version) &gt;= '2.0'">
 					<div id="divToolbox">
 						<a href="javascript:;" id="linkMap">Map this album</a>
 					</div>
