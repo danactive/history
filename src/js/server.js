@@ -4,6 +4,7 @@
 const hapi = require('hapi'),
   server = new hapi.Server(),
   pkg = require('../../package');
+const libAlbum = require('../../plugins/album/lib');
 const libRename = require('../../plugins/rename/lib');
 const libResize = require('../../plugins/resize/lib');
 
@@ -13,6 +14,7 @@ server.register([
   { register: require('inert') },
   { register: require('vision') },
   { register: require('./route.js') },
+  { register: libAlbum, routes: { prefix: '/view' } },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
   {
