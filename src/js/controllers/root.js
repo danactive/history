@@ -7,7 +7,7 @@ route.flickrGallery = {
 	tags: ['hapi'],
 	handler: function (request, reply) {
 		var credentials = require("../../../credentials.js");
-		reply.view('flickr_gallery.dust', credentials);
+		reply.view('src/views/flickr_gallery.dust', credentials);
 	},
 	validate: {
 		query: {
@@ -22,7 +22,7 @@ route.home = {
 	tags: ['hapi'],
 	handler: function (request, reply) {
 		require('../directory_contents.js').getGalleries(function (response) {
-			reply.view('home.dust', response.payload);
+			reply.view('src/views/home.dust', response.payload);
 		});
 	},
 	validate: {
@@ -42,7 +42,7 @@ route.watchVideo = {
 	description: 'Watch HTML5 videos',
 	tags: ['hapi'],
 	handler: function (request, reply) {
-		reply.view('video.dust');
+		reply.view('src/views/video.dust');
 	},
 	validate: {
 		query: {

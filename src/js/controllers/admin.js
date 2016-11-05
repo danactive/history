@@ -10,7 +10,7 @@ route.home = {
 	description: 'Admin landing page',
 	tags: ['hapi'],
 	handler: function (request, reply) {
-		reply.view("admin.dust");
+		reply.view('src/views/admin.dust');
 	},
 	validate: {
 		query: {}
@@ -50,7 +50,7 @@ route.adminWalkPath = {
 					'/static/css/directory_contents.css'
 				]
 			};
-		reply.view('layout_admin', context);
+		reply.view('src/views/layout_admin', context);
 	},
 	notes: ['inprogress'],
 	tags: ['inprogress'],
@@ -108,7 +108,7 @@ route.adminDiffAlbumPath = {
 	tags: ['deprecated'],
 	handler: function (request, reply) {
 		reply.view(
-			'admin.node.dust',
+			'src/views/admin.node.dust',
 			{
 				"page": 'diff_xml',
 				"scripts": [

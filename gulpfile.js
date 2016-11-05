@@ -4,30 +4,26 @@ const plugins = require('gulp-load-plugins')({ camelize: true });
 
 const paths = {};
 paths.root = ['*.js'];
+paths.lib = ['lib/**/*.js'];
 paths.source = ['src/js/**/*.js', '!src/js/edit_admin_xml.browser.js'];
 paths.jsBrowser = ['src/js/**/*.browser.js'];
-paths.jsLint = paths.root.concat(paths.source);
+paths.jsLint = paths.root.concat(paths.lib);
 paths.views = ['src/views/**/*.dust'];
 paths.test = paths.tests = ['src/test/**/*.js', '!src/test/ignore*.js'];
 paths.watch = paths.lint;
 
 gulp.task('lint', () => gulp.src(paths.jsLint)
-  .pipe(plugins.plumber())
+  .pipe(plugins.print())
   .pipe(plugins.expectFile(paths.jsLint))
-  .pipe(plugins.eslint({
-    extends: 'eslint:recommended',
-    globals: { require: true, module: true },
-    rules: { 'no-console': 0 },
-    ecmaFeatures: {
-      blockBindings: true,
-    },
-  }))
+  .pipe(plugins.eslint())
   .pipe(plugins.eslint.format())
   .pipe(plugins.eslint.failAfterError()));
 
 gulp.task('js', () => gulp.src(paths.jsBrowser)
   .pipe(plugins.expectFile(paths.jsBrowser))
-  .pipe(plugins.rename(path => path.basename = path.basename.replace('.browser', '')))
+  .pipe(plugins.rename((path) => {
+    path.basename = path.basename.replace('.browser', ''); // eslint-disable-line no-param-reassign
+  }))
   .pipe(gulp.dest('public/js')));
 
 gulp.task('test', ['lint'], () => gulp.src(paths.test)

@@ -1,4 +1,4 @@
-/* global require */
+/* global __dirname, require */
 const joi = require('joi');
 
 const json = require('./json');
@@ -8,7 +8,7 @@ const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
 
   json.getAlbum(gallery, albumStem)
-    .then(response => reply(response))
+    .then(response => reply.view('plugins/album/views/home.jsx', response))
     .catch(error => reply(error));
 };
 
