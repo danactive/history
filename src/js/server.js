@@ -1,54 +1,64 @@
-/*global __dirname, console, require*/
-'use strict';
+/* global __dirname, require*/
 
-const hapi = require('hapi'),
-  server = new hapi.Server(),
-  pkg = require('../../package');
+const dust = require('dustjs-linkedin');
+const dustViews = require('fs').readFileSync('./public/views.min.js');
+const hapi = require('hapi');
+const hapiDust = require('hapi-dust');
+const hapiReactViews = require('hapi-react-views');
+const hapiSwagger = require('hapi-swagger');
+const hoek = require('hoek');
+const lout = require('lout');
+const notifier = require('node-notifier');
+const inert = require('inert');
+const vision = require('vision');
+require('tuxharness');
+
 const libAlbum = require('../../plugins/album/lib');
 const libRename = require('../../plugins/rename/lib');
 const libResize = require('../../plugins/resize/lib');
+const libRoutes = require('./route.js');
+const pkg = require('../../package');
 
-server.connection({ "port": 8000 });
+require('babel-core/register')({
+  presets: ['react', 'es2015'],
+});
 
+const server = new hapi.Server();
+server.connection({ port: 8000 });
 server.register([
-  { register: require('inert') },
-  { register: require('vision') },
-  { register: require('./route.js') },
+  { register: inert },
+  { register: vision },
+  { register: libRoutes },
   { register: libAlbum, routes: { prefix: '/view' } },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
   {
-    register: require('hapi-swagger'),
-    options: { info: { title: 'history API', version: pkg.version } }
+    register: hapiSwagger,
+    options: { info: { title: 'history API', version: pkg.version } },
   },
-  { register: require('lout') }
-], function (error) {
-  const notifier = require('node-notifier'),
-    hoek = require('hoek');
-
+  { register: lout },
+], (error) => {
   hoek.assert(!error, error);
-  var dust = require('dustjs-linkedin'),
-    dustViews = require("fs").readFileSync("./public/views.min.js");
 
-  require("tuxharness");
   dust.loadSource(dustViews);
   console.log('Views loaded to cache');
 
   server.start();
-  console.log('Server running at ' + server.info.uri);
+  console.log(`Server running at ${server.info.uri}`);
   notifier.notify({
-      title: 'Server event',
-      message: 'Running at ' + server.info.uri
-    });
+    title: 'Server event',
+    message: `Running at ${server.info.uri}`,
+  });
 });
 
 server.views({
-  "defaultExtension": "dust",
-  "engines": {
-    "dust": require('hapi-dust')
+  defaultExtension: 'dust',
+  engines: {
+    dust: hapiDust,
+    jsx: hapiReactViews,
   },
-  "isCached": true,
-  "path": '../views',
-  "partialsPath": '../views',
-  "relativeTo": __dirname
+  isCached: true,
+  path: '../../',
+  partialsPath: '../../',
+  relativeTo: __dirname,
 });

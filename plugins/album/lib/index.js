@@ -33,6 +33,12 @@ exports.register = (server, options, next) => {
     },
   });
 
+  server.route({
+    method: 'GET',
+    path: '/album-view',
+    handler: (request, reply) => reply.view('plugins/album/views/home.jsx'),
+  });
+
   next();
 };
 
