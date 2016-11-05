@@ -8,7 +8,7 @@ const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
 
   json.getAlbum(gallery, albumStem)
-    .then(response => reply(response))
+    .then(response => reply.view('plugins/album/views/home.jsx', response))
     .catch(error => reply(error));
 };
 
@@ -31,12 +31,6 @@ exports.register = (server, options, next) => {
         },
       },
     },
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/album-view',
-    handler: (request, reply) => reply.view('plugins/album/views/home.jsx'),
   });
 
   next();

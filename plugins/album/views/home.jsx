@@ -1,22 +1,26 @@
 const React = require('react');
 
-class Listing extends React.Component {
+class Album extends React.Component {
   constructor(props) {
     super(props);
 
     // Set up initial state
     this.state = {
-      hello: props.initialValue || 'placeholder',
+      items: props.album.item || ['placeholder', '2', '3'],
     };
   }
 
   render() {
-    return <div>{this.state.hello}</div>;
+    const listItems = this.state.items.map(item => <li>{item.filename[0]}</li>);
+
+    return <ul>{listItems}</ul>;
   }
 }
 
-Listing.propTypes = {
-  initialValue: React.PropTypes.string.isRequired,
+Album.propTypes = {
+  album: React.PropTypes.shape({
+    item: React.PropTypes.arrayOf(),
+  }),
 };
 
-module.exports = Listing;
+module.exports = Album;
