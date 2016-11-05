@@ -1,4 +1,4 @@
-/* global require */
+/* global __dirname, require */
 const joi = require('joi');
 
 const json = require('./json');

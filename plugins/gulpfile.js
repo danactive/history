@@ -6,9 +6,9 @@ const tape = require('gulp-tape');
 
 const paths = {
   lib: [
-    'album/lib/*.js',
-    'album/*.js',
-    'album/views/*.jsx',
+    '../*.js', '!../gulpfile.js',
+    '../lib/*.js',
+    'album/*.js', 'album/lib/*.js', 'album/views/*.jsx',
     'exists/lib/*.js',
     'log/lib/*.js',
     'rename/lib/*.js',
@@ -16,6 +16,7 @@ const paths = {
     'utils/lib/*.js',
   ],
   test: [
+    '../gulpfile.js',
     'gulpfile.js',
     'album/test/*.js',
     'exists/test/*.js',
@@ -35,8 +36,8 @@ function lint(files, configFile) {
     .pipe(eslint.failAfterError());
 }
 
-gulp.task('lint', ['lint-test'], () => lint(paths.lib, '.eslintrc'));
-gulp.task('lint-test', () => lint(paths.test, 'test.eslintrc'));
+gulp.task('lint', ['lint-test'], () => lint(paths.lib, '../.eslintrc'));
+gulp.task('lint-test', () => lint(paths.test, '../test.eslintrc'));
 
 gulp.task('test', () => {
   const files = paths.test;
