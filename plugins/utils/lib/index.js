@@ -73,3 +73,14 @@ file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, rejec
 });
 
 module.exports.file = file;
+
+function platform() {
+  switch (process.platform) {
+    case 'win32':
+      return 'windows';
+
+    default:
+      return process.platform;
+  }
+}
+module.exports.platform = platform();
