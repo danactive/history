@@ -1,6 +1,6 @@
 {
   "name": "history",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "scripts": {
     "dev": "gulp develop",
     "debug": "node-debug index.js",
@@ -9,7 +9,7 @@
     "postinstall": "npm outdated --depth=0",
     "postupdate": "npm outdated --depth=0",
     "start": "node .",
-    "test": "gulp test"
+    "test": "gulp --gulpfile plugins/gulpfile.js ci"
   },
   "main": "index.js",
   "dependencies": {

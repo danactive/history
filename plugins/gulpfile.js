@@ -50,4 +50,4 @@ gulp.task('test', () => {
     .pipe(tape());
 });
 
-gulp.task('build', ['lint', 'test']);
+gulp.task('ci', ['lint', 'test']);
