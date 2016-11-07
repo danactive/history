@@ -67,7 +67,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
     });
   });
 
-  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, (assert) => {
+  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: true }, (assert) => {
     const originalRelativeFile = './plugins/resize/test/fixtures/originals/2016-07-12.jpg';
     const server = new hapi.Server();
     server.connection({ port });

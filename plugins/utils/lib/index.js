@@ -41,7 +41,7 @@ const file = {
   },
   mimeType: extension => customMime(extension) || mime.lookup(extension),
   mediumType: extension => (typeof extension === 'string') && (extension.indexOf('/') > 0) && extension.split('/')[0],
-  absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(path.join('../', filepath))),
+  absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
 };
 
 /**
