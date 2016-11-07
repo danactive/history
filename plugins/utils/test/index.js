@@ -14,26 +14,67 @@ tape('Utilities', { skip: false }, (describe) => {
   });
 
   describe.test('* File - Get File Type', (assert) => {
-    assert.equal(lib.file.getType('file.type'), 'type', 'Normal type');
-    assert.equal(lib.file.getType('.gitignore'), 'gitignore', 'Dot file');
-    assert.equal(lib.file.getType('test.eslintrc'), 'eslintrc', 'Long type');
-    assert.equal(lib.file.getType('jquery.min.js'), 'js', 'Double type');
-    assert.equal(lib.file.getType('image.JPG'), 'jpg', 'Uppercase type');
-    assert.equal(lib.file.getType('image.JPeG'), 'jpeg', 'Mixed case type');
-    assert.equal(lib.file.getType('word'), '', 'No type');
-    assert.equal(lib.file.getType('folder/file.type'), 'type', 'Normal type with relative path (forward slash)');
-    assert.equal(lib.file.getType('folder\file.type'), 'type', 'Normal type with relative path (back slash)');
+    assert.equal(lib.file.type(), false, 'No argument');
+    assert.equal(lib.file.type('file.type'), 'type', 'Normal type');
+    assert.equal(lib.file.type('.gitignore'), 'gitignore', 'Dot file');
+    assert.equal(lib.file.type('test.eslintrc'), 'eslintrc', 'Long type');
+    assert.equal(lib.file.type('jquery.min.js'), 'js', 'Double type');
+    assert.equal(lib.file.type('image.JPG'), 'jpg', 'Uppercase type');
+    assert.equal(lib.file.type('image.JPeG'), 'jpeg', 'Mixed case type');
+    assert.equal(lib.file.type('word.'), '', 'No type (w/ dot)');
+    assert.equal(lib.file.type('word'), '', 'No type');
+    assert.equal(lib.file.type('folder/file.type'), 'type', 'Normal type with relative path (forward slash)');
+    assert.equal(lib.file.type('folder\file.type'), 'type', 'Normal type with relative path (back slash)');
     assert.end();
   });
 
   describe.test('* File - Get Mime Type', (assert) => {
-    assert.equal(lib.file.getMimeType('test.eslintrc'), false, 'Unsupported type');
-    assert.equal(lib.file.getMimeType('jquery.min.js'), 'application/javascript', 'JavaScript');
-    assert.equal(lib.file.getMimeType('image.JPG'), 'image/jpeg', 'Uppercase JPEG');
-    assert.equal(lib.file.getMimeType('image.JPeG'), 'image/jpeg', 'Mixed case JPEG');
-    assert.equal(lib.file.getMimeType('word'), false, 'No type');
-    assert.equal(lib.file.getMimeType('folder/file.mp4'), 'video/mp4', 'Video type with relative path (forward slash)');
-    assert.equal(lib.file.getMimeType('folder\file.webm'), 'video/webm', 'Video type with relative path (back slash)');
+    assert.equal(lib.file.mimeType(), false, 'No argument');
+    assert.equal(lib.file.mimeType('test.eslintrc'), false, 'Unsupported type');
+    assert.equal(lib.file.mimeType('jquery.min.js'), 'application/javascript', 'JavaScript');
+    assert.equal(lib.file.mimeType('image.JPG'), 'image/jpeg', 'Uppercase JPEG');
+    assert.equal(lib.file.mimeType('image.JPeG'), 'image/jpeg', 'Mixed case JPEG');
+    assert.equal(lib.file.mimeType('word'), false, 'No type');
+    assert.equal(lib.file.mimeType('folder/file.mp4'), 'video/mp4', 'Video type with relative path (forward slash)');
+    assert.equal(lib.file.mimeType('folder\file.webm'), 'video/webm', 'Video type with relative path (back slash)');
+    assert.end();
+  });
+
+  describe.test('* File - Extension to Mime type', (assert) => {
+    ['raw', 'arw'].forEach((type) => {
+      const mime = lib.file.mimeType(type);
+      assert.equal(mime, 'image/raw', `Image (${type})`);
+    });
+
+    ['m2ts', 'mts'].forEach((type) => {
+      const mime = lib.file.mimeType(type);
+      assert.equal(mime, 'video/mp2t', `Video (${type})`);
+    });
+
+    assert.end();
+  });
+
+  describe.test('* File - Get Medium Type', (assert) => {
+    assert.equal(lib.file.mediumType(), false, 'No argument');
+    assert.equal(lib.file.mediumType(''), false, 'Blank type');
+    assert.equal(lib.file.mediumType('FAKE'), false, 'Fake type');
+    assert.equal(lib.file.mediumType('image/jpeg'), 'image', 'JPEG is image');
+    assert.equal(lib.file.mediumType('video/mp4'), 'video', 'MP4 is video');
+    assert.equal(lib.file.mediumType('video/webm'), 'video', 'WebM is video');
+    assert.end();
+  });
+
+  describe.test('* File - Extension to Medium type', (assert) => {
+    lib.config.get('rawFileTypes.photo').forEach((type) => {
+      const medium = lib.file.mediumType(lib.file.mimeType(type));
+      assert.equal(medium, 'image', `Image (${type})`);
+    });
+
+    lib.config.get('rawFileTypes.video').forEach((type) => {
+      const medium = lib.file.mediumType(lib.file.mimeType(type));
+      assert.equal(medium, 'video', `Video (${type})`);
+    });
+
     assert.end();
   });
 

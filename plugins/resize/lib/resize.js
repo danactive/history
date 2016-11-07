@@ -18,7 +18,7 @@ function resize(sourcePath) {
     function transformImages() {
       const photoDims = utils.config.get('resizeDimensions.photo');
       const thumbDims = utils.config.get('resizeDimensions.thumb');
-      const originalMimeType = utils.file.getMimeType(originalPath);
+      const originalMimeType = utils.file.mimeType(originalPath);
 
       if (originalMimeType === 'image/jpeg') {
         gm(originalPath)
