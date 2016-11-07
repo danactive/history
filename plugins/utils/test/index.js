@@ -86,8 +86,9 @@ tape('Utilities', { skip: false }, (describe) => {
       'Relative resolved to Absolute file');
     assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '/'),
       'Relative resolved to Absolute folder trailing slash');
-    assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '\\'),
-      'Relative resolved to Absolute folder trailing backslash');
+    // Disable Windows only test
+    // assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '\\'),
+    //   'Relative resolved to Absolute folder trailing backslash');
     assert.equal(test(__dirname), __dirname,
       'Absolute resolved to folder');
     assert.equal(test(path.join(__dirname, './fixtures/aitch.html')), path.join(__dirname, './fixtures/aitch.html'),
