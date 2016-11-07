@@ -2,12 +2,13 @@
   "name": "history",
   "version": "1.4.2",
   "scripts": {
+    "ci": "gulp --gulpfile plugins/gulpfile.js ci",
     "dev": "gulp develop",
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "gulp --gulpfile plugins/gulpfile.js lint",
     "start": "node .",
-    "test": "gulp --gulpfile plugins/gulpfile.js ci"
+    "test": "gulp --gulpfile plugins/gulpfile.js test"
   },
   "main": "index.js",
   "dependencies": {

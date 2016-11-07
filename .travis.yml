@@ -6,8 +6,8 @@ addons:
     - graphicsmagick
 
 node_js:
+  - "6.0.0"
   - "6.9.0"
-  - "5"
   - "6"
   - "7"
 
@@ -15,3 +15,6 @@ before_install:
   - npm install -g yarn --cache-min 999999999
 install:
   - yarn
+
+scripts:
+  - yarn ci
