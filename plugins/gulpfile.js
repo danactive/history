@@ -7,7 +7,6 @@ const tape = require('gulp-tape');
 const paths = {
   lintLibRules: [
     '../*.js', '!../gulpfile.js',
-    '../lib/*.js',
     'album/*.js', 'album/lib/*.js', 'album/views/*.jsx',
     'exists/lib/*.js',
     'log/lib/*.js',
