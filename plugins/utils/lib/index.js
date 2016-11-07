@@ -14,21 +14,40 @@ module.exports.config = {
   get: filepath => dotProp.get(configJson, filepath),
 };
 
+function customMime(extension) {
+  switch (extension) {
+    case 'raw':
+    case 'arw':
+      return 'image/raw';
+    case 'm2ts':
+    case 'mts':
+      return 'video/mp2t';
+    default:
+      return false;
+  }
+}
+
 const file = {
-  getType: (filepath) => {
-    if (filepath.lastIndexOf('.') >= 0) {
-      return filepath.substr(filepath.lastIndexOf('.') + 1).toLowerCase();
+  type: (filepath) => {
+    if (!filepath) {
+      return false;
     }
-    return '';
+
+    if (filepath.lastIndexOf('.') === 0) {
+      return path.parse(filepath).name.toLowerCase().substr(1);
+    }
+
+    return path.extname(filepath).toLowerCase().substr(1);
   },
-  getMimeType: extension => mime.lookup(extension),
+  mimeType: extension => customMime(extension) || mime.lookup(extension),
+  mediumType: extension => (typeof extension === 'string') && (extension.indexOf('/') > 0) && extension.split('/')[0],
   absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(path.join('../', filepath))),
 };
 
 /**
  Find associated path and filename based on file without extension
 
- @method fileGlob
+ @method glob
  @param {string} sourceFolder Folder that contains the files
  @param {string} pattern glob file extension pattern to find matching filenames
  @param {object} [options]
@@ -38,7 +57,7 @@ const file = {
 file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
   let absolutePath = file.absolutePath(sourceFolder);
   if (options.ignoreExtension === true) {
-    absolutePath = absolutePath.replace(`.${file.getType(absolutePath)}`, '');
+    absolutePath = absolutePath.replace(`.${file.type(absolutePath)}`, '');
   } else {
     absolutePath = path.join(absolutePath, '/');
   }

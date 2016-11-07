@@ -62,9 +62,9 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
       return server.inject(request, (response) => {
         assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<photo id="100"><filename>${prefix}-37.jpg</filename></photo>` +
-          `<photo id="101"><filename>${prefix}-64.jpg</filename></photo>` +
-          `<photo id="102"><filename>${prefix}-90.jpg</filename></photo>`, 'XML response is expected');
+        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
+          `<item id="101"><filename>${prefix}-64.jpg</filename></item>` +
+          `<item id="102"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
       });
     });
   });
@@ -111,8 +111,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
       server.inject(request, (response) => {
         assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<photo id="100"><filename>${prefix}-50.jpg</filename></photo>` +
-          `<photo id="101"><filename>${prefix}-90.jpg</filename></photo>`, 'XML response is expected');
+        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-50.jpg</filename></item>` +
+          `<item id="101"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
         assert.end();
       });
 

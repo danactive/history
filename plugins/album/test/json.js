@@ -7,8 +7,14 @@ tape('Read album XML', { skip: false }, (describe) => {
   testCases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, (assert) => {
       lib.getAlbum(testCase.request.gallery, testCase.request.album_stem)
-      .then(response => testCase.then(assert, response))
-      .catch(error => testCase.catch(assert, error));
+      .then((response) => {
+        if (testCase.success) {
+          testCase.success(assert, response);
+        } else {
+          testCase.successJson(assert, response);
+        }
+      })
+      .catch(error => testCase.error(assert, error));
     });
   });
 });

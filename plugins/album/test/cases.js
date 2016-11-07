@@ -11,8 +11,8 @@ testCases.push({
     gallery: 'FAKE',
     album_stem: 'sample',
   },
-  then: assert => assert.fail('Unexpected response found'),
-  catch: (assert, error) => {
+  success: assert => assert.fail('Unexpected response found'),
+  error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
     assert.end();
@@ -26,8 +26,8 @@ testCases.push({
     gallery: 'demo',
     album_stem: 'FAKE',
   },
-  then: assert => assert.fail('Unexpected response found'),
-  catch: (assert, error) => {
+  success: assert => assert.fail('Unexpected response found'),
+  error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
     assert.end();
@@ -41,8 +41,8 @@ testCases.push({
     gallery: 'demo',
     album_stem: 'invalid',
   },
-  then: assert => assert.fail('Unexpected response found'),
-  catch: (assert, error) => {
+  success: assert => assert.fail('Unexpected response found'),
+  error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 403, 'Status code');
     assert.end();
@@ -56,12 +56,17 @@ testCases.push({
     gallery: 'demo',
     album_stem: 'sample',
   },
-  then: (assert, response) => {
+  successJson: (assert, response) => {
     assert.ok(response, 'Has response');
     assert.equal(response.album.meta[0].album_name[0], 'sample', 'Album name');
     assert.end();
   },
-  catch: assert => assert.fail('Unexpected response found'),
+  successView: (assert, response) => {
+    assert.ok(response, 'Has response');
+    assert.ok(response.indexOf('2012-fireplace.mp4') > 0, 'HTML string');
+    assert.end();
+  },
+  error: assert => assert.fail('Unexpected response found'),
 });
 
 module.exports = testCases;

@@ -16,14 +16,12 @@ const handler = (request, reply) => {
   // const log = logMod('plugin-rename-index');
 
   const handleError = (error) => {
-    const notFound = boom.notFound(`Source Folder does not exist in the file system 
-        (${sourceFolder}) with error (${error})`);
-    const boomError = (error.isBoom) ? error : notFound;
+    const boomError = (error.isBoom) ? error : boom.wrap(error);
 
     reply(boomError);
   };
 
-  const lookupFilenames = () => filenamesMod.calculateFutureFilenames(prefix, fromFilenames.length);
+  const lookupFilenames = () => filenamesMod.futureFilenamesOutputs(fromFilenames, prefix);
 
   const renamePaths = (futureFilenames) => {
     const toFilenames = futureFilenames.filenames;
@@ -47,10 +45,10 @@ const validation = {
   renameAssociated: joi.boolean().default(false)
     .description('JPG and RAW or video and still image are common associated pairs that should rename together'),
   sourceFolder: joi.string().trim().required().example('/public/todo/'),
-  xml: joi.string().required().regex(/<photo\b[^>]*>(.*?)<\/photo>/)
-    .example(`<photo id="1"><filename>2016-12-31-37.jpg</filename></photo>` + // eslint-disable-line quotes
-      `<photo id="2"><filename>2016-12-31-64.jpg</filename></photo>` + // eslint-disable-line quotes
-      `<photo id="3"><filename>2016-12-31-90.jpg</filename></photo>`), // eslint-disable-line quotes
+  xml: joi.string().required().regex(/<item\b[^>]*>(.*?)<\/item>/)
+    .example(`<item id="1"><filename>2016-12-31-37.jpg</filename></item>` + // eslint-disable-line quotes
+      `<item id="2"><filename>2016-12-31-64.jpg</filename></item>` + // eslint-disable-line quotes
+      `<item id="3"><filename>2016-12-31-90.jpg</filename></item>`), // eslint-disable-line quotes
 };
 
 exports.register = (server, options, next) => {

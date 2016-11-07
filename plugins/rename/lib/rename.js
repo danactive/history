@@ -34,7 +34,7 @@ Viewing files in a browser should exclude source files
 **/
 function supportedBrowserMedia(filename) {
   return new Promise((resolve) => {
-    const findType = utils.file.getType(filename);
+    const findType = utils.file.type(filename);
     const matchingTypes = utils.config.get('supportedFileTypes.photo')
       .concat(utils.config.get('supportedFileTypes.video'));
     resolve(matchingTypes.find(supportedType => supportedType === findType));

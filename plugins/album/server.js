@@ -20,7 +20,6 @@ server.register(vision, (pluginError) => {
     },
     compileOptions: {}, // optional
     relativeTo: __dirname,
-    path: 'views',
   });
 
   server.route({
