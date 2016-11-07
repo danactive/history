@@ -1,11 +1,17 @@
 language: node_js
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install imagemagick graphicsmagick
+addons:
+  apt:
+    packages:
+    - graphicsmagick
 
 node_js:
   - "6.9.0"
   - "5"
   - "6"
   - "7"
+
+before_install:
+  - npm install -g yarn --cache-min 999999999
+install:
+  - yarn
