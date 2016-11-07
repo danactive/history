@@ -1,5 +1,4 @@
-history
-=======
+# history [![Build Status](https://travis-ci.org/danactive/history.png?branch=master)](https://travis-ci.org/danactive/history)
 
 Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.
 * Plot thumbnails on a map
