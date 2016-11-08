@@ -4,17 +4,19 @@ const joi = require('joi');
 const json = require('./json');
 
 const handler = (request, reply) => {
-  const gallery = request.query.gallery;
   const albumStem = request.query.album_stem;
+  const gallery = request.query.gallery;
+  const raw = request.query.raw;
 
   json.getAlbum(gallery, albumStem)
-    .then(response => reply.view('plugins/album/views/home.jsx', response))
+    .then(response => (raw ? reply(response) : reply.view('plugins/album/views/home.jsx', response)))
     .catch(error => reply(error));
 };
 
 const validation = {
-  gallery: joi.string().required().example('demo'),
   albumStem: joi.string().required(),
+  gallery: joi.string().required().example('demo'),
+  raw: joi.boolean(),
 };
 
 exports.register = (server, options, next) => {
@@ -28,6 +30,7 @@ exports.register = (server, options, next) => {
         query: {
           album_stem: validation.albumStem,
           gallery: validation.gallery,
+          raw: validation.raw,
         },
       },
     },

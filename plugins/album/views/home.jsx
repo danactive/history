@@ -1,25 +1,31 @@
 const React = require('react');
 
+const Thumb = require('./thumb.jsx');
+
 class Album extends React.Component {
   constructor(props) {
     super(props);
 
     // Set up initial state
     this.state = {
-      items: props.album.item || ['placeholder', '2', '3'],
+      items: props.album.item,
     };
   }
 
   render() {
-    const listItems = this.state.items.map(item => <li>{item.filename[0]}</li>);
+    const thumbs = this.state.items.map(item => <Thumb key={item.$.id} item={item} />);
 
-    return <ul>{listItems}</ul>;
+    return <ul>{thumbs}</ul>;
   }
 }
 
 Album.propTypes = {
   album: React.PropTypes.shape({
-    item: React.PropTypes.arrayOf(),
+    item: React.PropTypes.arrayOf(React.PropTypes.shape({
+      $: React.PropTypes.shape({
+        id: React.PropTypes.string,
+      }),
+    })),
   }),
 };
 
