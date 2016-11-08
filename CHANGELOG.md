@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/danactive/history/compare/1.5.0...v1.5.1) (2016-11-08)
+
+
+### Bug Fixes
+
+* **lint:** Lock dependencies for lint ([#28](https://github.com/danactive/history/issues/28)) ([1721063](https://github.com/danactive/history/commit/1721063))
+* **lint:** Use function since no state ([6341b94](https://github.com/danactive/history/commit/6341b94))
+* **lint:** Use propTypes to avoid runtime React warnings ([bc937da](https://github.com/danactive/history/commit/bc937da))
+* **react:** Rename view to component name ([a39683c](https://github.com/danactive/history/commit/a39683c))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/danactive/history/compare/v1.3.2...v1.5.0) (2016-11-08)
 
