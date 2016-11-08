@@ -2,21 +2,10 @@ const React = require('react');
 
 const Thumb = require('./thumb.jsx');
 
-class Album extends React.Component {
-  constructor(props) {
-    super(props);
+function Album({ album }) {
+  const thumbs = album.item.map(item => <Thumb key={item.$.id} item={item} />);
 
-    // Set up initial state
-    this.state = {
-      items: props.album.item,
-    };
-  }
-
-  render() {
-    const thumbs = this.state.items.map(item => <Thumb key={item.$.id} item={item} />);
-
-    return <ul>{thumbs}</ul>;
-  }
+  return <ul>{thumbs}</ul>;
 }
 
 Album.propTypes = {

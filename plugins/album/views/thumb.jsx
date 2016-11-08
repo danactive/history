@@ -1,18 +1,7 @@
 const React = require('react');
 
-class Thumb extends React.Component {
-  constructor(props) {
-    super(props);
-
-    // Set up initial state
-    this.state = {
-      item: props.item,
-    };
-  }
-
-  render() {
-    return <li>{this.state.item.filename[0]}</li>;
-  }
+function Thumb({ item }) {
+  return <li>{item.filename[0]}</li>;
 }
 
 Thumb.propTypes = {
