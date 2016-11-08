@@ -1,3 +1,35 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/danactive/history/compare/v1.3.2...v1.5.0) (2016-11-08)
+
+
+### Bug Fixes
+
+* **ci:** Correct Travis filename ([0632746](https://github.com/danactive/history/commit/0632746))
+* **ci:** Disable Windows only test ([44c87c7](https://github.com/danactive/history/commit/44c87c7))
+* **ci:** Drop node.js 5 ([b8ab6d4](https://github.com/danactive/history/commit/b8ab6d4))
+* **ci:** Drop node.js 6.0.0 ([189d5f2](https://github.com/danactive/history/commit/189d5f2))
+* **ci:** Drop plugin node_modules, and force update to root ([d35ac5a](https://github.com/danactive/history/commit/d35ac5a))
+* **ci:** Install GraphicsMagick for Travis to pass tests ([0a090cf](https://github.com/danactive/history/commit/0a090cf))
+* **ci:** Prevent yarn from deleting server.js ([67409d2](https://github.com/danactive/history/commit/67409d2))
+* **ci:** Run Windows test on Windows ([ee39bdc](https://github.com/danactive/history/commit/ee39bdc))
+* **ci:** Temp disable resize test to pass in CI ([fec87ac](https://github.com/danactive/history/commit/fec87ac))
+* **ci:** Travis badge ([e0e3849](https://github.com/danactive/history/commit/e0e3849))
+* **ci:** Travis runs Plugins test and lint in parallel ([0d1d1b8](https://github.com/danactive/history/commit/0d1d1b8))
+* **ci:** Yarn for packages ([4dba927](https://github.com/danactive/history/commit/4dba927))
+
+
+### Features
+
+* **album:** Display a list of filenames ([e19cc0d](https://github.com/danactive/history/commit/e19cc0d))
+* **ci:** Add Travis CI ([#21](https://github.com/danactive/history/issues/21)) ([c15c7a2](https://github.com/danactive/history/commit/c15c7a2))
+* **test:** All Plugin tests and lint pass ([#17](https://github.com/danactive/history/issues/17)) ([6428c5e](https://github.com/danactive/history/commit/6428c5e))
+
+
+
 # Changelog
 
 ### 1.4.1 - Admin resize folder
