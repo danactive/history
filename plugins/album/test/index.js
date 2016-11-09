@@ -3,6 +3,7 @@ const tape = require('tape-catch');
 tape('Verify /album route', { skip: false }, (describe) => {
   const hapi = require('hapi');
   const hapiReactViews = require('hapi-react-views');
+  const inert = require('inert');
   const querystring = require('querystring');
   const path = require('path');
   const vision = require('vision');
@@ -15,7 +16,7 @@ tape('Verify /album route', { skip: false }, (describe) => {
   const testCases = require('./cases');
   const utils = require('../../utils/lib');
 
-  const plugins = [vision, lib];
+  const plugins = [inert, vision, lib];
   const port = utils.config.get('port');
 
   testCases.forEach((testCase) => {

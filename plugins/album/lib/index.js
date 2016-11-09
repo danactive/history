@@ -9,7 +9,7 @@ const handler = (request, reply) => {
   const raw = request.query.raw;
 
   json.getAlbum(gallery, albumStem)
-    .then(response => (raw ? reply(response) : reply.view('plugins/album/views/album.jsx', response)))
+    .then(response => (raw ? reply(response) : reply.view('plugins/album/views/page.jsx', response)))
     .catch(error => reply(error));
 };
 
@@ -36,10 +36,27 @@ exports.register = (server, options, next) => {
     },
   });
 
+  server.route({
+    method: 'GET',
+    path: '/album/static/{path*}',
+    config: {
+      description: 'Static assets like JS, CSS, images files',
+      tags: ['v0'],
+      handler: {
+        directory: {
+          path: 'plugins/album/public',
+          listing: true,
+          index: false,
+          redirectToSlash: true,
+        },
+      },
+    },
+  });
+
   next();
 };
 
 exports.register.attributes = {
   name: 'history-album',
-  version: '0.1.0',
+  version: '0.2.0',
 };
