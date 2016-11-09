@@ -6,5 +6,5 @@ node_modules
 npm-debug.log
 resizeImages
 public/js/
-plugins/resize/test/fixtures/photos/
-plugins/resize/test/fixtures/thumbs/
+plugins/resize/test/fixtures/photos/2016-07-12.jpg
+plugins/resize/test/fixtures/thumbs/2016-07-12.jpg
