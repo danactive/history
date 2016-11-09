@@ -11,18 +11,21 @@ const lout = require('lout');
 const notifier = require('node-notifier');
 const inert = require('inert');
 const vision = require('vision');
+
 require('tuxharness');
 
 const libAlbum = require('./plugins/album/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libRoutes = require('./src/js/route.js');
+const logMod = require('./plugins/log/lib');
 const pkg = require('./package');
 
 require('babel-core/register')({
   presets: ['react', 'es2015'],
 });
 
+const log = logMod('server');
 const server = new hapi.Server();
 server.connection({ port: 8000 });
 server.register([
@@ -41,10 +44,10 @@ server.register([
   hoek.assert(!error, error);
 
   dust.loadSource(dustViews);
-  console.log('Views loaded to cache');
+  log.operational('Views loaded to cache');
 
   server.start();
-  console.log(`Server running at ${server.info.uri}`);
+  log.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
     title: 'Server event',
     message: `Running at ${server.info.uri}`,

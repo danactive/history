@@ -1,12 +1,14 @@
 const React = require('react');
 
 function Thumb({ item }) {
-  return <li>{item.filename[0]}</li>;
+  return (<li className="liAlbumPhoto">
+    <div className="albumBoxPhotoImg"><a rel="set"><img src={item.path} alt="Caption" /></a></div>
+  </li>);
 }
 
 Thumb.propTypes = {
   item: React.PropTypes.shape({
-    filename: React.PropTypes.arrayOf(React.PropTypes.string.isRequired),
+    path: React.PropTypes.string.isRequired,
   }),
 };
 
