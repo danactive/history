@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.6.0"></a>
+# [1.6.0](https://github.com/danactive/history/compare/v1.5.1...v1.6.0) (2016-11-09)
+
+
+### Bug Fixes
+
+* **Test:** Enable resize and measure image ([34d0bc9](https://github.com/danactive/history/commit/34d0bc9))
+
+
+### Features
+
+* **View Album:** Thumbnail images layout [#20](https://github.com/danactive/history/issues/20) ([f4f2c56](https://github.com/danactive/history/commit/f4f2c56))
+
+
+
 <a name="1.5.1"></a>
 ## [1.5.1](https://github.com/danactive/history/compare/1.5.0...v1.5.1) (2016-11-08)
 
