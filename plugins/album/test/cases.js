@@ -58,7 +58,7 @@ testCases.push({
   },
   successJson: (assert, response) => {
     assert.ok(response, 'Has response');
-    assert.equal(response.album.meta[0].album_name[0], 'sample', 'Album name');
+    assert.equal(response.album.meta.albumName, 'sample', 'Album name');
     assert.end();
   },
   successView: (assert, response) => {
@@ -66,7 +66,7 @@ testCases.push({
     assert.ok(response.indexOf('2012-fireplace.mp4') > 0, 'HTML string');
     assert.end();
   },
-  error: assert => assert.fail('Unexpected response found'),
+  error: (assert, error) => assert.fail(`Unexpected response found ${error}`),
 });
 
 module.exports = testCases;
