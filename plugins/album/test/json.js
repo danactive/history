@@ -19,28 +19,34 @@ tape('Read album XML', { skip: false }, (describe) => {
   });
 
   describe.test('* Caption', { skip: false }, (assert) => {
+    const item = { thumbCaption: 'Caption' };
+    assert.equal(lib.caption(item), item.thumbCaption, 'Caption');
+    assert.end();
+  });
+
+  describe.test('* Title', { skip: false }, (assert) => {
     const item = { photoDesc: 'Description' };
-    assert.equal(lib.caption(item), item.photoDesc, 'Description');
+    assert.equal(lib.title(item), item.photoDesc, 'Description');
 
     item.photoCity = 'City';
-    assert.equal(lib.caption(item), `${item.photoCity}: ${item.photoDesc}`, 'City & Description');
+    assert.equal(lib.title(item), `${item.photoCity}: ${item.photoDesc}`, 'City & Description');
 
     item.photoLoc = 'Location';
-    assert.equal(lib.caption(item), `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`, 'Loc, City, Desc');
+    assert.equal(lib.title(item), `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`, 'Loc, City, Desc');
 
     delete item.photoDesc;
-    assert.equal(lib.caption(item), `${item.photoLoc} (${item.photoCity})`, 'Location & City');
+    assert.equal(lib.title(item), `${item.photoLoc} (${item.photoCity})`, 'Location & City');
 
     delete item.photoCity;
-    assert.equal(lib.caption(item), item.photoLoc, 'Location');
+    assert.equal(lib.title(item), item.photoLoc, 'Location');
 
     item.photoDesc = 'Desc2';
-    assert.equal(lib.caption(item), `${item.photoLoc}: ${item.photoDesc}`, 'Location & Description');
+    assert.equal(lib.title(item), `${item.photoLoc}: ${item.photoDesc}`, 'Location & Description');
 
     delete item.photoDesc;
     delete item.photoLoc;
     item.photoCity = 'City2';
-    assert.equal(lib.caption(item), item.photoCity, 'City');
+    assert.equal(lib.title(item), item.photoCity, 'City');
     assert.end();
   });
 
@@ -68,14 +74,21 @@ tape('Read album XML', { skip: false }, (describe) => {
     const mock = {
       album: {
         meta: 'Self talk',
-        item: [{ $: { id: 1 }, photoDesc: 'Desc', photoCity: 'City', filename: 'Filename.jpg' }],
+        item: [{
+          $: { id: 1 },
+          filename: 'Filename.jpg',
+          photoDesc: 'Desc',
+          photoCity: 'City',
+          thumbCaption: 'Caption',
+        }],
       },
     };
     const result = lib.templatePrepare(mock);
     assert.notDeepEqual(result, mock, 'Clone result, not pass by reference');
     assert.deepEqual(result.album.meta, mock.album.meta, 'Meta (w/ Items)');
     assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
-    assert.equal(result.album.items[0].caption, 'City: Desc', 'Caption');
+    assert.equal(result.album.items[0].caption, 'Caption', 'Caption');
+    assert.equal(result.album.items[0].title, 'City: Desc', 'Title');
     assert.equal(result.album.items[0].path, '/static/gallery-dan/media/thumbs/2016/Filename.jpg', 'Path');
 
     assert.end();

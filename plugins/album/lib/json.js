@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
-function caption(item) {
+function title(item) {
   const presentable = (...values) => values.every(value => value !== undefined && value !== '');
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
     return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`;
@@ -28,6 +28,11 @@ function caption(item) {
 
   return item.photoDesc;
 }
+module.exports.title = title;
+
+function caption(item) {
+  return item.thumbCaption;
+}
 module.exports.caption = caption;
 
 function thumbPath(item) {
@@ -44,6 +49,7 @@ function templatePrepare(result = {}) {
 
   output.album.items = output.album.item.map((item) => {
     item.caption = caption(item);
+    item.title = title(item);
     item.path = thumbPath(item);
     return item;
   });
