@@ -66,7 +66,7 @@ testCases.push({
     assert.ok(response.indexOf('2012-fireplace.mp4') > 0, 'HTML string');
     assert.end();
   },
-  error: (assert, error) => assert.fail(`Unexpected response found ${error}`),
+  error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`),
 });
 
 module.exports = testCases;

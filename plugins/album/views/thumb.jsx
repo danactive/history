@@ -10,9 +10,6 @@ function Thumb({ item }) {
 Thumb.propTypes = {
   item: React.PropTypes.shape({
     caption: React.PropTypes.string,
-    city: React.PropTypes.string,
-    description: React.PropTypes.string,
-    location: React.PropTypes.string,
     path: React.PropTypes.string.isRequired,
   }),
 };

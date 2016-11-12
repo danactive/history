@@ -19,50 +19,65 @@ tape('Read album XML', { skip: false }, (describe) => {
   });
 
   describe.test('* Caption', { skip: false }, (assert) => {
-    const item = { description: 'Description' };
-    assert.equal(lib.caption(item), item.description, 'Description');
+    const item = { photoDesc: 'Description' };
+    assert.equal(lib.caption(item), item.photoDesc, 'Description');
 
-    item.city = 'City';
-    assert.equal(lib.caption(item), `${item.city}: ${item.description}`, 'City & Description');
+    item.photoCity = 'City';
+    assert.equal(lib.caption(item), `${item.photoCity}: ${item.photoDesc}`, 'City & Description');
 
-    item.location = 'Location';
-    assert.equal(lib.caption(item), `${item.location} (${item.city}): ${item.description}`, 'Loc, City, Desc');
+    item.photoLoc = 'Location';
+    assert.equal(lib.caption(item), `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`, 'Loc, City, Desc');
 
-    delete item.description;
-    assert.equal(lib.caption(item), `${item.location} (${item.city})`, 'Location & City');
+    delete item.photoDesc;
+    assert.equal(lib.caption(item), `${item.photoLoc} (${item.photoCity})`, 'Location & City');
 
-    delete item.city;
-    assert.equal(lib.caption(item), item.location, 'Location');
+    delete item.photoCity;
+    assert.equal(lib.caption(item), item.photoLoc, 'Location');
 
-    item.description = 'Desc2';
-    assert.equal(lib.caption(item), `${item.location}: ${item.description}`, 'Location & Description');
+    item.photoDesc = 'Desc2';
+    assert.equal(lib.caption(item), `${item.photoLoc}: ${item.photoDesc}`, 'Location & Description');
 
-    delete item.description;
-    delete item.location;
-    item.city = 'City2';
-    assert.equal(lib.caption(item), item.city, 'City');
+    delete item.photoDesc;
+    delete item.photoLoc;
+    item.photoCity = 'City2';
+    assert.equal(lib.caption(item), item.photoCity, 'City');
     assert.end();
   });
 
-  describe.test('* Prepare JSON for view template', { skip: false }, (assert) => {
-    let json = lib.templatePrepare();
-    assert.deepEqual(json, {}, 'Blank');
+  describe.test('* Prepare JSON for view template without enhancements', { skip: false }, (assert) => {
+    let result = lib.templatePrepare();
+    assert.deepEqual(result, {}, 'Blank');
 
-    const meta = { meta: 'Self talk' };
-    json = lib.templatePrepare(meta);
-    assert.deepEqual(json, meta, 'Meta');
+    const mock = { album: { meta: 'Self talk' } };
+    result = lib.templatePrepare(mock);
+    assert.deepEqual(result, mock, 'Meta');
 
-    const items = [{ $: { id: 1 } }];
-    json = lib.templatePrepare({ items });
-    assert.deepEqual(json, { items }, 'Items');
+    mock.album.item = [{ $: { id: 1 } }];
+    result = lib.templatePrepare(mock);
+    assert.deepEqual(result.album.meta, mock.album.meta, 'Meta (w/ Items)');
+    assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
 
-    json = lib.templatePrepare({ items, meta });
-    assert.deepEqual(json, { items, meta }, 'Meta & Items');
+    delete mock.album.meta;
+    result = lib.templatePrepare(mock);
+    assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items');
 
-    items[0].city = 'City';
-    items[0].description = 'Description';
-    json = lib.templatePrepare({ items, meta });
-    assert.equal(json.items[0].caption, `${items[0].city}: ${items[0].description}`, 'Caption');
+    assert.end();
+  });
+
+  describe.test('* Prepare JSON for view template with enhancements', { skip: false }, (assert) => {
+    const mock = {
+      album: {
+        meta: 'Self talk',
+        item: [{ $: { id: 1 }, photoDesc: 'Desc', photoCity: 'City', filename: 'Filename.jpg' }],
+      },
+    };
+    const result = lib.templatePrepare(mock);
+    assert.notDeepEqual(result, mock, 'Clone result, not pass by reference');
+    assert.deepEqual(result.album.meta, mock.album.meta, 'Meta (w/ Items)');
+    assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
+    assert.equal(result.album.items[0].caption, 'City: Desc', 'Caption');
+    assert.equal(result.album.items[0].path, '/static/gallery-dan/media/thumbs/2016/Filename.jpg', 'Path');
+
     assert.end();
   });
 });
