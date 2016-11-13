@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
+const utils = require('../../utils/lib');
+
 function title(item) {
   const presentable = (...values) => values.every(value => value !== undefined && value !== '');
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
@@ -35,22 +37,31 @@ function caption(item) {
 }
 module.exports.caption = caption;
 
-function thumbPath(item) {
-  return `/static/gallery-dan/media/thumbs/2016/${item.filename}`;
+function thumbPath(item, gallery) {
+  if (!item || !item.filename) {
+    return undefined;
+  }
+
+  let filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
+  filename = filename.replace(utils.file.type(filename), 'jpg');
+  const year = filename.indexOf('-') >= 0 && filename.split('-')[0];
+  return `/static/gallery-${gallery}/media/thumbs/${year}/${filename}`;
 }
+module.exports.thumbPath = thumbPath;
 
 
 function templatePrepare(result = {}) {
-  if (!result.album || !result.album.item) {
+  if (!result.album || !result.album.item || !result.album.meta) {
     return result;
   }
 
+  const gallery = result.album.meta.gallery;
   const output = clone(result);
 
   output.album.items = output.album.item.map((item) => {
     item.caption = caption(item);
     item.title = title(item);
-    item.path = thumbPath(item);
+    item.path = thumbPath(item, gallery);
     return item;
   });
   delete output.album.item;

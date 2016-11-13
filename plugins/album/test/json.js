@@ -24,6 +24,13 @@ tape('Read album XML', { skip: false }, (describe) => {
     assert.end();
   });
 
+  describe.test('* Path', { skip: false }, (assert) => {
+    const item = { filename: '2016-12-31-01.jpg' };
+    const expectedPath = `/static/gallery-demo/media/thumbs/2016/${item.filename}`;
+    assert.equal(lib.thumbPath(item, 'demo'), expectedPath, 'Path');
+    assert.end();
+  });
+
   describe.test('* Title', { skip: false }, (assert) => {
     const item = { photoDesc: 'Description' };
     assert.equal(lib.title(item), item.photoDesc, 'Description');
@@ -63,20 +70,16 @@ tape('Read album XML', { skip: false }, (describe) => {
     assert.deepEqual(result.album.meta, mock.album.meta, 'Meta (w/ Items)');
     assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
 
-    delete mock.album.meta;
-    result = lib.templatePrepare(mock);
-    assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items');
-
     assert.end();
   });
 
   describe.test('* Prepare JSON for view template with enhancements', { skip: false }, (assert) => {
     const mock = {
       album: {
-        meta: 'Self talk',
+        meta: { gallery: 'demo' },
         item: [{
           $: { id: 1 },
-          filename: 'Filename.jpg',
+          filename: '2016-Filename.jpg',
           photoDesc: 'Desc',
           photoCity: 'City',
           thumbCaption: 'Caption',
@@ -89,7 +92,7 @@ tape('Read album XML', { skip: false }, (describe) => {
     assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
     assert.equal(result.album.items[0].caption, 'Caption', 'Caption');
     assert.equal(result.album.items[0].title, 'City: Desc', 'Title');
-    assert.equal(result.album.items[0].path, '/static/gallery-dan/media/thumbs/2016/Filename.jpg', 'Path');
+    assert.equal(result.album.items[0].path, '/static/gallery-demo/media/thumbs/2016/2016-Filename.jpg', 'Path');
 
     assert.end();
   });

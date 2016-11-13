@@ -63,7 +63,7 @@ testCases.push({
   },
   successView: (assert, response) => {
     assert.ok(response, 'Has response');
-    assert.ok(response.indexOf('2012-fireplace.mp4') > 0, 'HTML string');
+    assert.ok(response.indexOf('2012-fireplace.jpg') > 0, 'HTML string');
     assert.end();
   },
   error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`),
