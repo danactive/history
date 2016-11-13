@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/danactive/history/compare/v1.7.0...v1.8.0) (2016-11-13)
+
+
+### Bug Fixes
+
+* **Dependencies:** Remove yarn warning for babel ([1369e48](https://github.com/danactive/history/commit/1369e48))
+
+
+### Features
+
+* **View Album:** Caption supports video ([5465ae8](https://github.com/danactive/history/commit/5465ae8))
+* **View Album:** Lightbox (legacy) scripts applied to load thumbnail ([#31](https://github.com/danactive/history/issues/31)) ([af1cd05](https://github.com/danactive/history/commit/af1cd05))
+* **View Album:** Linted lightbox (legacy) scripts applied to load photo ([#31](https://github.com/danactive/history/issues/31)) ([c1968d4](https://github.com/danactive/history/commit/c1968d4))
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/danactive/history/compare/v1.6.0...v1.7.0) (2016-11-13)
 
