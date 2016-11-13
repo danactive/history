@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/danactive/history/compare/v1.6.0...v1.7.0) (2016-11-13)
+
+
+### Features
+
+* **View Album:** Display Thumbnail captions ([#29](https://github.com/danactive/history/issues/29)) ([eba3486](https://github.com/danactive/history/commit/eba3486))
+* **View Album:** Dynamic thumbnail path ([#32](https://github.com/danactive/history/issues/32)) ([c6ca9a7](https://github.com/danactive/history/commit/c6ca9a7))
+* **View Album:** Thumbnail captions needs testing and styling ([88df5bc](https://github.com/danactive/history/commit/88df5bc))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/danactive/history/compare/v1.5.1...v1.6.0) (2016-11-09)
 
