@@ -38,20 +38,6 @@ function photoViewed() {
 }
 jQuery(function() {
 	'use strict';
-	colorThief = new ColorThief();
-	jQuery('#albumBox a').colorbox({
-		"right": '25%',
-		"onComplete": photoViewed,
-		"preloading": true,
-		"title": function () {
-			if (this && this.dataset && this.dataset.caption) {
-				return this.dataset.caption;
-			} else {
-				return jQuery(this).data('caption');
-			}
-		},
-		"transition": 'none'
-	});
 });
 /* MAP */
 Array.max = function( array ){
@@ -132,7 +118,7 @@ function displayAlbum (response) {
 				$mapBox.removeClass("subtle");
 			},
 			"highlightOmittedPin": function () {
-				$mapBox.addClass("subtle");	
+				$mapBox.addClass("subtle");
 			}
 		},
 		"map": {
@@ -153,11 +139,11 @@ function displayAlbum (response) {
 			addOptions.html = "<div class='thumbPlaceholder'><img src='" + map.util.filenamePath(filename, true) + ".jpg'></div><div class='caption'>" + item.thumb_caption + "</div>";
 			addOptions.id = filename || i;
 			addOptions.index = parseInt(item.sort, 10);
-			
+
 			if (item.geo) {
 				addOptions.coordinates = [item.geo.lon, item.geo.lat];
 			}
-			
+
 			map.pin.add(addOptions);
 		}); //close each
 	}

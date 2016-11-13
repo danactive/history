@@ -2,7 +2,7 @@ const React = require('react');
 
 function Thumb({ item }) {
   return (<li className="liAlbumPhoto">
-    <div className="albumBoxPhotoImg"><a rel="set"><img src={item.path} alt={item.caption} /></a></div>
+    <div className="albumBoxPhotoImg"><a href={item.path} rel="set"><img src={item.path} alt={item.caption} /></a></div>
     <div className="albumBoxPhotoCaption">{item.caption}</div>
   </li>);
 }

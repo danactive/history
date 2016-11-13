@@ -21,7 +21,6 @@
 				<meta charset="utf-8" />
 				<title>History - Photo Album</title>
 				<base href="../"/>
-				<link href="../lib/jquery-colorbox/example1/colorbox.css" rel="stylesheet" media="screen" />
 				<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
 				<!--[if lte IE 8]>
 				    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
@@ -219,10 +218,7 @@
 						</xsl:for-each>
 					</ul>
 				</div>
-				<!-- Attach jQuery library -->
-				<script src="../lib/jquery/dist/jquery.min.js"></script>
 				<!-- Photo -->
-				<script src="../lib/jquery-colorbox/jquery.colorbox-min.js"></script>
 				<script src="../lib/color-thief.js"></script>
 				<!-- Attach Leaflet & Mapstraction -->
 				<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
