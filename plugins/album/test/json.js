@@ -21,6 +21,9 @@ tape('Read album XML', { skip: false }, (describe) => {
   describe.test('* Caption', { skip: false }, (assert) => {
     const item = { thumbCaption: 'Caption' };
     assert.equal(lib.caption(item), item.thumbCaption, 'Caption');
+
+    item.type = 'video';
+    assert.equal(lib.caption(item), `Video: ${item.thumbCaption}`, 'Caption w/ Video');
     assert.end();
   });
 

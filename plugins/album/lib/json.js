@@ -33,6 +33,10 @@ function title(item) {
 module.exports.title = title;
 
 function caption(item) {
+  if (item.type === 'video') {
+    return `Video: ${item.thumbCaption}`;
+  }
+
   return item.thumbCaption;
 }
 module.exports.caption = caption;
