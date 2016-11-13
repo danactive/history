@@ -7,7 +7,7 @@ const tape = require('gulp-tape');
 const paths = {
   lintLibRules: [
     '../*.js', '!../gulpfile.js',
-    'album/lib/*.js', 'album/views/*.jsx',
+    'album/lib/*.js', 'album/public/*.js', 'album/views/*.jsx',
     'exists/lib/*.js',
     'log/lib/*.js',
     'rename/lib/*.js',
@@ -17,6 +17,7 @@ const paths = {
   lintTestRules: [
     '../gulpfile.js',
     'gulpfile.js',
+    'album/test/cases.js',
   ],
   test: [
     'album/test/*.js', '!album/test/cases.js',
@@ -28,17 +29,19 @@ const paths = {
   ],
 };
 
-function lint(files, configFile) {
-  return gulp.src(files)
-    .pipe(print())
-    .pipe(expect(files))
-    .pipe(eslint({ configFile }))
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
+function lint(configFile, ...files) {
+  files.forEach((file) => {
+    gulp.src(file)
+      .pipe(print())
+      .pipe(expect(file))
+      .pipe(eslint({ configFile }))
+      .pipe(eslint.format())
+      .pipe(eslint.failAfterError());
+  });
 }
 
-gulp.task('lint', ['lint-test'], () => lint(paths.lintLibRules, '../.eslintrc'));
-gulp.task('lint-test', () => lint(paths.lintTestRules.concat(paths.test), '../test.eslintrc'));
+gulp.task('lint', ['lint-test'], () => lint('../.eslintrc', paths.lintLibRules));
+gulp.task('lint-test', () => lint('../test.eslintrc', paths.lintTestRules, paths.test));
 
 gulp.task('test', () => {
   const files = paths.test;

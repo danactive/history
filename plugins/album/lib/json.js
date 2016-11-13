@@ -41,7 +41,7 @@ function caption(item) {
 }
 module.exports.caption = caption;
 
-function thumbPath(item, gallery) {
+function getThumbPath(item, gallery) {
   if (!item || !item.filename) {
     return undefined;
   }
@@ -51,7 +51,7 @@ function thumbPath(item, gallery) {
   const year = filename.indexOf('-') >= 0 && filename.split('-')[0];
   return `/static/gallery-${gallery}/media/thumbs/${year}/${filename}`;
 }
-module.exports.thumbPath = thumbPath;
+module.exports.getThumbPath = getThumbPath;
 
 
 function templatePrepare(result = {}) {
@@ -61,14 +61,19 @@ function templatePrepare(result = {}) {
 
   const gallery = result.album.meta.gallery;
   const output = clone(result);
-
-  output.album.items = output.album.item.map((item) => {
-    item.caption = caption(item);
-    item.title = title(item);
-    item.path = thumbPath(item, gallery);
-    return item;
-  });
   delete output.album.item;
+
+  output.album.items = result.album.item.map((item) => {
+    const thumbPath = getThumbPath(item, gallery);
+    const enhancements = {
+      caption: caption(item),
+      title: title(item),
+      thumbPath,
+      photoPath: utils.file.photoPath(thumbPath),
+    };
+
+    return Object.assign(item, enhancements);
+  });
 
   return output;
 }

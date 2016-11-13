@@ -12,10 +12,10 @@ function Page({ album }) {
       </head>
       <body>
         <div id="albumBox"><Album album={album} /></div>
-        <script src="/view/album/static/lib/jquery/dist/jquery.min.js"></script>
-        <script src="/view/album/static/lib/jquery-colorbox/jquery.colorbox-min.js"></script>
-        <script src="/view/album/static/lib/color-thief.js"></script>
-        <script src="/view/album/static/album.js"></script>
+        <script src="/view/album/static/lib/jquery/dist/jquery.min.js" />
+        <script src="/view/album/static/lib/jquery-colorbox/jquery.colorbox-min.js" />
+        <script src="/view/album/static/lib/color-thief.js" />
+        <script src="/view/album/static/album.js" />
       </body>
     </html>
   );

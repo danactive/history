@@ -16,6 +16,7 @@ tape('Verify /album route', { skip: false }, (describe) => {
   const testCases = require('./cases');
   const utils = require('../../utils/lib');
 
+  const SAMPLE_IMAGE_COUNT = 6;
   const plugins = [inert, vision, lib];
   const port = utils.config.get('port');
 
@@ -50,6 +51,38 @@ tape('Verify /album route', { skip: false }, (describe) => {
           }
           return testCase.successView(assert, response.result);
         });
+      });
+    });
+  });
+
+  describe.test('* JavaScript library requirements', { skip: false }, (assert) => {
+    const server = new hapi.Server();
+    server.connection({ port });
+    server.register(plugins, (pluginError) => {
+      if (pluginError) {
+        return assert.fail(pluginError);
+      }
+
+      const url = `/album?${querystring.stringify({ gallery: 'demo', album_stem: 'sample' })}`;
+      const request = {
+        method: 'GET',
+        url,
+      };
+
+      server.views({
+        engines: {
+          jsx: hapiReactViews,
+        },
+        relativeTo: path.join(__dirname, '../../../'),
+      });
+
+      return server.inject(request, (response) => {
+        const thumbDivs = response.result.split('<div class="albumBoxPhotoImg">').length;
+        const thumbLinks = response.result.split('<div class="albumBoxPhotoImg"><a href=').length;
+        assert.equal(thumbDivs, SAMPLE_IMAGE_COUNT, 'HTML thumb divs match images in sample album');
+        assert.equal(thumbDivs, thumbLinks, 'ColorBox requirement href found');
+
+        assert.end();
       });
     });
   });

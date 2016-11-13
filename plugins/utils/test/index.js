@@ -97,6 +97,14 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.end();
   });
 
+  describe.test('* File - Convert thumbs path to photos path', (assert) => {
+    const test = lib.file.photoPath;
+    assert.equal(test(), undefined, 'Missing path arg');
+    assert.equal(test('media/thumbs/2001/2001-03-21-01.jpg'), 'media/photos/2001/2001-03-21-01.jpg', 'Normal path');
+    assert.equal(test('media/thumbs/2001/2001-thumbs.jpg'), 'media/photos/2001/2001-thumbs.jpg', 'Thumbs in path');
+    assert.end();
+  });
+
   describe.test('* File - Glob', (assert) => {
     assert.plan(8);
 
