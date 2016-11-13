@@ -1,4 +1,7 @@
 # history [![Build Status](https://travis-ci.org/danactive/history.png?branch=master)](https://travis-ci.org/danactive/history)
+[![Dependencies Status](https://david-dm.org/danactive/history.svg)](https://david-dm.org/danactive/history)
+[![DevDependencies Status](https://david-dm.org/danactive/history/dev-status.svg)](https://david-dm.org/danactive/history#info=devDependencies)
+[![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
 Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.
 * Plot thumbnails on a map
@@ -8,8 +11,9 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 
 Installation
 ------
-1. Node.js
-1. `npm run dev`
+1. Node.js v6.9.x
+1. Install project dependencies `yarn install` (Ensure yarn is installed globally `npm install yarn --global`
+1. Start web server `yarn start`
 1. View address in browser
 
 Technologies
