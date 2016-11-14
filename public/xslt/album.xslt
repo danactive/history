@@ -66,15 +66,7 @@
 			</head>
 
 			<body>
-				<!-- XML schema 1.5 thru 2.0 had geo tag in this format -->
-				<xsl:if test="number(/album/meta/version) &gt;= '1.5' or number(/album/meta/album_version) &gt;= '2.0'">
-					<div id="divToolbox">
-						<a href="javascript:;" id="linkMap">Map this album</a>
-					</div>
-				</xsl:if>
-				<div style="clear: left;"></div>
-				<div id="mapBox" class="hide"></div>
-				<div id="albumBox">
+        <div id="albumBox">
 					<xsl:attribute name="data-album">
 						<xsl:value-of select="$photo__album_id" />
 					</xsl:attribute>
