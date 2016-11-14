@@ -1,4 +1,4 @@
-/* global ColorThief, jQuery, getQueryByName */
+/* global ColorThief, createMap, jQuery, getQueryByName */
 const colorThief = new ColorThief();
 let map;
 const mapBoxId = 'mapBox';
@@ -35,48 +35,6 @@ jQuery('#albumBox a').colorbox({
   transition: 'none',
 });
 
-function displayAlbum(response) {
-  // map = new Map({
-  //   album: meta.album,
-  //   gallery: meta.gallery,
-  //   events: {
-  //     highlightPlottedPin: () => {
-  //       $mapBox.removeClass('subtle');
-  //     },
-  //     highlightOmittedPin: () => {
-  //       $mapBox.addClass('subtle');
-  //     }
-  //   },
-  //   map: {
-  //     centre: [0, 0],
-  //     containerId: mapBoxId,
-  //     itemCount: response.json.album.item.length
-  //   }
-  // });
-  //
-  // if (response.json.album.item) {
-  //   jQuery.each(response.json.album.item, function(i, item) {
-  //     var addOptions = {},
-  //       filename = item.filename || '';
-  //
-  //     if (typeof filename === 'object') {
-  //       filename = item.filename[0];
-  //     }
-  //     addOptions.html = `<div class="thumbPlaceholder"><img src="${map.util.filenamePath(filename, true)}.jpg"></div>
-  // <div class="caption">${item.thumb_caption}</div>`;
-  //     addOptions.id = filename || i;
-  //     addOptions.index = parseInt(item.sort, 10);
-  //
-  //     if (item.geo) {
-  //       addOptions.coordinates = [item.geo.lon, item.geo.lat];
-  //     }
-  //
-  //     map.pin.add(addOptions);
-  //   }); //close each
-  // }
-  console.log(response);
-} // close displayAlbum
-
 jQuery('#linkMap').click(function toggleMap() {
   const SHOW_MAP_LABEL = 'Expand Map';
   const HIDE_MAP_LABEL = 'Collapse Map';
@@ -98,7 +56,7 @@ jQuery('#linkMap').click(function toggleMap() {
       gallery: getQueryByName('gallery'),
       raw: true,
     },
-    success: displayAlbum,
+    success: createMap,
   });
   jQuery('body').toggleClass('splitMode');
   $mapBox.toggleClass('hide');

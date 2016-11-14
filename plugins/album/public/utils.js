@@ -1,6 +1,6 @@
 /* global window */
 
-function getParameterByName(_name, _url) {
+function getQueryByName(_name, _url) {
   let url = _url;
   if (!url) {
     url = window.location.href;
@@ -16,6 +16,6 @@ function getParameterByName(_name, _url) {
 // If Node.js then export as public
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = {
-    getParameterByName,
+    getQueryByName,
   };
 }
