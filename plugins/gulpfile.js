@@ -3,6 +3,7 @@ const expect = require('gulp-expect-file');
 const gulp = require('gulp');
 const print = require('gulp-print');
 const tape = require('gulp-tape');
+const tapSummary = require('tap-summary');
 
 const paths = {
   lintLibRules: [
@@ -45,11 +46,12 @@ gulp.task('lint-test', () => lint('../test.eslintrc', paths.lintTestRules, paths
 
 gulp.task('test', () => {
   const files = paths.test;
+  const options = { reporter: tapSummary({ progress: false }) };
 
   return gulp.src(files)
     .pipe(print())
     .pipe(expect(files))
-    .pipe(tape());
+    .pipe(tape(options));
 });
 
 gulp.task('ci', ['lint', 'test']);
