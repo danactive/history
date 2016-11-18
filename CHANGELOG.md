@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/danactive/history/compare/v1.8.0...v1.9.0) (2016-11-18)
+
+
+### Bug Fixes
+
+* **package:** update joi to version 10.0.0 ([c56106d](https://github.com/danactive/history/commit/c56106d))
+
+
+### Features
+
+* **CI:** Add project dependency badges ([#23](https://github.com/danactive/history/issues/23)) ([7377878](https://github.com/danactive/history/commit/7377878))
+* **CI:** Test reporter to summarize fail ([#33](https://github.com/danactive/history/issues/33)) ([f74e776](https://github.com/danactive/history/commit/f74e776))
+* **Map Album:** Add MapBox GL JS to right split view ([#36](https://github.com/danactive/history/issues/36)) ([b56ea2d](https://github.com/danactive/history/commit/b56ea2d))
+* **Map Album:** Plot markers with thumb icon, center to first marker ([#40](https://github.com/danactive/history/issues/40)) ([c083190](https://github.com/danactive/history/commit/c083190))
+* **View Album Map:** Map it button w/ split view ([#35](https://github.com/danactive/history/issues/35)) ([143e191](https://github.com/danactive/history/commit/143e191))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/danactive/history/compare/v1.7.0...v1.8.0) (2016-11-13)
 
