@@ -63,10 +63,12 @@ function templatePrepare(result = {}) {
   const output = clone(result);
   delete output.album.item;
 
-  output.album.items = result.album.item.map((item) => {
+  output.album.items = result.album.item.map((_item) => {
+    const item = _item;
+    item.caption = item.thumbCaption;
     const thumbPath = getThumbPath(item, gallery);
     const enhancements = {
-      caption: caption(item),
+      thumbCaption: caption(item),
       title: title(item),
       thumbPath,
       photoPath: utils.file.photoPath(thumbPath),
