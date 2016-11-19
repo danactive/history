@@ -38,20 +38,4 @@ route.notFound = {
 	}
 };
 
-route.watchVideo = {
-	description: 'Watch HTML5 videos',
-	tags: ['hapi'],
-	handler: function (request, reply) {
-		reply.view('src/views/video.dust');
-	},
-	validate: {
-		query: {
-			videos: joi.string(),
-			w: joi.number(),
-			h: joi.number(),
-			gallery: joi.string()
-		}
-	}
-};
-
 module.exports = route;

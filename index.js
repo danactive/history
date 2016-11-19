@@ -18,6 +18,7 @@ const libAlbum = require('./plugins/album/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libRoutes = require('./src/js/route.js');
+const libVideo = require('./plugins/video/lib/index');
 const logMod = require('./plugins/log/lib');
 const pkg = require('./package');
 
@@ -35,6 +36,7 @@ server.register([
   { register: libAlbum, routes: { prefix: '/view' } },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
+  { register: libVideo, routes: { prefix: '/view' } },
   {
     register: hapiSwagger,
     options: { info: { title: 'history API', version: pkg.version } },

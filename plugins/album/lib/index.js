@@ -53,6 +53,18 @@ exports.register = (server, options, next) => {
     },
   });
 
+  server.route({
+    method: 'GET',
+    path: '/album/static/utils.js',
+    config: {
+      description: 'Utility script',
+      tags: ['v0'],
+      handler: {
+        file: 'plugins/utils/public/utils.js',
+      },
+    },
+  });
+
   next();
 };
 
