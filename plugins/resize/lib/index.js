@@ -29,7 +29,7 @@ exports.register = (server, options, next) => {
       },
       response: {
         schema: {
-          resize: joi.boolean(),
+          resize: joi.boolean().truthy('true').falsy('false'),
         },
       },
     },

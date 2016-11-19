@@ -16,7 +16,7 @@ const handler = (request, reply) => {
 const validation = {
   albumStem: joi.string().required(),
   gallery: joi.string().required().example('demo'),
-  raw: joi.boolean(),
+  raw: joi.boolean().truthy('true').falsy('false').default(false),
 };
 
 exports.register = (server, options, next) => {

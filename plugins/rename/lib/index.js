@@ -42,7 +42,7 @@ const validation = {
     .required()
     .example('["DSC01229.JPG"]'),
   prefix: joi.string().isoDate().required().example('2016-12-31'),
-  renameAssociated: joi.boolean().default(false)
+  renameAssociated: joi.boolean().truthy('true').falsy('false').default(false)
     .description('JPG and RAW or video and still image are common associated pairs that should rename together'),
   sourceFolder: joi.string().trim().required().example('/public/todo/'),
   xml: joi.string().required().regex(/<item\b[^>]*>(.*?)<\/item>/)
