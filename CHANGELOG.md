@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.10.0"></a>
+# [1.10.0](https://github.com/danactive/history/compare/v1.9.0...v1.10.0) (2016-11-19)
+
+
+### Bug Fixes
+
+* **caption:** Switch definitions: caption is generic and thumbCaption is specific to thumbnails with Video prefix ([a3a5bc7](https://github.com/danactive/history/commit/a3a5bc7))
+* **joi:** Update code for breaking change of joi dependency ([e7ba3af](https://github.com/danactive/history/commit/e7ba3af))
+* **View Gallery:** Gallery list links to View Album (plugin); delete deprecated mapstraction ([#44](https://github.com/danactive/history/issues/44)) ([cf055f6](https://github.com/danactive/history/commit/cf055f6))
+
+
+### Features
+
+* **View Album:** Video player support multiple codec formats ([#43](https://github.com/danactive/history/issues/43)) ([082500f](https://github.com/danactive/history/commit/082500f))
+* **View Album:** Video plays in lightbox of photo album ([#43](https://github.com/danactive/history/issues/43)) ([1e194ea](https://github.com/danactive/history/commit/1e194ea))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/danactive/history/compare/v1.8.0...v1.9.0) (2016-11-18)
 
