@@ -98,13 +98,6 @@
 									<xsl:text> </xsl:text>
 								</xsl:for-each>
 							</xsl:variable>
-							<!-- _____________Media path _______________ -->
-							<xsl:variable name="media_path">
-								<xsl:value-of select="substring-before(filename,'-')"/>
-								<xsl:text>/</xsl:text>
-								<xsl:value-of select="substring-before(filename,'.')"/>
-								<xsl:text>.jpg</xsl:text><!-- don't use video extention -->
-							</xsl:variable>
 
 							<li class="liAlbumPhoto">
 								<xsl:attribute name="id">
@@ -120,35 +113,6 @@
 								</xsl:attribute>
 								<div class="albumBoxPhotoImg">
 									<a rel="set">
-										<xsl:attribute name="href">
-											<xsl:text>media/photos/</xsl:text>
-											<xsl:value-of select="$media_path"/>
-										</xsl:attribute>
-										<!-- jQuery lightbox uses as photo caption -->
-										<xsl:attribute name="data-caption">
-											<xsl:choose>
-												<xsl:when test="photo_loc != '' and photo_city != '' and photo_desc != ''">
-													<xsl:value-of select="photo_loc"/> (<xsl:value-of select="photo_city"/>): <xsl:value-of select="photo_desc"/>
-												</xsl:when>
-												<xsl:when test="photo_loc != '' and photo_city != '' and photo_desc = ''">
-													<xsl:value-of select="photo_loc"/> (<xsl:value-of select="photo_city"/>)
-												</xsl:when>
-												<xsl:when test="photo_loc != '' and photo_city = '' and photo_desc != ''">
-													<xsl:value-of select="photo_loc"/>: <xsl:value-of select="photo_desc"/>
-												</xsl:when>
-												<xsl:when test="photo_loc = '' and photo_city != '' and photo_desc != ''">
-													<xsl:value-of select="photo_city"/>: <xsl:value-of select="photo_desc"/>
-												</xsl:when>
-												<xsl:when test="photo_loc != ''">
-													<xsl:value-of select="photo_loc"/>
-												</xsl:when>
-												<xsl:when test="photo_city != ''">
-													<xsl:value-of select="photo_city"/>
-												</xsl:when>
-												<xsl:when test="photo_desc != ''">
-													<xsl:value-of select="photo_desc"/>
-												</xsl:when>
-											</xsl:choose>
 											<xsl:if test="$characters != ''">
 												<xsl:text> with </xsl:text>
 												<xsl:value-of select="$characters"/>
@@ -168,40 +132,12 @@
 													</xsl:choose>
 												&lt;/div&gt;
 											</xsl:if>
-											<xsl:if test="type = 'video'">
-												&lt;div class="meta"&gt;
-													&lt;a href="javascript:;" onclick="fOpenWin('/watch-video?videos=<xsl:value-of select="filename[1]"/>,<xsl:value-of select="filename[2]"/>&amp;w=<xsl:value-of select="size/w"/>&amp;h=<xsl:value-of select="size/h"/>&amp;gallery=<xsl:value-of select="$galleryDir"/>',<xsl:value-of select="size/w + 20"/>,<xsl:value-of select="size/h + 20"/>);"&gt;Watch Video&lt;/a&gt;
-												&lt;/div&gt;
-											</xsl:if>
 											<xsl:if test="geo/lat != '' and geo/lon != ''">
 												&lt;div class="meta"&gt;
 													&lt;a href="javascript:;" onclick="fOpenWin('/flickr-gallery?lat=<xsl:value-of select="geo/lat"/>&amp;lon=<xsl:value-of select="geo/lon"/>',800,600);"&gt;Search Flickr&lt;/a&gt;
 												&lt;/div&gt;
 											</xsl:if>
-										</xsl:attribute>
-										<img>
-											<xsl:attribute name="src">
-												<xsl:text>media/thumbs/</xsl:text>
-												<xsl:value-of select="$media_path"/>
-											</xsl:attribute>
-											<!--
-											<xsl:attribute name="title">
-												<xsl:choose>
-													<xsl:when test="photo_id != ''">
-														<xsl:value-of select="photo_id" />
-													</xsl:when>
-													<xsl:otherwise>
-														<xsl:value-of select="sort" />
-													</xsl:otherwise>
-												</xsl:choose>
-											</xsl:attribute>
-											-->
-										</img>
 									</a>
-								</div>
-								<div class="albumBoxPhotoCaption">
-									<xsl:if test="type = 'video'">Video: </xsl:if>
-									<xsl:value-of select="thumb_caption"/>
 								</div>
 								<div class="albumBoxPhotoChar">
 									<xsl:value-of select="$characters"/>

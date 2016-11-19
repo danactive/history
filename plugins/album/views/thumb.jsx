@@ -3,7 +3,7 @@ const React = require('react');
 function Thumb({ item }) {
   return (<li className="liAlbumPhoto">
     <div className="albumBoxPhotoImg">
-      <a href={item.photoPath} rel="set">
+      <a href={item.mediaPath} rel="set">
         <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
       </a>
     </div>
@@ -16,7 +16,7 @@ Thumb.propTypes = {
     caption: React.PropTypes.string,
     thumbCaption: React.PropTypes.string.isRequired,
     thumbPath: React.PropTypes.string.isRequired,
-    photoPath: React.PropTypes.string.isRequired,
+    mediaPath: React.PropTypes.string.isRequired,
   }),
 };
 

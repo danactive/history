@@ -7,7 +7,7 @@ const $mapBox = jQuery(`#${mapBoxId}`);
 function photoViewed() {
   const photoImage = jQuery('img.cboxPhoto').get(0);
   const $thumbImage = jQuery(this);
-  const dominateColour = colorThief.getColor(photoImage);
+  const dominateColour = photoImage ? colorThief.getColor(photoImage) : [0, 0, 0];
   const $thumbBox = $thumbImage.parents('.liAlbumPhoto');
 
   $thumbBox.addClass('imgViewed'); //  change thumb to white

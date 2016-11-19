@@ -82,21 +82,37 @@ tape('Read album XML', { skip: false }, (describe) => {
         meta: { gallery: 'demo' },
         item: [{
           $: { id: 1 },
-          filename: '2016-Filename.jpg',
+          filename: '2016-Image-Filename.jpg',
           photoDesc: 'Desc',
           photoCity: 'City',
           thumbCaption: 'Caption',
-        }],
+        },
+          {
+            $: { id: 2 },
+            type: 'video',
+            filename: ['2016-Video-Filename.mov', '2016-Video-Filename.avi'],
+            size: { w: 1280, h: 720 },
+            photoDesc: 'Desc',
+            photoCity: 'City',
+            thumbCaption: 'Caption',
+          }],
       },
     };
     const result = lib.templatePrepare(mock);
     assert.notDeepEqual(result, mock, 'Clone result, not pass by reference');
     assert.deepEqual(result.album.meta, mock.album.meta, 'Meta (w/ Items)');
     assert.deepEqual(result.album.items[0].$, mock.album.item[0].$, 'Items (w/ Meta)');
-    assert.equal(result.album.items[0].caption, 'Caption', 'Caption');
+    assert.equal(result.album.items[0].caption, 'Caption', 'Image Caption');
+    assert.equal(result.album.items[0].thumbCaption, 'Caption', 'Image Thumb Caption');
     assert.equal(result.album.items[0].title, 'City: Desc', 'Title');
-    assert.equal(result.album.items[0].thumbPath, '/static/gallery-demo/media/thumbs/2016/2016-Filename.jpg', 'Thumb Path');
-    assert.equal(result.album.items[0].photoPath, '/static/gallery-demo/media/photos/2016/2016-Filename.jpg', 'Photo Path');
+    assert.equal(result.album.items[0].thumbPath,
+      '/static/gallery-demo/media/thumbs/2016/2016-Image-Filename.jpg', 'Thumb Path');
+    assert.equal(result.album.items[0].mediaPath,
+      '/static/gallery-demo/media/photos/2016/2016-Image-Filename.jpg', 'Photo Path');
+    assert.equal(result.album.items[1].caption, 'Caption', 'Video Caption');
+    assert.equal(result.album.items[1].thumbCaption, 'Video: Caption', 'Video Thumb Caption');
+    assert.equal(result.album.items[1].mediaPath,
+      '/view/video?sources=2016-Video-Filename.mov,2016-Video-Filename.avi&w=1280&h=720&gallery=demo', 'Video Path');
 
     assert.end();
   });

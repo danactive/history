@@ -29,18 +29,6 @@ exports.register = (server, options, next) => {
     },
   });
 
-  server.route({
-    method: 'GET',
-    path: '/video/static/utils.js',
-    config: {
-      description: 'Utility script',
-      tags: ['v0'],
-      handler: {
-        file: 'plugins/utils/public/utils.js',
-      },
-    },
-  });
-
   next();
 };
 

@@ -53,6 +53,17 @@ function getThumbPath(item, gallery) {
 }
 module.exports.getThumbPath = getThumbPath;
 
+function getVideoPath(item, gallery) {
+  if (!item || !item.filename) {
+    return undefined;
+  }
+
+  const filename = (typeof item.filename === 'string') ? item.filename : item.filename.join(',');
+  const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' };
+  return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`;
+}
+module.exports.getVideoPath = getVideoPath;
+
 
 function templatePrepare(result = {}) {
   if (!result.album || !result.album.item || !result.album.meta) {
@@ -67,11 +78,13 @@ function templatePrepare(result = {}) {
     const item = _item;
     item.caption = item.thumbCaption;
     const thumbPath = getThumbPath(item, gallery);
+    const photoPath = utils.file.photoPath(thumbPath);
+    const videoPath = getVideoPath(item, gallery);
     const enhancements = {
       thumbCaption: caption(item),
       title: title(item),
       thumbPath,
-      photoPath: utils.file.photoPath(thumbPath),
+      mediaPath: (item.type === 'video') ? videoPath : photoPath,
     };
 
     return Object.assign(item, enhancements);

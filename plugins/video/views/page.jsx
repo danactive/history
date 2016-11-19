@@ -13,8 +13,6 @@ function Page({ video }) {
       </head>
       <body style={body}>
         <Video video={video} />
-        <script src="/view/album/static/utils.js" />
-        <script src="/view/album/static/video.js" />
       </body>
     </html>
   );
