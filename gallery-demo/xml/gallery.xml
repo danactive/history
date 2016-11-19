@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../../xslt/gallery.xslt"?>
-<gallery>
+<gallery name="demo">
 	<album>
 		<gallery_id>1</gallery_id>
 		<album_name>sample</album_name> <!-- unique album name -->
