@@ -1,0 +1,59 @@
+/* global __dirname, require */
+// const joi = require('joi');
+
+const handler = (request, reply) => {
+  reply.view('plugins/editAlbum/views/page.jsx', {});
+};
+
+// const validation = {};
+
+exports.register = (server, options, next) => {
+  server.route({
+    method: 'GET',
+    path: '/album',
+    config: {
+      handler,
+      tags: ['api', 'plugin', 'v0'],
+      validate: {
+        query: {
+        },
+      },
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/album/static/{path*}',
+    config: {
+      description: 'Static assets like JS, CSS, images files',
+      tags: ['v0'],
+      handler: {
+        directory: {
+          path: 'plugins/editAlbum/public',
+          listing: true,
+          index: false,
+          redirectToSlash: true,
+        },
+      },
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/album/static/jquery.js',
+    config: {
+      description: 'jQuery library',
+      tags: ['v0'],
+      handler: {
+        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
+      },
+    },
+  });
+
+  next();
+};
+
+exports.register.attributes = {
+  name: 'history-edit-album',
+  version: '0.1.0',
+};

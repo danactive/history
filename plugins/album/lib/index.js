@@ -65,10 +65,22 @@ exports.register = (server, options, next) => {
     },
   });
 
+  server.route({
+    method: 'GET',
+    path: '/album/static/jquery.js',
+    config: {
+      description: 'jQuery library',
+      tags: ['v0'],
+      handler: {
+        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
+      },
+    },
+  });
+
   next();
 };
 
 exports.register.attributes = {
-  name: 'history-album',
+  name: 'history-view-album',
   version: '0.2.0',
 };

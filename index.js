@@ -14,7 +14,9 @@ const vision = require('vision');
 
 require('tuxharness');
 
-const libAlbum = require('./plugins/album/lib/index');
+const config = require('./config.json');
+const viewAlbum = require('./plugins/album/lib/index');
+const editAlbum = require('./plugins/editAlbum/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libRoutes = require('./src/js/route.js');
@@ -26,14 +28,16 @@ require('babel-core/register')({
   presets: ['react', 'es2015'],
 });
 
+const port = config.port;
 const log = logMod('server');
 const server = new hapi.Server();
-server.connection({ port: 8000 });
+server.connection({ port });
 server.register([
   { register: inert },
   { register: vision },
   { register: libRoutes },
-  { register: libAlbum, routes: { prefix: '/view' } },
+  { register: viewAlbum, routes: { prefix: '/view' } },
+  { register: editAlbum, routes: { prefix: '/edit' } },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
   { register: libVideo, routes: { prefix: '/view' } },
