@@ -1,6 +1,7 @@
 # history [![Build Status](https://travis-ci.org/danactive/history.png?branch=master)](https://travis-ci.org/danactive/history)
 [![Dependencies Status](https://david-dm.org/danactive/history.svg)](https://david-dm.org/danactive/history)
 [![DevDependencies Status](https://david-dm.org/danactive/history/dev-status.svg)](https://david-dm.org/danactive/history#info=devDependencies)
+[![Code Climate](https://codeclimate.com/github/danactive/history/badges/gpa.svg)](https://codeclimate.com/github/danactive/history)
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
 Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.
