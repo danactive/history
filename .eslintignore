@@ -1,0 +1,4 @@
+**/public/lib/*.js
+public/js/*.js
+src/**/*.js
+plugins/editAlbum/public/*.js

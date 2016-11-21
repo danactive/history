@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+
 const eslint = require('gulp-eslint');
 const expect = require('gulp-expect-file');
 const gulp = require('gulp');
@@ -8,7 +10,7 @@ const tapSummary = require('tap-summary');
 const paths = {
   lintLibRules: [
     '../*.js',
-    '*/lib/*.js', '*/public/*.js', '*/views/*.jsx',
+    '*/lib/*.js', '*/public/*.js', '!editAlbum/public/*.js', '*/views/*.jsx',
   ],
   lintTestRules: [
     'gulpfile.js',
