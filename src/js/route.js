@@ -7,7 +7,6 @@ exports.register = function(server, options, next) {
 		root = require("./controllers/root.js"),
 		routes = [];
 
-	routes.push({ "method": 'GET',  "path": '/admin', "config": admin.home });
 	routes.push({ "method": 'GET',  "path": '/api/getGalleries', "config": admin.apiGetGalleries });
 	routes.push({ "method": 'GET',  "path": '/admin/walk-path', "config": admin.adminWalkPath });
 	routes.push({ "method": 'GET',  "path": '/api/walk-path', "config": admin.apiWalkPath });

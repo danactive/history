@@ -6,17 +6,6 @@ var directoryContents = require('../directory_contents.js'),
 	route = {},
 	walkPath;
 
-route.home = {
-	description: 'Admin landing page',
-	tags: ['hapi'],
-	handler: function (request, reply) {
-		reply.view('src/views/admin.dust');
-	},
-	validate: {
-		query: {}
-	}
-};
-
 route.apiGetGalleries = {
 	description: 'List photo gallery names',
 	handler: function (request, reply) {

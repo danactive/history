@@ -12,6 +12,7 @@ const vision = require('vision');
 require('tuxharness');
 
 const config = require('./config.json');
+const libAdmin = require('./plugins/admin/lib/index');
 const viewAlbum = require('./plugins/album/lib/index');
 const editAlbum = require('./plugins/editAlbum/lib/index');
 const libHome = require('./plugins/home/lib/index');
@@ -34,6 +35,7 @@ server.register([
   { register: inert },
   { register: vision },
   { register: libRoutes },
+  { register: libAdmin, routes: { prefix: '/admin' } },
   { register: viewAlbum, routes: { prefix: '/view' } },
   { register: editAlbum, routes: { prefix: '/edit' } },
   { register: libHome },
