@@ -1,9 +1,6 @@
 /* global __dirname, require*/
 
-const dust = require('dustjs-linkedin');
-const dustViews = require('fs').readFileSync('./public/views.min.js');
 const hapi = require('hapi');
-const hapiDust = require('hapi-dust');
 const hapiReactViews = require('hapi-react-views');
 const hapiSwagger = require('hapi-swagger');
 const hoek = require('hoek');
@@ -17,6 +14,7 @@ require('tuxharness');
 const config = require('./config.json');
 const viewAlbum = require('./plugins/album/lib/index');
 const editAlbum = require('./plugins/editAlbum/lib/index');
+const libHome = require('./plugins/home/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libRoutes = require('./src/js/route.js');
@@ -38,6 +36,7 @@ server.register([
   { register: libRoutes },
   { register: viewAlbum, routes: { prefix: '/view' } },
   { register: editAlbum, routes: { prefix: '/edit' } },
+  { register: libHome },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
   { register: libVideo, routes: { prefix: '/view' } },
@@ -49,9 +48,6 @@ server.register([
 ], (error) => {
   hoek.assert(!error, error);
 
-  dust.loadSource(dustViews);
-  log.operational('Views loaded to cache');
-
   server.start();
   log.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
@@ -61,9 +57,8 @@ server.register([
 });
 
 server.views({
-  defaultExtension: 'dust',
+  defaultExtension: 'jsx',
   engines: {
-    dust: hapiDust,
     jsx: hapiReactViews,
   },
   isCached: true,

@@ -17,19 +17,6 @@ route.flickrGallery = {
 	}
 };
 
-route.home = {
-	description: 'Home landing page',
-	tags: ['hapi'],
-	handler: function (request, reply) {
-		require('../directory_contents.js').getGalleries(function (response) {
-			reply.view('src/views/home.dust', response.payload);
-		});
-	},
-	validate: {
-		query: {}
-	}
-};
-
 route.notFound = {
 	description: 'Catch all route',
 	tags: ['hapi'],

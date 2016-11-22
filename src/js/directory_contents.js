@@ -11,8 +11,7 @@ var boom = require("boom"),
 		"missingPath": "Path does not exist: "
 	},
 	debugMsg,
-	fs = require('fs'),
-	util = require("./util.js");
+	fs = require('fs');
 debugMsg = function (msg) {
 	if (constant.config.debug && constant.config.debug === true) {
 		console.log(msg);
@@ -198,46 +197,4 @@ module.exports.prepForView = function (meta, args, callback) {
 		}
 	});
 	callback(meta);
-};
-
-
-/***
-*      #####                   #####
-*     #     # ###### #####    #     #   ##   #      #      ###### #####  #   #
-*     #       #        #      #        #  #  #      #      #      #    #  # #
-*     #  #### #####    #      #  #### #    # #      #      #####  #    #   #
-*     #     # #        #      #     # ###### #      #      #      #####    #
-*     #     # #        #      #     # #    # #      #      #      #   #    #
-*      #####  ######   #       #####  #    # ###### ###### ###### #    #   #
-*
-*/
-module.exports.getGalleries = function (cb) {
-	var folder = ".";
-	fs.readdir(folder, function (err, files) {
-		var galleries = [],
-			out = {
-				"meta": {
-					"source": {
-						"type": "absolute",
-						"path": require("path").resolve(folder)
-					},
-					"methodVersion": '2.0.0'
-				},
-				"payload": {}
-			};
-
-		if (err) {
-			return cb(require("extend")(true, out, util.setError(err)));
-		}
-
-		files.forEach(function (filename) {
-			if (filename.indexOf('gallery-') === 0) {
-				galleries.push(filename.substr(8));
-			}
-		});
-
-		out.payload.galleries = galleries;
-
-		return cb(out);
-	});
 };

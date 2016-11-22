@@ -23,7 +23,6 @@ exports.register = function(server, options, next) {
 	routes.push({ "method": 'GET',  "path": '/favicon.ico', "handler": { "file": './favicon.ico' } });
 
 	routes.push({ "method": 'GET',  "path": '/flickr-gallery', "config": root.flickrGallery });
-	routes.push({ "method": 'GET',  "path": '/', "config": root.home });
 	routes.push({ "method": '*',    "path": '/{p*}', "config": root.notFound });
 
 	server.route(routes);
