@@ -3,6 +3,8 @@
 const eslint = require('gulp-eslint');
 const expect = require('gulp-expect-file');
 const gulp = require('gulp');
+const nsp = require('gulp-nsp');
+const path = require('path');
 const print = require('gulp-print');
 const tape = require('gulp-tape');
 const tapSummary = require('tap-summary');
@@ -45,4 +47,6 @@ gulp.task('test', () => {
     .pipe(tape(options));
 });
 
-gulp.task('ci', ['lint', 'test']);
+gulp.task('nsp', done => nsp({ package: path.join(__dirname, '../', 'package.json') }, done));
+
+gulp.task('ci', ['lint', 'test', 'nsp']);

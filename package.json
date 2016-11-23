@@ -8,6 +8,7 @@
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "gulp --gulpfile plugins/gulpfile.js lint",
     "eslint": "eslint **/*.{js,jsx}",
+    "nsp": "gulp --gulpfile plugins/gulpfile.js nsp",
     "release": "standard-version",
     "start": "node .",
     "test": "gulp --gulpfile plugins/gulpfile.js test"
@@ -61,6 +62,7 @@
     "gulp-expect-file": "^0.0.7",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^3.0.1",
+    "gulp-nsp": "^2.4.2",
     "gulp-plumber": "^1.0.1",
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
