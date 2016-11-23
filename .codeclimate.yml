@@ -1,0 +1,18 @@
+engines:
+  duplication:
+       enabled: true
+       config:
+         languages:
+           javascript:
+  eslint:
+    enabled: true
+    channel: "eslint-3"
+    config:
+        extensions:
+        - .js
+        - .jsx
+
+ratings:
+   paths:
+   - "**.js"
+   - "**.jsx"
