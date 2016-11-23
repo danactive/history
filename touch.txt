@@ -1,4 +1,1 @@
-Hello World
-
-Edited in Dreamweaver 1057
-Edited via GitHub.com 1059
+Trigger Code Climate after enabling webhooks
