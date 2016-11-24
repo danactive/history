@@ -31,11 +31,11 @@ route.adminWalkPath = {
 					'//cdn.jsdelivr.net/dustjs/2.5.1/dust-core.min.js',
 					'//cdn.jsdelivr.net/dustjs.helpers/1.5.0/dust-helpers.min.js',
 					'/static/js/directory_contents.js',
-					'/static/lib/jquery-ui-1.11.2.custom/jquery-ui.min.js',
+					'https://code.jquery.com/ui/1.11.4/jquery-ui.min.js',
 					'/public/views.min.js'
 				],
 				"css": [
-					'/static/lib/jquery-ui-1.11.2.custom/jquery-ui.min.css',
+					'https://code.jquery.com/ui/1.11.4/themes/humanity/jquery-ui.css',
 					'/static/css/directory_contents.css'
 				]
 			};
