@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Gallery', { skip: false }, (describe) => {
-  const lib = require('../lib/gallery');
+  const lib = require('../lib');
 
   describe.test('* Get Galleries', { skip: false }, (assert) => {
     lib.getGalleries()

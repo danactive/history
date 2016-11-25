@@ -1,11 +1,19 @@
 /* global __dirname, require */
-// const joi = require('joi');
+const joi = require('joi');
+
+const gallery = require('../../gallery/lib');
 
 const handler = (request, reply) => {
-  reply.view('plugins/editAlbum/views/page.jsx', {});
+  const raw = request.query.raw;
+  const format = galleries => ({ galleries });
+
+  gallery.getGalleries()
+    .then(galleries => (raw ? reply(format(galleries)) : reply.view('plugins/editAlbum/views/page.jsx', format(galleries))));
 };
 
-// const validation = {};
+const validation = {
+  raw: joi.boolean().truthy('true').falsy('false').default(false),
+};
 
 exports.register = (server, options, next) => {
   server.route({
@@ -16,6 +24,7 @@ exports.register = (server, options, next) => {
       tags: ['api', 'plugin', 'v0'],
       validate: {
         query: {
+          raw: validation.raw,
         },
       },
     },

@@ -16,7 +16,9 @@ function Page() {
           <div className="grid_8">
             <div>
               Gallery
-              <select id="editGalleries" tabIndex="-1"><option value="">Loopup these galleries</option></select>
+              <select id="editGalleries" tabIndex="-1">
+                <option value="">Lookup these galleries</option>
+              </select>
               <input type="button" id="changeGallery" value="View" />
             </div>
             <div>
