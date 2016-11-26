@@ -1,8 +1,14 @@
 const React = require('react');
 
 function GalleryDropdown(props) {
-  const galleryOptions = props.galleries.map(gallery => <option value={gallery}>{gallery}</option>);
-  return <select id="editGalleries" tabIndex="-1"><option value="">Select gallery</option>{galleryOptions}</select>;
+  const galleryOptions = props.galleries.map((gallery) => {
+    const id = `gallery-${gallery}`;
+    return <option key={id} value={gallery}>{gallery}</option>;
+  });
+  return (<select id="editGalleries" tabIndex="-1">
+    <option key="gallery-none" value="">Select gallery</option>
+    {galleryOptions}
+  </select>);
 }
 
 function Page({ galleries }) {

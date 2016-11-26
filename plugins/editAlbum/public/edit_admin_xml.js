@@ -211,7 +211,6 @@ GetAlbumXml = function() { // both <select> and btn call this function
 	}
 	if (isAlbumChangable) {
 		$.get('../static/gallery-' + $('#editGalleries').val() + '/xml/album_' + $('#editAlbums').val() + '.xml').
-			error(ajaxError).
 			success(ConvertXmlToJson);
 
 		$("#sortGallery")[0].selectedIndex = 0; // reset sort dropdown
@@ -224,7 +223,6 @@ GetGalleryNames = function() { // both <select> and btn call this function
 	}
 	if (isGalleryChangable) {
 		$.get('../static/gallery-' + $('#editGalleries').val() + '/xml/gallery.xml').
-			error(ajaxError).
 			success(PopulateAlbums);
 
 		$("#editAlbums").get(0).length = 0; // clear albums dropdown
