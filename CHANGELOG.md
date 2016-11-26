@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.11.0"></a>
+# [1.11.0](https://github.com/danactive/history/compare/v1.10.0...v1.11.0) (2016-11-26)
+
+
+### Bug Fixes
+
+* **CI:** Disable Code Climate until eslint 3 is supported ([#45](https://github.com/danactive/history/issues/45)) ([8c7bc21](https://github.com/danactive/history/commit/8c7bc21))
+* **CI:** Remove vulnerabilities: dustjs-linkedin ([#42](https://github.com/danactive/history/issues/42)) ([2460f94](https://github.com/danactive/history/commit/2460f94))
+* **CI:** Task NSP executed by CI ([#42](https://github.com/danactive/history/issues/42)) ([eadf341](https://github.com/danactive/history/commit/eadf341))
+* **CI:** Use CDN for jQuery UI not hosted locally ([17b1ec2](https://github.com/danactive/history/commit/17b1ec2))
+* **CI:** Verify Code Climate will read master branch ([#45](https://github.com/danactive/history/issues/45) [#47](https://github.com/danactive/history/issues/47)) ([8175931](https://github.com/danactive/history/commit/8175931))
+* **Lint:** Apply ignore for third party libraries and legacy scripts ([#45](https://github.com/danactive/history/issues/45)) ([0a23b78](https://github.com/danactive/history/commit/0a23b78))
+* **Lint:** yarn lint uses gulp and yarn eslint uses native eslint: both pass ([#45](https://github.com/danactive/history/issues/45)) ([75e7a3e](https://github.com/danactive/history/commit/75e7a3e))
+
+
+### Features
+
+* **Edit Album:** Gallery dropdown populated with React ([#46](https://github.com/danactive/history/issues/46)) ([92b5f7b](https://github.com/danactive/history/commit/92b5f7b))
+* **Edit Album:** Legacy jQuery code but functional ([#46](https://github.com/danactive/history/issues/46)) ([a243b06](https://github.com/danactive/history/commit/a243b06))
+* **Edit Album:** UI using React.js ([#46](https://github.com/danactive/history/issues/46)) ([0a1af6f](https://github.com/danactive/history/commit/0a1af6f))
+* **View Album:** Admin using React.js view engine ([#42](https://github.com/danactive/history/issues/42)) ([ee6254c](https://github.com/danactive/history/commit/ee6254c))
+
+
+
 <a name="1.10.0"></a>
 # [1.10.0](https://github.com/danactive/history/compare/v1.9.0...v1.10.0) (2016-11-19)
 
