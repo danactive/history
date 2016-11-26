@@ -1,6 +1,11 @@
 const React = require('react');
 
-function Page() {
+function GalleryDropdown(props) {
+  const galleryOptions = props.galleries.map(gallery => <option value={gallery}>{gallery}</option>);
+  return <select id="editGalleries" tabIndex="-1"><option value="">Select gallery</option>{galleryOptions}</select>;
+}
+
+function Page({ galleries }) {
   return (
     <html lang="en">
       <head>
@@ -16,9 +21,7 @@ function Page() {
           <div className="grid_8">
             <div>
               Gallery
-              <select id="editGalleries" tabIndex="-1">
-                <option value="">Lookup these galleries</option>
-              </select>
+              <GalleryDropdown galleries={galleries} />
               <input type="button" id="changeGallery" value="View" />
             </div>
             <div>
@@ -105,7 +108,10 @@ function Page() {
 }
 
 Page.propTypes = {
-  album: React.PropTypes.shape(),
+  galleries: React.PropTypes.arrayOf(React.PropTypes.string),
+};
+GalleryDropdown.propTypes = {
+  galleries: React.PropTypes.arrayOf(React.PropTypes.string),
 };
 
 module.exports = Page;

@@ -233,12 +233,6 @@ GetGalleryNames = function() { // both <select> and btn call this function
 		$('#listPhotos').html(''); // clear previous gallery
 	}
 },
-PopulateGalleries = (response) => { // list of gallery names
-  const inner = response.galleries.join('</option><option>');
-  $('#editGalleries').
-    change(GetGalleryNames).
-    append(`<option>${inner}</option>`);
-},
 PopulateAlbums = function(xmlData) { // complete gallery xml
 	var options = [];
 	$('album', xmlData).each(function(i, gallery) {
@@ -255,9 +249,7 @@ ToggleDisable = function() {
 		prop('disabled',$(this).prop('checked')); // disable text field if checkbox is checked
 };
 $(window).ready(function() {
-	$.get('/edit/album?raw=true').
-		success(PopulateGalleries);
-
+  $('#editGalleries').change(GetGalleryNames);
 	$('#changeGallery').click(GetGalleryNames);
 	$('#changeAlbum').click(GetAlbumXml);
 	$('#editAlbums').change(GetAlbumXml);
