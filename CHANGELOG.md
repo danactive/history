@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.11.1"></a>
+## [1.11.1](https://github.com/danactive/history/compare/v1.11.0...v1.11.1) (2016-11-27)
+
+
+### Bug Fixes
+
+* **CI:** Remove unused legacy scripts ([0bb7e2d](https://github.com/danactive/history/commit/0bb7e2d))
+
+
+
 <a name="1.11.0"></a>
 # [1.11.0](https://github.com/danactive/history/compare/v1.10.0...v1.11.0) (2016-11-26)
 
