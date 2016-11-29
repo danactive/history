@@ -1,17 +1,6 @@
 const React = require('react');
 
-function GalleryDropdown(props) {
-  const galleryOptions = props.galleries.map((gallery) => {
-    const id = `gallery-${gallery}`;
-    return <option key={id} value={gallery}>{gallery}</option>;
-  });
-  return (<select id="editGalleries" tabIndex="-1">
-    <option key="gallery-none" value="">Select gallery</option>
-    {galleryOptions}
-  </select>);
-}
-
-function Page({ galleries }) {
+function Page(props) {
   return (
     <html lang="en">
       <head>
@@ -25,14 +14,12 @@ function Page({ galleries }) {
       <body>
         <div className="container_16">
           <div className="grid_8">
-            <div>
-              Gallery
-              <GalleryDropdown galleries={galleries} />
-              <input type="button" id="changeGallery" value="View" />
-            </div>
+            <section id="galleryDropdown" dangerouslySetInnerHTML={{ __html: props.galleries }} />
             <div>
               Album
-              <select id="editAlbums" tabIndex="-2"><option value="">Edit these album photos</option></select>
+              <select id="editAlbums" tabIndex="-2">
+                <option value="">Edit these album photos</option>
+              </select>
               <input type="button" id="changeAlbum" value="View" />
             </div>
             <div>
@@ -108,16 +95,16 @@ function Page({ galleries }) {
         <script src="./album/static/lib/json_to_xml.js" />
         <script src="./album/static/admin-edit-xml-tested.js" />
         <script src="./album/static/edit_admin_xml.js" />
+        <script id="app-state" dangerouslySetInnerHTML={{ __html: props.state }} />
+        <script src="./album/assets/client.js" />
       </body>
     </html>
   );
 }
 
 Page.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string),
-};
-GalleryDropdown.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string),
+  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  state: React.PropTypes.string.isRequired,
 };
 
 module.exports = Page;
