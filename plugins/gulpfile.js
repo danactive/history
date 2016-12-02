@@ -12,7 +12,7 @@ const tapSummary = require('tap-summary');
 const paths = {
   lintLibRules: [
     '../*.js',
-    '*/lib/*.js', '*/public/*.js', '!editAlbum/public/*.js', '!editAlbum/public/assets/*.js', '*/views/*.jsx',
+    '*/*.js', '*/lib/*.js', '*/public/*.js', '!editAlbum/public/lib/*.js', '*/views/*.jsx',
   ],
   lintTestRules: [
     'gulpfile.js',

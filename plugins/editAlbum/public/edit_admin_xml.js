@@ -1,4 +1,4 @@
-/* global $, ajaxError, SaveToJson, schema, window */
+/* global $, ajaxError, SaveToJson, schema, util, window */
 const album = {
   form: {
     schema: { // HTML element ID, XML node name
@@ -148,7 +148,7 @@ const album = {
       }
     },
     Preview: (_filename) => {
-      filename = `${_filename.substr(0, _filename.lastIndexOf('.'))}.jpg`;
+      const filename = `${_filename.substr(0, _filename.lastIndexOf('.'))}.jpg`;
       const photoPath = [
         '../static/gallery-',
         $('#editGalleries').val(),
@@ -161,19 +161,20 @@ const album = {
     },
     Sort: function sortPhoto() {
       $('#listPhotos span').remove(); // clear previous sort labels
-      const AlphaSort = (x, y, xmlNode) => {
-        x = $(x).data('photo')[xmlNode];
+      const AlphaSort = (_x, _y, xmlNode) => {
+        let x = $(_x).data('photo')[xmlNode];
         x = (x === null) ? '' : x;
-        y = $(y).data('photo')[xmlNode];
+        let y = $(_y).data('photo')[xmlNode];
         y = (y === null) ? '' : y;
-        return ((x === y) ? 0 : ((x > y) ? 1 : -1));
+        const xLarger = (x > y) ? 1 : -1;
+        return (x === y) ? 0 : xLarger;
       };
       const SortByCity = (x, y) => AlphaSort(x, y, schema.city);
       const SortByLocation = (x, y) => AlphaSort(x, y, schema.location);
       const SortByDate = (x, y) => AlphaSort(x, y, schema.filename);
-      const SortByXml = (x, y) => {
-        x = $(x).data('photo').id;
-        y = $(y).data('photo').id;
+      const SortByXml = (_x, _y) => {
+        const x = $(_x).data('photo').id;
+        const y = $(_y).data('photo').id;
         return parseInt(x, 10) - parseInt(y, 10);
       };
       let sortBy; // alias for (above) sort function
