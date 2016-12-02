@@ -8,3 +8,4 @@ resizeImages
 public/js/
 plugins/resize/test/fixtures/photos/2016-07-12.jpg
 plugins/resize/test/fixtures/thumbs/2016-07-12.jpg
+plugins/editAlbum/public/assets

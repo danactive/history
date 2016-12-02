@@ -5,7 +5,12 @@ const gallery = require('../../gallery/lib');
 
 const handler = (request, reply) => {
   const raw = request.query.raw;
-  const format = galleries => ({ galleries });
+  const format = (galleries) => {
+    const context = { galleries };
+    context.state = `window.state = ${JSON.stringify(context)};`;
+
+    return context;
+  };
 
   gallery.getGalleries()
     .then(galleries => (raw ? reply(format(galleries)) : reply.view('plugins/editAlbum/views/page.jsx', format(galleries))));
@@ -56,6 +61,14 @@ exports.register = (server, options, next) => {
       handler: {
         file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
       },
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/album/assets/client.js',
+    handler: {
+      file: 'plugins/editAlbum/public/assets/client.js',
     },
   });
 
