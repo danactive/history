@@ -26,14 +26,14 @@ class GalleryDropdown extends React.Component {
 
   render() {
     return (
-      <div>
+      <section>
         Gallery
         <select id="editGalleries" tabIndex="-1" onChange={this.handleChange}>
           <option key="gallery-none" value="">Select gallery</option>
           {this.galleryOptions}
         </select>
         <input type="button" id="changeGallery" value="View" />
-      </div>
+      </section>
     );
   }
 }
