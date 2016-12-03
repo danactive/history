@@ -68,7 +68,7 @@
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
     "gulp-tape": "0.0.9",
-    "standard-version": "^3.0.0",
+    "standard-version": "^4.0.0",
     "tape": "^4.6.0",
     "tape-catch": "^1.0.6",
     "webpack": "^1.13.3"
