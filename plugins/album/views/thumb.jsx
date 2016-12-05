@@ -20,4 +20,10 @@ Thumb.propTypes = {
   }),
 };
 
+Thumb.defaultProps = {
+  item: {
+    caption: 'Thumbnail',
+  },
+};
+
 module.exports = Thumb;
