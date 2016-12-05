@@ -5,11 +5,9 @@
 [![NSP Status](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f/badge)](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f)
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
-Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.
+Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption... in XML albums.
 * Plot thumbnails on a map
-* Code runs on static web hosts
 * Includes administration tools for XML generation
-* Free & open source (dependent on other open source projects see individual licenses)
 
 Installation
 ------
@@ -22,8 +20,7 @@ Technologies
 ------
 ####Viewing
 * XML databases for photo/video galleries
-* XSLT to transform XML to HTML/CSS/JavaScript/jQuery
-* JavaScript/jQuery for the pagination & lightbox
+* Isomorphic React.js phasing out of JavaScript/jQuery for the pagination & lightbox
 
 ####Administration
 * Node.js to support AJAX & image manipulation
@@ -44,21 +41,6 @@ To use the administration tools
 * [node.js](http://nodejs.org/)
 * [hapi.js](http://hapijs.org/)
 * [GraphicsMagick](https://www.npmjs.com/package/gm) Install GraphicsMagick before npm
-* [bower](http://bower.io/) via npm
-	* npm install -g bower
-
-Folder structures
--------
-* admin/ - administration files for generating XML.  Copy and paste the XML structure into the albums
-* gallery-demo/ - demonstration of a gallery with the sample album inside
-* node_modules/ - Backup of installed modules for Node.js
-* .gitignore - blacklist files/folders for GitHub
-* README.md - this file
-* index.htm - Home page when avoiding Node.js
-* video.htm - Reads a query string and generates the HTML5 video tags
-* app.js - Node.js code for creating a web server
-* webserver_node START.bat - (Windows) Executes the Node.js web server for localhost viewing and administration image manipulation
-* webserver_node VIEW.url - (Windows) Opens http://localhost in default browser
 
 Photo/video album XML schemas
 -------
