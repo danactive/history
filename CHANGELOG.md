@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.12.0"></a>
+# [1.12.0](https://github.com/danactive/history/compare/v1.11.1...v1.12.0) (2016-12-05)
+
+
+### Bug Fixes
+
+* **Edit Album:** Lint jQuery legacy scripts ([#50](https://github.com/danactive/history/issues/50)) ([8448ce9](https://github.com/danactive/history/commit/8448ce9))
+* **package:** update hapi to version 16.0.0 ([b922678](https://github.com/danactive/history/commit/b922678))
+* **package:** update standard-version to version 4.0.0 ([31f67d2](https://github.com/danactive/history/commit/31f67d2))
+
+
+### Features
+
+* **Test Coverage:** Test one React view using react-addons-test-utils ([#34](https://github.com/danactive/history/issues/34)) ([9b08bc7](https://github.com/danactive/history/commit/9b08bc7))
+* **Edit Album:** Isomorphically change gallery (#54) Introduce webpack
+
+
+
 <a name="1.11.1"></a>
 ## [1.11.1](https://github.com/danactive/history/compare/v1.11.0...v1.11.1) (2016-11-27)
 
