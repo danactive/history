@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.12.1"></a>
+## [1.12.1](https://github.com/danactive/history/compare/v1.12.0...v1.12.1) (2016-12-05)
+
+
+### Bug Fixes
+
+* **package:** Yarn lock to match package.json ([25f1531](https://github.com/danactive/history/commit/25f1531))
+
+
+
 <a name="1.12.0"></a>
 # [1.12.0](https://github.com/danactive/history/compare/v1.11.1...v1.12.0) (2016-12-05)
 
