@@ -2,6 +2,8 @@
 
 const eslint = require('gulp-eslint');
 const expect = require('gulp-expect-file');
+const flags = require('yargs').argv;
+const filter = require('gulp-filter');
 const gulp = require('gulp');
 const nsp = require('gulp-nsp');
 const path = require('path');
@@ -24,10 +26,12 @@ const paths = {
 };
 
 function lint(configFile, ...files) {
+  const plugin = flags.plugin;
+  const filterFiles = plugin ? filter([`${plugin}/**/*`]) : filter(['**/*']);
   files.forEach((file) => {
     gulp.src(file)
+      .pipe(filterFiles)
       .pipe(print())
-      .pipe(expect(file))
       .pipe(eslint({ configFile }))
       .pipe(eslint.format())
       .pipe(eslint.failAfterError());

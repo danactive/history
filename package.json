@@ -66,6 +66,7 @@
     "gulp-develop-server": "^0.5.2",
     "gulp-eslint": "^3.0.1",
     "gulp-expect-file": "^0.0.7",
+    "gulp-filter": "^4.0.0",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^3.0.1",
     "gulp-nsp": "^2.4.2",
@@ -79,7 +80,9 @@
     "tap-summary": "^3.0.1",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
-    "tape-jsx-equals": "^1.0.0"
+    "tape-jsx-equals": "^1.0.0",
+    "webpack": "^1.13.3",
+    "yargs": "^6.5.0"
   },
   "peerDependencies": {
     "eslint": "^3.9.1",
