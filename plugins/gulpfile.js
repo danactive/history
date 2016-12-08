@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 const eslint = require('gulp-eslint');
-const expect = require('gulp-expect-file');
 const flags = require('yargs').argv;
 const filter = require('gulp-filter');
 const gulp = require('gulp');
@@ -25,12 +24,15 @@ const paths = {
   ],
 };
 
-function lint(configFile, ...files) {
+function filterFiles() {
   const plugin = flags.plugin;
-  const filterFiles = plugin ? filter([`${plugin}/**/*`]) : filter(['**/*']);
+  return plugin ? filter([`${plugin}/**/*`]) : filter(['**/*']);
+}
+
+function lint(configFile, ...files) {
   files.forEach((file) => {
     gulp.src(file)
-      .pipe(filterFiles)
+      .pipe(filterFiles())
       .pipe(print())
       .pipe(eslint({ configFile }))
       .pipe(eslint.format())
@@ -46,8 +48,8 @@ gulp.task('test', () => {
   const options = { reporter: tapSummary({ progress: false }) };
 
   return gulp.src(files)
+    .pipe(filterFiles())
     .pipe(print())
-    .pipe(expect(files))
     .pipe(tape(options));
 });
 
