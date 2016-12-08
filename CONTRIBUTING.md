@@ -11,6 +11,10 @@
 ## Pull Requests (code review)
 * GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
 * Write a comment and reference the issue number such as (#123)
+* Do not bump version or update changelog as it's automated when manually triggered
+
+## Commit message
+* Strictly enforced [changelog convention](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md)
 
 # Developement
 Ensure yarn is installed globally `npm install yarn --global`
