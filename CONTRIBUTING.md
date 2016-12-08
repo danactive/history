@@ -13,29 +13,28 @@
 * Write a comment and reference the issue number such as (#123)
 
 # Developement
+Ensure yarn is installed globally `npm install yarn --global`
 
 ## CLI commands
 * `yarn lint` enforces code syntax quality
 	* `yarn lint -- --plugin=video` apply lint to only video plugin folder
 
-Technologies
-------
-####Viewing
+## Technologies
+
+### Viewing
 * XML databases for photo/video galleries
 * Isomorphic React.js phasing out of JavaScript/jQuery for the pagination & lightbox
 
-####Administration
-* Node.js to support AJAX & image manipulation
+### Administration
+* Node.js to support AJAX and image manipulation
 * AJAX to read the XML gallery data
 
 
-Dependencies
-------
+## Dependencies
 Included in this project
-* [jQuery](http://jquery.com/) via bower
-* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) via bower
-* [Mapstraction (mapping)](http://mapstraction.com/) build 2.0.18
-* [Google Maps (map provider)](https://developers.google.com/maps/) v3
+* [jQuery](http://jquery.com/) via CDN
+* [ColorBox (jQuery plugin)](http://www.jacklmoore.com/colorbox) via bower (stale)
+* [MapBox GL JS (slippy map)](https://www.mapbox.com/mapbox-gl-js/api/) v0.27.0
 * [Twitter Bootstrap (admin)](http://twitter.github.com/bootstrap/) v2.0.3
 * [Fluid 960 Grid System (admin)](http://www.designinfluences.com/fluid960gs/)
 
@@ -44,8 +43,11 @@ To use the administration tools
 * [hapi.js](http://hapijs.org/)
 * [GraphicsMagick](https://www.npmjs.com/package/gm) Install GraphicsMagick before npm
 
-Photo/video album XML schemas
--------
+### Adding dependencies to project
+* Update **package.json** with `yarn`
+	* Install project dependencies `yarn add [module]`
+
+## Photo/video album XML schemas
 ### Current schema (2.0)
 
 Example
