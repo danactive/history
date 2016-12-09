@@ -1,17 +1,19 @@
 # How-to contribute to *history*
 
 ## Issues
-* Find an existing issue and write a comment
-  * Request issue to be assigned to you for code review
+* Improvements and conversations start with project issues
+* Find an existing issue or write a new comment
   * Answer a question or provide a code solution
   * Ask a question
   * Submit a bug
-* GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
+  * Recommend a feature
+* More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
-* GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
-* Write a comment and reference the issue number such as (#123)
+* Explain code commits and reference the issue number such as (#123)
 * Do not bump version or update changelog as it's automated when manually triggered
+* Write unit tests for code commit
+* More with GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
 
 ## Commit message
 * Strictly enforced [changelog convention](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md)
@@ -22,6 +24,8 @@ Ensure yarn is installed globally `npm install yarn --global`
 ## CLI commands
 * `yarn lint` enforces code syntax quality
 	* `yarn lint -- --plugin=video` apply lint to only video plugin folder
+* `yarn test` execute unit tests
+	* `yarn test -- --plugin=editAlbum` test specific plugin
 
 ## Technologies
 
