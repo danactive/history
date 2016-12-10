@@ -4,6 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/danactive/history/badges/gpa.svg)](https://codeclimate.com/github/danactive/history)
 [![NSP Status](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f/badge)](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f)
 [![Known Vulnerabilities](https://snyk.io/test/github/danactive/history/badge.svg)](https://snyk.io/test/github/danactive/history)
+[![Coverage Status](https://coveralls.io/repos/github/danactive/history/badge.svg)](https://coveralls.io/github/danactive/history)
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 
 Your personal **history** storyboarded with photo and video albums.  Associate photos with their meta data including geocode, caption... in XML albums.

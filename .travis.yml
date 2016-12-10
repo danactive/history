@@ -17,3 +17,5 @@ install:
 
 scripts:
   - yarn ci
+after_success:
+  - yarn test:ci
