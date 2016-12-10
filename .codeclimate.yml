@@ -5,7 +5,7 @@ engines:
          languages:
            javascript:
   eslint:
-    enabled: false
+    enabled: true
     channel: "eslint-3"
     config:
         extensions:

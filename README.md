@@ -13,7 +13,16 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 * Includes administration tools for XML generation
 
 ## Installation
-1. Node.js v6.9.x
+1. Node.js v6.9.x [Download](https://nodejs.org/)
 1. Install project dependencies `npm install` (`yarn` is used for development)
 1. Start web server `npm start`
 1. View address in browser (printed in terminal on successful load)
+
+## Changelog of releases
+See [CHANGELOG](CHANGELOG.md)
+
+## Contributing to this open-source project
+See [CONTRIBUTING](CONTRIBUTING.md)
+
+## Copyright
+See [LICENSE](LICENSE)

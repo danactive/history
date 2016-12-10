@@ -7,16 +7,16 @@
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "gulp --gulpfile plugins/gulpfile.js lint",
-    "eslint": "eslint **/*.{js,jsx}",
     "nsp": "gulp --gulpfile plugins/gulpfile.js nsp",
     "release": "standard-version",
     "start": "webpack --config plugins/editAlbum/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc tape plugins/**/*.spec.js",
+    "test:react": "babel-tape-runner plugins/album/test/*.js | faucet",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
     "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov",
-    "test:react": "babel-tape-runner plugins/album/test/*.js | faucet"
+    "ci-lint": "eslint **/*.{js,jsx}"
   },
   "main": "index.js",
   "dependencies": {
