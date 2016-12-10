@@ -20,7 +20,7 @@ const paths = {
     'album/test/cases.js',
   ],
   test: [
-    '**/test/*.js', '!album/test/cases.js', '!album/test/react-thumb.js',
+    '**/test/*.js', '!album/test/cases.js', '!album/test/react-thumb*.js',
   ],
 };
 
