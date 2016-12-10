@@ -10,6 +10,8 @@
 * More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
+* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
+* Commit message subject must include a GitHub issue  [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
 * Explain code commits and reference the issue number such as (#123)
 * Do not bump version or update changelog as it's automated when manually triggered
 * Write unit tests for code commit
@@ -24,10 +26,9 @@ Ensure yarn is installed globally `npm install yarn --global`
 ## CLI commands
 * `yarn lint` enforces code syntax quality
 	* `yarn lint -- --plugin=video` apply lint to only video plugin folder
-* `yarn test` execute unit tests
-	* `yarn test -- --plugin=editAlbum` test specific plugin
+* `yarn test` execute unit tests with code coverage report
+	* `yarn test:all -- --plugin=editAlbum` test specific plugin
 	* `yarn test:react` test React.js views across all plugins
-	* `yarn test:cover` instrument code based on tests
 
 ## Technologies
 
