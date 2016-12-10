@@ -26,6 +26,8 @@ Ensure yarn is installed globally `npm install yarn --global`
 	* `yarn lint -- --plugin=video` apply lint to only video plugin folder
 * `yarn test` execute unit tests
 	* `yarn test -- --plugin=editAlbum` test specific plugin
+	* `yarn test:react` test React.js views across all plugins
+	* `yarn test:cover` instrument code based on tests
 
 ## Technologies
 
