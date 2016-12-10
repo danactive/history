@@ -13,7 +13,9 @@
     "start": "webpack --config plugins/editAlbum/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc tape plugins/**/*.spec.js",
-    "test:ci": "nyc report --reporter=text-lcov | coveralls",
+    "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
+    "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov",
     "test:react": "babel-tape-runner plugins/album/test/*.js | faucet"
   },
   "main": "index.js",
@@ -55,6 +57,7 @@
     "babel-tape-runner": "^2.0.1",
     "calipers": "^2.0.0",
     "calipers-jpeg": "^2.0.0",
+    "codeclimate-test-reporter": "^0.4.0",
     "coveralls": "^2.11.15",
     "enzyme": "^2.6.0",
     "eslint": "^3.9.1",
