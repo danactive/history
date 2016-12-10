@@ -13,7 +13,7 @@
     "start": "webpack --config plugins/editAlbum/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc tape plugins/**/*.spec.js",
-    "test:ci": "nyc report --reporter=text-lcov | coveralls",
+    "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "test:react": "babel-tape-runner plugins/album/test/*.js | faucet"
   },
   "main": "index.js",
