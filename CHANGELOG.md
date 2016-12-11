@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.13.0"></a>
+# [1.13.0](https://github.com/danactive/history/compare/v1.12.1...v1.13.0) (2016-12-11)
+
+
+### Bug Fixes
+
+* **Badge:** Add coverage badge [[#34](https://github.com/danactive/history/issues/34)] ([902d557](https://github.com/danactive/history/commit/902d557))
+* **CI:** Ensure lint breaks the build [[#66](https://github.com/danactive/history/issues/66)] ([62ceb5c](https://github.com/danactive/history/commit/62ceb5c))
+* **CI:** Remove nsp with gulp and GitHub.com integration with NSP and Snyk [[#66](https://github.com/danactive/history/issues/66)] ([9364f79](https://github.com/danactive/history/commit/9364f79))
+* **Edit Album:** TabIndex to positive for keyboard tab order [[#68](https://github.com/danactive/history/issues/68)] ([0e3d4bc](https://github.com/danactive/history/commit/0e3d4bc))
+* **Lint:** Add blank test for coverage report [[#66](https://github.com/danactive/history/issues/66)] ([090a899](https://github.com/danactive/history/commit/090a899))
+* **README:** Table of service badges ([0db22f7](https://github.com/danactive/history/commit/0db22f7))
+
+
+### Features
+
+* **Coverage:** Istanbul (nyc) test coverage for all plugin spec files [[#34](https://github.com/danactive/history/issues/34)] ([eec81c4](https://github.com/danactive/history/commit/eec81c4))
+* **Coverage:** React test sample ([b7f975a](https://github.com/danactive/history/commit/b7f975a))
+* **Dev:** Allow specific plugins to filter gulp task sources: lint ([57e159a](https://github.com/danactive/history/commit/57e159a))
+* **Dev:** Allow specific plugins to filter gulp task sources: test ([#49](https://github.com/danactive/history/issues/49)) ([eef6b37](https://github.com/danactive/history/commit/eef6b37))
+* **Dev:** Enforce commit, pull request, and issue rules ([#60](https://github.com/danactive/history/issues/60)) ([23ef4ee](https://github.com/danactive/history/commit/23ef4ee))
+* **LICENSE:** 2016 MIT license ([00bc223](https://github.com/danactive/history/commit/00bc223))
+
+
+
 <a name="1.12.1"></a>
 ## [1.12.1](https://github.com/danactive/history/compare/v1.12.0...v1.12.1) (2016-12-05)
 
