@@ -14,8 +14,9 @@
 ## Pull Requests (code review)
 * Do not bump version or update changelog as it's manually triggered when released
 * Enforced rules for new Pull Requests
-	* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
 	* Commit message subject must include a GitHub issue [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
+	* Pull request title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/pull-request/subject-must-be-in-tense) 
+	* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
 * Write unit tests to match existing test coverage
 * More with GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
 
