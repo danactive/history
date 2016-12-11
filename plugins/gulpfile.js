@@ -4,8 +4,6 @@ const eslint = require('gulp-eslint');
 const flags = require('yargs').argv;
 const filter = require('gulp-filter');
 const gulp = require('gulp');
-const nsp = require('gulp-nsp');
-const path = require('path');
 const print = require('gulp-print');
 const tape = require('gulp-tape');
 const tapSummary = require('tap-summary');
@@ -52,7 +50,3 @@ gulp.task('test', () => {
     .pipe(print())
     .pipe(tape(options));
 });
-
-gulp.task('nsp', done => nsp({ package: path.join(__dirname, '../', 'package.json') }, done));
-
-gulp.task('ci', ['lint', 'test', 'nsp']);

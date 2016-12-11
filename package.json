@@ -2,21 +2,19 @@
   "name": "history",
   "version": "1.12.1",
   "scripts": {
-    "ci": "gulp --gulpfile plugins/gulpfile.js ci",
     "dev": "gulp develop",
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "gulp --gulpfile plugins/gulpfile.js lint",
-    "eslint": "eslint **/*.{js,jsx}",
-    "nsp": "gulp --gulpfile plugins/gulpfile.js nsp",
     "release": "standard-version",
     "start": "webpack --config plugins/editAlbum/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc tape plugins/**/*.spec.js",
+    "test:react": "babel-tape-runner plugins/album/test/*.js | faucet",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
     "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov",
-    "test:react": "babel-tape-runner plugins/album/test/*.js | faucet"
+    "ci-lint": "eslint **/*.{js,jsx}"
   },
   "main": "index.js",
   "dependencies": {
@@ -75,7 +73,6 @@
     "gulp-filter": "^4.0.0",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^3.0.1",
-    "gulp-nsp": "^2.4.2",
     "gulp-plumber": "^1.0.1",
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
