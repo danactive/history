@@ -19,7 +19,6 @@ install:
   - yarn install
 before_script:
   - yarn lint
-  - yarn nsp
 scripts:
   - yarn test:all
   - yarn test:react
