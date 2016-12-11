@@ -1,6 +1,7 @@
 /* global GetGalleryNames */
 const React = require('react');
 
+// eslint-disable jsx-a11y/tabindex-no-positive
 class GalleryDropdown extends React.Component {
   constructor(props) {
     super(props);
@@ -28,7 +29,7 @@ class GalleryDropdown extends React.Component {
     return (
       <section>
         Gallery
-        <select id="editGalleries" tabIndex="-1" onChange={this.handleChange}>
+        <select id="editGalleries" tabIndex="1" onChange={this.handleChange}>
           <option key="gallery-none" value="">Select gallery</option>
           {this.galleryOptions}
         </select>
