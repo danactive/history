@@ -17,9 +17,11 @@ before_install:
   - npm install -g yarn --cache-min 999999999
 install:
   - yarn install
-
+before_script:
+  - yarn lint
 scripts:
-  - yarn ci
+  - yarn test:all
+  - yarn test:react
 after_success:
   - yarn ci-cover:coveralls
   - yarn ci-cover:prep-codeclimate

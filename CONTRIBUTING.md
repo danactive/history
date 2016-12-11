@@ -7,14 +7,16 @@
   * Ask a question
   * Submit a bug
   * Recommend a feature
+* Enforced rules for new Issues
+	* Issue description cannot be empty [read more...](https://gitmagic.io/rules/#/issue/body-cannot-be-empty) 
 * More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
-* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
-* Commit message subject must include a GitHub issue  [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
-* Explain code commits and reference the issue number such as (#123)
-* Do not bump version or update changelog as it's automated when manually triggered
-* Write unit tests for code commit
+* Do not bump version or update changelog as it's manually triggered when released
+* Enforced rules for new Pull Requests
+	* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
+	* Commit message subject must include a GitHub issue [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
+* Write unit tests to match existing test coverage
 * More with GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
 
 ## Commit message
