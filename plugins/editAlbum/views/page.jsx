@@ -1,6 +1,6 @@
 const React = require('react');
 
-// eslint-disable jsx-a11y/tabindex-no-positive
+/* eslint-disable jsx-a11y/tabindex-no-positive */
 function Page(props) {
   return (
     <html lang="en">

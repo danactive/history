@@ -1,7 +1,7 @@
 /* global GetGalleryNames */
 const React = require('react');
 
-// eslint-disable jsx-a11y/tabindex-no-positive
+/* eslint-disable jsx-a11y/tabindex-no-positive */
 class GalleryDropdown extends React.Component {
   constructor(props) {
     super(props);
