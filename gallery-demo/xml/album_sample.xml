@@ -44,7 +44,10 @@
 		<photo_loc>Home</photo_loc>
 		<thumb_caption>Fireplace</thumb_caption>
 		<photo_desc>A sample HTML5 video in both MP4 and WebM formats</photo_desc>
-		<size><w>1280</w><h>720</h></size>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
 		<geo>
 			<lat>49.25</lat>
 			<lon>-123.1</lon>
@@ -59,5 +62,10 @@
 		<photo_city>Vancouver International Airport, BC</photo_city>
 		<photo_loc>YVR</photo_loc>
 		<thumb_caption>Airport</thumb_caption>
+		<photo_desc></photo_desc>
+		<ref>
+			<name>Vancouver_International_Airport</name>
+			<source>wikipedia</source>
+		</ref>
 	</item>
 </album>
