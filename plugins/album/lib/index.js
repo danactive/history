@@ -25,7 +25,7 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin', 'v0'],
+      tags: ['api', 'plugin'],
       validate: {
         query: {
           album_stem: validation.albumStem,
@@ -70,9 +70,19 @@ exports.register = (server, options, next) => {
     path: '/album/static/jquery.js',
     config: {
       description: 'jQuery library',
-      tags: ['v0'],
+      tags: ['jQuery'],
       handler: {
         file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
+      },
+    },
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/album/bundle.js',
+    config: {
+      handler: {
+        file: 'plugins/album/public/assets/bundle.js',
       },
     },
   });
@@ -82,5 +92,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-view-album',
-  version: '0.2.0',
+  version: '0.3.0',
 };
