@@ -91,7 +91,7 @@
   "peerDependencies": {
     "eslint": "^3.9.1",
     "eslint-plugin-import": "^2.1.0",
-    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-jsx-a11y": "^3.0.2",
     "eslint-plugin-react": "^6.6.0"
   },
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
