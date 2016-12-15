@@ -8,7 +8,8 @@
   * Submit a bug
   * Recommend a feature
 * Enforced rules for new Issues
-	* Issue description cannot be empty [read more...](https://gitmagic.io/rules/#/issue/body-cannot-be-empty) 
+	* Issue title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/issue/subject-must-be-in-tense)
+	* Issue description cannot be empty [read more...](https://gitmagic.io/rules/#/issue/body-cannot-be-empty)
 * More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
