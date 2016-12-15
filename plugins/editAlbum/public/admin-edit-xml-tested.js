@@ -10,7 +10,7 @@ const schema = {
   geo_lat: 'geo.lat',
   geo_lon: 'geo.lon',
 };
-function SaveToJson() {
+function SaveToJson(event) {
   function examineThumbs(i, thumb) {
     let $field;
     let fieldValue;
@@ -53,6 +53,8 @@ function SaveToJson() {
   $('#listPhotos .selected').each(examineThumbs);
   $('#rawAlbumJson').val(JSON.stringify(album.json)); // display in textarea
   $('#rawAlbumJsonToXml').val(util.xml.formatPretty(util.json.convertToXml(album.json, '')));
+  event.preventDefault();
+  $('input').blur(); // allow arrows to move through thumbnails not fields
 }
 
 // If Node.js then export as public
