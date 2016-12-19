@@ -99,7 +99,7 @@ function Page(props) {
         <script src="./album/static/admin-edit-xml-tested.js" />
         <script src="./album/static/edit_admin_xml.js" />
         <script id="app-state" dangerouslySetInnerHTML={{ __html: props.state }} />
-        <script src="./album/assets/client.js" />
+        <script src="./album/assets/bundle.js" />
       </body>
     </html>
   );

@@ -53,9 +53,10 @@
             <h1>
               <a>
                 <xsl:attribute name="href">
-                  <xsl:text>album_</xsl:text>
+                  <xsl:text>/view/album?album_stem=</xsl:text>
                   <xsl:value-of select="album_name"/>
-                  <xsl:text>.xml</xsl:text>
+                  <xsl:text>&amp;gallery=</xsl:text>
+                  <xsl:value-of select="/gallery/@name"/>
                 </xsl:attribute>
                 <xsl:value-of select="album_h1"/>
               </a>

@@ -57,7 +57,6 @@ exports.register = (server, options, next) => {
     path: '/album/static/jquery.js',
     config: {
       description: 'jQuery library',
-      tags: ['v0'],
       handler: {
         file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
       },
@@ -66,9 +65,9 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
-    path: '/album/assets/client.js',
+    path: '/album/assets/bundle.js',
     handler: {
-      file: 'plugins/editAlbum/public/assets/client.js',
+      file: 'plugins/editAlbum/public/assets/bundle.js',
     },
   });
 
