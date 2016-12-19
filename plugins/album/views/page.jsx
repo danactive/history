@@ -24,7 +24,7 @@ function Page({ album }) {
         <script src="./album/static/jquery.js" />
         <script src="./album/static/lib/color-thief.js" />
         <script src="https://api.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.js" />
-        <script src="./album/static/assets/bundle.js"></script>
+        <script src="./album/static/assets/bundle.js" />
         <script src="./album/static/utils.js" />
         <script src="./album/static/map.js" />
         <script src="./album/static/album.js" />
