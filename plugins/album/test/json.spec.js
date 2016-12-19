@@ -87,15 +87,15 @@ test('Read album XML', { skip: false }, (describe) => {
           photoCity: 'City',
           thumbCaption: 'Caption',
         },
-          {
-            $: { id: 2 },
-            type: 'video',
-            filename: ['2016-Video-Filename.mov', '2016-Video-Filename.avi'],
-            size: { w: 1280, h: 720 },
-            photoDesc: 'Desc',
-            photoCity: 'City',
-            thumbCaption: 'Caption',
-          }],
+        {
+          $: { id: 2 },
+          type: 'video',
+          filename: ['2016-Video-Filename.mov', '2016-Video-Filename.avi'],
+          size: { w: 1280, h: 720 },
+          photoDesc: 'Desc',
+          photoCity: 'City',
+          thumbCaption: 'Caption',
+        }],
       },
     };
     const result = lib.templatePrepare(mock);

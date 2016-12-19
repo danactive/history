@@ -36,58 +36,60 @@ function Page(props) {
             <div id="listPhotos" />
           </div>
           <div id="right" className="grid_8">
-            <fieldset>
-              <legend>Edit Photo Meta Data</legend>
-              <p><b>Generate XML then copy to album XML document.</b></p>
-              <p>
-                <label htmlFor="filename">Filename</label>
-                <input type="text" id="filename" disabled="disabled" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="city">City</label>
-                <input type="text" id="city" tabIndex="4" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="location">Location</label>
-                <input type="text" id="location" tabIndex="5" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="caption">Caption</label>
-                <input type="text" id="caption" tabIndex="6" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="description">Description</label>
-                <input type="text" id="description" tabIndex="7" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="ref_src"><select id="ref_src" tabIndex="8">
-                  <option />
-                  <option value="facebook">Facebook</option>
-                  <option value="google">Google</option>
-                  <option value="wikipedia">Wikipedia</option>
-                </select></label>
-                <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <p>
-                <label htmlFor="geo_lat">Geolocation</label>
-                <input type="text" id="geo_lat" className="half" tabIndex="10" title="Latitude" />
-                <input type="text" id="geo_lon" className="half" tabIndex="11" title="Longitude" />
-                <input type="checkbox" title="Check to disable editability" />
-                <span className="suggestions" />
-              </p>
-              <input type="submit" value="Save" id="saveToJson" tabIndex="12" />
-            </fieldset>
+            <form>
+              <fieldset>
+                <legend>Edit Photo Meta Data</legend>
+                <p><b>Generate XML then copy to album XML document.</b></p>
+                <p>
+                  <label htmlFor="filename">Filename</label>
+                  <input type="text" id="filename" disabled="disabled" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="city">City</label>
+                  <input type="text" id="city" tabIndex="4" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="location">Location</label>
+                  <input type="text" id="location" tabIndex="5" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="caption">Caption</label>
+                  <input type="text" id="caption" tabIndex="6" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="description">Description</label>
+                  <input type="text" id="description" tabIndex="7" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="ref_src"><select id="ref_src" tabIndex="8">
+                    <option />
+                    <option value="facebook">Facebook</option>
+                    <option value="google">Google</option>
+                    <option value="wikipedia">Wikipedia</option>
+                  </select></label>
+                  <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <p>
+                  <label htmlFor="geo_lat">Geolocation</label>
+                  <input type="text" id="geo_lat" className="half" tabIndex="10" title="Latitude" />
+                  <input type="text" id="geo_lon" className="half" tabIndex="11" title="Longitude" />
+                  <input type="checkbox" title="Check to disable editability" />
+                  <span className="suggestions" />
+                </p>
+                <input type="submit" value="Save" id="saveToJson" tabIndex="12" />
+              </fieldset>
+            </form>
             <textarea id="rawAlbumJson" /><textarea id="rawAlbumJsonToXml" />
             <div id="photoPreview" />
           </div>
