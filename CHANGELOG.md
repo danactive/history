@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.14.0"></a>
+# [1.14.0](https://github.com/danactive/history/compare/v1.13.0...v1.14.0) (2016-12-20)
+
+
+### Bug Fixes
+
+* **Edit Album:** Power user may save with enter then navigate with arrow keys ([e13adc6](https://github.com/danactive/history/commit/e13adc6))
+* **View Album:** Change colorbox to latest version [[#70](https://github.com/danactive/history/issues/70)] ([5132cc6](https://github.com/danactive/history/commit/5132cc6))
+* **View Album:** Change ColorThieft to work with colorbox [[#70](https://github.com/danactive/history/issues/70)] ([e339646](https://github.com/danactive/history/commit/e339646))
+* **CI:** Lint [[#72](https://github.com/danactive/history/issues/72)] ([6960b65](https://github.com/danactive/history/commit/6960b65))
+
+
+### Features
+
+* **CI:** Enable SourceClear [[#72](https://github.com/danactive/history/issues/72)] ([15dc85f](https://github.com/danactive/history/commit/15dc85f))
+* **View Album:** Webpack serving CSS and JS for jQuery colobox v1.5.10 [[#70](https://github.com/danactive/history/issues/70)] ([edc4804](https://github.com/danactive/history/commit/edc4804))
+
+
+
 <a name="1.13.0"></a>
 # [1.13.0](https://github.com/danactive/history/compare/v1.12.1...v1.13.0) (2016-12-11)
 
