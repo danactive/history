@@ -26,3 +26,4 @@ after_success:
   - yarn ci-cover:coveralls
   - yarn ci-cover:prep-codeclimate
   - yarn ci-cover:codeclimate
+  - curl -sSL https://download.sourceclear.com/ci.sh | bash
