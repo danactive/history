@@ -13,7 +13,7 @@ function photoViewed() {
   $thumbBox.addClass('imgViewed'); //  change thumb to white
 
   // lightbox
-  jQuery('#cboxOverlay').css('background-color', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
+  jQuery('#cboxOverlay').css('background', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
   jQuery('#cboxTitle').hide();
   jQuery('#cboxLoadedContent').append(jQuery('#cboxTitle').html()).css({ color: jQuery('#cboxTitle').css('color') });
   jQuery.fn.colorbox.resize();
