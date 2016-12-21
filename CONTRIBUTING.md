@@ -2,14 +2,13 @@
 
 ## Issues
 * Improvements and conversations start with project issues
-* Find an existing issue or write a new comment
-  * Answer a question or provide a code solution
-  * Ask a question
-  * Submit a bug
-  * Recommend a feature
+* There are two types of issues
+  * Report a bug
+  * Request a feature
 * Enforced rules for new Issues
 	* Issue title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/issue/subject-must-be-in-tense)
 	* Issue description cannot be empty [read more...](https://gitmagic.io/rules/#/issue/body-cannot-be-empty)
+* New Issues will follow this [Issue Template](.github/ISSUE_TEMPLATE.md)
 * More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
