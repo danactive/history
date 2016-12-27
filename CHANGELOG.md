@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.15.0"></a>
+# [1.15.0](https://github.com/danactive/history/compare/v1.14.0...v1.15.0) (2016-12-27)
+
+
+### Features
+
+* **Repo:** Add template for new GitHub Issues [[#71](https://github.com/danactive/history/issues/71)] ([830d266](https://github.com/danactive/history/commit/830d266))
+* **Repo:** Add template for new Pull Requests [[#71](https://github.com/danactive/history/issues/71)] ([d590cca](https://github.com/danactive/history/commit/d590cca))
+
+
+
 <a name="1.14.0"></a>
 # [1.14.0](https://github.com/danactive/history/compare/v1.13.0...v1.14.0) (2016-12-20)
 
