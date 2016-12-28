@@ -126,9 +126,6 @@
 														<xsl:when test="ref/source = 'google'">
 															&lt;a href="javascript:;" onclick="fOpenWin('http://www.google.com/search?q=<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
 														</xsl:when>
-														<xsl:when test="ref/source = 'wikipedia'">
-															&lt;a href="javascript:;" onclick="fOpenWin('http://en.wikipedia.org/wiki/<xsl:value-of select="ref/name"/>',1000,900);"&gt;More: <xsl:value-of select="ref/name"/>&lt;/a&gt;
-														</xsl:when>
 													</xsl:choose>
 												&lt;/div&gt;
 											</xsl:if>
