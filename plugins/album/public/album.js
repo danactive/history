@@ -14,24 +14,16 @@ function photoViewed() {
 
   // lightbox
   jQuery('#cboxOverlay').css('background', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
-  jQuery('#cboxTitle').hide();
-  jQuery('#cboxLoadedContent').append(jQuery('#cboxTitle').html()).css({ color: jQuery('#cboxTitle').css('color') });
   jQuery.fn.colorbox.resize();
+
   if (map) {
     const index = parseInt($thumbBox.attr('id').replace('photo', ''), 10);
     map.pin.go(index);
   }
 }
 jQuery('#albumBox a').colorbox({
-  right: '25%',
   preloading: true,
   onComplete: photoViewed,
-  title: function title() {
-    if (this && this.dataset && this.dataset.caption) {
-      return this.dataset.caption;
-    }
-    return jQuery(this).data('caption');
-  },
   transition: 'none',
 });
 
