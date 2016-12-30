@@ -4,6 +4,34 @@ test('Read album XML', { skip: false }, (describe) => {
   const lib = require('../lib/json');
   const testCases = require('./cases');
 
+  describe.test('* Check for safe paths', { skip: false }, (assert) => {
+    let result = lib.safeAlbumPath();
+    assert.ok(result.isBoom, 'Undefined fails');
+
+    result = lib.safeAlbumPath('pass');
+    assert.ok(result.isBoom, 'Undefined fails (x2)');
+
+    result = lib.safeAlbumPath('');
+    assert.ok(result.isBoom, 'Blank fails');
+
+    result = lib.safeAlbumPath('pass', '');
+    assert.ok(result.isBoom, 'Blank fails (x2)');
+
+    result = lib.safeAlbumPath('@');
+    assert.ok(result.isBoom, 'Special char fails');
+
+    result = lib.safeAlbumPath('pass', '@');
+    assert.ok(result.isBoom, 'Special char fails (x2)');
+
+    result = lib.safeAlbumPath('pass', 'pass');
+    assert.equal(typeof result, 'string', 'Pass');
+
+    result = lib.safeAlbumPath('_PASS--123_', '-456__PASS-');
+    assert.equal(typeof result, 'string', 'Pass (x2)');
+
+    assert.end();
+  });
+
   testCases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, (assert) => {
       lib.getAlbum(testCase.request.gallery, testCase.request.album_stem)

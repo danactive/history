@@ -5,6 +5,44 @@ const normalize = {
 };
 
 testCases.push({
+  name: '* Catch missing gallery',
+  options: { skip: false },
+  request: {},
+  success: assert => assert.fail('Unexpected response found'),
+  error: (assert, error, options = {}) => {
+    assert.ok(error, 'Caught expected error');
+
+    if (options.rest === true) {
+      assert.ok(normalize.statusCode(error), 400, 'Status code');
+    } else {
+      assert.ok(normalize.statusCode(error), 406, 'Status code');
+    }
+
+    assert.end();
+  },
+});
+
+testCases.push({
+  name: '* Catch missing album',
+  options: { skip: true },
+  request: {
+    gallery: 'FAKE',
+  },
+  success: assert => assert.fail('Unexpected response found'),
+  error: (assert, error, options = {}) => {
+    assert.ok(error, 'Caught expected error');
+
+    if (options.rest === true) {
+      assert.ok(normalize.statusCode(error), 400, 'Status code');
+    } else {
+      assert.ok(normalize.statusCode(error), 406, 'Status code');
+    }
+
+    assert.end();
+  },
+});
+
+testCases.push({
   name: '* Catch fake gallery',
   options: { skip: false },
   request: {

@@ -44,11 +44,13 @@ test('Verify /album route', { skip: false }, (describe) => {
 
         return server.inject(request, (response) => {
           if (response.result.error) {
-            return testCase.error(assert, response.result);
+            return testCase.error(assert, response.result, { rest: true });
           }
+
           if (testCase.success) {
-            return testCase.success(assert, response.result);
+            return testCase.success(assert, response.result, { rest: true });
           }
+
           return testCase.successView(assert, response.result);
         });
       });

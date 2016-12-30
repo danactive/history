@@ -94,20 +94,43 @@ function templatePrepare(result = {}) {
 }
 module.exports.templatePrepare = templatePrepare;
 
+function safeAlbumPath(gallery, albumStem) {
+  const restriction = name => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
+    and may contain any special characters including dash (-) or underscore (_)`;
+
+  if (!/^[a-z0-9_-]{1,25}$/gi.test(albumStem) || !albumStem) {
+    return boom.notAcceptable(restriction('gallery id'));
+  }
+
+  if (!/^[a-z0-9_-]{1,25}$/gi.test(gallery) || !gallery) {
+    return boom.notAcceptable(restriction('album id'));
+  }
+
+  return path.join(__dirname, '../../../', `gallery-${gallery}`, 'xml', `album_${albumStem}.xml`);
+}
+module.exports.safeAlbumPath = safeAlbumPath;
+
 
 module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
   const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [name => camelCase(name)] };
   const parser = new xml2js.Parser(options);
-  const xmlPath = path.join(__dirname, '../../../', `gallery-${gallery}`, 'xml', `album_${albumStem}.xml`);
+  const xmlPath = safeAlbumPath(gallery, albumStem);
+
+  if (typeof xmlPath === 'object') {
+    reject(xmlPath);
+    return;
+  }
 
   fs.readFile(xmlPath, (readError, fileData) => {
     if (readError) {
       reject(boom.notFound('XML album path is not found', readError));
+      return;
     }
 
     parser.parseString(fileData, (parseError, result) => {
       if (parseError) {
         reject(boom.forbidden('XML format is invalid'));
+        return;
       }
 
       resolve(templatePrepare(result));
