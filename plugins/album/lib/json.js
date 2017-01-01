@@ -6,6 +6,7 @@ const path = require('path');
 const xml2js = require('xml2js');
 
 const utils = require('../../utils/lib');
+const validation = require('../../../lib/validation');
 
 function title(item) {
   const presentable = (...values) => values.every(value => value !== undefined && value !== '');
@@ -98,15 +99,18 @@ function safeAlbumPath(gallery, albumStem) {
   const restriction = name => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
     and may contain any special characters including dash (-) or underscore (_)`;
 
-  if (!/^[a-z0-9_-]{1,25}$/gi.test(albumStem) || !albumStem) {
-    return boom.notAcceptable(restriction('gallery id'));
-  }
-
-  if (!/^[a-z0-9_-]{1,25}$/gi.test(gallery) || !gallery) {
+  if (validation.albumStem.validate(albumStem).error || !albumStem) {
     return boom.notAcceptable(restriction('album id'));
   }
 
-  return path.join(__dirname, '../../../', `gallery-${gallery}`, 'xml', `album_${albumStem}.xml`);
+  if (validation.gallery.validate(gallery).error || !gallery) {
+    return boom.notAcceptable(restriction('gallery id'));
+  }
+
+  const safeAlbumStem = `album_${albumStem}.xml`;
+  const safeGallery = `gallery-${gallery}`;
+
+  return path.join(__dirname, '../../../', safeGallery, 'xml', safeAlbumStem);
 }
 module.exports.safeAlbumPath = safeAlbumPath;
 

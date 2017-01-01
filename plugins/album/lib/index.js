@@ -1,7 +1,6 @@
 /* global __dirname, require */
-const joi = require('joi');
-
 const json = require('./json');
+const validation = require('../../../lib/validation');
 
 const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
@@ -11,12 +10,6 @@ const handler = (request, reply) => {
   json.getAlbum(gallery, albumStem)
     .then(response => (raw ? reply(response) : reply.view('plugins/album/views/page.jsx', response)))
     .catch(error => reply(error));
-};
-
-const validation = {
-  albumStem: joi.string().required(),
-  gallery: joi.string().required().example('demo'),
-  raw: joi.boolean().truthy('true').falsy('false').default(false),
 };
 
 exports.register = (server, options, next) => {
