@@ -5,29 +5,24 @@ test('Read album XML', { skip: false }, (describe) => {
   const testCases = require('./cases');
 
   describe.test('* Check for safe paths', { skip: false }, (assert) => {
-    let result = lib.safeAlbumPath();
-    assert.ok(result.isBoom, 'Undefined fails');
+    const names = ['gallery', 'albumStem'];
 
-    result = lib.safeAlbumPath('pass');
-    assert.ok(result.isBoom, 'Undefined fails (x2)');
+    names.forEach((name) => {
+      let result = lib.safePath(name, undefined);
+      assert.ok(result.isBoom, `Undefined fails ${name}`);
 
-    result = lib.safeAlbumPath('');
-    assert.ok(result.isBoom, 'Blank fails');
+      result = lib.safePath(name, '');
+      assert.ok(result.isBoom, `Blank fails ${name}`);
 
-    result = lib.safeAlbumPath('pass', '');
-    assert.ok(result.isBoom, 'Blank fails (x2)');
+      result = lib.safePath(name, '@');
+      assert.ok(result.isBoom, `Special char fails ${name}`);
 
-    result = lib.safeAlbumPath('@');
-    assert.ok(result.isBoom, 'Special char fails');
+      result = lib.safePath(name, 'pass');
+      assert.equal(typeof result, 'string', `Pass ${name}`);
 
-    result = lib.safeAlbumPath('pass', '@');
-    assert.ok(result.isBoom, 'Special char fails (x2)');
-
-    result = lib.safeAlbumPath('pass', 'pass');
-    assert.equal(typeof result, 'string', 'Pass');
-
-    result = lib.safeAlbumPath('_PASS--123_', '-456__PASS-');
-    assert.equal(typeof result, 'string', 'Pass (x2)');
+      result = lib.safePath(name, '_PASS--123_');
+      assert.equal(typeof result, 'string', `Pass (x2) ${name}`);
+    });
 
     assert.end();
   });

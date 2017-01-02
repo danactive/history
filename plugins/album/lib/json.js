@@ -95,35 +95,44 @@ function templatePrepare(result = {}) {
 }
 module.exports.templatePrepare = templatePrepare;
 
-function safeAlbumPath(gallery, albumStem) {
-  const restriction = name => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
+function safePath(name, value) {
+  const restriction = () => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
     and may contain any special characters including dash (-) or underscore (_)`;
 
-  if (validation.albumStem.validate(albumStem).error || !albumStem) {
-    return boom.notAcceptable(restriction('album id'));
+  if (!value || validation[name].validate(value).error) {
+    return boom.notAcceptable(restriction());
   }
 
-  if (validation.gallery.validate(gallery).error || !gallery) {
-    return boom.notAcceptable(restriction('gallery id'));
+  if (name === 'albumStem') {
+    return `album_${value}.xml`;
   }
 
-  const safeAlbumStem = `album_${albumStem}.xml`;
-  const safeGallery = `gallery-${gallery}`;
-
-  return path.join(__dirname, '../../../', safeGallery, 'xml', safeAlbumStem);
+  return `gallery-${value}`;
 }
-module.exports.safeAlbumPath = safeAlbumPath;
+module.exports.safePath = safePath;
+
+function ensureSafePath(name, value, reject) {
+  const partialPath = safePath(name, value);
+
+  if (partialPath.isBoom === true) {
+    return reject(partialPath);
+  }
+
+  return partialPath;
+}
 
 
 module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
   const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [name => camelCase(name)] };
   const parser = new xml2js.Parser(options);
-  const xmlPath = safeAlbumPath(gallery, albumStem);
 
-  if (typeof xmlPath === 'object') {
-    reject(xmlPath);
-    return;
-  }
+  const xmlPath = path.join(
+    __dirname,
+    '../../../',
+    ensureSafePath('gallery', gallery, reject),
+    'xml',
+    ensureSafePath('albumStem', albumStem, reject),
+  );
 
   fs.readFile(xmlPath, (readError, fileData) => {
     if (readError) {
