@@ -1,7 +1,7 @@
 module.exports = {
   entry: {
     album: './plugins/album/lib/client.js',
-    editAlbum: './plugins/editAlbum/lib/client.js'
+    editAlbum: './plugins/editAlbum/lib/client.js',
   },
   resolve: {
     extensions: ['', '.css', '.js', '.jsx'],
@@ -19,7 +19,7 @@ module.exports = {
         },
       },
       { test: /\.css$/, loader: 'style!css' },
-      { test: /\.(jpe?g|png|gif|svg)$/i, loader: "url-loader?limit=100000" }
+      { test: /\.(jpe?g|png|gif|svg)$/i, loader: 'url-loader?limit=100000' },
     ],
   },
 };

@@ -1,5 +1,5 @@
-import test from 'tape'
-import React from 'react'
+import test from 'tape';
+import React from 'react';
 import { shallow, mount } from 'enzyme';
 
 import './react-enzyme-setup';
@@ -13,7 +13,7 @@ test('React Component - Thumb', (describe) => {
   };
 
   describe.test('* Thumbnail image and caption', (assert) => {
-    const wrapper = shallow(<Thumb item={item} />)
+    const wrapper = shallow(<Thumb item={item} />);
     assert.ok(wrapper.contains(<img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />));
     assert.ok(wrapper.contains(<div className="albumBoxPhotoCaption">{item.thumbCaption}</div>));
     assert.end();
@@ -32,8 +32,8 @@ test('React Component - Thumb', (describe) => {
 
   describe.test('* Title - Wikipedia', (assert) => {
     item.ref = {
-      name: "Vancouver_International_Airport",
-      source: "wikipedia"
+      name: 'Vancouver_International_Airport',
+      source: 'wikipedia',
     };
     const wrapper = mount(<Thumb item={item} />);
     const title = wrapper.find('a').props().title;

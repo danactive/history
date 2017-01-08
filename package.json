@@ -5,7 +5,8 @@
     "dev": "gulp develop",
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
-    "lint": "gulp --gulpfile plugins/gulpfile.js lint",
+    "lint": "eslint lib plugins *.js --ext .js,.jsx",
+    "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
     "start": "webpack --config plugins/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
@@ -13,8 +14,7 @@
     "test:react": "babel-tape-runner plugins/album/test/*.js | faucet",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
-    "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov",
-    "ci-lint": "eslint **/*.{js,jsx}"
+    "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov"
   },
   "main": "index.js",
   "dependencies": {
@@ -74,7 +74,6 @@
     "gulp": "^3.9.0",
     "gulp-concat": "^2.4.3",
     "gulp-develop-server": "^0.5.2",
-    "gulp-eslint": "^3.0.1",
     "gulp-filter": "^4.0.0",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^3.0.1",
