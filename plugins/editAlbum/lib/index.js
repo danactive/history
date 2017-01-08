@@ -1,7 +1,7 @@
 /* global __dirname, require */
 const joi = require('joi');
 
-const gallery = require('../../gallery/lib');
+const gallery = require('../../gallery/lib/gallery');
 
 const handler = (request, reply) => {
   const raw = request.query.raw;

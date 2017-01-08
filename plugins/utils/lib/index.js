@@ -6,7 +6,7 @@ const mime = require('mime-types');
 const path = require('path');
 
 const configJson = require('../../../config.json');
-// const logMod = require('../../log/lib');
+// const logMod = require('../../log/lib/log');
 const pkg = require('../../../package.json');
 
 // const log = logMod('util');
@@ -113,10 +113,6 @@ function setError(error, message, _data, serviceAddress) {
     error: boomError,
     version: pkg.version,
   };
-
-  if (serviceAddress) {
-    out.meta.serviceAddress = serviceAddress;
-  }
 
   return out;
 }

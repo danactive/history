@@ -30,6 +30,7 @@
     "clone": "^2.0.0",
     "dot-prop": "^4.0.0",
     "extend": "^3.0.0",
+    "geojson": "^0.4.0",
     "glob": "^7.0.0",
     "gm": "^1.23.0",
     "hapi": "^16.0.0",
@@ -52,6 +53,7 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "@mapbox/geojsonhint": "^1.2.1",
     "babel-preset-stage-0": "^6.16.0",
     "babel-tape-runner": "^2.0.1",
     "calipers": "^2.0.0",

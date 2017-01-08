@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Log', { skip: false }, (describe) => {
-  const lib = require('../lib');
+  const lib = require('../lib/log');
 
   const moduleName = 'test';
 

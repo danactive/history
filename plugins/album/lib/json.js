@@ -81,11 +81,16 @@ function templatePrepare(result = {}) {
     const thumbPath = getThumbPath(item, gallery);
     const photoPath = utils.file.photoPath(thumbPath);
     const videoPath = getVideoPath(item, gallery);
+    // todo workaround for nested https://github.com/caseypt/GeoJSON.js/issues/27
+    const geo_lat = (item.geo && item.geo.lat) || 0; // eslint-disable-line camelcase
+    const geo_lon = (item.geo && item.geo.lon) || 0; // eslint-disable-line camelcase
     const enhancements = {
       thumbCaption: caption(item),
       title: title(item),
       thumbPath,
       mediaPath: (item.type === 'video') ? videoPath : photoPath,
+      geo_lat,
+      geo_lon,
     };
 
     return Object.assign(item, enhancements);
@@ -131,7 +136,7 @@ module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) 
     '../../../',
     ensureSafePath('gallery', gallery, reject),
     'xml',
-    ensureSafePath('albumStem', albumStem, reject),
+    ensureSafePath('albumStem', albumStem, reject) // eslint-disable-line comma-dangle
   );
 
   fs.readFile(xmlPath, (readError, fileData) => {

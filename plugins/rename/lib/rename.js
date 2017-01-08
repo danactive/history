@@ -3,7 +3,7 @@ const boom = require('boom');
 const fs = require('fs');
 const path = require('path');
 
-const exists = require('../../exists/lib');
+const exists = require('../../exists/lib/exists');
 const utils = require('../../utils/lib');
 
 /**

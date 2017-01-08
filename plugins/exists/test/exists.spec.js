@@ -3,7 +3,7 @@ const tape = require('tape-catch');
 tape('Index', { skip: false }, (describe) => {
   const path = require('path');
 
-  const lib = require('../lib');
+  const lib = require('../lib/exists');
 
   describe.test('* Real relative file exists', (assert) => {
     const testPath = './plugins/exists/test/fixtures/exists.txt';
