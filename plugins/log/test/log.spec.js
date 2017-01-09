@@ -4,41 +4,34 @@ tape('Log', { skip: false }, (describe) => {
   const lib = require('../lib/log');
 
   const moduleName = 'test';
+  const createCallbackHandler = (assert, testMessage) => (message) => {
+    assert.ok(message.indexOf(testMessage) > -1, 'Message found');
+    assert.ok(message.indexOf(moduleName) > -1, 'Module name found');
+    assert.end();
+  };
 
   describe.test('* Operational message', (assert) => {
-    const testMessage = 'plugin-test-1';
+    const testMessage = 'plugin-test-operational';
     const logger = lib(moduleName, {
-      callback: (message) => {
-        assert.ok(message.indexOf(testMessage) > -1, 'Message found');
-        assert.ok(message.indexOf(moduleName) > -1, 'Module name found');
-        assert.end();
-      },
+      callback: createCallbackHandler(assert, testMessage),
     });
 
     logger.operational(testMessage);
   });
 
   describe.test('* Debug message', (assert) => {
-    const testMessage = 'plugin-test-2';
+    const testMessage = 'plugin-test-debug';
     const logger = lib(moduleName, {
-      callback: (message) => {
-        assert.ok(message.indexOf(testMessage) > -1, 'Message found');
-        assert.ok(message.indexOf(moduleName) > -1, 'Module name found');
-        assert.end();
-      },
+      callback: createCallbackHandler(assert, testMessage),
     });
 
     logger.debug(testMessage);
   });
 
   describe.test('* Panic message', (assert) => {
-    const testMessage = 'plugin-test-3';
+    const testMessage = 'plugin-test-panic';
     const logger = lib(moduleName, {
-      callback: (message) => {
-        assert.ok(message.indexOf(testMessage) > -1, 'Message found');
-        assert.ok(message.indexOf(moduleName) > -1, 'Module name found');
-        assert.end();
-      },
+      callback: createCallbackHandler(assert, testMessage),
     });
 
     logger.panic(testMessage);
