@@ -1,8 +1,24 @@
 /* global ColorThief, createMap, jQuery, getQueryByName */
+const MAP_BOX_ID = 'mapBox';
+
 const colorThief = new ColorThief();
 let map;
-const mapBoxId = 'mapBox';
-const $mapBox = jQuery(`#${mapBoxId}`);
+const $mapBox = jQuery(`#${MAP_BOX_ID}`);
+
+const toggleMapButtonLabel = () => {
+  const SHOW_MAP_LABEL = 'Expand Map';
+  const HIDE_MAP_LABEL = 'Collapse Map';
+
+  const $button = jQuery(this);
+  // const $button = jQuery(this.target); // jQuery 3.x
+  const textOnClick = $button.text();
+
+  if (textOnClick === HIDE_MAP_LABEL) {
+    $button.text(SHOW_MAP_LABEL);
+  } else {
+    $button.text(HIDE_MAP_LABEL);
+  }
+};
 
 function photoViewed() {
   const photoImage = jQuery('img.cboxPhoto').get(0);
@@ -21,36 +37,16 @@ function photoViewed() {
     map.pin.go(index);
   }
 }
+
 jQuery('#albumBox a').colorbox({
   preloading: true,
   onComplete: photoViewed,
   transition: 'none',
 });
 
-jQuery('#linkMap').click(function toggleMap() {
-  const SHOW_MAP_LABEL = 'Expand Map';
-  const HIDE_MAP_LABEL = 'Collapse Map';
-  const toggleMapButtonLabel = () => {
-    const $button = jQuery(this);
-    // const $button = jQuery(this.target); // jQuery 3.x
-    const textOnClick = $button.text();
-
-    if (textOnClick === HIDE_MAP_LABEL) {
-      $button.text(SHOW_MAP_LABEL);
-    } else {
-      $button.text(HIDE_MAP_LABEL);
-    }
-  };
-  jQuery.ajax({
-    url: '/view/album',
-    data: {
-      album_stem: getQueryByName('album_stem'),
-      gallery: getQueryByName('gallery'),
-      raw: true,
-    },
-    success: createMap,
-  });
+jQuery('#linkMap').click(() => {
   jQuery('body').toggleClass('splitMode');
   $mapBox.toggleClass('hide');
   toggleMapButtonLabel();
+  createMap(MAP_BOX_ID);
 });

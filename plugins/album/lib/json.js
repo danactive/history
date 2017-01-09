@@ -82,8 +82,8 @@ function templatePrepare(result = {}) {
     const photoPath = utils.file.photoPath(thumbPath);
     const videoPath = getVideoPath(item, gallery);
     // todo workaround for nested https://github.com/caseypt/GeoJSON.js/issues/27
-    const geo_lat = (item.geo && item.geo.lat) || 0; // eslint-disable-line camelcase
-    const geo_lon = (item.geo && item.geo.lon) || 0; // eslint-disable-line camelcase
+    const geo_lat = (item.geo && item.geo.lat) || null; // eslint-disable-line camelcase
+    const geo_lon = (item.geo && item.geo.lon) || null; // eslint-disable-line camelcase
     const enhancements = {
       thumbCaption: caption(item),
       title: title(item),
