@@ -2,7 +2,7 @@ const boom = require('boom');
 const gm = require('gm');
 const path = require('path');
 
-const existsMod = require('../../exists/lib');
+const existsMod = require('../../exists/lib/exists');
 const utils = require('../../utils/lib');
 
 /**

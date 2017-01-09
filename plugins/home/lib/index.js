@@ -1,6 +1,6 @@
 /* global __dirname, require */
 
-const gallery = require('../../gallery/lib');
+const gallery = require('../../gallery/lib/gallery');
 
 const handler = (request, reply) => {
   gallery.getGalleries().then(galleries => reply.view('plugins/home/views/page.jsx', { galleries }));

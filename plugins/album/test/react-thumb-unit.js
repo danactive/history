@@ -54,8 +54,8 @@ test('React Component - Thumb', (describe) => {
 
   describe.test('* Title - Wikipedia', { skip: false }, (assert) => {
     item.ref = {
-      name: "Vancouver_International_Airport",
-      source: "wikipedia"
+      name: 'Vancouver_International_Airport',
+      source: 'wikipedia',
     };
     const component = createComponent.shallow(<Thumb item={item} />);
     const title = component.findByQuery('a')[0].props.title;

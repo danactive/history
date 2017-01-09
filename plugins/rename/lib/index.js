@@ -2,9 +2,9 @@
 const boom = require('boom');
 const joi = require('joi');
 
-const existsMod = require('../../exists/lib');
+const existsMod = require('../../exists/lib/exists');
 const filenamesMod = require('./filenames');
-// const logMod = require('../../log/lib');
+// const logMod = require('../../log/lib/log');
 const renameMod = require('./rename');
 
 const handler = (request, reply) => {

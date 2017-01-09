@@ -15,12 +15,13 @@ const config = require('./config.json');
 const libAdmin = require('./plugins/admin/lib/index');
 const viewAlbum = require('./plugins/album/lib/index');
 const editAlbum = require('./plugins/editAlbum/lib/index');
+const libGeojson = require('./plugins/geojson/lib/index');
 const libHome = require('./plugins/home/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libRoutes = require('./src/js/route.js');
 const libVideo = require('./plugins/video/lib/index');
-const logMod = require('./plugins/log/lib');
+const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
 
 require('babel-core/register')({
@@ -38,6 +39,7 @@ server.register([
   { register: libAdmin, routes: { prefix: '/admin' } },
   { register: viewAlbum, routes: { prefix: '/view' } },
   { register: editAlbum, routes: { prefix: '/edit' } },
+  { register: libGeojson, routes: { prefix: '/geojson' } },
   { register: libHome },
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },

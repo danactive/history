@@ -6,7 +6,7 @@ const mime = require('mime-types');
 const path = require('path');
 
 const configJson = require('../../../config.json');
-// const logMod = require('../../log/lib');
+// const logMod = require('../../log/lib/log');
 const pkg = require('../../../package.json');
 
 // const log = logMod('util');
@@ -94,10 +94,9 @@ module.exports.platform = platform();
  * @param {object} [error] Node.js create error object (may be Boom wrapped)
  * @param {string} [message] Description of error
  * @param {object} [data] Additional meta data of error
- * @param {string} [serviceAddress] Service API endpoint with query string parameters
  * @return {object} Returns JSON of error details
  */
-function setError(error, message, _data, serviceAddress) {
+function setError(error, message, _data) {
   const hasError = (error !== undefined && error !== null);
   const out = {};
   const statusCode = 500;
@@ -113,10 +112,6 @@ function setError(error, message, _data, serviceAddress) {
     error: boomError,
     version: pkg.version,
   };
-
-  if (serviceAddress) {
-    out.meta.serviceAddress = serviceAddress;
-  }
 
   return out;
 }

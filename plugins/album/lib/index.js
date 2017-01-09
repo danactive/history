@@ -8,7 +8,7 @@ const handler = (request, reply) => {
   const raw = request.query.raw;
 
   json.getAlbum(gallery, albumStem)
-    .then(response => (raw ? reply(response) : reply.view('plugins/album/views/page.jsx', response)))
+    .then(albumData => (raw ? reply(albumData) : reply.view('plugins/album/views/page.jsx', albumData)))
     .catch(error => reply(error));
 };
 
@@ -34,7 +34,6 @@ exports.register = (server, options, next) => {
     path: '/album/static/{path*}',
     config: {
       description: 'Static assets like JS, CSS, images files',
-      tags: ['v0'],
       handler: {
         directory: {
           path: 'plugins/album/public',
@@ -51,7 +50,6 @@ exports.register = (server, options, next) => {
     path: '/album/static/utils.js',
     config: {
       description: 'Utility script',
-      tags: ['v0'],
       handler: {
         file: 'plugins/utils/public/utils.js',
       },
