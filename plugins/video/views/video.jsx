@@ -21,7 +21,7 @@ Video.propTypes = {
     h: React.PropTypes.number.isRequired,
     gallery: React.PropTypes.string.isRequired,
     sources: React.PropTypes.string.isRequired,
-  }),
+  }).isRequired,
 };
 
 module.exports = Video;

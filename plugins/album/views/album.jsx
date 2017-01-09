@@ -14,8 +14,8 @@ Album.propTypes = {
       $: React.PropTypes.shape({
         id: React.PropTypes.string,
       }),
-    })),
-  }),
+    })).isRequired,
+  }).isRequired,
 };
 
 module.exports = Album;

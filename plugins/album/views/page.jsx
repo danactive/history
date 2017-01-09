@@ -34,7 +34,7 @@ function Page({ album }) {
 }
 
 Page.propTypes = {
-  album: React.PropTypes.shape(),
+  album: React.PropTypes.shape().isRequired,
 };
 
 module.exports = Page;
