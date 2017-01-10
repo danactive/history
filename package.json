@@ -74,7 +74,7 @@
     "gulp": "^3.9.0",
     "gulp-concat": "^2.4.3",
     "gulp-develop-server": "^0.5.2",
-    "gulp-filter": "^4.0.0",
+    "gulp-filter": "^5.0.0",
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^3.0.1",
     "gulp-plumber": "^1.0.1",
