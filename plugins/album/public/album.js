@@ -1,4 +1,4 @@
-/* global ColorThief, createMap, jQuery, getQueryByName */
+/* global ColorThief, createMap, jQuery */
 const MAP_BOX_ID = 'mapBox';
 
 const colorThief = new ColorThief();
