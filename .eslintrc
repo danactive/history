@@ -1,6 +1,11 @@
 {
     "extends": "airbnb",
     "rules": {
-        "max-len": [2, 150, 4]
+        "max-len": [2, 150, 4],
+		"no-restricted-properties": ["off", {
+			"object": "Math",
+			"property": "pow",
+			"message": "Overwrite AirBnb rule, avoid ES7 exponentiation operator (**) use Math.pow() instead.",
+		}],
     }
 }

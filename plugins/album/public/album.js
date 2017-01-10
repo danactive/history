@@ -1,8 +1,7 @@
-/* global ColorThief, createMap, jQuery, getQueryByName */
+/* global ColorThief, createMap, jQuery, getQueryByName, window */
 const MAP_BOX_ID = 'mapBox';
 
 const colorThief = new ColorThief();
-let map;
 const $mapBox = jQuery(`#${MAP_BOX_ID}`);
 
 const toggleMapButtonLabel = () => {
@@ -20,6 +19,17 @@ const toggleMapButtonLabel = () => {
   }
 };
 
+function showMarker(map, _lon, _lat) {
+  const lat = parseFloat(_lat);
+  const lon = parseFloat(_lon);
+
+  if (Number.isNaN(lat) || Number.isNaN(lon)) {
+    return;
+  }
+
+  map.flyTo({ center: [lon, lat], zoom: 14, screenSpeed: 2, curve: Math.pow(3, 0.25) });
+}
+
 function photoViewed() {
   const photoImage = jQuery('img.cboxPhoto').get(0);
   const $thumbImage = jQuery(this);
@@ -32,9 +42,8 @@ function photoViewed() {
   jQuery('#cboxOverlay').css('background', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
   jQuery.fn.colorbox.resize();
 
-  if (map) {
-    const index = parseInt($thumbBox.attr('id').replace('photo', ''), 10);
-    map.pin.go(index);
+  if (window.map) {
+    showMarker(window.map, $thumbBox.attr('data-lon'), $thumbBox.attr('data-lat'));
   }
 }
 

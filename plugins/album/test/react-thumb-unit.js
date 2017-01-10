@@ -8,7 +8,7 @@ import Thumb from '../views/thumb';
 
 const test = addAssertions(tape, { jsxEquals });
 
-test('React Component - Thumb', (describe) => {
+test('React Component - Thumb', { skip: false }, (describe) => {
   const item = {
     mediaPath: 'c',
     thumbCaption: 'a',
@@ -29,7 +29,7 @@ test('React Component - Thumb', (describe) => {
     renderer.render(<Thumb item={item} />);
     const result = renderer.getRenderOutput();
 
-    assert.jsxEquals(result, <li className="liAlbumPhoto">
+    assert.jsxEquals(result, <li className="liAlbumPhoto" data-lon={undefined} data-lat={undefined}>
       <div className="albumBoxPhotoImg">
         <a href="c" rel="set" title="">
           <img alt="a" src="b" title={undefined} />
@@ -38,6 +38,26 @@ test('React Component - Thumb', (describe) => {
       <div className="albumBoxPhotoCaption">a</div>
     </li>);
 
+    assert.end();
+  });
+
+  describe.test('* Thumbnail missing geocode', (assert) => {
+    const component = createComponent.shallow(<Thumb item={item} />);
+    const liProps = component.findByQuery('li')[0].props;
+    assert.notOk(liProps['data-lon'], 'Missing longitude');
+    assert.notOk(liProps['data-lat'], 'Missing latitude');
+    assert.end();
+  });
+
+  describe.test('* Thumbnail has geocode', (assert) => {
+    item.geo = {
+      lat: 1,
+      lon: 0,
+    };
+    const component = createComponent.shallow(<Thumb item={item} />);
+    const liProps = component.findByQuery('li')[0].props;
+    assert.equal(liProps['data-lon'], 0, 'Has longitude');
+    assert.equal(liProps['data-lat'], 1, 'Has latitude');
     assert.end();
   });
 
