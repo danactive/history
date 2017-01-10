@@ -1,49 +1,77 @@
 /* global document, mapboxgl, window */
-function createMap(response) {
-  const ICON_SQUARE_PX = 60;
-  const hasGeo = item => item.geo;
-  const schema20ToGeoJson = item => ({
-    type: 'Feature',
-    properties: {
-      caption: item.caption,
-      thumbPath: item.thumbPath,
-    },
-    geometry: {
-      type: 'Point',
-      coordinates: [item.geo.lon, item.geo.lat],
-    },
-  });
-  const geojson = { type: 'FeatureCollection', features: [] };
-
-  geojson.features = response.album.items.filter(hasGeo).map(schema20ToGeoJson);
-
+function createMap(containerId) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
   const map = new mapboxgl.Map({
-    container: 'mapBox', // container id
-    style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
-    zoom: response.album.meta.geo.googleZoom,
+    container: containerId,
+    style: 'mapbox://styles/mapbox/dark-v9',
+    center: [-103.59179687498357, 40.66995747013945],
+    zoom: 3,
   });
 
-  // add markers to map
-  geojson.features.forEach((marker) => {
-    // create a DOM element for the marker
-    const el = document.createElement('div');
-    el.className = 'marker';
-    el.style.backgroundImage = `url(${marker.properties.thumbPath})`;
-    el.style.width = `${ICON_SQUARE_PX}px`;
-    el.style.height = `${ICON_SQUARE_PX}px`;
-
-    el.addEventListener('click', () => {
-      map.panTo(marker.geometry.coordinates);
+  map.on('load', () => {
+    // Add a new source from our GeoJSON data and set the
+    // 'cluster' option to true.
+    map.addSource('earthquakes', {
+      type: 'geojson',
+      // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
+      // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
+      data: '/geojson?album_stem=sample&gallery=demo',
+      cluster: true,
+      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
     });
 
-    // add marker to map
-    new mapboxgl.Marker(el, { offset: [-ICON_SQUARE_PX / 2, -ICON_SQUARE_PX / 2] })
-      .setLngLat(marker.geometry.coordinates)
-      .addTo(map);
-  });
+    // Use the earthquakes source to create five layers:
+    // One for unclustered points, three for each cluster category,
+    // and one for cluster labels.
+    map.addLayer({
+      id: 'unclustered-points',
+      type: 'symbol',
+      source: 'earthquakes',
+      filter: ['!has', 'point_count'],
+      layout: {
+        'icon-image': 'marker-15',
+      },
+    });
 
-  map.panTo(geojson.features[0].geometry.coordinates);
+    // Display the earthquake data in three layers, each filtered to a range of
+    // count values. Each range gets a different fill color.
+    const layers = [
+      [150, '#f28cb1'],
+      [20, '#f1f075'],
+      [0, '#51bbd6'],
+    ];
+
+    layers.forEach((layer, i) => {
+      map.addLayer({
+        id: `cluster-${i}`,
+        type: 'circle',
+        source: 'earthquakes',
+        paint: {
+          'circle-color': layer[1],
+          'circle-radius': 18,
+        },
+        filter: i === 0 ?
+          ['>=', 'point_count', layer[0]] :
+          ['all', ['>=', 'point_count', layer[0]], ['<', 'point_count', layers[i - 1][0]]],
+      });
+    });
+
+    // Add a layer for the clusters' count labels
+    map.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'earthquakes',
+      layout: {
+        'text-field': '{point_count}',
+        'text-font': [
+          'DIN Offc Pro Medium',
+          'Arial Unicode MS Bold',
+        ],
+        'text-size': 12,
+      },
+    });
+  });
 }
 
 // If Node.js then export as public
