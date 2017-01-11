@@ -1,4 +1,4 @@
-/* global document, mapboxgl, window */
+/* global document, getQueryByName, mapboxgl, window */
 function createMap(containerId) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
   window.map = new mapboxgl.Map({
@@ -15,7 +15,7 @@ function createMap(containerId) {
       type: 'geojson',
       // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
       // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
-      data: '/geojson?album_stem=sample&gallery=demo',
+      data: `/geojson?album_stem=${albumStem}&gallery=${gallery}`,
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
