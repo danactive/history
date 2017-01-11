@@ -1,20 +1,17 @@
 /* global document, getQueryByName, mapboxgl, window */
 function createMap(containerId) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
-  const map = new mapboxgl.Map({
+  window.map = new mapboxgl.Map({
     container: containerId,
     style: 'mapbox://styles/mapbox/dark-v9',
     center: [-103.59179687498357, 40.66995747013945],
     zoom: 3,
   });
 
-  map.on('load', () => {
-    const albumStem = getQueryByName('album_stem');
-    const gallery = getQueryByName('gallery');
-
+  window.map.on('load', () => {
     // Add a new source from our GeoJSON data and set the
     // 'cluster' option to true.
-    map.addSource('earthquakes', {
+    window.map.addSource('earthquakes', {
       type: 'geojson',
       // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
       // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
@@ -27,7 +24,7 @@ function createMap(containerId) {
     // Use the earthquakes source to create five layers:
     // One for unclustered points, three for each cluster category,
     // and one for cluster labels.
-    map.addLayer({
+    window.map.addLayer({
       id: 'unclustered-points',
       type: 'symbol',
       source: 'earthquakes',
@@ -46,7 +43,7 @@ function createMap(containerId) {
     ];
 
     layers.forEach((layer, i) => {
-      map.addLayer({
+      window.map.addLayer({
         id: `cluster-${i}`,
         type: 'circle',
         source: 'earthquakes',
@@ -61,7 +58,7 @@ function createMap(containerId) {
     });
 
     // Add a layer for the clusters' count labels
-    map.addLayer({
+    window.map.addLayer({
       id: 'cluster-count',
       type: 'symbol',
       source: 'earthquakes',

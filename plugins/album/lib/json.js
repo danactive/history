@@ -78,6 +78,11 @@ function templatePrepare(result = {}) {
   output.album.items = result.album.item.map((_item) => {
     const item = _item;
     item.caption = item.thumbCaption;
+    if (item.geo) {
+      item.geo.lat = parseFloat(item.geo.lat);
+      item.geo.lon = parseFloat(item.geo.lon);
+    }
+
     const thumbPath = getThumbPath(item, gallery);
     const photoPath = utils.file.photoPath(thumbPath);
     const videoPath = getVideoPath(item, gallery);
