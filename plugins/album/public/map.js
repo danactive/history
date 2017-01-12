@@ -3,7 +3,7 @@ function createMap(containerId) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
   window.map = new mapboxgl.Map({
     container: containerId,
-    style: 'mapbox://styles/mapbox/dark-v9',
+    style: 'mapbox://styles/mapbox/satellite-streets-v10',
     center: [-103.59179687498357, 40.66995747013945],
     zoom: 3,
   });
