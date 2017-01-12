@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.16.0"></a>
+# [1.16.0](https://github.com/danactive/history/compare/v1.15.0...v1.16.0) (2017-01-12)
+
+
+### Bug Fixes
+
+* **CI:** DRY to improve Code Climate check [[#90](https://github.com/danactive/history/issues/90)] ([ada4946](https://github.com/danactive/history/commit/ada4946))
+* **Edit Admin:** Add validation for untrusted input in path [[#62](https://github.com/danactive/history/issues/62)][[#81](https://github.com/danactive/history/issues/81)] ([675c401](https://github.com/danactive/history/commit/675c401))
+* **Lint:** Change lint from gulp to npm with same functionality [[#49](https://github.com/danactive/history/issues/49)] ([a8a845f](https://github.com/danactive/history/commit/a8a845f))
+* **View Album:** Add Wikipedia link conditionally to lightbox title [[#70](https://github.com/danactive/history/issues/70)] ([ea21344](https://github.com/danactive/history/commit/ea21344))
+* **View Album:** Display satellite tiles on map [[#90](https://github.com/danactive/history/issues/90)] ([09c6885](https://github.com/danactive/history/commit/09c6885))
+* **View Album:** Remove Wikipedia link from legacy code [[#70](https://github.com/danactive/history/issues/70)] ([3c52f8b](https://github.com/danactive/history/commit/3c52f8b))
+* **View Album:** Slippy map plots gallery and album data [[#39](https://github.com/danactive/history/issues/39)] ([4015e22](https://github.com/danactive/history/commit/4015e22))
+
+
+### Features
+
+* **GeoJSON:** Add plugin to request album as GeoJSON [[#90](https://github.com/danactive/history/issues/90)] ([c68f258](https://github.com/danactive/history/commit/c68f258))
+* **View Album:** Change marker clustering to be coloured by density [[#39](https://github.com/danactive/history/issues/39)] ([251b09d](https://github.com/danactive/history/commit/251b09d))
+* **View Album:** Pan and zoom map to pin based on lightbox photo geocode [[#90](https://github.com/danactive/history/issues/90)] ([26c6cdc](https://github.com/danactive/history/commit/26c6cdc))
+
+
+
 <a name="1.15.0"></a>
 # [1.15.0](https://github.com/danactive/history/compare/v1.14.0...v1.15.0) (2016-12-27)
 
