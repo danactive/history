@@ -19,7 +19,6 @@ const libGeojson = require('./plugins/geojson/lib/index');
 const libHome = require('./plugins/home/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
-const libRoutes = require('./src/js/route.js');
 const libVideo = require('./plugins/video/lib/index');
 const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
@@ -35,7 +34,6 @@ server.connection({ port });
 server.register([
   { register: inert },
   { register: vision },
-  { register: libRoutes },
   { register: libAdmin, routes: { prefix: '/admin' } },
   { register: viewAlbum, routes: { prefix: '/view' } },
   { register: editAlbum, routes: { prefix: '/edit' } },
