@@ -34,7 +34,7 @@ route.gallery = {
 	handler: {
 		directory: {
 			path: function (request) {
-				return "gallery-" + request.params.gallery;
+				return "public/galleries/gallery-" + request.params.gallery;
 			},
 			listing: true,
 			index: false,

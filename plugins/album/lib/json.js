@@ -139,6 +139,7 @@ module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) 
   const xmlPath = path.join(
     __dirname,
     '../../../',
+    'public/galleries',
     ensureSafePath('gallery', gallery, reject),
     'xml',
     ensureSafePath('albumStem', albumStem, reject) // eslint-disable-line comma-dangle

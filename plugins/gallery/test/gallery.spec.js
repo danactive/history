@@ -10,6 +10,9 @@ tape('Gallery', { skip: false }, (describe) => {
         assert.ok(galleries.includes('demo'), 'Demo gallery found');
         assert.end();
       })
-      .catch(error => assert.fail(error));
+      .catch((error) => {
+        assert.fail(error);
+        assert.end();
+      });
   });
 });
