@@ -16,7 +16,6 @@
 * Enforced rules for new Pull Requests
 	* Commit message subject must include a GitHub issue [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
 	* Pull request title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/pull-request/subject-must-be-in-tense) 
-	* Pull request description must include verification steps [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-verification-steps)
 	* Pull request description must include a screenshot [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-screenshot)
 * New Pull Requests will follow this [PR Template](.github/PULL_REQUEST_TEMPLATE.md)
 * Write unit tests to match existing test coverage

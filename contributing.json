@@ -21,8 +21,7 @@
     "subject_must_not_end_with_dot": true,
 
     "body_cannot_be_empty": true,
-    "body_must_include_verification_steps": true,
-    "body_must_include_screenshot": ["html", "css"]
+    "body_must_include_screenshot": ["css", "html", "jsx"]
   },
   "issue": {
     "subject_cannot_be_empty": true,
