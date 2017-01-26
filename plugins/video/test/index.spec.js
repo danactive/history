@@ -46,7 +46,6 @@ tape('Verify /video route', { skip: false }, (describe) => {
       });
 
       return server.inject(request, (response) => {
-        assert.ok(response.result.indexOf('<video controls=""') > -1, 'Video controls');
         assert.ok(response.result.indexOf('><source src=') > -1, 'Source element');
         assert.equal((response.result.match(/><source src="/g) || []).length, sources.split(',').length, 'Source elements count');
 

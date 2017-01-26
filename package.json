@@ -11,7 +11,7 @@
     "start": "webpack --config plugins/webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc  --extension .jsx tape plugins/**/*.spec.js",
-    "test:react": "babel-tape-runner plugins/album/test/*.js | faucet",
+    "test:react": "babel-tape-runner plugins/album/test/*.js plugins/video/test/*.js | faucet",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
     "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov"
