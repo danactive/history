@@ -24,7 +24,7 @@ function customMime(extension) {
   }
 }
 
-const file = {
+const fileMethods = {
   type: (filepath) => {
     if (!filepath) {
       return false;
@@ -42,6 +42,18 @@ const file = {
   photoPath: filepath => filepath && filepath.replace('thumbs', 'photos'),
 };
 
+fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
+  if (filepath === null || gallery === null) {
+    return undefined;
+  }
+
+  const year = filepath.substr(0, 4);
+  const firstVideoSource = filepath.split(',')[0];
+  const type = fileMethods.type(firstVideoSource);
+  const file = firstVideoSource.substr(0, firstVideoSource.indexOf(type) - 1);
+  return `/static/gallery-${gallery}/media/thumbs/${year}/${file}.jpg`;
+};
+
 /**
  Find associated path and filename based on file without extension
 
@@ -52,10 +64,10 @@ const file = {
  @param {bool} [options.ignoreExtension] Apply pattern without file extension
  @return {Promise} array of string associated filenames with absolute path
  **/
-file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
-  let absolutePath = file.absolutePath(sourceFolder);
+fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
+  let absolutePath = fileMethods.absolutePath(sourceFolder);
   if (options.ignoreExtension === true) {
-    absolutePath = absolutePath.replace(`.${file.type(absolutePath)}`, '');
+    absolutePath = absolutePath.replace(`.${fileMethods.type(absolutePath)}`, '');
   } else {
     absolutePath = path.join(absolutePath, '/');
   }
@@ -70,4 +82,4 @@ file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, rejec
   });
 });
 
-module.exports.file = file;
+module.exports.file = fileMethods;

@@ -2,7 +2,7 @@ import test from 'tape';
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 
-import './react-enzyme-setup';
+import '../../../test/react-enzyme-setup';
 import Thumb from '../views/thumb';
 
 test('React Component - Thumb', { skip: false }, (describe) => {

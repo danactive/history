@@ -105,6 +105,19 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.end();
   });
 
+  describe.test('* File - Convert video filename to thumbs path', (assert) => {
+    const test = lib.file.videoToThumbsPath;
+    assert.equal(test(), undefined, 'Missing path arg');
+    assert.equal(test('2001-video-description.mp4'), undefined, 'Missing gallery');
+    assert.equal(test('2001-video-description.mp4', 'demo'),
+      '/static/gallery-demo/media/thumbs/2001/2001-video-description.jpg', 'Single Video');
+    assert.equal(test('2002-03-21-01.mp4', 'demo'),
+      '/static/gallery-demo/media/thumbs/2002/2002-03-21-01.jpg', 'Single Video as Year');
+    assert.equal(test('2003-video.avi,2004-video.mts', 'demo'),
+      '/static/gallery-demo/media/thumbs/2003/2003-video.jpg', 'Multiple videos');
+    assert.end();
+  });
+
   describe.test('* File - Glob', (assert) => {
     assert.plan(8);
 
