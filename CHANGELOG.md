@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/danactive/history/compare/v1.16.0...v2.0.0) (2017-01-27)
+
+
+### Bug Fixes
+
+* **Repo:** Change PR rules to allow Greenkeeper to create [[#98](https://github.com/danactive/history/issues/98)] ([a869c1d](https://github.com/danactive/history/commit/a869c1d))
+* **Repo:** Remove deprecated flles and folders [[#101](https://github.com/danactive/history/issues/101)] ([f9b20af](https://github.com/danactive/history/commit/f9b20af))
+
+
+### Features
+
+* **View Album:** Change HTML5 video to preload, autoplay and use JPEG poster [[#104](https://github.com/danactive/history/issues/104)] ([9c7b566](https://github.com/danactive/history/commit/9c7b566))
+
+
+### BREAKING CHANGE
+
+* **Repo:** Change gallery folder for improved security [[#105](https://github.com/danactive/history/issues/105)] ([54396b0](https://github.com/danactive/history/commit/54396b0))
+	* Move folder from `/gallery-demo` to `/public/galleries/gallery-demo`
+
+
+
 <a name="1.16.0"></a>
 # [1.16.0](https://github.com/danactive/history/compare/v1.15.0...v1.16.0) (2017-01-12)
 
