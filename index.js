@@ -55,6 +55,7 @@ server.register([
   server.start();
   log.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
+    icon: `${__dirname}/favicon.ico`,
     title: 'Server event',
     message: `Running at ${server.info.uri}`,
   });
