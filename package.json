@@ -49,7 +49,7 @@
     "rimraf": "^2.2.8",
     "tuxharness": "^2.0.4",
     "vision": "^4.1.0",
-    "webpack": "^1.13.3",
+    "webpack": "^2.2.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
