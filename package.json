@@ -8,7 +8,7 @@
     "lint": "eslint lib plugins *.js --ext .js,.jsx",
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
-    "start": "webpack --config plugins/webpack.js && node .",
+    "start": "webpack --config webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc  --extension .jsx tape plugins/**/*.spec.js",
     "test:react": "babel-tape-runner plugins/album/test/*.js plugins/video/test/*.js | faucet",
