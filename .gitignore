@@ -13,3 +13,4 @@ plugins/editAlbum/public/assets
 coverage.lcov
 .nyc_output
 yarn-error.log
+tmp

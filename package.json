@@ -47,6 +47,7 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "rimraf": "^2.2.8",
+    "tap-webpack-plugin": "^1.1.0",
     "tuxharness": "^2.0.4",
     "vision": "^4.1.0",
     "webpack": "^1.13.3",
