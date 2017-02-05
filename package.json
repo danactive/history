@@ -8,7 +8,7 @@
     "lint": "eslint lib plugins *.js --ext .js,.jsx",
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
-    "start": "webpack --config plugins/webpack.js && node .",
+    "start": "webpack --config webpack.js && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
     "test": "nyc  --extension .jsx tape plugins/**/*.spec.js",
     "test:react": "babel-tape-runner plugins/album/test/*.js plugins/video/test/*.js | faucet",
@@ -47,9 +47,10 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "rimraf": "^2.2.8",
+    "tap-webpack-plugin": "^1.1.0",
     "tuxharness": "^2.0.4",
     "vision": "^4.1.0",
-    "webpack": "^1.13.3",
+    "webpack": "^2.2.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
@@ -92,7 +93,6 @@
     "tape-catch": "^1.0.6",
     "tape-jsx-equals": "^1.0.0",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.3",
     "yargs": "^6.5.0"
   },
   "peerDependencies": {
