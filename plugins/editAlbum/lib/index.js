@@ -26,7 +26,7 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin', 'v0'],
+      tags: ['api', 'plugin'],
       validate: {
         query: {
           raw: validation.raw,
