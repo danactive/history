@@ -1,19 +1,18 @@
-// const TapWebpackPlugin = require('tap-webpack-plugin');
+const TapWebpackPlugin = require('tap-webpack-plugin');
 
 module.exports = [
-  // disabled until https://github.com/conradz/tap-webpack-plugin/issues/5
   // test bundle configuration
-  // {
-  //   target: 'node',
-  //   entry: './test/webpack',
-  //   output: {
-  //     path: 'tmp',
-  //     filename: 'test.js',
-  //   },
-  //   plugins: [
-  //     new TapWebpackPlugin(),
-  //   ],
-  // },
+  {
+    target: 'node',
+    entry: './test/webpack',
+    output: {
+      path: 'tmp',
+      filename: 'test.js',
+    },
+    plugins: [
+      new TapWebpackPlugin(),
+    ],
+  },
   // export npm modules to browser scripts
   {
     entry: {
