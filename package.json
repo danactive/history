@@ -78,7 +78,7 @@
     "gulp-develop-server": "^0.5.2",
     "gulp-filter": "^5.0.0",
     "gulp-load-plugins": "^1.2.0",
-    "gulp-mocha": "^3.0.1",
+    "gulp-mocha": "^4.0.0",
     "gulp-plumber": "^1.0.1",
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
