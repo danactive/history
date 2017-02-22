@@ -35,6 +35,7 @@
     "hapi-swagger": "^7.4.0",
     "hoek": "^4.1.0",
     "inert": "^4.0.2",
+    "instagram-node": "^0.5.8",
     "joi": "^10.0.0",
     "lout": "^9.2.0",
     "mime-types": "^2.1.12",
