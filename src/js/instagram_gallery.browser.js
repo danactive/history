@@ -1,8 +1,6 @@
 /*global $, instagram, util*/
 "use strict";
 
-var ig = require('instagram-node').instagram();
-
 var displayPhotos = function (response) {
 		var origPath = "",
 			$galleryBox = $("#galleryBox"),
@@ -34,7 +32,7 @@ var displayPhotos = function (response) {
 			"url": instaUrl,
 			"data": instaArgs,
 			"dataType": 'jsonp', // tell $ our expected response format JSON with padding
-			"jsonpCallback": "jsonFlickrApi", //execute Flickr function that contains the response JSON
+			"jsonpCallback": "jsonInstagramApi", //execute Flickr function that contains the response JSON
 			"success": displayPhotos
 		});
 	},
