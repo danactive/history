@@ -6,10 +6,6 @@ const mime = require('mime-types');
 const path = require('path');
 
 const configJson = require('../../../config.json');
-// const logMod = require('../../log/lib');
-const pkg = require('../../../package.json');
-
-// const log = logMod('util');
 
 module.exports.config = {
   get: filepath => dotProp.get(configJson, filepath),
@@ -28,7 +24,7 @@ function customMime(extension) {
   }
 }
 
-const file = {
+const fileMethods = {
   type: (filepath) => {
     if (!filepath) {
       return false;
@@ -46,6 +42,18 @@ const file = {
   photoPath: filepath => filepath && filepath.replace('thumbs', 'photos'),
 };
 
+fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
+  if (filepath === null || gallery === null) {
+    return undefined;
+  }
+
+  const year = filepath.substr(0, 4);
+  const firstVideoSource = filepath.split(',')[0];
+  const type = fileMethods.type(firstVideoSource);
+  const file = firstVideoSource.substr(0, firstVideoSource.indexOf(type) - 1);
+  return `/static/gallery-${gallery}/media/thumbs/${year}/${file}.jpg`;
+};
+
 /**
  Find associated path and filename based on file without extension
 
@@ -56,10 +64,10 @@ const file = {
  @param {bool} [options.ignoreExtension] Apply pattern without file extension
  @return {Promise} array of string associated filenames with absolute path
  **/
-file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
-  let absolutePath = file.absolutePath(sourceFolder);
+fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
+  let absolutePath = fileMethods.absolutePath(sourceFolder);
   if (options.ignoreExtension === true) {
-    absolutePath = absolutePath.replace(`.${file.type(absolutePath)}`, '');
+    absolutePath = absolutePath.replace(`.${fileMethods.type(absolutePath)}`, '');
   } else {
     absolutePath = path.join(absolutePath, '/');
   }
@@ -74,51 +82,4 @@ file.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, rejec
   });
 });
 
-module.exports.file = file;
-
-function platform() {
-  switch (process.platform) {
-    case 'win32':
-      return 'windows';
-
-    default:
-      return process.platform;
-  }
-}
-module.exports.platform = platform();
-
-/**
- * Error handling for JSON output
- *
- * @method setError
- * @param {object} [error] Node.js create error object (may be Boom wrapped)
- * @param {string} [message] Description of error
- * @param {object} [data] Additional meta data of error
- * @param {string} [serviceAddress] Service API endpoint with query string parameters
- * @return {object} Returns JSON of error details
- */
-function setError(error, message, _data, serviceAddress) {
-  const hasError = (error !== undefined && error !== null);
-  const out = {};
-  const statusCode = 500;
-  const data = _data || { message };
-
-  if (hasError && error.meta && error.meta.error.isBoom) {
-    return error;
-  }
-
-  const boomError = (hasError) ? boom.wrap(error, statusCode, message) : boom.create(statusCode, message, data);
-
-  out.meta = {
-    error: boomError,
-    version: pkg.version,
-  };
-
-  if (serviceAddress) {
-    out.meta.serviceAddress = serviceAddress;
-  }
-
-  return out;
-}
-
-module.exports.setError = setError;
+module.exports.file = fileMethods;

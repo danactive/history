@@ -12,7 +12,9 @@ function Video({ video }) {
     return <Source key={id} extension={extension} gallery={video.gallery} source={source} />;
   });
 
-  return (<video controls width={video.w} height={video.h}>{sources}</video>);
+  const poster = utils.file.photoPath(utils.file.videoToThumbsPath(video.sources, video.gallery));
+
+  return (<video width={video.w} height={video.h} poster={poster} controls preload="auto" autoPlay="true">{sources}</video>);
 }
 
 Video.propTypes = {
@@ -21,7 +23,7 @@ Video.propTypes = {
     h: React.PropTypes.number.isRequired,
     gallery: React.PropTypes.string.isRequired,
     sources: React.PropTypes.string.isRequired,
-  }),
+  }).isRequired,
 };
 
 module.exports = Video;

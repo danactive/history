@@ -1,5 +1,8 @@
 language: node_js
 
+env:
+  - CODECLIMATE_REPO_TOKEN=27355443bbc9aa3c50cffddc9f6fedf22948472b021e30c115e8749095b51ea0
+
 addons:
   apt:
     packages:
@@ -14,6 +17,12 @@ before_install:
   - npm install -g yarn --cache-min 999999999
 install:
   - yarn install
-
-scripts:
-  - yarn ci
+before_script:
+  - yarn lint
+  - yarn test:all
+  - yarn test:react
+after_success:
+  - yarn ci-cover:coveralls
+  - yarn ci-cover:prep-codeclimate
+  - yarn ci-cover:codeclimate
+  - curl -sSL https://download.sourceclear.com/ci.sh | bash

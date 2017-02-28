@@ -1,7 +1,7 @@
 /* global __dirname, require */
 const joi = require('joi');
 
-const gallery = require('../../gallery/lib');
+const gallery = require('../../gallery/lib/gallery');
 
 const handler = (request, reply) => {
   const raw = request.query.raw;
@@ -26,7 +26,7 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin', 'v0'],
+      tags: ['api', 'plugin'],
       validate: {
         query: {
           raw: validation.raw,
@@ -57,7 +57,6 @@ exports.register = (server, options, next) => {
     path: '/album/static/jquery.js',
     config: {
       description: 'jQuery library',
-      tags: ['v0'],
       handler: {
         file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
       },
@@ -66,9 +65,9 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
-    path: '/album/assets/client.js',
+    path: '/album/assets/bundle.js',
     handler: {
-      file: 'plugins/editAlbum/public/assets/client.js',
+      file: 'plugins/editAlbum/public/assets/bundle.js',
     },
   });
 

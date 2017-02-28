@@ -2,6 +2,106 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/danactive/history/compare/v1.16.0...v2.0.0) (2017-01-27)
+
+
+### Bug Fixes
+
+* **Repo:** Change PR rules to allow Greenkeeper to create [[#98](https://github.com/danactive/history/issues/98)] ([a869c1d](https://github.com/danactive/history/commit/a869c1d))
+* **Repo:** Remove deprecated flles and folders [[#101](https://github.com/danactive/history/issues/101)] ([f9b20af](https://github.com/danactive/history/commit/f9b20af))
+
+
+### Features
+
+* **View Album:** Change HTML5 video to preload, autoplay and use JPEG poster [[#104](https://github.com/danactive/history/issues/104)] ([9c7b566](https://github.com/danactive/history/commit/9c7b566))
+
+
+### BREAKING CHANGE
+
+* **Repo:** Change gallery folder for improved security [[#105](https://github.com/danactive/history/issues/105)] ([54396b0](https://github.com/danactive/history/commit/54396b0))
+	* Move folder from `/gallery-demo` to `/public/galleries/gallery-demo`
+
+
+
+<a name="1.16.0"></a>
+# [1.16.0](https://github.com/danactive/history/compare/v1.15.0...v1.16.0) (2017-01-12)
+
+
+### Bug Fixes
+
+* **CI:** DRY to improve Code Climate check [[#90](https://github.com/danactive/history/issues/90)] ([ada4946](https://github.com/danactive/history/commit/ada4946))
+* **Edit Admin:** Add validation for untrusted input in path [[#62](https://github.com/danactive/history/issues/62)][[#81](https://github.com/danactive/history/issues/81)] ([675c401](https://github.com/danactive/history/commit/675c401))
+* **Lint:** Change lint from gulp to npm with same functionality [[#49](https://github.com/danactive/history/issues/49)] ([a8a845f](https://github.com/danactive/history/commit/a8a845f))
+* **View Album:** Add Wikipedia link conditionally to lightbox title [[#70](https://github.com/danactive/history/issues/70)] ([ea21344](https://github.com/danactive/history/commit/ea21344))
+* **View Album:** Display satellite tiles on map [[#90](https://github.com/danactive/history/issues/90)] ([09c6885](https://github.com/danactive/history/commit/09c6885))
+* **View Album:** Remove Wikipedia link from legacy code [[#70](https://github.com/danactive/history/issues/70)] ([3c52f8b](https://github.com/danactive/history/commit/3c52f8b))
+* **View Album:** Slippy map plots gallery and album data [[#39](https://github.com/danactive/history/issues/39)] ([4015e22](https://github.com/danactive/history/commit/4015e22))
+
+
+### Features
+
+* **GeoJSON:** Add plugin to request album as GeoJSON [[#90](https://github.com/danactive/history/issues/90)] ([c68f258](https://github.com/danactive/history/commit/c68f258))
+* **View Album:** Change marker clustering to be coloured by density [[#39](https://github.com/danactive/history/issues/39)] ([251b09d](https://github.com/danactive/history/commit/251b09d))
+* **View Album:** Pan and zoom map to pin based on lightbox photo geocode [[#90](https://github.com/danactive/history/issues/90)] ([26c6cdc](https://github.com/danactive/history/commit/26c6cdc))
+
+
+
+<a name="1.15.0"></a>
+# [1.15.0](https://github.com/danactive/history/compare/v1.14.0...v1.15.0) (2016-12-27)
+
+
+### Features
+
+* **Repo:** Add template for new GitHub Issues [[#71](https://github.com/danactive/history/issues/71)] ([830d266](https://github.com/danactive/history/commit/830d266))
+* **Repo:** Add template for new Pull Requests [[#71](https://github.com/danactive/history/issues/71)] ([d590cca](https://github.com/danactive/history/commit/d590cca))
+
+
+
+<a name="1.14.0"></a>
+# [1.14.0](https://github.com/danactive/history/compare/v1.13.0...v1.14.0) (2016-12-20)
+
+
+### Bug Fixes
+
+* **Edit Album:** Power user may save with enter then navigate with arrow keys ([e13adc6](https://github.com/danactive/history/commit/e13adc6))
+* **View Album:** Change colorbox to latest version [[#70](https://github.com/danactive/history/issues/70)] ([5132cc6](https://github.com/danactive/history/commit/5132cc6))
+* **View Album:** Change ColorThieft to work with colorbox [[#70](https://github.com/danactive/history/issues/70)] ([e339646](https://github.com/danactive/history/commit/e339646))
+* **CI:** Lint [[#72](https://github.com/danactive/history/issues/72)] ([6960b65](https://github.com/danactive/history/commit/6960b65))
+
+
+### Features
+
+* **CI:** Enable SourceClear [[#72](https://github.com/danactive/history/issues/72)] ([15dc85f](https://github.com/danactive/history/commit/15dc85f))
+* **View Album:** Webpack serving CSS and JS for jQuery colobox v1.5.10 [[#70](https://github.com/danactive/history/issues/70)] ([edc4804](https://github.com/danactive/history/commit/edc4804))
+
+
+
+<a name="1.13.0"></a>
+# [1.13.0](https://github.com/danactive/history/compare/v1.12.1...v1.13.0) (2016-12-11)
+
+
+### Bug Fixes
+
+* **Badge:** Add coverage badge [[#34](https://github.com/danactive/history/issues/34)] ([902d557](https://github.com/danactive/history/commit/902d557))
+* **CI:** Ensure lint breaks the build [[#66](https://github.com/danactive/history/issues/66)] ([62ceb5c](https://github.com/danactive/history/commit/62ceb5c))
+* **CI:** Remove nsp with gulp and GitHub.com integration with NSP and Snyk [[#66](https://github.com/danactive/history/issues/66)] ([9364f79](https://github.com/danactive/history/commit/9364f79))
+* **Edit Album:** TabIndex to positive for keyboard tab order [[#68](https://github.com/danactive/history/issues/68)] ([0e3d4bc](https://github.com/danactive/history/commit/0e3d4bc))
+* **Lint:** Add blank test for coverage report [[#66](https://github.com/danactive/history/issues/66)] ([090a899](https://github.com/danactive/history/commit/090a899))
+* **README:** Table of service badges ([0db22f7](https://github.com/danactive/history/commit/0db22f7))
+
+
+### Features
+
+* **Coverage:** Istanbul (nyc) test coverage for all plugin spec files [[#34](https://github.com/danactive/history/issues/34)] ([eec81c4](https://github.com/danactive/history/commit/eec81c4))
+* **Coverage:** React test sample ([b7f975a](https://github.com/danactive/history/commit/b7f975a))
+* **Dev:** Allow specific plugins to filter gulp task sources: lint ([57e159a](https://github.com/danactive/history/commit/57e159a))
+* **Dev:** Allow specific plugins to filter gulp task sources: test ([#49](https://github.com/danactive/history/issues/49)) ([eef6b37](https://github.com/danactive/history/commit/eef6b37))
+* **Dev:** Enforce commit, pull request, and issue rules ([#60](https://github.com/danactive/history/issues/60)) ([23ef4ee](https://github.com/danactive/history/commit/23ef4ee))
+* **LICENSE:** 2016 MIT license ([00bc223](https://github.com/danactive/history/commit/00bc223))
+
+
+
 <a name="1.12.1"></a>
 ## [1.12.1](https://github.com/danactive/history/compare/v1.12.0...v1.12.1) (2016-12-05)
 

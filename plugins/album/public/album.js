@@ -1,8 +1,34 @@
-/* global ColorThief, createMap, jQuery, getQueryByName */
+/* global ColorThief, createMap, jQuery, window */
+const MAP_BOX_ID = 'mapBox';
+
 const colorThief = new ColorThief();
-let map;
-const mapBoxId = 'mapBox';
-const $mapBox = jQuery(`#${mapBoxId}`);
+const $mapBox = jQuery(`#${MAP_BOX_ID}`);
+
+const toggleMapButtonLabel = () => {
+  const SHOW_MAP_LABEL = 'Expand Map';
+  const HIDE_MAP_LABEL = 'Collapse Map';
+
+  const $button = jQuery(this);
+  // const $button = jQuery(this.target); // jQuery 3.x
+  const textOnClick = $button.text();
+
+  if (textOnClick === HIDE_MAP_LABEL) {
+    $button.text(SHOW_MAP_LABEL);
+  } else {
+    $button.text(HIDE_MAP_LABEL);
+  }
+};
+
+function showMarker(map, _lon, _lat) {
+  const lat = parseFloat(_lat);
+  const lon = parseFloat(_lon);
+
+  if (Number.isNaN(lat) || Number.isNaN(lon)) {
+    return;
+  }
+
+  map.flyTo({ center: [lon, lat], zoom: 14, screenSpeed: 2, curve: Math.pow(3, 0.25) });
+}
 
 function photoViewed() {
   const photoImage = jQuery('img.cboxPhoto').get(0);
@@ -13,54 +39,25 @@ function photoViewed() {
   $thumbBox.addClass('imgViewed'); //  change thumb to white
 
   // lightbox
-  jQuery('#cboxOverlay').css('background-color', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
-  jQuery('#cboxTitle').hide();
-  jQuery('#cboxLoadedContent').append(jQuery('#cboxTitle').html()).css({ color: jQuery('#cboxTitle').css('color') });
+  jQuery('#cboxOverlay').css('background', `rgb(${dominateColour[0]},${dominateColour[1]},${dominateColour[2]})`);
   jQuery.fn.colorbox.resize();
-  if (map) {
-    const index = parseInt($thumbBox.attr('id').replace('photo', ''), 10);
-    map.pin.go(index);
+
+  if (window.map) {
+    showMarker(window.map, $thumbBox.attr('data-lon'), $thumbBox.attr('data-lat'));
   }
 }
+
 jQuery('#albumBox a').colorbox({
-  right: '25%',
   preloading: true,
   onComplete: photoViewed,
-  title: function title() {
-    if (this && this.dataset && this.dataset.caption) {
-      return this.dataset.caption;
-    }
-    return jQuery(this).data('caption');
-  },
   transition: 'none',
 });
 
-jQuery('#linkMap').click(function toggleMap() {
-  const SHOW_MAP_LABEL = 'Expand Map';
-  const HIDE_MAP_LABEL = 'Collapse Map';
-  const toggleMapButtonLabel = () => {
-    const $button = jQuery(this);
-    // const $button = jQuery(this.target); // jQuery 3.x
-    const textOnClick = $button.text();
-
-    if (textOnClick === HIDE_MAP_LABEL) {
-      $button.text(SHOW_MAP_LABEL);
-    } else {
-      $button.text(HIDE_MAP_LABEL);
-    }
-  };
-  jQuery.ajax({
-    url: '/view/album',
-    data: {
-      album_stem: getQueryByName('album_stem'),
-      gallery: getQueryByName('gallery'),
-      raw: true,
-    },
-    success: createMap,
-  });
+jQuery('#linkMap').click(() => {
   jQuery('body').toggleClass('splitMode');
   $mapBox.toggleClass('hide');
   toggleMapButtonLabel();
+  createMap(MAP_BOX_ID);
 });
 
 function instagram() {

@@ -10,12 +10,12 @@ function Album({ album }) {
 
 Album.propTypes = {
   album: React.PropTypes.shape({
-    item: React.PropTypes.arrayOf(React.PropTypes.shape({
+    items: React.PropTypes.arrayOf(React.PropTypes.shape({
       $: React.PropTypes.shape({
         id: React.PropTypes.string,
       }),
-    })),
-  }),
+    })).isRequired,
+  }).isRequired,
 };
 
 module.exports = Album;

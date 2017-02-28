@@ -6,7 +6,6 @@
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us">
       <head>
         <title>History - Photo Album Galleries</title>
-        <script type="text/javascript" src="../../js/global.js"></script>
         <style type="text/css">
           .album { float: left; width: 185px; height: 170px; padding: 10px; }
           .even { background-color: peachpuff; }
@@ -53,9 +52,10 @@
             <h1>
               <a>
                 <xsl:attribute name="href">
-                  <xsl:text>album_</xsl:text>
+                  <xsl:text>/view/album?album_stem=</xsl:text>
                   <xsl:value-of select="album_name"/>
-                  <xsl:text>.xml</xsl:text>
+                  <xsl:text>&amp;gallery=</xsl:text>
+                  <xsl:value-of select="/gallery/@name"/>
                 </xsl:attribute>
                 <xsl:value-of select="album_h1"/>
               </a>

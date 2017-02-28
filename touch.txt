@@ -1,1 +1,1 @@
-Trigger Code Climate after enabling webhooks
+Trigger Travis for SourceClear check

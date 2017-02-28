@@ -8,4 +8,9 @@ resizeImages
 public/js/
 plugins/resize/test/fixtures/photos/2016-07-12.jpg
 plugins/resize/test/fixtures/thumbs/2016-07-12.jpg
+plugins/album/public/assets
 plugins/editAlbum/public/assets
+coverage.lcov
+.nyc_output
+yarn-error.log
+tmp

@@ -4,6 +4,7 @@ engines:
        config:
          languages:
            javascript:
+             mass_threshold: 60
   eslint:
     enabled: false
     channel: "eslint-3"
