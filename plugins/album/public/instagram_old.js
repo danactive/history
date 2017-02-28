@@ -6,6 +6,7 @@ const accessToken = '1449178229.53cbd33.5fe02c44297a45b7b71cd74093aa51f9';
 // const authUrl = `https://api.instagram.com/oauth/authorize/?client_id=${clientId}&redirect_uri=${redirUrl}&response_type=code`;
 // albumBox (image) onClick
 jQuery('.liAlbumPhoto').on('click', function(e) {
+  console.log('albumBox');
   // window.location = (authUrl);
   const lat = jQuery(this).data('lat');
   const lng = jQuery(this).data('lon');
@@ -14,18 +15,22 @@ jQuery('.liAlbumPhoto').on('click', function(e) {
     type: 'GET',
     dataType: 'jsonp',
     cache: false,
-    url: `https://api.instagram.com/v1/media/search?lat=${lat}&lng=${lng}&access_token=${accessToken}`,
+    url: `https://api.instagram.com/v1/locations/search?lat=${lat}&lng=${lng}&access_token=${accessToken}`,
     success: (data) => {
-      console.log(data);
       const obj = data.data;
-      obj.forEach( (item) => {
-        const thumbnail = item.images.thumbnai.url;
-        const stanRes = item.images.standard_resolution.url;
-        jQuery('#justifiedGallery').append(
-          `<a href=${stanRes}><img src=${thumbnail}/></a>`
-        )
+      obj.forEach( (element) => {
+        console.log(element.id);
+        const id = element.id;
+        jQuery.ajax({
+          type: 'GET',
+          dataType: 'jsonp',
+          cache: false,
+          url: `https://api.instagram.com/v1/locations/${id}/media/recent?access_token=${accessToken}`,
+          success: (data) => {
+            console.log(data);
+          }
+        })
       })
-
     },
   });
 });
