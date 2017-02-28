@@ -13,7 +13,7 @@
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="static/lib/jquery.justifiedGallery/justifiedGallery.js"></script>
     <script>
-        var flickr = {flickr|s|js};
+        var instagram = {instagram|s|js};
     </script>
-    <script src="static/js/flickr_gallery.js"></script>
+    <script src="static/js/instagram_gallery.js"></script>
 {/scripts}
