@@ -1,6 +1,6 @@
 /* global jQuery */
 
-jQuery('.liAlbumPhoto').on('click', function (e) {
+jQuery('.liAlbumPhoto').on('click', function flickrPhotos(e) {
   console.log(e);
   // Register HTML Elements
   const photo = jQuery(this);
@@ -11,6 +11,9 @@ jQuery('.liAlbumPhoto').on('click', function (e) {
     photoArea.html('');
 
     for (let i = 0; i < 50; i += 1) {
+      if (i === photos.length) {
+        return;
+      }
       const farmId = photos[i].getAttribute('farm');
       const serverId = photos[i].getAttribute('server');
       const id = photos[i].getAttribute('id');
@@ -18,6 +21,7 @@ jQuery('.liAlbumPhoto').on('click', function (e) {
 
       const url = `http://farm${farmId}.staticflickr.com/${serverId}/${id}_${secret}_s.jpg`;
       photoArea.append(`<a href='${url}'><img src='${url}'/></a>`);
+
       jQuery('#mygallery').justifiedGallery();
     }
   }
@@ -53,7 +57,7 @@ jQuery('.liAlbumPhoto').on('click', function (e) {
     });
   }
 
-  if (photo.data('lat') !== '' && photo.data('lon') !== '') {
+  if (photo.data('lat') !== undefined && photo.data('lon') !== undefined) {
     setTimeout(generateFlickr, 100);
   }
 
