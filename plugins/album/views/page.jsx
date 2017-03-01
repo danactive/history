@@ -19,6 +19,7 @@ function Page({ album }) {
       <body>
         <div id="divToolbox">
           <button id="linkMap">Map this album</button>
+          <button id="igLogin"><a href="http://localhost:8000/view/instagram-login" target="_blank">Login to instagram</a></button>
         </div>
         <div style={clearLeft} />
         <div id="mapBox" className="hide" />
