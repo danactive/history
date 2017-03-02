@@ -1,7 +1,10 @@
-/* global __dirname, require */
+/* global jQuery, __dirname, require, location */
+
 const json = require('./json');
 const validation = require('../../../lib/validation');
 const instagram = require('instagram-node');
+const instagramjs = require('../public/instagram');
+
 
 const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
@@ -78,7 +81,6 @@ exports.register = (server, options, next) => {
       },
     },
   });
-
   const ig = instagram.instagram();
   const redirectLandingAddress = 'http://localhost:8000/view/instagram-login';
   const clientId = '53cbd338e38643ba96179cdb50a333a3';
@@ -100,12 +102,16 @@ exports.register = (server, options, next) => {
             client_secret: clientSecret,
           });
 
+          // instagramjs.getLocation();
+          // const lat = location.lat;
+          // const lon = location.lon;
+
           ig.media_search(48.4335645654, 2.345645645, (err, medias) => {
             if (err) {
               reply(`Error found ${err.message}`);
               return;
             }
-
+            console.log(medias);
             reply(medias);
           });
         });
@@ -129,14 +135,15 @@ exports.register = (server, options, next) => {
         access_token: accessToken,
         client_secret: clientSecret,
       });
-
-      ig.media_search(48.4335645654, 2.345645645, (err, medias) => {
+      instagramjs.getLocation();
+      const lat = location.lat;
+      const lon = location.lon;
+      console.log(lat);
+      ig.media_search(lat, lon, (err, medias) => {
         if (err) {
           reply(`Error found ${err.message}`);
           return;
-        }
-
-        reply(medias);
+        } reply(medias);
       });
     },
   });
