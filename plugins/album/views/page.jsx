@@ -24,6 +24,7 @@ function Page({ album }) {
         <div style={clearLeft} />
         <div id="mapBox" className="hide" />
         <div id="albumBox"><Album album={album} /></div>
+        <div id="gallery" />
         <script src="./album/static/jquery.js" />
         <script src="./album/static/lib/color-thief.js" />
         <script src="./album/static/lib/justified-gallery/jquery.justifiedGallery.min.js" />
@@ -31,8 +32,8 @@ function Page({ album }) {
         <script src="./album/static/utils.js" />
         <script src="./album/static/map.js" />
         <script src="./album/static/instagram.js" />
-        <script src="./album/static/instagram.js" />
         <script src="./album/static/album.js" />
+        <script>instagram();</script>
       </body>
     </html>
   );
