@@ -20,5 +20,6 @@ if (isNode) {
   module.exports.instagram = {
     client_id: credentials.instagram.client_id,
     client_secret: credentials.instagram.client_secret,
+    access_Token: credentials.instagram.access_token,
   };
 }

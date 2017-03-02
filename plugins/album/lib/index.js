@@ -4,6 +4,7 @@ const json = require('./json');
 const validation = require('../../../lib/validation');
 const instagram = require('instagram-node');
 const instagramjs = require('../public/instagram');
+const credentials = require('../../../credentials.js');
 
 
 const handler = (request, reply) => {
@@ -83,9 +84,6 @@ exports.register = (server, options, next) => {
   });
   const ig = instagram.instagram();
   const redirectLandingAddress = 'http://localhost:8000/view/instagram-login';
-  const clientId = '53cbd338e38643ba96179cdb50a333a3';
-  const clientSecret = '8225835440eb4689b1632b808d5ccea7';
-  let accessToken = '1449178229.53cbd33.5fe02c44297a45b7b71cd74093aa51f9';
   server.route({
     method: 'GET',
     path: '/instagram-login',
@@ -96,29 +94,25 @@ exports.register = (server, options, next) => {
             reply(`Error found ${authError.message}`);
             return;
           }
-          accessToken = result.access_token;
+          // Get Access Token
+          credentials.instagram.access_Token = result.access_token;
           ig.use({
-            access_token: accessToken,
-            client_secret: clientSecret,
+            access_token: credentials.instagram.access_Token,
+            client_secret: credentials.instagram.client_secret,
           });
-
-          // instagramjs.getLocation();
-          // const lat = location.lat;
-          // const lon = location.lon;
 
           ig.media_search(48.4335645654, 2.345645645, (err, medias) => {
             if (err) {
               reply(`Error found ${err.message}`);
               return;
             }
-            console.log(medias);
             reply(medias);
           });
         });
       } else {
         ig.use({
-          client_id: clientId,
-          client_secret: clientSecret,
+          client_id: credentials.instagram.client_id,
+          client_secret: credentials.instagram.client_secret,
         });
 
         reply()
@@ -132,13 +126,13 @@ exports.register = (server, options, next) => {
     path: '/instagram',
     handler: (request, reply) => {
       ig.use({
-        access_token: accessToken,
-        client_secret: clientSecret,
+        access_token: credentials.instagram.access_Token,
+        client_secret: credentials.instagram.client_secret,
       });
+
       instagramjs.getLocation();
       const lat = location.lat;
       const lon = location.lon;
-      console.log(lat);
       ig.media_search(lat, lon, (err, medias) => {
         if (err) {
           reply(`Error found ${err.message}`);
