@@ -76,7 +76,7 @@ server.views({
 });
 
 const ig = instagram.instagram();
-const redirectLandingAddress = 'http://localhost:8080/api/instagram-login';
+const redirectLandingAddress = 'http://localhost:8000/api/instagram-login';
 
 server.route({
   method: 'GET',
@@ -97,7 +97,7 @@ server.route({
         });
 
         // error, medias, pagination, remaining, limit
-        ig.tag_media_recent('vancouver', { count: 10 }, (mediaError, media) => {
+        ig.location_search({ lat: 20, lng: 20 }, { count: 10 }, (mediaError, media) => {
           if (mediaError) {
             reply(`Error found ${mediaError.message}`);
             return;
@@ -123,18 +123,16 @@ server.route({
   path: '/api/instagram',
   handler: (request, reply) => {
     ig.use({
-      access_token: credentials.instagram.access_token,
+      client_id: credentials.instagram.client_id,
       client_secret: credentials.instagram.client_secret,
     });
-
-    // error, medias, pagination, remaining, limit
-    ig.location_media_recent('vancouver', { count: 10 }, (mediaError, media) => {
-      if (mediaError) {
-        reply(`Error found ${mediaError.message}`);
+    ig.location_search({ lat: 48.565464564, lng: 2.34656589 }, { distance: 10, count: 10 }, (err, result, remaining, limit) => {
+      if (err) {
+        reply(`Error found ${err.message}`);
         return;
       }
 
-      reply(media);
+      reply(result);
     });
   },
 });

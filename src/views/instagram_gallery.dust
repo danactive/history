@@ -1,0 +1,19 @@
+{>"layout.dust"/}
+
+{<header}
+    <link rel="stylesheet" href="static/lib/jquery.justifiedGallery/justifiedGallery.min.css" />
+{/header}
+
+{<body}
+    <div id="galleryBox"></div>
+{/body}
+
+{<scripts}
+    <script src="static/js/global.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="static/lib/jquery.justifiedGallery/justifiedGallery.js"></script>
+    <script>
+        var instagram = {instagram|s|js};
+    </script>
+    <script src="static/js/instagram_gallery.js"></script>
+{/scripts}

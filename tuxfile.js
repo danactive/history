@@ -9,10 +9,18 @@ harnesses.push({
 });
 
 harnesses.push({
+  route: 'instagram?lat=49.25&lon=-123.1',
+  data: credentials,
+  view: 'instagram_gallery.dust',
+});
+
+harnesses.push({
   route: 'walk-path',
   data: 'http://localhost:8000/template/walk-path',
   view: 'harness/directory_contents.dust',
 });
+
+console.log('tuxfile.js');
 
 module.exports = {
   register: {
