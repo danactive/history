@@ -7,7 +7,11 @@ const credentials = {
   },
   instagram: {
     client_id: '53cbd338e38643ba96179cdb50a333a3',
+<<<<<<< HEAD
     client_secret: '8225835440eb4689b1632b808d5ccea7',
+=======
+    client_secret: '8225835440eb4689b1632b808d5ccea7'
+>>>>>>> 721c347... credentials update
   },
 };
 

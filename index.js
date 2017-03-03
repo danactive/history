@@ -25,7 +25,7 @@ const libVideo = require('./plugins/video/lib/index');
 const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
 
-const credentials = require('./credentials.json');
+const credentials = require('./credentials.js');
 
 require('babel-core/register')({
   presets: ['react', 'es2015'],
@@ -128,7 +128,7 @@ server.route({
     });
 
     // error, medias, pagination, remaining, limit
-    ig.tag_media_recent('vancouver', { count: 10 }, (mediaError, media) => {
+    ig.location_media_recent('vancouver', { count: 10 }, (mediaError, media) => {
       if (mediaError) {
         reply(`Error found ${mediaError.message}`);
         return;
