@@ -1,10 +1,6 @@
-/* global jQuery, __dirname, require, location */
-
+/* global __dirname, require */
 const json = require('./json');
 const validation = require('../../../lib/validation');
-const instagram = require('instagram-node');
-const instagramjs = require('../public/instagram');
-const credentials = require('../../../credentials.js');
 
 const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
@@ -79,65 +75,6 @@ exports.register = (server, options, next) => {
       handler: {
         file: 'plugins/album/public/assets/bundle.js',
       },
-    },
-  });
-  const ig = instagram.instagram();
-  const redirectLandingAddress = 'http://localhost:8000/view/instagram-login';
-  server.route({
-    method: 'GET',
-    path: '/instagram-login',
-    handler: (request, reply) => {
-      if (request.query.code) {
-        ig.authorize_user(request.query.code, redirectLandingAddress, (authError, result) => {
-          if (authError) {
-            reply(`Error found ${authError.message}`);
-            return;
-          }
-          // Get Access Token
-          credentials.instagram.access_Token = result.access_token;
-          ig.use({
-            access_token: credentials.instagram.access_Token,
-            client_secret: credentials.instagram.client_secret,
-          });
-
-          ig.media_search(48.4335645654, 2.345645645, (err, medias) => {
-            if (err) {
-              reply(`Error found ${err.message}`);
-              return;
-            }
-            reply(medias);
-          });
-        });
-      } else {
-        ig.use({
-          client_id: credentials.instagram.client_id,
-          client_secret: credentials.instagram.client_secret,
-        });
-
-        reply()
-          .redirect(ig.get_authorization_url(redirectLandingAddress, { scope: ['public_content'] }));
-      }
-    },
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/instagram',
-    handler: (request, reply) => {
-      ig.use({
-        access_token: credentials.instagram.access_Token,
-        client_secret: credentials.instagram.client_secret,
-      });
-
-      instagramjs.getLocation();
-      const lat = location.lat;
-      const lon = location.lon;
-      ig.media_search(lat, lon, (err, medias) => {
-        if (err) {
-          reply(`Error found ${err.message}`);
-          return;
-        } reply(medias);
-      });
     },
   });
 
