@@ -59,4 +59,3 @@ jQuery('#linkMap').click(() => {
   toggleMapButtonLabel();
   createMap(MAP_BOX_ID);
 });
-
