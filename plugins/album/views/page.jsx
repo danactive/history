@@ -26,6 +26,7 @@ function Page({ album }) {
         <div id="albumBox"><Album album={album} /></div>
         <div id="gallery" />
         <script src="./album/static/jquery.js" />
+        <script src="./album/static/lib/jquery-colorbox/jquery.colorbox-min.js" />
         <script src="./album/static/lib/color-thief.js" />
         <script src="./album/static/lib/justified-gallery/jquery.justifiedGallery.min.js" />
         <script src="https://api.mapbox.com/mapbox-gl-js/v0.27.0/mapbox-gl.js" />
@@ -40,7 +41,7 @@ function Page({ album }) {
 }
 
 Page.propTypes = {
-  album: React.PropTypes.shape().isRequired,
+  album: React.PropTypes.shape(),
 };
 
 module.exports = Page;
