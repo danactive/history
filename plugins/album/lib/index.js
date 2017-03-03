@@ -6,7 +6,6 @@ const instagram = require('instagram-node');
 const instagramjs = require('../public/instagram');
 const credentials = require('../../../credentials.js');
 
-
 const handler = (request, reply) => {
   const albumStem = request.query.album_stem;
   const gallery = request.query.gallery;
