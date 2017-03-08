@@ -55,7 +55,7 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
-    "@mapbox/geojsonhint": "^1.2.1",
+    "@mapbox/geojsonhint": "^2.0.1",
     "babel-preset-stage-0": "^6.16.0",
     "babel-tape-runner": "^2.0.1",
     "calipers": "^2.0.0",
@@ -64,11 +64,11 @@
     "coveralls": "^2.11.15",
     "css-loader": "^0.26.1",
     "enzyme": "^2.6.0",
-    "eslint": "^3.9.1",
+    "eslint": "^3.16.1",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.2",
-    "eslint-plugin-react": "^6.6.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0",
     "expect.js": "^0.3.0",
     "extend-tape": "^1.2.0",
     "faucet": "^0.0.1",
@@ -78,7 +78,7 @@
     "gulp-develop-server": "^0.5.2",
     "gulp-filter": "^5.0.0",
     "gulp-load-plugins": "^1.2.0",
-    "gulp-mocha": "^3.0.1",
+    "gulp-mocha": "^4.1.0",
     "gulp-plumber": "^1.0.1",
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
@@ -94,13 +94,13 @@
     "tape-catch": "^1.0.6",
     "tape-jsx-equals": "^1.0.0",
     "url-loader": "^0.5.7",
-    "yargs": "^6.5.0"
+    "yargs": "^7.0.1"
   },
   "peerDependencies": {
-    "eslint": "^3.13.0",
+    "eslint": "^3.16.1",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^3.0.2",
-    "eslint-plugin-react": "^6.9.0"
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.0"
   },
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
   "repository": {
