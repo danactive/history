@@ -2,7 +2,6 @@
   "name": "history",
   "version": "2.2.0",
   "scripts": {
-    "dev": "gulp develop",
     "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "eslint lib plugins *.js --ext .js,.jsx",

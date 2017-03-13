@@ -59,7 +59,10 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.equal(lib.file.mediumType(''), false, 'Blank type');
     assert.equal(lib.file.mediumType('FAKE'), false, 'Fake type');
     assert.equal(lib.file.mediumType('image/jpeg'), 'image', 'JPEG is image');
+    assert.equal(lib.file.mediumType('image'), 'image', 'image is image');
+    assert.equal(lib.file.mediumType('photo'), 'image', 'photo is image');
     assert.equal(lib.file.mediumType('video/mp4'), 'video', 'MP4 is video');
+    assert.equal(lib.file.mediumType('video'), 'video', 'video is video');
     assert.equal(lib.file.mediumType('video/webm'), 'video', 'WebM is video');
     assert.end();
   });

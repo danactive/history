@@ -20,6 +20,7 @@ const libGeojson = require('./plugins/geojson/lib/index');
 const libHome = require('./plugins/home/lib/index');
 const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
+const libWalk = require('./plugins/walk/lib/index');
 const libVideo = require('./plugins/video/lib/index');
 const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
@@ -44,6 +45,7 @@ server.register([
   { register: libRename, routes: { prefix: '/admin' } },
   { register: libResize, routes: { prefix: '/admin' } },
   { register: libVideo, routes: { prefix: '/view' } },
+  { register: libWalk },
   {
     register: hapiSwagger,
     options: { info: { title: 'history API', version: pkg.version } }
