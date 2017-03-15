@@ -88,7 +88,7 @@
     "react-addons-test-utils": "^15.4.1",
     "react-unit": "^2.0.0",
     "standard-version": "^4.0.0",
-    "style-loader": "^0.13.1",
+    "style-loader": "^0.14.0",
     "tap-summary": "^3.0.1",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
