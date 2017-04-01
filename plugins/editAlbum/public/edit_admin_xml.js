@@ -260,12 +260,14 @@ const GetGalleryNames = () => { // both <select> and btn call this function
     $('#listPhotos').html(''); // clear previous gallery
   }
 };
-const ToggleDisable = function ToggleDisable() {
+
+function ToggleDisable() {
   $(this)
     .parent()
     .find('input[type=text], select')
     .prop('disabled', $(this).prop('checked')); // disable text field if checkbox is checked
-};
+}
+
 $(window).ready(() => {
   $('#changeGallery').click(GetGalleryNames);
   $('#changeAlbum').click(GetAlbumXml);

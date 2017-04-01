@@ -1,3 +1,4 @@
+const path = require('path');
 const TapWebpackPlugin = require('tap-webpack-plugin');
 
 module.exports = [
@@ -6,7 +7,7 @@ module.exports = [
     target: 'node',
     entry: './test/webpack',
     output: {
-      path: 'tmp',
+      path: path.resolve(__dirname, './tmp'),
       filename: 'test.js',
     },
     plugins: [
