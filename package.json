@@ -86,7 +86,7 @@
     "jsdom": "^9.9.1",
     "nyc": "^10.0.0",
     "react-addons-test-utils": "^15.4.1",
-    "react-unit": "^2.0.0",
+    "react-unit": "^3.0.0",
     "standard-version": "^4.0.0",
     "style-loader": "^0.16.1",
     "tap-summary": "^3.0.1",
