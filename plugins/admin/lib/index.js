@@ -9,8 +9,8 @@ exports.register = (server, options, next) => {
     path: '/',
     config: {
       handler,
-      description: 'Administration pages',
-    },
+      description: 'Administration pages'
+    }
   });
 
   next();
@@ -18,5 +18,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-admin',
-  version: '0.1.0',
+  version: '0.1.0'
 };

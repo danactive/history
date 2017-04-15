@@ -41,16 +41,16 @@ function resize(sourcePath) {
                   meta: {
                     error: {
                       count: errors.length,
-                      message: errors.join('; '),
-                    },
+                      message: errors.join('; ')
+                    }
                   },
                   payload: {
                     paths: {
                       original: originalPath,
                       photo: photoPath,
-                      thumb: thumbPath,
-                    },
-                  },
+                      thumb: thumbPath
+                    }
+                  }
                 });
               }
             }

@@ -10,8 +10,8 @@ const routeHandler = (error, server, galleries, next) => {
   } else {
     handler = {
       directory: {
-        path: request => path.join(__dirname, '../../../', `public/galleries/gallery-${request.params.gallery}`),
-      },
+        path: request => path.join(__dirname, '../../../', `public/galleries/gallery-${request.params.gallery}`)
+      }
     };
   }
 
@@ -19,8 +19,8 @@ const routeHandler = (error, server, galleries, next) => {
     method: 'GET',
     path: '/static/gallery-{gallery}/{param*}',
     config: {
-      handler,
-    },
+      handler
+    }
   });
 
   next();
@@ -33,10 +33,10 @@ exports.register = (server, options, next) => {
     config: {
       handler: {
         file: {
-          path: path.join(__dirname, '../../../', 'public/xslt/gallery.xslt'),
-        },
-      },
-    },
+          path: path.join(__dirname, '../../../', 'public/xslt/gallery.xslt')
+        }
+      }
+    }
   });
 
   const noError = undefined;
@@ -47,5 +47,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-gallery',
-  version: '0.1.0',
+  version: '0.1.0'
 };

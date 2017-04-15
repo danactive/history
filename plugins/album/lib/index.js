@@ -23,10 +23,10 @@ exports.register = (server, options, next) => {
         query: {
           album_stem: validation.albumStem,
           gallery: validation.gallery,
-          raw: validation.raw,
-        },
-      },
-    },
+          raw: validation.raw
+        }
+      }
+    }
   });
 
   server.route({
@@ -39,10 +39,10 @@ exports.register = (server, options, next) => {
           path: 'plugins/album/public',
           listing: true,
           index: false,
-          redirectToSlash: true,
-        },
-      },
-    },
+          redirectToSlash: true
+        }
+      }
+    }
   });
 
   server.route({
@@ -51,9 +51,9 @@ exports.register = (server, options, next) => {
     config: {
       description: 'Utility script',
       handler: {
-        file: 'plugins/utils/public/utils.js',
-      },
-    },
+        file: 'plugins/utils/public/utils.js'
+      }
+    }
   });
 
   server.route({
@@ -63,9 +63,9 @@ exports.register = (server, options, next) => {
       description: 'jQuery library',
       tags: ['jQuery'],
       handler: {
-        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
-      },
-    },
+        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js'
+      }
+    }
   });
 
   server.route({
@@ -73,9 +73,9 @@ exports.register = (server, options, next) => {
     path: '/album/bundle.js',
     config: {
       handler: {
-        file: 'plugins/album/public/assets/bundle.js',
-      },
-    },
+        file: 'plugins/album/public/assets/bundle.js'
+      }
+    }
   });
 
   next();
@@ -83,5 +83,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-view-album',
-  version: '0.3.0',
+  version: '0.3.0'
 };

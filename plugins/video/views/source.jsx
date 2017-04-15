@@ -21,7 +21,7 @@ function Source({ extension, gallery, source }) {
 Source.propTypes = {
   extension: React.PropTypes.string.isRequired,
   gallery: React.PropTypes.string.isRequired,
-  source: React.PropTypes.string.isRequired,
+  source: React.PropTypes.string.isRequired
 };
 
 module.exports = Source;

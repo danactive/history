@@ -8,7 +8,7 @@ const path = require('path');
 const configJson = require('../../../config.json');
 
 module.exports.config = {
-  get: filepath => dotProp.get(configJson, filepath),
+  get: filepath => dotProp.get(configJson, filepath)
 };
 
 function customMime(extension) {
@@ -39,7 +39,7 @@ const fileMethods = {
   mimeType: extension => customMime(extension) || mime.lookup(extension),
   mediumType: extension => (typeof extension === 'string') && (extension.indexOf('/') > 0) && extension.split('/')[0],
   absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
-  photoPath: filepath => filepath && filepath.replace('thumbs', 'photos'),
+  photoPath: filepath => filepath && filepath.replace('thumbs', 'photos')
 };
 
 fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {

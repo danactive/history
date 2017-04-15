@@ -29,5 +29,5 @@ const getGalleries = () => new Promise((resolve, reject) => {
 });
 
 module.exports = {
-  getGalleries,
+  getGalleries
 };

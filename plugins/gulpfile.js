@@ -9,8 +9,8 @@ const tapSummary = require('tap-summary');
 
 const paths = {
   test: [
-    '*/test/*.spec.js', '!album/test/cases.js', '!album/test/react-thumb*.js',
-  ],
+    '*/test/*.spec.js', '!album/test/cases.js', '!album/test/react-thumb*.js'
+  ]
 };
 
 function filterFiles() {

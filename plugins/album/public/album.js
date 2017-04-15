@@ -50,7 +50,7 @@ function photoViewed() {
 jQuery('#albumBox a').colorbox({
   preloading: true,
   onComplete: photoViewed,
-  transition: 'none',
+  transition: 'none'
 });
 
 jQuery('#linkMap').click(() => {

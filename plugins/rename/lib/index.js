@@ -48,7 +48,7 @@ const validation = {
   xml: joi.string().required().regex(/<item\b[^>]*>(.*?)<\/item>/)
     .example(`<item id="1"><filename>2016-12-31-37.jpg</filename></item>` + // eslint-disable-line quotes
       `<item id="2"><filename>2016-12-31-64.jpg</filename></item>` + // eslint-disable-line quotes
-      `<item id="3"><filename>2016-12-31-90.jpg</filename></item>`), // eslint-disable-line quotes
+      `<item id="3"><filename>2016-12-31-90.jpg</filename></item>`) // eslint-disable-line quotes
 };
 
 exports.register = (server, options, next) => {
@@ -63,16 +63,16 @@ exports.register = (server, options, next) => {
           filenames: validation.filenames,
           prefix: validation.prefix,
           source_folder: validation.sourceFolder,
-          rename_associated: validation.renameAssociated,
-        },
+          rename_associated: validation.renameAssociated
+        }
       },
       response: {
         schema: {
           filenames: validation.filenames,
-          xml: validation.xml,
-        },
-      },
-    },
+          xml: validation.xml
+        }
+      }
+    }
   });
 
   next();
@@ -80,5 +80,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-rename',
-  version: '2.0.0',
+  version: '2.0.0'
 };

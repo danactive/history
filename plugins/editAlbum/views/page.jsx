@@ -107,7 +107,7 @@ function Page(props) {
 
 Page.propTypes = {
   galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  state: React.PropTypes.string.isRequired,
+  state: React.PropTypes.string.isRequired
 };
 
 module.exports = Page;

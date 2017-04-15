@@ -95,7 +95,7 @@ function templatePrepare(result = {}) {
       thumbPath,
       mediaPath: (item.type === 'video') ? videoPath : photoPath,
       geo_lat,
-      geo_lon,
+      geo_lon
     };
 
     return Object.assign(item, enhancements);

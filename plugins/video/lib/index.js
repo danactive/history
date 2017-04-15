@@ -7,7 +7,7 @@ const validation = {
   sources: joi.string(),
   w: joi.number(),
   h: joi.number(),
-  gallery: joi.string(),
+  gallery: joi.string()
 };
 
 exports.register = (server, options, next) => {
@@ -23,10 +23,10 @@ exports.register = (server, options, next) => {
           sources: validation.sources,
           w: validation.w,
           h: validation.h,
-          gallery: validation.gallery,
-        },
-      },
-    },
+          gallery: validation.gallery
+        }
+      }
+    }
   });
 
   next();
@@ -34,5 +34,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-video',
-  version: '0.1.0',
+  version: '0.1.0'
 };

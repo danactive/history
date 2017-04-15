@@ -7,7 +7,7 @@ function Gallery({ gallery }) {
 }
 
 Gallery.propTypes = {
-  gallery: React.PropTypes.string.isRequired,
+  gallery: React.PropTypes.string.isRequired
 };
 
 module.exports = Gallery;

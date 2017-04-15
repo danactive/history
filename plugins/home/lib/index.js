@@ -12,8 +12,8 @@ exports.register = (server, options, next) => {
     path: '/',
     config: {
       description: 'Home landing page',
-      handler,
-    },
+      handler
+    }
   });
 
   next();
@@ -21,5 +21,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-home',
-  version: '0.1.0',
+  version: '0.1.0'
 };

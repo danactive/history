@@ -17,7 +17,7 @@ const handler = (request, reply) => {
 };
 
 const validation = {
-  raw: joi.boolean().truthy('true').falsy('false').default(false),
+  raw: joi.boolean().truthy('true').falsy('false').default(false)
 };
 
 exports.register = (server, options, next) => {
@@ -29,10 +29,10 @@ exports.register = (server, options, next) => {
       tags: ['api', 'plugin'],
       validate: {
         query: {
-          raw: validation.raw,
-        },
-      },
-    },
+          raw: validation.raw
+        }
+      }
+    }
   });
 
   server.route({
@@ -46,10 +46,10 @@ exports.register = (server, options, next) => {
           path: 'plugins/editAlbum/public',
           listing: true,
           index: false,
-          redirectToSlash: true,
-        },
-      },
-    },
+          redirectToSlash: true
+        }
+      }
+    }
   });
 
   server.route({
@@ -58,17 +58,17 @@ exports.register = (server, options, next) => {
     config: {
       description: 'jQuery library',
       handler: {
-        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js',
-      },
-    },
+        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js'
+      }
+    }
   });
 
   server.route({
     method: 'GET',
     path: '/album/assets/bundle.js',
     handler: {
-      file: 'plugins/editAlbum/public/assets/bundle.js',
-    },
+      file: 'plugins/editAlbum/public/assets/bundle.js'
+    }
   });
 
   next();
@@ -76,5 +76,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-edit-album',
-  version: '0.1.0',
+  version: '0.1.0'
 };

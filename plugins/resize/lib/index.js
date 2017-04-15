@@ -12,7 +12,7 @@ const handler = (request, reply) => {
 };
 
 const validation = {
-  sourcePath: joi.string(),
+  sourcePath: joi.string()
 };
 
 exports.register = (server, options, next) => {
@@ -24,15 +24,15 @@ exports.register = (server, options, next) => {
       tags: ['api', 'plugin', 'v0'],
       validate: {
         payload: {
-          source_path: validation.sourcePath,
-        },
+          source_path: validation.sourcePath
+        }
       },
       response: {
         schema: {
-          resize: joi.boolean().truthy('true').falsy('false'),
-        },
-      },
-    },
+          resize: joi.boolean().truthy('true').falsy('false')
+        }
+      }
+    }
   });
 
   next();
@@ -40,5 +40,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-resize',
-  version: '0.2.0',
+  version: '0.2.0'
 };

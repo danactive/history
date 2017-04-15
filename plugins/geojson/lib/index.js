@@ -22,10 +22,10 @@ exports.register = (server, options, next) => {
       validate: {
         query: {
           album_stem: validation.albumStem,
-          gallery: validation.gallery,
-        },
-      },
-    },
+          gallery: validation.gallery
+        }
+      }
+    }
   });
 
   next();
@@ -33,5 +33,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-geojson',
-  version: '0.1.0',
+  version: '0.1.0'
 };

@@ -7,7 +7,7 @@ class GalleryDropdown extends React.Component {
     super(props);
 
     this.state = {
-      gallery: '',
+      gallery: ''
     };
 
     this.galleryOptions = this.props.galleries.map((gallery) => {
@@ -20,7 +20,7 @@ class GalleryDropdown extends React.Component {
 
   handleChange() {
     this.setState({
-      gallery: this.value,
+      gallery: this.value
     });
     GetGalleryNames();
   }
@@ -40,7 +40,7 @@ class GalleryDropdown extends React.Component {
 }
 
 GalleryDropdown.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
 };
 
 module.exports = GalleryDropdown;

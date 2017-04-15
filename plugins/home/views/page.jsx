@@ -20,7 +20,7 @@ function Page({ galleries }) {
 }
 
 Page.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
 };
 
 module.exports = Page;

@@ -19,7 +19,7 @@ function Page({ video }) {
 }
 
 Page.propTypes = {
-  video: React.PropTypes.shape().isRequired,
+  video: React.PropTypes.shape().isRequired
 };
 
 module.exports = Page;

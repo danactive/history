@@ -8,23 +8,23 @@ module.exports = [
     entry: './test/webpack',
     output: {
       path: path.resolve(__dirname, './tmp'),
-      filename: 'test.js',
+      filename: 'test.js'
     },
     plugins: [
-      new TapWebpackPlugin(),
-    ],
+      new TapWebpackPlugin()
+    ]
   },
   // export npm modules to browser scripts
   {
     entry: {
       album: './plugins/album/lib/client.js',
-      editAlbum: './plugins/editAlbum/lib/client.js',
+      editAlbum: './plugins/editAlbum/lib/client.js'
     },
     resolve: {
-      extensions: ['.css', '.js', '.jsx'],
+      extensions: ['.css', '.js', '.jsx']
     },
     output: {
-      filename: './plugins/[name]/public/assets/bundle.js',
+      filename: './plugins/[name]/public/assets/bundle.js'
     },
     module: {
       rules: [
@@ -34,20 +34,20 @@ module.exports = [
             {
               loader: 'babel-loader',
               options: {
-                presets: ['react', 'es2015'],
-              },
-            },
-          ],
+                presets: ['react', 'es2015']
+              }
+            }
+          ]
         },
         {
           test: /\.css$/,
-          use: ['style-loader', 'css-loader'],
+          use: ['style-loader', 'css-loader']
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
-          use: ['url-loader?limit=100000'],
-        },
-      ],
-    },
-  },
+          use: ['url-loader?limit=100000']
+        }
+      ]
+    }
+  }
 ];

@@ -25,7 +25,7 @@ const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
 
 require('babel-core/register')({
-  presets: ['react', 'es2015'],
+  presets: ['react', 'es2015']
 });
 
 const port = config.port;
@@ -46,9 +46,9 @@ server.register([
   { register: libVideo, routes: { prefix: '/view' } },
   {
     register: hapiSwagger,
-    options: { info: { title: 'history API', version: pkg.version } },
+    options: { info: { title: 'history API', version: pkg.version } }
   },
-  { register: lout },
+  { register: lout }
 ], (error) => {
   hoek.assert(!error, error);
 
@@ -57,17 +57,17 @@ server.register([
   notifier.notify({
     icon: `${__dirname}/favicon.ico`,
     title: 'Server event',
-    message: `Running at ${server.info.uri}`,
+    message: `Running at ${server.info.uri}`
   });
 });
 
 server.views({
   defaultExtension: 'jsx',
   engines: {
-    jsx: hapiReactViews,
+    jsx: hapiReactViews
   },
   isCached: true,
   path: './',
   partialsPath: './',
-  relativeTo: __dirname,
+  relativeTo: __dirname
 });
