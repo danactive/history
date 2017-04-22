@@ -4,6 +4,9 @@ environment:
     - nodejs_version: "6"
     - nodejs_version: "7"
 
+matrix:
+  fast_finish: true # build fail immediately once one of the job fails
+
 platform:
   - x86
   - x64
@@ -23,4 +26,5 @@ test_script:
   - yarn test:all
   - yarn test:react
 
-build: off
+build_script:
+  - yarn run webpack

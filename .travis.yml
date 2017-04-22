@@ -20,6 +20,10 @@ before_script:
   - yarn lint
   - yarn test:all
   - yarn test:react
+
+script:
+  - yarn run webpack
+
 after_success:
   - yarn ci-cover:coveralls
   - yarn ci-cover:prep-codeclimate
