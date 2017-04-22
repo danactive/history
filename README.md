@@ -8,7 +8,7 @@ Your personal **history** storyboarded with photo and video albums.  Associate p
 ## Project Status:
 | Service | Status |
 |---|---|
-| CI | [![Build Status](https://travis-ci.org/danactive/history.png?branch=master)](https://travis-ci.org/danactive/history) |
+| CI | [![Build Status](https://travis-ci.org/danactive/history.png?branch=master)](https://travis-ci.org/danactive/history) [![Windows build status](https://ci.appveyor.com/api/projects/status/df0s6b0wrdv0akkd?svg=true)](https://ci.appveyor.com/project/danactive/history/branch/master) |
 | Dependencies | [![Dependencies Status](https://david-dm.org/danactive/history.svg)](https://david-dm.org/danactive/history) [![DevDependencies Status](https://david-dm.org/danactive/history/dev-status.svg)](https://david-dm.org/danactive/history#info=devDependencies) |
 | Code Quality | [![Code Climate](https://codeclimate.com/github/danactive/history/badges/gpa.svg)](https://codeclimate.com/github/danactive/history) |
 | Security | [![NSP Status](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f/badge)](https://nodesecurity.io/orgs/danactive/projects/86c4bdca-2365-43a7-b863-8dd4c21b021f) [![Known Vulnerabilities](https://snyk.io/test/github/danactive/history/badge.svg)](https://snyk.io/test/github/danactive/history) |

@@ -13,11 +13,10 @@ node_js:
   - "6"
   - "7"
 
-before_install:
-  - npm install -g yarn --cache-min 999999999
-install:
-  - yarn install
 before_script:
+  - node --version
+  - npm --version
+  - gm version
   - yarn lint
   - yarn test:all
   - yarn test:react
