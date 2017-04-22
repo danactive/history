@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/danactive/history/compare/v2.0.0...v2.1.0) (2017-04-22)
+
+
+### Bug Fixes
+
+* **CI:** Change CI to test webpack [[#149](https://github.com/danactive/history/issues/149)] ([c1e3446](https://github.com/danactive/history/commit/c1e3446))
+* **CLI:** Display favicon with server start event notification ([8b52867](https://github.com/danactive/history/commit/8b52867))
+* **package:** update babel-loader to version 7.0.0 ([a6ff5fa](https://github.com/danactive/history/commit/a6ff5fa))
+* **package:** update node-notifier to version 5.0.1 ([f807df3](https://github.com/danactive/history/commit/f807df3)), closes [#111](https://github.com/danactive/history/issues/111)
+* **webpack:** Absolute path & Lint ([84312e0](https://github.com/danactive/history/commit/84312e0))
+* **webpack:** webpack v2 failed on Windows 7, trailing commas was part of the error ([409d2b1](https://github.com/danactive/history/commit/409d2b1))
+
+
+### Features
+
+* **CI:** Add Windows CI hosted by AppVeyor [[#149](https://github.com/danactive/history/issues/149),[#92](https://github.com/danactive/history/issues/92)] ([e47a02f](https://github.com/danactive/history/commit/e47a02f))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/danactive/history/compare/v1.16.0...v2.0.0) (2017-01-27)
 
