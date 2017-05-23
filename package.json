@@ -34,7 +34,7 @@
     "geojson": "^0.4.0",
     "glob": "^7.0.0",
     "gm": "^1.23.0",
-    "hapi": "^16.0.0",
+    "hapi": "^16.1.1",
     "hapi-react-views": "^9.2.1",
     "hapi-swagger": "^7.4.0",
     "hoek": "^4.1.0",
@@ -67,8 +67,8 @@
     "eslint": "^3.16.1",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^4.0.0",
-    "eslint-plugin-react": "^6.10.0",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-react": "^7.0.1",
     "expect.js": "^0.3.0",
     "extend-tape": "^1.2.0",
     "faucet": "^0.0.1",
@@ -99,7 +99,7 @@
   "peerDependencies": {
     "eslint": "^3.16.1",
     "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^5.0.1",
+    "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1"
   },
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
