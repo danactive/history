@@ -83,7 +83,7 @@
     "gulp-print": "^2.0.1",
     "gulp-rename": "^1.2.0",
     "gulp-tape": "0.0.9",
-    "jsdom": "^9.9.1",
+    "jsdom": "^10.1.0",
     "nyc": "^10.0.0",
     "react-addons-test-utils": "^15.4.1",
     "react-unit": "^3.0.0",
