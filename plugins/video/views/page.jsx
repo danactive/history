@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 const Video = require('./video.jsx');
@@ -19,7 +20,7 @@ function Page({ video }) {
 }
 
 Page.propTypes = {
-  video: React.PropTypes.shape().isRequired
+  video: propTypes.shape().isRequired
 };
 
 module.exports = Page;

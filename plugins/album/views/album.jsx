@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 const Thumb = require('./thumb.jsx');
@@ -9,10 +10,10 @@ function Album({ album }) {
 }
 
 Album.propTypes = {
-  album: React.PropTypes.shape({
-    items: React.PropTypes.arrayOf(React.PropTypes.shape({
-      $: React.PropTypes.shape({
-        id: React.PropTypes.string
+  album: propTypes.shape({
+    items: propTypes.arrayOf(propTypes.shape({
+      $: propTypes.shape({
+        id: propTypes.string
       })
     })).isRequired
   }).isRequired

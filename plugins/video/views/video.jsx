@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 const utils = require('../../utils/lib');
@@ -30,11 +31,11 @@ function Video({ video }) {
 }
 
 Video.propTypes = {
-  video: React.PropTypes.shape({
-    w: React.PropTypes.number.isRequired,
-    h: React.PropTypes.number.isRequired,
-    gallery: React.PropTypes.string.isRequired,
-    sources: React.PropTypes.string.isRequired
+  video: propTypes.shape({
+    w: propTypes.number.isRequired,
+    h: propTypes.number.isRequired,
+    gallery: propTypes.string.isRequired,
+    sources: propTypes.string.isRequired
   }).isRequired
 };
 

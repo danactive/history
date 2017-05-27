@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 function Track({ extension, gallery, source }) {
@@ -8,9 +9,9 @@ function Track({ extension, gallery, source }) {
 }
 
 Track.propTypes = {
-  extension: React.PropTypes.string.isRequired,
-  gallery: React.PropTypes.string.isRequired,
-  source: React.PropTypes.string.isRequired
+  extension: propTypes.string.isRequired,
+  gallery: propTypes.string.isRequired,
+  source: propTypes.string.isRequired
 };
 
 module.exports = Track;

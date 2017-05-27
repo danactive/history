@@ -1,4 +1,5 @@
 /* global GetGalleryNames */
+const propTypes = require('prop-types');
 const React = require('react');
 
 /* eslint-disable jsx-a11y/tabindex-no-positive */
@@ -40,7 +41,7 @@ class GalleryDropdown extends React.Component {
 }
 
 GalleryDropdown.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+  galleries: propTypes.arrayOf(propTypes.string).isRequired
 };
 
 module.exports = GalleryDropdown;

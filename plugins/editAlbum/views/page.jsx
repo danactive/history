@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 /* eslint-disable jsx-a11y/tabindex-no-positive */
@@ -106,8 +107,8 @@ function Page(props) {
 }
 
 Page.propTypes = {
-  galleries: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  state: React.PropTypes.string.isRequired
+  galleries: propTypes.arrayOf(propTypes.string).isRequired,
+  state: propTypes.string.isRequired
 };
 
 module.exports = Page;

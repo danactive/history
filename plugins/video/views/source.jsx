@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 function Source({ extension, gallery, source }) {
@@ -19,9 +20,9 @@ function Source({ extension, gallery, source }) {
 }
 
 Source.propTypes = {
-  extension: React.PropTypes.string.isRequired,
-  gallery: React.PropTypes.string.isRequired,
-  source: React.PropTypes.string.isRequired
+  extension: propTypes.string.isRequired,
+  gallery: propTypes.string.isRequired,
+  source: propTypes.string.isRequired
 };
 
 module.exports = Source;

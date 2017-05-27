@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 function Thumb({ item }) {
@@ -24,14 +25,14 @@ function Thumb({ item }) {
 }
 
 Thumb.propTypes = {
-  item: React.PropTypes.shape({
-    caption: React.PropTypes.string,
-    thumbCaption: React.PropTypes.string.isRequired,
-    thumbPath: React.PropTypes.string.isRequired,
-    mediaPath: React.PropTypes.string.isRequired,
-    geo: React.PropTypes.shape({
-      lat: React.PropTypes.number,
-      lon: React.PropTypes.number
+  item: propTypes.shape({
+    caption: propTypes.string,
+    thumbCaption: propTypes.string.isRequired,
+    thumbPath: propTypes.string.isRequired,
+    mediaPath: propTypes.string.isRequired,
+    geo: propTypes.shape({
+      lat: propTypes.number,
+      lon: propTypes.number
     })
   })
 };
