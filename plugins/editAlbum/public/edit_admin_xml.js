@@ -1,4 +1,4 @@
-/* global $, ajaxError, SaveToJson, schema, util, window */
+/* global $, SaveToJson, schema, util, window */
 const album = {
   form: {
     schema: { // HTML element ID, XML node name

@@ -1,4 +1,4 @@
-/* global document, getQueryByName, mapboxgl, window */
+/* global getQueryByName, mapboxgl, window */
 function createMap(containerId) {
   mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
   window.map = new mapboxgl.Map({
