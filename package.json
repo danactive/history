@@ -98,7 +98,7 @@
     "yargs": "^8.0.1"
   },
   "peerDependencies": {
-    "eslint": "^3.16.1",
+    "eslint": "^4.1.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
     "eslint-plugin-react": "^7.0.1"
