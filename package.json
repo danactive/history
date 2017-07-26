@@ -52,7 +52,7 @@
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
     "vision": "^4.1.0",
-    "webpack": "^2.2.1",
+    "webpack": "^3.4.1",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
