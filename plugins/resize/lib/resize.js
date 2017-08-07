@@ -5,12 +5,12 @@ const path = require('path');
 const existsMod = require('../../exists/lib/exists');
 const utils = require('../../utils/lib');
 
-/**
+/*
  Resize single photo into originals, photos, thumbs folder
 
  @method resize
  @param {string} sourcePath path to image file
- **/
+*/
 function resize(sourcePath) {
   return new Promise((resolve, reject) => {
     const originalPath = path.resolve(__dirname, '../../../', sourcePath);

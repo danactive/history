@@ -6,14 +6,14 @@ const path = require('path');
 const exists = require('../../exists/lib/exists');
 const utils = require('../../utils/lib');
 
-/**
+/*
 Reassign associated filename based on file without extension
 
 @method reassignAssociated
 @param {string[]} [absoluteFolderFilenames] Filenames that contains the raw camera photo files with absolute path
 @param {string} [futureFile] Future file (without extension) of renamed new name based on date
 @return {Promise} associated filenames with path
-**/
+*/
 function reassignAssociated(absoluteFolderFilenames, futureFile) {
   return new Promise((resolve) => {
     resolve(absoluteFolderFilenames.map((filename) => {
@@ -25,13 +25,13 @@ function reassignAssociated(absoluteFolderFilenames, futureFile) {
 }
 exports.reassignAssociated = reassignAssociated;
 
-/**
+/*
 Viewing files in a browser should exclude source files
 
 @method supportedBrowserMedia
 @param {string} filename Filename path
 @return {Promise} publicly viewable file
-**/
+*/
 function supportedBrowserMedia(filename) {
   return new Promise((resolve) => {
     const findType = utils.file.type(filename);
@@ -42,7 +42,7 @@ function supportedBrowserMedia(filename) {
 }
 exports.supportedBrowserMedia = supportedBrowserMedia;
 
-/**
+/*
 Renamed file paths
 
 @method renamePaths
@@ -52,7 +52,7 @@ Renamed file paths
 @param {object} [options] Additional optional options
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
-**/
+*/
 function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
   return new Promise((resolve, reject) => {
     const renamedFilenames = [];

@@ -1,4 +1,4 @@
-/* global __dirname, require*/
+/* global __dirname, require */
 
 const hapi = require('hapi');
 const hapiReactViews = require('hapi-react-views');

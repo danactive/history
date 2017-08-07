@@ -54,7 +54,7 @@ fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
   return `/static/gallery-${gallery}/media/thumbs/${year}/${file}.jpg`;
 };
 
-/**
+/*
  Find associated path and filename based on file without extension
 
  @method glob
@@ -63,7 +63,7 @@ fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
  @param {object} [options]
  @param {bool} [options.ignoreExtension] Apply pattern without file extension
  @return {Promise} array of string associated filenames with absolute path
- **/
+*/
 fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve, reject) => {
   let absolutePath = fileMethods.absolutePath(sourceFolder);
   if (options.ignoreExtension === true) {

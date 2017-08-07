@@ -1,1 +1,1 @@
-Trigger Travis for SourceClear check
+Update commit message

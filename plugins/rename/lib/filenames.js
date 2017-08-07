@@ -25,7 +25,7 @@ function videoTypeInList(sourceFilenames, sourceFile) {
 }
 module.exports.videoTypeInList = videoTypeInList;
 
-/**
+/*
 Generate renamed files
 
 @method futureFilenamesOutputs
@@ -33,7 +33,7 @@ Generate renamed files
 @param {string} prefix Root of filename with increment added before extension
 @param {string} [xmlStartPhotoId] initial position
 @return {json}
-**/
+*/
 function futureFilenamesOutputs(sourceFilenames, prefix, xmlStartPhotoId = 100) {
   const uniqueFilenames = uniqueFiles(sourceFilenames);
   const photosInDay = uniqueFilenames.size;
