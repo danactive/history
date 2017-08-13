@@ -4,13 +4,13 @@ const path = require('path');
 
 const moduleName = 'pathExists';
 
-/**
+/*
 Verify if a path exists on the file system
 
 @method pathExists
 @param {string} verifyPath relative/absolute path (file or folder) on the file system
 @returns {Promise}
-**/
+*/
 function pathExists(verifyPath) {
   return new Promise((resolve, reject) => {
     if (verifyPath === undefined) {
