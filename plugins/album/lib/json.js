@@ -81,21 +81,21 @@ function templatePrepare(result = {}) {
     if (item.geo) {
       item.geo.lat = parseFloat(item.geo.lat);
       item.geo.lon = parseFloat(item.geo.lon);
+    } else {
+      item.geo = {
+        lat: null,
+        lon: null
+      };
     }
 
     const thumbPath = getThumbPath(item, gallery);
     const photoPath = utils.file.photoPath(thumbPath);
     const videoPath = getVideoPath(item, gallery);
-    // todo workaround for nested https://github.com/caseypt/GeoJSON.js/issues/27
-    const geo_lat = (item.geo && item.geo.lat) || null; // eslint-disable-line camelcase
-    const geo_lon = (item.geo && item.geo.lon) || null; // eslint-disable-line camelcase
     const enhancements = {
       thumbCaption: caption(item),
       title: title(item),
       thumbPath,
-      mediaPath: (item.type === 'video') ? videoPath : photoPath,
-      geo_lat,
-      geo_lon
+      mediaPath: (item.type === 'video') ? videoPath : photoPath
     };
 
     return Object.assign(item, enhancements);
