@@ -3,6 +3,7 @@ environment:
     - nodejs_version: "6.9.0"
     - nodejs_version: "6"
     - nodejs_version: "7"
+    - nodejs_version: "8"
 
 matrix:
   fast_finish: true # build fail immediately once one of the job fails
