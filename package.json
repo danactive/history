@@ -73,7 +73,7 @@
     "expect.js": "^0.3.0",
     "extend-tape": "^1.2.0",
     "faucet": "^0.0.1",
-    "file-loader": "^0.11.0",
+    "file-loader": "^1.0.0-rc.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.4.3",
     "gulp-develop-server": "^0.5.2",
