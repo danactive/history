@@ -11,7 +11,7 @@ function Page({ album }) {
       <head>
         <title>History</title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-        <link href="https://api.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.css" rel="stylesheet" />
+        <link href="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css" rel="stylesheet" />
         <link href="./album/static/album.css" rel="stylesheet" />
         <link href="./album/static/map.css" rel="stylesheet" />
       </head>
@@ -24,7 +24,7 @@ function Page({ album }) {
         <div id="albumBox"><Album album={album} /></div>
         <script src="./album/static/jquery.js" />
         <script src="./album/static/lib/color-thief.js" />
-        <script src="https://api.mapbox.com/mapbox-gl-js/v0.31.0/mapbox-gl.js" />
+        <script src="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js" />
         <script src="./album/static/assets/bundle.js" />
         <script src="./album/static/utils.js" />
         <script src="./album/static/map.js" />
