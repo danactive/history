@@ -1,6 +1,6 @@
 {
   "name": "history",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "scripts": {
     "dev": "gulp develop",
     "debug": "node-debug index.js",

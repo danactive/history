@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.2.0"></a>
+# [2.2.0](https://github.com/danactive/history/compare/v2.1.0...v2.2.0) (2017-08-20)
+
+
+### Bug Fixes
+
+* **geojson:** Remove tech debt as module added support [[#95](https://github.com/danactive/history/issues/95)] ([139e4b4](https://github.com/danactive/history/commit/139e4b4))
+* **package:** update boom to version 5.0.0 ([ab3b91a](https://github.com/danactive/history/commit/ab3b91a))
+* **package:** update geojson to version 0.5.0 ([b917813](https://github.com/danactive/history/commit/b917813))
+* **package:** update webpack to version 3.4.1 ([4003950](https://github.com/danactive/history/commit/4003950)), closes [#171](https://github.com/danactive/history/issues/171)
+
+
+### Features
+
+* **CI:** Add Node.js v8 to Travis (Linux) and Appveyor (Windows) [[#181](https://github.com/danactive/history/issues/181)] ([b7c76b8](https://github.com/danactive/history/commit/b7c76b8))
+* **Map:** Add marker for unclustered geo locations [[#37](https://github.com/danactive/history/issues/37)] ([4924c83](https://github.com/danactive/history/commit/4924c83))
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/danactive/history/compare/v2.0.0...v2.1.0) (2017-04-22)
 
