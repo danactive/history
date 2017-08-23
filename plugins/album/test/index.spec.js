@@ -14,52 +14,16 @@ test('Verify /album route', { skip: false }, (describe) => {
 
   const lib = require('../lib');
   const testCases = require('./cases');
-  const utils = require('../../utils/lib');
+  const testCaseDef = require('../../../test/casesDefinition');
 
   const SAMPLE_IMAGE_COUNT = 6;
   const plugins = [inert, vision, lib];
-  const port = utils.config.get('port');
 
-  testCases.forEach((testCase) => {
-    describe.test(testCase.name, testCase.options, (assert) => {
-      const server = new hapi.Server();
-      server.connection({ port });
-      server.register(plugins, (pluginError) => {
-        if (pluginError) {
-          return assert.fail(pluginError);
-        }
-
-        const url = `/album?${querystring.stringify({ gallery: testCase.request.gallery, album_stem: testCase.request.album_stem })}`;
-        const request = {
-          method: 'GET',
-          url,
-        };
-
-        server.views({
-          engines: {
-            jsx: hapiReactViews,
-          },
-          relativeTo: path.join(__dirname, '../../../'),
-        });
-
-        return server.inject(request, (response) => {
-          if (response.result.error) {
-            return testCase.error(assert, response.result, { rest: true });
-          }
-
-          if (testCase.success) {
-            return testCase.success(assert, response.result, { rest: true });
-          }
-
-          return testCase.successView(assert, response.result);
-        });
-      });
-    });
-  });
+  testCaseDef.execHapi({ describe, plugins, testCases, routeStem: '/album' });
 
   describe.test('* JavaScript library requirements', { skip: false }, (assert) => {
     const server = new hapi.Server();
-    server.connection({ port });
+    server.connection();
     server.register(plugins, (pluginError) => {
       if (pluginError) {
         return assert.fail(pluginError);

@@ -5,23 +5,32 @@ const glob = require('glob');
 const mime = require('mime-types');
 const path = require('path');
 
-const configJson = require('../../../config.json');
+const config = require('../../../config.json');
 
 module.exports.config = {
-  get: filepath => dotProp.get(configJson, filepath)
+  get: filepath => dotProp.get(config, filepath)
 };
 
 function customMime(extension) {
-  switch (extension) {
-    case 'raw':
-    case 'arw':
-      return 'image/raw';
-    case 'm2ts':
-    case 'mts':
-      return 'video/mp2t';
-    default:
-      return false;
+  if (['raw', 'arw'].includes(extension)) {
+    return 'image/raw';
   }
+
+  if (['m2ts', 'mts'].includes(extension)) {
+    return 'video/mp2t';
+  }
+
+  const photoTypes = config.supportedFileTypes.photo.concat(config.rawFileTypes.photo);
+  if (photoTypes.includes(extension)) {
+    return 'image';
+  }
+
+  const videoTypes = config.supportedFileTypes.video.concat(config.rawFileTypes.video);
+  if (videoTypes.includes(extension)) {
+    return 'video';
+  }
+
+  return false;
 }
 
 const fileMethods = {
@@ -37,7 +46,29 @@ const fileMethods = {
     return path.extname(filepath).toLowerCase().substr(1);
   },
   mimeType: extension => customMime(extension) || mime.lookup(extension),
-  mediumType: extension => (typeof extension === 'string') && (extension.indexOf('/') > 0) && extension.split('/')[0],
+  mediumType: (extension) => {
+    if (!extension) {
+      return false;
+    }
+
+    if (typeof extension !== 'string') {
+      return false;
+    }
+
+    if (extension.indexOf('/') === -1) {
+      if (['image', 'photo'].includes(extension)) {
+        return 'image';
+      }
+
+      if (['video'].includes(extension)) {
+        return 'video';
+      }
+
+      return false;
+    }
+
+    return extension.split('/')[0];
+  },
   absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
   photoPath: filepath => filepath && filepath.replace('thumbs', 'photos')
 };

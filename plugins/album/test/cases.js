@@ -1,10 +1,10 @@
-const testCases = [];
+const cases = [];
 
 const normalize = {
   statusCode: error => error.statusCode || error.output.statusCode,
 };
 
-testCases.push({
+cases.push({
   name: '* Catch missing gallery',
   options: { skip: false },
   request: {},
@@ -22,7 +22,7 @@ testCases.push({
   },
 });
 
-testCases.push({
+cases.push({
   name: '* Catch missing album',
   options: { skip: true },
   request: {
@@ -42,7 +42,7 @@ testCases.push({
   },
 });
 
-testCases.push({
+cases.push({
   name: '* Catch fake gallery',
   options: { skip: false },
   request: {
@@ -57,7 +57,7 @@ testCases.push({
   },
 });
 
-testCases.push({
+cases.push({
   name: '* Catch fake album',
   options: { skip: false },
   request: {
@@ -72,7 +72,7 @@ testCases.push({
   },
 });
 
-testCases.push({
+cases.push({
   name: '* Catch invalid format',
   options: { skip: false },
   request: {
@@ -87,7 +87,7 @@ testCases.push({
   },
 });
 
-testCases.push({
+cases.push({
   name: '* Read valid document',
   options: { skip: false },
   request: {
@@ -107,4 +107,4 @@ testCases.push({
   error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`),
 });
 
-module.exports = testCases;
+module.exports = { cases };
