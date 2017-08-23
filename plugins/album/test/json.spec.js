@@ -27,7 +27,7 @@ test('Read album XML', { skip: false }, (describe) => {
     assert.end();
   });
 
-  testCases.forEach((testCase) => {
+  testCases.cases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, (assert) => {
       lib.getAlbum(testCase.request.gallery, testCase.request.album_stem)
         .then((response) => {

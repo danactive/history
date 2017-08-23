@@ -228,7 +228,8 @@ const ConvertXmlToJson = (xmlData) => {
 const GetAlbumXml = () => { // both <select> and btn call this function
   let isAlbumChangable = ($('#listPhotos').html() === ''); // rule1 must be empty
   if (!isAlbumChangable) {
-    isAlbumChangable = window.confirm('Change photo album?'); // otherwise confirm before clearing
+    // otherwise confirm before clearing
+    isAlbumChangable = window.confirm('Change photo album?'); // eslint-disable-line no-alert
   }
   if (isAlbumChangable) {
     $.get(`../static/gallery-${$('#editGalleries').val()}/xml/album_${$('#editAlbums').val()}.xml`)
@@ -248,7 +249,8 @@ const PopulateAlbums = (xmlData) => { // complete gallery xml
 const GetGalleryNames = () => { // both <select> and btn call this function
   let isGalleryChangable = $('#listPhotos').html() === ''; // rule1 must be empty
   if (!isGalleryChangable) {
-    isGalleryChangable = window.confirm('Change photo gallery?'); // otherwise confirm before clearing
+    // otherwise confirm before clearing
+    isGalleryChangable = window.confirm('Change photo gallery?'); // eslint-disable-line no-alert
   }
   if (isGalleryChangable) {
     $.get(`../static/gallery-${$('#editGalleries').val()}/xml/gallery.xml`)

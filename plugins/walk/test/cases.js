@@ -3,7 +3,7 @@ const cases = [];
 cases.push({
   name: '* Find galleries folder',
   options: { skip: false },
-  request: {},
+  request: { raw: true },
   success: (assert, response) => {
     let assertionEnded = false;
     response.files.forEach((file) => {
@@ -30,7 +30,7 @@ cases.push({
 cases.push({
   name: '* Public test path',
   options: { skip: false },
-  request: { path: 'test/fixtures/walkable' },
+  request: { path: 'test/fixtures/walkable', raw: true },
   success: (assert, response) => {
     let assertionEnded = false;
     let matchCount = 0;

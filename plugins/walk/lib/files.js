@@ -3,9 +3,16 @@ const path = require('path');
 
 const utils = require('../../utils/lib');
 
-function listFiles(currentPath = '') {
+function listFiles(destPath = '') {
   return new Promise((resolve, reject) => {
-    const globPath = path.join(__dirname, '../../../public', currentPath); // todo security, prevent traversing up tree
+    const publicPath = path.join(__dirname, '../../../public');
+    const globPath = path.join(publicPath, destPath);
+
+    if (!globPath.startsWith(publicPath)) {
+      reject(new URIError('Invalid system path'));
+      return;
+    }
+
     glob(`${globPath}/*`, (error, files) => {
       if (error) {
         reject(error);
@@ -16,7 +23,7 @@ function listFiles(currentPath = '') {
         const out = {};
         out.ext = utils.file.type(file); // case-insensitive
         out.name = path.basename(file, `.${out.ext}`);
-        out.path = file.replace(globPath, currentPath);
+        out.path = file.replace(globPath, destPath);
 
         const type = utils.file.mediumType(out.ext);
         out.type = type || 'folder';
@@ -24,7 +31,7 @@ function listFiles(currentPath = '') {
         return out;
       });
 
-      resolve({ files: webPaths, currentPath });
+      resolve({ files: webPaths, destPath });
     });
   });
 }
