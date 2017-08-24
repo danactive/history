@@ -1,3 +1,4 @@
+const propTypes = require('prop-types');
 const React = require('react');
 
 const Contents = require('./contents.jsx');
@@ -11,13 +12,14 @@ function Page({ files }) {
       </head>
       <body>
         <Contents files={files} />
+        <script src="../walk/static/bundle.js" />
       </body>
     </html>
   );
 }
 
 Page.propTypes = {
-  files: React.PropTypes.arrayOf(React.PropTypes.shape()).isRequired
+  files: propTypes.arrayOf(propTypes.shape()).isRequired
 };
 
 module.exports = Page;

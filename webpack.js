@@ -17,8 +17,9 @@ module.exports = [
   // export npm modules to browser scripts
   {
     entry: {
-      album: './plugins/album/lib/client.js',
-      editAlbum: './plugins/editAlbum/lib/client.js'
+      album: './plugins/album/lib/browser.js',
+      editAlbum: './plugins/editAlbum/lib/browser.js',
+      walk: './plugins/walk/lib/browser.js'
     },
     resolve: {
       extensions: ['.css', '.js', '.jsx']
