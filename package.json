@@ -89,7 +89,7 @@
     "react-unit": "^3.0.0",
     "standard-version": "^4.0.0",
     "style-loader": "^0.18.0",
-    "tap-summary": "^3.0.1",
+    "tap-summary": "^4.0.0",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "tape-jsx-equals": "^1.0.0",
