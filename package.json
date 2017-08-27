@@ -2,7 +2,6 @@
   "name": "history",
   "version": "2.2.0",
   "scripts": {
-    "debug": "node-debug index.js",
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "eslint lib plugins *.js --ext .js,.jsx",
     "lint:filter": "eslint --ext .js,.jsx",
@@ -57,7 +56,7 @@
   },
   "devDependencies": {
     "@mapbox/geojsonhint": "^2.0.1",
-    "babel-preset-stage-0": "^6.16.0",
+    "babel-preset-stage-3": "^6.24.1",
     "babel-tape-runner": "^2.0.1",
     "calipers": "^2.0.0",
     "calipers-jpeg": "^2.0.0",
