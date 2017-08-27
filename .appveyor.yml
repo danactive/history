@@ -24,7 +24,7 @@ test_script:
   - npm --version
   - gm version
   - yarn lint
-  - yarn test:all
+  - yarn test
   - yarn test:react
 
 build_script:
