@@ -7,6 +7,7 @@ addons:
   apt:
     packages:
     - graphicsmagick
+  srcclr: true
 
 node_js:
   - "6.9.0"
@@ -19,14 +20,12 @@ before_script:
   - npm --version
   - gm version
   - yarn lint
-  - yarn test
   - yarn test:react
 
 script:
-  - yarn run webpack
+  - yarn test
 
 after_success:
   - yarn ci-cover:coveralls
   - yarn ci-cover:prep-codeclimate
   - yarn ci-cover:codeclimate
-  - curl -sSL https://download.sourceclear.com/ci.sh | bash
