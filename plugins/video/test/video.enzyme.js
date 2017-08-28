@@ -2,7 +2,7 @@ import test from 'tape';
 import React from 'react';
 import { mount } from 'enzyme';
 
-import '../../../test/react-enzyme-setup';
+import '../../../test/setup.enzyme';
 import Video from '../views/video';
 
 test('React Component - Video', { skip: false }, (describe) => {
