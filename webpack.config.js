@@ -1,4 +1,5 @@
 const path = require('path');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const TapWebpackPlugin = require('tap-webpack-plugin');
 
 module.exports = [
@@ -48,6 +49,11 @@ module.exports = [
           use: ['url-loader?limit=100000']
         }
       ]
-    }
+    },
+    plugins: [
+      new BrowserSyncPlugin({
+        proxy: 'localhost:8000'
+      })
+    ]
   }
 ];
