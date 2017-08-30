@@ -1,10 +1,9 @@
 /* global require */
+const routes = require('../../../lib/routes');
 const files = require('./files');
 
-const curryJsonOrView = ({ isRaw, reply, viewPath }) => json => ((isRaw) ? reply(json) : reply.view(viewPath, json));
-
 const handler = (request, reply) => {
-  const outResponse = curryJsonOrView({
+  const outResponse = routes.curryJsonOrView({
     reply,
     isRaw: request.query.raw,
     viewPath: 'plugins/walk/views/page.jsx'
@@ -25,22 +24,7 @@ exports.register = (server, options, next) => {
     }
   });
 
-  server.route({
-    method: 'GET',
-    path: '/walk/static/{path*}',
-    config: {
-      description: 'Static assets like JS, CSS, images files',
-      tags: ['static'],
-      handler: {
-        directory: {
-          path: 'plugins/walk/public',
-          listing: true,
-          index: false,
-          redirectToSlash: true
-        }
-      }
-    }
-  });
+  server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
 
   server.route({
     method: 'GET',

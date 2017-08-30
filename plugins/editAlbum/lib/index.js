@@ -2,18 +2,23 @@
 const joi = require('joi');
 
 const gallery = require('../../gallery/lib/gallery');
+const routes = require('../../../lib/routes');
 
 const handler = (request, reply) => {
-  const raw = request.query.raw;
-  const format = (galleries) => {
-    const context = { galleries };
-    context.state = `window.state = ${JSON.stringify(context)};`;
+  const outResponse = routes.curryJsonOrView({
+    reply,
+    isRaw: request.query.raw,
+    viewPath: 'plugins/editAlbum/views/page.jsx',
+    formatJson: (json) => {
+      const context = { galleries: json };
+      context.state = `window.state = ${JSON.stringify(context)};`;
 
-    return context;
-  };
+      return context;
+    }
+  });
 
   gallery.getGalleries()
-    .then(galleries => (raw ? reply(format(galleries)) : reply.view('plugins/editAlbum/views/page.jsx', format(galleries))));
+    .then(outResponse);
 };
 
 const validation = {
@@ -35,22 +40,7 @@ exports.register = (server, options, next) => {
     }
   });
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/{path*}',
-    config: {
-      description: 'Static assets like JS, CSS, images files',
-      tags: ['v0'],
-      handler: {
-        directory: {
-          path: 'plugins/editAlbum/public',
-          listing: true,
-          index: false,
-          redirectToSlash: true
-        }
-      }
-    }
-  });
+  server.route(routes.staticRoute({ urlSegment: 'album', pluginName: 'editAlbum' }));
 
   server.route({
     method: 'GET',
@@ -75,6 +65,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-edit-album',
-  version: '0.1.0'
+  name: 'edit-album',
+  version: '0.2.0'
 };
