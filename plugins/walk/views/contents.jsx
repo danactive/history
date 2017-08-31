@@ -1,20 +1,28 @@
+const propTypes = require('prop-types');
 const React = require('react');
+
+const Placeholder = require('./placeholder');
 
 function Contents({ files }) {
   const thumbs = files.map((file) => {
     const href = `?path=${file.path}`;
-    return <li key={file.name}><a href={href}>{file.name}</a></li>;
+
+    if (file.mediumType === 'image') {
+      return <Placeholder file={file} key={file.filename} />;
+    }
+
+    return <li key={file.filename}><a href={href}>{file.filename}</a></li>;
   });
 
   return <ul>{thumbs}</ul>;
 }
 
 Contents.propTypes = {
-  files: React.PropTypes.arrayOf(React.PropTypes.shape({
-    ext: React.PropTypes.string,
-    name: React.PropTypes.string,
-    path: React.PropTypes.string,
-    type: React.PropTypes.string
+  files: propTypes.arrayOf(propTypes.shape({
+    ext: propTypes.string,
+    filename: propTypes.string.isRequired,
+    path: propTypes.string.isRequired,
+    mediumType: propTypes.string.isRequired
   })).isRequired
 };
 
