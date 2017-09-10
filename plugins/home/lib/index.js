@@ -3,7 +3,7 @@
 const gallery = require('../../gallery/lib/gallery');
 
 const handler = (request, reply) => {
-  gallery.getGalleries().then(galleries => reply.view('plugins/home/views/page.jsx', { galleries }));
+  gallery.getGalleries().then(galleries => reply.view('plugins/home/components/page.jsx', { galleries }));
 };
 
 exports.register = (server, options, next) => {

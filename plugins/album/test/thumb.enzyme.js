@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow, mount } from 'enzyme';
 
 import '../../../test/setup.enzyme';
-import Thumb from '../views/thumb';
+import Thumb from '../components/thumb';
 
 test('React Component - Thumb', { skip: false }, (describe) => {
   const item = {

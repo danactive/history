@@ -8,7 +8,7 @@ const handler = (request, reply) => {
   const outResponse = routes.curryJsonOrView({
     reply,
     isRaw: request.query.raw,
-    viewPath: 'plugins/editAlbum/views/page.jsx',
+    viewPath: 'plugins/editAlbum/components/page.jsx',
     formatJson: (json) => {
       const context = { galleries: json };
       context.state = `window.state = ${JSON.stringify(context)};`;

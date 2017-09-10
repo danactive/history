@@ -1,7 +1,7 @@
 
 /* global require */
 
-const handler = (request, reply) => reply.view('plugins/admin/views/page.jsx');
+const handler = (request, reply) => reply.view('plugins/admin/components/page.jsx');
 
 exports.register = (server, options, next) => {
   server.route({

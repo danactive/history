@@ -1,7 +1,7 @@
 /* global document */
 const React = require('react');
 const ReactDOM = require('react-dom');
-const AppComponent = require('../views/thumbnail.jsx');
+const AppComponent = require('../components/thumbnail.jsx');
 
 const App = React.createFactory(AppComponent);
 
