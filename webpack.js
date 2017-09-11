@@ -19,6 +19,7 @@ module.exports = [
     entry: {
       album: './plugins/album/lib/browser.js',
       editAlbum: './plugins/editAlbum/lib/browser.js',
+      exploreVideo: './plugins/exploreVideo/components/app.jsx',
       walk: './plugins/walk/lib/browser.js'
     },
     resolve: {

@@ -14,6 +14,11 @@ function Thumb({ item }) {
     }
   }
 
+  if (item.geo && item.geo.lat) {
+    const geocode = `${item.geo.lat},${item.geo.lon}`;
+    title.push(`<a href='/explore/video/static/index.html?geocode=${geocode}' target='_blank'>Explore</a>`);
+  }
+
   return (<li className="liAlbumPhoto" data-lat={item.geo && item.geo.lat} data-lon={item.geo && item.geo.lon}>
     <div className="albumBoxPhotoImg">
       <a href={item.mediaPath} rel="set" title={title.join(' | ')}>

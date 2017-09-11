@@ -5,10 +5,10 @@ const glob = require('glob');
 const mime = require('mime-types');
 const path = require('path');
 
-const config = require('../../../config.json');
+const configFile = require('../../../config.json');
 
-module.exports.config = {
-  get: filepath => dotProp.get(config, filepath)
+const config = {
+  get: filepath => dotProp.get(configFile, filepath)
 };
 
 function customMime(extension) {
@@ -20,12 +20,12 @@ function customMime(extension) {
     return 'video/mp2t';
   }
 
-  const photoTypes = config.supportedFileTypes.photo.concat(config.rawFileTypes.photo);
+  const photoTypes = configFile.supportedFileTypes.photo.concat(configFile.rawFileTypes.photo);
   if (photoTypes.includes(extension)) {
     return 'image';
   }
 
-  const videoTypes = config.supportedFileTypes.video.concat(config.rawFileTypes.video);
+  const videoTypes = configFile.supportedFileTypes.video.concat(configFile.rawFileTypes.video);
   if (videoTypes.includes(extension)) {
     return 'video';
   }
@@ -113,4 +113,4 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   });
 });
 
-module.exports.file = fileMethods;
+module.exports = { config, file: fileMethods };

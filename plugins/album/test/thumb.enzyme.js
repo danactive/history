@@ -5,7 +5,7 @@ import { shallow, mount } from 'enzyme';
 import '../../../test/setup.enzyme';
 import Thumb from '../components/thumb';
 
-test('React Component - Thumb', { skip: false }, (describe) => {
+test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   const item = {
     mediaPath: 'c',
     thumbCaption: 'a',
@@ -36,6 +36,9 @@ test('React Component - Thumb', { skip: false }, (describe) => {
     const liProps = wrapper.find('li').props();
     assert.equal(liProps['data-lon'], 0, 'Has longitude');
     assert.equal(liProps['data-lat'], 1, 'Has latitude');
+
+    delete item.geo;
+
     assert.end();
   });
 

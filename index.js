@@ -15,6 +15,7 @@ const config = require('./config.json');
 const libAdmin = require('./plugins/admin/lib/index');
 const viewAlbum = require('./plugins/album/lib/index');
 const editAlbum = require('./plugins/editAlbum/lib/index');
+const exploreVideo = require('./plugins/exploreVideo/lib/index');
 const libGallery = require('./plugins/gallery/lib/index');
 const libGeojson = require('./plugins/geojson/lib/index');
 const libHome = require('./plugins/home/lib/index');
@@ -39,6 +40,7 @@ server.register([
   { register: libAdmin, routes: { prefix: '/admin' } },
   { register: viewAlbum, routes: { prefix: '/view' } },
   { register: editAlbum, routes: { prefix: '/edit' } },
+  { register: exploreVideo, routes: { prefix: '/explore' } },
   { register: libGallery },
   { register: libGeojson, routes: { prefix: '/geojson' } },
   { register: libHome },
