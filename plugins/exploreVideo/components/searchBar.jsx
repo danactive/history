@@ -4,11 +4,28 @@ const propTypes = require('prop-types');
 const React = require('react');
 
 class SearchBar extends React.Component {
+  static getQS() {
+    return (typeof URL === 'undefined') ? '' : new URL(window.location.href).search;
+  }
+
+  // output sample '49.25,-123.1' or ''
+  static getGeoCode(qs) {
+    const matches = /(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/.exec(qs);
+    return (matches) ? matches[0] : '';
+  }
+
+  static get defaults() {
+    return {
+      geocode: '13.7524000,100.5021833',
+      instruction: 'Keyword or GeoCode'
+    };
+  }
+
   constructor(props) {
     super(props);
 
-    const geocode = /(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/.exec(new URL(window.location.href).search)[0];
-    const searchValue = geocode || '13.7524000,100.5021833';
+    const geocode = SearchBar.getGeoCode(SearchBar.getQS());
+    const searchValue = geocode || SearchBar.defaults.geocode;
     this.state = { searchValue };
   }
 
@@ -26,13 +43,12 @@ class SearchBar extends React.Component {
   }
 
   render() {
-    const instruction = 'Keyword or GeoCode';
     return (
       <section id="search-bar">
         <input
           onChange={event => this.onInputChange(event.target.value)}
-          placeholder={instruction}
-          title={instruction}
+          placeholder={SearchBar.defaults.instruction}
+          title={SearchBar.defaults.instruction}
           value={this.state.searchValue}
         />
       </section>
