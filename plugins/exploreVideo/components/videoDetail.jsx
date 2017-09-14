@@ -21,7 +21,7 @@ const VideoDetail = ({ video }) => {
 };
 
 VideoDetail.defaultProps = {
-  video: { isLoading: true }
+  video: null
 };
 
 VideoDetail.propTypes = {

@@ -6,15 +6,9 @@ const VideoListItem = ({ video, onVideoSelect }) => {
 
   return (
     <div className="video-list-media" onClick={() => onVideoSelect(video)} role="button" tabIndex="0">
-      <div className="media-left">
-        <img className="media-object" src={imageUrl} alt="Video thumbnail" />
-      </div>
+      <div className="media-thumbnail"><img src={imageUrl} alt="Video thumbnail" /></div>
 
-      <div className="media-body">
-        <div className="media-heading">
-          {video.snippet.title}
-        </div>
-      </div>
+      <div className="media-heading">{video.snippet.title}</div>
     </div>
   );
 };
