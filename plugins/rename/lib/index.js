@@ -41,7 +41,8 @@ const validation = {
     .min(1).max(80)
     .required()
     .example('["DSC01229.JPG"]'),
-  prefix: joi.string().isoDate().required().example('2016-12-31'),
+  prefix: joi.string().isoDate().raw().required()
+    .example('2016-12-31'),
   renameAssociated: joi.boolean().truthy('true').falsy('false').default(false)
     .description('JPG and RAW or video and still image are common associated pairs that should rename together'),
   sourceFolder: joi.string().trim().required().example('/public/todo/'),

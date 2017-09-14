@@ -37,7 +37,7 @@
     "hapi-swagger": "^7.4.0",
     "hoek": "^4.1.0",
     "inert": "^4.0.2",
-    "joi": "^10.0.0",
+    "joi": "^11.0.0",
     "jquery-colorbox": "^1.6.4",
     "lout": "^10.0.1",
     "mime-types": "^2.1.12",
