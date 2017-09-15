@@ -19,7 +19,7 @@ class App extends React.Component {
 
   videoSearch(searchValue) {
     if (!searchValue) {
-      return;
+      return undefined;
     }
 
     const geoAddress = `https://content.googleapis.com/youtube/v3/search?location=${searchValue}&locationRadius=1km&maxResults=5&
@@ -31,7 +31,7 @@ class App extends React.Component {
     // https://www.googleapis.com/youtube/v3/search?part=snippet&order=viewCount&publishedAfter=
     // 2014-10-29T00%3A00%3A00Z&publishedBefore=2014-10-31T00%3A00%3A00Z&key=AIzaSyC8rNZ8fkVAjK_B4UfmNQNISPar6D-TjI4
 
-    fetch(address)
+    return fetch(address)
       .then(response => response.json())
       .then((payload) => {
         this.setState({

@@ -26,10 +26,6 @@ const libVideo = require('./plugins/video/lib/index');
 const logMod = require('./plugins/log/lib/log');
 const pkg = require('./package');
 
-require('babel-core/register')({
-  presets: ['react', 'es2015']
-});
-
 const port = config.port;
 const log = logMod('server');
 const server = new hapi.Server();

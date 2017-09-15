@@ -1,3 +1,5 @@
+const _ = require('lodash');
+const fetch = require('node-fetch');
 const { JSDOM } = require('jsdom');
 
 const jsdom = new JSDOM('<!doctype html><html><body></body></html>');
@@ -15,4 +17,6 @@ global.document = window.document;
 global.navigator = {
   userAgent: 'node.js'
 };
+global._ = _;
+global.fetch = fetch;
 copyProps(window, global);

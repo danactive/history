@@ -6,7 +6,7 @@ const test = require('tape');
 require('../../../test/setup.enzyme');
 const SearchBar = require('../components/searchBar');
 
-test('Explore Video', (describe) => {
+test('Explore Video - Search Bar', (describe) => {
   describe.test('* Retrieve web address from browser', (assert) => {
     const actual = SearchBar.getQS();
     const expected = '';

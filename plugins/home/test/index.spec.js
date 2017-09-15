@@ -7,10 +7,6 @@ tape('Verify / route', { skip: false }, (describe) => {
   const path = require('path');
   const vision = require('vision');
 
-  require('babel-core/register')({
-    presets: ['react', 'es2015'],
-  });
-
   const lib = require('../lib');
   const utils = require('../../utils/lib');
 
