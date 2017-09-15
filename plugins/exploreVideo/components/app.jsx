@@ -1,12 +1,12 @@
-/* global _, document, fetch */
-
+/* global _, fetch */
 const React = require('react');
-const ReactDOM = require('react-dom');
+
+const credentials = require('../../../credentials');
 const SearchBar = require('./searchBar.jsx');
 const VideoList = require('./videoList.jsx');
 const VideoDetail = require('./videoDetail.jsx');
 
-const API_KEY = 'AIzaSyC8rNZ8fkVAjK_B4UfmNQNISPar6D-TjI4';
+const API_KEY = credentials.youtube.api_key;
 
 class App extends React.Component {
   constructor(props) {
@@ -55,4 +55,4 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('video-container'));
+module.exports = App;
