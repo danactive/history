@@ -1,7 +1,7 @@
 /* global require */
 const joi = require('joi');
 
-const handler = (request, reply) => reply.view('plugins/video/views/page.jsx', { video: request.query });
+const handler = (request, reply) => reply.view('plugins/video/components/page.jsx', { video: request.query });
 
 const validation = {
   sources: joi.string(),

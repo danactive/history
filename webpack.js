@@ -19,6 +19,7 @@ module.exports = [
     entry: {
       album: './plugins/album/lib/browser.js',
       editAlbum: './plugins/editAlbum/lib/browser.js',
+      exploreVideo: './plugins/exploreVideo/lib/browser.js',
       walk: './plugins/walk/lib/browser.js'
     },
     resolve: {
@@ -35,7 +36,7 @@ module.exports = [
             {
               loader: 'babel-loader',
               options: {
-                presets: ['react', 'es2015']
+                presets: ['react', 'env']
               }
             }
           ]

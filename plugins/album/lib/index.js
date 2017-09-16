@@ -8,7 +8,7 @@ const handler = (request, reply) => {
   const raw = request.query.raw;
 
   json.getAlbum(gallery, albumStem)
-    .then(albumData => (raw ? reply(albumData) : reply.view('plugins/album/views/page.jsx', albumData)))
+    .then(albumData => (raw ? reply(albumData) : reply.view('plugins/album/components/page.jsx', albumData)))
     .catch(error => reply(error));
 };
 

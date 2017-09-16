@@ -1,6 +1,18 @@
 const propTypes = require('prop-types');
 const React = require('react');
 
+function textField({ label, tabIndex }) {
+  const name = label.toLowerCase();
+  return (
+    <p>
+      <label htmlFor={name}>{label}</label>
+      <input type="text" id={name} tabIndex={tabIndex} />
+      <input type="checkbox" title="Check to disable editability" />
+      <span className="suggestions" />
+    </p>
+  );
+}
+
 /* eslint-disable jsx-a11y/tabindex-no-positive */
 function Page(props) {
   return (
@@ -46,30 +58,10 @@ function Page(props) {
                   <input type="text" id="filename" disabled="disabled" />
                   <span className="suggestions" />
                 </p>
-                <p>
-                  <label htmlFor="city">City</label>
-                  <input type="text" id="city" tabIndex="4" />
-                  <input type="checkbox" title="Check to disable editability" />
-                  <span className="suggestions" />
-                </p>
-                <p>
-                  <label htmlFor="location">Location</label>
-                  <input type="text" id="location" tabIndex="5" />
-                  <input type="checkbox" title="Check to disable editability" />
-                  <span className="suggestions" />
-                </p>
-                <p>
-                  <label htmlFor="caption">Caption</label>
-                  <input type="text" id="caption" tabIndex="6" />
-                  <input type="checkbox" title="Check to disable editability" />
-                  <span className="suggestions" />
-                </p>
-                <p>
-                  <label htmlFor="description">Description</label>
-                  <input type="text" id="description" tabIndex="7" />
-                  <input type="checkbox" title="Check to disable editability" />
-                  <span className="suggestions" />
-                </p>
+                {textField({ label: 'City', tabIndex: 4 })}
+                {textField({ label: 'Location', tabIndex: 5 })}
+                {textField({ label: 'Caption', tabIndex: 6 })}
+                {textField({ label: 'Description', tabIndex: 7 })}
                 <p>
                   <label htmlFor="ref_src"><select id="ref_src" tabIndex="8">
                     <option />
@@ -105,6 +97,11 @@ function Page(props) {
     </html>
   );
 }
+
+textField.propTypes = {
+  label: propTypes.string.isRequired,
+  tabIndex: propTypes.number.isRequired
+};
 
 Page.propTypes = {
   galleries: propTypes.arrayOf(propTypes.string).isRequired,

@@ -1,5 +1,4 @@
-/* global __dirname, require */
-const gallery = require('../../gallery/lib/gallery');
+/* global require */
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
@@ -11,54 +10,35 @@ const handler = (request, reply) => {
 
     return context;
   };
-  const viewPath = 'plugins/editAlbum/components/page.jsx';
+  const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
   const outResponse = routes.curryJsonOrView({ isRaw, formatJson, reply, viewPath });
 
-  gallery.getGalleries()
-    .then(outResponse);
+  outResponse({});
 };
 
 exports.register = (server, options, next) => {
   server.route({
     method: 'GET',
-    path: '/album',
+    path: '/',
     config: {
       handler,
       tags: ['api', 'plugin'],
       validate: {
         query: {
+          geocode: validation.geocode,
           raw: validation.raw
         }
       }
     }
   });
 
-  server.route(routes.staticRoute({ urlSegment: 'album', pluginName: 'editAlbum' }));
-
-  server.route({
-    method: 'GET',
-    path: '/album/static/jquery.js',
-    config: {
-      description: 'jQuery library',
-      handler: {
-        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js'
-      }
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/album/assets/bundle.js',
-    handler: {
-      file: 'plugins/editAlbum/public/assets/bundle.js'
-    }
-  });
+  server.route(routes.staticRoute({ urlSegment: 'video', pluginName: 'exploreVideo' }));
 
   next();
 };
 
 exports.register.attributes = {
-  name: 'edit-album',
+  name: 'explore-video',
   version: '0.2.0'
 };

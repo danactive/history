@@ -6,7 +6,7 @@ const handler = (request, reply) => {
   const outResponse = routes.curryJsonOrView({
     reply,
     isRaw: request.query.raw,
-    viewPath: 'plugins/walk/views/page.jsx'
+    viewPath: 'plugins/walk/components/page.jsx'
   });
   const path = request.query.path;
 

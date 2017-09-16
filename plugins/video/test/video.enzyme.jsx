@@ -3,9 +3,9 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import '../../../test/setup.enzyme';
-import Video from '../views/video';
+import Video from '../components/video';
 
-test('React Component - Video', { skip: false }, (describe) => {
+test('Video - Video (React Component)', { skip: false }, (describe) => {
   const item = {
     w: 800,
     h: 600,

@@ -17,15 +17,15 @@ function execHapi({ describe, plugins, routeStem, testCases }) {
         const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
         const request = {
           method: 'GET',
-          url,
+          url
         };
 
         if (server.views) {
           server.views({
             engines: {
-              jsx: hapiReactViews,
+              jsx: hapiReactViews
             },
-            relativeTo: path.join(__dirname, '../'),
+            relativeTo: path.join(__dirname, '../')
           });
         }
 
