@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/danactive/history/compare/v2.2.0...v2.3.0) (2017-09-16)
+
+
+### Bug Fixes
+
+* **CI:** Update nyc code coverage to ignore tests [[#201](https://github.com/danactive/history/issues/201)] ([d28067a](https://github.com/danactive/history/commit/d28067a))
+* **Test:** Fix after success has been broken. nyc coverage needs to be generated  [[#189](https://github.com/danactive/history/issues/189)] ([1c0e339](https://github.com/danactive/history/commit/1c0e339))
+* **Test:** Fix SourceClear to integrate with Travis [[#189](https://github.com/danactive/history/issues/189)] ([6f2f4e6](https://github.com/danactive/history/commit/6f2f4e6))
+* **Test:** Remove react-unti with enzyme champion [[#189](https://github.com/danactive/history/issues/189)] ([7e08214](https://github.com/danactive/history/commit/7e08214))
+* **Test:** Wildcard react tests for future additions [[#189](https://github.com/danactive/history/issues/189)] ([51fc6ca](https://github.com/danactive/history/commit/51fc6ca))
+* **Walk:** Improve test cases with DRY definition [[#152](https://github.com/danactive/history/issues/152)] ([5959692](https://github.com/danactive/history/commit/5959692))
+* **Walk:** Update shared static route code to DRY [[#187](https://github.com/danactive/history/issues/187)] ([0e8753c](https://github.com/danactive/history/commit/0e8753c))
+
+
+### Features
+
+* **Explore Video:** Add React video player of YouTube videos [[#195](https://github.com/danactive/history/issues/195)] ([7f8010a](https://github.com/danactive/history/commit/7f8010a))
+* **Walk:** Admin walk path will traverse without preview [[#152](https://github.com/danactive/history/issues/152)] ([b52e943](https://github.com/danactive/history/commit/b52e943))
+* **Walk:** Navigate to image and a todo message overwrites spinner [[#187](https://github.com/danactive/history/issues/187)] ([c536e72](https://github.com/danactive/history/commit/c536e72))
+
+
+
 <a name="2.2.0"></a>
 # [2.2.0](https://github.com/danactive/history/compare/v2.1.0...v2.2.0) (2017-08-20)
 
