@@ -8,7 +8,8 @@
     "release": "standard-version",
     "start": "npm run webpack && node .",
     "test:all": "gulp --gulpfile plugins/gulpfile.js test",
-    "test": "npm run webpack && nyc --extension .jsx babel-tape-runner  plugins/*/test/*.spec.js",
+    "test": "npm run webpack && nyc --extension .jsx babel-tape-runner plugins/*/test/*.spec.js",
+    "test:cover:html": "nyc report --reporter=html",
     "test:react": "babel-tape-runner plugins/*/test/*.enzyme.jsx | faucet",
     "debug:test:react": "node $NODE_DEBUG_OPTION ./node_modules/babel-tape-runner/bin/babel-tape-runner plugins/*/test/*.enzyme.jsx | faucet",
     "webpack": "webpack --config webpack.js",
@@ -131,5 +132,10 @@
     "npm": ">=3"
   },
   "readmeFilename": "README.md",
-  "tuxharness": "./tuxharness.js"
+  "tuxharness": "./tuxharness.js",
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ]
+  }
 }
