@@ -10,7 +10,7 @@ test('Video - Video (React Component)', { skip: false }, (describe) => {
     w: 800,
     h: 600,
     gallery: 'test',
-    sources: '2017-video.mp4',
+    sources: '2017-video.mp4'
   };
 
   describe.test('* Parent element', (assert) => {

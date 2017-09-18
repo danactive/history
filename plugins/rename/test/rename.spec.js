@@ -25,7 +25,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
     const futureAssociatedFilenames = [
       `${filepath}${futureFile}.bat`,
       `${filepath}${futureFile}.bin`,
-      `${filepath}${futureFile}.bmp`,
+      `${filepath}${futureFile}.bmp`
     ];
 
     assert.plan(1);
@@ -52,7 +52,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
       `${file}.bmp`,
       `${file}.psd`,
       `${file}.pdf`,
-      `${file}.raw`,
+      `${file}.raw`
     ];
 
     assert.plan(filenames.length);
@@ -68,7 +68,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
       `${file}.jpg`,
       `${file}.jpeg`,
       `${file}.mp4`,
-      `${file}.webm`,
+      `${file}.webm`
     ];
 
     assert.plan(filenames.length);

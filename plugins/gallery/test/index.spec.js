@@ -16,10 +16,10 @@ tape('Gallery Index', { skip: false }, (describe) => {
       connections: {
         routes: {
           files: {
-            relativeTo: path.join(__dirname, '../../../', 'public'),
-          },
-        },
-      },
+            relativeTo: path.join(__dirname, '../../../', 'public')
+          }
+        }
+      }
     });
     server.connection({ port });
     server.register(plugins, (pluginError) => {
@@ -30,7 +30,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
 
       const request = {
         method: 'GET',
-        url: '/static/gallery-demo/xml/gallery.xml',
+        url: '/static/gallery-demo/xml/gallery.xml'
       };
 
       server.inject(request, (result) => {

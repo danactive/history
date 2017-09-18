@@ -9,7 +9,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   const item = {
     mediaPath: 'c',
     thumbCaption: 'a',
-    thumbPath: 'b',
+    thumbPath: 'b'
   };
 
   describe.test('* Thumbnail image and caption', (assert) => {
@@ -30,7 +30,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   describe.test('* Thumbnail has geocode', (assert) => {
     item.geo = {
       lat: 1,
-      lon: 0,
+      lon: 0
     };
     const wrapper = mount(<Thumb item={item} />);
     const liProps = wrapper.find('li').props();
@@ -56,7 +56,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   describe.test('* Title - Wikipedia', (assert) => {
     item.ref = {
       name: 'Vancouver_International_Airport',
-      source: 'wikipedia',
+      source: 'wikipedia'
     };
     const wrapper = mount(<Thumb item={item} />);
     const title = wrapper.find('a').props().title;

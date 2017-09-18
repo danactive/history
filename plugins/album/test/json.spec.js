@@ -108,7 +108,7 @@ test('Read album XML', { skip: false }, (describe) => {
           filename: '2016-Image-Filename.jpg',
           photoDesc: 'Desc',
           photoCity: 'City',
-          thumbCaption: 'Caption',
+          thumbCaption: 'Caption'
         },
         {
           $: { id: 2 },
@@ -117,9 +117,9 @@ test('Read album XML', { skip: false }, (describe) => {
           size: { w: 1280, h: 720 },
           photoDesc: 'Desc',
           photoCity: 'City',
-          thumbCaption: 'Caption',
-        }],
-      },
+          thumbCaption: 'Caption'
+        }]
+      }
     };
     const result = lib.templatePrepare(mock);
     assert.notDeepEqual(result, mock, 'Clone result, not pass by reference');

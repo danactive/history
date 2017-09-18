@@ -1,7 +1,7 @@
 const cases = [];
 
 const normalize = {
-  statusCode: error => error.statusCode || error.output.statusCode,
+  statusCode: error => error.statusCode || error.output.statusCode
 };
 
 cases.push({
@@ -19,14 +19,14 @@ cases.push({
     }
 
     assert.end();
-  },
+  }
 });
 
 cases.push({
   name: '* Catch missing album',
   options: { skip: true },
   request: {
-    gallery: 'FAKE',
+    gallery: 'FAKE'
   },
   success: assert => assert.fail('Unexpected response found'),
   error: (assert, error, options = {}) => {
@@ -39,7 +39,7 @@ cases.push({
     }
 
     assert.end();
-  },
+  }
 });
 
 cases.push({
@@ -47,14 +47,14 @@ cases.push({
   options: { skip: false },
   request: {
     gallery: 'FAKE',
-    album_stem: 'sample',
+    album_stem: 'sample'
   },
   success: assert => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
     assert.end();
-  },
+  }
 });
 
 cases.push({
@@ -62,14 +62,14 @@ cases.push({
   options: { skip: false },
   request: {
     gallery: 'demo',
-    album_stem: 'FAKE',
+    album_stem: 'FAKE'
   },
   success: assert => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
     assert.end();
-  },
+  }
 });
 
 cases.push({
@@ -77,14 +77,14 @@ cases.push({
   options: { skip: false },
   request: {
     gallery: 'demo',
-    album_stem: 'invalid',
+    album_stem: 'invalid'
   },
   success: assert => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 403, 'Status code');
     assert.end();
-  },
+  }
 });
 
 cases.push({
@@ -92,7 +92,7 @@ cases.push({
   options: { skip: false },
   request: {
     gallery: 'demo',
-    album_stem: 'sample',
+    album_stem: 'sample'
   },
   successJson: (assert, response) => {
     assert.ok(response, 'Has response');
@@ -104,7 +104,7 @@ cases.push({
     assert.ok(response.indexOf('2012-fireplace.jpg') > 0, 'HTML string');
     assert.end();
   },
-  error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`),
+  error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`)
 });
 
 module.exports = { cases };

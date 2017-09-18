@@ -28,14 +28,14 @@ test('Verify /album route', { skip: false }, (describe) => {
       const url = `/album?${querystring.stringify({ gallery: 'demo', album_stem: 'sample' })}`;
       const request = {
         method: 'GET',
-        url,
+        url
       };
 
       server.views({
         engines: {
-          jsx: hapiReactViews,
+          jsx: hapiReactViews
         },
-        relativeTo: path.join(__dirname, '../../../'),
+        relativeTo: path.join(__dirname, '../../../')
       });
 
       return server.inject(request, (response) => {

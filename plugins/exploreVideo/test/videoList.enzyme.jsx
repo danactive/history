@@ -3,7 +3,7 @@ const React = require('react');
 const test = require('tape');
 
 require('../../../test/setup.enzyme');
-const mock = require('../test/mocks/youtube.json');
+const mock = require('./fixtures/youtube.json');
 const VideoList = require('../components/videoList.jsx');
 const VideoListItem = require('../components/videoListItem.jsx');
 

@@ -29,8 +29,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         method: 'POST',
         url: '/resize',
         payload: {
-          source_path: 'FAKE',
-        },
+          source_path: 'FAKE'
+        }
       };
 
       server.inject(request, (result) => {
@@ -55,8 +55,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         method: 'POST',
         url: '/resize',
         payload: {
-          source_path: './plugins/resize/test/fixtures/Capture.PNG',
-        },
+          source_path: './plugins/resize/test/fixtures/Capture.PNG'
+        }
       };
 
       return server.inject(request, (response) => {
@@ -80,8 +80,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         method: 'POST',
         url: '/resize',
         payload: {
-          source_path: originalRelativeFile,
-        },
+          source_path: originalRelativeFile
+        }
       };
 
       return server.inject(request, (response) => {

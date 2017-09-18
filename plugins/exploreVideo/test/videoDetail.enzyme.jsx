@@ -4,7 +4,7 @@ const test = require('tape');
 
 require('../../../test/setup.enzyme');
 const VideoDetail = require('../components/videoDetail');
-const mock = require('../test/mocks/youtube.json');
+const mock = require('./fixtures/youtube.json');
 
 test('Explore Video - Video Detail (React Component)', (describe) => {
   describe.test('* Render component with missing video object', (assert) => {

@@ -24,14 +24,14 @@ tape('Verify / route', { skip: false }, (describe) => {
       const url = '/';
       const request = {
         method: 'GET',
-        url,
+        url
       };
 
       server.views({
         engines: {
-          jsx: hapiReactViews,
+          jsx: hapiReactViews
         },
-        relativeTo: path.join(__dirname, '../../../'),
+        relativeTo: path.join(__dirname, '../../../')
       });
 
       return server.inject(request, (response) => {

@@ -28,8 +28,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable/FAKE',
-        },
+          source_folder: './plugins/rename/test/fixtures/renameable/FAKE'
+        }
       };
 
       server.inject(request, (result) => {
@@ -56,8 +56,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable',
-        },
+          source_folder: './plugins/rename/test/fixtures/renameable'
+        }
       };
 
       return server.inject(request, (response) => {
@@ -105,8 +105,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
           filenames: ['dee.dat', 'pee.pdf'],
           prefix,
           source_folder: './plugins/rename/test/fixtures/renameable',
-          rename_associated: true,
-        },
+          rename_associated: true
+        }
       };
 
       server.inject(request, (response) => {

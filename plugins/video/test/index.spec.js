@@ -27,18 +27,18 @@ tape('Verify /video route', { skip: false }, (describe) => {
         gallery: 'demo',
         sources,
         w: 1280,
-        h: 720,
+        h: 720
       })}`;
       const request = {
         method: 'GET',
-        url,
+        url
       };
 
       server.views({
         engines: {
-          jsx: hapiReactViews,
+          jsx: hapiReactViews
         },
-        relativeTo: path.join(__dirname, '../../../'),
+        relativeTo: path.join(__dirname, '../../../')
       });
 
       return server.inject(request, (response) => {

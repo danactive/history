@@ -13,7 +13,7 @@ tape('Log', { skip: false }, (describe) => {
   describe.test('* Operational message', (assert) => {
     const testMessage = 'plugin-test-operational';
     const logger = lib(moduleName, {
-      callback: createCallbackHandler(assert, testMessage),
+      callback: createCallbackHandler(assert, testMessage)
     });
 
     logger.operational(testMessage);
@@ -22,7 +22,7 @@ tape('Log', { skip: false }, (describe) => {
   describe.test('* Debug message', (assert) => {
     const testMessage = 'plugin-test-debug';
     const logger = lib(moduleName, {
-      callback: createCallbackHandler(assert, testMessage),
+      callback: createCallbackHandler(assert, testMessage)
     });
 
     logger.debug(testMessage);
@@ -31,7 +31,7 @@ tape('Log', { skip: false }, (describe) => {
   describe.test('* Panic message', (assert) => {
     const testMessage = 'plugin-test-panic';
     const logger = lib(moduleName, {
-      callback: createCallbackHandler(assert, testMessage),
+      callback: createCallbackHandler(assert, testMessage)
     });
 
     logger.panic(testMessage);

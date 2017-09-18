@@ -21,7 +21,7 @@ tape('GeoJSON Index', { skip: false }, (describe) => {
 
       const request = {
         method: 'GET',
-        url: '/?gallery=demo&album_stem=sample',
+        url: '/?gallery=demo&album_stem=sample'
       };
 
       server.inject(request, (result) => {
