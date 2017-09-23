@@ -1,15 +1,18 @@
 /* global __dirname, require */
 const json = require('./json');
+const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
 const handler = (request, reply) => {
-  const albumStem = request.query.album_stem;
-  const gallery = request.query.gallery;
-  const raw = request.query.raw;
+  const isRaw = request.query.raw;
+  const viewPath = 'plugins/album/components/page.jsx';
 
-  json.getAlbum(gallery, albumStem)
-    .then(albumData => (raw ? reply(albumData) : reply.view('plugins/album/components/page.jsx', albumData)))
-    .catch(error => reply(error));
+  const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
+  const outError = routes.createErrorReply(reply);
+
+  json.getAlbum(request.query.gallery, request.query.album_stem)
+    .then(outResponse)
+    .catch(outError);
 };
 
 exports.register = (server, options, next) => {

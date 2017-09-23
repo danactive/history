@@ -3,15 +3,16 @@ const routes = require('../../../lib/routes');
 const files = require('./files');
 
 const handler = (request, reply) => {
-  const outResponse = routes.curryJsonOrView({
+  const outResponse = routes.createFormatReply({
     reply,
     isRaw: request.query.raw,
     viewPath: 'plugins/walk/components/page.jsx'
   });
-  const path = request.query.path;
+  const outError = routes.createErrorReply(reply);
 
-  files.listFiles(path)
-    .then(outResponse);
+  files.listFiles(request.query.path)
+    .then(outResponse)
+    .catch(outError);
 };
 
 exports.register = (server, options, next) => {
