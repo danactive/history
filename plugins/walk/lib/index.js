@@ -2,15 +2,12 @@
 const routes = require('../../../lib/routes');
 const files = require('./files');
 
-const handler = (request, reply) => {
-  const outResponse = routes.createFormatReply({
-    reply,
-    isRaw: request.query.raw,
-    viewPath: 'plugins/walk/components/page.jsx'
-  });
+const handler = ({ query: { path, raw: isRaw } }, reply) => {
+  const viewPath = 'plugins/walk/components/page.jsx';
+  const outResponse = routes.createFormatReply({ reply, isRaw, viewPath });
   const outError = routes.createErrorReply(reply);
 
-  files.listFiles(request.query.path)
+  files.listFiles(path)
     .then(outResponse)
     .catch(outError);
 };

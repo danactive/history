@@ -138,6 +138,7 @@
   "tuxharness": "./tuxharness.js",
   "nyc": {
     "exclude": [
+      "**/cases.js",
       "**/*.spec.js"
     ]
   }

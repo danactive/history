@@ -52,10 +52,10 @@ function getThumbPath(item, gallery) {
     return undefined;
   }
 
-  let filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
-  filename = filename.replace(utils.file.type(filename), 'jpg');
-  const year = filename.indexOf('-') >= 0 && filename.split('-')[0];
-  return `/static/gallery-${gallery}/media/thumbs/${year}/${filename}`;
+  const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
+  const imageFilename = filename.replace(utils.file.type(filename), 'jpg');
+  const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
+  return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
 
 

@@ -3,8 +3,7 @@ const gallery = require('../../gallery/lib/gallery');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
-  const isRaw = request.query.raw;
+const handler = ({ query: { raw: isRaw } }, reply) => {
   const formatJson = (json) => {
     const context = { galleries: json };
     context.state = `window.state = ${JSON.stringify(context)};`;

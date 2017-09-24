@@ -3,14 +3,12 @@ const json = require('./json');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
-  const isRaw = request.query.raw;
+const handler = ({ query: { album_stem: albumStem, gallery, raw: isRaw } }, reply) => {
   const viewPath = 'plugins/album/components/page.jsx';
-
   const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
   const outError = routes.createErrorReply(reply);
 
-  json.getAlbum(request.query.gallery, request.query.album_stem)
+  json.getAlbum(gallery, albumStem)
     .then(outResponse)
     .catch(outError);
 };
