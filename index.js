@@ -11,6 +11,10 @@ const vision = require('vision');
 
 require('tuxharness');
 
+const utils = require('./plugins/utils');
+
+utils.env.load();
+
 const config = require('./config.json');
 const libAdmin = require('./plugins/admin/lib/index');
 const viewAlbum = require('./plugins/album/lib/index');

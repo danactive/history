@@ -1,5 +1,6 @@
 const appRoot = require('app-root-path');
 const boom = require('boom');
+const dotenv = require('dotenv');
 const dotProp = require('dot-prop');
 const glob = require('glob');
 const mime = require('mime-types');
@@ -8,7 +9,25 @@ const path = require('path');
 const configFile = require('../../../config.json');
 
 const config = {
-  get: filepath => dotProp.get(configFile, filepath)
+  get: dotpath => dotProp.get(configFile, dotpath)
+};
+
+const env = {
+  load: () => {
+    dotenv.config({ path: path.join(__dirname, '../../../.env') });
+    process.env.HISTORY_ENV_LOADED = true;
+  },
+  get: (key) => {
+    if (!process.env.HISTORY_ENV_LOADED) {
+      env.load();
+    }
+
+    if (process.env[key]) {
+      return process.env[key];
+    }
+
+    return null;
+  }
 };
 
 function customMime(extension) {
@@ -113,4 +132,4 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   });
 });
 
-module.exports = { config, file: fileMethods };
+module.exports = { env, config, file: fileMethods };

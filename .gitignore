@@ -7,6 +7,7 @@ plugins/resize/test/fixtures/photos/2016-07-12.jpg
 plugins/resize/test/fixtures/thumbs/2016-07-12.jpg
 plugins/*/public/assets
 
-coverage.lcov
+coverage
 .nyc_output
 tmp
+.env

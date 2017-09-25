@@ -1,14 +1,18 @@
 /* global __dirname, require */
 const json = require('./json');
 const routes = require('../../../lib/routes');
+const transform = require('./dropbox').transform;
 const validation = require('../../../lib/validation');
 
-const handler = ({ query: { album_stem: albumStem, gallery, raw: isRaw } }, reply) => {
+const handler = ({ query: { album_stem: albumStem, gallery, cloud, raw: isRaw } }, reply) => {
   const viewPath = 'plugins/album/components/page.jsx';
+
+  const applyCloud = (response => ((cloud === 'dropbox') ? transform(response, 'thumbPath') : response));
   const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
   const outError = routes.createErrorReply(reply);
 
   json.getAlbum(gallery, albumStem)
+    .then(applyCloud)
     .then(outResponse)
     .catch(outError);
 };
@@ -19,10 +23,11 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin'],
+      tags: ['react'],
       validate: {
         query: {
           album_stem: validation.albumStem,
+          cloud: validation.cloudProviders,
           gallery: validation.gallery,
           raw: validation.raw
         }
@@ -30,21 +35,7 @@ exports.register = (server, options, next) => {
     }
   });
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/{path*}',
-    config: {
-      description: 'Static assets like JS, CSS, images files',
-      handler: {
-        directory: {
-          path: 'plugins/album/public',
-          listing: true,
-          index: false,
-          redirectToSlash: true
-        }
-      }
-    }
-  });
+  server.route(routes.staticRoute({ pluginName: 'album', urlSegment: 'album' }));
 
   server.route({
     method: 'GET',
@@ -83,6 +74,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-view-album',
-  version: '0.3.0'
+  name: 'view-album',
+  version: '0.4.0'
 };
