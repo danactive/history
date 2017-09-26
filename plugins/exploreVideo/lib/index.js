@@ -12,7 +12,7 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
-  const outResponse = routes.curryJsonOrView({ isRaw, formatJson, reply, viewPath });
+  const outResponse = routes.createFormatReply({ isRaw, formatJson, reply, viewPath });
 
   outResponse({});
 };

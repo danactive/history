@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Utilities', { skip: false }, (describe) => {
-  const lib = require('../lib');
+  const lib = require('../');
   const path = require('path');
 
   describe.test('* Config - Get', (assert) => {
@@ -10,6 +10,29 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.ok(value.length, 'Get array type');
     assert.ok(value[0], 'jpg', 'Read array index 0');
     assert.ok(value[1], 'jpeg', 'Read array index 1');
+    assert.end();
+  });
+
+  describe.test('* Env - Load and Get', (assert) => {
+    let actual;
+    let expected;
+
+
+    actual = lib.env.get('HISTORY_ENV_LOADED');
+    expected = true;
+    assert.equal(actual, expected, 'Get env as bool');
+
+
+    actual = lib.env.get('HISTORY_ENV_TESTED');
+    expected = 1;
+    assert.equal(actual, expected, 'Get env as number');
+
+
+    actual = lib.env.get('HISTORY_ENV_FAKE');
+    expected = null;
+    assert.equal(actual, expected, 'Cannot find missing variable');
+
+
     assert.end();
   });
 
@@ -57,6 +80,7 @@ tape('Utilities', { skip: false }, (describe) => {
   describe.test('* File - Get Medium Type', (assert) => {
     assert.equal(lib.file.mediumType(), false, 'No argument');
     assert.equal(lib.file.mediumType(''), false, 'Blank type');
+    assert.equal(lib.file.mediumType(1), false, 'Not string');
     assert.equal(lib.file.mediumType('FAKE'), false, 'Fake type');
     assert.equal(lib.file.mediumType('image/jpeg'), 'image', 'JPEG is image');
     assert.equal(lib.file.mediumType('image'), 'image', 'image is image');

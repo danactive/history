@@ -1,6 +1,6 @@
 /* global __dirname, require */
 
-const hapi = require('hapi');
+const Hapi = require('hapi');
 const hapiReactViews = require('hapi-react-views');
 const hapiSwagger = require('hapi-swagger');
 const hoek = require('hoek');
@@ -10,6 +10,10 @@ const inert = require('inert');
 const vision = require('vision');
 
 require('tuxharness');
+
+const utils = require('./plugins/utils');
+
+utils.env.load();
 
 const config = require('./config.json');
 const libAdmin = require('./plugins/admin/lib/index');
@@ -23,12 +27,12 @@ const libRename = require('./plugins/rename/lib/index');
 const libResize = require('./plugins/resize/lib/index');
 const libWalk = require('./plugins/walk/lib/index');
 const libVideo = require('./plugins/video/lib/index');
-const logMod = require('./plugins/log/lib/log');
+const log = require('./plugins/log');
 const pkg = require('./package');
 
 const port = config.port;
-const log = logMod('server');
-const server = new hapi.Server();
+const logger = log.createLogger('server');
+const server = new Hapi.Server();
 server.connection({ port });
 server.register([
   { register: inert },
@@ -53,7 +57,7 @@ server.register([
   hoek.assert(!error, error);
 
   server.start();
-  log.operational(`Server running at ${server.info.uri}`);
+  logger.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
     icon: `${__dirname}/favicon.ico`,
     title: 'Server event',

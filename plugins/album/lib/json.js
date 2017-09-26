@@ -13,25 +13,30 @@ function title(item) {
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
     return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`;
   }
+
   if (presentable(item.photoLoc, item.photoCity)) {
     return `${item.photoLoc} (${item.photoCity})`;
   }
+
   if (presentable(item.photoLoc, item.photoDesc)) {
     return `${item.photoLoc}: ${item.photoDesc}`;
   }
+
   if (presentable(item.photoCity, item.photoDesc)) {
     return `${item.photoCity}: ${item.photoDesc}`;
   }
+
   if (presentable(item.photoLoc)) {
     return item.photoLoc;
   }
+
   if (presentable(item.photoCity)) {
     return item.photoCity;
   }
 
   return item.photoDesc;
 }
-module.exports.title = title;
+
 
 function caption(item) {
   if (item.type === 'video') {
@@ -40,19 +45,19 @@ function caption(item) {
 
   return item.thumbCaption;
 }
-module.exports.caption = caption;
+
 
 function getThumbPath(item, gallery) {
   if (!item || !item.filename) {
     return undefined;
   }
 
-  let filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
-  filename = filename.replace(utils.file.type(filename), 'jpg');
-  const year = filename.indexOf('-') >= 0 && filename.split('-')[0];
-  return `/static/gallery-${gallery}/media/thumbs/${year}/${filename}`;
+  const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
+  const imageFilename = filename.replace(utils.file.type(filename), 'jpg');
+  const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
+  return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
-module.exports.getThumbPath = getThumbPath;
+
 
 function getVideoPath(item, gallery) {
   if (!item || !item.filename) {
@@ -63,7 +68,6 @@ function getVideoPath(item, gallery) {
   const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' };
   return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`;
 }
-module.exports.getVideoPath = getVideoPath;
 
 
 function templatePrepare(result = {}) {
@@ -103,7 +107,7 @@ function templatePrepare(result = {}) {
 
   return output;
 }
-module.exports.templatePrepare = templatePrepare;
+
 
 function safePath(name, value) {
   const restriction = () => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
@@ -119,7 +123,7 @@ function safePath(name, value) {
 
   return `gallery-${value}`;
 }
-module.exports.safePath = safePath;
+
 
 function ensureSafePath(name, value, reject) {
   const partialPath = safePath(name, value);
@@ -132,7 +136,7 @@ function ensureSafePath(name, value, reject) {
 }
 
 
-module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
+const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
   const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [name => camelCase(name)] };
   const parser = new xml2js.Parser(options);
 
@@ -142,7 +146,7 @@ module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) 
     'public/galleries',
     ensureSafePath('gallery', gallery, reject),
     'xml',
-    ensureSafePath('albumStem', albumStem, reject) // eslint-disable-line comma-dangle
+    ensureSafePath('albumStem', albumStem, reject)
   );
 
   fs.readFile(xmlPath, (readError, fileData) => {
@@ -161,3 +165,13 @@ module.exports.getAlbum = (gallery, albumStem) => new Promise((resolve, reject) 
     });
   });
 });
+
+module.exports = {
+  caption,
+  getAlbum,
+  getThumbPath,
+  getVideoPath,
+  safePath,
+  title,
+  templatePrepare
+};

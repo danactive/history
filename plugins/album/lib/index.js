@@ -1,15 +1,40 @@
 /* global __dirname, require */
+const Dropbox = require('dropbox');
+
+const createTransform = require('./dropbox').createTransform;
 const json = require('./json');
+const log = require('../../log');
+const routes = require('../../../lib/routes');
+const utils = require('../../utils');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
-  const albumStem = request.query.album_stem;
-  const gallery = request.query.gallery;
-  const raw = request.query.raw;
+const logger = log.createLogger('Route: View Album');
+
+function applyDropbox(response) {
+  const accessToken = utils.env.get('HISTORY_DROPBOX_ACCESS_TOKEN');
+
+  if (!accessToken) {
+    logger.panic('applyDropbox error (Missing Dropbox API accessToken)');
+
+    return response;
+  }
+
+  const transform = createTransform(new Dropbox({ accessToken }));
+
+  return transform(response, 'thumbPath');
+}
+
+const handler = ({ query: { album_stem: albumStem, gallery, cloud, raw: isRaw } }, reply) => {
+  const viewPath = 'plugins/album/components/page.jsx';
+
+  const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
+  const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
+  const outError = routes.createErrorReply(reply);
 
   json.getAlbum(gallery, albumStem)
-    .then(albumData => (raw ? reply(albumData) : reply.view('plugins/album/components/page.jsx', albumData)))
-    .catch(error => reply(error));
+    .then(applyCloud)
+    .then(outResponse)
+    .catch(outError);
 };
 
 exports.register = (server, options, next) => {
@@ -18,10 +43,11 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin'],
+      tags: ['react'],
       validate: {
         query: {
           album_stem: validation.albumStem,
+          cloud: validation.cloudProviders,
           gallery: validation.gallery,
           raw: validation.raw
         }
@@ -29,21 +55,7 @@ exports.register = (server, options, next) => {
     }
   });
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/{path*}',
-    config: {
-      description: 'Static assets like JS, CSS, images files',
-      handler: {
-        directory: {
-          path: 'plugins/album/public',
-          listing: true,
-          index: false,
-          redirectToSlash: true
-        }
-      }
-    }
-  });
+  server.route(routes.staticRoute({ pluginName: 'album', urlSegment: 'album' }));
 
   server.route({
     method: 'GET',
@@ -82,6 +94,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-view-album',
-  version: '0.3.0'
+  name: 'view-album',
+  version: '0.5.0'
 };

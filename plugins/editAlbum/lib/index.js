@@ -3,8 +3,7 @@ const gallery = require('../../gallery/lib/gallery');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
-  const isRaw = request.query.raw;
+const handler = ({ query: { raw: isRaw } }, reply) => {
   const formatJson = (json) => {
     const context = { galleries: json };
     context.state = `window.state = ${JSON.stringify(context)};`;
@@ -13,10 +12,12 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const outResponse = routes.curryJsonOrView({ isRaw, formatJson, reply, viewPath });
+  const outResponse = routes.createFormatReply({ isRaw, formatJson, reply, viewPath });
+  const outError = routes.createErrorReply(reply);
 
   gallery.getGalleries()
-    .then(outResponse);
+    .then(outResponse)
+    .catch(outError);
 };
 
 exports.register = (server, options, next) => {
