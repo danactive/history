@@ -1,13 +1,33 @@
 /* global __dirname, require */
+const Dropbox = require('dropbox');
+
+const createTransform = require('./dropbox').createTransform;
 const json = require('./json');
+const log = require('../../log');
 const routes = require('../../../lib/routes');
-const transform = require('./dropbox').transform;
+const utils = require('../../utils');
 const validation = require('../../../lib/validation');
+
+const logger = log.createLogger('Route: View Album');
+
+function applyDropbox(response) {
+  const accessToken = utils.env.get('HISTORY_DROPBOX_ACCESS_TOKEN');
+
+  if (!accessToken) {
+    logger.panic('applyDropbox error (Missing Dropbox API accessToken)');
+
+    return response;
+  }
+
+  const transform = createTransform(new Dropbox({ accessToken }));
+
+  return transform(response, 'thumbPath');
+}
 
 const handler = ({ query: { album_stem: albumStem, gallery, cloud, raw: isRaw } }, reply) => {
   const viewPath = 'plugins/album/components/page.jsx';
 
-  const applyCloud = (response => ((cloud === 'dropbox') ? transform(response, 'thumbPath') : response));
+  const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
   const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
   const outError = routes.createErrorReply(reply);
 
@@ -75,5 +95,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'view-album',
-  version: '0.4.0'
+  version: '0.5.0'
 };

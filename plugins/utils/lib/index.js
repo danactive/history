@@ -16,6 +16,7 @@ const env = {
   load: () => {
     dotenv.config({ path: path.join(__dirname, '../../../.env') });
     process.env.HISTORY_ENV_LOADED = true;
+    process.env.HISTORY_ENV_TESTED = 1;
   },
   get: (key) => {
     if (!process.env.HISTORY_ENV_LOADED) {
@@ -23,12 +24,16 @@ const env = {
     }
 
     if (process.env[key]) {
-      return process.env[key];
+      return JSON.parse(process.env[key]);
     }
 
     return null;
   }
 };
+
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
 
 function customMime(extension) {
   if (['raw', 'arw'].includes(extension)) {
@@ -132,4 +137,4 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   });
 });
 
-module.exports = { env, config, file: fileMethods };
+module.exports = { env, config, clone, file: fileMethods };

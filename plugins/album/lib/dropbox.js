@@ -1,12 +1,8 @@
-const Dropbox = require('dropbox');
-
 const log = require('../../log');
 const utils = require('../../utils');
 
-const accessToken = utils.env.get('HISTORY_DROPBOX_ACCESS_TOKEN');
 const logger = log.createLogger('Album Dropbox');
 
-const dropbox = new Dropbox({ accessToken });
 
 function determineError(e) {
   const wrap = msg => `error (${msg})`;
@@ -26,71 +22,39 @@ function determineError(e) {
   return e;
 }
 
-async function getAllImagePaths(path) {
-  if (!accessToken) {
-    logger.panic('getAllImagePaths error (Missing Dropbox API accessToken)');
 
-    return [];
-  }
-
+async function getImagePath(dbx, path) {
   try {
-    const { entries } = await dropbox.filesListFolder({ path });
-    const createTempPath = entry => dropbox.filesGetTemporaryLink({ path: entry.path_lower });
-    const promises = entries.map(createTempPath);
-    const urls = await Promise.all(promises);
-
-    return urls.map(url => url.link);
-  } catch (e) {
-    logger.debug(`getAllImagePaths ${determineError(e)}`);
-
-    return [];
-  }
-}
-
-async function getImagePath(path) {
-  if (!accessToken) {
-    logger.panic('getImagePath error (Missing Dropbox API accessToken)');
-
-    return '';
-  }
-
-  try {
-    const tempPath = await dropbox.filesGetTemporaryLink({ path });
+    const tempPath = await dbx.filesGetTemporaryLink({ path });
 
     return tempPath.link;
   } catch (e) {
     logger.debug(`getImagePath ${path} ${determineError(e)}`);
 
-    return '';
+    return null;
   }
 }
 
-async function transform(response, field) {
-  if (!accessToken) {
-    logger.panic('transform error (Missing Dropbox API accessToken)');
 
-    return response;
-  }
+function createTransform(dbx) {
+  return async (response, field) => {
+    try {
+      const out = utils.clone(response);
+      const promises = response.album.items.map(item => getImagePath(dbx, item[field]));
+      const urls = await Promise.all(promises);
 
-  try {
-    const promises = response.album.items.map(item => getImagePath(item[field]));
-    const urls = await Promise.all(promises);
-    response.album.items = response.album.items.map((item, index) => {
-      const merge = item;
+      response.album.items.forEach((item, index) => {
+        out.album.items[index].thumbPath = urls[index];
+      });
 
-      if (urls[index]) {
-        merge.thumbPath = urls[index];
-      }
+      return out;
+    } catch (e) {
+      logger.debug(`transform ${determineError(e)}`);
 
-      return merge;
-    });
-
-    return response;
-  } catch (e) {
-    logger.debug(`transform ${determineError(e)}`);
-
-    return response;
-  }
+      return response;
+    }
+  };
 }
 
-module.exports = { getImagePath, getAllImagePaths, transform };
+
+module.exports = { createTransform };
