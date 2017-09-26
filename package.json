@@ -50,7 +50,7 @@
     "node-notifier": "^5.0.1",
     "prop-types": "^15.5.10",
     "react": "^15.3.2",
-    "react-dom": "^15.3.2",
+    "react-dom": "^16.0.0",
     "react-test-renderer": "^15.6.1",
     "rimraf": "^2.2.8",
     "tap-webpack-plugin": "^2.0.0",
