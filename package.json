@@ -40,7 +40,7 @@
     "hapi": "^16.1.1",
     "hapi-react-views": "^9.2.1",
     "hapi-swagger": "^7.4.0",
-    "hoek": "^4.1.0",
+    "hoek": "^5.0.0",
     "inert": "^4.0.2",
     "joi": "^11.0.0",
     "jquery-colorbox": "^1.6.4",
