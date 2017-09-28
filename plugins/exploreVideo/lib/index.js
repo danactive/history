@@ -23,7 +23,7 @@ exports.register = (server, options, next) => {
     path: '/',
     config: {
       handler,
-      tags: ['api', 'plugin'],
+      tags: ['react'],
       validate: {
         query: {
           geocode: validation.geocode,
@@ -40,5 +40,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'explore-video',
-  version: '0.2.0'
+  version: '0.3.0'
 };

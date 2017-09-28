@@ -8,6 +8,7 @@ const App = require('../components/app');
 test('Explore Video - App', (describe) => {
   describe.test('* YouTube API Video Search', async (assert) => {
     assert.plan(4);
+
     const wrapper = shallow(<App />);
     let actual;
     let expected;
@@ -42,8 +43,6 @@ test('Explore Video - App', (describe) => {
       actual = wrapper.state('videos').length;
       expected = 0;
       assert.ok(actual > expected, 'Constructor value videos');
-
-      assert.end();
     } catch (e) {
       assert.fail(e);
     }

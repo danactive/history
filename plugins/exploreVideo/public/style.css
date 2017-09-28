@@ -19,8 +19,12 @@
   grid-area: right;
 }
 
+#search-bar select {
+  width: 20%;
+}
+
 #search-bar input {
-  width: 96%;
+  width: 75%;
   margin: 2%;
   box-shadow: 0 0.5em 0.5em -0.5em silver;
   font-size: 1em;

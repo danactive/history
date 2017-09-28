@@ -17,7 +17,8 @@ class SearchBar extends React.Component {
   static get defaults() {
     return {
       geocode: '13.7524000,100.5021833',
-      instruction: 'Keyword or GeoCode'
+      instruction: 'Keyword or GeoCode',
+      searchOrder: 'relevance'
     };
   }
 
@@ -26,31 +27,40 @@ class SearchBar extends React.Component {
 
     const geocode = SearchBar.getGeoCode(SearchBar.getQS());
     const searchValue = geocode || SearchBar.defaults.geocode;
-    this.state = { searchValue };
+    const searchOrder = SearchBar.defaults.searchOrder;
+    this.state = { searchValue, searchOrder };
   }
 
   componentDidMount() {
-    this.props.onSearchChange(this.state.searchValue);
+    this.props.onSearchChange(this.state.searchValue, { searchOrder: this.state.searchOrder });
   }
 
-  onInputChange(searchValue) {
-    this.changeInputValue(searchValue);
-    this.props.onSearchChange(searchValue);
-  }
-
-  changeInputValue(searchValue) {
+  onSearchChange(searchValue) {
     this.setState({ searchValue });
+    this.props.onSearchChange(searchValue, { searchOrder: this.state.searchOrder });
+  }
+
+  onOrderChange(searchOrder) {
+    this.setState({ searchOrder });
+    this.props.onSearchChange(this.state.searchValue, { searchOrder });
   }
 
   render() {
     return (
       <section id="search-bar">
         <input
-          onChange={event => this.onInputChange(event.target.value)}
+          onChange={event => this.onSearchChange(event.target.value)}
           placeholder={SearchBar.defaults.instruction}
           title={SearchBar.defaults.instruction}
           value={this.state.searchValue}
         />
+        <select
+          defaultValue="relevance"
+          onChange={event => this.onOrderChange(event.target.value)}
+        >
+          <option value="date">Date of creation</option>
+          <option value="relevance">Relevance</option>
+        </select>
       </section>
     );
   }

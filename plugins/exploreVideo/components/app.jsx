@@ -17,14 +17,17 @@ class App extends React.Component {
     };
   }
 
-  videoSearch(searchValue) {
+  videoSearch(searchValue, options = {}) {
     if (!searchValue) {
       return undefined;
     }
 
-    const geoAddress = `https://content.googleapis.com/youtube/v3/search?location=${searchValue}&locationRadius=1km&maxResults=5&
-    order=date&part=id,snippet&type=video&videoEmbeddable=true&key=${API_KEY}&videoLiscense=any`;
-    const keywordAddress = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${API_KEY}&q=${searchValue}&type=video`;
+    const order = (options.searchOrder) ? `&order=${options.searchOrder}` : '';
+
+    const geoAddress = `https://content.googleapis.com/youtube/v3/search?location=${searchValue}&locationRadius=1km&maxResults=5${order}` +
+    `&part=id,snippet&type=video&videoEmbeddable=true&key=${API_KEY}&videoLiscense=any`;
+    const keywordAddress = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${API_KEY}&q=${searchValue}&type=video${order}`;
+
     const address = (Number(searchValue.split(',')[0])) ? geoAddress : keywordAddress;
 
     // most views
@@ -43,7 +46,7 @@ class App extends React.Component {
   }
 
   render() {
-    const videoSearch = _.debounce(searchValue => this.videoSearch(searchValue), 400);
+    const videoSearch = _.debounce((searchValue, options) => this.videoSearch(searchValue, options), 400);
 
     return (
       <section id="video-component">
