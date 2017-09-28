@@ -7,7 +7,6 @@ addons:
   apt:
     packages:
     - graphicsmagick
-  srcclr: true
 
 node_js:
   - "6.9.0"
