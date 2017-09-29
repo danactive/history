@@ -1,6 +1,7 @@
-import test from 'tape';
+import Adapter from 'enzyme-adapter-react-16';
+import enzyme from 'enzyme';
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import test from 'tape';
 
 import '../../../test/setup.enzyme';
 import Thumb from '../components/thumb';
@@ -11,6 +12,9 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
     thumbCaption: 'a',
     thumbPath: 'b'
   };
+  const { shallow, mount } = enzyme;
+
+  enzyme.configure({ adapter: new Adapter() });
 
   describe.test('* Thumbnail image and caption', (assert) => {
     const wrapper = shallow(<Thumb item={item} />);

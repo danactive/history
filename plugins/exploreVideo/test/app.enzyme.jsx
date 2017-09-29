@@ -1,11 +1,16 @@
-const { shallow } = require('enzyme');
-const React = require('react');
-const test = require('tape');
+import Adapter from 'enzyme-adapter-react-16';
+import enzyme from 'enzyme';
+import test from 'tape';
+import React from 'react';
 
-require('../../../test/setup.enzyme');
-const App = require('../components/app');
+import '../../../test/setup.enzyme';
+import App from '../components/app';
 
 test('Explore Video - App', (describe) => {
+  const { shallow } = enzyme;
+
+  enzyme.configure({ adapter: new Adapter() });
+
   describe.test('* YouTube API Video Search', async (assert) => {
     assert.plan(4);
 

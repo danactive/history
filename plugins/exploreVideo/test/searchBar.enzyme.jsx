@@ -1,10 +1,15 @@
-const { shallow } = require('enzyme');
-const React = require('react');
-const sinon = require('sinon');
-const test = require('tape');
+import Adapter from 'enzyme-adapter-react-16';
+import enzyme from 'enzyme';
+import React from 'react';
+import test from 'tape';
+import sinon from 'sinon';
 
-require('../../../test/setup.enzyme');
-const SearchBar = require('../components/searchBar');
+import '../../../test/setup.enzyme';
+import SearchBar from '../components/searchBar';
+
+const { shallow } = enzyme;
+
+enzyme.configure({ adapter: new Adapter() });
 
 test('Explore Video - Search Bar', (describe) => {
   describe.test('* Retrieve web address from browser', (assert) => {
@@ -74,9 +79,9 @@ test('Explore Video - Search Bar (React Component)', (describe) => {
     const wrapper = shallow(<SearchBar onSearchChange={onSearchChange} />);
 
 
-    assert.notOk(onSearchChange.calledOnce, 'Search not executed');
+    assert.ok(onSearchChange.calledOnce, 'Search not executed');
     wrapper.find('input').simulate('change', { target: { value: 'boring' } });
-    assert.ok(onSearchChange.calledOnce, 'Search executed');
+    assert.ok(onSearchChange.calledTwice, 'Search executed');
 
 
     const actual = wrapper.find('input').props().value;
