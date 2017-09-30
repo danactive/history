@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/danactive/history/compare/v2.4.0...v3.0.0) (2017-09-30)
+
+
+### Bug Fixes
+
+* **package:** update boom to version 6.0.0 ([a7b0d5e](https://github.com/danactive/history/commit/a7b0d5e))
+
+
+### BREAKING CHANGES
+
+* **package:** drop Node.js 6 + 7 support
+
+
+
 <a name="2.4.0"></a>
 # [2.4.0](https://github.com/danactive/history/compare/v2.3.0...v2.4.0) (2017-09-30)
 
