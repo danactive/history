@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.4.0"></a>
+# [2.4.0](https://github.com/danactive/history/compare/v2.3.0...v2.4.0) (2017-09-30)
+
+
+### Bug Fixes
+
+* **CI:** Remove SourceClear build step check due to free account over usage [[#217](https://github.com/danactive/history/issues/217)] ([893ddb2](https://github.com/danactive/history/commit/893ddb2))
+* **CI:** Update GraphicsMagick to July 7, 2017 version [[#215](https://github.com/danactive/history/issues/215)] ([d0ea9b7](https://github.com/danactive/history/commit/d0ea9b7))
+* **package:** update joi to version 11.0.0 ([1c18038](https://github.com/danactive/history/commit/1c18038))
+* **package:** update react framework to version 16.0.0 ([96587ba](https://github.com/danactive/history/commit/96587ba))
+
+
+### Features
+
+* **CI:** Add markdown to lint [[#199](https://github.com/danactive/history/issues/199)] ([4f3463a](https://github.com/danactive/history/commit/4f3463a))
+* **CI:** Update greenkeeper.io service to generate yarn lockfile [[#197](https://github.com/danactive/history/issues/197)] ([1ce3177](https://github.com/danactive/history/commit/1ce3177))
+* **Explore Album:** Update search box with sort order option [[#217](https://github.com/danactive/history/issues/217)] ([83b11b3](https://github.com/danactive/history/commit/83b11b3))
+* **View Album:** Add Dropbox API to host thumbails [[#206](https://github.com/danactive/history/issues/206)] ([013b32e](https://github.com/danactive/history/commit/013b32e))
+
+
+
 <a name="2.3.0"></a>
 # [2.3.0](https://github.com/danactive/history/compare/v2.2.0...v2.3.0) (2017-09-16)
 
