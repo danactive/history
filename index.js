@@ -3,7 +3,6 @@
 const Hapi = require('hapi');
 const hapiReactViews = require('hapi-react-views');
 const hapiSwagger = require('hapi-swagger');
-const hoek = require('hoek');
 const lout = require('lout');
 const notifier = require('node-notifier');
 const inert = require('inert');
@@ -54,7 +53,10 @@ server.register([
   },
   { register: lout }
 ], (error) => {
-  hoek.assert(!error, error);
+  if (error) {
+    logger.panic(`Web server failed to initialize ${error.message}`);
+    return;
+  }
 
   server.start();
   logger.operational(`Server running at ${server.info.uri}`);
