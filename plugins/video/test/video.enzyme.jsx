@@ -1,11 +1,16 @@
-import test from 'tape';
+import Adapter from 'enzyme-adapter-react-16';
+import enzyme from 'enzyme';
 import React from 'react';
-import { mount } from 'enzyme';
+import test from 'tape';
 
 import '../../../test/setup.enzyme';
 import Video from '../components/video';
 
 test('Video - Video (React Component)', { skip: false }, (describe) => {
+  const { mount } = enzyme;
+
+  enzyme.configure({ adapter: new Adapter() });
+
   const item = {
     w: 800,
     h: 600,

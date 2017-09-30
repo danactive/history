@@ -1,12 +1,17 @@
-const { shallow } = require('enzyme');
-const React = require('react');
-const test = require('tape');
+import Adapter from 'enzyme-adapter-react-16';
+import enzyme from 'enzyme';
+import React from 'react';
+import test from 'tape';
 
-require('../../../test/setup.enzyme');
-const VideoDetail = require('../components/videoDetail');
-const mock = require('./fixtures/youtube.json');
+import '../../../test/setup.enzyme';
+import mock from './fixtures/youtube.json';
+import VideoDetail from '../components/videoDetail';
 
 test('Explore Video - Video Detail (React Component)', (describe) => {
+  const { shallow } = enzyme;
+
+  enzyme.configure({ adapter: new Adapter() });
+
   describe.test('* Render component with missing video object', (assert) => {
     const actual = shallow(<VideoDetail />).html();
     const expected = '<section>Loading...</section>';
