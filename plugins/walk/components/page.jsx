@@ -11,6 +11,7 @@ function Page({ files }) {
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
       </head>
       <body>
+        <div id="controls" />
         <Contents files={files} />
         <script src="../walk/static/bundle.js" />
       </body>

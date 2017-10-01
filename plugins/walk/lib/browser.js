@@ -1,9 +1,14 @@
 /* global document */
+import 'react-dates/lib/css/_datepicker.css';
+
 const React = require('react');
 const ReactDOM = require('react-dom');
-const AppComponent = require('../components/thumbnail.jsx');
 
-const App = React.createFactory(AppComponent);
+const browser = require('../../../lib/browser');
+const Controls = require('../components/controls.jsx');
+const Thumbnail = require('../components/thumbnail.jsx');
+
+const ThumbnailApp = React.createFactory(Thumbnail);
 
 function renderViewDrain(containers) {
   if (containers.length === 0) {
@@ -13,7 +18,7 @@ function renderViewDrain(containers) {
   const container = containers.pop();
   const data = { filename: container.getAttribute('data-filename') };
 
-  ReactDOM.render(App(data), container);
+  ReactDOM.render(ThumbnailApp(data), container);
   renderViewDrain(containers);
 }
 
@@ -27,3 +32,6 @@ function renderView(htmlCollection) {
 }
 
 renderView(document.getElementsByClassName('preview'));
+
+
+browser.renderComponentToDom({ AppComponent: Controls, domSelector: '#controls' });
