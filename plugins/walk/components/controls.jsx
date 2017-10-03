@@ -1,6 +1,24 @@
-import propTypes from 'prop-types';
-import { SingleDatePicker } from 'react-dates';
+/* global document */
+import moment from 'moment';
+import momentPropTypes from 'react-moment-proptypes';
+import { isInclusivelyBeforeDay, SingleDatePicker } from 'react-dates';
 import React from 'react';
+
+function assembleControls(dateComponent) {
+  const domControl = document.getElementById('controls');
+  const hasImage = (domControl && domControl.getAttribute('data-has-image') === 'true');
+
+  if (hasImage) {
+    return (
+      <section>
+        <span>{dateComponent}</span>
+        <a key="rename" href="#rename">Rename</a>
+      </section>
+    );
+  }
+
+  return <section />;
+}
 
 class Controls extends React.Component {
   constructor(props) {
@@ -26,16 +44,19 @@ class Controls extends React.Component {
   render() {
     const { focused, date } = this.state;
 
-    return (
+    const dateComponent = (
       <SingleDatePicker
         {...this.props}
-        id="date_input"
+        key="date_input"
         date={date}
         focused={focused}
         onDateChange={this.onDateChange}
         onFocusChange={this.onFocusChange}
+        isOutsideRange={day => !isInclusivelyBeforeDay(day, moment())}
       />
     );
+
+    return assembleControls(dateComponent);
   }
 }
 
@@ -44,7 +65,7 @@ Controls.defaultProps = {
 };
 
 Controls.propTypes = {
-  date: propTypes.bool
+  date: momentPropTypes.momentObj
 };
 
 module.exports = Controls;
