@@ -4,6 +4,8 @@ import momentPropTypes from 'react-moment-proptypes';
 import { isInclusivelyBeforeDay, SingleDatePicker } from 'react-dates';
 import React from 'react';
 
+import Rename from './rename';
+
 function assembleControls(dateComponent) {
   const domControl = document.getElementById('controls');
   const hasImage = (domControl && domControl.getAttribute('data-has-image') === 'true');
@@ -12,7 +14,7 @@ function assembleControls(dateComponent) {
     return (
       <section>
         <span>{dateComponent}</span>
-        <a key="rename" href="#rename">Rename</a>
+        <Rename />
       </section>
     );
   }
@@ -61,7 +63,7 @@ class Controls extends React.Component {
 }
 
 Controls.defaultProps = {
-  date: null
+  date: moment()
 };
 
 Controls.propTypes = {
