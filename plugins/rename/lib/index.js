@@ -8,10 +8,12 @@ const filenamesMod = require('./filenames');
 const renameMod = require('./rename');
 
 const handler = (request, reply) => {
-  const fromFilenames = request.payload.filenames;
-  const prefix = request.payload.prefix;
-  const sourceFolder = request.payload.source_folder;
-  const renameAssociated = request.payload.rename_associated;
+  const {
+    filenames: fromFilenames,
+    prefix,
+    source_folder: sourceFolder,
+    rename_associated: renameAssociated
+  } = request.payload;
   const options = { renameAssociated };
   // const log = logMod('plugin-rename-index');
 

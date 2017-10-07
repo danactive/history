@@ -3,9 +3,8 @@ const React = require('react');
 const VideoListItem = require('./videoListItem.jsx');
 
 const VideoList = (props) => {
-  const videoItems = props.videos.map(video =>
-    <VideoListItem onVideoSelect={props.onVideoSelect} key={video.etag} video={video} />
-  );
+  const videoItems = props.videos.map((video, index) =>
+    <VideoListItem index={index} onVideoSelect={props.onVideoSelect} key={video.etag} video={video} />);
 
   return <nav id="video-list">{videoItems}</nav>;
 };

@@ -75,7 +75,7 @@ function templatePrepare(result = {}) {
     return result;
   }
 
-  const gallery = result.album.meta.gallery;
+  const { gallery } = result.album.meta;
   const output = clone(result);
   delete output.album.item;
 

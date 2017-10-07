@@ -27,7 +27,7 @@ class SearchBar extends React.Component {
 
     const geocode = SearchBar.getGeoCode(SearchBar.getQS());
     const searchValue = geocode || SearchBar.defaults.geocode;
-    const searchOrder = SearchBar.defaults.searchOrder;
+    const { searchOrder } = SearchBar.defaults;
     this.state = { searchValue, searchOrder };
   }
 
@@ -53,10 +53,12 @@ class SearchBar extends React.Component {
           placeholder={SearchBar.defaults.instruction}
           title={SearchBar.defaults.instruction}
           value={this.state.searchValue}
+          tabIndex="1"
         />
         <select
           defaultValue="relevance"
           onChange={event => this.onOrderChange(event.target.value)}
+          tabIndex="2"
         >
           <option value="date">Date of creation</option>
           <option value="relevance">Relevance</option>

@@ -14,7 +14,7 @@ const paths = {
 };
 
 function filterFiles() {
-  const plugin = flags.plugin;
+  const { plugin } = flags;
   return plugin ? filter([`${plugin}/**/*`]) : filter(['**/*']);
 }
 

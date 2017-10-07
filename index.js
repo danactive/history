@@ -29,7 +29,7 @@ const libVideo = require('./plugins/video/lib/index');
 const log = require('./plugins/log');
 const pkg = require('./package');
 
-const port = config.port;
+const { port } = config;
 const logger = log.createLogger('server');
 const server = new Hapi.Server();
 server.connection({ port });
