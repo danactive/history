@@ -1,7 +1,7 @@
 /* global __dirname, require */
 const Dropbox = require('dropbox');
 
-const createTransform = require('./dropbox').createTransform;
+const { createTransform } = require('./dropbox');
 const json = require('./json');
 const log = require('../../log');
 const routes = require('../../../lib/routes');
@@ -24,7 +24,11 @@ function applyDropbox(response) {
   return transform(response, 'thumbPath');
 }
 
-const handler = ({ query: { album_stem: albumStem, gallery, cloud, raw: isRaw } }, reply) => {
+const handler = ({
+  query: {
+    album_stem: albumStem, gallery, cloud, raw: isRaw
+  }
+}, reply) => {
   const viewPath = 'plugins/album/components/page.jsx';
 
   const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);

@@ -2,7 +2,7 @@ const test = require('tape-catch');
 
 test('Album plugin - Dropbox', { skip: false }, (describe) => {
   const json = require('../lib/json');
-  const createTransform = require('../lib/dropbox').createTransform;
+  const { createTransform } = require('../lib/dropbox');
 
   describe.test('* Transform', { skip: false }, async (assert) => {
     const xml = await json.getAlbum('demo', 'sample');

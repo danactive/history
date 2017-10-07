@@ -19,14 +19,16 @@ function Thumb({ item }) {
     title.push(`<a href='/explore?geocode=${geocode}' target='_blank'>Explore</a>`);
   }
 
-  return (<li className="liAlbumPhoto" data-lat={item.geo && item.geo.lat} data-lon={item.geo && item.geo.lon}>
-    <div className="albumBoxPhotoImg">
-      <a href={item.mediaPath} rel="set" title={title.join(' | ')}>
-        <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
-      </a>
-    </div>
-    <div className="albumBoxPhotoCaption">{item.thumbCaption}</div>
-  </li>);
+  return (
+    <li className="liAlbumPhoto" data-lat={item.geo && item.geo.lat} data-lon={item.geo && item.geo.lon}>
+      <div className="albumBoxPhotoImg">
+        <a href={item.mediaPath} rel="set" title={title.join(' | ')}>
+          <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
+        </a>
+      </div>
+      <div className="albumBoxPhotoCaption">{item.thumbCaption}</div>
+    </li>
+  );
 }
 
 Thumb.propTypes = {

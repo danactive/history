@@ -11,5 +11,7 @@ tape('Verify /walk route', { skip: false }, (describe) => {
   const plugins = [inert, vision, lib];
   const url = '/admin/walk-path';
 
-  testCaseDef.execHapi({ describe, plugins, testCases, url });
+  testCaseDef.execHapi({
+    describe, plugins, testCases, url
+  });
 });

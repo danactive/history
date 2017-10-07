@@ -3,7 +3,9 @@ const hapiReactViews = require('hapi-react-views');
 const path = require('path');
 const querystring = require('querystring');
 
-function execHapi({ describe, plugins, routeStem, testCases }) {
+function execHapi({
+  describe, plugins, routeStem, testCases
+}) {
   testCases.cases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, (assert) => {
       const server = new hapi.Server();

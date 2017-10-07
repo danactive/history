@@ -49,7 +49,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   describe.test('* Title - Photo City', (assert) => {
     item.photoCity = 'Vancouver, BC';
     const wrapper = mount(<Thumb item={item} />);
-    const title = wrapper.find('a').props().title;
+    const { title } = wrapper.find('a').props();
 
     assert.equal(title, item.photoCity, 'Has title with Photo City');
 
@@ -63,7 +63,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
       source: 'wikipedia'
     };
     const wrapper = mount(<Thumb item={item} />);
-    const title = wrapper.find('a').props().title;
+    const { title } = wrapper.find('a').props();
     const titleHtml = '<a href=\'https://en.wikipedia.org/wiki/Vancouver_International_Airport\' target=\'_blank\'>Wiki</a>';
 
     assert.equal(title, titleHtml, 'Has title with Wikipedia link');

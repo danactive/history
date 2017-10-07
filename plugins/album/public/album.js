@@ -27,7 +27,9 @@ function showMarker(map, _lon, _lat) {
     return;
   }
 
-  map.flyTo({ center: [lon, lat], zoom: 14, screenSpeed: 2, curve: Math.pow(3, 0.25) });
+  map.flyTo({
+    center: [lon, lat], zoom: 14, screenSpeed: 2, curve: Math.pow(3, 0.25)
+  });
 }
 
 function photoViewed() {
