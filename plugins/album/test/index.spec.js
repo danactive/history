@@ -15,7 +15,9 @@ test('Verify /album route', { skip: false }, (describe) => {
   const SAMPLE_IMAGE_COUNT = 6;
   const plugins = [inert, vision, lib];
 
-  testCaseDef.execHapi({ describe, plugins, testCases, routeStem: '/album' });
+  testCaseDef.execHapi({
+    describe, plugins, testCases, routeStem: '/album'
+  });
 
   describe.test('* JavaScript library requirements', { skip: false }, (assert) => {
     const server = new hapi.Server();

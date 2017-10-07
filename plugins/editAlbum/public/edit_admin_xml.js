@@ -1,4 +1,14 @@
 /* global $, SaveToJson, schema, util, window */
+
+function getFilename(rawFilename) {
+  if (rawFilename instanceof Array) {
+    const [filename] = rawFilename;
+    return `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
+  }
+
+  return rawFilename;
+}
+
 const album = {
   form: {
     schema: { // HTML element ID, XML node name
@@ -38,9 +48,7 @@ const album = {
     PopulateFromPhoto: (_data) => {
       const data = $.extend({}, _data);
       const seen = {};
-      if (typeof data.filename === 'object') {
-        data.filename = data.filename[0];
-      }
+      data.filename = (data.filename instanceof Array) ? data.filename[0] : data.filename;
 
       function clickField($e) { // click on .suggestion <div>
         const txt = $(this).text();
@@ -201,17 +209,12 @@ const album = {
   json: {}, // current album data
   Generate: () => { // output album.xml
     const galleryName = $('#editGalleries').val();
-    let filename;
-    let year;
+
     $('#listPhotos').html(''); // clear previous gallery
     $.each(album.json.album.item, (i, item) => {
-      if (item.filename instanceof Array) {
-        filename = item.filename[0];
-        filename = `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
-      } else {
-        filename = item.filename;
-      }
-      year = filename.substr(0, filename.indexOf('-'));
+      const filename = getFilename(item.filename);
+      const year = filename.substr(0, filename.indexOf('-'));
+
       $('<div>')
         .click(album.photo.Invoke)
         .data('photo', item)

@@ -107,20 +107,32 @@ tape('Utilities', { skip: false }, (describe) => {
 
   describe.test('* File - Ensure absolute path', (assert) => {
     const test = lib.file.absolutePath;
-    assert.equal(test('./plugins/utils/test'), __dirname,
-      'Relative resolved to Absolute folder');
-    assert.equal(test('./plugins/utils/test/fixtures/aitch.html'), path.join(__dirname, './fixtures/aitch.html'),
-      'Relative resolved to Absolute file');
-    assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '/'),
-      'Relative resolved to Absolute folder trailing slash');
+    assert.equal(
+      test('./plugins/utils/test'), __dirname,
+      'Relative resolved to Absolute folder'
+    );
+    assert.equal(
+      test('./plugins/utils/test/fixtures/aitch.html'), path.join(__dirname, './fixtures/aitch.html'),
+      'Relative resolved to Absolute file'
+    );
+    assert.equal(
+      test('./plugins/utils/test/'), path.join(__dirname, '/'),
+      'Relative resolved to Absolute folder trailing slash'
+    );
     if (lib.platform === 'windows') {
-      assert.equal(test('./plugins/utils/test/'), path.join(__dirname, '\\'),
-        'Relative resolved to Absolute folder trailing backslash');
+      assert.equal(
+        test('./plugins/utils/test/'), path.join(__dirname, '\\'),
+        'Relative resolved to Absolute folder trailing backslash'
+      );
     }
-    assert.equal(test(__dirname), __dirname,
-      'Absolute resolved to folder');
-    assert.equal(test(path.join(__dirname, './fixtures/aitch.html')), path.join(__dirname, './fixtures/aitch.html'),
-      'Absolute to file');
+    assert.equal(
+      test(__dirname), __dirname,
+      'Absolute resolved to folder'
+    );
+    assert.equal(
+      test(path.join(__dirname, './fixtures/aitch.html')), path.join(__dirname, './fixtures/aitch.html'),
+      'Absolute to file'
+    );
     assert.end();
   });
 
@@ -136,12 +148,18 @@ tape('Utilities', { skip: false }, (describe) => {
     const test = lib.file.videoToThumbsPath;
     assert.equal(test(), undefined, 'Missing path arg');
     assert.equal(test('2001-video-description.mp4'), undefined, 'Missing gallery');
-    assert.equal(test('2001-video-description.mp4', 'demo'),
-      '/static/gallery-demo/media/thumbs/2001/2001-video-description.jpg', 'Single Video');
-    assert.equal(test('2002-03-21-01.mp4', 'demo'),
-      '/static/gallery-demo/media/thumbs/2002/2002-03-21-01.jpg', 'Single Video as Year');
-    assert.equal(test('2003-video.avi,2004-video.mts', 'demo'),
-      '/static/gallery-demo/media/thumbs/2003/2003-video.jpg', 'Multiple videos');
+    assert.equal(
+      test('2001-video-description.mp4', 'demo'),
+      '/static/gallery-demo/media/thumbs/2001/2001-video-description.jpg', 'Single Video'
+    );
+    assert.equal(
+      test('2002-03-21-01.mp4', 'demo'),
+      '/static/gallery-demo/media/thumbs/2002/2002-03-21-01.jpg', 'Single Video as Year'
+    );
+    assert.equal(
+      test('2003-video.avi,2004-video.mts', 'demo'),
+      '/static/gallery-demo/media/thumbs/2003/2003-video.jpg', 'Multiple videos'
+    );
     assert.end();
   });
 

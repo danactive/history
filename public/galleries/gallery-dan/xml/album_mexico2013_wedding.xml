@@ -1,0 +1,4289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<album>
+	<meta>
+		<gallery>dan</gallery>
+		<album_name>mexico2013_wedding</album_name>
+		<album_version>2.0</album_version>
+		<geo>
+			<google_zoom>7</google_zoom>
+		</geo>
+	</meta>
+	<item id="100">
+		<filename>2013-10-30-37.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>MEX Airport</photo_loc>
+		<geo>
+			<lat>19.436111</lat>
+			<lon>-99.071944</lon>
+		</geo>
+		<thumb_caption>Airport</thumb_caption>
+	</item>
+	<item id="101">
+		<filename>2013-10-30-64.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>MEX Airport</photo_loc>
+		<geo>
+			<lat>19.436111</lat>
+			<lon>-99.071944</lon>
+		</geo>
+		<thumb_caption>Airport</thumb_caption>
+	</item>
+	<item id="102">
+		<filename>2013-10-30-90.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>MEX Airport</photo_loc>
+		<geo>
+			<lat>19.436111</lat>
+			<lon>-99.071944</lon>
+		</geo>
+		<thumb_caption>Airport</thumb_caption>
+	</item>
+	<item id="200">
+		<filename>2013-10-31-12.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Hotel Catedral</photo_loc>
+		<geo>
+			<lat>19.435833</lat>
+			<lon>-99.133029</lon>
+		</geo>
+		<thumb_caption>Hotel</thumb_caption>
+	</item>
+	<item id="201">
+		<filename>2013-10-31-14.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Hotel Catedral</photo_loc>
+		<geo>
+			<lat>19.435833</lat>
+			<lon>-99.133029</lon>
+		</geo>
+		<thumb_caption>Hotel</thumb_caption>
+	</item>
+	<item id="202">
+		<filename>2013-10-31-17.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Hotel Catedral</photo_loc>
+		<geo>
+			<lat>19.435833</lat>
+			<lon>-99.133029</lon>
+		</geo>
+		<thumb_caption>Hotel</thumb_caption>
+	</item>
+	<item id="203">
+		<filename>2013-10-31-19.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+	</item>
+	<item id="204">
+		<filename>2013-10-31-21.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="205">
+		<filename>2013-10-31-24.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="206">
+		<filename>2013-10-31-26.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Play</thumb_caption>
+	</item>
+	<item id="207">
+		<filename>2013-10-31-29.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="208">
+		<filename>2013-10-31-31.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="209">
+		<filename>2013-10-31-33.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="210">
+		<filename>2013-10-31-36.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Torre Latinoamericana</photo_loc>
+		<ref>
+			<name>Torre_Latinoamericana</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Skyscraper</thumb_caption>
+	</item>
+	<item id="211">
+		<filename>2013-10-31-38.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Torre Latinoamericana</photo_loc>
+		<ref>
+			<name>Torre_Latinoamericana</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Skyscraper</thumb_caption>
+	</item>
+	<item id="212">
+		<filename>2013-10-31-40.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Torre Latinoamericana</photo_loc>
+		<ref>
+			<name>Torre_Latinoamericana</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Skyscraper</thumb_caption>
+	</item>
+	<item id="213">
+		<filename>2013-10-31-43.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Torre Latinoamericana</photo_loc>
+		<ref>
+			<name>Torre_Latinoamericana</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Skyscraper</thumb_caption>
+	</item>
+	<item id="214">
+		<filename>2013-10-31-45.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Palacio de Bellas Artes</photo_loc>
+		<ref>
+			<name>Palacio_de_Bellas_Artes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Skyscraper</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="215">
+		<filename>2013-10-31-48.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Palacio de Bellas Artes</photo_loc>
+		<ref>
+			<name>Palacio_de_Bellas_Artes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.435639</lat>
+			<lon>-99.141278</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="216">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-10-31-50.mp4</filename>
+		<filename>2013-10-31-50.webm</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="217">
+		<filename>2013-10-31-52.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Palacio de Bellas Artes</photo_loc>
+		<ref>
+			<name>Palacio_de_Bellas_Artes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.435639</lat>
+			<lon>-99.141278</lon>
+		</geo>
+		<thumb_caption>Theatre</thumb_caption>
+	</item>
+	<item id="218">
+		<filename>2013-10-31-55.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<geo>
+			<lat>19.4339183003</lat>
+			<lon>-99.1401207447</lon>
+		</geo>
+		<thumb_caption>Art</thumb_caption>
+	</item>
+	<item id="219">
+		<filename>2013-10-31-60.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<geo>
+			<lat>19.4339183003</lat>
+			<lon>-99.1401207447</lon>
+		</geo>
+		<thumb_caption>Skulls</thumb_caption>
+	</item>
+	<item id="220">
+		<filename>2013-10-31-62.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<geo>
+			<lat>19.4339183003</lat>
+			<lon>-99.1401207447</lon>
+		</geo>
+		<thumb_caption>Dog</thumb_caption>
+	</item>
+	<item id="221">
+		<filename>2013-10-31-64.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="222">
+		<filename>2013-10-31-65.JPG</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Torre Latinoamericana</photo_loc>
+		<geo>
+			<lat>19.433889</lat>
+			<lon>-99.140556</lon>
+		</geo>
+		<thumb_caption>Policia</thumb_caption>
+	</item>
+	<item id="223">
+		<filename>2013-10-31-67.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="224">
+		<filename>2013-10-31-69.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="225">
+		<filename>2013-10-31-71.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="226">
+		<filename>2013-10-31-74.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="227">
+		<filename>2013-10-31-76.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="228">
+		<filename>2013-10-31-79.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="229">
+		<filename>2013-10-31-81.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="230">
+		<filename>2013-10-31-83.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="231">
+		<filename>2013-10-31-86.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="232">
+		<filename>2013-10-31-88.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="233">
+		<filename>2013-10-31-90.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Costumes</thumb_caption>
+	</item>
+	<item id="300">
+		<filename>2013-11-01-12.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Temple of the Feathered Serpent</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Temple_of_the_Feathered_Serpent</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6818</lat>
+			<lon>-98.8461</lon>
+		</geo>
+	</item>
+	<item id="301">
+		<filename>2013-11-01-14.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Temple of the Feathered Serpent</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Temple_of_the_Feathered_Serpent</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6818</lat>
+			<lon>-98.8461</lon>
+		</geo>
+	</item>
+	<item id="302">
+		<filename>2013-11-01-17.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Temple of the Feathered Serpent</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Temple_of_the_Feathered_Serpent</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6818</lat>
+			<lon>-98.8461</lon>
+		</geo>
+	</item>
+	<item id="303">
+		<filename>2013-11-01-19.jpg</filename>
+		<geo>
+			<lat>19.6829751962</lat>
+			<lon>-98.8495570421</lon>
+		</geo>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Admission building</photo_loc>
+		<thumb_caption>Day of the Dead</thumb_caption>
+	</item>
+	<item id="304">
+		<filename>2013-11-01-21.jpg</filename>
+		<geo>
+			<lat>19.6829751962</lat>
+			<lon>-98.8495570421</lon>
+		</geo>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Admission building</photo_loc>
+		<thumb_caption>Day of the Dead</thumb_caption>
+	</item>
+	<item id="305">
+		<filename>2013-11-01-24.jpg</filename>
+		<geo>
+			<lat>19.6993976111</lat>
+			<lon>-98.8391742110</lon>
+		</geo>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Restaurant El Jaguar</photo_loc>
+		<thumb_caption>Restaurant</thumb_caption>
+	</item>
+	<item id="306">
+		<filename>2013-11-01-26.jpg</filename>
+		<geo>
+			<lat>19.6993976111</lat>
+			<lon>-98.8391742110</lon>
+		</geo>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Restaurant El Jaguar</photo_loc>
+		<thumb_caption>Restaurant</thumb_caption>
+	</item>
+	<item id="307">
+		<filename>2013-11-01-29.jpg</filename>
+		<geo>
+			<lat>19.6993976111</lat>
+			<lon>-98.8391742110</lon>
+		</geo>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Restaurant El Jaguar</photo_loc>
+		<thumb_caption>Restaurant</thumb_caption>
+	</item>
+	<item id="308">
+		<filename>2013-11-01-31.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Moon</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Moon</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6997031637</lat>
+			<lon>-98.8439780474</lon>
+		</geo>
+	</item>
+	<item id="309">
+		<filename>2013-11-01-33.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Moon</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Moon</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6997031637</lat>
+			<lon>-98.8439780474</lon>
+		</geo>
+	</item>
+	<item id="310">
+		<filename>2013-11-01-36.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Moon</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Moon</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6997031637</lat>
+			<lon>-98.8439780474</lon>
+		</geo>
+	</item>
+	<item id="311">
+		<filename>2013-11-01-38.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Moon</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Moon</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6997031637</lat>
+			<lon>-98.8439780474</lon>
+		</geo>
+	</item>
+	<item id="312">
+		<filename>2013-11-01-40.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Moon</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Moon</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6997031637</lat>
+			<lon>-98.8439780474</lon>
+		</geo>
+	</item>
+	<item id="313">
+		<filename>2013-11-01-43.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<thumb_caption>Ruins</thumb_caption>
+	</item>
+	<item id="314">
+		<filename>2013-11-01-45.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<thumb_caption>Ruins</thumb_caption>
+	</item>
+	<item id="315">
+		<filename>2013-11-01-48.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<thumb_caption>Ruins</thumb_caption>
+	</item>
+	<item id="316">
+		<filename>2013-11-01-50.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<thumb_caption>Ruins</thumb_caption>
+	</item>
+	<item id="317">
+		<filename>2013-11-01-52.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<thumb_caption>Cactus</thumb_caption>
+	</item>
+	<item id="318">
+		<filename>2013-11-01-55.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Sun</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Sun</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6924202478</lat>
+			<lon>-98.8437044621</lon>
+		</geo>
+	</item>
+	<item id="319">
+		<filename>2013-11-01-57.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Sun</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Sun</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6924202478</lat>
+			<lon>-98.8437044621</lon>
+		</geo>
+	</item>
+	<item id="320">
+		<filename>2013-11-01-60.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Sun</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Sun</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6924202478</lat>
+			<lon>-98.8437044621</lon>
+		</geo>
+	</item>
+	<item id="321">
+		<filename>2013-11-01-62.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Sun</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Sun</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6924202478</lat>
+			<lon>-98.8437044621</lon>
+		</geo>
+	</item>
+	<item id="322">
+		<filename>2013-11-01-64.jpg</filename>
+		<photo_city>Teotihuacan</photo_city>
+		<photo_loc>Pyramid of the Sun</photo_loc>
+		<thumb_caption>Temple</thumb_caption>
+		<ref>
+			<name>Pyramid_of_the_Sun</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.6924202478</lat>
+			<lon>-98.8437044621</lon>
+		</geo>
+	</item>
+	<item id="323">
+		<filename>2013-11-01-67.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Cemetery</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+	</item>
+	<item id="324">
+		<filename>2013-11-01-69.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Cemetery</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+	</item>
+	<item id="325">
+		<filename>2013-11-01-71.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Cemetery</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+	</item>
+	<item id="326">
+		<filename>2013-11-01-74.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Cemetery</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+	</item>
+	<item id="327">
+		<filename>2013-11-01-76.jpg</filename>
+		<geo>
+			<lat>19.252508</lat>
+			<lon>-99.093301</lon>
+		</geo>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="328">
+		<filename>2013-11-01-79.jpg</filename>
+		<geo>
+			<lat>19.252508</lat>
+			<lon>-99.093301</lon>
+		</geo>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="329">
+		<filename>2013-11-01-81.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="330">
+		<filename>2013-11-01-83.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="331">
+		<filename>2013-11-01-86.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="332">
+		<filename>2013-11-01-88.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="333">
+		<filename>2013-11-01-90.jpg</filename>
+		<photo_city>Xochimilco</photo_city>
+		<photo_loc>Xochimilco canals</photo_loc>
+		<thumb_caption>Canals</thumb_caption>
+		<photo_desc>gondola-like boats called “trajineras”</photo_desc>
+	</item>
+	<item id="400">
+		<filename>2013-11-02-13.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>near Hotel Roble</photo_loc>
+		<thumb_caption>Hare krishna</thumb_caption>
+		<geo>
+			<lat>19.429874</lat>
+			<lon>-99.132762</lon>
+		</geo>
+	</item>
+	<item id="401">
+		<filename>2013-11-02-16.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="402">
+		<filename>2013-11-02-19.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="403">
+		<filename>2013-11-02-22.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="404">
+		<filename>2013-11-02-25.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="405">
+		<filename>2013-11-02-28.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="406">
+		<filename>2013-11-02-31.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="407">
+		<filename>2013-11-02-34.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="408">
+		<filename>2013-11-02-38.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="409">
+		<filename>2013-11-02-41.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="410">
+		<filename>2013-11-02-44.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="411">
+		<filename>2013-11-02-47.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="412">
+		<filename>2013-11-02-50.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="413">
+		<filename>2013-11-02-53.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="414">
+		<filename>2013-11-02-56.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="415">
+		<filename>2013-11-02-59.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="416">
+		<filename>2013-11-02-62.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="417">
+		<filename>2013-11-02-66.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="418">
+		<filename>2013-11-02-69.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="419">
+		<filename>2013-11-02-72.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>National Museum of Anthropology</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>Museo_Nacional_de_Antropología</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.426</lat>
+			<lon>-99.186</lon>
+		</geo>
+	</item>
+	<item id="420">
+		<filename>2013-11-02-75.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Camino Real Hotel</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>19.4275820486</lat>
+			<lon>-99.1789913177</lon>
+		</geo>
+	</item>
+	<item id="421">
+		<filename>2013-11-02-78.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Camino Real Hotel</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>19.4275820486</lat>
+			<lon>-99.1789913177</lon>
+		</geo>
+	</item>
+	<item id="422">
+		<filename>2013-11-02-81.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Camino Real Hotel</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>19.4275820486</lat>
+			<lon>-99.1789913177</lon>
+		</geo>
+	</item>
+	<item id="423">
+		<filename>2013-11-02-84.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Camino Real Hotel</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>19.4275820486</lat>
+			<lon>-99.1789913177</lon>
+		</geo>
+	</item>
+	<item id="424">
+		<filename>2013-11-02-87.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>near Anthropology</photo_loc>
+		<geo>
+			<lat>19.4246301056</lat>
+			<lon>-99.1846641898</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="425">
+		<filename>2013-11-02-90.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>near Anthropology</photo_loc>
+		<geo>
+			<lat>19.4246301056</lat>
+			<lon>-99.1846641898</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="500">
+		<filename>2013-11-03-11.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+	</item>
+	<item id="501">
+		<type>video</type>
+		<size>
+			<w>450</w>
+			<h>800</h>
+		</size>
+		<filename>2013-11-03-13.mp4</filename>
+		<filename>2013-11-03-13.webm</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Subway</thumb_caption>
+	</item>
+	<item id="502">
+		<filename>2013-11-03-15.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>19.356594</lat>
+			<lon>-99.174574</lon>
+		</geo>
+	</item>
+	<item id="503">
+		<filename>2013-11-03-17.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="504">
+		<filename>2013-11-03-18.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="505">
+		<filename>2013-11-03-20.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<geo>
+			<lat>19.348741</lat>
+			<lon>-99.174539</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="506">
+		<filename>2013-11-03-22.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<geo>
+			<lat>19.348957</lat>
+			<lon>-99.174486</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="507">
+		<filename>2013-11-03-24.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Casa de Cultura Jesus Reyes Heroles in Coyoacán</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<photo_desc>Statues of Frida Kahlo and Diego Rivera</photo_desc>
+		<geo>
+			<lat>19.349172</lat>
+			<lon>-99.171063</lon>
+		</geo>
+		<ref>
+			<name>http://sic.conaculta.gob.mx/ficha.php?table=centro_cultural&amp;table_id=1435</name>
+		</ref>
+	</item>
+	<item id="508">
+		<filename>2013-11-03-25.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Casa de Cultura Jesus Reyes Heroles in Coyoacán</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<geo>
+			<lat>19.349172</lat>
+			<lon>-99.171063</lon>
+		</geo>
+	</item>
+	<item id="509">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-03-27.mp4</filename>
+		<filename>2013-11-03-27.webm</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Casa de Cultura Jesus Reyes Heroles in Coyoacán</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<geo>
+			<lat>19.349169</lat>
+			<lon>-99.170722</lon>
+		</geo>
+	</item>
+	<item id="510">
+		<filename>2013-11-03-29.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Casa de Cultura Jesus Reyes Heroles in Coyoacán</photo_loc>
+		<thumb_caption>Kitchen</thumb_caption>
+	</item>
+	<item id="511">
+		<filename>2013-11-03-31.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<geo>
+			<lat>19.349771</lat>
+			<lon>-99.171181</lon>
+		</geo>
+		<thumb_caption>Meal</thumb_caption>
+	</item>
+	<item id="512">
+		<filename>2013-11-03-32.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="513">
+		<filename>2013-11-03-34.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Fransisco Sosa in Coyoacán</photo_loc>
+		<geo>
+			<lat>19.349554</lat>
+			<lon>-99.174196</lon>
+		</geo>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="514">
+		<filename>2013-11-03-36.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<geo>
+			<lat>19.349033</lat>
+			<lon>-99.164137</lon>
+		</geo>
+	</item>
+	<item id="515">
+		<filename>2013-11-03-38.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<geo>
+			<lat>19.348848</lat>
+			<lon>-99.163875</lon>
+		</geo>
+	</item>
+	<item id="516">
+		<filename>2013-11-03-39.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<geo>
+			<lat>19.348848</lat>
+			<lon>-99.163875</lon>
+		</geo>
+		<thumb_caption>Festival</thumb_caption>
+	</item>
+	<item id="517">
+		<filename>2013-11-03-41.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<geo>
+			<lat>19.348848</lat>
+			<lon>-99.163875</lon>
+		</geo>
+		<thumb_caption>Festival</thumb_caption>
+	</item>
+	<item id="518">
+		<filename>2013-11-03-43.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Festival</thumb_caption>
+		<geo>
+			<lat>19.349888</lat>
+			<lon>-99.16203</lon>
+		</geo>
+	</item>
+	<item id="519">
+		<filename>2013-11-03-45.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Festival</thumb_caption>
+		<geo>
+			<lat>19.349888</lat>
+			<lon>-99.16203</lon>
+		</geo>
+	</item>
+	<item id="520">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-03-46.mp4</filename>
+		<filename>2013-11-03-46.webm</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Music</thumb_caption>
+		<geo>
+			<lat>19.349716</lat>
+			<lon>-99.162421</lon>
+		</geo>
+	</item>
+	<item id="521">
+		<filename>2013-11-03-48.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Music</thumb_caption>
+		<geo>
+			<lat>19.349716</lat>
+			<lon>-99.162421</lon>
+		</geo>
+	</item>
+	<item id="522">
+		<filename>2013-11-03-50.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Dolls</thumb_caption>
+	</item>
+	<item id="523">
+		<filename>2013-11-03-52.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="524">
+		<filename>2013-11-03-54.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Clowns</thumb_caption>
+	</item>
+	<item id="525">
+		<filename>2013-11-03-55.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="526">
+		<filename>2013-11-03-57.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="527">
+		<filename>2013-11-03-59.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="528">
+		<filename>2013-11-03-61.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="529">
+		<filename>2013-11-03-62.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="530">
+		<filename>2013-11-03-64.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mercado de Coyoacán in Coyoacán</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>19.352753</lat>
+			<lon>-99.161466</lon>
+		</geo>
+	</item>
+	<item id="531">
+		<filename>2013-11-03-66.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="532">
+		<filename>2013-11-03-68.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Frida Kahlo Museum in Coyoacán</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<geo>
+			<lat>19.354914</lat>
+			<lon>-99.162459</lon>
+		</geo>
+		<ref>
+			<name>Frida_Kahlo_Museum</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="533">
+		<filename>2013-11-03-69.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Panteón Xoco in Coyoacán</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<geo>
+			<lat>19.359256</lat>
+			<lon>-99.164916</lon>
+		</geo>
+	</item>
+	<item id="534">
+		<filename>2013-11-03-71.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Panteón Xoco in Coyoacán</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<geo>
+			<lat>19.359256</lat>
+			<lon>-99.164916</lon>
+		</geo>
+	</item>
+	<item id="535">
+		<filename>2013-11-03-73.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Cineteca Nacional in Coyoacán</photo_loc>
+		<thumb_caption>Theatre</thumb_caption>
+		<geo>
+			<lat>19.361463</lat>
+			<lon>-99.164253</lon>
+		</geo>
+	</item>
+	<item id="536">
+		<filename>2013-11-03-75.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="537">
+		<filename>2013-11-03-76.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="538">
+		<filename>2013-11-03-78.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="539">
+		<filename>2013-11-03-80.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Coyoacán</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="540">
+		<filename>2013-11-03-82.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Parque México, Colonia Hipódromo hood, Condesa district</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<geo>
+			<lat>19.411132</lat>
+			<lon>-99.170229</lon>
+		</geo>
+	</item>
+	<item id="541">
+		<filename>2013-11-03-83.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Parque México, Colonia Hipódromo hood, Condesa district</photo_loc>
+		<thumb_caption>Jugglers</thumb_caption>
+		<geo>
+			<lat>19.411716</lat>
+			<lon>-99.169895</lon>
+		</geo>
+	</item>
+	<item id="542">
+		<filename>2013-11-03-85.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Colonia Hipódromo hood, Condesa district</photo_loc>
+		<geo>
+			<lat>19.410861</lat>
+			<lon>-99.172437</lon>
+		</geo>
+		<thumb_caption>Meal</thumb_caption>
+	</item>
+	<item id="543">
+		<filename>2013-11-03-87.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Colonia Roma district</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<ref>
+			<name>Fuente_de_Cibeles_(Mexico_City)</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.419988</lat>
+			<lon>-99.166326</lon>
+		</geo>
+	</item>
+	<item id="544">
+		<filename>2013-11-03-89.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>19.417884</lat>
+			<lon>-99.161898</lon>
+		</geo>
+	</item>
+	<item id="545">
+		<filename>2013-11-03-90.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="600">
+		<filename>2013-11-04-12.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<geo>
+			<lat>19.430289</lat>
+			<lon>-99.136662</lon>
+		</geo>
+	</item>
+	<item id="601">
+		<filename>2013-11-04-14.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>19.429145</lat>
+			<lon>-99.135049</lon>
+		</geo>
+	</item>
+	<item id="602">
+		<filename>2013-11-04-17.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Toilet</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>19.429145</lat>
+			<lon>-99.135049</lon>
+		</geo>
+	</item>
+	<item id="603">
+		<filename>2013-11-04-19.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+	</item>
+	<item id="604">
+		<filename>2013-11-04-21.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+	</item>
+	<item id="605">
+		<filename>2013-11-04-24.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+	</item>
+	<item id="606">
+		<filename>2013-11-04-26.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+	</item>
+	<item id="607">
+		<filename>2013-11-04-29.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="608">
+		<filename>2013-11-04-31.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Zócalo</photo_loc>
+		<thumb_caption>Zócalo</thumb_caption>
+		<photo_desc>Day of the Dead festival</photo_desc>
+		<ref>
+			<name>Zócalo</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.432778</lat>
+			<lon>-99.133333</lon>
+		</geo>
+	</item>
+	<item id="610">
+		<filename>2013-11-04-33.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mexico City Metropolitan Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>19.434057</lat>
+			<lon>-99.132998</lon>
+		</geo>
+	</item>
+	<item id="611">
+		<filename>2013-11-04-36.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mexico City Metropolitan Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>19.434057</lat>
+			<lon>-99.132998</lon>
+		</geo>
+	</item>
+	<item id="612">
+		<filename>2013-11-04-38.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mexico City Metropolitan Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>19.434057</lat>
+			<lon>-99.132998</lon>
+		</geo>
+	</item>
+	<item id="613">
+		<filename>2013-11-04-40.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mexico City Metropolitan Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>19.434057</lat>
+			<lon>-99.132998</lon>
+		</geo>
+	</item>
+	<item id="614">
+		<filename>2013-11-04-43.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mexico City Metropolitan Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>19.434057</lat>
+			<lon>-99.132998</lon>
+		</geo>
+	</item>
+	<item id="615">
+		<filename>2013-11-04-45.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="616">
+		<filename>2013-11-04-48.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Santo Domingo, Centro</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<ref>
+			<name>Santo_Domingo_(Mexico_City)</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>19.437745</lat>
+			<lon>-99.133877</lon>
+		</geo>
+	</item>
+	<item id="617">
+		<filename>2013-11-04-50.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Centro</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="618">
+		<filename>2013-11-04-52.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Mission of Our Lady of Lebanon</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>(official name Catedral Maronita Santuario de San Charbel)</photo_desc>
+		<geo>
+			<lat>19.429699</lat>
+			<lon>-99.130795</lon>
+		</geo>
+	</item>
+	<item id="619">
+		<filename>2013-11-04-55.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Federal District (Distrito Federal)</photo_loc>
+		<thumb_caption>Metro</thumb_caption>
+		<photo_desc>officially called Sistema de Transporte Colectivo, often shortened to STC</photo_desc>
+	</item>
+	<item id="620">
+		<filename>2013-11-04-57.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Terminal Central del Norte del D.F.</photo_loc>
+		<thumb_caption>Bus</thumb_caption>
+		<geo>
+			<lat>19.4805</lat>
+			<lon>-99.139833</lon>
+		</geo>
+	</item>
+	<item id="621">
+		<filename>2013-11-04-60.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Terminal Central del Norte del D.F.</photo_loc>
+		<thumb_caption>Bus</thumb_caption>
+		<geo>
+			<lat>19.4805</lat>
+			<lon>-99.139833</lon>
+		</geo>
+	</item>
+	<item id="622">
+		<filename>2013-11-04-62.jpg</filename>
+		<photo_city>Mexico City (México, D. F.)</photo_city>
+		<photo_loc>Terminal Central del Norte del D.F.</photo_loc>
+		<thumb_caption>Bus</thumb_caption>
+		<geo>
+			<lat>19.4805</lat>
+			<lon>-99.139833</lon>
+		</geo>
+	</item>
+	<item id="623">
+		<filename>2013-11-04-64.jpg</filename>
+		<photo_city>Mexico</photo_city>
+		<thumb_caption>View</thumb_caption>
+	</item>
+	<item id="624">
+		<filename>2013-11-04-67.jpg</filename>
+		<photo_city>Mexico</photo_city>
+		<thumb_caption>View</thumb_caption>
+	</item>
+	<item id="625">
+		<filename>2013-11-04-71.jpg</filename>
+		<photo_city>Mexico</photo_city>
+		<thumb_caption>View</thumb_caption>
+	</item>
+	<item id="626">
+		<filename>2013-11-04-74.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mercado Hidalgo</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>21.017775</lat>
+			<lon>-101.258022</lon>
+		</geo>
+	</item>
+	<item id="627">
+		<filename>2013-11-04-76.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<thumb_caption>Church</thumb_caption>
+	</item>
+	<item id="628">
+		<filename>2013-11-04-79.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<thumb_caption>Tunnel</thumb_caption>
+	</item>
+	<item id="629">
+		<filename>2013-11-04-81.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<thumb_caption>Insect</thumb_caption>
+	</item>
+	<item id="630">
+		<filename>2013-11-04-83.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.017539</lat>
+			<lon>-101.25574</lon>
+		</geo>
+	</item>
+	<item id="631">
+		<filename>2013-11-04-86.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.017539</lat>
+			<lon>-101.25574</lon>
+		</geo>
+	</item>
+	<item id="632">
+		<filename>2013-11-04-88.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Hotel Murillo Plaza</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<geo>
+			<lat>21.0198529235</lat>
+			<lon>-101.2590229511</lon>
+		</geo>
+	</item>
+	<item id="700">
+		<filename>2013-11-05-11.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Hotel Murillo Plaza</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<geo>
+			<lat>21.0198529235</lat>
+			<lon>-101.2590229511</lon>
+		</geo>
+	</item>
+	<item id="701">
+		<filename>2013-11-05-12.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.019923</lat>
+			<lon>-101.264725</lon>
+		</geo>
+	</item>
+	<item id="702">
+		<filename>2013-11-05-13.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.019923</lat>
+			<lon>-101.264725</lon>
+		</geo>
+	</item>
+	<item id="703">
+		<filename>2013-11-05-15.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Panteón Municipal Santa Paula</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<geo>
+			<lat>21.020319</lat>
+			<lon>-101.265945</lon>
+		</geo>
+	</item>
+	<item id="704">
+		<filename>2013-11-05-16.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Panteón Municipal Santa Paula</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<geo>
+			<lat>21.020319</lat>
+			<lon>-101.265945</lon>
+		</geo>
+	</item>
+	<item id="705">
+		<filename>2013-11-05-17.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Panteón Municipal Santa Paula</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<geo>
+			<lat>21.020319</lat>
+			<lon>-101.265945</lon>
+		</geo>
+	</item>
+	<item id="707">
+		<filename>2013-11-05-19.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mummy Museum</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>http://www.momiasdeguanajuato.gob.mx/english/index.html</name>
+		</ref>
+		<geo>
+			<lat>21.019875</lat>
+			<lon>-101.266161</lon>
+		</geo>
+	</item>
+	<item id="708">
+		<filename>2013-11-05-20.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mummy Museum</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>http://www.momiasdeguanajuato.gob.mx/english/index.html</name>
+		</ref>
+		<geo>
+			<lat>21.019875</lat>
+			<lon>-101.266161</lon>
+		</geo>
+	</item>
+	<item id="709">
+		<filename>2013-11-05-21.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mummy Museum</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>http://www.momiasdeguanajuato.gob.mx/english/index.html</name>
+		</ref>
+		<geo>
+			<lat>21.019875</lat>
+			<lon>-101.266161</lon>
+		</geo>
+	</item>
+	<item id="710">
+		<filename>2013-11-05-23.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mummy Museum</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>http://www.momiasdeguanajuato.gob.mx/english/index.html</name>
+		</ref>
+		<geo>
+			<lat>21.019875</lat>
+			<lon>-101.266161</lon>
+		</geo>
+	</item>
+	<item id="711">
+		<filename>2013-11-05-24.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mummy Museum</photo_loc>
+		<thumb_caption>Museum</thumb_caption>
+		<ref>
+			<name>http://www.momiasdeguanajuato.gob.mx/english/index.html</name>
+		</ref>
+		<geo>
+			<lat>21.019875</lat>
+			<lon>-101.266161</lon>
+		</geo>
+	</item>
+	<item id="712">
+		<filename>2013-11-05-25.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+	</item>
+	<item id="713">
+		<filename>2013-11-05-27.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>San Cayetano Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.041308</lat>
+			<lon>-101.257403</lon>
+		</geo>
+	</item>
+	<item id="714">
+		<filename>2013-11-05-28.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Bocamina mine</photo_loc>
+		<thumb_caption>Mine</thumb_caption>
+		<geo>
+			<lat>21.041954</lat>
+			<lon>-101.257138</lon>
+		</geo>
+	</item>
+	<item id="715">
+		<filename>2013-11-05-29.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Bocamina mine</photo_loc>
+		<thumb_caption>Mine</thumb_caption>
+		<geo>
+			<lat>21.041954</lat>
+			<lon>-101.257138</lon>
+		</geo>
+	</item>
+	<item id="716">
+		<filename>2013-11-05-31.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Bocamina mine</photo_loc>
+		<thumb_caption>Mine</thumb_caption>
+		<geo>
+			<lat>21.041954</lat>
+			<lon>-101.257138</lon>
+		</geo>
+	</item>
+	<item id="717">
+		<filename>2013-11-05-32.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Bocamina mine</photo_loc>
+		<thumb_caption>Mine</thumb_caption>
+		<geo>
+			<lat>21.041954</lat>
+			<lon>-101.257138</lon>
+		</geo>
+	</item>
+	<item id="718">
+		<filename>2013-11-05-33.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Bocamina mine</photo_loc>
+		<thumb_caption>Mine</thumb_caption>
+		<geo>
+			<lat>21.041954</lat>
+			<lon>-101.257138</lon>
+		</geo>
+	</item>
+	<item id="719">
+		<filename>2013-11-05-35.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>San Cayetano Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.041308</lat>
+			<lon>-101.257403</lon>
+		</geo>
+	</item>
+	<item id="720">
+		<filename>2013-11-05-37.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>San Cayetano Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.041308</lat>
+			<lon>-101.257403</lon>
+		</geo>
+	</item>
+	<item id="721">
+		<filename>2013-11-05-39.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>San Cayetano Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.041308</lat>
+			<lon>-101.257403</lon>
+		</geo>
+	</item>
+	<item id="722">
+		<filename>2013-11-05-40.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>San Cayetano Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.041308</lat>
+			<lon>-101.257403</lon>
+		</geo>
+	</item>
+	<item id="723">
+		<filename>2013-11-05-41.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.018604</lat>
+			<lon>-101.259101</lon>
+		</geo>
+	</item>
+	<item id="724">
+		<filename>2013-11-05-43.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.018604</lat>
+			<lon>-101.259101</lon>
+		</geo>
+	</item>
+	<item id="725">
+		<filename>2013-11-05-44.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="726">
+		<filename>2013-11-05-45.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="727">
+		<filename>2013-11-05-47.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="728">
+		<filename>2013-11-05-48.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="9900">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-05-51.mp4</filename>
+		<filename>2013-11-05-51.webm</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Mariachi</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="729">
+		<filename>2013-11-05-52.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurant La Carreta</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.016974</lat>
+			<lon>-101.256414</lon>
+		</geo>
+	</item>
+	<item id="730">
+		<filename>2013-11-05-53.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>near Templo de San Francisco</photo_loc>
+		<thumb_caption>Rain</thumb_caption>
+		<geo>
+			<lat>21.016713</lat>
+			<lon>-101.254093</lon>
+		</geo>
+	</item>
+	<item id="731">
+		<filename>2013-11-05-55.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>near Templo de San Francisco</photo_loc>
+		<thumb_caption>Rain</thumb_caption>
+		<geo>
+			<lat>21.016713</lat>
+			<lon>-101.254093</lon>
+		</geo>
+	</item>
+	<item id="732">
+		<filename>2013-11-05-56.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>near Templo de San Francisco</photo_loc>
+		<thumb_caption>Rain</thumb_caption>
+		<geo>
+			<lat>21.016713</lat>
+			<lon>-101.254093</lon>
+		</geo>
+	</item>
+	<item id="733">
+		<filename>2013-11-05-57.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Don Quixote Iconographic Museum</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Museo Iconografico del Quijote</photo_desc>
+		<ref>
+			<name>http://www.guanajuato.gob.mx/museo/</name>
+		</ref>
+		<geo>
+			<lat>21.01442</lat>
+			<lon>-101.251918</lon>
+		</geo>
+	</item>
+	<item id="734">
+		<filename>2013-11-05-59.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Don Quixote Iconographic Museum</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Museo Iconografico del Quijote</photo_desc>
+		<ref>
+			<name>http://www.guanajuato.gob.mx/museo/</name>
+		</ref>
+		<geo>
+			<lat>21.01442</lat>
+			<lon>-101.251918</lon>
+		</geo>
+	</item>
+	<item id="735">
+		<filename>2013-11-05-60.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Don Quixote Iconographic Museum</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Museo Iconografico del Quijote</photo_desc>
+		<ref>
+			<name>http://www.guanajuato.gob.mx/museo/</name>
+		</ref>
+		<geo>
+			<lat>21.01442</lat>
+			<lon>-101.251918</lon>
+		</geo>
+	</item>
+	<item id="736">
+		<filename>2013-11-05-61.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Don Quixote Iconographic Museum</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Museo Iconografico del Quijote</photo_desc>
+		<ref>
+			<name>http://www.guanajuato.gob.mx/museo/</name>
+		</ref>
+		<geo>
+			<lat>21.01442</lat>
+			<lon>-101.251918</lon>
+		</geo>
+	</item>
+	<item id="737">
+		<filename>2013-11-05-63.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Don Quixote Iconographic Museum</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Museo Iconografico del Quijote</photo_desc>
+		<ref>
+			<name>http://www.guanajuato.gob.mx/museo/</name>
+		</ref>
+		<geo>
+			<lat>21.01442</lat>
+			<lon>-101.251918</lon>
+		</geo>
+	</item>
+	<item id="738">
+		<filename>2013-11-05-64.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Basilica Colegiata de Nuestra Señora de Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.016505</lat>
+			<lon>-101.253533</lon>
+		</geo>
+	</item>
+	<item id="739">
+		<filename>2013-11-05-65.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Basilica Colegiata de Nuestra Señora de Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.016505</lat>
+			<lon>-101.253533</lon>
+		</geo>
+	</item>
+	<item id="740">
+		<filename>2013-11-05-67.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Temple of San Francisco</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<geo>
+			<lat>21.014365</lat>
+			<lon>-101.251985</lon>
+		</geo>
+	</item>
+	<item id="741">
+		<filename>2013-11-05-68.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="742">
+		<filename>2013-11-05-69.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>University of Guanajuato</photo_loc>
+		<thumb_caption>University</thumb_caption>
+		<photo_desc>Universidad de Guanajuato</photo_desc>
+		<ref>
+			<name>Universidad_de_Guanajuato</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>21.017349</lat>
+			<lon>-101.253616</lon>
+		</geo>
+	</item>
+	<item id="743">
+		<filename>2013-11-05-73.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>University of Guanajuato</photo_loc>
+		<thumb_caption>University</thumb_caption>
+		<photo_desc>Universidad de Guanajuato</photo_desc>
+		<ref>
+			<name>Universidad_de_Guanajuato</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>21.017349</lat>
+			<lon>-101.253616</lon>
+		</geo>
+	</item>
+	<item id="744">
+		<filename>2013-11-05-75.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>The Juarez Theatre</photo_loc>
+		<thumb_caption>Theatre</thumb_caption>
+		<photo_desc>Teatro Juárez</photo_desc>
+		<geo>
+			<lat>21.015556</lat>
+			<lon>-101.2529</lon>
+		</geo>
+	</item>
+	<item id="745">
+		<filename>2013-11-05-76.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>The Juarez Theatre</photo_loc>
+		<thumb_caption>Theatre</thumb_caption>
+		<photo_desc>Teatro Juárez</photo_desc>
+		<geo>
+			<lat>21.015556</lat>
+			<lon>-101.2529</lon>
+		</geo>
+	</item>
+	<item id="746">
+		<filename>2013-11-05-77.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>The Juarez Theatre</photo_loc>
+		<thumb_caption>Theatre</thumb_caption>
+		<photo_desc>Teatro Juárez</photo_desc>
+		<geo>
+			<lat>21.015556</lat>
+			<lon>-101.2529</lon>
+		</geo>
+	</item>
+	<item id="747">
+		<filename>2013-11-05-79.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<geo>
+			<lat>21.014941</lat>
+			<lon>-101.253364</lon>
+		</geo>
+	</item>
+	<item id="748">
+		<filename>2013-11-05-80.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Funicular to El Pípila</photo_loc>
+		<thumb_caption>Ride</thumb_caption>
+		<geo>
+			<lat>21.014936</lat>
+			<lon>-101.253209</lon>
+		</geo>
+	</item>
+	<item id="749">
+		<filename>2013-11-05-81.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="750">
+		<filename>2013-11-05-83.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>El Pípila</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<ref>
+			<name>El_Pípila</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="751">
+		<filename>2013-11-05-84.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="752">
+		<filename>2013-11-05-85.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="753">
+		<filename>2013-11-05-87.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="754">
+		<filename>2013-11-05-88.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="755">
+		<filename>2013-11-05-89.JPG</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Near El Pípila</photo_loc>
+		<thumb_caption>View</thumb_caption>
+		<geo>
+			<lat>21.014547</lat>
+			<lon>-101.254348</lon>
+		</geo>
+	</item>
+	<item id="756">
+		<filename>2013-11-05-91.JPG</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc>Includes cactus (nopal)</photo_desc>
+	</item>
+	<item id="800">
+		<filename>2013-11-06-13.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurante El Pollo Non</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.019703</lat>
+			<lon>-101.261408</lon>
+		</geo>
+	</item>
+	<item id="801">
+		<filename>2013-11-06-17.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Restaurante El Pollo Non</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>21.019703</lat>
+			<lon>-101.261408</lon>
+		</geo>
+	</item>
+	<item id="802">
+		<filename>2013-11-06-20.jpg</filename>
+		<photo_city>Guanajuato, Guanajuato</photo_city>
+		<photo_loc>Mercado Hidalgo</photo_loc>
+		<thumb_caption>Market</thumb_caption>
+		<geo>
+			<lat>21.017499</lat>
+			<lon>-101.258554</lon>
+		</geo>
+	</item>
+	<item id="803">
+		<filename>2013-11-06-27.jpg</filename>
+		<photo_city>Santa Rosa de Lima, Guanajuato</photo_city>
+		<photo_loc>Conservas Santa Rosa</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc>Jam shop stop on tour</photo_desc>
+		<ref>
+			<name>ConservasSantaRosa</name>
+			<source>facebook</source>
+		</ref>
+		<geo>
+			<lat>21.071618</lat>
+			<lon>-101.197045</lon>
+		</geo>
+	</item>
+	<item id="804">
+		<filename>2013-11-06-31.jpg</filename>
+		<photo_city>Santa Rosa de Lima, Guanajuato</photo_city>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc>Jam shop stop on tour</photo_desc>
+		<geo>
+			<lat>21.071618</lat>
+			<lon>-101.197045</lon>
+		</geo>
+	</item>
+	<item id="805">
+		<filename>2013-11-06-34.jpg</filename>
+		<photo_city>Near Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Police</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="806">
+		<filename>2013-11-06-38.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc> Panteón Municipal</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.156604</lat>
+			<lon>-100.948796</lon>
+		</geo>
+	</item>
+	<item id="807">
+		<filename>2013-11-06-41.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc> Panteón Municipal</photo_loc>
+		<thumb_caption>Cemetery</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.156604</lat>
+			<lon>-100.948796</lon>
+		</geo>
+	</item>
+	<item id="808">
+		<filename>2013-11-06-45.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc>Dolores Parish &amp; Hidalgo Statue</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<photo_desc>(Jardin del Grande Hidalgo)</photo_desc>
+		<geo>
+			<lat>21.157434</lat>
+			<lon>-100.934616</lon>
+		</geo>
+		<ref>
+			<name>Dolores_Hidalgo</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="809">
+		<filename>2013-11-06-48.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc>Artilugios</photo_loc>
+		<thumb_caption>Pottery</thumb_caption>
+		<photo_desc/>
+		<ref>
+			<name>http://www.artilugios.com.mx/</name>
+		</ref>
+	</item>
+	<item id="810">
+		<filename>2013-11-06-52.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Police</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.15842</lat>
+			<lon>-100.915475</lon>
+		</geo>
+	</item>
+	<item id="811">
+		<filename>2013-11-06-55.jpg</filename>
+		<photo_city>Dolores Hidalgo, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Police</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.15842</lat>
+			<lon>-100.915475</lon>
+		</geo>
+	</item>
+	<item id="812">
+		<filename>2013-11-06-59.jpg</filename>
+		<photo_city>near San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc>Sanctuary of Atotonilco</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>World Heritage Site, Mexican Baroque, Sistine Chapel of Mexico, restoration work was undertaken in 2010</photo_desc>
+		<ref>
+			<name>Sanctuary_of_Atotonilco</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>21.004752</lat>
+			<lon>-100.794513</lon>
+		</geo>
+	</item>
+	<item id="813">
+		<filename>2013-11-06-62.jpg</filename>
+		<photo_city>near San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc>Sanctuary of Atotonilco</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>World Heritage Site, Mexican Baroque, Sistine Chapel of Mexico, restoration work was undertaken in 2010</photo_desc>
+		<ref>
+			<name>Sanctuary_of_Atotonilco</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>21.004752</lat>
+			<lon>-100.794513</lon>
+		</geo>
+	</item>
+	<item id="10000">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-06-66.mp4</filename>
+		<filename>2013-11-06-66.webm</filename>
+		<photo_city>Guanajuato</photo_city>
+		<thumb_caption>Singers</thumb_caption>
+		<photo_desc>Spanish speaking tour guide singing with mariachi</photo_desc>
+	</item>
+	<item id="814">
+		<filename>2013-11-06-69.jpg</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc>Parish church of San Miguel</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>w/ donkey</photo_desc>
+		<geo>
+			<lat>20.914479</lat>
+			<lon>-100.744131</lon>
+		</geo>
+	</item>
+	<item id="815">
+		<filename>2013-11-06-73.jpg</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Toilet</thumb_caption>
+		<photo_desc>Toilet paper in waste bin</photo_desc>
+	</item>
+	<item id="816">
+		<filename>2013-11-06-76.jpg</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc>Parish church of San Miguel</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>Neo-gothic facade (official name La Parroquia de San Miguel Arcángel)</photo_desc>
+		<geo>
+			<lat>20.913933</lat>
+			<lon>-100.743793</lon>
+		</geo>
+	</item>
+	<item id="817">
+		<filename>2013-11-06-80.jpg</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Fountain</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="818">
+		<filename>2013-11-06-83.jpg</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="819">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-06-87.mp4</filename>
+		<filename>2013-11-06-87.webm</filename>
+		<photo_city>San Miguel de Allende, Guanajuato</photo_city>
+		<photo_loc>Jardin Allende</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.914249</lat>
+			<lon>-100.743621</lon>
+		</geo>
+	</item>
+	<item id="820">
+		<filename>2013-11-06-90.jpg</filename>
+		<photo_city>Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="900">
+		<filename>2013-11-07-12.jpg</filename>
+		<photo_city/>
+		<photo_loc/>
+		<thumb_caption>View</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="901">
+		<filename>2013-11-07-15.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Hotel San Francisco</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.109762</lat>
+			<lon>-101.645211</lon>
+		</geo>
+	</item>
+	<item id="902">
+		<filename>2013-11-07-18.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Hotel San Francisco</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.109762</lat>
+			<lon>-101.645211</lon>
+		</geo>
+	</item>
+	<item id="903">
+		<filename>2013-11-07-20.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Catedral Metropolitana de León Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.124282</lat>
+			<lon>-101.681901</lon>
+		</geo>
+	</item>
+	<item id="904">
+		<filename>2013-11-07-23.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Catedral Metropolitana de León Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.124282</lat>
+			<lon>-101.681901</lon>
+		</geo>
+	</item>
+	<item id="905">
+		<filename>2013-11-07-26.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Catedral Metropolitana de León Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.124282</lat>
+			<lon>-101.681901</lon>
+		</geo>
+	</item>
+	<item id="906">
+		<filename>2013-11-07-28.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Catedral Metropolitana de León Guanajuato</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.124282</lat>
+			<lon>-101.681901</lon>
+		</geo>
+	</item>
+	<item id="907">
+		<filename>2013-11-07-31.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>SS Benedicto XVI Plaza</photo_loc>
+		<thumb_caption>Plaza</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.123626</lat>
+			<lon>-101.682072</lon>
+		</geo>
+	</item>
+	<item id="908">
+		<filename>2013-11-07-34.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>SS Benedicto XVI Plaza</photo_loc>
+		<thumb_caption>Plaza</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.123605</lat>
+			<lon>-101.681999</lon>
+		</geo>
+	</item>
+	<item id="909">
+		<filename>2013-11-07-37.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>SS Benedicto XVI Plaza</photo_loc>
+		<thumb_caption>Plaza</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.123609</lat>
+			<lon>-101.68193</lon>
+		</geo>
+	</item>
+	<item id="910">
+		<filename>2013-11-07-39.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Plaza Principal</photo_loc>
+		<thumb_caption>Park</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.1219</lat>
+			<lon>-101.682807</lon>
+		</geo>
+	</item>
+	<item id="911">
+		<filename>2013-11-07-42.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Plaza Principal</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc>Drinking micheladas</photo_desc>
+		<geo>
+			<lat>21.12224</lat>
+			<lon>-101.682346</lon>
+		</geo>
+	</item>
+	<item id="912">
+		<filename>2013-11-07-45.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Plaza Principal</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.12224</lat>
+			<lon>-101.682346</lon>
+		</geo>
+	</item>
+	<item id="913">
+		<filename>2013-11-07-47.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Municiple Hall</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc>(Palacio Municipal in Spanish)</photo_desc>
+		<geo>
+			<lat>21.122022</lat>
+			<lon>-101.68318</lon>
+		</geo>
+	</item>
+	<item id="914">
+		<filename>2013-11-07-50.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Municiple Hall</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>(Palacio Municipal in Spanish)</photo_desc>
+		<geo>
+			<lat>21.122022</lat>
+			<lon>-101.68318</lon>
+		</geo>
+	</item>
+	<item id="915">
+		<filename>2013-11-07-53.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="916">
+		<filename>2013-11-07-55.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="917">
+		<filename>2013-11-07-58.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Templo Expiatorio</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>neo Gothic in design (official name Templo Expiatorio del Sagrado Corazón de Jesús)</photo_desc>
+		<geo>
+			<lat>21.120344</lat>
+			<lon>-101.674841</lon>
+		</geo>
+	</item>
+	<item id="918">
+		<filename>2013-11-07-61.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Templo Expiatorio</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>neo Gothic in design (official name Templo Expiatorio del Sagrado Corazón de Jesús)</photo_desc>
+		<geo>
+			<lat>21.120344</lat>
+			<lon>-101.674841</lon>
+		</geo>
+	</item>
+	<item id="919">
+		<filename>2013-11-07-64.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Templo Expiatorio</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>neo Gothic in design (official name Templo Expiatorio del Sagrado Corazón de Jesús)</photo_desc>
+		<geo>
+			<lat>21.120344</lat>
+			<lon>-101.674841</lon>
+		</geo>
+	</item>
+	<item id="920">
+		<filename>2013-11-07-66.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Heroes' Causeway Arch</photo_loc>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc>(Arco de la Calzada de los Héroes, in Spanish)</photo_desc>
+		<geo>
+			<lat>21.11888</lat>
+			<lon>-101.671963</lon>
+		</geo>
+	</item>
+	<item id="921">
+		<filename>2013-11-07-69.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Theatre Doblado</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>(Teatro Manuel Doblado in Spanish)</photo_desc>
+		<geo>
+			<lat>21.123061</lat>
+			<lon>-101.680114</lon>
+		</geo>
+	</item>
+	<item id="922">
+		<filename>2013-11-07-72.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Theatre Doblado</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>(Teatro Manuel Doblado in Spanish)</photo_desc>
+		<geo>
+			<lat>21.123061</lat>
+			<lon>-101.680114</lon>
+		</geo>
+	</item>
+	<item id="923">
+		<filename>2013-11-07-74.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Theatre Doblado</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>(Teatro Manuel Doblado in Spanish)</photo_desc>
+		<geo>
+			<lat>21.123061</lat>
+			<lon>-101.680114</lon>
+		</geo>
+	</item>
+	<item id="924">
+		<filename>2013-11-07-77.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>Theatre Doblado</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>(Teatro Manuel Doblado in Spanish)</photo_desc>
+		<geo>
+			<lat>21.123061</lat>
+			<lon>-101.680114</lon>
+		</geo>
+	</item>
+	<item id="925">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-07-80.mp4</filename>
+		<filename>2013-11-07-80.webm</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc>SS Benedicto XVI Plaza</photo_loc>
+		<thumb_caption>Beggar</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>21.123886</lat>
+			<lon>-101.682362</lon>
+		</geo>
+	</item>
+	<item id="926">
+		<filename>2013-11-07-85.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="927">
+		<filename>2013-11-07-88.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="928">
+		<filename>2013-11-07-90.jpg</filename>
+		<photo_city>León, Guanajuato</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1000">
+		<filename>2013-11-08-15.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Hotel Vista Junior Guadalajara</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.622583</lat>
+			<lon>-103.288614</lon>
+		</geo>
+	</item>
+	<item id="1001">
+		<filename>2013-11-08-20.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.621919</lat>
+			<lon>-103.288763</lon>
+		</geo>
+	</item>
+	<item id="1002">
+		<filename>2013-11-08-25.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.621919</lat>
+			<lon>-103.288763</lon>
+		</geo>
+	</item>
+	<item id="1003">
+		<filename>2013-11-08-30.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.621919</lat>
+			<lon>-103.288763</lon>
+		</geo>
+	</item>
+	<item id="1004">
+		<filename>2013-11-08-35.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Parroquia de San Francisco</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.28863</lat>
+			<lon>-103.192928</lon>
+		</geo>
+	</item>
+	<item id="1005">
+		<filename>2013-11-08-40.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<thumb_caption>Fountain</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.287918</lat>
+			<lon>-103.193282</lon>
+		</geo>
+	</item>
+	<item id="1006">
+		<filename>2013-11-08-45.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<thumb_caption>Pier</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.287551</lat>
+			<lon>-103.193524</lon>
+		</geo>
+	</item>
+	<item id="1007">
+		<filename>2013-11-08-50.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<thumb_caption>Bird</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.286517</lat>
+			<lon>-103.193966</lon>
+		</geo>
+	</item>
+	<item id="1008">
+		<filename>2013-11-08-55.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<photo_desc/>
+		<geo>
+			<lat>20.286517</lat>
+			<lon>-103.193966</lon>
+		</geo>
+		<thumb_caption>Boat</thumb_caption>
+	</item>
+	<item id="1009">
+		<filename>2013-11-08-60.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<thumb_caption>Boat</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1010">
+		<filename>2013-11-08-65.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Scorpion Island in Lake Chapala</photo_loc>
+		<thumb_caption>Island</thumb_caption>
+		<photo_desc>(Isla de los Alacranes in Spanish)</photo_desc>
+		<ref>
+			<name>Isla_de_los_Alacranes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.251724</lat>
+			<lon>-103.171219</lon>
+		</geo>
+	</item>
+	<item id="1011">
+		<filename>2013-11-08-70.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Scorpion Island in Lake Chapala</photo_loc>
+		<thumb_caption>Island</thumb_caption>
+		<photo_desc>(Isla de los Alacranes in Spanish)</photo_desc>
+		<ref>
+			<name>Isla_de_los_Alacranes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.251724</lat>
+			<lon>-103.171219</lon>
+		</geo>
+	</item>
+	<item id="1012">
+		<filename>2013-11-08-75.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Scorpion Island in Lake Chapala</photo_loc>
+		<thumb_caption>Island</thumb_caption>
+		<photo_desc>(Isla de los Alacranes in Spanish)</photo_desc>
+		<ref>
+			<name>Isla_de_los_Alacranes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.251166</lat>
+			<lon>-103.170725</lon>
+		</geo>
+	</item>
+	<item id="1013">
+		<filename>2013-11-08-80.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Scorpion Island in Lake Chapala</photo_loc>
+		<thumb_caption>Island</thumb_caption>
+		<photo_desc>(Isla de los Alacranes in Spanish)</photo_desc>
+		<ref>
+			<name>Isla_de_los_Alacranes</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.251166</lat>
+			<lon>-103.170725</lon>
+		</geo>
+	</item>
+	<item id="1014">
+		<filename>2013-11-08-85.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Parroquia de San Francisco</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.28863</lat>
+			<lon>-103.192928</lon>
+		</geo>
+	</item>
+	<item id="1015">
+		<filename>2013-11-08-90.jpg</filename>
+		<photo_city>Chapala, Jalisco</photo_city>
+		<photo_loc>Lake Chapala</photo_loc>
+		<thumb_caption>Statue</thumb_caption>
+		<photo_desc>Jesus the Fisherman</photo_desc>
+		<geo>
+			<lat>20.286711</lat>
+			<lon>-103.193057</lon>
+		</geo>
+	</item>
+	<item id="1100">
+		<filename>2013-11-09-12.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Hotel Vista Junior Guadalajara</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.622199</lat>
+			<lon>-103.288463</lon>
+		</geo>
+	</item>
+	<item id="1101">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-09-14.mp4</filename>
+		<filename>2013-11-09-14.webm</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<thumb_caption>Bus</thumb_caption>
+	</item>
+	<item id="1102">
+		<filename>2013-11-09-17.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.650945</lat>
+			<lon>-103.310075</lon>
+		</geo>
+	</item>
+	<item id="1103">
+		<filename>2013-11-09-19.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc>Hot tamale</photo_desc>
+		<ref>
+			<name>Tamale</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.657502</lat>
+			<lon>-103.350854</lon>
+		</geo>
+	</item>
+	<item id="1104">
+		<filename>2013-11-09-21.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Station</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.656273</lat>
+			<lon>-103.352139</lon>
+		</geo>
+		<ref>
+			<name>Tequila_Express</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1105">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-09-24.mp4</filename>
+		<filename>2013-11-09-24.webm</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Station</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.656273</lat>
+			<lon>-103.352139</lon>
+		</geo>
+		<ref>
+			<name>Tequila_Express</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1106">
+		<filename>2013-11-09-26.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Station</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.656273</lat>
+			<lon>-103.352139</lon>
+		</geo>
+		<ref>
+			<name>Tequila_Express</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1107">
+		<filename>2013-11-09-29.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1108">
+		<filename>2013-11-09-31.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1109">
+		<filename>2013-11-09-33.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc>Tequila Herradura brands of Tequila</photo_desc>
+		<ref>
+			<name>Tequila_Herradura</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1110">
+		<filename>2013-11-09-36.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1111">
+		<filename>2013-11-09-38.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1112">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-09-40.mp4</filename>
+		<filename>2013-11-09-40.webm</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1113">
+		<filename>2013-11-09-43.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1114">
+		<filename>2013-11-09-45.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc>Tequila Express</photo_loc>
+		<thumb_caption>Train</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1115">
+		<filename>2013-11-09-48.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Tequila</thumb_caption>
+		<photo_desc>Cutting the cactus to expose the pineapple heart. (Hacienda San Jose del Refugio in Spanish)</photo_desc>
+		<geo>
+			<lat>20.8427</lat>
+			<lon>-103.722249</lon>
+		</geo>
+	</item>
+	<item id="1116">
+		<filename>2013-11-09-50.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Tequila</thumb_caption>
+		<photo_desc>Blue agave pineapple hearts. (Hacienda San Jose del Refugio in Spanish)</photo_desc>
+		<geo>
+			<lat>20.8427</lat>
+			<lon>-103.722249</lon>
+		</geo>
+	</item>
+	<item id="1117">
+		<filename>2013-11-09-52.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Donkey</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1118">
+		<filename>2013-11-09-55.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Tequila</thumb_caption>
+		<photo_desc>View of fermenting tank area of Tequila distillery</photo_desc>
+		<geo>
+			<lat>20.840749</lat>
+			<lon>-103.722367</lon>
+		</geo>
+	</item>
+	<item id="1119">
+		<filename>2013-11-09-57.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Tequila</thumb_caption>
+		<photo_desc>Mosto is fermented agave juice while ordinario has been distilled.</photo_desc>
+		<geo>
+			<lat>20.840749</lat>
+			<lon>-103.722367</lon>
+		</geo>
+		<ref>
+			<name>Tequila</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1120">
+		<filename>2013-11-09-60.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Tequila</thumb_caption>
+		<photo_desc>Oak casks for aging which develops a mellower flavor and amber colour.</photo_desc>
+	</item>
+	<item id="1121">
+		<filename>2013-11-09-62.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Friends</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.842584</lat>
+			<lon>-103.720138</lon>
+		</geo>
+	</item>
+	<item id="1122">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-09-64.mp4</filename>
+		<filename>2013-11-09-64.webm</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.842584</lat>
+			<lon>-103.720138</lon>
+		</geo>
+	</item>
+	<item id="1123">
+		<filename>2013-11-09-69.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.842584</lat>
+			<lon>-103.720138</lon>
+		</geo>
+	</item>
+	<item id="1124">
+		<filename>2013-11-09-71.jpg</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.842584</lat>
+			<lon>-103.720138</lon>
+		</geo>
+	</item>
+	<item id="1125">
+		<type>video</type>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<filename>2013-11-09-74.mp4</filename>
+		<filename>2013-11-09-74.webm</filename>
+		<photo_city>Amatitán, Jalisco</photo_city>
+		<photo_loc>Herradura Tequila production plant</photo_loc>
+		<thumb_caption>Recap</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1126">
+		<filename>2013-11-09-76.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Hospicio Cabañas</photo_loc>
+		<thumb_caption>Boxing</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.676866</lat>
+			<lon>-103.338584</lon>
+		</geo>
+	</item>
+	<item id="1127">
+		<filename>2013-11-09-79.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Hospicio Cabañas</photo_loc>
+		<thumb_caption>Chair</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.676692</lat>
+			<lon>-103.338533</lon>
+		</geo>
+	</item>
+	<item id="1128">
+		<filename>2013-11-09-81.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Founders Square</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.677089</lat>
+			<lon>-103.343834</lon>
+		</geo>
+	</item>
+	<item id="1129">
+		<filename>2013-11-09-83.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Teatro Degollado</photo_loc>
+		<thumb_caption>Theatre</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.677025</lat>
+			<lon>-103.344879</lon>
+		</geo>
+		<ref>
+			<name>Teatro_Degollado</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="1130">
+		<filename>2013-11-09-86.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Teatro Degollado</photo_loc>
+		<thumb_caption>Police</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.677025</lat>
+			<lon>-103.344879</lon>
+		</geo>
+	</item>
+	<item id="1131">
+		<filename>2013-11-09-88.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Street</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.676971</lat>
+			<lon>-103.347889</lon>
+		</geo>
+	</item>
+	<item id="1132">
+		<filename>2013-11-09-90.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>Guadalajara Cathedral</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc>built in the Renaissance style, with neo-gothic towers</photo_desc>
+		<ref>
+			<name>Guadalajara_Cathedral</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.676944</lat>
+			<lon>-103.347222</lon>
+		</geo>
+	</item>
+	<item id="1200">
+		<filename>2013-11-10-15.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>New Central bus station</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.621865</lat>
+			<lon>-103.287795</lon>
+		</geo>
+	</item>
+	<item id="1201">
+		<filename>2013-11-10-20.jpg</filename>
+		<photo_city>Guadalajara, Jalisco</photo_city>
+		<photo_loc>New Central bus station</photo_loc>
+		<thumb_caption>Bus</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.621872</lat>
+			<lon>-103.288227</lon>
+		</geo>
+	</item>
+	<item id="1202">
+		<filename>2013-11-10-25.jpg</filename>
+		<photo_city>Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Accident</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1203">
+		<filename>2013-11-10-30.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Main Bus Terminal</photo_loc>
+		<thumb_caption>Lady</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.68596</lat>
+			<lon>-105.23193</lon>
+		</geo>
+	</item>
+	<item id="1204">
+		<filename>2013-11-10-35.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Beach</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.626066</lat>
+			<lon>-105.232028</lon>
+		</geo>
+	</item>
+	<item id="1205">
+		<filename>2013-11-10-40.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Sunset</thumb_caption>
+		<geo>
+			<lat>20.625384</lat>
+			<lon>-105.232131</lon>
+		</geo>
+	</item>
+	<item id="1206">
+		<filename>2013-11-10-45.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Sunset</thumb_caption>
+		<geo>
+			<lat>20.625384</lat>
+			<lon>-105.232131</lon>
+		</geo>
+	</item>
+	<item id="1207">
+		<filename>2013-11-10-50.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<geo>
+			<lat>20.626628</lat>
+			<lon>-105.23131</lon>
+		</geo>
+	</item>
+	<item id="1208">
+		<filename>2013-11-10-55.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Bar</thumb_caption>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1209">
+		<filename>2013-11-10-60.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Friends</thumb_caption>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1210">
+		<filename>2013-11-10-65.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Drink</thumb_caption>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1211">
+		<filename>2013-11-10-70.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_desc/>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1212">
+		<filename>2013-11-10-75.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Doll</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1213">
+		<filename>2013-11-10-80.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Hilo</photo_loc>
+		<thumb_caption>Club</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.61101</lat>
+			<lon>-105.234632</lon>
+		</geo>
+	</item>
+	<item id="1214">
+		<filename>2013-11-10-85.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>The Vaquita</photo_loc>
+		<thumb_caption>Club</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.611508</lat>
+			<lon>-105.234372</lon>
+		</geo>
+	</item>
+	<item id="1215">
+		<filename>2013-11-10-90.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>The Vaquita</photo_loc>
+		<thumb_caption>Club</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.611508</lat>
+			<lon>-105.234372</lon>
+		</geo>
+	</item>
+	<item id="1300">
+		<filename>2013-11-11-14.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.626628</lat>
+			<lon>-105.23131</lon>
+		</geo>
+	</item>
+	<item id="1301">
+		<filename>2013-11-11-19.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>El Andariego Restaurante</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.620735</lat>
+			<lon>-105.230823</lon>
+		</geo>
+	</item>
+	<item id="1302">
+		<filename>2013-11-11-23.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>El Andariego Restaurante</photo_loc>
+		<thumb_caption>Meal</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.620735</lat>
+			<lon>-105.230823</lon>
+		</geo>
+	</item>
+	<item id="1303">
+		<filename>2013-11-11-28.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Building</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1304">
+		<filename>2013-11-11-32.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Señor Frogs</photo_loc>
+		<thumb_caption>Mascot</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.61021</lat>
+			<lon>-105.234576</lon>
+		</geo>
+	</item>
+	<item id="1305">
+		<filename>2013-11-11-37.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Building</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1306">
+		<filename>2013-11-11-41.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Guadalupe's Church</photo_loc>
+		<thumb_caption>Church</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.608298</lat>
+			<lon>-105.234891</lon>
+		</geo>
+	</item>
+	<item id="1307">
+		<filename>2013-11-11-46.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1308">
+		<filename>2013-11-11-50.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.608522</lat>
+			<lon>-105.235492</lon>
+		</geo>
+	</item>
+	<item id="1309">
+		<filename>2013-11-11-55.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc/>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Fat Beatles</photo_desc>
+	</item>
+	<item id="1310">
+		<filename>2013-11-11-59.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Malecon Boadwalk</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Searching for Reason - 1999 (En busca de la razón in Spanish)</photo_desc>
+		<geo>
+			<lat>20.610934</lat>
+			<lon>-105.234878</lon>
+		</geo>
+	</item>
+	<item id="1311">
+		<filename>2013-11-11-64.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Malecon Boadwalk</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>Triton and the Nereid - 1990 (Tritón y Sirena in Spanish)</photo_desc>
+		<geo>
+			<lat>20.609513</lat>
+			<lon>-105.235377</lon>
+		</geo>
+	</item>
+	<item id="1312">
+		<filename>2013-11-11-68.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Malecon Boadwalk</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>The Subtle Rock-Eater - 2006 (El sutil come piedras in Spanish)</photo_desc>
+		<geo>
+			<lat>20.611967</lat>
+			<lon>-105.234335</lon>
+		</geo>
+	</item>
+	<item id="1313">
+		<filename>2013-11-11-73.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Malecon Boadwalk</photo_loc>
+		<thumb_caption>Art</thumb_caption>
+		<photo_desc>The Millennia Statue - 2001 (Los Milenios in Spanish)</photo_desc>
+		<geo>
+			<lat>20.614725</lat>
+			<lon>-105.233207</lon>
+		</geo>
+	</item>
+	<item id="1314">
+		<filename>2013-11-11-77.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Sheraton</photo_loc>
+		<thumb_caption>Hotel</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.626628</lat>
+			<lon>-105.23131</lon>
+		</geo>
+	</item>
+	<item id="1315">
+		<filename>2013-11-11-82.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Casa Ley</photo_loc>
+		<thumb_caption>Grocer</thumb_caption>
+		<photo_desc/>
+		<ref>
+			<name>Casa_Ley</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.617652</lat>
+			<lon>-105.231168</lon>
+		</geo>
+	</item>
+	<item id="1316">
+		<filename>2013-11-11-86.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Casa Ley</photo_loc>
+		<thumb_caption>Grocer</thumb_caption>
+		<photo_desc/>
+		<ref>
+			<name>Casa_Ley</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.617652</lat>
+			<lon>-105.231168</lon>
+		</geo>
+	</item>
+	<item id="1317">
+		<filename>2013-11-11-90.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Casa Ley</photo_loc>
+		<thumb_caption>Grocer</thumb_caption>
+		<photo_desc/>
+		<ref>
+			<name>Casa_Ley</name>
+			<source>wikipedia</source>
+		</ref>
+		<geo>
+			<lat>20.617652</lat>
+			<lon>-105.231168</lon>
+		</geo>
+	</item>
+	<item id="1400">
+		<filename>2013-11-12-13.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Marina</photo_loc>
+		<thumb_caption>Ship</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.655971</lat>
+			<lon>-105.240511</lon>
+		</geo>
+	</item>
+	<item id="1401">
+		<filename>2013-11-12-16.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>At sea</photo_loc>
+		<thumb_caption>Boat</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1402">
+		<filename>2013-11-12-19.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>At sea</photo_loc>
+		<thumb_caption>Boat</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1403">
+		<filename>2013-11-12-22.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Dock</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.505436</lat>
+			<lon>-105.383429</lon>
+		</geo>
+	</item>
+	<item id="1404">
+		<filename>2013-11-12-25.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Crab</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.505174</lat>
+			<lon>-105.383725</lon>
+		</geo>
+	</item>
+	<item id="1405">
+		<filename>2013-11-12-28.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Fire</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.505174</lat>
+			<lon>-105.383725</lon>
+		</geo>
+	</item>
+	<item id="1406">
+		<filename>2013-11-12-31.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Beach</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1407">
+		<filename>2013-11-12-34.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Ocean</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1408">
+		<filename>2013-11-12-38.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1409">
+		<filename>2013-11-12-41.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1410">
+		<filename>2013-11-12-44.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1411">
+		<filename>2013-11-12-47.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1412">
+		<filename>2013-11-12-50.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1413">
+		<filename>2013-11-12-53.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1414">
+		<filename>2013-11-12-56.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1415">
+		<filename>2013-11-12-59.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1416">
+		<filename>2013-11-12-62.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1417">
+		<filename>2013-11-12-66.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Wedding</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1418">
+		<filename>2013-11-12-69.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Candle</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1419">
+		<filename>2013-11-12-72.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Table</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504471</lat>
+			<lon>-105.381707</lon>
+		</geo>
+	</item>
+	<item id="1420">
+		<filename>2013-11-12-75.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Table</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504471</lat>
+			<lon>-105.381707</lon>
+		</geo>
+	</item>
+	<item id="1421">
+		<filename>2013-11-12-78.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Pose</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1422">
+		<filename>2013-11-12-81.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Pose</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1423">
+		<filename>2013-11-12-84.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Friends</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1424">
+		<filename>2013-11-12-87.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Dance</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1425">
+		<filename>2013-11-12-90.jpg</filename>
+		<photo_city>Aguacate, Jalisco</photo_city>
+		<photo_loc>Las Caletas</photo_loc>
+		<thumb_caption>Sand</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.504727</lat>
+			<lon>-105.381659</lon>
+		</geo>
+	</item>
+	<item id="1500">
+		<filename>2013-11-13-14.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.578422</lat>
+			<lon>-105.201291</lon>
+		</geo>
+	</item>
+	<item id="1501">
+		<filename>2013-11-13-19.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1502">
+		<filename>2013-11-13-23.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1503">
+		<filename>2013-11-13-28.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1504">
+		<filename>2013-11-13-32.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1505">
+		<filename>2013-11-13-37.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1506">
+		<filename>2013-11-13-41.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1507">
+		<filename>2013-11-13-46.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1508">
+		<filename>2013-11-13-50.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1509">
+		<filename>2013-11-13-55.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Zipline</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.575102</lat>
+			<lon>-105.199996</lon>
+		</geo>
+	</item>
+	<item id="1510">
+		<filename>2013-11-13-59.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Donkey</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.575102</lat>
+			<lon>-105.199996</lon>
+		</geo>
+	</item>
+	<item id="1511">
+		<filename>2013-11-13-64.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Donkey</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.575102</lat>
+			<lon>-105.199996</lon>
+		</geo>
+	</item>
+	<item id="1512">
+		<filename>2013-11-13-68.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Donkey</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.574688</lat>
+			<lon>-105.200999</lon>
+		</geo>
+	</item>
+	<item id="1513">
+		<filename>2013-11-13-73.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Donkey</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.576959</lat>
+			<lon>-105.201337</lon>
+		</geo>
+	</item>
+	<item id="1514">
+		<filename>2013-11-13-77.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Pose</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.57777</lat>
+			<lon>-105.201302</lon>
+		</geo>
+	</item>
+	<item id="1515">
+		<filename>2013-11-13-82.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Lizard</thumb_caption>
+		<photo_desc/>
+		<geo>
+			<lat>20.57777</lat>
+			<lon>-105.201302</lon>
+		</geo>
+	</item>
+	<item id="1516">
+		<filename>2013-11-13-86.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>Ride</thumb_caption>
+		<photo_desc/>
+	</item>
+	<item id="1518">
+		<filename>2013-11-13-90.jpg</filename>
+		<photo_city>Puerto Vallarta, Jalisco</photo_city>
+		<photo_loc>Vallarta Adventures - Canopy River</photo_loc>
+		<thumb_caption>River</thumb_caption>
+		<photo_desc/>
+	</item>
+</album>

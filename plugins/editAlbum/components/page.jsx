@@ -5,15 +5,16 @@ function textField({ label, tabIndex }) {
   const name = label.toLowerCase();
   return (
     <p>
-      <label htmlFor={name}>{label}</label>
-      <input type="text" id={name} tabIndex={tabIndex} />
+      <label htmlFor={name}>
+        {label}
+        <input type="text" id={name} tabIndex={tabIndex} />
+      </label>
       <input type="checkbox" title="Check to disable editability" />
       <span className="suggestions" />
     </p>
   );
 }
 
-/* eslint-disable jsx-a11y/tabindex-no-positive */
 function Page(props) {
   return (
     <html lang="en">
@@ -54,8 +55,10 @@ function Page(props) {
                 <legend>Edit Photo Meta Data</legend>
                 <p><b>Generate XML then copy to album XML document.</b></p>
                 <p>
-                  <label htmlFor="filename">Filename</label>
-                  <input type="text" id="filename" disabled="disabled" />
+                  <label htmlFor="filename">
+                    Filename
+                    <input type="text" id="filename" disabled="disabled" />
+                  </label>
                   <span className="suggestions" />
                 </p>
                 {textField({ label: 'City', tabIndex: 4 })}
@@ -63,19 +66,23 @@ function Page(props) {
                 {textField({ label: 'Caption', tabIndex: 6 })}
                 {textField({ label: 'Description', tabIndex: 7 })}
                 <p>
-                  <label htmlFor="ref_src"><select id="ref_src" tabIndex="8">
-                    <option />
-                    <option value="facebook">Facebook</option>
-                    <option value="google">Google</option>
-                    <option value="wikipedia">Wikipedia</option>
-                  </select></label>
+                  <label htmlFor="ref_src">
+                    <select id="ref_src" tabIndex="8">
+                      <option />
+                      <option value="facebook">Facebook</option>
+                      <option value="google">Google</option>
+                      <option value="wikipedia">Wikipedia</option>
+                    </select>
+                  </label>
                   <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
                   <input type="checkbox" title="Check to disable editability" />
                   <span className="suggestions" />
                 </p>
                 <p>
-                  <label htmlFor="geo_lat">Geolocation</label>
-                  <input type="text" id="geo_lat" className="half" tabIndex="10" title="Latitude" />
+                  <label htmlFor="geo_lat">
+                    Geolocation
+                    <input type="text" id="geo_lat" className="half" tabIndex="10" title="Latitude" />
+                  </label>
                   <input type="text" id="geo_lon" className="half" tabIndex="11" title="Longitude" />
                   <input type="checkbox" title="Check to disable editability" />
                   <span className="suggestions" />

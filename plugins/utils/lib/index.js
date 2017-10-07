@@ -137,4 +137,6 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   });
 });
 
-module.exports = { env, config, clone, file: fileMethods };
+module.exports = {
+  env, config, clone, file: fileMethods
+};

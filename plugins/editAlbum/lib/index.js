@@ -12,7 +12,9 @@ const handler = ({ query: { raw: isRaw } }, reply) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const outResponse = routes.createFormatReply({ isRaw, formatJson, reply, viewPath });
+  const outResponse = routes.createFormatReply({
+    isRaw, formatJson, reply, viewPath
+  });
   const outError = routes.createErrorReply(reply);
 
   gallery.getGalleries()

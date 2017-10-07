@@ -3,8 +3,10 @@ const json = require('./json');
 const validation = require('../../../lib/validation');
 
 const handler = (request, reply) => {
-  const albumStem = request.query.album_stem;
-  const gallery = request.query.gallery;
+  const {
+    album_stem: albumStem,
+    gallery
+  } = request.query;
 
   json.dataToGeojson(gallery, albumStem)
     .then(geojsonData => reply(geojsonData))
