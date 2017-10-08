@@ -12,14 +12,14 @@ const handler = ({ query: { raw: isRaw } }, reply) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const outResponse = routes.createFormatReply({
+  const handleResponse = routes.createFormatReply({
     isRaw, formatJson, reply, viewPath
   });
-  const outError = routes.createErrorReply(reply);
+  const handleError = routes.createErrorReply(reply);
 
   gallery.getGalleries()
-    .then(outResponse)
-    .catch(outError);
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 exports.register = (server, options, next) => {

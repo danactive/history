@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Verify /rename route', { skip: false }, (describe) => {
-  const hapi = require('hapi');
+  const Hapi = require('hapi');
   const path = require('path');
 
   const lib = require('../lib');
@@ -15,11 +15,13 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   const port = utils.config.get('port');
 
   describe.test('* Caught fake source folder', (assert) => {
-    const server = new hapi.Server();
+    const server = new Hapi.Server();
+
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
-        return assert.fail(error);
+        assert.fail(error);
+        return;
       }
 
       const request = {
@@ -33,20 +35,20 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       };
 
       server.inject(request, (result) => {
-        assert.equal(result.statusCode, 404);
+        assert.equal(result.statusCode, 404, 'Status code');
         assert.end();
       });
-
-      return undefined;
     });
   });
 
   describe.test('* Rename filename based on prefix', (assert) => {
-    const server = new hapi.Server();
+    const server = new Hapi.Server();
+
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
-        return assert.fail(error);
+        assert.fail(error);
+        return;
       }
 
       assert.plan(2);
@@ -56,15 +58,26 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
+          raw: true,
           source_folder: './plugins/rename/test/fixtures/renameable'
         }
       };
 
-      return server.inject(request, (response) => {
-        assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
+      server.inject(request, (response) => {
+        let actual;
+        let expected;
+
+
+        actual = response.statusCode;
+        expected = 200;
+        assert.equal(actual, expected, 'HTTP status okay');
+
+
+        actual = response.result.xml;
+        expected = `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
           `<item id="101"><filename>${prefix}-64.jpg</filename></item>` +
-          `<item id="102"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
+          `<item id="102"><filename>${prefix}-90.jpg</filename></item>`;
+        assert.equal(actual, expected, 'XML response is expected');
       });
     });
   });
@@ -90,12 +103,13 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   });
 
   describe.test('* Rename filename based on prefix with associated files', (assert) => {
-    const server = new hapi.Server();
+    const server = new Hapi.Server();
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
         assert.fail(`Plugin failed due to ${error}`);
-        return assert.end();
+        assert.end();
+        return;
       }
 
       const request = {
@@ -104,19 +118,29 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['dee.dat', 'pee.pdf'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable',
-          rename_associated: true
+          raw: true,
+          rename_associated: true,
+          source_folder: './plugins/rename/test/fixtures/renameable'
         }
       };
 
       server.inject(request, (response) => {
-        assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-50.jpg</filename></item>` +
-          `<item id="101"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
+        let actual;
+        let expected;
+
+
+        actual = response.statusCode;
+        expected = 200;
+        assert.equal(actual, expected, 'HTTP status okay');
+
+
+        actual = response.result.xml;
+        expected = `<item id="100"><filename>${prefix}-50.jpg</filename></item><item id="101"><filename>${prefix}-90.jpg</filename></item>`;
+        assert.equal(actual, expected, 'XML response is expected');
         assert.end();
       });
 
-      return assert.pass('No error');
+      assert.pass('No error');
     });
   });
 

@@ -4,12 +4,12 @@ const files = require('./files');
 
 const handler = ({ query: { path, raw: isRaw } }, reply) => {
   const viewPath = 'plugins/walk/components/page.jsx';
-  const outResponse = routes.createFormatReply({ reply, isRaw, viewPath });
-  const outError = routes.createErrorReply(reply);
+  const handleResponse = routes.createFormatReply({ reply, isRaw, viewPath });
+  const handleError = routes.createErrorReply(reply);
 
   files.listFiles(path)
-    .then(outResponse)
-    .catch(outError);
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 exports.register = (server, options, next) => {

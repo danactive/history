@@ -19,9 +19,7 @@ test('Walk - Controls (React Components)', (describe) => {
 
   describe.test('* Date picker - Render component', (assert) => {
     fakeDom('<div id="controls" data-has-image="true"></div>');
-    const wrapper = shallow(
-      <Controls date={moment('2017-10-31T00:00:00.000Z')} />
-    );
+    const wrapper = shallow(<Controls date={moment('2017-10-31T00:00:00.000Z')} />);
     let actual;
     let expected;
 
@@ -41,9 +39,7 @@ test('Walk - Controls (React Components)', (describe) => {
 
   describe.test('* No date - Render component', (assert) => {
     fakeDom('<section id="controls" data-has-image="false"></section>');
-    const wrapper = shallow(
-      <Controls />
-    );
+    const wrapper = shallow(<Controls />);
 
     const actual = wrapper.html();
     const expected = '<section></section>';

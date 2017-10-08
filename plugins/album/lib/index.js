@@ -32,13 +32,13 @@ const handler = ({
   const viewPath = 'plugins/album/components/page.jsx';
 
   const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
-  const outResponse = routes.createFormatReply({ isRaw, reply, viewPath });
-  const outError = routes.createErrorReply(reply);
+  const handleResponse = routes.createFormatReply({ isRaw, reply, viewPath });
+  const handleError = routes.createErrorReply(reply);
 
   json.getAlbum(gallery, albumStem)
     .then(applyCloud)
-    .then(outResponse)
-    .catch(outError);
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 exports.register = (server, options, next) => {

@@ -79,7 +79,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
     }, 2);
 
     {
-      const fullPath = path.resolve(__dirname, '../../../', sourceFolder);
+      const fullPath = path.resolve(__dirname, '../../../', sourceFolder); // todo only read from public folder
 
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {

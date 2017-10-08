@@ -66,8 +66,10 @@ Controls.defaultProps = {
   date: moment()
 };
 
+const datePropType = momentPropTypes.momentObj;
+
 Controls.propTypes = {
-  date: momentPropTypes.momentObj
+  date: datePropType
 };
 
 module.exports = Controls;
