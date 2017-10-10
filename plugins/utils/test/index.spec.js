@@ -196,4 +196,47 @@ tape('Utilities', { skip: false }, (describe) => {
       .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (.htm)'))
       .catch(error => assert.fail(error));
   });
+
+  describe.test('* File - Safe Public Path - Throws an exception', (assert) => {
+    assert.ok(lib.file.safePublicPath().isBoom, 'Execute with undefined arg');
+    assert.ok(lib.file.safePublicPath(null).isBoom, 'Execute with null arg');
+    assert.ok(lib.file.safePublicPath(true).isBoom, 'Execute with true arg');
+
+    assert.end();
+  });
+
+  describe.test('* File - Safe Public Path - Traverse up directory(s)', (assert) => {
+    assert.ok(lib.file.safePublicPath('../').isBoom, 'Up one folder');
+    assert.ok(lib.file.safePublicPath('../../').isBoom, 'Up two folders');
+    assert.end();
+  });
+
+  describe.test('* File - Safe Public Path - Blank', (assert) => {
+    const normalPath = path.normalize('/history/public');
+    const actual = lib.file.safePublicPath('').endsWith(normalPath);
+    assert.ok(actual, 'Public folder system path');
+
+    assert.end();
+  });
+
+  describe.test('* File - Safe Public Path - Root', (assert) => {
+    const normalPath = path.normalize('/history/public/');
+    assert.ok(lib.file.safePublicPath('/').endsWith(normalPath));
+    assert.end();
+  });
+
+  describe.test('* File - Safe Public Path - File', (assert) => {
+    const normalPath = path.normalize('/history/public/fixtures/exists.txt');
+    assert.ok(lib.file.safePublicPath('/fixtures/exists.txt').endsWith(normalPath));
+    assert.end();
+  });
+
+  describe.test('* File - Safe Public Path - Root absolute path', (assert) => {
+    const testPath = path.join(__dirname, '../../../public/test/fixtures');
+    const normalFilePath = path.normalize('/history/public/test/fixtures/exists.txt');
+    const normalFolderPath = path.normalize('/history/public/test/fixtures');
+    assert.ok(lib.file.safePublicPath(path.join(testPath, '/exists.txt')).endsWith(normalFilePath));
+    assert.ok(lib.file.safePublicPath(testPath).endsWith(normalFolderPath));
+    assert.end();
+  });
 });

@@ -2,7 +2,9 @@ const boom = require('boom');
 const fs = require('fs');
 const path = require('path');
 
-const moduleName = 'pathExists';
+const utils = require('../../utils');
+
+const MODULE_NAME = 'pathExists';
 
 /*
 Verify if a path exists on the file system
@@ -13,18 +15,17 @@ Verify if a path exists on the file system
 */
 function pathExists(verifyPath) {
   return new Promise((resolve, reject) => {
-    if (verifyPath === undefined) {
-      reject(boom.notFound(`${moduleName} module: File system path is missing (${verifyPath})`));
+    if (verifyPath === undefined || verifyPath === null) {
+      reject(boom.notFound(`${MODULE_NAME} module: File system path is missing (${verifyPath})`));
     }
 
-    const verifiedPath = path.isAbsolute(verifyPath) ? verifyPath : path.resolve(__dirname, '../../../', verifyPath); // todo read public folder only
+    const verifiedPath = utils.file.safePublicPath(verifyPath);
 
     fs.stat(verifiedPath, (error, type) => {
       if (error) {
         const pathType = path.isAbsolute(verifyPath) ? 'absolute' : 'relative';
 
-        return reject(boom.notFound(`${moduleName} module: File system path is ${pathType} and not found
-        due to error (${error})`));
+        return reject(boom.notFound(`${MODULE_NAME} module: File system path is ${pathType} and not found due to error (${error})`));
       }
 
       if (type.isFile() || type.isDirectory()) {

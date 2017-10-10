@@ -3,7 +3,6 @@ const tape = require('tape-catch');
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
   const hapi = require('hapi');
-  const path = require('path');
 
   const lib = require('../lib');
   const utils = require('../../utils/lib');
@@ -55,7 +54,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         method: 'POST',
         url: '/resize',
         payload: {
-          source_path: './plugins/resize/test/fixtures/Capture.PNG'
+          source_path: '/test/fixtures/resizable/Capture.PNG'
         }
       };
 
@@ -68,7 +67,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   });
 
   describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, (assert) => {
-    const originalRelativeFile = './plugins/resize/test/fixtures/originals/2016-07-12.jpg';
+    const originalRelativeFile = '/test/fixtures/resizable/originals/2016-07-12.jpg';
     const server = new hapi.Server();
     server.connection({ port });
     server.register(plugins, (error) => {
@@ -89,7 +88,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
 
         assert.ok(response, 'Has response');
 
-        const originalAbsoluteFile = path.resolve(__dirname, '../../../', originalRelativeFile);
+        const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
         const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
         calipers.measure(photoPath)
           .then((result) => {

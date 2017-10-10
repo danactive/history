@@ -30,7 +30,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable/FAKE'
+          source_folder: '/test/fixtures/renameable/FAKE'
         }
       };
 
@@ -51,7 +51,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         return;
       }
 
-      assert.plan(2);
+      assert.plan(3);
       const request = {
         method: 'POST',
         url: '/rename',
@@ -59,7 +59,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
           raw: true,
-          source_folder: './plugins/rename/test/fixtures/renameable'
+          source_folder: '/test/fixtures/renameable'
         }
       };
 
@@ -71,6 +71,11 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         actual = response.statusCode;
         expected = 200;
         assert.equal(actual, expected, 'HTTP status okay');
+
+
+        actual = response.result.message;
+        expected = undefined;
+        assert.equal(actual, expected, 'No response error');
 
 
         actual = response.result.xml;
@@ -85,14 +90,14 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   describe.test('* Restore filenames to original', { timeout: TIMEOUT }, (assert) => {
     const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
     const futureFilenames = ['aitch.html', 'gee.gif', 'em.md'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     libRename.renamePaths(sourceFolder, filenames, futureFilenames)
       .then((result) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })
@@ -104,6 +109,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   describe.test('* Rename filename based on prefix with associated files', (assert) => {
     const server = new Hapi.Server();
+
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
@@ -120,7 +126,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
           prefix,
           raw: true,
           rename_associated: true,
-          source_folder: './plugins/rename/test/fixtures/renameable'
+          source_folder: '/test/fixtures/renameable'
         }
       };
 
@@ -131,12 +137,24 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
         actual = response.statusCode;
         expected = 200;
-        assert.equal(actual, expected, 'HTTP status okay');
+        assert.equal(actual, expected, 'HTTP status');
+
+
+        actual = response.statusMessage;
+        expected = 'OK';
+        assert.equal(actual, expected, 'HTTP status message');
+
+
+        actual = response.result.message;
+        expected = undefined;
+        assert.equal(actual, expected, 'No response error');
 
 
         actual = response.result.xml;
         expected = `<item id="100"><filename>${prefix}-50.jpg</filename></item><item id="101"><filename>${prefix}-90.jpg</filename></item>`;
         assert.equal(actual, expected, 'XML response is expected');
+
+
         assert.end();
       });
 
@@ -147,14 +165,14 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   describe.test('* Restore filenames to original with associated files', { timeout: TIMEOUT }, (assert) => {
     const filenames = [`${prefix}-50.dat`, `${prefix}-50.doc`, `${prefix}-50.docx`, `${prefix}-90.pdf`, `${prefix}-90.png`, `${prefix}-90.psd`];
     const futureFilenames = ['dee.dat', 'dee.doc', 'dee.docx', 'pee.pdf', 'pee.png', 'pee.psd'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     libRename.renamePaths(sourceFolder, filenames, futureFilenames)
       .then((result) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })

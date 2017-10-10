@@ -14,7 +14,7 @@ enzyme.configure({ adapter: new Adapter() });
 
 test('Explore Video - VideoList (React Components)', (describe) => {
   describe.test('* Render component', (assert) => {
-    const wrapper = shallow(<VideoList onVideoSelect={() => {}} videos={mock.items} />);
+    const wrapper = shallow(<VideoList index="1" onVideoSelect={() => {}} videos={mock.items} />);
 
 
     const actual = wrapper.find('VideoListItem').length;
@@ -28,7 +28,7 @@ test('Explore Video - VideoList (React Components)', (describe) => {
 
 test('Explore Video - VideoListItem (React Components)', (describe) => {
   describe.test('* Render video text elements', (assert) => {
-    const wrapper = shallow(<VideoListItem onVideoSelect={() => {}} video={mock.items[0]} />);
+    const wrapper = shallow(<VideoListItem index="1" onVideoSelect={() => {}} video={mock.items[0]} />);
     let actual;
     let expected;
 

@@ -1,12 +1,13 @@
 /* global require */
 const tape = require('tape-catch');
 
-tape('Verify rename library', { skip: false }, (describe) => {
+tape('Verify rename library', { skip: true }, (describe) => {
   const appRoot = require('app-root-path');
   const path = require('path');
 
   const exist = require('../../exists/lib/exists');
   const plugin = require('../lib/rename');
+  const utils = require('../../utils');
 
   /*
   *######                                                    #
@@ -91,14 +92,14 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Rename real source folder', { skip: false }, (assert) => {
     const filenames = ['cee.css', 'jay.js', 'el.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
       .then((result) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })
@@ -108,14 +109,14 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Restore real source folder', { skip: false }, (assert) => {
     const filenames = ['changed.css', 'renamed.js', 'temp.txt'];
     const futureFilenames = ['cee.css', 'jay.js', 'el.log'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
       .then((result) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })
@@ -125,7 +126,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Caught fake source folder', { skip: false }, (assert) => {
     const filenames = ['cee.css', 'jay.js', 'el.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-    const sourceFolder = './plugins/rename/test/fixtures/FAKE';
+    const sourceFolder = '/test/fixtures/FAKE';
 
     assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -136,7 +137,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Caught fake source filenames', { skip: false }, (assert) => {
     const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log'];
     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     assert.plan(1);
     plugin.renamePaths(sourceFolder, filenames, futureFilenames)
@@ -147,7 +148,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Rename associated is false so one filename', { skip: false }, (assert) => {
     const filenames = ['bee.bat'];
     const futureFilenames = ['rename_grouped.bat'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
       .then((result) => {
@@ -155,7 +156,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
 
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
 
@@ -172,14 +173,14 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Restore associated is false so one filename', { skip: false }, (assert) => {
     const filenames = ['rename_grouped.bat'];
     const futureFilenames = ['bee.bat'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
       .then((result) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })
@@ -189,7 +190,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Rename associated is true so six filenames', { skip: false }, (assert) => {
     const filenames = ['bee.bat', 'tee.txt'];
     const futureFilenames = ['rename_grouped.bat', 'rename_associated.txt'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
     const expectedFilenames = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
       'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt'];
 
@@ -198,7 +199,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
         assert.plan(result.length * 2);
         const uniqueResult = new Set(result);
         expectedFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
 
           exist.pathExists(`${sourceFolder}/${filename}`)
@@ -212,7 +213,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   describe.test('* Restore associated is true so six filenames', { skip: false }, (assert) => {
     const filenames = ['rename_grouped.bat', 'rename_associated.txt'];
     const futureFilenames = ['bee.bat', 'tee.txt'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+    const sourceFolder = '/test/fixtures/renameable';
     const expectedFilenames = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt'];
 
     plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: true })
@@ -220,7 +221,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
         assert.plan(result.length);
         const uniqueResult = new Set(result);
         expectedFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       })

@@ -1,17 +1,18 @@
 const existsMod = require('../../exists/lib/exists');
 const filenamesMod = require('./filenames');
-// const log = require('../../log');
 const renameMod = require('./rename');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = ({
-  payload: {
-    filenames: fromFilenames, prefix, preview, raw: isRaw, rename_associated: renameAssociated, source_folder: sourceFolder
-  }
-}, reply) => {
+const handler = (request, reply) => {
+  const {
+    payload: {
+      filenames: fromFilenames, prefix, preview, raw: isRaw, rename_associated: renameAssociated, source_folder: sourceFolder
+    }
+  } = request;
+
   const options = { renameAssociated };
-  // const logger = log.createLogger('Route: Rename');
+
   const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
 
   const handleResponse = routes.createFormatReply({ formatJson, isRaw, reply });

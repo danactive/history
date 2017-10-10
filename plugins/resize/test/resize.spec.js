@@ -3,6 +3,7 @@ const tape = require('tape-catch');
 
 tape('Verify resize library', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
+  const fs = require('fs');
   const path = require('path');
 
   const plugin = require('../lib/resize');
@@ -12,7 +13,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
   const PHOTO_FOLDER_NAME = 'photos';
   const THUMB_FOLDER_NAME = 'thumbs';
 
-  const fixturesPath = './plugins/resize/test/fixtures';
+  const fixturesPath = '/test/fixtures/resizable';
   const photoDims = utils.config.get('resizeDimensions.photo');
   const thumbDims = utils.config.get('resizeDimensions.thumb');
 
@@ -39,22 +40,26 @@ tape('Verify resize library', { skip: false }, (describe) => {
     const originalRelativeFile = path.join(fixturesPath, 'originals/2016-07-12.jpg');
     plugin.resize(originalRelativeFile)
       .then(() => {
-        assert.plan(4);
+        assert.plan(6);
 
-        const originalAbsoluteFile = path.resolve(__dirname, '../../../', originalRelativeFile);
+        const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
         const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
         calipers.measure(photoPath)
           .then((result) => {
             assert.equal(result.pages[0].width, photoDims.width, 'Photo width measured');
             assert.ok(result.pages[0].height <= photoDims.height, 'Photo height measured');
-          });
+            fs.unlink(photoPath, () => assert.pass('Clean up photo'));
+          })
+          .catch(e => assert.fail(e));
 
         const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
         calipers.measure(thumbPath)
           .then((result) => {
             assert.equal(result.pages[0].width, thumbDims.width, 'Thumb width measured');
             assert.ok(result.pages[0].height <= thumbDims.height, 'Thumb height measured');
-          });
+            fs.unlink(thumbPath, () => assert.pass('Clean up thumb'));
+          })
+          .catch(e => assert.fail(e));
       })
       .catch(error => assert.fail(error));
   });

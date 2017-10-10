@@ -4,8 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 const exists = require('../../exists/lib/exists');
+const log = require('../../log');
 const utils = require('../../utils/lib');
 
+const logger = log.createLogger('Rename: Rename lib');
 /*
 Reassign associated filename based on file without extension
 
@@ -71,19 +73,23 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
         });
       }
 
+      logger.debug(`rename.oldName=(${rename.oldName})`);
+
       exists.pathExists(rename.oldName)
         .then(renameFile)
         .catch((error) => {
-          reject(boom.wrap(error));
+          reject(boom.boomify(error));
         });
     }, 2);
 
     {
-      const fullPath = path.resolve(__dirname, '../../../', sourceFolder); // todo only read from public folder
+      const fullPath = utils.file.safePublicPath(sourceFolder);
 
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {
           let oldNames;
+
+          logger.debug(`transformFilenames fullPath=(${fullPath}) pair.current=(${pair.current}) path.join=(${path.join(fullPath, pair.current)})`);
 
           utils.file.glob(path.join(fullPath, pair.current), '.*', { ignoreExtension: true })
             .then((associatedFilenames) => {
@@ -96,11 +102,15 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
             .then((reassignFilenames) => {
               const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }));
 
+              logger.debug(`Reassign pairs first (${oldNames[0]}) New (${reassignPairs[0].newName})`);
+
               cb(null, reassignPairs);
             });
         } else {
           const oldName = path.join(fullPath, pair.current);
           const newName = path.join(fullPath, pair.future);
+
+          logger.debug(`Old (${oldName}) New (${newName})`);
 
           cb(null, { oldName, newName });
         }
@@ -108,15 +118,18 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
 
       const filenamePairs = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }));
 
+      logger.debug(`filenamePairs[0].current=(${filenamePairs[0].current})`);
+
       async.map(filenamePairs, transformFilenames, (error, transformedPairs) => {
         if (error) {
           return reject(error);
         }
 
+        logger.debug('async transformedPairs');
+        logger.debug(JSON.stringify(transformedPairs));
+
         if (Array.isArray(transformedPairs)) {
-          transformedPairs.forEach((pair) => {
-            q.push(pair);
-          });
+          q.push([...[].concat(...transformedPairs)]);
         } else {
           q.push(transformedPairs);
         }

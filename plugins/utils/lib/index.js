@@ -130,12 +130,39 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   glob(find, (error, files) => {
     // log.debug(find);
     if (error) {
-      reject(boom.wrap(error));
+      reject(boom.boomify(error));
     }
 
     resolve(files);
   });
 });
+
+/*
+ Construct a file system path from the history public folder
+
+ @method safePublicPath
+ @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
+ @return {Promise} string
+*/
+fileMethods.safePublicPath = (rawDestinationPath) => {
+  try {
+    const publicPath = path.join(__dirname, '../../../public');
+    const isRawInPublic = rawDestinationPath.startsWith(publicPath);
+    const safeDestinationPath = (isRawInPublic) ? rawDestinationPath : path.join(publicPath, rawDestinationPath);
+
+    if (!safeDestinationPath.startsWith(publicPath)) {
+      throw new URIError('Restrict to public file system');
+    }
+
+    return safeDestinationPath;
+  } catch (error) {
+    if (error.name === 'TypeError') {
+      return boom.notAcceptable('Invalid file system path');
+    }
+
+    return boom.boomify(error);
+  }
+};
 
 module.exports = {
   env, config, clone, file: fileMethods
