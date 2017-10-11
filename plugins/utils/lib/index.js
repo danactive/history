@@ -128,7 +128,6 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   }
   const find = `${absolutePath}${pattern}`;
   glob(find, (error, files) => {
-    // log.debug(find);
     if (error) {
       reject(boom.boomify(error));
     }
@@ -146,12 +145,13 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
 */
 fileMethods.safePublicPath = (rawDestinationPath) => {
   try {
-    const publicPath = path.join(__dirname, '../../../public');
-    const isRawInPublic = rawDestinationPath.startsWith(publicPath);
-    const safeDestinationPath = (isRawInPublic) ? rawDestinationPath : path.join(publicPath, rawDestinationPath);
+    const normalizedDestinationPath = path.normalize(rawDestinationPath);
+    const publicPath = path.normalize(path.join(__dirname, '../../../public'));
+    const isRawInPublic = normalizedDestinationPath.startsWith(publicPath);
+    const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath);
 
     if (!safeDestinationPath.startsWith(publicPath)) {
-      throw new URIError('Restrict to public file system');
+      throw new URIError(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`);
     }
 
     return safeDestinationPath;

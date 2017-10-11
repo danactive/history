@@ -36,4 +36,5 @@ function pathExists(verifyPath) {
     });
   });
 }
-exports.pathExists = pathExists;
+
+module.exports = { pathExists };

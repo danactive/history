@@ -1,7 +1,7 @@
 /* global require */
 const tape = require('tape-catch');
 
-tape('Verify rename library', { skip: true }, (describe) => {
+tape('Verify rename library', { skip: false }, (describe) => {
   const appRoot = require('app-root-path');
   const path = require('path');
 
