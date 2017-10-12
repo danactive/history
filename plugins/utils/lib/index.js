@@ -143,7 +143,7 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
  @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
  @return {Promise} string
 */
-fileMethods.safePublicPath = (rawDestinationPath) => {
+fileMethods.safePublicPath = rawDestinationPath => new Promise((resolve, reject) => {
   try {
     const normalizedDestinationPath = path.normalize(rawDestinationPath);
     const publicPath = path.normalize(path.join(__dirname, '../../../public'));
@@ -151,18 +151,18 @@ fileMethods.safePublicPath = (rawDestinationPath) => {
     const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath);
 
     if (!safeDestinationPath.startsWith(publicPath)) {
-      throw new URIError(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`);
+      return reject(boom.forbidden(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`));
     }
 
-    return safeDestinationPath;
+    return resolve(safeDestinationPath);
   } catch (error) {
-    if (error.name === 'TypeError') {
-      return boom.notAcceptable('Invalid file system path');
+    if (error.name === 'TypeError') { // path core module error
+      return reject(boom.notAcceptable('Invalid file system path'));
     }
 
-    return boom.boomify(error);
+    return reject(boom.boomify(error));
   }
-};
+});
 
 module.exports = {
   env, config, clone, file: fileMethods

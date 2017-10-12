@@ -36,31 +36,28 @@ tape('Verify resize library', { skip: false }, (describe) => {
       });
   });
 
-  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, (assert) => {
+  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, async (assert) => {
     const originalRelativeFile = path.join(fixturesPath, 'originals/2016-07-12.jpg');
-    plugin.resize(originalRelativeFile)
-      .then(() => {
-        assert.plan(6);
+    await plugin.resize(originalRelativeFile);
 
-        const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
-        const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
-        calipers.measure(photoPath)
-          .then((result) => {
-            assert.equal(result.pages[0].width, photoDims.width, 'Photo width measured');
-            assert.ok(result.pages[0].height <= photoDims.height, 'Photo height measured');
-            fs.unlink(photoPath, () => assert.pass('Clean up photo'));
-          })
-          .catch(e => assert.fail(e));
+    try {
+      const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+      const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
 
-        const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
-        calipers.measure(thumbPath)
-          .then((result) => {
-            assert.equal(result.pages[0].width, thumbDims.width, 'Thumb width measured');
-            assert.ok(result.pages[0].height <= thumbDims.height, 'Thumb height measured');
-            fs.unlink(thumbPath, () => assert.pass('Clean up thumb'));
-          })
-          .catch(e => assert.fail(e));
-      })
-      .catch(error => assert.fail(error));
+      const resultPhoto = await calipers.measure(photoPath);
+      assert.equal(resultPhoto.pages[0].width, photoDims.width, 'Photo width measured');
+      assert.ok(resultPhoto.pages[0].height <= photoDims.height, 'Photo height measured');
+      fs.unlink(photoPath, () => assert.pass('Clean up photo'));
+
+      const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
+      const resultThumb = await calipers.measure(thumbPath);
+      assert.equal(resultThumb.pages[0].width, thumbDims.width, 'Thumb width measured');
+      assert.ok(resultThumb.pages[0].height <= thumbDims.height, 'Thumb height measured');
+      fs.unlink(thumbPath, () => assert.pass('Clean up thumb'));
+    } catch (error) {
+      assert.fail(`Resize failed ${error}`);
+    }
+
+    assert.end();
   });
 });

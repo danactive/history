@@ -54,7 +54,7 @@ Renamed file paths
 @return {Promise}
 */
 function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const renamedFilenames = [];
     const q = async.queue((rename, next) => {
       function renameFile() {
@@ -73,13 +73,12 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
 
       exists.pathExists(rename.oldName)
         .then(renameFile)
-        .catch((error) => {
-          reject(boom.boomify(error));
-        });
+        .catch(error => reject(boom.boomify(error)));
     }, 2);
 
     {
-      const fullPath = utils.file.safePublicPath(sourceFolder);
+      const fullPath = await utils.file.safePublicPath(sourceFolder)
+        .catch(error => reject(boom.boomify(error)));
 
       const transformFilenames = (pair, cb) => {
         if (options.renameAssociated) {
@@ -110,7 +109,8 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
 
       async.map(filenamePairs, transformFilenames, (error, transformedPairs) => {
         if (error) {
-          return reject(error);
+          reject(error);
+          return;
         }
 
         if (Array.isArray(transformedPairs)) {
@@ -118,8 +118,6 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
         } else {
           q.push(transformedPairs);
         }
-
-        return undefined;
       });
     }
 

@@ -197,46 +197,92 @@ tape('Utilities', { skip: false }, (describe) => {
       .catch(error => assert.fail(error));
   });
 
-  describe.test('* File - Safe Public Path - Throws an exception', (assert) => {
-    assert.ok(lib.file.safePublicPath().isBoom, 'Execute with undefined arg');
-    assert.ok(lib.file.safePublicPath(null).isBoom, 'Execute with null arg');
-    assert.ok(lib.file.safePublicPath(true).isBoom, 'Execute with true arg');
+  function getFailurePath({
+    assert, testPath, message
+  }) {
+    lib.file.safePublicPath(testPath)
+      .then(() => assert.fail('Safe path incorrectly found'))
+      .catch((error) => {
+        if (error.isBoom) {
+          assert.pass(message);
+        }
+      });
+  }
 
-    assert.end();
+  function getSuccessPath({
+    assert, testPath, expected, message
+  }) {
+    lib.file.safePublicPath(testPath)
+      // .then(actual => assert.ok(actual.endsWith(expected), `${message} actual=(${actual}) expected=(${expected});`))
+      .then(actual => assert.ok(actual.endsWith(expected), message))
+      .catch(() => assert.fail(`Safe path incorrectly missed (${testPath});`));
+  }
+
+  describe.test('* File - Safe Public Path - Throws an exception', (assert) => {
+    assert.plan(3);
+
+    getFailurePath({
+      assert, testPath: undefined, message: 'Execute with undefined arg'
+    });
+
+    getFailurePath({
+      assert, testPath: null, message: 'Execute with null arg'
+    });
+
+    getFailurePath({
+      assert, testPath: true, message: 'Execute with true arg'
+    });
   });
 
   describe.test('* File - Safe Public Path - Traverse up directory(s)', (assert) => {
-    assert.ok(lib.file.safePublicPath('../').isBoom, 'Up one folder');
-    assert.ok(lib.file.safePublicPath('../../').isBoom, 'Up two folders');
-    assert.end();
-  });
+    assert.plan(2);
 
-  describe.test('* File - Safe Public Path - Blank', (assert) => {
-    const normalPath = path.normalize('/history/public');
-    const actual = lib.file.safePublicPath('').endsWith(normalPath);
-    assert.ok(actual, 'Public folder system path');
+    getFailurePath({
+      assert, testPath: '../', message: 'Up one folder'
+    });
 
-    assert.end();
+    getFailurePath({
+      assert, testPath: '../../', message: 'Up two folders'
+    });
   });
 
   describe.test('* File - Safe Public Path - Root', (assert) => {
-    const normalPath = path.normalize('/history/public/');
-    assert.ok(lib.file.safePublicPath('/').endsWith(normalPath));
-    assert.end();
+    assert.plan(2);
+
+    const normalPath = path.normalize('/history/public');
+
+    getSuccessPath({
+      assert, testPath: '', expected: normalPath, message: 'Public folder system path'
+    });
+
+    getSuccessPath({
+      assert, testPath: '/', expected: `${normalPath}/`, message: 'Public folder system path'
+    });
   });
 
   describe.test('* File - Safe Public Path - File', (assert) => {
+    assert.plan(1);
+
     const normalPath = path.normalize('/history/public/fixtures/exists.txt');
-    assert.ok(lib.file.safePublicPath('/fixtures/exists.txt').endsWith(normalPath));
-    assert.end();
+
+    getSuccessPath({
+      assert, testPath: '/fixtures/exists.txt', expected: normalPath, message: 'Public folder with file'
+    });
   });
 
   describe.test('* File - Safe Public Path - Root absolute path', (assert) => {
+    assert.plan(2);
+
     const testPath = path.join(__dirname, '../../../public/test/fixtures');
     const normalFilePath = path.normalize('/history/public/test/fixtures/exists.txt');
     const normalFolderPath = path.normalize('/history/public/test/fixtures');
-    assert.ok(lib.file.safePublicPath(path.join(testPath, '/exists.txt')).endsWith(normalFilePath));
-    assert.ok(lib.file.safePublicPath(testPath).endsWith(normalFolderPath));
-    assert.end();
+
+    getSuccessPath({
+      assert, testPath: path.join(testPath, '/exists.txt'), expected: normalFilePath, message: 'Public folder absolute file'
+    });
+
+    getSuccessPath({
+      assert, testPath, expected: normalFolderPath, message: 'Public folder with absolute folder'
+    });
   });
 });

@@ -65,4 +65,9 @@ tape('Exists: Library', { skip: false }, (describe) => {
     const testPath = '/test/fixtures/fakeFolder';
     failureTest(assert, testPath);
   });
+
+  describe.test('* Safe path throws error', (assert) => {
+    const testPath = true;
+    failureTest(assert, testPath);
+  });
 });
