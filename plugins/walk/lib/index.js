@@ -24,6 +24,8 @@ exports.register = (server, options, next) => {
 
   server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
 
+  server.route(routes.routeToUtils({ urlSegment: 'walk' }));
+
   server.route({
     method: 'GET',
     path: '/walk/static/bundle.js',
@@ -40,5 +42,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-walk',
-  version: '0.2.0'
+  version: '0.3.0'
 };

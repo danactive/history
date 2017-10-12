@@ -1,8 +1,10 @@
-const existsMod = require('../../exists/lib/exists');
-const filenamesMod = require('./filenames');
-const renameMod = require('./rename');
+const existsChecker = require('../../exists/lib/exists');
+const filenamer = require('./filenames');
+const renamer = require('./rename');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
+
+const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
 
 const handler = (request, reply) => {
   const {
@@ -11,29 +13,28 @@ const handler = (request, reply) => {
     }
   } = request;
 
-  const options = { renameAssociated };
-
-  const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
-
   const handleResponse = routes.createFormatReply({ formatJson, isRaw, reply });
   const handleError = routes.createErrorReply(reply);
 
-  const lookupFilenames = () => filenamesMod.futureFilenamesOutputs(fromFilenames, prefix);
+  const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix);
 
   const renamePaths = (futureFilenames) => {
+    const options = { renameAssociated };
     const toFilenames = futureFilenames.filenames;
-    renameMod.renamePaths(sourceFolder, fromFilenames, toFilenames, options)
+
+    renamer.renamePaths(sourceFolder, fromFilenames, toFilenames, options)
       .then(routes.createFormatReply({ formatJson: () => ({ xml: futureFilenames.xml, filenames: toFilenames }), isRaw, reply }))
       .catch(handleError);
   };
 
+
   if (preview === true) {
-    existsMod.pathExists(sourceFolder)
+    existsChecker.pathExists(sourceFolder)
       .then(lookupFilenames)
       .then(handleResponse)
       .catch(handleError);
   } else {
-    existsMod.pathExists(sourceFolder)
+    existsChecker.pathExists(sourceFolder)
       .then(lookupFilenames)
       .then(renamePaths)
       .catch(handleError);
@@ -72,5 +73,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'rename',
-  version: '2.1.0'
+  version: '2.1.1'
 };

@@ -61,16 +61,7 @@ exports.register = (server, options, next) => {
 
   server.route(routes.staticRoute({ pluginName: 'album', urlSegment: 'album' }));
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/utils.js',
-    config: {
-      description: 'Utility script',
-      handler: {
-        file: 'plugins/utils/public/utils.js'
-      }
-    }
-  });
+  server.route(routes.routeToUtils({ urlSegment: 'album' }));
 
   server.route({
     method: 'GET',
@@ -99,5 +90,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'view-album',
-  version: '0.5.0'
+  version: '0.5.1'
 };

@@ -20,6 +20,7 @@ function Page({ files }) {
         <section id="controls" data-has-image={hasImage} />
         <Contents files={files} />
         <script src="../walk/static/bundle.js" />
+        <script src="../walk/static/utils.js" />
       </body>
     </html>
   );
