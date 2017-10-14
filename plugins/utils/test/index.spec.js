@@ -252,11 +252,11 @@ tape('Utilities', { skip: false }, (describe) => {
     const normalPath = path.normalize('/history/public');
 
     getSuccessPath({
-      assert, testPath: '', expected: normalPath, message: 'Public folder system path'
+      assert, testPath: '', expected: normalPath, message: 'Public folder system path (Blank)'
     });
 
     getSuccessPath({
-      assert, testPath: '/', expected: `${normalPath}/`, message: 'Public folder system path'
+      assert, testPath: '/', expected: path.normalize(`${normalPath}/`), message: 'Public folder system path (Slash)'
     });
   });
 

@@ -147,8 +147,8 @@ tape('Verify rename library', { skip: false }, (describe) => {
         const uniqueResult = new Set(result);
 
         futureFilenames.forEach(async (filename) => {
-          const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
-          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
+          const publicPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+          assert.ok(uniqueResult.has(publicPath), `Public path matches future path (${publicPath})`);
         });
 
         await exist.pathExists(`${sourceFolder}/bee.bin`);
