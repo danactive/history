@@ -44,7 +44,7 @@
     "hapi-react-views": "^9.2.1",
     "hapi-swagger": "^7.4.0",
     "inert": "^4.0.2",
-    "joi": "^11.0.0",
+    "joi": "^13.0.0",
     "jquery-colorbox": "^1.6.4",
     "lout": "^10.0.1",
     "mime-types": "^2.1.12",
