@@ -1,26 +1,23 @@
 const tape = require('tape-catch');
 
 tape('Verify /rename route', { skip: false }, (describe) => {
-  const hapi = require('hapi');
+  const Hapi = require('hapi');
   const path = require('path');
 
   const lib = require('../lib');
   const libRename = require('../lib/rename');
   const utils = require('../../utils/lib');
 
-  const TIMEOUT = 1100;
-
   const plugins = [lib];
   const prefix = '2016-10-16';
   const port = utils.config.get('port');
 
-  describe.test('* Caught fake source folder', (assert) => {
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (error) => {
-      if (error) {
-        return assert.fail(error);
-      }
+  describe.test('* Caught fake source folder', async (assert) => {
+    try {
+      const server = new Hapi.Server();
+
+      server.connection({ port });
+      await server.register(plugins);
 
       const request = {
         method: 'POST',
@@ -28,75 +25,85 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable/FAKE'
+          source_folder: '/test/fixtures/renameable/FAKE'
         }
       };
 
-      server.inject(request, (result) => {
-        assert.equal(result.statusCode, 404);
-        assert.end();
-      });
+      const response = await server.inject(request);
 
-      return undefined;
-    });
+      assert.equal(response.statusCode, 404, 'Status code');
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   });
 
-  describe.test('* Rename filename based on prefix', (assert) => {
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (error) => {
-      if (error) {
-        return assert.fail(error);
-      }
+  describe.test('* Rename filename based on prefix', async (assert) => {
+    try {
+      const server = new Hapi.Server();
 
-      assert.plan(2);
+      server.connection({ port });
+      await server.register(plugins);
+
       const request = {
         method: 'POST',
         url: '/rename',
         payload: {
           filenames: ['aitch.html', 'gee.gif', 'em.md'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable'
+          raw: true,
+          source_folder: '/test/fixtures/renameable'
         }
       };
 
-      return server.inject(request, (response) => {
-        assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
-          `<item id="101"><filename>${prefix}-64.jpg</filename></item>` +
-          `<item id="102"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
+      const response = await server.inject(request);
+
+      let actual;
+      let expected;
+
+
+      actual = response.statusCode;
+      expected = 200;
+      assert.equal(actual, expected, 'HTTP status okay');
+
+
+      actual = response.result.message;
+      expected = undefined;
+      assert.equal(actual, expected, 'No response error');
+
+
+      actual = response.result.xml;
+      expected = `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
+        `<item id="101"><filename>${prefix}-64.jpg</filename></item>` +
+        `<item id="102"><filename>${prefix}-90.jpg</filename></item>`;
+      assert.equal(actual, expected, 'XML response is expected');
+
+
+      const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
+      const futureFilenames = ['aitch.html', 'gee.gif', 'em.md'];
+      const sourceFolder = '/test/fixtures/renameable';
+
+      const result = await libRename.renamePaths(sourceFolder, filenames, futureFilenames);
+      const uniqueResult = new Set(result);
+
+      futureFilenames.forEach(async (filename) => {
+        const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+        assert.ok(uniqueResult.has(fullPath), `Full path matches future path (${fullPath})`);
       });
-    });
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   });
 
-  describe.test('* Restore filenames to original', { timeout: TIMEOUT }, (assert) => {
-    const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
-    const futureFilenames = ['aitch.html', 'gee.gif', 'em.md'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
+  describe.test('* Rename filename based on prefix with associated files', async (assert) => {
+    try {
+      const server = new Hapi.Server();
 
-    libRename.renamePaths(sourceFolder, filenames, futureFilenames)
-      .then((result) => {
-        assert.plan(result.length);
-        const uniqueResult = new Set(result);
-        futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
-          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
-        });
-      })
-      .catch((error) => {
-        assert.fail(`Rename failed ${error}`);
-        assert.end();
-      });
-  });
-
-  describe.test('* Rename filename based on prefix with associated files', (assert) => {
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (error) => {
-      if (error) {
-        assert.fail(`Plugin failed due to ${error}`);
-        return assert.end();
-      }
+      server.connection({ port });
+      await server.register(plugins);
 
       const request = {
         method: 'POST',
@@ -104,39 +111,53 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         payload: {
           filenames: ['dee.dat', 'pee.pdf'],
           prefix,
-          source_folder: './plugins/rename/test/fixtures/renameable',
-          rename_associated: true
+          raw: true,
+          rename_associated: true,
+          source_folder: '/test/fixtures/renameable'
         }
       };
 
-      server.inject(request, (response) => {
-        assert.equal(response.statusCode, 200, 'HTTP status okay');
-        assert.equal(response.result.xml, `<item id="100"><filename>${prefix}-50.jpg</filename></item>` +
-          `<item id="101"><filename>${prefix}-90.jpg</filename></item>`, 'XML response is expected');
-        assert.end();
+      const response = await server.inject(request);
+
+      let actual;
+      let expected;
+
+
+      actual = response.statusCode;
+      expected = 200;
+      assert.equal(actual, expected, 'HTTP status');
+
+
+      actual = response.statusMessage;
+      expected = 'OK';
+      assert.equal(actual, expected, 'HTTP status message');
+
+
+      actual = response.result.message;
+      expected = undefined;
+      assert.equal(actual, expected, 'No response error');
+
+
+      actual = response.result.xml;
+      expected = `<item id="100"><filename>${prefix}-50.jpg</filename></item><item id="101"><filename>${prefix}-90.jpg</filename></item>`;
+      assert.equal(actual, expected, 'XML response is expected');
+
+
+      const filenames = [`${prefix}-50.dat`, `${prefix}-50.doc`, `${prefix}-50.docx`, `${prefix}-90.pdf`, `${prefix}-90.png`, `${prefix}-90.psd`];
+      const futureFilenames = ['dee.dat', 'dee.doc', 'dee.docx', 'pee.pdf', 'pee.png', 'pee.psd'];
+      const sourceFolder = '/test/fixtures/renameable';
+
+      const result = await libRename.renamePaths(sourceFolder, filenames, futureFilenames);
+      const uniqueResult = new Set(result);
+
+      futureFilenames.forEach(async (filename) => {
+        const publicPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+        assert.ok(uniqueResult.has(publicPath), `Public path matches future path (${publicPath})`);
       });
+    } catch (error) {
+      assert.fail(error);
+    }
 
-      return assert.pass('No error');
-    });
-  });
-
-  describe.test('* Restore filenames to original with associated files', { timeout: TIMEOUT }, (assert) => {
-    const filenames = [`${prefix}-50.dat`, `${prefix}-50.doc`, `${prefix}-50.docx`, `${prefix}-90.pdf`, `${prefix}-90.png`, `${prefix}-90.psd`];
-    const futureFilenames = ['dee.dat', 'dee.doc', 'dee.docx', 'pee.pdf', 'pee.png', 'pee.psd'];
-    const sourceFolder = './plugins/rename/test/fixtures/renameable';
-
-    libRename.renamePaths(sourceFolder, filenames, futureFilenames)
-      .then((result) => {
-        assert.plan(result.length);
-        const uniqueResult = new Set(result);
-        futureFilenames.forEach((filename) => {
-          const fullPath = path.resolve(__dirname, '../../../', sourceFolder, filename);
-          assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
-        });
-      })
-      .catch((error) => {
-        assert.fail(`Rename failed ${error}`);
-        assert.end();
-      });
+    assert.end();
   });
 });

@@ -4,12 +4,12 @@ const files = require('./files');
 
 const handler = ({ query: { path, raw: isRaw } }, reply) => {
   const viewPath = 'plugins/walk/components/page.jsx';
-  const outResponse = routes.createFormatReply({ reply, isRaw, viewPath });
-  const outError = routes.createErrorReply(reply);
+  const handleResponse = routes.createFormatReply({ reply, isRaw, viewPath });
+  const handleError = routes.createErrorReply(reply);
 
   files.listFiles(path)
-    .then(outResponse)
-    .catch(outError);
+    .then(handleResponse)
+    .catch(handleError);
 };
 
 exports.register = (server, options, next) => {
@@ -23,6 +23,8 @@ exports.register = (server, options, next) => {
   });
 
   server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
+
+  server.route(routes.routeToUtils({ urlSegment: 'walk' }));
 
   server.route({
     method: 'GET',
@@ -40,5 +42,5 @@ exports.register = (server, options, next) => {
 
 exports.register.attributes = {
   name: 'history-walk',
-  version: '0.2.0'
+  version: '0.3.0'
 };

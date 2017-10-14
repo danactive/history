@@ -24,7 +24,7 @@ cases.push({
 
 cases.push({
   name: '* Catch missing album',
-  options: { skip: true },
+  options: { skip: false },
   request: {
     gallery: 'FAKE'
   },

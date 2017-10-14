@@ -128,13 +128,40 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
   }
   const find = `${absolutePath}${pattern}`;
   glob(find, (error, files) => {
-    // log.debug(find);
     if (error) {
-      reject(boom.wrap(error));
+      reject(boom.boomify(error));
     }
 
     resolve(files);
   });
+});
+
+/*
+ Construct a file system path from the history public folder
+
+ @method safePublicPath
+ @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
+ @return {Promise} string
+*/
+fileMethods.safePublicPath = rawDestinationPath => new Promise((resolve, reject) => {
+  try {
+    const normalizedDestinationPath = path.normalize(rawDestinationPath);
+    const publicPath = path.normalize(path.join(__dirname, '../../../public'));
+    const isRawInPublic = normalizedDestinationPath.startsWith(publicPath);
+    const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath);
+
+    if (!safeDestinationPath.startsWith(publicPath)) {
+      return reject(boom.forbidden(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`));
+    }
+
+    return resolve(safeDestinationPath);
+  } catch (error) {
+    if (error.name === 'TypeError') { // path core module error
+      return reject(boom.notAcceptable('Invalid file system path'));
+    }
+
+    return reject(boom.boomify(error));
+  }
 });
 
 module.exports = {

@@ -12,11 +12,11 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
-  const outResponse = routes.createFormatReply({
+  const handleResponse = routes.createFormatReply({
     isRaw, formatJson, reply, viewPath
   });
 
-  outResponse({});
+  handleResponse({});
 };
 
 exports.register = (server, options, next) => {

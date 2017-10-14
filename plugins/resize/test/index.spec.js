@@ -2,8 +2,7 @@ const tape = require('tape-catch');
 
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
-  const hapi = require('hapi');
-  const path = require('path');
+  const Hapi = require('hapi');
 
   const lib = require('../lib');
   const utils = require('../../utils/lib');
@@ -18,7 +17,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   const THUMB_FOLDER_NAME = 'thumbs';
 
   describe.test('* Caught fake source', { skip: false }, (assert) => {
-    const server = new hapi.Server();
+    const server = new Hapi.Server();
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
@@ -43,7 +42,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   });
 
   describe.test('* Catch non-JPEG file', { skip: false }, (assert) => {
-    const server = new hapi.Server();
+    const server = new Hapi.Server();
     server.connection({ port });
     server.register(plugins, (error) => {
       if (error) {
@@ -55,7 +54,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         method: 'POST',
         url: '/resize',
         payload: {
-          source_path: './plugins/resize/test/fixtures/Capture.PNG'
+          source_path: '/test/fixtures/resizable/Capture.PNG'
         }
       };
 
@@ -67,14 +66,13 @@ tape('Verify /resize route', { skip: false }, (describe) => {
     });
   });
 
-  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, (assert) => {
-    const originalRelativeFile = './plugins/resize/test/fixtures/originals/2016-07-12.jpg';
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (error) => {
-      if (error) {
-        return assert.fail(error);
-      }
+  describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, async (assert) => {
+    try {
+      const originalRelativeFile = '/test/fixtures/resizable/originals/2016-07-12.jpg';
+      const server = new Hapi.Server();
+
+      server.connection({ port });
+      await server.register(plugins);
 
       const request = {
         method: 'POST',
@@ -84,26 +82,23 @@ tape('Verify /resize route', { skip: false }, (describe) => {
         }
       };
 
-      return server.inject(request, (response) => {
-        assert.plan(5);
+      const response = await server.inject(request);
+      assert.ok(response, 'Has response');
 
-        assert.ok(response, 'Has response');
+      const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+      const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
+      const resultsPhoto = await calipers.measure(photoPath);
+      assert.equal(resultsPhoto.pages[0].width, photoDims.width, 'Photo width measured');
+      assert.ok(resultsPhoto.pages[0].height <= photoDims.height, 'Photo height measured');
 
-        const originalAbsoluteFile = path.resolve(__dirname, '../../../', originalRelativeFile);
-        const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
-        calipers.measure(photoPath)
-          .then((result) => {
-            assert.equal(result.pages[0].width, photoDims.width, 'Photo width measured');
-            assert.ok(result.pages[0].height <= photoDims.height, 'Photo height measured');
-          });
+      const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
+      const resultsThumb = await calipers.measure(thumbPath);
+      assert.equal(resultsThumb.pages[0].width, thumbDims.width, 'Thumb width measured');
+      assert.ok(resultsThumb.pages[0].height <= thumbDims.height, 'Thumb height measured');
+    } catch (error) {
+      assert.fail(error);
+    }
 
-        const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
-        calipers.measure(thumbPath)
-          .then((result) => {
-            assert.equal(result.pages[0].width, thumbDims.width, 'Thumb width measured');
-            assert.ok(result.pages[0].height <= thumbDims.height, 'Thumb height measured');
-          });
-      });
-    });
+    assert.end();
   });
 });

@@ -196,4 +196,93 @@ tape('Utilities', { skip: false }, (describe) => {
       .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (.htm)'))
       .catch(error => assert.fail(error));
   });
+
+  function getFailurePath({
+    assert, testPath, message
+  }) {
+    lib.file.safePublicPath(testPath)
+      .then(() => assert.fail('Safe path incorrectly found'))
+      .catch((error) => {
+        if (error.isBoom) {
+          assert.pass(message);
+        }
+      });
+  }
+
+  function getSuccessPath({
+    assert, testPath, expected, message
+  }) {
+    lib.file.safePublicPath(testPath)
+      // .then(actual => assert.ok(actual.endsWith(expected), `${message} actual=(${actual}) expected=(${expected});`))
+      .then(actual => assert.ok(actual.endsWith(expected), message))
+      .catch(() => assert.fail(`Safe path incorrectly missed (${testPath});`));
+  }
+
+  describe.test('* File - Safe Public Path - Throws an exception', (assert) => {
+    assert.plan(3);
+
+    getFailurePath({
+      assert, testPath: undefined, message: 'Execute with undefined arg'
+    });
+
+    getFailurePath({
+      assert, testPath: null, message: 'Execute with null arg'
+    });
+
+    getFailurePath({
+      assert, testPath: true, message: 'Execute with true arg'
+    });
+  });
+
+  describe.test('* File - Safe Public Path - Traverse up directory(s)', (assert) => {
+    assert.plan(2);
+
+    getFailurePath({
+      assert, testPath: '../', message: 'Up one folder'
+    });
+
+    getFailurePath({
+      assert, testPath: '../../', message: 'Up two folders'
+    });
+  });
+
+  describe.test('* File - Safe Public Path - Root', (assert) => {
+    assert.plan(2);
+
+    const normalPath = path.normalize('/history/public');
+
+    getSuccessPath({
+      assert, testPath: '', expected: normalPath, message: 'Public folder system path (Blank)'
+    });
+
+    getSuccessPath({
+      assert, testPath: '/', expected: path.normalize(`${normalPath}/`), message: 'Public folder system path (Slash)'
+    });
+  });
+
+  describe.test('* File - Safe Public Path - File', (assert) => {
+    assert.plan(1);
+
+    const normalPath = path.normalize('/history/public/fixtures/exists.txt');
+
+    getSuccessPath({
+      assert, testPath: '/fixtures/exists.txt', expected: normalPath, message: 'Public folder with file'
+    });
+  });
+
+  describe.test('* File - Safe Public Path - Root absolute path', (assert) => {
+    assert.plan(2);
+
+    const testPath = path.join(__dirname, '../../../public/test/fixtures');
+    const normalFilePath = path.normalize('/history/public/test/fixtures/exists.txt');
+    const normalFolderPath = path.normalize('/history/public/test/fixtures');
+
+    getSuccessPath({
+      assert, testPath: path.join(testPath, '/exists.txt'), expected: normalFilePath, message: 'Public folder absolute file'
+    });
+
+    getSuccessPath({
+      assert, testPath, expected: normalFolderPath, message: 'Public folder with absolute folder'
+    });
+  });
 });

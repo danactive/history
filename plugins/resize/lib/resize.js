@@ -1,6 +1,5 @@
 const boom = require('boom');
 const gm = require('gm');
-const path = require('path');
 
 const existsMod = require('../../exists/lib/exists');
 const utils = require('../../utils/lib');
@@ -13,9 +12,7 @@ const utils = require('../../utils/lib');
 */
 function resize(sourcePath) {
   return new Promise((resolve, reject) => {
-    const originalPath = path.resolve(__dirname, '../../../', sourcePath);
-
-    function transformImages() {
+    function transformImages(originalPath) {
       const photoDims = utils.config.get('resizeDimensions.photo');
       const thumbDims = utils.config.get('resizeDimensions.thumb');
       const originalMimeType = utils.file.mimeType(originalPath);
@@ -79,9 +76,10 @@ function resize(sourcePath) {
       }
     }
 
-    existsMod.pathExists(originalPath)
+    utils.file.safePublicPath(sourcePath)
+      .then(existsMod.pathExists)
       .then(transformImages)
-      .catch(error => reject(boom.wrap(error)));
+      .catch(error => reject(boom.boomify(error)));
   });
 }
 
