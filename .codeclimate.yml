@@ -7,7 +7,7 @@ engines:
              mass_threshold: 80
   eslint:
     enabled: false
-    channel: "eslint-3"
+    channel: "eslint-4"
     config:
         extensions:
         - .js
@@ -17,3 +17,9 @@ ratings:
    paths:
    - "**.js"
    - "**.jsx"
+
+exclude_paths:
+- "plugins/album/public/lib/color-thief.js"
+- "plugins/album/test/cases.js"
+- "plugins/editAlbum/public/lib/json_to_xml.js"
+
