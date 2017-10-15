@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/danactive/history/compare/v3.0.0...v3.1.0) (2017-10-15)
+
+
+### Bug Fixes
+
+* **Lint:** Update dependencies and Lint new rules ([e48cb72](https://github.com/danactive/history/commit/e48cb72))
+* **package:** Update joi to version 13.0.0 ([7410dec](https://github.com/danactive/history/commit/7410dec)), closes [#227](https://github.com/danactive/history/issues/227)
+* **Rename:** Update unit test to use async [[#222](https://github.com/danactive/history/issues/222)] ([2706a27](https://github.com/danactive/history/commit/2706a27)) ([d901bc0](https://github.com/danactive/history/commit/d901bc0))
+* **Safe Public:** Update plugins exists, rename, resize to read from public folder only [[#222](https://github.com/danactive/history/issues/222)] ([090142d](https://github.com/danactive/history/commit/090142d))
+* **Walk:** Update datepicker only appears when current folder contains images [[#222](https://github.com/danactive/history/issues/222)] ([a0f658b](https://github.com/danactive/history/commit/a0f658b))
+* **Walk:** Update rename link to own component [[#222](https://github.com/danactive/history/issues/222)] ([2e97c0a](https://github.com/danactive/history/commit/2e97c0a))
+
+
+### Features
+
+* **Rename:** Allow preview of new filenames [[#222](https://github.com/danactive/history/issues/222)] ([1583dc3](https://github.com/danactive/history/commit/1583dc3))
+* **Walk:** Add datepicker in browser [[#222](https://github.com/danactive/history/issues/222)] ([09ec888](https://github.com/danactive/history/commit/09ec888))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/danactive/history/compare/v2.4.0...v3.0.0) (2017-09-30)
 
