@@ -10,6 +10,10 @@ function getAllFilenames() {
 
 const getDate = () => document.getElementById('date').value;
 
+const output = (message) => {
+  document.getElementById('console').value = JSON.stringify(message, null, '\t');
+};
+
 function onClick() {
   const filenames = getAllFilenames();
   const prefix = getDate();
@@ -37,21 +41,20 @@ function onClick() {
 
   return fetch('/admin/rename', options)
     .then(response => response.json())
-    .then((payload) => {
-      console.log(payload);
-    })
-    .catch(error => console.log(error.message));
+    .then(output)
+    .catch(output);
 }
 
 function Rename() {
-  return (
+  return [
     <button
       key="rename"
       onClick={onClick}
     >
-      Rename
-    </button>
-  );
+      Rename preview
+    </button>,
+    <textarea key="console" id="console" style={{ padding: '1em', fontFamily: '"Montserrat", "sans-serif"', fontSize: '1em' }} />
+  ];
 }
 
 module.exports = Rename;
