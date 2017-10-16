@@ -8,6 +8,7 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/',
     config: {
+      tags: ['static'],
       handler,
       description: 'Administration pages'
     }
@@ -17,6 +18,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-admin',
-  version: '0.1.0'
+  name: 'admin',
+  version: '0.1.1'
 };

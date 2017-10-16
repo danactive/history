@@ -21,7 +21,7 @@ exports.register = (server, options, next) => {
     path: '/resize',
     config: {
       handler,
-      tags: ['api', 'plugin', 'v0'],
+      tags: ['api'],
       validate: {
         payload: {
           source_path: validation.sourcePath
@@ -39,6 +39,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-resize',
-  version: '0.2.0'
+  name: 'resize',
+  version: '0.2.1'
 };

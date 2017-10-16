@@ -28,7 +28,7 @@ exports.register = (server, options, next) => {
     path: '/album',
     config: {
       handler,
-      tags: ['api', 'plugin'],
+      tags: ['api', 'react'],
       validate: {
         query: {
           raw: validation.raw
@@ -39,29 +39,12 @@ exports.register = (server, options, next) => {
 
   server.route(routes.staticRoute({ urlSegment: 'album', pluginName: 'editAlbum' }));
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/jquery.js',
-    config: {
-      description: 'jQuery library',
-      handler: {
-        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js'
-      }
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/album/assets/bundle.js',
-    handler: {
-      file: 'plugins/editAlbum/public/assets/bundle.js'
-    }
-  });
+  server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
 
   next();
 };
 
 exports.register.attributes = {
   name: 'edit-album',
-  version: '0.2.0'
+  version: '0.2.1'
 };
