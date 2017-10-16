@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const exists = require('../../exists/lib/exists');
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 
 /*
 Reassign associated filename based on file without extension

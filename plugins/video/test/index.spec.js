@@ -9,7 +9,7 @@ tape('Verify /video route', { skip: false }, (describe) => {
   const vision = require('vision');
 
   const lib = require('../lib');
-  const utils = require('../../utils/lib');
+  const utils = require('../../utils');
 
   const plugins = [inert, vision, lib];
   const port = utils.config.get('port');

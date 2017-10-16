@@ -1,7 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 
 function listFiles(destPath = '') {
   return new Promise((resolve, reject) => {

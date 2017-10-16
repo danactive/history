@@ -2,7 +2,7 @@ const boom = require('boom');
 const gm = require('gm');
 
 const existsMod = require('../../exists/lib/exists');
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 
 /*
  Resize single photo into originals, photos, thumbs folder
