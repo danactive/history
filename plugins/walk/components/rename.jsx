@@ -21,15 +21,16 @@ function onClick() {
 
   /*
   curl -d '{"filenames":["2001-03-21-01.jpg","2012-fireplace.jpg","2014-02-08-14.jpg"], "prefix": "2017-10-10",
-  "source_folder": "/galleries/gallery-demo/media/photos/lots", "preview": "true", "raw": "true"}'
+  "source_folder": "/galleries/gallery-demo/media/photos/lots", "preview": "false", "raw": "true", "rename_associated": "true"}'
   -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
    */
   const data = {
     filenames,
     prefix,
     source_folder: sourceFolder,
-    preview: true,
-    raw: true
+    preview: false,
+    raw: true,
+    rename_associated: true
   };
   const options = {
     headers: {
@@ -51,7 +52,7 @@ function Rename() {
       key="rename"
       onClick={onClick}
     >
-      Rename preview
+      Rename
     </button>,
     <textarea key="console" id="console" style={{ padding: '1em', fontFamily: '"Montserrat", "sans-serif"', fontSize: '1em' }} />
   ];

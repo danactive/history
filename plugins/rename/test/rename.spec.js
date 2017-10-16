@@ -37,49 +37,6 @@ tape('Verify rename library', { skip: false }, (describe) => {
   });
 
   /*
-  *      #####                                                            #     #
-  *     #     # #    # #####  #####   ####  #####  ##### ###### #####     ##   ## ###### #####  #   ##
-  *     #       #    # #    # #    # #    # #    #   #   #      #    #    # # # # #      #    # #  #  #
-  *      #####  #    # #    # #    # #    # #    #   #   #####  #    #    #  #  # #####  #    # # #    #
-  *           # #    # #####  #####  #    # #####    #   #      #    #    #     # #      #    # # ######
-  *     #     # #    # #      #      #    # #   #    #   #      #    #    #     # #      #    # # #    #
-  *      #####   ####  #      #       ####  #    #   #   ###### #####     #     # ###### #####  # #    #
-  *
-  */
-  describe.test('* Failing supported browser media', { skip: false }, (assert) => {
-    const file = '2016-12-31';
-    const filenames = [
-      `${file}.arw`,
-      `${file}.bmp`,
-      `${file}.psd`,
-      `${file}.pdf`,
-      `${file}.raw`
-    ];
-
-    assert.plan(filenames.length);
-    filenames.forEach((filename) => {
-      plugin.supportedBrowserMedia(filename)
-        .then(supported => assert.notOk(supported));
-    });
-  });
-
-  describe.test('* Passing supported browser media', { skip: false }, (assert) => {
-    const file = '2016-12-31';
-    const filenames = [
-      `${file}.jpg`,
-      `${file}.jpeg`,
-      `${file}.mp4`,
-      `${file}.webm`
-    ];
-
-    assert.plan(filenames.length);
-    filenames.forEach((filename) => {
-      plugin.supportedBrowserMedia(filename)
-        .then(supported => assert.ok(supported));
-    });
-  });
-
-  /*
   *     ######                                        ######
   *     #     # ###### #    #   ##   #    # ######    #     #   ##   ##### #    #  ####
   *     #     # #      ##   #  #  #  ##  ## #         #     #  #  #    #   #    # #
@@ -194,6 +151,34 @@ tape('Verify rename library', { skip: false }, (describe) => {
 
     await runTest({ filenames: originals, futureFilenames: temps, expectedFilenames: expectedTemp });
     await runTest({ filenames: temps, futureFilenames: originals, expectedFilenames: expectedOriginal });
+
+    assert.end();
+  });
+
+  describe.test('* Preview associated is true so six filenames', { skip: false }, async (assert) => {
+    const originals = ['bee.bat', 'tee.txt'];
+    const sourceFolder = '/test/fixtures/renameable';
+    const expectedTemp = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
+      'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt'];
+    const expectedOriginal = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt'];
+
+    try {
+      const result = await plugin.renamePaths(sourceFolder, originals, expectedTemp, { preview: true, renameAssociated: true });
+      const uniqueResult = new Set(result);
+
+      expectedOriginal.forEach(async (filename) => {
+        const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+        assert.notOk(uniqueResult.has(fullPath), `Preview path misses existing path (${filename})`);
+      });
+
+      await exist.pathExists(`${sourceFolder}/${expectedOriginal[0]}`);
+      assert.pass(`Associated ${expectedOriginal[0]} file remains untouched`);
+
+      await exist.pathExists(`${sourceFolder}/${expectedOriginal[2]}`);
+      assert.pass(`Associated ${expectedOriginal[2]} file remains untouched`);
+    } catch (error) {
+      assert.fail(`Rename failed ${error}`);
+    }
 
     assert.end();
   });

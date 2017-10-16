@@ -23,24 +23,6 @@ function reassignAssociated(absoluteFolderFilenames, futureFile) {
     }));
   });
 }
-exports.reassignAssociated = reassignAssociated;
-
-/*
-Viewing files in a browser should exclude source files
-
-@method supportedBrowserMedia
-@param {string} filename Filename path
-@return {Promise} publicly viewable file
-*/
-function supportedBrowserMedia(filename) {
-  return new Promise((resolve) => {
-    const findType = utils.file.type(filename);
-    const matchingTypes = utils.config.get('supportedFileTypes.photo')
-      .concat(utils.config.get('supportedFileTypes.video'));
-    resolve(matchingTypes.find(supportedType => supportedType === findType));
-  });
-}
-exports.supportedBrowserMedia = supportedBrowserMedia;
 
 /*
 Renamed file paths
@@ -53,22 +35,25 @@ Renamed file paths
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 */
-function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
+function renamePaths(sourceFolder, filenames, futureFilenames, { preview, renameAssociated } = {}) {
   return new Promise(async (resolve, reject) => {
     const renamedFilenames = [];
     const q = async.queue((rename, next) => {
       function renameFile() {
-        fs.rename(rename.oldName, rename.newName, (error) => {
-          if (error) {
-            reject(boom.wrap(error));
-          }
-
-          if (supportedBrowserMedia(rename.newName)) {
-            renamedFilenames.push(rename.newName);
-          }
-
+        if (preview && renameAssociated) {
+          renamedFilenames.push(rename.newName);
           next();
-        });
+        } else {
+          fs.rename(rename.oldName, rename.newName, (error) => {
+            if (error) {
+              reject(boom.wrap(error));
+            }
+
+            renamedFilenames.push(rename.newName);
+
+            next();
+          });
+        }
       }
 
       exists.pathExists(rename.oldName)
@@ -81,7 +66,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
         .catch(error => reject(boom.boomify(error)));
 
       const transformFilenames = (pair, cb) => {
-        if (options.renameAssociated) {
+        if (renameAssociated) {
           let oldNames;
 
           utils.file.glob(path.join(fullPath, pair.current), '.*', { ignoreExtension: true })
@@ -125,4 +110,8 @@ function renamePaths(sourceFolder, filenames, futureFilenames, options = {}) {
     q.drain = () => resolve(renamedFilenames);
   });
 }
-exports.renamePaths = renamePaths;
+
+module.exports = {
+  reassignAssociated,
+  renamePaths
+};
