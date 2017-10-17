@@ -1,7 +1,7 @@
 const propTypes = require('prop-types');
 const React = require('react');
 
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 
 const Source = require('./source.jsx');
 const Track = require('./track.jsx');

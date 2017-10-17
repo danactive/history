@@ -20,7 +20,7 @@ exports.register = (server, options, next) => {
     config: {
       description: 'GeoJSON for any album in any gallery',
       handler,
-      tags: ['api', 'plugin'],
+      tags: ['api'],
       validate: {
         query: {
           album_stem: validation.albumStem,
@@ -34,6 +34,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-geojson',
-  version: '0.1.0'
+  name: 'geojson',
+  version: '0.1.1'
 };

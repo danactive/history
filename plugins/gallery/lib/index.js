@@ -19,6 +19,7 @@ const routeHandler = (error, server, galleries, next) => {
     method: 'GET',
     path: '/static/gallery-{gallery}/{param*}',
     config: {
+      tags: ['static'],
       handler
     }
   });
@@ -31,6 +32,7 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/static/xslt/gallery.xslt',
     config: {
+      tags: ['static'],
       handler: {
         file: {
           path: path.join(__dirname, '../../../', 'public/xslt/gallery.xslt')
@@ -46,6 +48,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-gallery',
-  version: '0.1.0'
+  name: 'gallery',
+  version: '0.1.1'
 };

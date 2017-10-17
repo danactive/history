@@ -7,7 +7,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
   const path = require('path');
 
   const plugin = require('../lib/resize');
-  const utils = require('../../utils/lib');
+  const utils = require('../../utils');
 
   const ORIGINAL_FOLDER_NAME = 'originals';
   const PHOTO_FOLDER_NAME = 'photos';

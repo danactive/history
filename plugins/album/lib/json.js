@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 const validation = require('../../../lib/validation');
 
 function title(item) {

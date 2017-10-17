@@ -1,10 +1,11 @@
 const propTypes = require('prop-types');
 const React = require('react');
 
+const config = require('../../../config.json');
 const Contents = require('./contents.jsx');
 
 function areImages(file) {
-  return (file.mediumType === 'image');
+  return (file.mediumType === 'image' && config.supportedFileTypes.photo.includes(file.ext));
 }
 
 function Page({ files }) {
@@ -19,8 +20,8 @@ function Page({ files }) {
       <body>
         <section id="controls" data-has-image={hasImage} />
         <Contents files={files} />
-        <script src="../walk/static/bundle.js" />
         <script src="../walk/static/utils.js" />
+        <script src="../walk/static/bundle.js" />
       </body>
     </html>
   );

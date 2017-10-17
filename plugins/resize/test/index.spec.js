@@ -5,7 +5,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   const Hapi = require('hapi');
 
   const lib = require('../lib');
-  const utils = require('../../utils/lib');
+  const utils = require('../../utils');
 
   const plugins = [lib];
   const port = utils.config.get('port');

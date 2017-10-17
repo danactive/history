@@ -17,7 +17,7 @@ exports.register = (server, options, next) => {
     config: {
       handler,
       description: 'Watch HTML5 videos',
-      tags: ['api', 'plugin', 'v0'],
+      tags: ['react'],
       validate: {
         query: {
           sources: validation.sources,
@@ -33,6 +33,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-video',
-  version: '0.1.0'
+  name: 'video',
+  version: '0.1.1'
 };

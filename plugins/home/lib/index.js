@@ -12,7 +12,8 @@ exports.register = (server, options, next) => {
     path: '/',
     config: {
       description: 'Home landing page',
-      handler
+      handler,
+      tags: ['react']
     }
   });
 
@@ -20,6 +21,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-home',
-  version: '0.1.0'
+  name: 'home',
+  version: '0.1.1'
 };
