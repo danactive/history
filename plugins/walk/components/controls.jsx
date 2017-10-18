@@ -1,6 +1,7 @@
 /* global document */
 import moment from 'moment';
 import momentPropTypes from 'react-moment-proptypes';
+import 'react-dates/initialize';
 import { isInclusivelyBeforeDay, SingleDatePicker } from 'react-dates';
 import React from 'react';
 
