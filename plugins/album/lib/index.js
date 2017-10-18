@@ -61,34 +61,14 @@ exports.register = (server, options, next) => {
 
   server.route(routes.staticRoute({ pluginName: 'album', urlSegment: 'album' }));
 
-  server.route(routes.routeToUtils({ urlSegment: 'album' }));
+  server.route(routes.staticRouteUtils({ urlSegment: 'album' }));
 
-  server.route({
-    method: 'GET',
-    path: '/album/static/jquery.js',
-    config: {
-      description: 'jQuery library',
-      tags: ['jQuery'],
-      handler: {
-        file: 'plugins/utils/public/lib/jquery/dist/jquery.min.js'
-      }
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/album/bundle.js',
-    config: {
-      handler: {
-        file: 'plugins/album/public/assets/bundle.js'
-      }
-    }
-  });
+  server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
 
   next();
 };
 
 exports.register.attributes = {
   name: 'view-album',
-  version: '0.5.1'
+  version: '0.5.2'
 };

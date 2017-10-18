@@ -1,6 +1,6 @@
 const path = require('path');
 
-const utils = require('../../utils/lib');
+const utils = require('../../utils');
 
 /**
  * Count unique filenames

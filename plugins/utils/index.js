@@ -1,3 +1,3 @@
-const lib = require('./lib');
+const lib = require('./lib/utils.js');
 
 module.exports = lib;

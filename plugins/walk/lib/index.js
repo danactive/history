@@ -18,13 +18,13 @@ exports.register = (server, options, next) => {
     path: '/admin/walk-path',
     config: {
       handler,
-      tags: ['api', 'plugin']
+      tags: ['api', 'react']
     }
   });
 
   server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
 
-  server.route(routes.routeToUtils({ urlSegment: 'walk' }));
+  server.route(routes.staticRouteUtils({ urlSegment: 'walk' }));
 
   server.route({
     method: 'GET',
@@ -41,6 +41,6 @@ exports.register = (server, options, next) => {
 };
 
 exports.register.attributes = {
-  name: 'history-walk',
-  version: '0.3.0'
+  name: 'walk',
+  version: '0.3.1'
 };

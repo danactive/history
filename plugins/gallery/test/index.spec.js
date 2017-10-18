@@ -6,7 +6,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
   const inert = require('inert');
 
   const lib = require('../lib');
-  const utils = require('../../utils/lib');
+  const utils = require('../../utils');
 
   const plugins = [inert, lib];
   const port = utils.config.get('port');

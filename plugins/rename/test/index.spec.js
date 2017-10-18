@@ -6,7 +6,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   const lib = require('../lib');
   const libRename = require('../lib/rename');
-  const utils = require('../../utils/lib');
+  const utils = require('../../utils');
 
   const plugins = [lib];
   const prefix = '2016-10-16';

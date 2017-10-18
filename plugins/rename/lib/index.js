@@ -19,7 +19,7 @@ const handler = (request, reply) => {
   const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix);
 
   const renamePaths = (futureFilenames) => {
-    const options = { renameAssociated };
+    const options = { preview, renameAssociated };
     const toFilenames = futureFilenames.filenames;
 
     renamer.renamePaths(sourceFolder, fromFilenames, toFilenames, options)
