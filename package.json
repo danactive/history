@@ -105,7 +105,7 @@
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "url-loader": "^0.6.1",
-    "yargs": "^9.0.1"
+    "yargs": "^10.0.3"
   },
   "peerDependencies": {
     "eslint": "^4.1.0",
