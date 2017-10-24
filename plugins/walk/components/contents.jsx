@@ -2,11 +2,11 @@ const propTypes = require('prop-types');
 const React = require('react');
 
 const Placeholder = require('./placeholder');
-const utils = require('../../utils');
+const walkFiles = require('../lib/files');
 
 function Contents({ files }) {
   const thumbs = files.map((file) => {
-    if (file.mediumType === 'image' && utils.config.get('supportedFileTypes.photo').includes(file.ext)) {
+    if (walkFiles.areImages(file)) {
       return <Placeholder file={file} key={file.filename} />;
     }
 

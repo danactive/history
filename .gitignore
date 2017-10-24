@@ -2,7 +2,7 @@ node_modules
 npm-debug.log
 yarn-error.log
 
-public/js/
+public/todo
 plugins/*/public/assets
 
 coverage

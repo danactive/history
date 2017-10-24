@@ -47,13 +47,21 @@ function caption(item) {
 }
 
 
+function jpgFilenameInsensitive(filename) {
+  const currentExt = utils.file.type(filename);
+  const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg';
+  const imageFilename = filename.replace(currentExt, futureExt);
+
+  return imageFilename;
+}
+
 function getThumbPath(item, gallery) {
   if (!item || !item.filename) {
     return undefined;
   }
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
-  const imageFilename = filename.replace(utils.file.type(filename), 'jpg');
+  const imageFilename = jpgFilenameInsensitive(filename);
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
   return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
@@ -168,6 +176,7 @@ const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
 
 module.exports = {
   caption,
+  jpgFilenameInsensitive,
   getAlbum,
   getThumbPath,
   getVideoPath,

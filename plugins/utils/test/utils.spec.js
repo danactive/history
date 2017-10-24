@@ -42,8 +42,8 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.equal(lib.file.type('.gitignore'), 'gitignore', 'Dot file');
     assert.equal(lib.file.type('test.eslintrc'), 'eslintrc', 'Long type');
     assert.equal(lib.file.type('jquery.min.js'), 'js', 'Double type');
-    assert.equal(lib.file.type('image.JPG'), 'jpg', 'Uppercase type');
-    assert.equal(lib.file.type('image.JPeG'), 'jpeg', 'Mixed case type');
+    assert.equal(lib.file.type('image.JPG'), 'JPG', 'Uppercase type');
+    assert.equal(lib.file.type('image.JPeG'), 'JPeG', 'Mixed case type');
     assert.equal(lib.file.type('word.'), '', 'No type (w/ dot)');
     assert.equal(lib.file.type('word'), '', 'No type');
     assert.equal(lib.file.type('folder/file.type'), 'type', 'Normal type with relative path (forward slash)');

@@ -64,10 +64,10 @@ const fileMethods = {
     }
 
     if (filepath.lastIndexOf('.') === 0) {
-      return path.parse(filepath).name.toLowerCase().substr(1);
+      return path.parse(filepath).name.substr(1);
     }
 
-    return path.extname(filepath).toLowerCase().substr(1);
+    return path.extname(filepath).substr(1);
   },
   mimeType: extension => customMime(extension) || mime.lookup(extension),
   mediumType: (extension) => {

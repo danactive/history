@@ -1,6 +1,7 @@
 const glob = require('glob');
 const path = require('path');
 
+const config = require('../../../config.json');
 const utils = require('../../utils');
 
 function listFiles(destPath = '') {
@@ -37,4 +38,11 @@ function listFiles(destPath = '') {
   });
 }
 
-module.exports = { listFiles };
+function areImages(file) {
+  return (file.mediumType === 'image' && config.supportedFileTypes.photo.includes(file.ext.toLowerCase()));
+}
+
+module.exports = {
+  areImages,
+  listFiles
+};

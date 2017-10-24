@@ -31,7 +31,7 @@ Ensure yarn is installed globally `npm install yarn --global`
 * `yarn lint` enforces code syntax quality
 	* `yarn lint:filter plugins/video` apply lint to only video plugin folder
 * `yarn test` execute unit tests with code coverage report
-	* `yarn test:all -- --plugin=editAlbum` test specific plugin
+	* `yarn test:all --plugin=editAlbum` test and filter to specific plugin
 	* `yarn test:react` test React.js views across all plugins
 
 ## Technologies

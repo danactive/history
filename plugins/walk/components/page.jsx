@@ -1,15 +1,11 @@
 const propTypes = require('prop-types');
 const React = require('react');
 
-const config = require('../../../config.json');
 const Contents = require('./contents.jsx');
-
-function areImages(file) {
-  return (file.mediumType === 'image' && config.supportedFileTypes.photo.includes(file.ext));
-}
+const walkFiles = require('../lib/files');
 
 function Page({ files }) {
-  const hasImage = files.some(areImages);
+  const hasImage = files.some(walkFiles.areImages);
 
   return (
     <html lang="en">

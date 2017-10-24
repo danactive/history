@@ -145,4 +145,44 @@ test('Read album XML', { skip: false }, (describe) => {
 
     assert.end();
   });
+
+
+  describe.test('* Retain camera filename extension', { skip: false }, (assert) => {
+    const unit = lib.jpgFilenameInsensitive;
+    let actual;
+    let expected;
+
+
+    actual = unit('filename.jpg');
+    expected = 'filename.jpg';
+    assert.equal(actual, expected, 'jpg');
+
+
+    actual = unit('filename.JPG');
+    expected = 'filename.JPG';
+    assert.equal(actual, expected, 'JPG');
+
+
+    actual = unit('filename.JPg');
+    expected = 'filename.JPg';
+    assert.equal(actual, expected, 'JPg');
+
+
+    actual = unit('filename.JPeG');
+    expected = 'filename.jpg';
+    assert.equal(actual, expected, 'JPeG');
+
+
+    actual = unit('filename.jpeg');
+    expected = 'filename.jpg';
+    assert.equal(actual, expected, 'jpeg');
+
+
+    actual = unit('filename.png');
+    expected = 'filename.jpg';
+    assert.equal(actual, expected, 'png');
+
+
+    assert.end();
+  });
 });

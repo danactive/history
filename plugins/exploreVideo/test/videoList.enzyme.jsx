@@ -28,7 +28,7 @@ test('Explore Video - VideoList (React Components)', (describe) => {
 
 test('Explore Video - VideoListItem (React Components)', (describe) => {
   describe.test('* Render video text elements', (assert) => {
-    const wrapper = shallow(<VideoListItem index="1" onVideoSelect={() => {}} video={mock.items[0]} />);
+    const wrapper = shallow(<VideoListItem index={1} onVideoSelect={() => {}} video={mock.items[0]} />);
     let actual;
     let expected;
 
