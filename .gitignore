@@ -3,7 +3,7 @@ npm-debug.log
 yarn-error.log
 
 public/todo
-plugins/*/public/assets
+server/plugins/*/public/assets
 
 coverage
 .nyc_output
