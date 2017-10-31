@@ -1,15 +1,23 @@
 /* global getQueryByName */
-const propTypes = require('prop-types');
-const React = require('react');
+import propTypes from 'prop-types';
+import React from 'react';
+import styled from 'styled-components';
+
+import NormalImg from '../../../../app/components/Img';
+
+const Img = styled(NormalImg)`
+  width: 12.5rem;
+  height: 9.4rem;
+`;
 
 const Thumbnail = ({ filename }) => {
   const imgPath = `/public/static/${getQueryByName('path')}/${filename}`;
 
-  return (<li><img src={imgPath} alt="Preview small dimensions" width="200" height="150" /></li>);
+  return (<Img src={imgPath} alt="Preview small dimensions" />);
 };
 
 Thumbnail.propTypes = {
   filename: propTypes.string.isRequired
 };
 
-module.exports = Thumbnail;
+export default Thumbnail;
