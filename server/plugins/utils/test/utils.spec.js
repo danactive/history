@@ -163,39 +163,37 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.end();
   });
 
-  describe.test('* File - Glob', (assert) => {
-    assert.plan(8);
 
-    lib.file.glob('./server/plugins/utils/test/fixtures', '*.fake')
-      .then(files => assert.equal(files.length, [].length, 'Find nothing (*.fake)'))
-      .catch(error => assert.fail(error));
+  describe.test('* File - Glob', async (assert) => {
+    try {
+      const expectedHtm = path.join(__dirname, './fixtures/aitch.htm');
+      const expectedHtml = path.join(__dirname, './fixtures/aitch.html');
 
-    lib.file.glob('./server/plugins/utils/test/fixtures', '*.htm')
-      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.htm)'))
-      .catch(error => assert.fail(error));
+      let files = await lib.file.glob('./server/plugins/utils/test/fixtures', '*.fake');
+      assert.equal(files.length, [].length, 'Find nothing (*.fake)');
 
-    lib.file.glob('./server/plugins/utils/test/fixtures', '*.html')
-      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.html)'))
-      .catch(error => assert.fail(error));
+      files = await lib.file.glob('./server/plugins/utils/test/fixtures', '*.htm');
+      assert.equal(path.resolve(files[0]), expectedHtm, 'Find HTM (*.htm)');
 
-    lib.file.glob('./server/plugins/utils/test/fixtures', '*.htm*')
-      .then((files) => {
-        assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.htm*)');
-        assert.equal(path.resolve(files[1]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.htm*)');
-      })
-      .catch(error => assert.fail(error));
+      files = await lib.file.glob('./server/plugins/utils/test/fixtures', '*.html');
+      assert.equal(path.resolve(files[0]), expectedHtml, 'Find HTML (*.html)');
 
-    lib.file.glob('./server/plugins/utils/test/fixtures', '*.*')
-      .then((files) => {
-        assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (*.*)');
-        assert.equal(path.resolve(files[1]), path.join(__dirname, './fixtures/aitch.html'), 'Find HTML (*.*)');
-      })
-      .catch(error => assert.fail(error));
+      files = await lib.file.glob('./server/plugins/utils/test/fixtures', '*.htm*');
+      assert.equal(path.resolve(files[0]), expectedHtm, 'Find HTM (*.htm*)');
+      assert.equal(path.resolve(files[1]), expectedHtml, 'Find HTML (*.htm*)');
 
-    lib.file.glob('./server/plugins/utils/test/fixtures/aitch.html', '.htm', { ignoreExtension: true })
-      .then(files => assert.equal(path.resolve(files[0]), path.join(__dirname, './fixtures/aitch.htm'), 'Find HTM (.htm)'))
-      .catch(error => assert.fail(error));
+      files = await lib.file.glob('./server/plugins/utils/test/fixtures', '*.*');
+      assert.equal(path.resolve(files[0]), expectedHtm, 'Find HTM (*.*)');
+      assert.equal(path.resolve(files[1]), expectedHtml, 'Find HTML (*.*)');
+
+      files = await lib.file.glob('./server/plugins/utils/test/fixtures/aitch.html', '.htm', { ignoreExtension: true });
+      assert.equal(path.resolve(files[0]), expectedHtm, 'Find HTM (.htm)');
+    } catch (error) {
+      assert.fail(error);
+    }
+    assert.end();
   });
+
 
   function getFailurePath({
     assert, testPath, message

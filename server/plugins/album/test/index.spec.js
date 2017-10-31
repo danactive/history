@@ -1,6 +1,6 @@
 const test = require('tape-catch');
 
-test('Verify /album route', { skip: false }, (describe) => {
+test('Verify /view/album route', { skip: false }, (describe) => {
   const hapi = require('hapi');
   const hapiReactViews = require('hapi-react-views');
   const inert = require('inert');
