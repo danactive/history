@@ -12,7 +12,7 @@
     "test:all": "gulp --gulpfile server/plugins/gulpfile.js test",
     "test": "npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
-    "test:react": "babel-tape-runner server/plugins/*/test/*.enzyme.jsx | faucet",
+    "test:react": "babel-tape-runner server/plugins/*/test/*.enzyme.jsx app/components/*/test/*.enzyme.jsx | faucet",
     "debug:test:react": "node $NODE_DEBUG_OPTION ./node_modules/babel-tape-runner/bin/babel-tape-runner server/plugins/*/test/*.enzyme.jsx | faucet",
     "webpack": "webpack --config webpack.js",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
