@@ -1,23 +1,18 @@
 /* global getQueryByName */
 import propTypes from 'prop-types';
 import React from 'react';
-import styled from 'styled-components';
 
-import NormalImg from '../../../../app/components/Img';
+import ThumbImg from '../../../../app/components/ThumbImg';
 
-const Img = styled(NormalImg)`
-  width: 12.5rem;
-  height: 9.4rem;
-`;
-
-const Thumbnail = ({ filename }) => {
+const PreviewThumb = ({ filename }) => {
   const imgPath = `/public/static/${getQueryByName('path')}/${filename}`;
 
-  return (<Img src={imgPath} alt="Preview small dimensions" />);
+  return (<ThumbImg src={imgPath} />);
 };
 
-Thumbnail.propTypes = {
+
+PreviewThumb.propTypes = {
   filename: propTypes.string.isRequired
 };
 
-export default Thumbnail;
+module.exports = PreviewThumb;
