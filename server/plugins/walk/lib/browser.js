@@ -6,9 +6,9 @@ const ReactDOM = require('react-dom');
 
 const browser = require('../../../lib/browser');
 const Controls = require('../components/controls.jsx');
-const Thumbnail = require('../components/thumbnail.jsx');
+const PreviewThumbContainer = require('../../../../app/containers/PreviewThumb/index.jsx');
 
-const ThumbnailApp = React.createFactory(Thumbnail);
+const PreviewThumb = React.createFactory(PreviewThumbContainer);
 
 function renderViewDrain(containers) {
   if (containers.length === 0) {
@@ -18,7 +18,7 @@ function renderViewDrain(containers) {
   const container = containers.pop();
   const data = { filename: container.getAttribute('data-filename') };
 
-  ReactDOM.render(ThumbnailApp(data), container);
+  ReactDOM.render(PreviewThumb(data), container);
   renderViewDrain(containers);
 }
 

@@ -2,7 +2,7 @@
 import propTypes from 'prop-types';
 import React from 'react';
 
-import ThumbImg from '../../../../app/components/ThumbImg';
+import ThumbImg from '../../components/ThumbImg/index';
 
 const PreviewThumb = ({ filename }) => {
   const imgPath = `/public/static/${getQueryByName('path')}/${filename}`;
