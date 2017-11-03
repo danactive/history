@@ -61,7 +61,7 @@
     "rimraf": "^2.2.8",
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
-    "vision": "^4.1.0",
+    "vision": "^5.0.0",
     "webpack": "^3.4.1",
     "xml2js": "^0.4.17"
   },
