@@ -24,6 +24,7 @@ const ReactBoilerplate = {
         'chalk',
         'compression',
         'cross-env',
+        'dotenv',
         'express',
         'ip',
         'minimist',

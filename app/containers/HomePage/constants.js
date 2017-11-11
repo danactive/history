@@ -10,3 +10,6 @@
  */
 
 export const CHANGE_USERNAME = 'boilerplate/Home/CHANGE_USERNAME';
+export const LOAD_GALLERIES = 'boilerplate/Home/LOAD_GALLERIES';
+export const LOAD_GALLERIES_SUCCESS = 'boilerplate/Home/LOAD_GALLERIES_SUCCESS';
+export const LOAD_GALLERIES_ERROR = 'boilerplate/Home/LOAD_GALLERIES_ERROR';

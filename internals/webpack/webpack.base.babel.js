@@ -4,6 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+require('dotenv').config();
 
 // Remove this line once the following warning goes away (it was meant for webpack loader authors not users):
 // 'DeprecationWarning: loaderUtils.parseQuery() received a non-string value which can be problematic,
@@ -95,6 +96,12 @@ module.exports = (options) => ({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       },
+    }),
+
+    // TODO production mode should request this from the user via browser UI
+    new webpack.EnvironmentPlugin({
+      HISTORY_DROPBOX_ACCESS_TOKEN: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+      HISTORY_YOUTUBE_API_KEY: process.env.HISTORY_YOUTUBE_API_KEY,
     }),
     new webpack.NamedModulesPlugin(),
   ]),

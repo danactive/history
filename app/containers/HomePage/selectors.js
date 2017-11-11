@@ -11,7 +11,16 @@ const makeSelectUsername = () => createSelector(
   (homeState) => homeState.get('username')
 );
 
+const makeSelectGalleries = () => createSelector(
+  selectHome,
+  (homeState) => {
+    const contents = homeState.get('contents') || [];
+    return contents.map((content) => content.path_lower);
+  }
+);
+
 export {
   selectHome,
   makeSelectUsername,
+  makeSelectGalleries,
 };

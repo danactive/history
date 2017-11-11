@@ -24,12 +24,15 @@ import Input from './Input';
 import Section from './Section';
 import messages from './messages';
 import { loadRepos } from '../App/actions';
-import { changeUsername } from './actions';
-import { makeSelectUsername } from './selectors';
+import { changeUsername, loadGalleries } from './actions';
+import { makeSelectUsername, makeSelectGalleries } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
 export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+  componentWillMount() {
+    this.props.onLoad();
+  }
   /**
    * when initial state username is not null, submit the form to load repos
    */
@@ -62,6 +65,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
               <FormattedMessage {...messages.startProjectMessage} />
             </p>
           </CenteredSection>
+          <H2>Dropbox files</H2>
+          <p>{this.props.galleries}</p>
           <Section>
             <H2>
               <FormattedMessage {...messages.trymeHeader} />
@@ -90,6 +95,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 }
 
 HomePage.propTypes = {
+  onLoad: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([
     PropTypes.object,
@@ -102,10 +108,12 @@ HomePage.propTypes = {
   onSubmitForm: PropTypes.func,
   username: PropTypes.string,
   onChangeUsername: PropTypes.func,
+  galleries: PropTypes.arrayOf(PropTypes.shape),
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
+    onLoad: () => dispatch(loadGalleries()),
     onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
     onSubmitForm: (evt) => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
@@ -119,6 +127,7 @@ const mapStateToProps = createStructuredSelector({
   username: makeSelectUsername(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
+  galleries: makeSelectGalleries(),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
