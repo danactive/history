@@ -4,6 +4,7 @@
 
 import { createSelector } from 'reselect';
 
+// Memorized selectors
 const selectHome = (state) => state.get('home');
 
 const makeSelectUsername = () => createSelector(

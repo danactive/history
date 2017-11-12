@@ -1,19 +1,32 @@
 import 'whatwg-fetch';
 
 /**
- * Parses the JSON returned by a network request
+ * Parses if network response returned is JSON then parse otherwise return raw
  *
  * @param  {object} response A response from a network request
  *
- * @return {object}          The parsed JSON from the request
+ * @return {object}          The parsed JSON, or raw other type from the request
  */
-function parseJSON(response) {
+function parseResponse(response) {
   if (response.status === 204 || response.status === 205) {
     return null;
   }
+
+  if (response.headers.get('Content-Type') === 'application/xml') {
+    return response.text();
+  }
+
   return response.json();
 }
 
+// Convert text to XML document or return response
+function parseAgain(response) {
+  if (typeof response === 'string') {
+    return (new window.DOMParser()).parseFromString(response, 'text/xml');
+  }
+
+  return response;
+}
 /**
  * Checks if a network request came back fine, and throws an error if not
  *
@@ -42,5 +55,6 @@ function checkStatus(response) {
 export default function request(url, options) {
   return fetch(url, options)
     .then(checkStatus)
-    .then(parseJSON);
+    .then(parseResponse)
+    .then(parseAgain);
 }

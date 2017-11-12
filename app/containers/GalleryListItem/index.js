@@ -11,9 +11,17 @@ import { compose } from 'redux';
 
 import ListItem from 'components/ListItem';
 
+function capitalize(words) {
+  return words.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
+}
+
+function removePrefix(name) {
+  return name.replace(/gallery-/gi, '');
+}
+
 function GalleryListItem({ item }) {
   const content = (
-    <b>{item.name}</b>
+    <b>{capitalize(removePrefix(item.name))}</b>
   );
 
   return (
