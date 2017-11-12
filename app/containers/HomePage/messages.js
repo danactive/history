@@ -26,4 +26,8 @@ export default defineMessages({
     id: 'boilerplate.containers.HomePage.tryme.atPrefix',
     defaultMessage: '@',
   },
+  galleriesHeader: {
+    id: 'boilerplate.containers.HomePage.galleries.header',
+    defaultMessage: 'Dropbox galleries',
+  },
 });

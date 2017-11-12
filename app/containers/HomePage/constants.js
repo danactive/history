@@ -9,7 +9,7 @@
  * export const YOUR_ACTION_CONSTANT = 'yourproject/YourContainer/YOUR_ACTION_CONSTANT';
  */
 
-export const CHANGE_USERNAME = 'boilerplate/Home/CHANGE_USERNAME';
-export const LOAD_GALLERIES = 'boilerplate/Home/LOAD_GALLERIES';
-export const LOAD_GALLERIES_SUCCESS = 'boilerplate/Home/LOAD_GALLERIES_SUCCESS';
-export const LOAD_GALLERIES_ERROR = 'boilerplate/Home/LOAD_GALLERIES_ERROR';
+export const CHANGE_USERNAME = 'history/Home/CHANGE_USERNAME';
+export const LOAD_GALLERIES = 'history/Home/LOAD_GALLERIES';
+export const LOAD_GALLERIES_SUCCESS = 'history/Home/LOAD_GALLERIES_SUCCESS';
+export const LOAD_GALLERIES_ERROR = 'history/Home/LOAD_GALLERIES_ERROR';

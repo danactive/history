@@ -14,18 +14,20 @@ import { createStructuredSelector } from 'reselect';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import { makeSelectRepos, makeSelectLoading, makeSelectError } from 'containers/App/selectors';
+import { makeSelectRepos, makeSelectRepoLoading, makeSelectRepoError } from 'containers/App/selectors';
 import H2 from 'components/H2';
 import ReposList from 'components/ReposList';
+import GalleryList from 'components/GalleryList';
 import AtPrefix from './AtPrefix';
 import CenteredSection from './CenteredSection';
 import Form from './Form';
 import Input from './Input';
 import Section from './Section';
 import messages from './messages';
+
 import { loadRepos } from '../App/actions';
 import { changeUsername, loadGalleries } from './actions';
-import { makeSelectUsername, makeSelectGalleries } from './selectors';
+import { makeSelectUsername, makeSelectGalleries, makeSelectGalleryLoading, makeSelectGalleryError } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -43,11 +45,16 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   }
 
   render() {
-    const { loading, error, repos } = this.props;
+    const { repoLoading, repoError, repos, galleries, galleryLoading, galleryError } = this.props;
     const reposListProps = {
-      loading,
-      error,
+      loading: repoLoading,
+      error: repoError,
       repos,
+    };
+    const galleryListProps = {
+      loading: galleryLoading,
+      error: galleryError,
+      galleries,
     };
 
     return (
@@ -65,8 +72,10 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
               <FormattedMessage {...messages.startProjectMessage} />
             </p>
           </CenteredSection>
-          <H2>Dropbox files</H2>
-          <p>{this.props.galleries}</p>
+          <H2>
+            <FormattedMessage {...messages.galleriesHeader} />
+          </H2>
+          <GalleryList {...galleryListProps} />
           <Section>
             <H2>
               <FormattedMessage {...messages.trymeHeader} />
@@ -96,8 +105,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
 HomePage.propTypes = {
   onLoad: PropTypes.func.isRequired,
-  loading: PropTypes.bool,
-  error: PropTypes.oneOfType([
+  repoLoading: PropTypes.bool,
+  repoError: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.bool,
   ]),
@@ -108,7 +117,12 @@ HomePage.propTypes = {
   onSubmitForm: PropTypes.func,
   username: PropTypes.string,
   onChangeUsername: PropTypes.func,
-  galleries: PropTypes.arrayOf(PropTypes.shape),
+  galleries: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  galleryLoading: PropTypes.bool,
+  galleryError: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]),
 };
 
 export function mapDispatchToProps(dispatch) {
@@ -125,9 +139,11 @@ export function mapDispatchToProps(dispatch) {
 const mapStateToProps = createStructuredSelector({
   repos: makeSelectRepos(),
   username: makeSelectUsername(),
-  loading: makeSelectLoading(),
-  error: makeSelectError(),
+  repoLoading: makeSelectRepoLoading(),
+  repoError: makeSelectRepoError(),
   galleries: makeSelectGalleries(),
+  galleryLoading: makeSelectGalleryLoading(),
+  galleryError: makeSelectGalleryError(),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

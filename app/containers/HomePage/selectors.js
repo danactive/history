@@ -13,14 +13,23 @@ const makeSelectUsername = () => createSelector(
 
 const makeSelectGalleries = () => createSelector(
   selectHome,
-  (homeState) => {
-    const contents = homeState.get('contents') || [];
-    return contents.map((content) => content.path_lower);
-  }
+  (homeState) => homeState.get('contents') || []
+);
+
+const makeSelectGalleryLoading = () => createSelector(
+  selectHome,
+  (homeState) => homeState.get('galleryLoading')
+);
+
+const makeSelectGalleryError = () => createSelector(
+  selectHome,
+  (homeState) => homeState.get('galleryError')
 );
 
 export {
   selectHome,
   makeSelectUsername,
   makeSelectGalleries,
+  makeSelectGalleryLoading,
+  makeSelectGalleryError,
 };

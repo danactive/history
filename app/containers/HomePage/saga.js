@@ -1,6 +1,3 @@
-/**
- * Gets the repositories of the user from Github
- */
 import Dropbox from 'dropbox';
 import { call, put, select, takeLatest } from 'redux-saga/effects';
 import { LOAD_REPOS } from 'containers/App/constants';
@@ -28,11 +25,12 @@ export function* getRepos() {
   }
 }
 
+// Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
   const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
   try {
-    const galleries = yield call([dbx, dbx.filesListFolder], { path: '' });
+    const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
     yield put(galleriesLoaded(galleries));
   } catch (error) {
     yield put(galleriesLoadingError(error));
