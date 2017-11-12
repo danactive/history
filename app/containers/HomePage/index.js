@@ -18,6 +18,7 @@ import { makeSelectRepos, makeSelectRepoLoading, makeSelectRepoError } from 'con
 import H2 from 'components/H2';
 import ReposList from 'components/ReposList';
 import GalleryList from 'components/GalleryList';
+import GalleryListItem from 'containers/GalleryListItem';
 import AtPrefix from './AtPrefix';
 import CenteredSection from './CenteredSection';
 import Form from './Form';
@@ -54,7 +55,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
     const galleryListProps = {
       loading: galleryLoading,
       error: galleryError,
-      galleries,
+      items: galleries,
+      component: GalleryListItem,
     };
 
     return (

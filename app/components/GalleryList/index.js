@@ -1,6 +1,6 @@
 /**
 *
-* GalleryList
+* GenericList
 *
 */
 
@@ -10,9 +10,8 @@ import PropTypes from 'prop-types';
 import List from 'components/List';
 import ListItem from 'components/ListItem';
 import LoadingIndicator from 'components/LoadingIndicator';
-import GalleryListItem from 'containers/GalleryListItem';
 
-function GalleryList({ loading, error, galleries }) {
+function GenericList({ loading, error, items, component }) {
   if (loading) {
     return <List component={LoadingIndicator} />;
   }
@@ -24,17 +23,18 @@ function GalleryList({ loading, error, galleries }) {
     return <List component={ErrorComponent} />;
   }
 
-  if (galleries.length > 0) {
-    return <List items={galleries} component={GalleryListItem} />;
+  if (items.length > 0) {
+    return <List items={items} component={component} />;
   }
 
   return null;
 }
 
-GalleryList.propTypes = {
+GenericList.propTypes = {
+  component: PropTypes.func.isRequired,
   loading: PropTypes.bool,
   error: PropTypes.any,
-  galleries: PropTypes.any,
+  items: PropTypes.any,
 };
 
-export default GalleryList;
+export default GenericList;
