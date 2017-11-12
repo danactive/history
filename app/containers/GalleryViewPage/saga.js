@@ -13,7 +13,7 @@ export function* getDropboxGalleryFile({ galleryName }) {
   try {
     const galleryFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${galleryName}/xml/gallery.xml` });
     const galleryFile = yield call(request, galleryFileUrl.link);
-    // TODO parse XML to JSON
+
     yield put(galleryLoaded(galleryFile));
   } catch (error) {
     yield put(galleryLoadingError(error));

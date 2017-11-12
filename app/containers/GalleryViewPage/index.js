@@ -15,7 +15,7 @@ import { compose } from 'redux';
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 import { loadGallery } from './actions';
-import { makeSelectFirstAlbumName, makeSelectGalleryLoading, makeSelectGalleryError } from './selectors';
+import { makeSelectAlbums, makeSelectGalleryLoading, makeSelectGalleryError } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
@@ -27,6 +27,8 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
   }
 
   render() {
+    this.props.albums.forEach((album) => console.log(album.name));
+
     return (
       <div>
         <Helmet>
@@ -34,20 +36,19 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
           <meta name="description" content="Description of GalleryViewPage" />
         </Helmet>
         <FormattedMessage {...messages.header} />
-        <div>{this.props.firstAlbumName}</div>
       </div>
     );
   }
 }
 
 GalleryViewPage.propTypes = {
-  firstAlbumName: PropTypes.string.isRequired,
+  albums: PropTypes.arrayOf(PropTypes.shape).isRequired,
   onLoad: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  firstAlbumName: makeSelectFirstAlbumName(),
+  albums: makeSelectAlbums(),
   galleryLoading: makeSelectGalleryLoading(),
   galleryError: makeSelectGalleryError(),
 });

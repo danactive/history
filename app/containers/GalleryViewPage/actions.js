@@ -17,10 +17,10 @@ export function loadGallery(galleryName) {
   };
 }
 
-export function galleryLoaded(gallery) {
+export function galleryLoaded(galleryXml) {
   return {
     type: LOAD_GALLERY_SUCCESS,
-    gallery,
+    galleryXml,
   };
 }
 

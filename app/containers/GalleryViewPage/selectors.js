@@ -3,9 +3,9 @@ import { createSelector } from 'reselect';
 // Memorized selectors
 const selectPage = (state) => state.get('galleryViewPage');
 
-const makeSelectFirstAlbumName = () => createSelector(
+const makeSelectAlbums = () => createSelector(
   selectPage,
-  (homeState) => homeState.get('firstAlbumName') || ''
+  (homeState) => homeState.get('albums') || []
 );
 
 const makeSelectGalleryLoading = () => createSelector(
@@ -19,7 +19,7 @@ const makeSelectGalleryError = () => createSelector(
 );
 
 export {
-  makeSelectFirstAlbumName,
+  makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 };
