@@ -12,6 +12,9 @@ import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
+import GenericList from 'components/GenericList';
+import AlbumListItem from 'containers/AlbumListItem';
+
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 import { loadGallery } from './actions';
@@ -20,6 +23,7 @@ import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
 
+
 export class GalleryViewPage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   componentWillMount() {
     const { onLoad, match: { params } } = this.props;
@@ -27,7 +31,14 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
   }
 
   render() {
-    this.props.albums.forEach((album) => console.log(album.name));
+    const { albums, galleryLoading, galleryError } = this.props;
+
+    const albumListProps = {
+      loading: galleryLoading,
+      error: galleryError,
+      items: albums,
+      component: AlbumListItem,
+    };
 
     return (
       <div>
@@ -36,6 +47,7 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
           <meta name="description" content="Description of GalleryViewPage" />
         </Helmet>
         <FormattedMessage {...messages.header} />
+        <GenericList {...albumListProps} />
       </div>
     );
   }
@@ -43,6 +55,11 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
 
 GalleryViewPage.propTypes = {
   albums: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  galleryLoading: PropTypes.bool,
+  galleryError: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]),
   onLoad: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired,
 };

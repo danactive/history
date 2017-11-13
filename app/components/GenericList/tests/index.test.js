@@ -1,9 +1,9 @@
 // import React from 'react';
 // import { shallow } from 'enzyme';
 
-// import GalleryList from '../index';
+// import GenericList from '../index';
 
-describe('<GalleryList />', () => {
+describe('<GenericList />', () => {
   it('Expect to have unit tests specified', () => {
     expect(true).toEqual(false);
   });

@@ -30,6 +30,7 @@ function parseFromNode(ascendant) {
 function parseAlbum(albumXml) {
   const parseNode = parseFromNode(albumXml);
   return {
+    id: parseNode('album_name'),
     name: parseNode('album_name'),
     h1: parseNode('album_h1'),
     h2: parseNode('album_h2'),

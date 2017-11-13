@@ -17,7 +17,7 @@ import injectSaga from 'utils/injectSaga';
 import { makeSelectRepos, makeSelectRepoLoading, makeSelectRepoError } from 'containers/App/selectors';
 import H2 from 'components/H2';
 import ReposList from 'components/ReposList';
-import GalleryList from 'components/GalleryList';
+import GenericList from 'components/GenericList';
 import GalleryListItem from 'containers/GalleryListItem';
 import AtPrefix from './AtPrefix';
 import CenteredSection from './CenteredSection';
@@ -77,7 +77,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
           <H2>
             <FormattedMessage {...messages.galleriesHeader} />
           </H2>
-          <GalleryList {...galleryListProps} />
+          <GenericList {...galleryListProps} />
           <Section>
             <H2>
               <FormattedMessage {...messages.trymeHeader} />
