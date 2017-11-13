@@ -9,14 +9,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 
 import ListItem from 'components/ListItem';
 import { capitalize } from 'utils/strings';
+import { makeSelectGalleryName } from './selectors';
 
-function AlbumListItem({ item }) {
+function AlbumListItem({ item, galleryName }) {
   const content = (
-    // TODO gallery param must be dynamic; search from state route location
-    <Link to={`/album/view/${item.name}?gallery=`}>{capitalize(item.name)}</Link>
+    <Link to={`/album/view/${item.name}?gallery=${galleryName}`}>{capitalize(item.name)}</Link>
   );
 
   return (
@@ -25,18 +26,15 @@ function AlbumListItem({ item }) {
 }
 
 AlbumListItem.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
-  item: PropTypes.object,
+  galleryName: PropTypes.string.isRequired,
+  item: PropTypes.object.isRequired,
 };
 
+const mapStateToProps = createStructuredSelector({
+  galleryName: makeSelectGalleryName(),
+});
 
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
-const withConnect = connect(null, mapDispatchToProps);
+const withConnect = connect(mapStateToProps);
 
 export default compose(
   withConnect,
