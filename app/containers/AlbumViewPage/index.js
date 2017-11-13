@@ -18,7 +18,13 @@ import ThumbListItem from 'containers/ThumbListItem';
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 import { loadAlbum } from './actions';
-import { makeSelectThumbs, makeSelectAlbumLoading, makeSelectAlbumError } from './selectors';
+import {
+  makeSelectThumbs,
+  makeSelectAlbumLoading,
+  makeSelectAlbumError,
+  makeSelectThumbsLoading,
+  makeSelectThumbsError,
+} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import messages from './messages';
@@ -30,11 +36,17 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
   }
 
   render() {
-    const { thumbs, albumLoading, albumError } = this.props;
+    const {
+      thumbs,
+      albumLoading,
+      albumError,
+      thumbsLoading,
+      thumbsError,
+    } = this.props;
 
     const thumbsListProps = {
-      loading: albumLoading,
-      error: albumError,
+      loading: albumLoading || thumbsLoading,
+      error: albumError || thumbsError,
       items: thumbs,
       component: ThumbListItem,
     };
@@ -55,7 +67,12 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
 AlbumViewPage.propTypes = {
   thumbs: PropTypes.arrayOf(PropTypes.shape).isRequired,
   albumLoading: PropTypes.bool,
+  thumbsLoading: PropTypes.bool,
   albumError: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.bool,
+  ]),
+  thumbsError: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.bool,
   ]),
@@ -67,7 +84,9 @@ AlbumViewPage.propTypes = {
 const mapStateToProps = createStructuredSelector({
   thumbs: makeSelectThumbs(),
   albumLoading: makeSelectAlbumLoading(),
+  thumbsLoading: makeSelectThumbsLoading(),
   albumError: makeSelectAlbumError(),
+  thumbsError: makeSelectThumbsError(),
 });
 
 function mapDispatchToProps(dispatch) {

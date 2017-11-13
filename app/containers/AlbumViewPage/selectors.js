@@ -18,8 +18,20 @@ const makeSelectAlbumError = () => createSelector(
   (pageState) => pageState.get('albumError')
 );
 
+const makeSelectThumbsLoading = () => createSelector(
+  selectPage,
+  (pageState) => pageState.get('thumbsLoading')
+);
+
+const makeSelectThumbsError = () => createSelector(
+  selectPage,
+  (pageState) => pageState.get('thumbsError')
+);
+
 export {
   makeSelectThumbs,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
+  makeSelectThumbsLoading,
+  makeSelectThumbsError,
 };

@@ -13,7 +13,7 @@ import ListItem from 'components/ListItem';
 
 function ThumbListItem({ item }) {
   const content = (
-    <b>{item.filename}</b>
+    (item.link) ? <b><a href={item.link}>{item.filename}</a></b> : <b>{item.filename}</b>
   );
 
   return (
