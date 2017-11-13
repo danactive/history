@@ -18,7 +18,7 @@ function GenericList({ loading, error, items, component }) {
 
   if (error !== false) {
     const ErrorComponent = () => (
-      <ListItem item={'Something went wrong, please try again!'} />
+      <ListItem item={`Something went wrong, please try again! Reason (${error.message})`} />
     );
     return <List component={ErrorComponent} />;
   }

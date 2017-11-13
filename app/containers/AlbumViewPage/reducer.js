@@ -5,6 +5,10 @@
  */
 
 import { fromJS } from 'immutable';
+import dotProp from 'dot-prop';
+
+import { normalizeError } from 'utils/error';
+
 import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
@@ -53,7 +57,11 @@ function albumViewPageReducer(state = initialState, action) {
 
     case LOAD_ALBUM_ERROR:
       return state
-        .set('albumError', action.error)
+        .set('albumError', normalizeError({
+          message: dotProp.get(action, 'error.error.error_summary'),
+          status: dotProp.get(action, 'error.status'),
+          debug: dotProp.get(action, 'error.response.req._data.path'),
+        }))
         .set('albumLoading', false);
 
     default:

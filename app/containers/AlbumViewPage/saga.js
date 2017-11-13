@@ -7,11 +7,10 @@ import { LOAD_ALBUM } from './constants';
 import { albumLoaded, albumLoadingError } from './actions';
 
 // Dropbox API v2 request/response handler
-export function* getDropboxAlbumFile({ albumName }) {
+export function* getDropboxAlbumFile({ albumName, galleryName }) {
   const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
   try {
-    const galleryName = 'dan';
     const albumFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${galleryName}/xml/album_${albumName}.xml` });
     const albumFile = yield call(request, albumFileUrl.link);
 

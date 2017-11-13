@@ -10,9 +10,14 @@ import {
   LOAD_ALBUM_ERROR,
 } from './constants';
 
-export function loadAlbum(albumName) {
+function parseQueryString(find, from) {
+  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
+}
+
+export function loadAlbum(querystring, albumName) {
   return {
     type: LOAD_ALBUM,
+    galleryName: parseQueryString('gallery', querystring),
     albumName,
   };
 }
