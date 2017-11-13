@@ -7,17 +7,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 
 import ListItem from 'components/ListItem';
-
-function capitalize(words) {
-  return words.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
-}
+import { capitalize } from 'utils/strings';
 
 function AlbumListItem({ item }) {
   const content = (
-    <b>{capitalize(item.name)}</b>
+    // TODO gallery param must be dynamic; search from state route location
+    <Link to={`/album/view/${item.name}?gallery=`}>{capitalize(item.name)}</Link>
   );
 
   return (

@@ -1,34 +1,27 @@
 /**
  *
- * GalleryListItem
+ * ThumbListItem
  *
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 
 import ListItem from 'components/ListItem';
-import { capitalize } from 'utils/strings';
 
-function removePrefix(name) {
-  return name.replace(/gallery-/gi, '');
-}
-
-function GalleryListItem({ item }) {
-  const galleryName = removePrefix(item.name);
+function ThumbListItem({ item }) {
   const content = (
-    <Link to={`/gallery/view/${galleryName}`}>{capitalize(galleryName)}</Link>
+    <b>{item.filename}</b>
   );
 
   return (
-    <ListItem key={`gallery-list-item-${item.id}`} item={content} />
+    <ListItem key={`thumbs-list-item-${item.id}`} item={content} />
   );
 }
 
-GalleryListItem.propTypes = {
+ThumbListItem.propTypes = {
   // dispatch: PropTypes.func.isRequired,
   item: PropTypes.object,
 };
@@ -44,4 +37,4 @@ const withConnect = connect(null, mapDispatchToProps);
 
 export default compose(
   withConnect,
-)(GalleryListItem);
+)(ThumbListItem);

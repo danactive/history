@@ -30,4 +30,3 @@ export function galleryLoadingError(error) {
     error,
   };
 }
-

@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
+import AlbumViewPage from 'containers/AlbumViewPage/Loadable';
 import HomePage from 'containers/HomePage/Loadable';
 import FeaturePage from 'containers/FeaturePage/Loadable';
 import GalleryViewPage from 'containers/GalleryViewPage/Loadable';
@@ -39,6 +40,7 @@ export default function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route path="/album/view/:albumName" component={AlbumViewPage} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/gallery/view/:galleryName" component={GalleryViewPage} />
         <Route path="" component={NotFoundPage} />
