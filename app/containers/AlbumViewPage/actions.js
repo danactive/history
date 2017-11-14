@@ -47,10 +47,11 @@ export function loadAlbum(querystring, albumName) {
   };
 }
 
-export function albumLoaded(albumXml) {
+export function albumLoaded(albumXml, galleryName) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     thumbs: Array.from(albumXml.getElementsByTagName('item')).map(parseAlbum),
+    galleryName,
   };
 }
 

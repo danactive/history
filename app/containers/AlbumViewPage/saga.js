@@ -14,24 +14,26 @@ import {
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
+export const albumXmlArgs = ({ albumName, galleryName }) => ({
+  path: `/public/gallery-${galleryName}/xml/album_${albumName}.xml`,
+});
+
 // Dropbox API v2 request/response handler
 export function* getDropboxAlbumFile({ albumName, galleryName }) {
   try {
-    const path = `/public/gallery-${galleryName}/xml/album_${albumName}.xml`;
-    const albumFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path });
+    const albumFileUrl = yield call([dbx, 'filesGetTemporaryLink'], albumXmlArgs({ albumName, galleryName }));
     const albumFile = yield call(request, albumFileUrl.link);
 
-    yield put(albumLoaded(albumFile));
+    yield put(albumLoaded(albumFile, galleryName));
   } catch (error) {
     yield put(albumLoadingError(error));
   }
 }
 
-export function* getDropboxThumbFilename({ thumbs }) {
+export function* getDropboxThumbFilename({ thumbs, galleryName }) {
   try {
-    const galleryName = 'demo';
     const yields = thumbs.map((thumb) => {
-      if (thumb.filename.toLowerCase().includes('jpg')) {
+      if (thumb.filename.toLowerCase().includes('jpg')) { // TODO add video support by dropping this `if`
         const year = thumb.filename.substr(0, 4);
         const path = `/public/gallery-${galleryName}/media/thumbs/${year}/${thumb.filename}`;
         return call([dbx, dbx.filesGetTemporaryLink], { path }); // eslint-disable-line redux-saga/yield-effects
