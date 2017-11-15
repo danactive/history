@@ -16,29 +16,6 @@ function parseQueryString(find, from) {
   return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
 }
 
-function parseFromNode(ascendant) {
-  return (descendant) => {
-    const tags = ascendant.getElementsByTagName(descendant);
-    if (tags.length > 0) {
-      return tags[0].innerHTML;
-    }
-
-    return '';
-  };
-}
-
-function parseAlbum(albumXml) {
-  const parseNode = parseFromNode(albumXml);
-  return {
-    id: albumXml.getAttribute('id'),
-    filename: parseNode('filename'),
-    city: parseNode('photo_city'),
-    location: parseNode('photo_loc'),
-    geo: [parseNode('lon'), parseNode('lat')],
-    caption: parseNode('thumb_caption'),
-  };
-}
-
 export function loadAlbum(querystring, albumName) {
   return {
     type: LOAD_ALBUM,
@@ -47,10 +24,10 @@ export function loadAlbum(querystring, albumName) {
   };
 }
 
-export function albumLoaded(albumXml, galleryName) {
+export function albumLoaded(thumbs, galleryName) {
   return {
     type: LOAD_ALBUM_SUCCESS,
-    thumbs: Array.from(albumXml.getElementsByTagName('item')).map(parseAlbum),
+    thumbs,
     galleryName,
   };
 }

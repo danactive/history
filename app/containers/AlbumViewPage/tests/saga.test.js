@@ -1,31 +1,38 @@
-/**
- * Test  sagas
- */
-
+/* eslint-disable redux-saga/yield-effects */
 import Dropbox from 'dropbox';
 
-/* eslint-disable redux-saga/yield-effects */
-import { call } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 
-import request from 'utils/request';
+import request, { parseTextXml } from 'utils/request';
 
 import { getDropboxAlbumFile, albumXmlArgs } from '../saga';
+import { LOAD_ALBUM_SUCCESS } from '../constants';
 
 describe('AlbumViewPage Saga - getDropboxAlbumFile', () => {
-  const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
-
   const testArgs = { albumName: 'sample', galleryName: 'demo' };
   const generator = getDropboxAlbumFile(testArgs);
 
   it('should first yield an Effect call', () => {
-    const actual = generator.next().value;
-    const expected = call([dbx, 'filesGetTemporaryLink'], albumXmlArgs(testArgs));
-    expect(actual).toEqual(expected);
+    const received = generator.next().value;
+    const expected = call([new Dropbox(), 'filesGetTemporaryLink'], albumXmlArgs(testArgs));
+    expect(received).toEqual(expected);
   });
 
   it('should second yield an Effect call', () => {
-    const actual = generator.next({ link: 'fake address' }).value;
+    const received = generator.next({ link: 'fake address' }).value;
     const expected = call(request, 'fake address');
-    expect(actual).toEqual(expected);
+    expect(received).toEqual(expected);
+  });
+
+  it('should third yield an Effect call', () => {
+    const received = generator.next(parseTextXml('')).value;
+    const expected = put({ type: LOAD_ALBUM_SUCCESS, thumbs: [], galleryName: 'demo' });
+    expect(received).toEqual(expected);
+  });
+
+  it('should be done', () => {
+    const received = generator.next().done;
+    const expected = true;
+    expect(received).toEqual(expected);
   });
 });

@@ -20,7 +20,7 @@ function parseResponse(response) {
 }
 
 // Convert text to XML document or return response
-function parseAgain(response) {
+export function parseTextXml(response) {
   if (typeof response === 'string') {
     return (new window.DOMParser()).parseFromString(response, 'text/xml');
   }
@@ -56,5 +56,5 @@ export default function request(url, options) {
   return fetch(url, options)
     .then(checkStatus)
     .then(parseResponse)
-    .then(parseAgain);
+    .then(parseTextXml);
 }

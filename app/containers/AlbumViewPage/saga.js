@@ -14,6 +14,29 @@ import {
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
+function parseFromNode(ascendant) {
+  return (descendant) => {
+    const tags = ascendant.getElementsByTagName(descendant);
+    if (tags.length > 0) {
+      return tags[0].innerHTML;
+    }
+
+    return '';
+  };
+}
+
+function parseAlbum(albumXml) {
+  const parseNode = parseFromNode(albumXml);
+  return {
+    id: albumXml.getAttribute('id'),
+    filename: parseNode('filename'),
+    city: parseNode('photo_city'),
+    location: parseNode('photo_loc'),
+    geo: [parseNode('lon'), parseNode('lat')],
+    caption: parseNode('thumb_caption'),
+  };
+}
+
 export const albumXmlArgs = ({ albumName, galleryName }) => ({
   path: `/public/gallery-${galleryName}/xml/album_${albumName}.xml`,
 });
@@ -21,10 +44,11 @@ export const albumXmlArgs = ({ albumName, galleryName }) => ({
 // Dropbox API v2 request/response handler
 export function* getDropboxAlbumFile({ albumName, galleryName }) {
   try {
-    const albumFileUrl = yield call([dbx, 'filesGetTemporaryLink'], albumXmlArgs({ albumName, galleryName }));
-    const albumFile = yield call(request, albumFileUrl.link);
+    const albumXmlUrl = yield call([dbx, 'filesGetTemporaryLink'], albumXmlArgs({ albumName, galleryName }));
+    const albumXmlFile = yield call(request, albumXmlUrl.link);
+    const thumbs = Array.from(albumXmlFile.getElementsByTagName('item')).map(parseAlbum);
 
-    yield put(albumLoaded(albumFile, galleryName));
+    yield put(albumLoaded(thumbs, galleryName));
   } catch (error) {
     yield put(albumLoadingError(error));
   }
