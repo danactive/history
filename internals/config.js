@@ -27,6 +27,7 @@ const ReactBoilerplate = {
         'dotenv',
         'express',
         'ip',
+        'jsdom',
         'minimist',
         'sanitize.css',
       ],

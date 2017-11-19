@@ -11,70 +11,64 @@ import {
   thumbLinksLoaded,
   thumbLinksLoadingError,
 } from './actions';
+import { getItemNodes, parseItemNode } from './transformXmlToJson';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
-function parseFromNode(ascendant) {
-  return (descendant) => {
-    const tags = ascendant.getElementsByTagName(descendant);
-    if (tags.length > 0) {
-      return tags[0].innerHTML;
-    }
 
-    return '';
-  };
-}
-
-function parseAlbum(albumXml) {
-  const parseNode = parseFromNode(albumXml);
-  return {
-    id: albumXml.getAttribute('id'),
-    filename: parseNode('filename'),
-    city: parseNode('photo_city'),
-    location: parseNode('photo_loc'),
-    geo: [parseNode('lon'), parseNode('lat')],
-    caption: parseNode('thumb_caption'),
-  };
-}
-
-export const albumXmlArgs = ({ albumName, galleryName }) => ({
+export const argsAlbumXmlPath = ({ galleryName, albumName }) => ({
   path: `/public/gallery-${galleryName}/xml/album_${albumName}.xml`,
 });
 
-// Dropbox API v2 request/response handler
-export function* getDropboxAlbumFile({ albumName, galleryName }) {
+
+export const argsThumbImgPath = (galleryName, filename) => {
+  const year = filename.substr(0, 4);
+
+  return {
+    path: `/public/gallery-${galleryName}/media/thumbs/${year}/${filename}`,
+  };
+};
+
+
+export function thumbFilenameCallsDropbox({ galleryName, thumbs }) {
+  return thumbs.map((thumb) => {
+    if (thumb.filename.toLowerCase().includes('jpg')) { // TODO add video support by dropping this `if`
+      // eslint-disable-next-line redux-saga/yield-effects
+      return call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath(galleryName, thumb.filename));
+    }
+
+    return { link: null };
+  });
+}
+
+
+// saga WORKER for LOAD_ALBUM
+export function* getAlbumFileOnDropbox({ galleryName, albumName }) {
   try {
-    const albumXmlUrl = yield call([dbx, 'filesGetTemporaryLink'], albumXmlArgs({ albumName, galleryName }));
-    const albumXmlFile = yield call(request, albumXmlUrl.link);
-    const thumbs = Array.from(albumXmlFile.getElementsByTagName('item')).map(parseAlbum);
+    const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ albumName, galleryName }));
+    const xmlFile = yield call(request, xmlUrl.link);
+    const thumbs = getItemNodes(xmlFile).map(parseItemNode);
 
     yield put(albumLoaded(thumbs, galleryName));
   } catch (error) {
-    yield put(albumLoadingError(error));
+    yield put(albumLoadingError(normalizeError(error)));
   }
 }
 
-export function* getDropboxThumbFilename({ thumbs, galleryName }) {
+// saga WORKER for LOAD_ALBUM_SUCCESS
+export function* getThumbPathsOnDropbox({ galleryName, thumbs }) {
   try {
-    const yields = thumbs.map((thumb) => {
-      if (thumb.filename.toLowerCase().includes('jpg')) { // TODO add video support by dropping this `if`
-        const year = thumb.filename.substr(0, 4);
-        const path = `/public/gallery-${galleryName}/media/thumbs/${year}/${thumb.filename}`;
-        return call([dbx, dbx.filesGetTemporaryLink], { path }); // eslint-disable-line redux-saga/yield-effects
-      }
-
-      return { link: null };
-    });
-    const dropboxResults = yield all(yields);
-    const out = thumbs.map((thumb, index) => ({ ...thumb, link: dropboxResults[index].link }));
-    yield put(thumbLinksLoaded(out));
+    const dropboxResults = yield all(thumbFilenameCallsDropbox({ galleryName, thumbs }));
+    const linkedThumbs = thumbs.map((thumb, index) => ({ ...thumb, link: dropboxResults[index].link }));
+    yield put(thumbLinksLoaded(linkedThumbs));
   } catch (error) {
     yield put(thumbLinksLoadingError(normalizeError(error)));
   }
 }
 
+
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
-  yield takeLatest(LOAD_ALBUM, getDropboxAlbumFile);
-  yield takeLatest(LOAD_ALBUM_SUCCESS, getDropboxThumbFilename);
+  yield takeLatest(LOAD_ALBUM, getAlbumFileOnDropbox);
+  yield takeLatest(LOAD_ALBUM_SUCCESS, getThumbPathsOnDropbox);
 }

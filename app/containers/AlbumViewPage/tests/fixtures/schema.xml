@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<album>
+	<meta>
+		<gallery>demo</gallery>
+		<album_name>test2017_schema</album_name>
+		<album_version>2.0</album_version>
+		<geo>
+			<google_zoom>7</google_zoom>
+		</geo>
+	</meta>
+	<item id="100">
+		<filename>2017-10-14-20.jpg</filename>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>YVR Airport</photo_loc>
+		<thumb_caption>Airport</thumb_caption>
+		<photo_desc>Regular schema</photo_desc>
+		<geo>
+			<lat>49.194722</lat>
+			<lon>-123.183889</lon>
+		</geo>
+	</item>
+</album>
