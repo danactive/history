@@ -16,19 +16,19 @@ function parseQueryString(find, from) {
   return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
 }
 
-export function loadAlbum(querystring, albumName) {
+export function loadAlbum(querystring, album) {
   return {
     type: LOAD_ALBUM,
-    galleryName: parseQueryString('gallery', querystring),
-    albumName,
+    gallery: parseQueryString('gallery', querystring),
+    album,
   };
 }
 
-export function albumLoaded(thumbs, galleryName) {
+export function albumLoaded(gallery, thumbs) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     thumbs,
-    galleryName,
+    gallery,
   };
 }
 

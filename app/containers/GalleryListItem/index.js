@@ -18,9 +18,9 @@ function removePrefix(name) {
 }
 
 function GalleryListItem({ item }) {
-  const galleryName = removePrefix(item.name);
+  const gallery = removePrefix(item.name);
   const content = (
-    <Link to={`/gallery/view/${galleryName}`}>{capitalize(galleryName)}</Link>
+    <Link to={`/gallery/view/${gallery}`}>{capitalize(gallery)}</Link>
   );
 
   return (

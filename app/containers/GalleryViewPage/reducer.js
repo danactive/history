@@ -45,7 +45,7 @@ function galleryViewPageReducer(state = initialState, action) {
       return state
         .set('galleryLoading', true)
         .set('galleryError', false)
-        .set('galleryName', action.galleryName);
+        .set('gallery', action.gallery);
 
     case LOAD_GALLERY_SUCCESS:
       return state

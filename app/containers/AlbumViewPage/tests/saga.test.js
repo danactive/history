@@ -21,7 +21,7 @@ describe('AlbumViewPage thumbFilenameCalls', () => {
 describe('AlbumViewPage Saga', () => {
   describe('getAlbumFileOnDropbox', () => {
     describe('Success', () => {
-      const testArgs = { albumName: 'sample', galleryName: 'demo' };
+      const testArgs = { album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(testArgs);
 
       it('should first yield an Effect call', () => {
@@ -38,7 +38,7 @@ describe('AlbumViewPage Saga', () => {
 
       it('should third yield an Effect put', () => {
         const received = generator.next(parseTextXml('')).value;
-        const expected = put({ type: LOAD_ALBUM_SUCCESS, thumbs: [], galleryName: testArgs.galleryName });
+        const expected = put({ type: LOAD_ALBUM_SUCCESS, thumbs: [], gallery: testArgs.gallery });
         expect(received).toEqual(expected);
       });
 
@@ -50,7 +50,7 @@ describe('AlbumViewPage Saga', () => {
     });
 
     describe('Failure', () => {
-      const testArgs = { albumName: 'albumName', galleryName: 'galleryName' };
+      const testArgs = { album: 'album', gallery: 'gallery' };
       const generator = getAlbumFileOnDropbox(testArgs);
 
       it('should first yield an Effect call', () => {
@@ -77,7 +77,7 @@ describe('AlbumViewPage Saga', () => {
 
   describe('getThumbPathsOnDropbox', () => {
     describe('Success', () => {
-      const testArgs = { thumbs: [], galleryName: 'demo' };
+      const testArgs = { thumbs: [], gallery: 'demo' };
       const generator = getThumbPathsOnDropbox(testArgs);
 
       it('should first yield an Effect all', () => {
@@ -100,7 +100,7 @@ describe('AlbumViewPage Saga', () => {
     });
 
     describe('Failure', () => {
-      const testArgs = { thumbs: [], galleryName: 'demo' };
+      const testArgs = { thumbs: [], gallery: 'demo' };
       const generator = getThumbPathsOnDropbox(testArgs);
 
       it('should first yield an Effect all', () => {

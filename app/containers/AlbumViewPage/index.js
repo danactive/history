@@ -32,7 +32,7 @@ import messages from './messages';
 export class AlbumViewPage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   componentWillMount() {
     const { onLoad, match: { params }, location: { search: query } } = this.props;
-    if (params.albumName) onLoad(query, params.albumName);
+    if (params.album) onLoad(query, params.album);
   }
 
   render() {
@@ -91,7 +91,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoad: (querystring, albumName) => dispatch(loadAlbum(querystring, albumName)),
+    onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
   };
 }
 

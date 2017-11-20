@@ -13,11 +13,11 @@ import { createStructuredSelector } from 'reselect';
 
 import ListItem from 'components/ListItem';
 import { capitalize } from 'utils/strings';
-import { makeSelectGalleryName } from './selectors';
+import { makeSelectGallery } from './selectors';
 
-function AlbumListItem({ item, galleryName }) {
+function AlbumListItem({ item, gallery }) {
   const content = (
-    <Link to={`/album/view/${item.name}?gallery=${galleryName}`}>{capitalize(item.name)}</Link>
+    <Link to={`/album/view/${item.name}?gallery=${gallery}`}>{capitalize(item.name)}</Link>
   );
 
   return (
@@ -26,12 +26,12 @@ function AlbumListItem({ item, galleryName }) {
 }
 
 AlbumListItem.propTypes = {
-  galleryName: PropTypes.string.isRequired,
+  gallery: PropTypes.string.isRequired,
   item: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  galleryName: makeSelectGalleryName(),
+  gallery: makeSelectGallery(),
 });
 
 const withConnect = connect(mapStateToProps);

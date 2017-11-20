@@ -7,11 +7,11 @@ import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
 
 // Dropbox API v2 request/response handler
-export function* getDropboxGalleryFile({ galleryName }) {
+export function* getDropboxGalleryFile({ gallery }) {
   const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
   try {
-    const galleryFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${galleryName}/xml/gallery.xml` });
+    const galleryFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${gallery}/xml/gallery.xml` });
     const galleryFile = yield call(request, galleryFileUrl.link);
 
     yield put(galleryLoaded(galleryFile));

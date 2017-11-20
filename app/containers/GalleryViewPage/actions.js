@@ -10,10 +10,10 @@ import {
   LOAD_GALLERY_ERROR,
 } from './constants';
 
-export function loadGallery(galleryName) {
+export function loadGallery(gallery) {
   return {
     type: LOAD_GALLERY,
-    galleryName,
+    gallery,
   };
 }
 

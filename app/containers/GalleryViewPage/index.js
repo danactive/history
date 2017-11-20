@@ -27,7 +27,7 @@ import messages from './messages';
 export class GalleryViewPage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   componentWillMount() {
     const { onLoad, match: { params } } = this.props;
-    if (params.galleryName) onLoad(params.galleryName);
+    if (params.gallery) onLoad(params.gallery);
   }
 
   render() {
@@ -72,7 +72,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoad: (galleryName) => dispatch(loadGallery(galleryName)),
+    onLoad: (gallery) => dispatch(loadGallery(gallery)),
   };
 }
 

@@ -40,9 +40,9 @@ export default function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route path="/album/view/:albumName" component={AlbumViewPage} />
+        <Route path="/album/view/:album" component={AlbumViewPage} />
         <Route path="/features" component={FeaturePage} />
-        <Route path="/gallery/view/:galleryName" component={GalleryViewPage} />
+        <Route path="/gallery/view/:gallery" component={GalleryViewPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       <Footer />
