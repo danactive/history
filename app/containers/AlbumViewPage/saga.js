@@ -20,25 +20,23 @@ export const argsAlbumXmlPath = ({ galleryName, albumName }) => ({
   path: `/public/gallery-${galleryName}/xml/album_${albumName}.xml`,
 });
 
+const getYear = (filename) => filename.substr(0, 4);
+
+const replaceFileExtWithJpg = (filename) => `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
 
 export const argsThumbImgPath = (galleryName, filename) => {
-  const year = filename.substr(0, 4);
+  const year = getYear(filename);
+  const jpgFilename = replaceFileExtWithJpg(filename);
 
   return {
-    path: `/public/gallery-${galleryName}/media/thumbs/${year}/${filename}`,
+    path: `/public/gallery-${galleryName}/media/thumbs/${year}/${jpgFilename}`,
   };
 };
 
 
 export function thumbFilenameCallsDropbox({ galleryName, thumbs }) {
-  return thumbs.map((thumb) => {
-    if (thumb.filename.toLowerCase().includes('jpg')) { // TODO add video support by dropping this `if`
-      // eslint-disable-next-line redux-saga/yield-effects
-      return call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath(galleryName, thumb.filename));
-    }
-
-    return { link: null };
-  });
+  // eslint-disable-next-line redux-saga/yield-effects
+  return thumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath(galleryName, thumb.filename)));
 }
 
 

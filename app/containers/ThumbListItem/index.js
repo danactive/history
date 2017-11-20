@@ -10,10 +10,11 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import ListItem from 'components/ListItem';
+import ThumbImg from 'components/ThumbImg';
 
 function ThumbListItem({ item }) {
   const content = (
-    (item.link) ? <b><a href={item.link}>{item.filename}</a></b> : <b>{item.filename}</b>
+    (item.link) ? <ThumbImg src={item.link} alt={item.filename} /> : <b>{item.filename}</b>
   );
 
   return (
