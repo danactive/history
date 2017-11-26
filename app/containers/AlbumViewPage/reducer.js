@@ -14,6 +14,7 @@ import {
   LOAD_ALBUM_ERROR,
   LOAD_THUMB_LINKS_SUCCESS,
   LOAD_THUMB_LINKS_ERROR,
+  LOAD_THUMB_LINKS_NEXT,
 } from './constants';
 
 const initialState = fromJS({
@@ -42,9 +43,11 @@ function albumViewPageReducer(state = initialState, action) {
         .set('albumLoading', false);
 
     case LOAD_THUMB_LINKS_SUCCESS:
+    case LOAD_THUMB_LINKS_NEXT:
       return state
         .set('thumbsLoading', false)
-        .set('thumbs', action.thumbs);
+        .set('thumbs', action.thumbs)
+        .set('page', action.page);
 
     case LOAD_THUMB_LINKS_ERROR:
       return state

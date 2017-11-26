@@ -9,6 +9,7 @@ import {
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
   LOAD_THUMB_LINKS_SUCCESS,
+  LOAD_THUMB_LINKS_NEXT,
   LOAD_THUMB_LINKS_ERROR,
 } from './constants';
 
@@ -24,11 +25,11 @@ export function loadAlbum(querystring, album) {
   };
 }
 
-export function albumLoaded(gallery, thumbs) {
+export function albumLoaded(gallery, metaThumbs) {
   return {
     type: LOAD_ALBUM_SUCCESS,
-    thumbs,
     gallery,
+    metaThumbs,
   };
 }
 
@@ -43,6 +44,16 @@ export function thumbLinksLoaded(thumbs) {
   return {
     type: LOAD_THUMB_LINKS_SUCCESS,
     thumbs,
+  };
+}
+
+export function thumbLinksNext({ gallery, thumbs, metaThumbs, page }) {
+  return {
+    type: LOAD_THUMB_LINKS_NEXT,
+    gallery,
+    thumbs,
+    metaThumbs,
+    page,
   };
 }
 

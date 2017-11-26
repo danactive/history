@@ -13,16 +13,17 @@ describe('AlbumViewPage Transform XML to JSON', () => {
   it('should transform to regular JSON schema', async () => {
     const received = await getItem();
     const expected = {
-      id: '100',
-      filename: '2017-10-14-20.jpg',
+      caption: 'Airport',
       city: 'Vancouver, BC',
-      location: 'YVR Airport',
       description: 'Regular schema',
+      filename: '2017-10-14-20.jpg',
+      id: '100',
       geo: [
         -123.183889,
         49.194722,
       ],
-      caption: 'Airport',
+      link: null,
+      location: 'YVR Airport',
     };
     expect(received).toEqual(expected);
   });

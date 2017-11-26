@@ -38,7 +38,7 @@ describe('AlbumViewPage Saga', () => {
 
       it('should third yield an Effect put', () => {
         const received = generator.next(parseTextXml('')).value;
-        const expected = put({ type: LOAD_ALBUM_SUCCESS, thumbs: [], gallery: testArgs.gallery });
+        const expected = put({ type: LOAD_ALBUM_SUCCESS, metaThumbs: [], gallery: testArgs.gallery });
         expect(received).toEqual(expected);
       });
 
