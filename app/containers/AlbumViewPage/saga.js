@@ -66,15 +66,17 @@ export function* getThumbPathsOnDropbox({ gallery, thumbs = [], metaThumbs, page
   try {
     const getPagedThumbs = setPagedThumbs(10, metaThumbs);
     const pagedMetaThumbs = getPagedThumbs(page);
+
+    if (pagedMetaThumbs.length === 0) { // all pages processed so thumbs all have Dropbox links
+      yield put(thumbLinksLoaded(thumbs));
+      return;
+    }
+
     const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, metaThumbs: pagedMetaThumbs }));
     const linkedThumbs = pagedMetaThumbs.map((thumb, index) => ({ ...thumb, link: dropboxResults[index].link }));
     const growingThumbs = thumbs.concat(linkedThumbs);
 
-    if (pagedMetaThumbs.length === 0) {
-      yield put(thumbLinksLoaded(growingThumbs));
-    } else {
-      yield put(thumbLinksNext({ gallery, thumbs: growingThumbs, metaThumbs, page: page + 1 }));
-    }
+    yield put(thumbLinksNext({ gallery, thumbs: growingThumbs, metaThumbs, page: page + 1 }));
   } catch (error) {
     yield put(thumbLinksLoadingError(normalizeError(error)));
   }
