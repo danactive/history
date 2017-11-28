@@ -1,17 +1,18 @@
 import Dropbox from 'dropbox';
-import { all, call, put, takeLatest, takeEvery } from 'redux-saga/effects';
+import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 
 import { normalizeError } from 'utils/error';
 import request from 'utils/request';
 
-import { LOAD_ALBUM, LOAD_ALBUM_SUCCESS, LOAD_THUMB_LINKS_NEXT } from './constants';
+import { LOAD_ALBUM, LOAD_NEXT_THUMB_PAGE } from './constants';
 import {
-  albumLoaded,
-  albumLoadingError,
-  thumbLinksLoaded,
-  thumbLinksNext,
-  thumbLinksLoadingError,
+  albumLoadSuccess,
+  albumLoadError,
+  nextPageSuccess,
+  nextPageError,
+  thumbsLoaded,
 } from './actions';
+import { makeSelectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
@@ -54,21 +55,22 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
     const xmlFile = yield call(request, xmlUrl.link);
     const metaThumbs = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoaded(gallery, metaThumbs));
+    yield put(albumLoadSuccess(gallery, metaThumbs));
   } catch (error) {
-    yield put(albumLoadingError(normalizeError(error)));
+    yield put(albumLoadError(normalizeError(error)));
   }
 }
 
 
-// saga WORKER for LOAD_ALBUM_SUCCESS or LOAD_THUMB_LINKS_NEXT
-export function* getThumbPathsOnDropbox({ gallery, thumbs = [], metaThumbs, page = 1 }) {
+// saga WORKER for LOAD_NEXT_THUMB_PAGE
+export function* getThumbPathsOnDropbox() {
   try {
+    const { gallery, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
     const getPagedThumbs = setPagedThumbs(10, metaThumbs);
     const pagedMetaThumbs = getPagedThumbs(page);
 
     if (pagedMetaThumbs.length === 0) { // all pages processed so thumbs all have Dropbox links
-      yield put(thumbLinksLoaded(thumbs));
+      yield put(thumbsLoaded(thumbs));
       return;
     }
 
@@ -76,16 +78,15 @@ export function* getThumbPathsOnDropbox({ gallery, thumbs = [], metaThumbs, page
     const linkedThumbs = pagedMetaThumbs.map((thumb, index) => ({ ...thumb, link: dropboxResults[index].link }));
     const growingThumbs = thumbs.concat(linkedThumbs);
 
-    yield put(thumbLinksNext({ gallery, thumbs: growingThumbs, metaThumbs, page: page + 1 }));
+    yield put(nextPageSuccess({ gallery, thumbs: growingThumbs, metaThumbs, page: page + 1 }));
   } catch (error) {
-    yield put(thumbLinksLoadingError(normalizeError(error)));
+    yield put(nextPageError(normalizeError(error)));
   }
 }
 
 
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
-  yield takeLatest(LOAD_ALBUM, getAlbumFileOnDropbox);
-  yield takeLatest(LOAD_ALBUM_SUCCESS, getThumbPathsOnDropbox);
-  yield takeEvery(LOAD_THUMB_LINKS_NEXT, getThumbPathsOnDropbox);
+  yield takeEvery(LOAD_ALBUM, getAlbumFileOnDropbox);
+  yield takeEvery(LOAD_NEXT_THUMB_PAGE, getThumbPathsOnDropbox);
 }

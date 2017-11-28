@@ -12,9 +12,9 @@ import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
-  LOAD_THUMB_LINKS_SUCCESS,
-  LOAD_THUMB_LINKS_ERROR,
-  LOAD_THUMB_LINKS_NEXT,
+  LOAD_NEXT_THUMB_PAGE_SUCCESS,
+  LOAD_NEXT_THUMB_PAGE_ERROR,
+  LOAD_THUMBS_SUCCESS,
 } from './constants';
 
 const initialState = fromJS({
@@ -35,24 +35,32 @@ function albumViewPageReducer(state = initialState, action) {
       return state
         .set('albumLoading', false)
         .set('thumbsLoading', true)
-        .set('thumbs', action.thumbs);
+        .set('gallery', action.gallery)
+        .set('metaThumbs', action.metaThumbs)
+        .set('thumbs', [])
+        .set('page', 1);
 
     case LOAD_ALBUM_ERROR:
       return state
         .set('albumError', normalizeError(action.error))
         .set('albumLoading', false);
 
-    case LOAD_THUMB_LINKS_SUCCESS:
-    case LOAD_THUMB_LINKS_NEXT:
+    case LOAD_NEXT_THUMB_PAGE_SUCCESS:
       return state
         .set('thumbsLoading', false)
         .set('thumbs', action.thumbs)
         .set('page', action.page);
 
-    case LOAD_THUMB_LINKS_ERROR:
+    case LOAD_NEXT_THUMB_PAGE_ERROR:
       return state
         .set('thumbsError', action.error)
         .set('thumbsLoading', false);
+
+    case LOAD_THUMBS_SUCCESS:
+      return state
+        .set('thumbs', action.thumbs)
+        .remove('metaThumbs')
+        .remove('page');
 
     default:
       return state;

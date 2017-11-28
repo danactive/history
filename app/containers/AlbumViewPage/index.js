@@ -17,7 +17,7 @@ import ThumbListItem from 'containers/ThumbListItem';
 
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
-import { loadAlbum } from './actions';
+import { loadAlbum, loadNextPage } from './actions';
 import {
   makeSelectThumbs,
   makeSelectAlbumLoading,
@@ -42,6 +42,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       albumError,
       thumbsLoading,
       thumbsError,
+      nextPage,
     } = this.props;
 
     const thumbsListProps = {
@@ -59,6 +60,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
         </Helmet>
         <FormattedMessage {...messages.header} />
         <GenericList {...thumbsListProps} />
+        <button onClick={nextPage}>Next Page</button>
       </div>
     );
   }
@@ -76,6 +78,7 @@ AlbumViewPage.propTypes = {
     PropTypes.object,
     PropTypes.bool,
   ]),
+  nextPage: PropTypes.func.isRequired,
   onLoad: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired, // router
   location: PropTypes.object.isRequired, // router
@@ -92,6 +95,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
+    nextPage: () => dispatch(loadNextPage()),
   };
 }
 

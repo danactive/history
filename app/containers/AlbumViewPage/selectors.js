@@ -28,10 +28,21 @@ const makeSelectThumbsError = () => createSelector(
   (pageState) => pageState.get('thumbsError')
 );
 
+const makeSelectNextPage = () => createSelector(
+  selectPage,
+  (pageState) => ({
+    gallery: pageState.get('gallery'),
+    thumbs: pageState.get('thumbs'),
+    metaThumbs: pageState.get('metaThumbs'),
+    page: pageState.get('page'),
+  })
+);
+
 export {
   makeSelectThumbs,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
   makeSelectThumbsLoading,
   makeSelectThumbsError,
+  makeSelectNextPage,
 };
