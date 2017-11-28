@@ -49,7 +49,8 @@ function albumViewPageReducer(state = initialState, action) {
       return state
         .set('thumbsLoading', false)
         .set('thumbs', action.thumbs)
-        .set('page', action.page);
+        .set('page', action.page)
+        .set('hasMore', action.hasMore);
 
     case LOAD_NEXT_THUMB_PAGE_ERROR:
       return state
@@ -58,9 +59,11 @@ function albumViewPageReducer(state = initialState, action) {
 
     case LOAD_THUMBS_SUCCESS:
       return state
+        .set('thumbsLoading', false)
         .set('thumbs', action.thumbs)
         .remove('metaThumbs')
-        .remove('page');
+        .remove('page')
+        .remove('hasMore');
 
     default:
       return state;

@@ -47,13 +47,14 @@ export function loadNextPage() {
   };
 }
 
-export function nextPageSuccess({ gallery, thumbs, metaThumbs, page }) {
+export function nextPageSuccess({ gallery, thumbs, metaThumbs, page, hasMore }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
     gallery,
     thumbs,
     metaThumbs,
     page,
+    hasMore,
   };
 }
 
