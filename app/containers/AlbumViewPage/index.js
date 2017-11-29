@@ -12,8 +12,8 @@ import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import GenericList from 'components/GenericList';
-import ThumbListItem from 'containers/ThumbListItem';
+import InfiniteScroll from 'react-infinite-scroller';
+import ThumbImg from 'components/ThumbImg';
 
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
@@ -24,6 +24,7 @@ import {
   makeSelectAlbumError,
   makeSelectThumbsLoading,
   makeSelectThumbsError,
+  makeSelectMoreThumbs,
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
@@ -38,19 +39,24 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
   render() {
     const {
       thumbs,
-      albumLoading,
-      albumError,
-      thumbsLoading,
-      thumbsError,
+      // albumLoading,
+      // albumError,
+      // thumbsLoading,
+      // thumbsError,
       nextPage,
+      hasMore,
     } = this.props;
 
-    const thumbsListProps = {
-      loading: albumLoading || thumbsLoading,
-      error: albumError || thumbsError,
-      items: thumbs,
-      component: ThumbListItem,
-    };
+    // const thumbsListProps = {
+    //   loading: albumLoading || thumbsLoading,
+    //   error: albumError || thumbsError,
+    //   items: thumbs,
+    //   component: ThumbListItem,
+    // };
+    //
+    const html = thumbs.map((item) => (
+      <ThumbImg src={item.link} alt={item.filename} key={`thumb-${item.filename}`} />
+    ));
 
     return (
       <div>
@@ -59,25 +65,33 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
         <FormattedMessage {...messages.header} />
-        <GenericList {...thumbsListProps} />
-        <button onClick={nextPage}>Next Page</button>
+
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={nextPage}
+          hasMore={hasMore}
+          loader={<div className="loader">Loading ...</div>}
+        >
+          {html}
+        </InfiniteScroll>
       </div>
     );
   }
 }
 
 AlbumViewPage.propTypes = {
+  hasMore: PropTypes.bool,
   thumbs: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  albumLoading: PropTypes.bool,
-  thumbsLoading: PropTypes.bool,
-  albumError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-  thumbsError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
+  // albumLoading: PropTypes.bool,
+  // thumbsLoading: PropTypes.bool,
+  // albumError: PropTypes.oneOfType([
+  //   PropTypes.object,
+  //   PropTypes.bool,
+  // ]),
+  // thumbsError: PropTypes.oneOfType([
+  //   PropTypes.object,
+  //   PropTypes.bool,
+  // ]),
   nextPage: PropTypes.func.isRequired,
   onLoad: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired, // router
@@ -90,6 +104,7 @@ const mapStateToProps = createStructuredSelector({
   thumbsLoading: makeSelectThumbsLoading(),
   albumError: makeSelectAlbumError(),
   thumbsError: makeSelectThumbsError(),
+  hasMore: makeSelectMoreThumbs(),
 });
 
 function mapDispatchToProps(dispatch) {

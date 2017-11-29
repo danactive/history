@@ -66,7 +66,7 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 export function* getThumbPathsOnDropbox() {
   try {
     const { gallery, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
-    const PAGE_SIZE = 2;
+    const PAGE_SIZE = 8;
     const getPagedThumbs = setPagedThumbs(PAGE_SIZE, metaThumbs);
     const pagedMetaThumbs = getPagedThumbs(page);
     const hasMore = (PAGE_SIZE * page) < metaThumbs.length;

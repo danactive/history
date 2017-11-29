@@ -236,6 +236,7 @@
     "react": "15.6.1",
     "react-dom": "15.6.1",
     "react-helmet": "5.1.3",
+    "react-infinite-scroller": "^1.1.1",
     "react-intl": "2.3.0",
     "react-loadable": "4.0.3",
     "react-redux": "5.0.5",

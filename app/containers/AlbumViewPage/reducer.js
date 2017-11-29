@@ -38,7 +38,8 @@ function albumViewPageReducer(state = initialState, action) {
         .set('gallery', action.gallery)
         .set('metaThumbs', action.metaThumbs)
         .set('thumbs', [])
-        .set('page', 1);
+        .set('page', 1)
+        .set('hasMore', true);
 
     case LOAD_ALBUM_ERROR:
       return state

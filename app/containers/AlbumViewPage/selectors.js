@@ -3,32 +3,32 @@ import { createSelector } from 'reselect';
 // Memorized selectors
 const selectPage = (state) => state.get('albumViewPage');
 
-const makeSelectThumbs = () => createSelector(
+export const makeSelectThumbs = () => createSelector(
   selectPage,
-  (homeState) => homeState.get('thumbs') || []
+  (pageState) => pageState.get('thumbs') || []
 );
 
-const makeSelectAlbumLoading = () => createSelector(
+export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
   (pageState) => pageState.get('albumLoading')
 );
 
-const makeSelectAlbumError = () => createSelector(
+export const makeSelectAlbumError = () => createSelector(
   selectPage,
   (pageState) => pageState.get('albumError')
 );
 
-const makeSelectThumbsLoading = () => createSelector(
+export const makeSelectThumbsLoading = () => createSelector(
   selectPage,
   (pageState) => pageState.get('thumbsLoading')
 );
 
-const makeSelectThumbsError = () => createSelector(
+export const makeSelectThumbsError = () => createSelector(
   selectPage,
   (pageState) => pageState.get('thumbsError')
 );
 
-const makeSelectNextPage = () => createSelector(
+export const makeSelectNextPage = () => createSelector(
   selectPage,
   (pageState) => ({
     gallery: pageState.get('gallery'),
@@ -38,11 +38,7 @@ const makeSelectNextPage = () => createSelector(
   })
 );
 
-export {
-  makeSelectThumbs,
-  makeSelectAlbumLoading,
-  makeSelectAlbumError,
-  makeSelectThumbsLoading,
-  makeSelectThumbsError,
-  makeSelectNextPage,
-};
+export const makeSelectMoreThumbs = () => createSelector(
+  selectPage,
+  (pageState) => pageState.get('hasMore')
+);
