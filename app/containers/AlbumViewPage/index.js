@@ -71,6 +71,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
           loadMore={nextPage}
           hasMore={hasMore}
           loader={<div className="loader">Loading ...</div>}
+          threshold={500}
         >
           {html}
         </InfiniteScroll>

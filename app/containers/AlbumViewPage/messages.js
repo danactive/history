@@ -8,6 +8,6 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   header: {
     id: 'app.containers.AlbumViewPage.header',
-    defaultMessage: 'This is AlbumViewPage container !',
+    defaultMessage: 'Thumbnail photos of our trip',
   },
 });
