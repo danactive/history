@@ -26,7 +26,7 @@ import {
   makeSelectThumbsError,
   makeSelectMoreThumbs,
 } from './selectors';
-import reducer from './reducer';
+import pageReducer, { albumReducer } from './reducer';
 import saga from './saga';
 import messages from './messages';
 
@@ -117,11 +117,13 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-const withReducer = injectReducer({ key: 'albumViewPage', reducer });
+const withPageReducer = injectReducer({ key: 'albumViewPage', reducer: pageReducer });
+const withAlbumReducer = injectReducer({ key: 'albums', reducer: albumReducer });
 const withSaga = injectSaga({ key: 'albumViewPage', saga });
 
 export default compose(
-  withReducer,
+  withPageReducer,
+  withAlbumReducer,
   withSaga,
   withConnect,
 )(AlbumViewPage);

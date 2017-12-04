@@ -2,9 +2,10 @@ import { createSelector } from 'reselect';
 
 // Memorized selectors
 const selectPage = (state) => state.get('albumViewPage');
+const selectAlbum = (state) => state.get('albums');
 
 export const makeSelectThumbs = () => createSelector(
-  selectPage,
+  selectAlbum,
   (pageState) => pageState.get('thumbs') || []
 );
 
@@ -30,10 +31,11 @@ export const makeSelectThumbsError = () => createSelector(
 
 export const makeSelectNextPage = () => createSelector(
   selectPage,
-  (pageState) => ({
+  selectAlbum,
+  (pageState, albumState) => ({
     gallery: pageState.get('gallery'),
-    thumbs: pageState.get('thumbs'),
-    metaThumbs: pageState.get('metaThumbs'),
+    thumbs: albumState.get('thumbs'),
+    metaThumbs: albumState.get('metaThumbs'),
     page: pageState.get('page'),
   })
 );

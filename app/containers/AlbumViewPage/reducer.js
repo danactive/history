@@ -17,14 +17,19 @@ import {
   LOAD_THUMBS_SUCCESS,
 } from './constants';
 
-const initialState = fromJS({
+const pageInitialState = fromJS({
   albumLoading: false,
   thumbsLoading: false,
   albumError: false,
   thumbsError: false,
 });
 
-function albumViewPageReducer(state = initialState, action) {
+const albumInitialState = fromJS({
+  metaThumbs: [],
+  thumbs: [],
+});
+
+export default function albumViewPageReducer(state = pageInitialState, action) {
   switch (action.type) {
     case LOAD_ALBUM:
       return state
@@ -36,8 +41,6 @@ function albumViewPageReducer(state = initialState, action) {
         .set('albumLoading', false)
         .set('thumbsLoading', true)
         .set('gallery', action.gallery)
-        .set('metaThumbs', action.metaThumbs)
-        .set('thumbs', [])
         .set('page', 1)
         .set('hasMore', true);
 
@@ -49,7 +52,6 @@ function albumViewPageReducer(state = initialState, action) {
     case LOAD_NEXT_THUMB_PAGE_SUCCESS:
       return state
         .set('thumbsLoading', false)
-        .set('thumbs', action.thumbs)
         .set('page', action.page)
         .set('hasMore', action.hasMore);
 
@@ -61,8 +63,6 @@ function albumViewPageReducer(state = initialState, action) {
     case LOAD_THUMBS_SUCCESS:
       return state
         .set('thumbsLoading', false)
-        .set('thumbs', action.thumbs)
-        .remove('metaThumbs')
         .remove('page')
         .remove('hasMore');
 
@@ -71,4 +71,23 @@ function albumViewPageReducer(state = initialState, action) {
   }
 }
 
-export default albumViewPageReducer;
+export function albumReducer(state = albumInitialState, action) {
+  switch (action.type) {
+    case LOAD_ALBUM_SUCCESS:
+      return state
+        .set('metaThumbs', action.metaThumbs)
+        .set('thumbs', []);
+
+    case LOAD_NEXT_THUMB_PAGE_SUCCESS:
+      return state
+        .set('thumbs', action.thumbs);
+
+    case LOAD_THUMBS_SUCCESS:
+      return state
+        .set('thumbs', action.thumbs)
+        .remove('metaThumbs');
+
+    default:
+      return state;
+  }
+}
