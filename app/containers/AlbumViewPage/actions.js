@@ -26,10 +26,11 @@ export function loadAlbum(querystring, album) {
   };
 }
 
-export function albumLoadSuccess(gallery, metaThumbs) {
+export function albumLoadSuccess({ gallery, album, metaThumbs }) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     gallery,
+    album,
     metaThumbs,
   };
 }
@@ -47,10 +48,11 @@ export function loadNextPage() {
   };
 }
 
-export function nextPageSuccess({ gallery, thumbs, metaThumbs, page, hasMore }) {
+export function nextPageSuccess({ gallery, album, thumbs, metaThumbs, page, hasMore }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
     gallery,
+    album,
     thumbs,
     metaThumbs,
     page,

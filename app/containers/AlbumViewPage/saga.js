@@ -23,13 +23,13 @@ export const argsAlbumXmlPath = ({ gallery, album }) => ({
 });
 
 
-const getYear = (filename) => filename.substr(0, 4);
+const getYear = (filename = '') => filename.substr(0, 4);
 
 
-const replaceFileExtWithJpg = (filename) => `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
+const replaceFileExtWithJpg = (filename = '') => `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
 
 
-export const argsThumbImgPath = (gallery, filename) => {
+export const argsThumbImgPath = ({ gallery, filename }) => {
   const year = getYear(filename);
   const jpgFilename = replaceFileExtWithJpg(filename);
 
@@ -44,7 +44,7 @@ const setPagedThumbs = (pageSize, list = []) => (page) => list.slice((page - 1) 
 
 export function thumbFilenameCallsDropbox({ gallery, metaThumbs }) {
   // eslint-disable-next-line redux-saga/yield-effects
-  return metaThumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath(gallery, thumb.filename)));
+  return metaThumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath({ gallery, filename: thumb.filename })));
 }
 
 
@@ -55,7 +55,7 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
     const xmlFile = yield call(request, xmlUrl.link);
     const metaThumbs = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoadSuccess(gallery, metaThumbs));
+    yield put(albumLoadSuccess({ gallery, album, metaThumbs }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
@@ -65,7 +65,7 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
 export function* getThumbPathsOnDropbox() {
   try {
-    const { gallery, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
+    const { gallery, album, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
     const PAGE_SIZE = 8;
     const getPagedThumbs = setPagedThumbs(PAGE_SIZE, metaThumbs);
     const pagedMetaThumbs = getPagedThumbs(page);
@@ -80,7 +80,7 @@ export function* getThumbPathsOnDropbox() {
       return;
     }
 
-    yield put(nextPageSuccess({ gallery, thumbs: growingThumbs, page: page + 1, hasMore }));
+    yield put(nextPageSuccess({ gallery, album, thumbs: growingThumbs, page: page + 1, hasMore: true }));
   } catch (error) {
     yield put(nextPageError(normalizeError(error)));
   }
