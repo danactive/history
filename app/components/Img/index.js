@@ -16,12 +16,12 @@ function Img(props) {
 
 // We require the use of src and alt, only enforced by react in dev mode
 Img.propTypes = {
+  alt: PropTypes.string.isRequired,
+  className: PropTypes.string,
   src: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
   ]).isRequired,
-  alt: PropTypes.string.isRequired,
-  className: PropTypes.string,
 };
 
 export default Img;

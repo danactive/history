@@ -21,8 +21,6 @@ import {
   makeSelectThumbs,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
-  makeSelectThumbsLoading,
-  makeSelectThumbsError,
 } from './selectors';
 import pageReducer, { albumReducer } from './reducer';
 import saga from './saga';
@@ -38,8 +36,6 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
     const {
       albumLoading,
       albumError,
-      // thumbsLoading,
-      // thumbsError,
       thumbs,
     } = this.props;
 
@@ -70,11 +66,6 @@ AlbumViewPage.propTypes = {
     PropTypes.object,
     PropTypes.bool,
   ]),
-  // thumbsLoading: PropTypes.bool,
-  // thumbsError: PropTypes.oneOfType([
-  //   PropTypes.object,
-  //   PropTypes.bool,
-  // ]),
   onLoad: PropTypes.func.isRequired,
   match: PropTypes.object.isRequired, // router
   location: PropTypes.object.isRequired, // router
@@ -83,9 +74,7 @@ AlbumViewPage.propTypes = {
 const mapStateToProps = createStructuredSelector({
   thumbs: makeSelectThumbs(),
   albumLoading: makeSelectAlbumLoading(),
-  thumbsLoading: makeSelectThumbsLoading(),
   albumError: makeSelectAlbumError(),
-  thumbsError: makeSelectThumbsError(),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -2,6 +2,7 @@ import propTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
+import A from '../A';
 import NormalImg from '../Img';
 
 const Img = styled(NormalImg)`
@@ -9,9 +10,10 @@ const Img = styled(NormalImg)`
   height: 2.82rem;
 `;
 
-const Thumb = ({ src }) => <Img src={src} alt="Preview thumbnail image (scaled down dimensions)" />;
+const Thumb = ({ onClick, src }) => <A onClick={onClick}><Img src={src} alt="Preview thumbnail image (scaled down dimensions)" /></A>;
 
 Thumb.propTypes = {
+  onClick: propTypes.func.isRequired,
   src: propTypes.string.isRequired,
 };
 

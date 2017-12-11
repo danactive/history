@@ -14,23 +14,13 @@ export const makeSelectAlbumError = () => createSelector(
   (pageState) => pageState.get('albumError')
 );
 
-export const makeSelectThumbsLoading = () => createSelector(
-  selectPage,
-  (pageState) => pageState.get('thumbsLoading')
-);
-
-export const makeSelectThumbsError = () => createSelector(
-  selectPage,
-  (pageState) => pageState.get('thumbsError')
-);
-
 export const makeSelectThumbs = () => createSelector(
   selectAlbum,
   (albumState) => {
     const gallery = albumState.get('gallery');
     const album = albumState.get('album');
 
-    return albumState.getIn([gallery, album, 'thumbs']);
+    return albumState.getIn([gallery, album, 'thumbs']) || [];
   }
 );
 

@@ -16,7 +16,6 @@ import ThumbImg from 'components/ThumbImg';
 import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 
-
 function InfiniteThumbs({ loading, error, items, nextPage, hasMore }) {
   if (loading) {
     return <LoadingIndicator />;
@@ -26,8 +25,12 @@ function InfiniteThumbs({ loading, error, items, nextPage, hasMore }) {
     return <div>{`Something went wrong, please try again! Reason (${error.message})`}</div>;
   }
 
+  const thumbSelected = (filename) => {
+    console.log('da', filename);
+  };
+
   const html = items.map((item) => (
-    <ThumbImg src={item.link} alt={item.filename} key={`thumb-${item.filename}`} />
+    <ThumbImg onClick={() => thumbSelected(item.filename)} src={item.link} alt={item.filename} key={`thumb-${item.filename}`} />
   ));
 
   return (
@@ -35,7 +38,7 @@ function InfiniteThumbs({ loading, error, items, nextPage, hasMore }) {
       pageStart={0}
       loadMore={nextPage}
       hasMore={hasMore}
-      loader={<div className="loader">Loading ...</div>}
+      loader={<LoadingIndicator />}
       threshold={500}
     >
       {html}
