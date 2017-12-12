@@ -21,8 +21,10 @@ import {
   makeSelectThumbs,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
+  makeSelectCurrentMemory,
 } from './selectors';
-import pageReducer, { albumReducer } from './reducer';
+import pageReducer from './reducer';
+import albumReducer from '../InfiniteThumbs/reducer';
 import saga from './saga';
 import messages from './messages';
 
@@ -36,6 +38,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
     const {
       albumLoading,
       albumError,
+      currentMemory,
       thumbs,
     } = this.props;
 
@@ -45,6 +48,8 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       items: thumbs,
     };
 
+    const out = (currentMemory) ? JSON.stringify(currentMemory) : '{}';
+
     return (
       <div>
         <Helmet>
@@ -53,6 +58,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
         </Helmet>
         <FormattedMessage {...messages.header} />
 
+        {out}
         <InfiniteThumbs {...thumbsProps} />
       </div>
     );
@@ -61,6 +67,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
 
 AlbumViewPage.propTypes = {
   thumbs: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  currentMemory: PropTypes.object,
   albumLoading: PropTypes.bool,
   albumError: PropTypes.oneOfType([
     PropTypes.object,
@@ -75,6 +82,7 @@ const mapStateToProps = createStructuredSelector({
   thumbs: makeSelectThumbs(),
   albumLoading: makeSelectAlbumLoading(),
   albumError: makeSelectAlbumError(),
+  currentMemory: makeSelectCurrentMemory(),
 });
 
 function mapDispatchToProps(dispatch) {

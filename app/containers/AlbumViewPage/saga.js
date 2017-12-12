@@ -66,13 +66,17 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 export function* getThumbPathsOnDropbox() {
   try {
     const { gallery, album, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
+    if (!metaThumbs || metaThumbs.length === 0) {
+      throw new Error('Empty or malformed album');
+    }
+
     const PAGE_SIZE = 8;
     const getPagedThumbs = setPagedThumbs(PAGE_SIZE, metaThumbs);
     const pagedMetaThumbs = getPagedThumbs(page);
     const hasMore = (PAGE_SIZE * page) < metaThumbs.length;
 
     const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, metaThumbs: pagedMetaThumbs }));
-    const linkedThumbs = pagedMetaThumbs.map((thumb, index) => ({ ...thumb, link: dropboxResults[index].link }));
+    const linkedThumbs = pagedMetaThumbs.map((thumb, index) => ({ ...thumb, thumbLink: dropboxResults[index].link }));
     const growingThumbs = thumbs.concat(linkedThumbs);
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links

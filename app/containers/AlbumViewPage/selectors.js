@@ -45,3 +45,8 @@ export const makeSelectMoreThumbs = () => createSelector(
   selectPage,
   (pageState) => pageState.get('hasMore')
 );
+
+export const makeSelectCurrentMemory = () => createSelector(
+  selectAlbum,
+  (albumState) => albumState.get('currentMemory')
+);

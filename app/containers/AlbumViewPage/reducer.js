@@ -24,16 +24,7 @@ const pageInitialState = fromJS({
   thumbsError: false,
 });
 
-const albumInitialState = fromJS({
-  demo: {
-    sample: {
-      thumbs: [],
-      metaThumbs: [],
-    },
-  },
-});
-
-export default function albumViewPageReducer(state = pageInitialState, action) {
+export default function reducer(state = pageInitialState, action) {
   switch (action.type) {
     case LOAD_ALBUM:
       return state
@@ -68,36 +59,6 @@ export default function albumViewPageReducer(state = pageInitialState, action) {
         .set('thumbsLoading', false)
         .remove('page')
         .remove('hasMore');
-
-    default:
-      return state;
-  }
-}
-
-export function albumReducer(state = albumInitialState, action) {
-  const gallery = state.get('gallery');
-  const album = state.get('album');
-
-  switch (action.type) {
-    case LOAD_ALBUM:
-      return state
-        .set('gallery', action.gallery)
-        .set('album', action.album)
-        .setIn([action.gallery, action.album, 'metaThumbs'], [])
-        .setIn([action.gallery, action.album, 'thumbs'], []);
-
-    case LOAD_ALBUM_SUCCESS:
-      return state
-        .setIn([gallery, album, 'metaThumbs'], action.metaThumbs);
-
-    case LOAD_NEXT_THUMB_PAGE_SUCCESS:
-      return state
-        .setIn([gallery, album, 'thumbs'], action.thumbs);
-
-    case LOAD_THUMBS_SUCCESS:
-      return state
-        .setIn([gallery, album, 'thumbs'], action.thumbs)
-        .deleteIn([gallery, album, 'metaThumbs']);
 
     default:
       return state;

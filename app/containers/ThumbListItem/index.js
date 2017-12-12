@@ -14,7 +14,7 @@ import ThumbImg from 'components/ThumbImg';
 
 function ThumbListItem({ item }) {
   const content = (
-    (item.link) ? <ThumbImg src={item.link} alt={item.filename} /> : <b>{item.filename}</b>
+    (item.thumbLink) ? <ThumbImg src={item.thumbLink} alt={item.filename} /> : <b>{item.filename}</b>
   );
 
   return (
