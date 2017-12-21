@@ -14,31 +14,34 @@ export const makeSelectAlbumError = () => createSelector(
   (pageState) => pageState.get('albumError')
 );
 
-export const makeSelectThumbs = () => createSelector(
+export const makeSelectMemories = () => createSelector(
   selectAlbum,
   (albumState) => {
     const gallery = albumState.get('gallery');
     const album = albumState.get('album');
 
-    return albumState.getIn([gallery, album, 'thumbs']) || [];
+    return albumState.getIn([gallery, album, 'memories'], []);
   }
 );
+
+export const selectNextPage = (state) => {
+  const pageState = selectPage(state);
+  const albumState = selectAlbum(state);
+  const gallery = albumState.get('gallery');
+  const album = albumState.get('album');
+
+  return {
+    gallery,
+    album,
+    memories: albumState.getIn([gallery, album, 'memories']),
+    page: pageState.get('page'),
+  };
+};
 
 export const makeSelectNextPage = () => createSelector(
   selectPage,
   selectAlbum,
-  (pageState, albumState) => {
-    const gallery = albumState.get('gallery');
-    const album = albumState.get('album');
-
-    return {
-      gallery,
-      album,
-      thumbs: albumState.getIn([gallery, album, 'thumbs']),
-      metaThumbs: albumState.getIn([gallery, album, 'metaThumbs']),
-      page: pageState.get('page'),
-    };
-  }
+  selectNextPage,
 );
 
 export const makeSelectMoreThumbs = () => createSelector(

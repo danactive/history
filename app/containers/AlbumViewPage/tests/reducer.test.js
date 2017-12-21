@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-import pageReducer, { albumReducer } from '../reducer';
+import pageReducer from '../reducer';
 import {
   loadAlbum,
   albumLoadSuccess,
@@ -14,7 +14,7 @@ describe('pageReducer', () => {
   let state;
   const fixtures = {
     gallery: 'demo',
-    page: 1,
+    page: 0,
     hasMore: true,
     error: { message: 'Bad request' },
   };
@@ -92,45 +92,6 @@ describe('pageReducer', () => {
       .set('thumbsLoading', false)
       .remove('page')
       .remove('hasMore');
-
-    expect(received).toEqual(expected);
-  });
-});
-
-describe('albumReducer', () => {
-  let state;
-  const fixtures = {
-    gallery: 'demo',
-    album: 'sample',
-    metaThumbs: { filename: '2017-12-25.jpg' },
-    page: 1,
-    hasMore: true,
-    error: { message: 'Bad request' },
-  };
-
-  beforeEach(() => {
-    state = fromJS({
-      demo: {
-        sample: {
-          thumbs: [],
-          metaThumbs: [],
-        },
-      },
-    });
-  });
-
-  it('should return the initial state', () => {
-    const expected = state;
-    expect(albumReducer(undefined, {})).toEqual(expected);
-  });
-
-  it('should handle the thumbsLoaded action correctly', () => {
-    const gallery = state.get('gallery');
-    const album = state.get('album');
-    const received = albumReducer(state, thumbsLoaded(fixtures.thumbs));
-    const expected = state
-      .setIn([gallery, album, 'thumbs'], fixtures.thumbs)
-      .deleteIn([gallery, album, 'metaThumbs']);
 
     expect(received).toEqual(expected);
   });

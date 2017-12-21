@@ -14,14 +14,13 @@ import {
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
 } from '../constants';
 
-import { albumReducer } from '../reducer';
+import reducer from '../../InfiniteThumbs/reducer';
 
 let state;
 
 describe('Load album hosted on Dropbox', () => {
   const fixtures = {
-    thumbs: { link: 'thumbnail.jpg' },
-    metaThumbs: { filename: '2017-12-25.jpg' },
+    memories: { filename: '2017-12-25.jpg' },
   };
 
   it('Page load event dispatches loadAlbum action', () => {});
@@ -37,12 +36,11 @@ describe('Load album hosted on Dropbox', () => {
   });
 
   it('reducer should store the action loadAlbum', () => {
-    const received = albumReducer(fromJS({}), loadAlbum('?gallery=demo', 'sample'));
+    const received = reducer(fromJS({}), loadAlbum('?gallery=demo', 'sample'));
     const expected = fromJS({})
       .set('gallery', 'demo')
       .set('album', 'sample')
-      .setIn(['demo', 'sample', 'metaThumbs'], [])
-      .setIn(['demo', 'sample', 'thumbs'], []);
+      .setIn(['demo', 'sample', 'memories'], []);
 
     expect(received).toEqual(expected);
     state = expected;
@@ -54,14 +52,14 @@ describe('Load album hosted on Dropbox', () => {
     const sagaResult = {
       gallery: 'demo',
       album: 'sample',
-      metaThumbs: fixtures.metaThumbs,
+      memories: fixtures.memories,
     };
     const received = albumLoadSuccess(sagaResult);
     const expected = {
       type: LOAD_ALBUM_SUCCESS,
       gallery: 'demo',
       album: 'sample',
-      metaThumbs: fixtures.metaThumbs,
+      memories: fixtures.memories,
     };
 
     expect(received).toEqual(expected);
@@ -71,12 +69,11 @@ describe('Load album hosted on Dropbox', () => {
     const sagaResult = {
       gallery: 'demo',
       album: 'sample',
-      metaThumbs: fixtures.metaThumbs,
+      memories: fixtures.memories,
     };
-    const received = albumReducer(state, albumLoadSuccess(sagaResult));
+    const received = reducer(state, albumLoadSuccess(sagaResult));
     const expected = state
-      .setIn(['demo', 'sample', 'metaThumbs'], fixtures.metaThumbs)
-      .setIn(['demo', 'sample', 'thumbs'], []);
+      .setIn(['demo', 'sample', 'memories'], fixtures.memories);
 
     expect(received).toEqual(expected);
     state = expected;
@@ -87,8 +84,7 @@ describe('Load next thumb page', () => {
   const fixtures = {
     gallery: 'demo',
     album: 'sample',
-    thumbs: { link: 'thumbnail.jpg' },
-    metaThumbs: { filename: '2017-12-25.jpg' },
+    memories: { link: 'thumbnail.jpg', filename: '2017-12-25.jpg' },
     page: 2,
     error: { error: 'error', message: 'message' },
   };
@@ -110,10 +106,9 @@ describe('Load next thumb page', () => {
     const args = {
       gallery: fixtures.gallery,
       album: fixtures.album,
-      thumbs: fixtures.thumbs,
-      metaThumbs: fixtures.metaThumbs,
+      newMemories: fixtures.memories,
       page: fixtures.page,
-      hasMore: false,
+      hasMore: true,
     };
     const expected = {
       ...args,
@@ -127,15 +122,14 @@ describe('Load next thumb page', () => {
     const album = state.get('album');
     const args = {
       gallery: fixtures.gallery,
-      thumbs: fixtures.thumbs,
-      metaThumbs: fixtures.metaThumbs,
+      memories: fixtures.memories,
       page: fixtures.page,
       hasMore: fixtures.hasMore,
     };
 
-    const received = albumReducer(state, nextPageSuccess(args));
+    const received = reducer(state, nextPageSuccess(args));
     const expected = state
-      .setIn([gallery, album, 'thumbs'], fixtures.thumbs);
+      .setIn([gallery, album, 'memories'], fixtures.memories);
 
     expect(received).toEqual(expected);
   });

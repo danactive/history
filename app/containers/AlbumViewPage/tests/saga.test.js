@@ -12,7 +12,7 @@ import {
   getThumbPathsOnDropbox,
   argsThumbImgPath,
 } from '../saga';
-import { makeSelectNextPage } from '../selectors';
+import { selectNextPage } from '../selectors';
 import {
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
@@ -70,7 +70,7 @@ describe('AlbumViewPage Saga', () => {
           filename: '2001-03-21-01.jpg',
           geo: [-123.1, 49.25],
           id: '1',
-          link: null,
+          thumbLink: null,
           location: 'Granville Island',
         };
         const received = generator.next(parseTextXml(xmlAlbum)).value;
@@ -78,7 +78,7 @@ describe('AlbumViewPage Saga', () => {
           type: LOAD_ALBUM_SUCCESS,
           gallery: fixtures.gallery,
           album: fixtures.album,
-          metaThumbs: [jsonAlbum],
+          memories: [jsonAlbum],
         });
         expect(received).toEqual(expected);
       });
@@ -121,22 +121,21 @@ describe('AlbumViewPage Saga', () => {
       const fixtures = {
         gallery: 'demo',
         album: 'sample',
-        thumbs: [],
       };
       const generator = getThumbPathsOnDropbox(fixtures);
 
       it('should first yield an Effect select', () => {
         const received = generator.next().value;
-        const expected = select(makeSelectNextPage);
+        const expected = select(selectNextPage);
         expect(received).toEqual(expected);
       });
 
       it('should second yield an Effect all', () => {
         const args = {
           gallery: fixtures.gallery,
-          metaThumbs: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          album: fixtures.album,
+          memories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
           page: 2,
-          thumbs: fixtures.thumbs,
         };
         const received = generator.next(args).value;
         const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], argsThumbImgPath(args))]);
@@ -158,13 +157,41 @@ describe('AlbumViewPage Saga', () => {
       });
     });
 
-    describe('Failure', () => {
+    describe('Failure - empty selector', () => {
       const fixtures = { thumbs: [], gallery: 'demo' };
       const generator = getThumbPathsOnDropbox(fixtures);
 
       it('should first yield an Effect select', () => {
         const received = generator.next().value;
-        const expected = select(makeSelectNextPage);
+        const expected = select(selectNextPage);
+        expect(received).toEqual(expected);
+      });
+
+      it('should second yield an Effect put', () => {
+        const received = generator.next().value;
+
+        const error = {
+          message: 'Empty or malformed album',
+        };
+        const expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
+
+        expect(received).toEqual(expected);
+      });
+
+      it('should be done', () => {
+        const received = generator.next().done;
+        const expected = true;
+        expect(received).toEqual(expected);
+      });
+    });
+
+    describe('Failure - catch error', () => {
+      const fixtures = { thumbs: [], gallery: 'demo' };
+      const generator = getThumbPathsOnDropbox(fixtures);
+
+      it('should first yield an Effect select', () => {
+        const received = generator.next().value;
+        const expected = select(selectNextPage);
         expect(received).toEqual(expected);
       });
 

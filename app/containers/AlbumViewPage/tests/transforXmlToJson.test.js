@@ -22,7 +22,7 @@ describe('AlbumViewPage Transform XML to JSON', () => {
         -123.183889,
         49.194722,
       ],
-      link: null,
+      thumbLink: null,
       location: 'YVR Airport',
     };
     expect(received).toEqual(expected);

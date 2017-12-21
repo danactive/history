@@ -1,20 +1,19 @@
 import { fromJS } from 'immutable';
 
-import {
-  CHOOSE_MEMORY,
-} from './constants';
+import { CHOOSE_MEMORY } from './constants';
 import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_THUMBS_SUCCESS,
+  PAGE_SIZE,
 } from '../AlbumViewPage/constants';
+import { insertPage } from '../AlbumViewPage/paging';
 
 const albumInitialState = fromJS({
   demo: {
     sample: {
-      thumbs: [],
-      metaThumbs: [],
+      memories: [],
     },
   },
 });
@@ -28,25 +27,34 @@ export default function reducer(state = albumInitialState, action) {
       return state
         .set('gallery', action.gallery)
         .set('album', action.album)
-        .setIn([action.gallery, action.album, 'metaThumbs'], [])
-        .setIn([action.gallery, action.album, 'thumbs'], []);
+        .setIn([action.gallery, action.album, 'memories'], []);
 
     case LOAD_ALBUM_SUCCESS:
       return state
-        .setIn([gallery, album, 'metaThumbs'], action.metaThumbs);
-
-    case LOAD_NEXT_THUMB_PAGE_SUCCESS:
-      return state
-        .setIn([gallery, album, 'thumbs'], action.thumbs);
+        .setIn([gallery, album, 'memories'], action.memories);
 
     case LOAD_THUMBS_SUCCESS:
+    case LOAD_NEXT_THUMB_PAGE_SUCCESS:
       return state
-        .setIn([gallery, album, 'thumbs'], action.thumbs)
-        .deleteIn([gallery, album, 'metaThumbs']);
+        .setIn(
+          [gallery, album, 'memories'],
+          insertPage({
+            insert: action.newMemories,
+            pageSize: PAGE_SIZE,
+            page: action.page,
+            list: state.getIn([gallery, album, 'memories']),
+          })
+        );
 
     case CHOOSE_MEMORY:
       return state
-        .set('currentMemory', state.getIn([gallery, album, 'thumbs']).filter((item) => item.id === action.id)[0] || {});
+        .set(
+          'currentMemory',
+          state
+            .getIn([gallery, album, 'memories'])
+            .filter((item) => item.id === action.id)[0],
+          {}
+        );
 
     default:
       return state;

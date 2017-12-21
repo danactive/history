@@ -4,8 +4,8 @@ import {
   selectAlbum,
   selectPage,
   makeSelectAlbumLoading,
-  makeSelectThumbs,
-  makeSelectNextPage,
+  makeSelectMemories,
+  selectNextPage,
 } from '../selectors';
 
 describe('Memorized selectors', () => {
@@ -46,27 +46,26 @@ describe('makeSelectAlbumLoading', () => {
   });
 });
 
-describe('makeSelectThumbs', () => {
-  const thumbsSelector = makeSelectThumbs();
-  it('should select the album thumbs', () => {
+describe('makeSelectMemories', () => {
+  const memoriesSelector = makeSelectMemories();
+  it('should select the album memories', () => {
     const mockedState = fromJS({
       albums: {
         gallery: 'demo',
         album: 'sample',
         demo: {
           sample: {
-            thumbs: [{ filename: '2017-12-25.jpg' }],
+            memories: [{ filename: '2017-12-25.jpg' }],
           },
         },
       },
     });
-    const expected = [{ filename: '2017-12-25.jpg' }];
-    expect(thumbsSelector(mockedState)).toEqual(expected);
+    const expected = fromJS([{ filename: '2017-12-25.jpg' }]);
+    expect(memoriesSelector(mockedState)).toEqual(expected);
   });
 });
 
-describe('makeSelectNextPage', () => {
-  const nextPageSelector = makeSelectNextPage();
+describe('selectNextPage', () => {
   it('should select the next page', () => {
     const mockedState = fromJS({
       albumViewPage: {
@@ -77,8 +76,7 @@ describe('makeSelectNextPage', () => {
         album: 'sample',
         demo: {
           sample: {
-            thumbs: [],
-            metaThumbs: [],
+            memories: [],
           },
         },
       },
@@ -86,10 +84,9 @@ describe('makeSelectNextPage', () => {
     const expected = {
       gallery: 'demo',
       album: 'sample',
-      thumbs: fromJS([]),
-      metaThumbs: fromJS([]),
+      memories: fromJS([]),
       page: 1,
     };
-    expect(nextPageSelector(mockedState)).toEqual(expected);
+    expect(selectNextPage(mockedState)).toEqual(expected);
   });
 });

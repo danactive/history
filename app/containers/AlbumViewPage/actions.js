@@ -26,12 +26,12 @@ export function loadAlbum(querystring, album) {
   };
 }
 
-export function albumLoadSuccess({ gallery, album, metaThumbs }) {
+export function albumLoadSuccess({ gallery, album, memories }) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     gallery,
     album,
-    metaThumbs,
+    memories,
   };
 }
 
@@ -48,15 +48,14 @@ export function loadNextPage() {
   };
 }
 
-export function nextPageSuccess({ gallery, album, thumbs, metaThumbs, page, hasMore }) {
+export function nextPageSuccess({ gallery, album, newMemories, page }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
     gallery,
     album,
-    thumbs,
-    metaThumbs,
+    newMemories,
     page,
-    hasMore,
+    hasMore: true,
   };
 }
 
@@ -67,9 +66,13 @@ export function nextPageError(error) {
   };
 }
 
-export function thumbsLoaded(thumbs) {
+export function thumbsLoaded({ gallery, album, newMemories, page }) {
   return {
     type: LOAD_THUMBS_SUCCESS,
-    thumbs,
+    gallery,
+    album,
+    newMemories,
+    page,
+    hasMore: false,
   };
 }

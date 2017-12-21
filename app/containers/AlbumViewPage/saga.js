@@ -4,7 +4,7 @@ import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import { normalizeError } from 'utils/error';
 import request from 'utils/request';
 
-import { LOAD_ALBUM, LOAD_NEXT_THUMB_PAGE } from './constants';
+import { LOAD_ALBUM, LOAD_NEXT_THUMB_PAGE, PAGE_SIZE } from './constants';
 import {
   albumLoadSuccess,
   albumLoadError,
@@ -12,8 +12,9 @@ import {
   nextPageError,
   thumbsLoaded,
 } from './actions';
-import { makeSelectNextPage } from './selectors';
+import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
+import { getPage } from './paging';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
 
@@ -39,12 +40,9 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
 };
 
 
-const setPagedThumbs = (pageSize, list = []) => (page) => list.slice((page - 1) * pageSize, page * pageSize);
-
-
-export function thumbFilenameCallsDropbox({ gallery, metaThumbs }) {
+export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
   // eslint-disable-next-line redux-saga/yield-effects
-  return metaThumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath({ gallery, filename: thumb.filename })));
+  return thumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath({ gallery, filename: thumb.filename })));
 }
 
 
@@ -53,9 +51,9 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
   try {
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
     const xmlFile = yield call(request, xmlUrl.link);
-    const metaThumbs = getItemNodes(xmlFile).map(parseItemNode);
+    const memories = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoadSuccess({ gallery, album, metaThumbs }));
+    yield put(albumLoadSuccess({ gallery, album, memories }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
@@ -65,26 +63,24 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
 export function* getThumbPathsOnDropbox() {
   try {
-    const { gallery, album, metaThumbs, thumbs, page } = yield select(makeSelectNextPage());
-    if (!metaThumbs || metaThumbs.length === 0) {
-      throw new Error('Empty or malformed album');
+    const { gallery, album, memories, page: prevPage } = yield select(selectNextPage);
+    if (!memories || memories.length === 0) {
+      throw new Error(`Empty or malformed album; memories=(${memories})`);
     }
 
-    const PAGE_SIZE = 8;
-    const getPagedThumbs = setPagedThumbs(PAGE_SIZE, metaThumbs);
-    const pagedMetaThumbs = getPagedThumbs(page);
-    const hasMore = (PAGE_SIZE * page) < metaThumbs.length;
+    const page = prevPage + 1;
+    const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
+    const hasMore = (PAGE_SIZE * page) < memories.length;
 
-    const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, metaThumbs: pagedMetaThumbs }));
-    const linkedThumbs = pagedMetaThumbs.map((thumb, index) => ({ ...thumb, thumbLink: dropboxResults[index].link }));
-    const growingThumbs = thumbs.concat(linkedThumbs);
+    const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));
+    const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links
-      yield put(thumbsLoaded(growingThumbs));
+      yield put(thumbsLoaded({ gallery, album, newMemories: linkedMemories, page }));
       return;
     }
 
-    yield put(nextPageSuccess({ gallery, album, thumbs: growingThumbs, page: page + 1, hasMore: true }));
+    yield put(nextPageSuccess({ gallery, album, newMemories: linkedMemories, page }));
   } catch (error) {
     yield put(nextPageError(normalizeError(error)));
   }

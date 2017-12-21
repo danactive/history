@@ -18,7 +18,7 @@ import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
 import { loadAlbum } from './actions';
 import {
-  makeSelectThumbs,
+  makeSelectMemories,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
   makeSelectCurrentMemory,
@@ -39,13 +39,13 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       albumLoading,
       albumError,
       currentMemory,
-      thumbs,
+      memories,
     } = this.props;
 
     const thumbsProps = {
       loading: albumLoading,
       error: albumError,
-      items: thumbs,
+      items: memories,
     };
 
     const out = (currentMemory) ? JSON.stringify(currentMemory) : '{}';
@@ -66,7 +66,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
 }
 
 AlbumViewPage.propTypes = {
-  thumbs: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
   currentMemory: PropTypes.object,
   albumLoading: PropTypes.bool,
   albumError: PropTypes.oneOfType([
@@ -79,7 +79,7 @@ AlbumViewPage.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  thumbs: makeSelectThumbs(),
+  memories: makeSelectMemories(),
   albumLoading: makeSelectAlbumLoading(),
   albumError: makeSelectAlbumError(),
   currentMemory: makeSelectCurrentMemory(),

@@ -46,9 +46,13 @@ function InfiniteThumbs(props) {
     return <LoadingIndicator />;
   }
 
-  const html = items.map((item) => (
+  const hasThumbLink = (item) => item.thumbLink !== null;
+
+  const thumbImages = (item) => (
     <ThumbImg onClick={() => selectThumb(item.id)} src={item.thumbLink} alt={item.filename} key={`thumb-${item.filename}`} />
-  ));
+  );
+
+  const html = items.filter(hasThumbLink).map(thumbImages);
 
   return (
     <InfiniteScroll

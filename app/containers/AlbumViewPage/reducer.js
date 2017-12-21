@@ -35,7 +35,7 @@ export default function reducer(state = pageInitialState, action) {
       return state
         .set('albumLoading', false)
         .set('thumbsLoading', true)
-        .set('page', 1)
+        .set('page', 0)
         .set('hasMore', true);
 
     case LOAD_ALBUM_ERROR:
