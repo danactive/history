@@ -42,7 +42,7 @@
     "gm": "^1.23.0",
     "hapi": "^16.1.1",
     "hapi-react-views": "^10.0.0",
-    "hapi-swagger": "^8.0.0",
+    "hapi-swagger": "^9.0.0",
     "inert": "^4.0.2",
     "joi": "^13.0.0",
     "jquery-colorbox": "^1.6.4",
