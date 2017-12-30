@@ -13,6 +13,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from 'containers/InfiniteThumbs/Loadable';
+import PhotoImg from 'components/PhotoImg';
 
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
@@ -30,8 +31,8 @@ import messages from './messages';
 
 export class AlbumViewPage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   componentWillMount() {
-    const { onLoad, match: { params }, location: { search: query } } = this.props;
-    if (params.album) onLoad(query, params.album);
+    const { onLoad, match: { params }, location: { search: querystring } } = this.props;
+    if (params.album) onLoad(querystring, params.album);
   }
 
   render() {
@@ -42,13 +43,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       memories,
     } = this.props;
 
-    const thumbsProps = {
-      loading: albumLoading,
-      error: albumError,
-      items: memories,
-    };
-
-    const out = (currentMemory) ? JSON.stringify(currentMemory) : '{}';
+    const photo = (currentMemory) ? <PhotoImg src={currentMemory.thumbLink} /> : '';
 
     return (
       <div>
@@ -58,8 +53,8 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
         </Helmet>
         <FormattedMessage {...messages.header} />
 
-        {out}
-        <InfiniteThumbs {...thumbsProps} />
+        {photo}
+        <InfiniteThumbs loading={albumLoading} error={albumError} items={memories} />
       </div>
     );
   }
@@ -74,8 +69,14 @@ AlbumViewPage.propTypes = {
     PropTypes.bool,
   ]),
   onLoad: PropTypes.func.isRequired,
-  match: PropTypes.object.isRequired, // router
-  location: PropTypes.object.isRequired, // router
+  match: PropTypes.shape({ // router
+    params: PropTypes.shape({
+      album: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  location: PropTypes.shape({ // router
+    search: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({

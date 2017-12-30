@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
+import injectSaga from 'utils/injectSaga';
+
 import InfiniteScroll from 'react-infinite-scroller';
 import LoadingIndicator from 'components/LoadingIndicator';
 import ThumbImg from 'components/ThumbImg';
@@ -18,6 +20,8 @@ import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from './actions';
 import { makeSelectThumbsError } from './selectors';
+import saga from './saga';
+
 
 function showUiError(error) {
   return <div>{`Something went wrong, please try again! Reason (${error.message})`}</div>;
@@ -93,7 +97,9 @@ function mapDispatchToProps(dispatch) {
 }
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
+const withSaga = injectSaga({ key: 'albums', saga });
 
 export default compose(
   withConnect,
+  withSaga,
 )(InfiniteThumbs);
