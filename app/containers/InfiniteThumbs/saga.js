@@ -4,7 +4,7 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 import { normalizeError } from 'utils/error';
 
 import { CHOOSE_MEMORY } from './constants';
-import { selectGalleryFilename } from './selectors';
+import { selectCurrentMemory } from './selectors';
 import { photoLoadError, photoLoadSuccess } from './actions';
 
 
@@ -30,10 +30,11 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 // saga WORKER for CHOOSE_MEMORY
 export function* getPhotoPathsOnDropbox() {
   try {
-    const { gallery, filename } = yield select(selectGalleryFilename);
+    const { gallery, album, currentMemory } = yield select(selectCurrentMemory);
+    const { filename, id } = currentMemory;
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsPhotoXmlPath({ gallery, filename }));
 
-    yield put(photoLoadSuccess({ gallery, photoLink: xmlUrl.link }));
+    yield put(photoLoadSuccess({ gallery, album, id, photoLink: xmlUrl.link }));
   } catch (error) {
     yield put(photoLoadError(normalizeError(error)));
   }

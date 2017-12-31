@@ -1,6 +1,9 @@
 import { fromJS } from 'immutable';
 
-import { CHOOSE_MEMORY } from './constants';
+import {
+  CHOOSE_MEMORY,
+  LOAD_PHOTO_SUCCESS,
+} from './constants';
 import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
@@ -54,6 +57,13 @@ export default function reducer(state = albumInitialState, action) {
             .getIn([gallery, album, 'memories'])
             .filter((item) => item.id === action.id)[0],
           {}
+        );
+
+    case LOAD_PHOTO_SUCCESS:
+      return state
+        .setIn(
+          ['currentMemory', 'photoLink'],
+          action.photoLink,
         );
 
     default:

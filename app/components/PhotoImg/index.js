@@ -6,15 +6,24 @@ import A from '../A';
 import NormalImg from '../Img';
 
 const Img = styled(NormalImg)`
-  width: 11.58rem;
-  height: 2.82rem;
+  width: 21rem;
+  height: 14rem;
 `;
 
-const Photo = ({ onClick, src }) => <A onClick={onClick}><Img src={src} alt="Preview thumbnail image (scaled down dimensions)" /></A>;
+const Photo = ({ onClick, highsrc, lowsrc }) => (
+  <A onClick={onClick}>
+    <picture>
+      <source media="(min-width: 25rem)" srcSet={highsrc} />
+      <source srcSet={lowsrc} />
+      <Img src={lowsrc} alt="Preview thumbnail image (scaled down dimensions)" />
+    </picture>
+  </A>
+);
 
 Photo.propTypes = {
   onClick: propTypes.func.isRequired,
-  src: propTypes.string.isRequired,
+  highsrc: propTypes.string,
+  lowsrc: propTypes.string.isRequired,
 };
 
 export default Photo;

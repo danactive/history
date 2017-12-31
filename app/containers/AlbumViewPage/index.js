@@ -43,7 +43,13 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       memories,
     } = this.props;
 
-    const photo = (currentMemory) ? <PhotoImg src={currentMemory.thumbLink} /> : '';
+    const photo = (currentMemory) ? (
+      <PhotoImg
+        highsrc={currentMemory.photoLink}
+        lowsrc={currentMemory.thumbLink}
+        onClick={() => console.log('Photo clicked')} // eslint-disable-line no-console
+      />
+    ) : '';
 
     return (
       <div>

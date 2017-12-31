@@ -14,11 +14,12 @@ export const makeSelectThumbsError = () => createSelector(
   (pageState) => pageState.get('thumbsError')
 );
 
-export const selectGalleryFilename = (state) => {
+export const selectCurrentMemory = (state) => {
   const albumState = selectAlbum(state);
 
   return {
     gallery: albumState.get('gallery'),
-    filename: albumState.get('currentMemory').filename,
+    album: albumState.get('album'),
+    currentMemory: albumState.get('currentMemory'),
   };
 };
