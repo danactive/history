@@ -91,7 +91,7 @@
     "gulp-load-plugins": "^1.2.0",
     "gulp-mocha": "^4.1.0",
     "gulp-plumber": "^1.0.1",
-    "gulp-print": "^3.0.0",
+    "gulp-print": "^5.0.0",
     "gulp-rename": "^1.2.0",
     "gulp-tape": "0.0.9",
     "jsdom": "^11.0.0",
