@@ -6,7 +6,7 @@ const handler = (request, reply) => {
   gallery.getGalleries().then(galleries => reply.view('plugins/home/components/page.jsx', { galleries }));
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
@@ -16,11 +16,12 @@ exports.register = (server, options, next) => {
       tags: ['react']
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'home',
-  version: '0.1.1'
+  version: '0.2.0'
 };
+
+module.exports = { plugin };

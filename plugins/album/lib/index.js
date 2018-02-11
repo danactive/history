@@ -41,7 +41,7 @@ const handler = ({
     .catch(handleError);
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/album',
@@ -64,11 +64,12 @@ exports.register = (server, options, next) => {
   server.route(routes.staticRouteUtils({ urlSegment: 'album' }));
 
   server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'view-album',
-  version: '0.5.2'
+  version: '0.6.0'
 };
+
+module.exports = { plugin };

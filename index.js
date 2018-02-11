@@ -1,6 +1,6 @@
 /* global __dirname, require */
 
-const Hapi = require('hapi');
+const hapi = require('hapi');
 const hapiReactViews = require('hapi-react-views');
 const notifier = require('node-notifier');
 
@@ -12,31 +12,40 @@ const plugins = require('./lib/plugins');
 
 const { port } = config;
 const logger = log.createLogger('server');
-const server = new Hapi.Server();
 
-server.connection({ port });
-server.register(plugins, (error) => {
-  if (error) {
-    logger.panic(`Web server failed to initialize ${error.message}`);
-    return;
-  }
-
-  server.start();
+function announceStart(server) {
   logger.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
     icon: `${__dirname}/favicon.ico`,
     title: 'Server event',
     message: `Running at ${server.info.uri}`
   });
-});
+}
 
-server.views({
-  defaultExtension: 'jsx',
-  engines: {
-    jsx: hapiReactViews
-  },
-  isCached: true,
-  path: './',
-  partialsPath: './',
-  relativeTo: __dirname
-});
+function getViewsConfig() {
+  return {
+    defaultExtension: 'jsx',
+    engines: {
+      jsx: hapiReactViews
+    },
+    isCached: true,
+    path: './',
+    partialsPath: './',
+    relativeTo: __dirname
+  };
+}
+
+async function startServer() {
+  const server = hapi.Server({ port });
+
+  try {
+    await server.register(plugins);
+    server.views(getViewsConfig());
+    await server.start();
+    announceStart(server);
+  } catch (error) {
+    logger.panic(`Web server failed to initialize ${error.message}`);
+  }
+}
+
+startServer();

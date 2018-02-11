@@ -10,7 +10,7 @@ const validation = {
   gallery: joi.string()
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/video',
@@ -28,11 +28,12 @@ exports.register = (server, options, next) => {
       }
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'video',
-  version: '0.1.1'
+  version: '0.2.0'
 };
+
+module.exports = { plugin };

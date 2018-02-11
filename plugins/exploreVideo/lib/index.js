@@ -19,7 +19,7 @@ const handler = (request, reply) => {
   handleResponse({});
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
@@ -36,11 +36,12 @@ exports.register = (server, options, next) => {
   });
 
   server.route(routes.staticRoute({ urlSegment: 'video', pluginName: 'exploreVideo' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'explore-video',
-  version: '0.3.0'
+  version: '0.4.0'
 };
+
+module.exports = { plugin };

@@ -15,7 +15,7 @@ const validation = {
   sourcePath: joi.string()
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'POST',
     path: '/resize',
@@ -34,11 +34,12 @@ exports.register = (server, options, next) => {
       }
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'resize',
-  version: '0.2.1'
+  version: '0.3.0'
 };
+
+module.exports = { plugin };

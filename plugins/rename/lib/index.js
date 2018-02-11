@@ -41,7 +41,7 @@ const handler = (request, reply) => {
   }
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'POST',
     path: '/rename',
@@ -67,11 +67,12 @@ exports.register = (server, options, next) => {
       }
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'rename',
-  version: '2.1.1'
+  version: '2.2.0'
 };
+
+module.exports = { plugin };

@@ -12,7 +12,7 @@ const handler = ({ query: { path, raw: isRaw } }, reply) => {
     .catch(handleError);
 };
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/admin/walk-path',
@@ -36,11 +36,12 @@ exports.register = (server, options, next) => {
       file: 'plugins/walk/public/assets/bundle.js'
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'walk',
-  version: '0.3.1'
+  version: '0.4.0'
 };
+
+module.exports = { plugin };
