@@ -2,15 +2,21 @@
 
 const gallery = require('../../gallery/lib/gallery');
 
-const handler = (request, reply) => {
-  gallery.getGalleries().then(galleries => reply.view('plugins/home/components/page.jsx', { galleries }));
-};
+const handler = (request, reply) => new Promise(async (resolve) => {
+  const isRaw = request.query.raw;
+  const viewPath = 'plugins/home/components/page.jsx';
+  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
+
+  const galleries = await gallery.getGalleries();
+
+  handleResponse({ galleries });
+});
 
 const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       description: 'Home landing page',
       handler,
       tags: ['react']

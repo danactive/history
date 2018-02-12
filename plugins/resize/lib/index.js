@@ -1,35 +1,29 @@
-/* global require */
-const joi = require('joi');
-
 const resizeMod = require('./resize');
+const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
+const handler = request => new Promise((reply) => {
   const sourcePath = request.payload.source_path;
 
   resizeMod.resize(sourcePath)
     .then(() => reply({ resize: true }))
-    .catch(error => reply(error));
-};
-
-const validation = {
-  sourcePath: joi.string()
-};
+    .catch(reply);
+});
 
 const register = (server) => {
   server.route({
     method: 'POST',
     path: '/resize',
-    config: {
+    options: {
       handler,
       tags: ['api'],
       validate: {
         payload: {
-          source_path: validation.sourcePath
+          source_path: validation.sourceFolder
         }
       },
       response: {
         schema: {
-          resize: joi.boolean().truthy('true').falsy('false')
+          resize: validation.resize
         }
       }
     }

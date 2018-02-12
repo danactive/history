@@ -1,24 +1,31 @@
 /* global require */
 const routes = require('../../../lib/routes');
 const files = require('./files');
+const validation = require('../../../lib/validation');
 
-const handler = ({ query: { path, raw: isRaw } }, reply) => {
+const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve) => {
   const viewPath = 'plugins/walk/components/page.jsx';
-  const handleResponse = routes.createFormatReply({ reply, isRaw, viewPath });
-  const handleError = routes.createErrorReply(reply);
+  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
+  const handleError = routes.createErrorReply(resolve);
 
   files.listFiles(path)
     .then(handleResponse)
     .catch(handleError);
-};
+});
 
 const register = (server) => {
   server.route({
     method: 'GET',
     path: '/admin/walk-path',
-    config: {
+    options: {
       handler,
-      tags: ['api', 'react']
+      tags: ['api', 'react'],
+      validate: {
+        query: {
+          path: validation.sourceFolder,
+          raw: validation.raw
+        }
+      }
     }
   });
 
@@ -29,7 +36,7 @@ const register = (server) => {
   server.route({
     method: 'GET',
     path: '/walk/static/bundle.js',
-    config: {
+    options: {
       tags: ['static']
     },
     handler: {

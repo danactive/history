@@ -92,19 +92,22 @@ cases.push({
   options: { skip: false },
   request: {
     gallery: 'demo',
-    album_stem: 'sample'
+    album_stem: 'sample',
+    raw: true
   },
   successJson: (assert, response) => {
     assert.ok(response, 'Has response');
     assert.equal(response.album.meta.albumName, 'sample', 'Album name');
     assert.end();
   },
-  successView: (assert, response) => {
-    assert.ok(response, 'Has response');
-    assert.ok(response.indexOf('2012-fireplace.jpg') > 0, 'HTML string');
+  successView: (assert, result) => {
+    assert.ok(result, 'Has response');
+    const actual = result.album.items.length;
+    const expected = 5;
+    assert.equal(actual, expected, 'Photo count');
     assert.end();
   },
-  error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`)
+  error: (assert, error) => assert.fail(`Unexpected response found ${JSON.stringify(error)}`) && assert.end()
 });
 
 module.exports = { cases };

@@ -1,13 +1,10 @@
-
-/* global require */
-
 const handler = (request, reply) => reply.view('plugins/admin/components/page.jsx');
 
 const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       tags: ['static'],
       handler,
       description: 'Administration pages'

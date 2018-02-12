@@ -6,14 +6,18 @@ const validation = require('../../../lib/validation');
 
 const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
 
-const handler = (request, reply) => {
+const handler = request => new Promise((reply) => {
   const {
     payload: {
-      filenames: fromFilenames, prefix, preview, raw: isRaw, rename_associated: renameAssociated, source_folder: sourceFolder
+      filenames: fromFilenames,
+      prefix,
+      preview,
+      rename_associated: renameAssociated,
+      source_folder: sourceFolder
     }
   } = request;
 
-  const handleResponse = routes.createFormatReply({ formatJson, isRaw, reply });
+  const handleResponse = json => reply(formatJson(json));
   const handleError = routes.createErrorReply(reply);
 
   const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix);
@@ -23,7 +27,7 @@ const handler = (request, reply) => {
     const toFilenames = futureFilenames.filenames;
 
     renamer.renamePaths(sourceFolder, fromFilenames, toFilenames, options)
-      .then(routes.createFormatReply({ formatJson: () => ({ xml: futureFilenames.xml, filenames: toFilenames }), isRaw, reply }))
+      .then(() => reply({ xml: futureFilenames.xml, filenames: toFilenames }))
       .catch(handleError);
   };
 
@@ -39,13 +43,13 @@ const handler = (request, reply) => {
       .then(renamePaths)
       .catch(handleError);
   }
-};
+});
 
 const register = (server) => {
   server.route({
     method: 'POST',
     path: '/rename',
-    config: {
+    options: {
       handler,
       tags: ['api'],
       validate: {
@@ -63,7 +67,7 @@ const register = (server) => {
           filenames: validation.filenames,
           xml: validation.xml
         },
-        failAction: (request, reply, error) => reply(`Response validation error (${error.message})`).code(400)
+        failAction: (request, reply, error) => reply.response(`Response validation error (${error.message})`).code(400)
       }
     }
   });

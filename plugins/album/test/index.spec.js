@@ -8,46 +8,51 @@ test('Verify /album route', { skip: false }, (describe) => {
   const path = require('path');
   const vision = require('vision');
 
+  const config = require('../../../config.json');
   const lib = require('../lib');
   const testCases = require('./cases');
   const testCaseDef = require('../../../test/casesDefinition');
 
-  const SAMPLE_IMAGE_COUNT = 6;
+  const SAMPLE_IMAGE_COUNT = 5;
   const plugins = [inert, vision, lib];
 
   testCaseDef.execHapi({
     describe, plugins, testCases, routeStem: '/album'
   });
 
-  describe.test('* JavaScript library requirements', { skip: false }, (assert) => {
-    const server = new hapi.Server();
-    server.connection();
-    server.register(plugins, (pluginError) => {
-      if (pluginError) {
-        return assert.fail(pluginError);
-      }
+  describe.test('* JavaScript library requirements', { skip: false }, async (assert) => {
+    const server = hapi.Server();
 
-      const url = `/album?${querystring.stringify({ gallery: 'demo', album_stem: 'sample' })}`;
-      const request = {
-        method: 'GET',
-        url
-      };
+    const url = `/album?${querystring.stringify({
+      album_stem: config.defaultAlbum,
+      gallery: config.defaultGallery,
+      raw: true
+    })}`;
 
-      server.views({
-        engines: {
-          jsx: hapiReactViews
-        },
-        relativeTo: path.join(__dirname, '../../../')
-      });
+    const viewsConfig = {
+      engines: {
+        jsx: hapiReactViews
+      },
+      relativeTo: path.join(__dirname, '../../../')
+    };
 
-      return server.inject(request, (response) => {
-        const thumbDivs = response.result.split('<div class="albumBoxPhotoImg">').length;
-        const thumbLinks = response.result.split('<div class="albumBoxPhotoImg"><a href=').length;
-        assert.equal(thumbDivs, SAMPLE_IMAGE_COUNT, 'HTML thumb divs match images in sample album');
-        assert.equal(thumbDivs, thumbLinks, 'ColorBox requirement href found');
+    const request = {
+      method: 'GET',
+      url
+    };
 
-        assert.end();
-      });
-    });
+    try {
+      await server.register(plugins);
+      server.views(viewsConfig);
+      const response = await server.inject(request);
+
+      const actual = response.result.album.items.length;
+      const expected = SAMPLE_IMAGE_COUNT;
+      assert.equal(actual, expected, 'Photo count');
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   });
 });

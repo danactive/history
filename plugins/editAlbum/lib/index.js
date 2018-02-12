@@ -12,9 +12,7 @@ const handler = ({ query: { raw: isRaw } }, reply) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const handleResponse = routes.createFormatReply({
-    isRaw, formatJson, reply, viewPath
-  });
+  const handleResponse = json => ((isRaw) ? reply(formatJson(json)) : reply.view(viewPath, formatJson(json)));
   const handleError = routes.createErrorReply(reply);
 
   gallery.getGalleries()
@@ -26,7 +24,7 @@ const register = (server) => {
   server.route({
     method: 'GET',
     path: '/album',
-    config: {
+    options: {
       handler,
       tags: ['api', 'react'],
       validate: {

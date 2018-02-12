@@ -7,7 +7,7 @@ const staticGalleryFolder = (server, handler) => {
   server.route({
     method: 'GET',
     path: '/static/gallery-{gallery}/{param*}',
-    config: {
+    options: {
       tags: ['static'],
       handler
     }
@@ -18,7 +18,7 @@ const register = server => new Promise(async (resolve) => {
   server.route({
     method: 'GET',
     path: '/static/xslt/gallery.xslt',
-    config: {
+    options: {
       tags: ['static'],
       handler: {
         file: {
@@ -37,7 +37,7 @@ const register = server => new Promise(async (resolve) => {
     };
     resolve(staticGalleryFolder(server, handleRoute));
   } catch (error) {
-    resolve(staticGalleryFolder(server, (request, reply) => reply(error)));
+    resolve(staticGalleryFolder(server, () => error));
   }
 });
 

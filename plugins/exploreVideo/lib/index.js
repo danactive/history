@@ -12,9 +12,7 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
-  const handleResponse = routes.createFormatReply({
-    isRaw, formatJson, reply, viewPath
-  });
+  const handleResponse = json => ((isRaw) ? reply(formatJson(json)) : reply.view(viewPath, formatJson(json)));
 
   handleResponse({});
 };
@@ -23,7 +21,7 @@ const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       handler,
       tags: ['react'],
       validate: {

@@ -1,29 +1,28 @@
-/* global require */
-const joi = require('joi');
+const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => reply.view('plugins/video/components/page.jsx', { video: request.query });
+const handler = (request, reply) => new Promise((resolve) => {
+  const isRaw = request.query.raw;
+  const viewPath = 'plugins/video/components/page.jsx';
+  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
 
-const validation = {
-  sources: joi.string(),
-  w: joi.number(),
-  h: joi.number(),
-  gallery: joi.string()
-};
+  handleResponse({ video: request.query });
+});
 
 const register = (server) => {
   server.route({
     method: 'GET',
     path: '/video',
-    config: {
+    options: {
       handler,
       description: 'Watch HTML5 videos',
       tags: ['react'],
       validate: {
         query: {
-          sources: validation.sources,
+          gallery: validation.gallery,
           w: validation.w,
           h: validation.h,
-          gallery: validation.gallery
+          raw: validation.raw,
+          sources: validation.sources
         }
       }
     }

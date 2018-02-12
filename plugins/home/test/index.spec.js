@@ -5,40 +5,57 @@ tape('Verify / route', { skip: false }, (describe) => {
   const hapiReactViews = require('hapi-react-views');
   const inert = require('inert');
   const path = require('path');
+  const querystring = require('querystring');
   const vision = require('vision');
 
+  const config = require('../../../config.json');
   const lib = require('../lib');
   const utils = require('../../utils');
 
   const plugins = [inert, vision, lib];
   const port = utils.config.get('port');
 
-  describe.test('* Valid React.js view', { skip: false }, (assert) => {
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (pluginError) => {
-      if (pluginError) {
-        return assert.fail(pluginError);
-      }
+  describe.test('* Verify / route', { skip: false }, async (assert) => {
+    const server = hapi.Server({ port });
 
-      const url = '/';
-      const request = {
-        method: 'GET',
-        url
-      };
+    const url = `/?${querystring.stringify({
+      raw: true
+    })}`;
 
-      server.views({
-        engines: {
-          jsx: hapiReactViews
-        },
-        relativeTo: path.join(__dirname, '../../../')
-      });
+    const viewsConfig = {
+      engines: {
+        jsx: hapiReactViews
+      },
+      relativeTo: path.join(__dirname, '../../../')
+    };
 
-      return server.inject(request, (response) => {
-        assert.ok(response.result.indexOf('<a href="static/gallery-demo/xml/gallery.xml">demo</a>') > -1, 'Link to demo gallery');
+    const request = {
+      method: 'GET',
+      url
+    };
 
-        assert.end();
-      });
-    });
+    try {
+      await server.register(plugins);
+      server.views(viewsConfig);
+      const response = await server.inject(request);
+
+
+      let actual;
+      let expected;
+
+
+      actual = response.statusCode;
+      expected = 200;
+      assert.equal(actual, expected, 'HTTP status is okay');
+
+
+      actual = response.result.galleries.includes(config.defaultGallery);
+      expected = true;
+      assert.equal(actual, expected, 'Default gallery found');
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   });
 });
