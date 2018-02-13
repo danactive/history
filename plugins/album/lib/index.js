@@ -26,13 +26,11 @@ function applyDropbox(response) {
 
 const handler = (request, reply) => new Promise((resolve) => {
   const {
-    query: {
-      album_stem: albumStem,
-      cloud,
-      gallery,
-      raw: isRaw
-    }
-  } = request;
+    album_stem: albumStem,
+    cloud,
+    gallery,
+    raw: isRaw
+  } = request.query;
   const viewPath = 'plugins/album/components/page.jsx';
 
   const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);

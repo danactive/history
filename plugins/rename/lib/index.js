@@ -8,14 +8,12 @@ const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
 
 const handler = request => new Promise((reply) => {
   const {
-    payload: {
-      filenames: fromFilenames,
-      prefix,
-      preview,
-      rename_associated: renameAssociated,
-      source_folder: sourceFolder
-    }
-  } = request;
+    filenames: fromFilenames,
+    prefix,
+    preview,
+    rename_associated: renameAssociated,
+    source_folder: sourceFolder
+  } = request.payload;
 
   const handleResponse = json => reply(formatJson(json));
   const handleError = routes.createErrorReply(reply);

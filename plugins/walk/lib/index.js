@@ -13,36 +13,40 @@ const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve
     .catch(handleError);
 });
 
-const register = (server) => {
-  server.route({
-    method: 'GET',
-    path: '/admin/walk-path',
-    options: {
-      handler,
-      tags: ['api', 'react'],
-      validate: {
-        query: {
-          path: validation.sourceFolder,
-          raw: validation.raw
-        }
+const routeWalkPath = {
+  method: 'GET',
+  path: '/admin/walk-path',
+  options: {
+    handler,
+    tags: ['api', 'react'],
+    validate: {
+      query: {
+        path: validation.sourceFolder,
+        raw: validation.raw
       }
     }
-  });
+  }
+};
+
+const routeBundle = {
+  method: 'GET',
+  path: '/walk/static/bundle.js',
+  options: {
+    tags: ['static'],
+    handler: {
+      file: 'plugins/walk/public/assets/bundle.js'
+    }
+  }
+};
+
+const register = (server) => {
+  server.route(routeWalkPath);
 
   server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
 
   server.route(routes.staticRouteUtils({ urlSegment: 'walk' }));
 
-  server.route({
-    method: 'GET',
-    path: '/walk/static/bundle.js',
-    options: {
-      tags: ['static']
-    },
-    handler: {
-      file: 'plugins/walk/public/assets/bundle.js'
-    }
-  });
+  server.route(routeBundle);
 };
 
 const plugin = {
