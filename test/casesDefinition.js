@@ -7,42 +7,45 @@ function execHapi({
   describe, plugins, routeStem, testCases
 }) {
   testCases.cases.forEach((testCase) => {
-    describe.test(testCase.name, testCase.options, (assert) => {
-      const server = new hapi.Server();
-      server.connection();
-      server.register(plugins, (pluginError) => {
-        if (pluginError) {
-          assert.fail(pluginError);
+    describe.test(testCase.name, testCase.options, async (assert) => {
+      const server = hapi.Server();
+
+      const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
+      const request = {
+        method: 'GET',
+        url
+      };
+
+      const viewsConfig = {
+        engines: {
+          jsx: hapiReactViews
+        },
+        relativeTo: path.join(__dirname, '../')
+      };
+
+      try {
+        await server.register(plugins);
+
+        if (server.views) {
+          server.views(viewsConfig);
+        }
+
+        const response = await server.inject(request);
+        if (response.result.error) {
+          testCase.error(assert, response.result, { rest: true });
           return;
         }
 
-        const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
-        const request = {
-          method: 'GET',
-          url
-        };
-
-        if (server.views) {
-          server.views({
-            engines: {
-              jsx: hapiReactViews
-            },
-            relativeTo: path.join(__dirname, '../')
-          });
+        if (testCase.success) {
+          testCase.success(assert, response.result, { rest: true });
+          return;
         }
 
-        server.inject(request, (response) => {
-          if (response.result.error) {
-            return testCase.error(assert, response.result, { rest: true });
-          }
-
-          if (testCase.success) {
-            return testCase.success(assert, response.result, { rest: true });
-          }
-
-          return testCase.successView(assert, response.result);
-        });
-      });
+        testCase.successView(assert, response.result);
+      } catch (error) {
+        assert.fail(error);
+        assert.end();
+      }
     });
   });
 }

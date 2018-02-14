@@ -1,5 +1,7 @@
 {
   "port": 8000,
+  "defaultAlbum": "sample",
+  "defaultGallery": "demo",
   "resizeDimensions": {
     "photo": { "width": 800, "height": 600 },
     "thumb": { "width": 185, "height": 45 }
