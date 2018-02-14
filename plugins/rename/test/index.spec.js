@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Verify /rename route', { skip: false }, (describe) => {
-  const Hapi = require('hapi');
+  const hapi = require('hapi');
   const path = require('path');
 
   const lib = require('../lib');
@@ -13,22 +13,20 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   const port = utils.config.get('port');
 
   describe.test('* Caught fake source folder', async (assert) => {
+    const server = hapi.Server({ port });
+    await server.register(plugins);
+
+    const request = {
+      method: 'POST',
+      url: '/rename',
+      payload: {
+        filenames: ['aitch.html', 'gee.gif', 'em.md'],
+        prefix,
+        source_folder: '/test/fixtures/renameable/FAKE'
+      }
+    };
+
     try {
-      const server = new Hapi.Server();
-
-      server.connection({ port });
-      await server.register(plugins);
-
-      const request = {
-        method: 'POST',
-        url: '/rename',
-        payload: {
-          filenames: ['aitch.html', 'gee.gif', 'em.md'],
-          prefix,
-          source_folder: '/test/fixtures/renameable/FAKE'
-        }
-      };
-
       const response = await server.inject(request);
 
       assert.equal(response.statusCode, 404, 'Status code');
@@ -40,23 +38,21 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   });
 
   describe.test('* Rename filename based on prefix', async (assert) => {
+    const server = hapi.Server({ port });
+
+    const request = {
+      method: 'POST',
+      url: '/rename',
+      payload: {
+        filenames: ['aitch.html', 'gee.gif', 'em.md'],
+        prefix,
+        raw: true,
+        source_folder: '/test/fixtures/renameable'
+      }
+    };
+
     try {
-      const server = new Hapi.Server();
-
-      server.connection({ port });
       await server.register(plugins);
-
-      const request = {
-        method: 'POST',
-        url: '/rename',
-        payload: {
-          filenames: ['aitch.html', 'gee.gif', 'em.md'],
-          prefix,
-          raw: true,
-          source_folder: '/test/fixtures/renameable'
-        }
-      };
-
       const response = await server.inject(request);
 
       let actual;
@@ -99,24 +95,22 @@ tape('Verify /rename route', { skip: false }, (describe) => {
   });
 
   describe.test('* Rename filename based on prefix with associated files', async (assert) => {
+    const server = hapi.Server({ port });
+
+    const request = {
+      method: 'POST',
+      url: '/rename',
+      payload: {
+        filenames: ['dee.dat', 'pee.pdf'],
+        prefix,
+        raw: true,
+        rename_associated: true,
+        source_folder: '/test/fixtures/renameable'
+      }
+    };
+
     try {
-      const server = new Hapi.Server();
-
-      server.connection({ port });
       await server.register(plugins);
-
-      const request = {
-        method: 'POST',
-        url: '/rename',
-        payload: {
-          filenames: ['dee.dat', 'pee.pdf'],
-          prefix,
-          raw: true,
-          rename_associated: true,
-          source_folder: '/test/fixtures/renameable'
-        }
-      };
-
       const response = await server.inject(request);
 
       let actual;

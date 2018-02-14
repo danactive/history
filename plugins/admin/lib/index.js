@@ -1,23 +1,21 @@
-
-/* global require */
-
 const handler = (request, reply) => reply.view('plugins/admin/components/page.jsx');
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       tags: ['static'],
       handler,
       description: 'Administration pages'
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'admin',
-  version: '0.1.1'
+  version: '0.2.0'
 };
+
+module.exports = { plugin };

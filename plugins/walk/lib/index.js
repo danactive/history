@@ -1,46 +1,58 @@
 /* global require */
 const routes = require('../../../lib/routes');
 const files = require('./files');
+const validation = require('../../../lib/validation');
 
-const handler = ({ query: { path, raw: isRaw } }, reply) => {
+const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve) => {
   const viewPath = 'plugins/walk/components/page.jsx';
-  const handleResponse = routes.createFormatReply({ reply, isRaw, viewPath });
-  const handleError = routes.createErrorReply(reply);
+  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
+  const handleError = routes.createErrorReply(resolve);
 
   files.listFiles(path)
     .then(handleResponse)
     .catch(handleError);
+});
+
+const routeWalkPath = {
+  method: 'GET',
+  path: '/admin/walk-path',
+  options: {
+    handler,
+    tags: ['api', 'react'],
+    validate: {
+      query: {
+        path: validation.sourceFolder,
+        raw: validation.raw
+      }
+    }
+  }
 };
 
-exports.register = (server, options, next) => {
-  server.route({
-    method: 'GET',
-    path: '/admin/walk-path',
-    config: {
-      handler,
-      tags: ['api', 'react']
+const routeBundle = {
+  method: 'GET',
+  path: '/walk/static/bundle.js',
+  options: {
+    tags: ['static'],
+    handler: {
+      file: 'plugins/walk/public/assets/bundle.js'
     }
-  });
+  }
+};
+
+const register = (server) => {
+  server.route(routeWalkPath);
 
   server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
 
   server.route(routes.staticRouteUtils({ urlSegment: 'walk' }));
 
-  server.route({
-    method: 'GET',
-    path: '/walk/static/bundle.js',
-    config: {
-      tags: ['static']
-    },
-    handler: {
-      file: 'plugins/walk/public/assets/bundle.js'
-    }
-  });
-
-  next();
+  server.route(routeBundle);
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'walk',
-  version: '0.3.1'
+  version: '0.4.0'
 };
+
+module.exports = { plugin };
