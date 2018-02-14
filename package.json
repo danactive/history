@@ -39,10 +39,10 @@
     "geojson": "^0.5.0",
     "glob": "^7.0.0",
     "gm": "^1.23.0",
-    "hapi": "^16.1.1",
+    "hapi": "^17.2.0",
     "hapi-react-views": "^10.0.0",
-    "hapi-swagger": "^8.0.0",
-    "inert": "^4.0.2",
+    "hapi-swagger": "^9.1.1",
+    "inert": "^5.1.0",
     "joi": "^13.0.0",
     "jquery-colorbox": "^1.6.4",
     "lout": "^10.0.1",
@@ -60,7 +60,8 @@
     "rimraf": "^2.2.8",
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
-    "vision": "^4.1.0",
+    "typy": "^1.4.3",
+    "vision": "^5.3.1",
     "webpack": "^3.4.1",
     "xml2js": "^0.4.17"
   },
@@ -92,7 +93,8 @@
     "style-loader": "^0.19.0",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
-    "url-loader": "^0.6.1"
+    "url-loader": "^0.6.1",
+    "wreck": "^14.0.2"
   },
   "peerDependencies": {
     "eslint": "^4.1.0",

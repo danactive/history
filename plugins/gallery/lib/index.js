@@ -3,35 +3,22 @@ const path = require('path');
 
 const gallery = require('./gallery');
 
-const routeHandler = (error, server, galleries, next) => {
-  let handler;
-  if (error) {
-    handler = (request, reply) => reply(error);
-  } else {
-    handler = {
-      directory: {
-        path: request => path.join(__dirname, '../../../', `public/galleries/gallery-${request.params.gallery}`)
-      }
-    };
-  }
-
+const staticGalleryFolder = (server, handler) => {
   server.route({
     method: 'GET',
     path: '/static/gallery-{gallery}/{param*}',
-    config: {
+    options: {
       tags: ['static'],
       handler
     }
   });
-
-  next();
 };
 
-exports.register = (server, options, next) => {
+const register = server => new Promise(async (resolve) => {
   server.route({
     method: 'GET',
     path: '/static/xslt/gallery.xslt',
-    config: {
+    options: {
       tags: ['static'],
       handler: {
         file: {
@@ -41,13 +28,23 @@ exports.register = (server, options, next) => {
     }
   });
 
-  const noError = undefined;
-  gallery.getGalleries()
-    .then(galleries => routeHandler(noError, server, galleries, next))
-    .catch(error => routeHandler(error, server, [], next));
+  try {
+    await gallery.getGalleries();
+    const handleRoute = {
+      directory: {
+        path: request => path.join(__dirname, '../../../', `public/galleries/gallery-${request.params.gallery}`)
+      }
+    };
+    resolve(staticGalleryFolder(server, handleRoute));
+  } catch (error) {
+    resolve(staticGalleryFolder(server, () => error));
+  }
+});
+
+const plugin = {
+  register,
+  name: 'gallery',
+  version: '0.2.0'
 };
 
-exports.register.attributes = {
-  name: 'gallery',
-  version: '0.1.1'
-};
+module.exports = { plugin };
