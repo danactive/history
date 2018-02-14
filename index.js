@@ -13,7 +13,9 @@ const plugins = require('./lib/plugins');
 const { port } = config;
 const logger = log.createLogger('server');
 
-function announceStart(server) {
+const server = hapi.Server({ port });
+
+function announceStart() {
   logger.operational(`Server running at ${server.info.uri}`);
   notifier.notify({
     icon: `${__dirname}/favicon.ico`,
@@ -36,16 +38,20 @@ function getViewsConfig() {
 }
 
 async function startServer() {
-  const server = hapi.Server({ port });
-
   try {
     await server.register(plugins);
     server.views(getViewsConfig());
     await server.start();
-    announceStart(server);
+    announceStart();
   } catch (error) {
     logger.panic(`Web server failed to initialize ${error.message}`);
   }
 }
 
 startServer();
+
+module.exports = {
+  stopServer: async () => {
+    await server.stop();
+  }
+};

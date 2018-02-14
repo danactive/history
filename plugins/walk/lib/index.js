@@ -5,7 +5,7 @@ const validation = require('../../../lib/validation');
 
 const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve) => {
   const viewPath = 'plugins/walk/components/page.jsx';
-  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
+  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
   const handleError = routes.createErrorReply(resolve);
 
   files.listFiles(path)

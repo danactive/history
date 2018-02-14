@@ -2,7 +2,7 @@
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
+const handler = (request, reply) => new Promise((resolve) => {
   const isRaw = request.query.raw;
   const formatJson = (json) => {
     const context = { galleries: json };
@@ -12,10 +12,10 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
-  const handleResponse = json => ((isRaw) ? reply(formatJson(json)) : reply.view(viewPath, formatJson(json)));
+  const handleResponse = json => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
 
   handleResponse({});
-};
+});
 
 const register = (server) => {
   server.route({

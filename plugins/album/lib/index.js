@@ -29,12 +29,12 @@ const handler = (request, reply) => new Promise((resolve) => {
     album_stem: albumStem,
     cloud,
     gallery,
-    raw: isRaw
+    raw: isRaw = false
   } = request.query;
   const viewPath = 'plugins/album/components/page.jsx';
 
   const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
-  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
+  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
   const handleError = routes.createErrorReply(resolve);
 
   jsonAlbum.getAlbum(gallery, albumStem)

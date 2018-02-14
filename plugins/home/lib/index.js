@@ -5,7 +5,7 @@ const gallery = require('../../gallery/lib/gallery');
 const handler = (request, reply) => new Promise(async (resolve) => {
   const isRaw = request.query.raw;
   const viewPath = 'plugins/home/components/page.jsx';
-  const handleResponse = json => ((isRaw) ? resolve(json) : reply.view(viewPath, json));
+  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
 
   const galleries = await gallery.getGalleries();
 
