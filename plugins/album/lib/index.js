@@ -2,7 +2,7 @@
 const Dropbox = require('dropbox');
 
 const { createTransform } = require('./dropbox');
-const json = require('./json');
+const jsonAlbum = require('./json');
 const log = require('../../log');
 const routes = require('../../../lib/routes');
 const utils = require('../../utils');
@@ -24,28 +24,30 @@ function applyDropbox(response) {
   return transform(response, 'thumbPath');
 }
 
-const handler = ({
-  query: {
-    album_stem: albumStem, gallery, cloud, raw: isRaw
-  }
-}, reply) => {
+const handler = (request, reply) => new Promise((resolve) => {
+  const {
+    album_stem: albumStem,
+    cloud,
+    gallery,
+    raw: isRaw = false
+  } = request.query;
   const viewPath = 'plugins/album/components/page.jsx';
 
   const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
-  const handleResponse = routes.createFormatReply({ isRaw, reply, viewPath });
-  const handleError = routes.createErrorReply(reply);
+  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
+  const handleError = routes.createErrorReply(resolve);
 
-  json.getAlbum(gallery, albumStem)
+  jsonAlbum.getAlbum(gallery, albumStem)
     .then(applyCloud)
     .then(handleResponse)
     .catch(handleError);
-};
+});
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/album',
-    config: {
+    options: {
       handler,
       tags: ['react'],
       validate: {
@@ -64,11 +66,12 @@ exports.register = (server, options, next) => {
   server.route(routes.staticRouteUtils({ urlSegment: 'album' }));
 
   server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'view-album',
-  version: '0.5.2'
+  version: '0.6.0'
 };
+
+module.exports = { plugin };
