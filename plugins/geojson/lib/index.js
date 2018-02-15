@@ -2,7 +2,7 @@
 const json = require('./json');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
+const handler = request => new Promise((reply) => {
   const {
     album_stem: albumStem,
     gallery
@@ -11,13 +11,13 @@ const handler = (request, reply) => {
   json.dataToGeojson(gallery, albumStem)
     .then(geojsonData => reply(geojsonData))
     .catch(error => reply(error));
-};
+});
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       description: 'GeoJSON for any album in any gallery',
       handler,
       tags: ['api'],
@@ -29,11 +29,12 @@ exports.register = (server, options, next) => {
       }
     }
   });
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'geojson',
-  version: '0.1.1'
+  version: '0.2.0'
 };
+
+module.exports = { plugin };
