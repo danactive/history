@@ -2,7 +2,7 @@
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = (request, reply) => {
+const handler = (request, reply) => new Promise((resolve) => {
   const isRaw = request.query.raw;
   const formatJson = (json) => {
     const context = { galleries: json };
@@ -12,18 +12,16 @@ const handler = (request, reply) => {
   };
   const viewPath = 'plugins/exploreVideo/components/page.jsx';
 
-  const handleResponse = routes.createFormatReply({
-    isRaw, formatJson, reply, viewPath
-  });
+  const handleResponse = json => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
 
   handleResponse({});
-};
+});
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/',
-    config: {
+    options: {
       handler,
       tags: ['react'],
       validate: {
@@ -36,11 +34,12 @@ exports.register = (server, options, next) => {
   });
 
   server.route(routes.staticRoute({ urlSegment: 'video', pluginName: 'exploreVideo' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'explore-video',
-  version: '0.3.0'
+  version: '0.4.0'
 };
+
+module.exports = { plugin };

@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/danactive/history/compare/v3.1.0...v3.2.0) (2018-02-10)
+
+
+### Bug Fixes
+
+* **CI:** Update code climate configuration ([114a6bd](https://github.com/danactive/history/commit/114a6bd))
+* **package:** Remove gulp as it was unused except for filtering tests that failed due to framework ([839800d](https://github.com/danactive/history/commit/839800d))
+* **package:** update boom to version 7.0.0 ([66f83d2](https://github.com/danactive/history/commit/66f83d2))
+* **package:** update boom to version 7.0.0 ([09a4fd9](https://github.com/danactive/history/commit/09a4fd9))
+* **package:** update dotenv to version 5.0.0 ([5b791a6](https://github.com/danactive/history/commit/5b791a6))
+* **package:** update hapi-react-views to version 10.0.0 ([6b7d0e8](https://github.com/danactive/history/commit/6b7d0e8))
+* **package:** update hapi-swagger to version 8.0.0 ([5632d85](https://github.com/danactive/history/commit/5632d85))
+* **package:** update react-dates to version 13.0.6 ([392db1c](https://github.com/danactive/history/commit/392db1c))
+* **package:** update react-dates to version 14.0.0 ([597f0d5](https://github.com/danactive/history/commit/597f0d5))
+* **package:** update react-dates to version 15.0.0 ([8a07832](https://github.com/danactive/history/commit/8a07832))
+* **Utils:** Update from index.js to utils.js as no route recipe [[#230](https://github.com/danactive/history/issues/230)] ([6a0aeeb](https://github.com/danactive/history/commit/6a0aeeb))
+* **Walk:** Add support for uppercase filenames ([5071411](https://github.com/danactive/history/commit/5071411))
+* **Walk:** React Dates changed the CSS theming ([eac50d3](https://github.com/danactive/history/commit/eac50d3))
+* **Walk:** Update contents to only show supported file types [[#230](https://github.com/danactive/history/issues/230)] ([586e165](https://github.com/danactive/history/commit/586e165))
+
+
+### Features
+
+* **Public:** Add static route for public folder [[#230](https://github.com/danactive/history/issues/230)] ([9fa630d](https://github.com/danactive/history/commit/9fa630d))
+* **Walk:** Update rename button to change file system [[#230](https://github.com/danactive/history/issues/230)] ([14ced3f](https://github.com/danactive/history/commit/14ced3f))
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/danactive/history/compare/v3.0.0...v3.1.0) (2017-10-15)
 

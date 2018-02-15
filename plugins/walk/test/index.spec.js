@@ -1,8 +1,9 @@
 const tape = require('tape-catch');
 
 tape('Verify /walk route', { skip: false }, (describe) => {
-  const Hapi = require('hapi');
+  const hapi = require('hapi');
   const inert = require('inert');
+  const typy = require('typy');
   const vision = require('vision');
 
   const lib = require('../lib');
@@ -19,33 +20,40 @@ tape('Verify /walk route', { skip: false }, (describe) => {
   });
 
   describe.test('* Handler', async (assert) => {
-    const server = new Hapi.Server();
-
-    server.connection({ port });
-    await server.register(plugins);
+    const server = hapi.Server({ port });
 
     const request = {
       method: 'GET',
-      url: '/admin/walk-path?path=/galleries&raw=true'
+      url: `${url}?path=/galleries&raw=true`
     };
-
-    const result = await server.inject(request);
-    const response = result.result;
 
     let actual;
     let expected;
 
+    try {
+      await server.register(plugins);
+      const response = await server.inject(request);
 
-    actual = result.statusCode;
-    expected = 200;
-    assert.equal(actual, expected, 'HTTP status is okay');
+
+      actual = response.statusCode;
+      expected = 200;
+      assert.equal(actual, expected, 'HTTP status is okay');
 
 
-    const gallery = response.files.find(file => (file.name === 'gallery-demo'));
-    actual = gallery.filename;
-    expected = 'gallery-demo';
-    assert.equal(actual, expected, 'Found demo gallery');
+      if (!typy(response.result.files).isArray) {
+        assert.fail('No response result');
+        assert.end();
+        return;
+      }
 
+
+      const gallery = response.result.files.find(file => (file.name === 'gallery-demo'));
+      actual = gallery.filename;
+      expected = 'gallery-demo';
+      assert.equal(actual, expected, 'Found demo gallery');
+    } catch (error) {
+      assert.fail(error);
+    }
 
     assert.end();
   });

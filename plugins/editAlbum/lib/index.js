@@ -3,7 +3,7 @@ const gallery = require('../../gallery/lib/gallery');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const handler = ({ query: { raw: isRaw } }, reply) => {
+const handler = ({ query: { raw: isRaw } }, reply) => new Promise((resolve) => {
   const formatJson = (json) => {
     const context = { galleries: json };
     context.state = `window.state = ${JSON.stringify(context)};`;
@@ -12,21 +12,19 @@ const handler = ({ query: { raw: isRaw } }, reply) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const handleResponse = routes.createFormatReply({
-    isRaw, formatJson, reply, viewPath
-  });
+  const handleResponse = json => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
   const handleError = routes.createErrorReply(reply);
 
   gallery.getGalleries()
     .then(handleResponse)
     .catch(handleError);
-};
+});
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route({
     method: 'GET',
     path: '/album',
-    config: {
+    options: {
       handler,
       tags: ['api', 'react'],
       validate: {
@@ -40,11 +38,12 @@ exports.register = (server, options, next) => {
   server.route(routes.staticRoute({ urlSegment: 'album', pluginName: 'editAlbum' }));
 
   server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'edit-album',
-  version: '0.2.1'
+  version: '0.3.0'
 };
+
+module.exports = { plugin };
