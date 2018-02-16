@@ -4,7 +4,7 @@ tape('Server', { skip: false }, (describe) => {
   const wreck = require('wreck');
   const querystring = require('querystring');
 
-  const config = require('../config.json');
+  const config = require('../../config.json');
   const lib = require('../index');
   const utils = require('../plugins/utils');
 

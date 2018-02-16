@@ -20,7 +20,7 @@ function execHapi({
         engines: {
           jsx: hapiReactViews
         },
-        relativeTo: path.join(__dirname, '../')
+        relativeTo: path.join(__dirname, '../../')
       };
 
       try {

@@ -14,10 +14,10 @@ const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve
 });
 
 const routeWalkPath = {
-    method: 'GET',
-    path: '/admin/walk-path',
+  method: 'GET',
+  path: '/admin/walk-path',
   options: {
-      handler,
+    handler,
     tags: ['api', 'react'],
     validate: {
       query: {
@@ -25,10 +25,12 @@ const routeWalkPath = {
         raw: validation.raw
       }
     }
-    }
+  }
 };
 
 const routeBundle = {
+  method: 'GET',
+  path: '/walk/static/bundle.js',
   options: {
     tags: ['static'],
     handler: {

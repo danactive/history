@@ -34,7 +34,7 @@ const register = server => new Promise(async (resolve) => {
       directory: {
         path: request => path.join(__dirname, '../../../../', `public/galleries/gallery-${request.params.gallery}`)
       }
-};
+    };
     resolve(staticGalleryFolder(server, handleRoute));
   } catch (error) {
     resolve(staticGalleryFolder(server, () => error));

@@ -16,10 +16,10 @@ tape('Gallery Index', { skip: false }, (describe) => {
     const server = hapi.Server({ port });
     server.path(relativeTo);
 
-      const request = {
-        method: 'GET',
-        url: '/static/gallery-demo/xml/gallery.xml'
-      };
+    const request = {
+      method: 'GET',
+      url: '/static/gallery-demo/xml/gallery.xml'
+    };
 
     try {
       await server.register(plugins);
@@ -31,6 +31,6 @@ tape('Gallery Index', { skip: false }, (describe) => {
       assert.fail(error);
     }
 
-        assert.end();
-      });
-    });
+    assert.end();
+  });
+});
