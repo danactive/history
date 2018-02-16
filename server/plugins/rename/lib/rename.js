@@ -1,5 +1,5 @@
 const async = require('async');
-const boom = require('boom');
+const Boom = require('boom');
 const fs = require('fs');
 const path = require('path');
 
@@ -46,7 +46,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, { preview, rename
         } else {
           fs.rename(rename.oldName, rename.newName, (error) => {
             if (error) {
-              reject(boom.wrap(error));
+              reject(Boom.boomify(error));
             }
 
             renamedFilenames.push(rename.newName);
@@ -58,12 +58,12 @@ function renamePaths(sourceFolder, filenames, futureFilenames, { preview, rename
 
       exists.pathExists(rename.oldName)
         .then(renameFile)
-        .catch(error => reject(boom.boomify(error)));
+        .catch(error => reject(Boom.boomify(error)));
     }, 2);
 
     {
       const fullPath = await utils.file.safePublicPath(sourceFolder)
-        .catch(error => reject(boom.boomify(error)));
+        .catch(error => reject(Boom.boomify(error)));
 
       const transformFilenames = (pair, cb) => {
         if (renameAssociated) {

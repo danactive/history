@@ -5,18 +5,17 @@ tape('Exists: Library', { skip: false }, (describe) => {
 
   const lib = require('../lib/exists');
 
-  const successTest = (assert, testPath) => {
-    lib.pathExists(testPath)
-      .then((verifiedPath) => {
-        const normalTestPath = path.normalize(testPath);
-        assert.ok(verifiedPath.endsWith(normalTestPath), `Verified path (${verifiedPath}) matches test path (${normalTestPath})`);
+  const successTest = async (assert, testPath) => {
+    try {
+      const verifiedPath = await lib.pathExists(testPath);
 
-        assert.end();
-      })
-      .catch((error) => {
-        assert.fail(error);
-        assert.end();
-      });
+      const normalTestPath = path.normalize(testPath);
+      assert.ok(verifiedPath.endsWith(normalTestPath), `Verified path (${verifiedPath}) matches test path (${normalTestPath})`);
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   };
 
   function failureTest(assert, testPath) {

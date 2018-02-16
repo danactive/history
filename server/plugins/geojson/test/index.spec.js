@@ -10,30 +10,28 @@ tape('GeoJSON Index', { skip: false }, (describe) => {
   const plugins = [lib];
   const port = utils.config.get('port');
 
-  describe.test('* Validate GeoJSON', (assert) => {
-    const server = new hapi.Server();
-    server.connection({ port });
-    server.register(plugins, (pluginError) => {
-      if (pluginError) {
-        assert.fail(pluginError);
-        return;
-      }
+  describe.test('* Validate GeoJSON', async (assert) => {
+    const server = hapi.Server({ port });
 
-      const request = {
-        method: 'GET',
-        url: '/?gallery=demo&album_stem=sample'
-      };
+    const request = {
+      method: 'GET',
+      url: '/?gallery=demo&album_stem=sample'
+    };
 
-      server.inject(request, (result) => {
-        assert.ok(geojsonhint.hint({}).length > 0, 'Error expected');
+    try {
+      await server.register(plugins);
+      const response = await server.inject(request);
 
-        assert.equal(result.statusCode, 200);
-        const response = result.result;
-        const error = geojsonhint.hint(response);
+      assert.ok(geojsonhint.hint({}).length > 0, 'Error expected');
 
-        assert.equal(error.length, 0, 'Validation passes');
-        assert.end();
-      });
-    });
+      assert.equal(response.statusCode, 200);
+      const error = geojsonhint.hint(response.result);
+
+      assert.equal(error.length, 0, 'Validation passes');
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
   });
 });

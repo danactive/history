@@ -1,12 +1,13 @@
 const routes = require('../../../lib/routes');
 
-exports.register = (server, options, next) => {
+const register = (server) => {
   server.route(routes.staticRoute({ urlSegment: 'public', pluginName: '../../' }));
-
-  next();
 };
 
-exports.register.attributes = {
+const plugin = {
+  register,
   name: 'public',
-  version: '0.1.0'
+  version: '0.2.0'
 };
+
+module.exports = { plugin };

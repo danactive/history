@@ -47,11 +47,6 @@ function staticRouteUtils({ urlSegment }) {
   };
 }
 
-const createFormatReply = ({
-  formatJson = x => x, isRaw = false, reply, viewPath = ''
-}) =>
-  json => ((isRaw) ? reply(formatJson(json)) : reply.view(viewPath, formatJson(json)));
-
 const createErrorReply = reply => (error) => {
   const boomError = (error.isBoom) ? error : boom.boomify(error);
 
@@ -60,7 +55,6 @@ const createErrorReply = reply => (error) => {
 
 module.exports = {
   createErrorReply,
-  createFormatReply,
   staticRoute,
   staticRouteJquery,
   staticRouteUtils
