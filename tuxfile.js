@@ -1,4 +1,4 @@
-const credentials = require('./credentials.js');
+const credentials = require('./server/credentials.js');
 
 const harnesses = [];
 

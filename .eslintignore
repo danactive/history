@@ -1,4 +1,2 @@
-public/js/*.js
-src/**/*.js
-plugins/*/public/assets/**/*.js
-plugins/*/public/lib/**/*.js
+server/plugins/*/public/assets/**/*.js
+server/plugins/*/public/lib/**/*.js

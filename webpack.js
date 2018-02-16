@@ -5,7 +5,7 @@ module.exports = [
   // test bundle configuration
   {
     target: 'node',
-    entry: './test/webpack',
+    entry: './server/test/webpack',
     output: {
       path: path.resolve(__dirname, './tmp'),
       filename: 'test.js'
@@ -17,16 +17,16 @@ module.exports = [
   // export npm modules to browser scripts
   {
     entry: {
-      album: './plugins/album/lib/browser.js',
-      editAlbum: './plugins/editAlbum/lib/browser.js',
-      exploreVideo: './plugins/exploreVideo/lib/browser.js',
-      walk: './plugins/walk/lib/browser.js'
+      album: './server/plugins/album/lib/browser.js',
+      editAlbum: './server/plugins/editAlbum/lib/browser.js',
+      exploreVideo: './server/plugins/exploreVideo/lib/browser.js',
+      walk: './server/plugins/walk/lib/browser.js'
     },
     resolve: {
       extensions: ['.css', '.js', '.jsx']
     },
     output: {
-      filename: './plugins/[name]/public/assets/bundle.js'
+      filename: './server/plugins/[name]/public/assets/bundle.js'
     },
     module: {
       rules: [

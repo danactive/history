@@ -4,7 +4,7 @@ engines:
        config:
          languages:
            javascript:
-             mass_threshold: 80
+             mass_threshold: 70
   eslint:
     enabled: false
     channel: "eslint-4"
@@ -19,6 +19,8 @@ ratings:
    - "**.jsx"
 
 exclude_paths:
-- "plugins/album/public/lib/color-thief.js"
-- "plugins/album/test/cases.js"
-- "plugins/editAlbum/public/lib/json_to_xml.js"
+   - "server/plugins/album/public/lib/color-thief.js"
+   - "server/plugins/album/test/cases.js"
+   - "server/plugins/editAlbum/public/lib/json_to_xml.js"
+   - "server/plugins/editAlbum/public/admin-edit-xml-tested.js"
+   - "server/plugins/editAlbum/public/edit_admin_xml.js"
