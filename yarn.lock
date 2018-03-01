@@ -5016,13 +5016,13 @@ loud-rejection@^1.0.0:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
 
-lout@^10.0.1:
-  version "10.0.3"
-  resolved "https://registry.yarnpkg.com/lout/-/lout-10.0.3.tgz#bd17c09135eefa7252202b80ad267793fc576e76"
+lout@^11.0.0:
+  version "11.0.0"
+  resolved "https://registry.yarnpkg.com/lout/-/lout-11.0.0.tgz#c811493068341255cfff26003c3997260dd9b380"
   dependencies:
-    boom "5.x.x"
+    boom "7.x.x"
     handlebars "4.x.x"
-    hoek "4.x.x"
+    hoek "5.x.x"
 
 lowercase-keys@^1.0.0:
   version "1.0.0"
