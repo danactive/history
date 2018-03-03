@@ -94,7 +94,7 @@
     "style-loader": "^0.20.1",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
-    "url-loader": "^0.6.1",
+    "url-loader": "^1.0.0",
     "webpack-cli": "^2.0.8",
     "wreck": "^14.0.2"
   },
