@@ -8028,9 +8028,9 @@ typedarray@^0.0.6, typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typy@^1.4.3:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/typy/-/typy-1.4.3.tgz#a03c4badd1e31e817cec7b16930398dafe37bdc2"
+typy@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/typy/-/typy-2.0.1.tgz#bfc0caebceecb39d98fbc84488379978085b1fb5"
 
 ua-parser-js@^0.7.9:
   version "0.7.17"
