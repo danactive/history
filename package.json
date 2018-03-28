@@ -28,7 +28,7 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.16.0",
     "boom": "^7.0.0",
-    "camelcase": "^4.0.0",
+    "camelcase": "^5.0.0",
     "clone": "^2.0.0",
     "dot-prop": "^4.0.0",
     "dotenv": "^5.0.0",
