@@ -1,6 +1,6 @@
 const test = require('tape');
 
-test('successful test', (t) => {
+test('webpack successfully builds', (t) => {
   t.equal(1, 1);
   t.end();
 });

@@ -4,11 +4,12 @@ const TapWebpackPlugin = require('tap-webpack-plugin');
 module.exports = [
   // test bundle configuration
   {
+    mode: 'none',
     target: 'node',
     entry: './server/test/webpack',
     output: {
-      path: path.resolve(__dirname, './tmp'),
-      filename: 'test.js'
+      path: path.resolve(__dirname),
+      filename: './tmp/test.js'
     },
     plugins: [
       new TapWebpackPlugin()
@@ -16,6 +17,7 @@ module.exports = [
   },
   // export npm modules to browser scripts
   {
+    mode: 'none',
     entry: {
       album: './server/plugins/album/lib/browser.js',
       editAlbum: './server/plugins/editAlbum/lib/browser.js',
@@ -26,6 +28,7 @@ module.exports = [
       extensions: ['.css', '.js', '.jsx']
     },
     output: {
+      path: path.resolve(__dirname),
       filename: './server/plugins/[name]/public/assets/bundle.js'
     },
     module: {
