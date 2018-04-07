@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/danactive/history/compare/v3.2.0...v3.3.0) (2018-04-07)
+
+
+### Bug Fixes
+
+* **CI:** Add security expection for gm/debug [[#237](https://github.com/danactive/history/issues/237)] ([e713c9e](https://github.com/danactive/history/commit/e713c9e))
+* **CI:** Update exclusion rule of third-party JS library ([0a1ffe3](https://github.com/danactive/history/commit/0a1ffe3))
+* **CI:** Update unit test code to reduce duplication and decrease threshold. Apply wontfix to specific matches [[#237](https://github.com/danactive/history/issues/237)] ([056f7d3](https://github.com/danactive/history/commit/056f7d3))
+* **Merge:** Update after merge and test passes ([f9e6f80](https://github.com/danactive/history/commit/f9e6f80))
+* **Merge:** Update branch 'greenkeeper/dropbox-3.0.0' into greenkeeper/node-fetch-2.0.0 ([0df159e](https://github.com/danactive/history/commit/0df159e))
+* **Merge:** Update branch 'greenkeeper/node-fetch-2.0.0' into greenkeeper/style-loader-0.20.0 ([f2d462c](https://github.com/danactive/history/commit/f2d462c))
+* **Merge:** Update branch 'master' into greenkeeper/dropbox-3.0.0 ([5ae65e9](https://github.com/danactive/history/commit/5ae65e9))
+* **package:** update camelcase to version 5.0.0 ([309167a](https://github.com/danactive/history/commit/309167a))
+* **package:** Update dependencies after npm removed deprecated nomnom ([017620b](https://github.com/danactive/history/commit/017620b))
+* **package:** update dropbox to version 3.0.0 ([a0900c9](https://github.com/danactive/history/commit/a0900c9))
+* **package:** update dropbox to version 4.0.0 ([fcc1094](https://github.com/danactive/history/commit/fcc1094))
+* **package:** update dropbox to version 4.0.0 ([c5dcd76](https://github.com/danactive/history/commit/c5dcd76))
+* **package:** update hapi to version 17.0.0 ([2e454e5](https://github.com/danactive/history/commit/2e454e5))
+* **package:** update lout to version 11.0.0 ([711837b](https://github.com/danactive/history/commit/711837b))
+* **package:** update lout to version 11.0.0 ([05eaa91](https://github.com/danactive/history/commit/05eaa91))
+* **package:** update react-dates to version 16.0.0 ([a9ef73a](https://github.com/danactive/history/commit/a9ef73a))
+* **package:** update react-dates to version 16.3.0 ([c0c8fad](https://github.com/danactive/history/commit/c0c8fad)), closes [#245](https://github.com/danactive/history/issues/245)
+* **package:** update typy to version 2.0.0 ([5380e12](https://github.com/danactive/history/commit/5380e12))
+* **package:** update typy to version 2.0.1 ([4b37b7d](https://github.com/danactive/history/commit/4b37b7d))
+* **package:** update webpack to version 4.0.0 ([7830696](https://github.com/danactive/history/commit/7830696))
+* **packge:** Update to remove vulnerability ([6453e1b](https://github.com/danactive/history/commit/6453e1b))
+* **Tests:** Update test code to support major change in hapi.js 17 ([f43a6bd](https://github.com/danactive/history/commit/f43a6bd))
+* **Tests:** Update to pass PR rules ([abc7cb4](https://github.com/danactive/history/commit/abc7cb4))
+* **Tests:** Update to resolve views ([2ca2205](https://github.com/danactive/history/commit/2ca2205))
+* **Webpack:** Update webpack to v4 tested in browser ([36623c4](https://github.com/danactive/history/commit/36623c4))
+
+
+### Features
+
+* **Img Component:** Add Img with tests; attributes: class, alt, src [[#237](https://github.com/danactive/history/issues/237)] ([b9bd9e1](https://github.com/danactive/history/commit/b9bd9e1))
+* **PreviewThumb:** Add container for admin/walk [[#237](https://github.com/danactive/history/issues/237)] ([e149e3a](https://github.com/danactive/history/commit/e149e3a))
+* **ThumbImg:** Add component for admin/walk [[#237](https://github.com/danactive/history/issues/237)] ([ec9aad8](https://github.com/danactive/history/commit/ec9aad8))
+* **Walk:** Add styled-components for component styling [[#237](https://github.com/danactive/history/issues/237)] ([5829b37](https://github.com/danactive/history/commit/5829b37))
+
+
+
 <a name="3.2.0"></a>
 # [3.2.0](https://github.com/danactive/history/compare/v3.1.0...v3.2.0) (2018-02-10)
 
