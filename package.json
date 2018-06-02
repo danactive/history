@@ -95,7 +95,7 @@
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "url-loader": "^1.0.0",
-    "webpack-cli": "^2.0.8",
+    "webpack-cli": "^3.0.0",
     "wreck": "^14.0.2"
   },
   "peerDependencies": {
