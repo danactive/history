@@ -17,7 +17,7 @@ test('Verify /view/album route', { skip: false }, (describe) => {
   const plugins = [inert, vision, lib];
 
   testCaseDef.execHapi({
-    describe, plugins, testCases, routeStem: '/album'
+    describe, plugins, testCases, routeStem: '/album',
   });
 
   describe.test('* JavaScript library requirements', { skip: false }, async (assert) => {
@@ -26,19 +26,19 @@ test('Verify /view/album route', { skip: false }, (describe) => {
     const url = `/album?${querystring.stringify({
       album_stem: config.defaultAlbum,
       gallery: config.defaultGallery,
-      raw: true
+      raw: true,
     })}`;
 
     const viewsConfig = {
       engines: {
-        jsx: hapiReactViews
+        jsx: hapiReactViews,
       },
-      relativeTo: path.join(__dirname, '../../../')
+      relativeTo: path.join(__dirname, '../../../'),
     };
 
     const request = {
       method: 'GET',
-      url
+      url,
     };
 
     try {

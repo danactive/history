@@ -41,7 +41,7 @@ function Page({ album }) {
 }
 
 Page.propTypes = {
-  album: propTypes.shape().isRequired
+  album: propTypes.shape().isRequired,
 };
 
 module.exports = Page;

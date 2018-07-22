@@ -96,7 +96,7 @@ function templatePrepare(result = {}) {
     } else {
       item.geo = {
         lat: null,
-        lon: null
+        lon: null,
       };
     }
 
@@ -107,7 +107,7 @@ function templatePrepare(result = {}) {
       thumbCaption: caption(item),
       title: title(item),
       thumbPath,
-      mediaPath: (item.type === 'video') ? videoPath : photoPath
+      mediaPath: (item.type === 'video') ? videoPath : photoPath,
     };
 
     return Object.assign(item, enhancements);
@@ -154,7 +154,7 @@ const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
     'public/galleries',
     ensureSafePath('gallery', gallery, reject),
     'xml',
-    ensureSafePath('albumStem', albumStem, reject)
+    ensureSafePath('albumStem', albumStem, reject),
   );
 
   fs.readFile(xmlPath, (readError, fileData) => {
@@ -182,5 +182,5 @@ module.exports = {
   getVideoPath,
   safePath,
   title,
-  templatePrepare
+  templatePrepare,
 };

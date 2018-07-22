@@ -24,7 +24,7 @@ test('Explore Video - Video Detail (React Component)', (describe) => {
     const wrapper = shallow(<VideoDetail video={mock.items[0]} />);
     const props = wrapper.find('iframe').props();
     const {
-      src
+      src,
     } = props;
 
     const actual = src;

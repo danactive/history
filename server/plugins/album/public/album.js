@@ -28,7 +28,7 @@ function showMarker(map, _lon, _lat) {
   }
 
   map.flyTo({
-    center: [lon, lat], zoom: 14, screenSpeed: 2, curve: Math.pow(3, 0.25)
+    center: [lon, lat], zoom: 14, screenSpeed: 2, curve: 3 ** 0.25,
   });
 }
 
@@ -52,7 +52,7 @@ function photoViewed() {
 jQuery('#albumBox a').colorbox({
   preloading: true,
   onComplete: photoViewed,
-  transition: 'none'
+  transition: 'none',
 });
 
 jQuery('#linkMap').click(() => {

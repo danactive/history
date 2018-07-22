@@ -40,8 +40,8 @@ Contents.propTypes = {
     ext: propTypes.string,
     filename: propTypes.string.isRequired,
     path: propTypes.string.isRequired,
-    mediumType: propTypes.string.isRequired
-  })).isRequired
+    mediumType: propTypes.string.isRequired,
+  })).isRequired,
 };
 
 module.exports = Contents;

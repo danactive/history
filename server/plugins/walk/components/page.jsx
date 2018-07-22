@@ -26,7 +26,7 @@ function Page({ files }) {
 }
 
 Page.propTypes = {
-  files: propTypes.arrayOf(propTypes.shape()).isRequired
+  files: propTypes.arrayOf(propTypes.shape()).isRequired,
 };
 
 module.exports = Page;

@@ -9,7 +9,7 @@ const path = require('path');
 const configFile = require('../../../../config.json');
 
 const config = {
-  get: dotpath => dotProp.get(configFile, dotpath)
+  get: dotpath => dotProp.get(configFile, dotpath),
 };
 
 const env = {
@@ -28,7 +28,7 @@ const env = {
     }
 
     return null;
-  }
+  },
 };
 
 function clone(obj) {
@@ -96,7 +96,7 @@ const fileMethods = {
     return extension.split('/')[0];
   },
   absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
-  photoPath: filepath => filepath && filepath.replace('thumbs', 'photos')
+  photoPath: filepath => filepath && filepath.replace('thumbs', 'photos'),
 };
 
 fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
@@ -167,5 +167,5 @@ fileMethods.safePublicPath = rawDestinationPath => new Promise((resolve, reject)
 });
 
 module.exports = {
-  env, config, clone, file: fileMethods
+  env, config, clone, file: fileMethods,
 };

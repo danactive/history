@@ -31,11 +31,11 @@ const VideoDetail = ({ video }) => {
 };
 
 VideoDetail.defaultProps = {
-  video: null
+  video: null,
 };
 
 VideoDetail.propTypes = {
-  video: propTypes.shape()
+  video: propTypes.shape(),
 };
 
 module.exports = VideoDetail;

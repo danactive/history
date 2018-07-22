@@ -113,5 +113,5 @@ function renamePaths(sourceFolder, filenames, futureFilenames, { preview, rename
 
 module.exports = {
   reassignAssociated,
-  renamePaths
+  renamePaths,
 };

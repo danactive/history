@@ -27,10 +27,10 @@ const register = (server) => {
       validate: {
         query: {
           geocode: validation.geocode,
-          raw: validation.raw
-        }
-      }
-    }
+          raw: validation.raw,
+        },
+      },
+    },
   });
 
   server.route(routes.staticRoute({ urlSegment: 'video', pluginName: 'exploreVideo' }));
@@ -39,7 +39,7 @@ const register = (server) => {
 const plugin = {
   register,
   name: 'explore-video',
-  version: '0.4.0'
+  version: '0.4.0',
 };
 
 module.exports = { plugin };

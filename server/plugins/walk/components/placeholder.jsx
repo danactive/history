@@ -16,8 +16,8 @@ function Placeholder({ file }) {
 
 Placeholder.propTypes = {
   file: propTypes.shape({
-    filename: propTypes.string.isRequired
-  }).isRequired
+    filename: propTypes.string.isRequired,
+  }).isRequired,
 };
 
 module.exports = Placeholder;

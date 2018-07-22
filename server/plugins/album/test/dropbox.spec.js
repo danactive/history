@@ -8,7 +8,7 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
     const xml = await json.getAlbum('demo', 'sample');
 
     const fakeDropbox = {
-      filesGetTemporaryLink: ({ path }) => Promise.resolve({ link: `dropbox://${path}` })
+      filesGetTemporaryLink: ({ path }) => Promise.resolve({ link: `dropbox://${path}` }),
     };
 
     const transform = createTransform(fakeDropbox);
@@ -30,7 +30,7 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
       { error: { message: 'ErrorMessage', error_summary: 'ErrorSummary' } },
       { error: { error_summary: 'ErrorSummary' } },
       { error: 'JustError' },
-      { fallback: 'Fallback' }
+      { fallback: 'Fallback' },
     ];
 
     assert.plan(2 * errors.length);
@@ -38,7 +38,7 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
 
     async function testPerError(error) {
       const fakeDropbox = {
-        filesGetTemporaryLink: () => Promise.reject(error)
+        filesGetTemporaryLink: () => Promise.reject(error),
       };
 
       const transform = createTransform(fakeDropbox);

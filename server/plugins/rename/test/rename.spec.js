@@ -26,7 +26,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
     const futureAssociatedFilenames = [
       `${filepath}${futureFile}.bat`,
       `${filepath}${futureFile}.bin`,
-      `${filepath}${futureFile}.bmp`
+      `${filepath}${futureFile}.bmp`,
     ];
 
     assert.plan(1);

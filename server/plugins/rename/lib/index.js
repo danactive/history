@@ -12,7 +12,7 @@ const handler = request => new Promise((reply) => {
     prefix,
     preview,
     rename_associated: renameAssociated,
-    source_folder: sourceFolder
+    source_folder: sourceFolder,
   } = request.payload;
 
   const handleResponse = json => reply(formatJson(json));
@@ -57,24 +57,24 @@ const register = (server) => {
           preview: validation.preview,
           source_folder: validation.sourceFolder,
           raw: validation.raw,
-          rename_associated: validation.renameAssociated
-        }
+          rename_associated: validation.renameAssociated,
+        },
       },
       response: {
         schema: {
           filenames: validation.filenames,
-          xml: validation.xml
+          xml: validation.xml,
         },
-        failAction: (request, reply, error) => reply.response(`Response validation error (${error.message})`).code(400)
-      }
-    }
+        failAction: (request, reply, error) => reply.response(`Response validation error (${error.message})`).code(400),
+      },
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'rename',
-  version: '2.2.0'
+  version: '2.2.0',
 };
 
 module.exports = { plugin };

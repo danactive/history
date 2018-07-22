@@ -16,7 +16,7 @@ test('View Admin - Page (React Component)', { skip: false }, (describe) => {
     assert.ok(wrapper.contains(
       <a href="/edit/album">
         Edit Album
-      </a>
+      </a>,
     ));
     assert.end();
   });

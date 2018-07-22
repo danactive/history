@@ -18,7 +18,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
 
     const request = {
       method: 'GET',
-      url: '/static/gallery-demo/xml/gallery.xml'
+      url: '/static/gallery-demo/xml/gallery.xml',
     };
 
     try {

@@ -14,7 +14,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       videos: [],
-      selectedVideo: null
+      selectedVideo: null,
     };
   }
 
@@ -40,7 +40,7 @@ class App extends React.Component {
       .then((payload) => {
         this.setState({
           videos: payload.items,
-          selectedVideo: payload.items[0]
+          selectedVideo: payload.items[0],
         });
       })
       .catch(error => logger.debug(error.message));
@@ -49,7 +49,7 @@ class App extends React.Component {
   render() {
     const {
       selectedVideo,
-      videos
+      videos,
     } = this.state;
     const videoSearch = _.debounce((searchValue, options) => this.videoSearch(searchValue, options), 400);
 

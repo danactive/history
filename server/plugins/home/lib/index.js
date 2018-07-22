@@ -19,15 +19,15 @@ const register = (server) => {
     options: {
       description: 'Home landing page',
       handler,
-      tags: ['react']
-    }
+      tags: ['react'],
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'home',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

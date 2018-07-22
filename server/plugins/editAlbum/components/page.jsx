@@ -1,5 +1,3 @@
-/* eslint jsx-a11y/label-has-for: 0 */
-// ESLint seems to have a bug, it dislikes htmlFor ref_src
 const propTypes = require('prop-types');
 const React = require('react');
 
@@ -20,7 +18,7 @@ function textField({ label, tabIndex }) {
 function Page(props) {
   const {
     galleries,
-    state
+    state,
   } = props;
   return (
     <html lang="en">
@@ -90,20 +88,18 @@ function Page(props) {
                 {textField({ label: 'Caption', tabIndex: 6 })}
                 {textField({ label: 'Description', tabIndex: 7 })}
                 <p>
-                  <label htmlFor="ref_src">
-                    <select id="ref_src" tabIndex="8">
-                      <option />
-                      <option value="facebook">
-                        Facebook
-                      </option>
-                      <option value="google">
-                        Google
-                      </option>
-                      <option value="wikipedia">
-                        Wikipedia
-                      </option>
-                    </select>
-                  </label>
+                  <select id="ref_src" tabIndex="8">
+                    <option />
+                    <option value="facebook">
+                      Facebook
+                    </option>
+                    <option value="google">
+                      Google
+                    </option>
+                    <option value="wikipedia">
+                      Wikipedia
+                    </option>
+                  </select>
                   <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
                   <input type="checkbox" title="Check to disable editability" />
                   <span className="suggestions" />
@@ -138,12 +134,12 @@ function Page(props) {
 
 textField.propTypes = {
   label: propTypes.string.isRequired,
-  tabIndex: propTypes.number.isRequired
+  tabIndex: propTypes.number.isRequired,
 };
 
 Page.propTypes = {
   galleries: propTypes.arrayOf(propTypes.string).isRequired,
-  state: propTypes.string.isRequired
+  state: propTypes.string.isRequired,
 };
 
 module.exports = Page;

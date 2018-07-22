@@ -29,7 +29,7 @@ const handler = (request, reply) => new Promise((resolve) => {
     album_stem: albumStem,
     cloud,
     gallery,
-    raw: isRaw = false
+    raw: isRaw = false,
   } = request.query;
   const viewPath = 'plugins/album/components/page.jsx';
 
@@ -55,10 +55,10 @@ const register = (server) => {
           album_stem: validation.albumStem,
           cloud: validation.cloudProviders,
           gallery: validation.gallery,
-          raw: validation.raw
-        }
-      }
-    }
+          raw: validation.raw,
+        },
+      },
+    },
   });
 
   server.route(routes.staticRoute({ pluginName: 'album', urlSegment: 'album' }));
@@ -71,7 +71,7 @@ const register = (server) => {
 const plugin = {
   register,
   name: 'view-album',
-  version: '0.6.0'
+  version: '0.6.0',
 };
 
 module.exports = { plugin };

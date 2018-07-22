@@ -7,7 +7,7 @@ class GalleryDropdown extends React.Component {
     super(props);
 
     const {
-      galleries
+      galleries,
     } = props;
 
     this.galleryOptions = galleries.map((gallery) => {
@@ -37,7 +37,7 @@ class GalleryDropdown extends React.Component {
 }
 
 GalleryDropdown.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired
+  galleries: propTypes.arrayOf(propTypes.string).isRequired,
 };
 
 module.exports = GalleryDropdown;

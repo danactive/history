@@ -7,15 +7,15 @@ const register = (server) => {
     options: {
       tags: ['static'],
       handler,
-      description: 'Administration pages'
-    }
+      description: 'Administration pages',
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'admin',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

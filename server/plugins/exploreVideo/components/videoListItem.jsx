@@ -31,12 +31,12 @@ VideoListItem.propTypes = {
     snippet: propTypes.shape({
       thumbnails: propTypes.shape({
         default: propTypes.shape({
-          url: propTypes.string.isRequired
-        }).isRequired
+          url: propTypes.string.isRequired,
+        }).isRequired,
       }).isRequired,
-      title: propTypes.string.isRequired
-    }).isRequired
-  }).isRequired
+      title: propTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 module.exports = VideoListItem;
