@@ -109,29 +109,29 @@ tape('Utilities', { skip: false }, (describe) => {
     const test = lib.file.absolutePath;
     assert.equal(
       test('./server/plugins/utils/test'), __dirname,
-      'Relative resolved to Absolute folder'
+      'Relative resolved to Absolute folder',
     );
     assert.equal(
       test('./server/plugins/utils/test/fixtures/aitch.html'), path.join(__dirname, './fixtures/aitch.html'),
-      'Relative resolved to Absolute file'
+      'Relative resolved to Absolute file',
     );
     assert.equal(
       test('./server/plugins/utils/test/'), path.join(__dirname, '/'),
-      'Relative resolved to Absolute folder trailing slash'
+      'Relative resolved to Absolute folder trailing slash',
     );
     if (lib.platform === 'windows') {
       assert.equal(
         test('./server/plugins/utils/test/'), path.join(__dirname, '\\'),
-        'Relative resolved to Absolute folder trailing backslash'
+        'Relative resolved to Absolute folder trailing backslash',
       );
     }
     assert.equal(
       test(__dirname), __dirname,
-      'Absolute resolved to folder'
+      'Absolute resolved to folder',
     );
     assert.equal(
       test(path.join(__dirname, './fixtures/aitch.html')), path.join(__dirname, './fixtures/aitch.html'),
-      'Absolute to file'
+      'Absolute to file',
     );
     assert.end();
   });
@@ -150,15 +150,15 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.equal(test('2001-video-description.mp4'), undefined, 'Missing gallery');
     assert.equal(
       test('2001-video-description.mp4', 'demo'),
-      '/static/gallery-demo/media/thumbs/2001/2001-video-description.jpg', 'Single Video'
+      '/static/gallery-demo/media/thumbs/2001/2001-video-description.jpg', 'Single Video',
     );
     assert.equal(
       test('2002-03-21-01.mp4', 'demo'),
-      '/static/gallery-demo/media/thumbs/2002/2002-03-21-01.jpg', 'Single Video as Year'
+      '/static/gallery-demo/media/thumbs/2002/2002-03-21-01.jpg', 'Single Video as Year',
     );
     assert.equal(
       test('2003-video.avi,2004-video.mts', 'demo'),
-      '/static/gallery-demo/media/thumbs/2003/2003-video.jpg', 'Multiple videos'
+      '/static/gallery-demo/media/thumbs/2003/2003-video.jpg', 'Multiple videos',
     );
     assert.end();
   });
@@ -196,7 +196,7 @@ tape('Utilities', { skip: false }, (describe) => {
 
 
   function getFailurePath({
-    assert, testPath, message
+    assert, testPath, message,
   }) {
     lib.file.safePublicPath(testPath)
       .then(() => assert.fail('Safe path incorrectly found'))
@@ -208,7 +208,7 @@ tape('Utilities', { skip: false }, (describe) => {
   }
 
   function getSuccessPath({
-    assert, testPath, expected, message
+    assert, testPath, expected, message,
   }) {
     lib.file.safePublicPath(testPath)
       // .then(actual => assert.ok(actual.endsWith(expected), `${message} actual=(${actual}) expected=(${expected});`))
@@ -220,15 +220,15 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.plan(3);
 
     getFailurePath({
-      assert, testPath: undefined, message: 'Execute with undefined arg'
+      assert, testPath: undefined, message: 'Execute with undefined arg',
     });
 
     getFailurePath({
-      assert, testPath: null, message: 'Execute with null arg'
+      assert, testPath: null, message: 'Execute with null arg',
     });
 
     getFailurePath({
-      assert, testPath: true, message: 'Execute with true arg'
+      assert, testPath: true, message: 'Execute with true arg',
     });
   });
 
@@ -236,11 +236,11 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.plan(2);
 
     getFailurePath({
-      assert, testPath: '../', message: 'Up one folder'
+      assert, testPath: '../', message: 'Up one folder',
     });
 
     getFailurePath({
-      assert, testPath: '../../', message: 'Up two folders'
+      assert, testPath: '../../', message: 'Up two folders',
     });
   });
 
@@ -250,11 +250,11 @@ tape('Utilities', { skip: false }, (describe) => {
     const normalPath = path.normalize('/history/public');
 
     getSuccessPath({
-      assert, testPath: '', expected: normalPath, message: 'Public folder system path (Blank)'
+      assert, testPath: '', expected: normalPath, message: 'Public folder system path (Blank)',
     });
 
     getSuccessPath({
-      assert, testPath: '/', expected: path.normalize(`${normalPath}/`), message: 'Public folder system path (Slash)'
+      assert, testPath: '/', expected: path.normalize(`${normalPath}/`), message: 'Public folder system path (Slash)',
     });
   });
 
@@ -264,7 +264,7 @@ tape('Utilities', { skip: false }, (describe) => {
     const normalPath = path.normalize('/history/public/fixtures/exists.txt');
 
     getSuccessPath({
-      assert, testPath: '/fixtures/exists.txt', expected: normalPath, message: 'Public folder with file'
+      assert, testPath: '/fixtures/exists.txt', expected: normalPath, message: 'Public folder with file',
     });
   });
 
@@ -276,11 +276,11 @@ tape('Utilities', { skip: false }, (describe) => {
     const normalFolderPath = path.normalize('/history/public/test/fixtures');
 
     getSuccessPath({
-      assert, testPath: path.join(testPath, '/exists.txt'), expected: normalFilePath, message: 'Public folder absolute file'
+      assert, testPath: path.join(testPath, '/exists.txt'), expected: normalFilePath, message: 'Public folder absolute file',
     });
 
     getSuccessPath({
-      assert, testPath, expected: normalFolderPath, message: 'Public folder with absolute folder'
+      assert, testPath, expected: normalFolderPath, message: 'Public folder with absolute folder',
     });
   });
 });

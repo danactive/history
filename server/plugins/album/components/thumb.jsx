@@ -41,9 +41,9 @@ Thumb.propTypes = {
     mediaPath: propTypes.string.isRequired,
     geo: propTypes.shape({
       lat: propTypes.number,
-      lon: propTypes.number
-    })
-  })
+      lon: propTypes.number,
+    }),
+  }),
 };
 
 Thumb.defaultProps = {
@@ -51,9 +51,9 @@ Thumb.defaultProps = {
     caption: 'Thumbnail',
     geo: {
       lat: null,
-      lon: null
-    }
-  }
+      lon: null,
+    },
+  },
 };
 
 module.exports = Thumb;

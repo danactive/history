@@ -43,5 +43,5 @@ function areImages(file) {
 
 module.exports = {
   areImages,
-  listFiles
+  listFiles,
 };

@@ -15,21 +15,21 @@ class SearchBar extends React.Component {
 
   componentDidMount() {
     const {
-      onSearchChange
+      onSearchChange,
     } = this.props;
     const {
       searchOrder,
-      searchValue
+      searchValue,
     } = this.state;
     onSearchChange(searchValue, { searchOrder });
   }
 
   onSearchChange(searchValue) {
     const {
-      onSearchChange
+      onSearchChange,
     } = this.props;
     const {
-      searchOrder
+      searchOrder,
     } = this.state;
     this.setState({ searchValue });
     onSearchChange(searchValue, { searchOrder });
@@ -37,10 +37,10 @@ class SearchBar extends React.Component {
 
   onOrderChange(searchOrder) {
     const {
-      onSearchChange
+      onSearchChange,
     } = this.props;
     const {
-      searchValue
+      searchValue,
     } = this.state;
     this.setState({ searchOrder });
     onSearchChange(searchValue, { searchOrder });
@@ -50,7 +50,7 @@ class SearchBar extends React.Component {
     return {
       geocode: '13.7524000,100.5021833',
       instruction: 'Keyword or GeoCode',
-      searchOrder: 'relevance'
+      searchOrder: 'relevance',
     };
   }
 
@@ -66,7 +66,7 @@ class SearchBar extends React.Component {
 
   render() {
     const {
-      searchValue
+      searchValue,
     } = this.state;
     return (
       <section id="search-bar">
@@ -95,7 +95,7 @@ class SearchBar extends React.Component {
 }
 
 SearchBar.propTypes = {
-  onSearchChange: propTypes.func.isRequired
+  onSearchChange: propTypes.func.isRequired,
 };
 
 module.exports = SearchBar;

@@ -20,7 +20,7 @@ function announceStart() {
   notifier.notify({
     icon: `${__dirname}/favicon.ico`,
     title: 'Server event',
-    message: `Running at ${server.info.uri}`
+    message: `Running at ${server.info.uri}`,
   });
 }
 
@@ -28,12 +28,12 @@ function getViewsConfig() {
   return {
     defaultExtension: 'jsx',
     engines: {
-      jsx: hapiReactViews
+      jsx: hapiReactViews,
     },
     isCached: true,
     path: './',
     partialsPath: './',
-    relativeTo: __dirname
+    relativeTo: __dirname,
   };
 }
 
@@ -53,5 +53,5 @@ startServer();
 module.exports = {
   stopServer: async () => {
     await server.stop();
-  }
+  },
 };

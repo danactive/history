@@ -22,7 +22,7 @@ function Page({ video }) {
 }
 
 Page.propTypes = {
-  video: propTypes.shape().isRequired
+  video: propTypes.shape().isRequired,
 };
 
 module.exports = Page;

@@ -4,7 +4,7 @@ const path = require('path');
 const querystring = require('querystring');
 
 function execHapi({
-  describe, plugins, routeStem, testCases
+  describe, plugins, routeStem, testCases,
 }) {
   testCases.cases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, async (assert) => {
@@ -13,14 +13,14 @@ function execHapi({
       const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
       const request = {
         method: 'GET',
-        url
+        url,
       };
 
       const viewsConfig = {
         engines: {
-          jsx: hapiReactViews
+          jsx: hapiReactViews,
         },
-        relativeTo: path.join(__dirname, '../../')
+        relativeTo: path.join(__dirname, '../../'),
       };
 
       try {

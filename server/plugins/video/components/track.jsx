@@ -11,7 +11,7 @@ function Track({ extension, gallery, source }) {
 Track.propTypes = {
   extension: propTypes.string.isRequired,
   gallery: propTypes.string.isRequired,
-  source: propTypes.string.isRequired
+  source: propTypes.string.isRequired,
 };
 
 module.exports = Track;

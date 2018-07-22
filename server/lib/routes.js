@@ -12,10 +12,10 @@ function staticRoute({ pluginName, urlSegment }) {
           path: `server/plugins/${pluginName}/public`,
           listing: true,
           index: false,
-          redirectToSlash: true
-        }
-      }
-    }
+          redirectToSlash: true,
+        },
+      },
+    },
   };
 }
 
@@ -27,9 +27,9 @@ function staticRouteJquery({ urlSegment }) {
       description: 'jQuery library',
       tags: ['static', 'jQuery'],
       handler: {
-        file: 'server/plugins/utils/public/lib/jquery/dist/jquery.min.js'
-      }
-    }
+        file: 'server/plugins/utils/public/lib/jquery/dist/jquery.min.js',
+      },
+    },
   };
 }
 
@@ -41,9 +41,9 @@ function staticRouteUtils({ urlSegment }) {
       description: 'Utility script',
       tags: ['static'],
       handler: {
-        file: 'server/plugins/utils/public/utils.js'
-      }
-    }
+        file: 'server/plugins/utils/public/utils.js',
+      },
+    },
   };
 }
 
@@ -57,5 +57,5 @@ module.exports = {
   createErrorReply,
   staticRoute,
   staticRouteJquery,
-  staticRouteUtils
+  staticRouteUtils,
 };

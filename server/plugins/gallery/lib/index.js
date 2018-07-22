@@ -9,8 +9,8 @@ const staticGalleryFolder = (server, handler) => {
     path: '/static/gallery-{gallery}/{param*}',
     options: {
       tags: ['static'],
-      handler
-    }
+      handler,
+    },
   });
 };
 
@@ -22,18 +22,18 @@ const register = server => new Promise(async (resolve) => {
       tags: ['static'],
       handler: {
         file: {
-          path: path.join(__dirname, '../../../../', 'public/xslt/gallery.xslt')
-        }
-      }
-    }
+          path: path.join(__dirname, '../../../../', 'public/xslt/gallery.xslt'),
+        },
+      },
+    },
   });
 
   try {
     await gallery.getGalleries();
     const handleRoute = {
       directory: {
-        path: request => path.join(__dirname, '../../../../', `public/galleries/gallery-${request.params.gallery}`)
-      }
+        path: request => path.join(__dirname, '../../../../', `public/galleries/gallery-${request.params.gallery}`),
+      },
     };
     resolve(staticGalleryFolder(server, handleRoute));
   } catch (error) {
@@ -44,7 +44,7 @@ const register = server => new Promise(async (resolve) => {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

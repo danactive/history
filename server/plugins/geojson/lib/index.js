@@ -5,7 +5,7 @@ const validation = require('../../../lib/validation');
 const handler = request => new Promise((reply) => {
   const {
     album_stem: albumStem,
-    gallery
+    gallery,
   } = request.query;
 
   json.dataToGeojson(gallery, albumStem)
@@ -24,17 +24,17 @@ const register = (server) => {
       validate: {
         query: {
           album_stem: validation.albumStem,
-          gallery: validation.gallery
-        }
-      }
-    }
+          gallery: validation.gallery,
+        },
+      },
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'geojson',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

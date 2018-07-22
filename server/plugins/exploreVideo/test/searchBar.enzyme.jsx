@@ -54,7 +54,7 @@ test('Explore Video - Search Bar (React Component)', (describe) => {
     const {
       placeholder,
       title,
-      value
+      value,
     } = wrapper.find('input').props();
     let actual;
     let expected;

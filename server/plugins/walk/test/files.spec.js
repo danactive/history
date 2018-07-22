@@ -26,7 +26,7 @@ tape('Files', { skip: false }, (describe) => {
 
     actual = unit({
       ext: 'jpg',
-      mediumType: 'video'
+      mediumType: 'video',
     });
     expected = false;
     assert.equal(actual, expected, 'jpg video');
@@ -34,7 +34,7 @@ tape('Files', { skip: false }, (describe) => {
 
     actual = unit({
       ext: 'jpg',
-      mediumType: 'image'
+      mediumType: 'image',
     });
     expected = true;
     assert.equal(actual, expected, 'jpg image');
@@ -42,7 +42,7 @@ tape('Files', { skip: false }, (describe) => {
 
     actual = unit({
       ext: 'JPG',
-      mediumType: 'image'
+      mediumType: 'image',
     });
     expected = true;
     assert.equal(actual, expected, 'JPG image');
@@ -50,7 +50,7 @@ tape('Files', { skip: false }, (describe) => {
 
     actual = unit({
       ext: 'JPg',
-      mediumType: 'image'
+      mediumType: 'image',
     });
     expected = true;
     assert.equal(actual, expected, 'JPg image');

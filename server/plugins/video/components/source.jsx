@@ -22,7 +22,7 @@ function Source({ extension, gallery, source }) {
 Source.propTypes = {
   extension: propTypes.string.isRequired,
   gallery: propTypes.string.isRequired,
-  source: propTypes.string.isRequired
+  source: propTypes.string.isRequired,
 };
 
 module.exports = Source;

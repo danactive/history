@@ -7,7 +7,7 @@ const register = (server) => {
 const plugin = {
   register,
   name: 'public',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

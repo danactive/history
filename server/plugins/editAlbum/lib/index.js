@@ -29,10 +29,10 @@ const register = (server) => {
       tags: ['api', 'react'],
       validate: {
         query: {
-          raw: validation.raw
-        }
-      }
-    }
+          raw: validation.raw,
+        },
+      },
+    },
   });
 
   server.route(routes.staticRoute({ urlSegment: 'album', pluginName: 'editAlbum' }));
@@ -43,7 +43,7 @@ const register = (server) => {
 const plugin = {
   register,
   name: 'edit-album',
-  version: '0.3.0'
+  version: '0.3.0',
 };
 
 module.exports = { plugin };

@@ -16,7 +16,7 @@ tape('Verify /walk route', { skip: false }, (describe) => {
   const url = '/admin/walk-path';
 
   testCaseDef.execHapi({
-    describe, plugins, testCases, url
+    describe, plugins, testCases, url,
   });
 
   describe.test('* Handler', async (assert) => {
@@ -24,7 +24,7 @@ tape('Verify /walk route', { skip: false }, (describe) => {
 
     const request = {
       method: 'GET',
-      url: `${url}?path=/galleries&raw=true`
+      url: `${url}?path=/galleries&raw=true`,
     };
 
     let actual;

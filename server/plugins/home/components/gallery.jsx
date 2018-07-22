@@ -14,7 +14,7 @@ function Gallery({ gallery }) {
 }
 
 Gallery.propTypes = {
-  gallery: propTypes.string.isRequired
+  gallery: propTypes.string.isRequired,
 };
 
 module.exports = Gallery;

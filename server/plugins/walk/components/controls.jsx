@@ -31,7 +31,7 @@ class Controls extends React.Component {
 
     this.state = {
       focused: false,
-      date: props.date
+      date: props.date,
     };
 
     this.onDateChange = this.onDateChange.bind(this);
@@ -66,13 +66,13 @@ class Controls extends React.Component {
 }
 
 Controls.defaultProps = {
-  date: moment()
+  date: moment(),
 };
 
 const datePropType = momentPropTypes.momentObj;
 
 Controls.propTypes = {
-  date: datePropType
+  date: datePropType,
 };
 
 module.exports = Controls;

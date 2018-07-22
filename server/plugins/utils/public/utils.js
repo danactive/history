@@ -16,6 +16,6 @@ function getQueryByName(_name, _url) {
 // If Node.js then export as public
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = {
-    getQueryByName
+    getQueryByName,
   };
 }

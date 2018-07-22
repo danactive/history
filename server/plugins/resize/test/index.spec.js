@@ -23,8 +23,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
       method: 'POST',
       url: '/resize',
       payload: {
-        source_path: 'FAKE'
-      }
+        source_path: 'FAKE',
+      },
     };
 
     try {
@@ -46,8 +46,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
       method: 'POST',
       url: '/resize',
       payload: {
-        source_path: '/test/fixtures/resizable/Capture.PNG'
-      }
+        source_path: '/test/fixtures/resizable/Capture.PNG',
+      },
     };
 
     try {
@@ -71,8 +71,8 @@ tape('Verify /resize route', { skip: false }, (describe) => {
       method: 'POST',
       url: '/resize',
       payload: {
-        source_path: originalRelativeFile
-      }
+        source_path: originalRelativeFile,
+      },
     };
 
     try {

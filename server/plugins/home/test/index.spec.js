@@ -19,19 +19,19 @@ tape('Verify / route', { skip: false }, (describe) => {
     const server = hapi.Server({ port });
 
     const url = `/?${querystring.stringify({
-      raw: true
+      raw: true,
     })}`;
 
     const viewsConfig = {
       engines: {
-        jsx: hapiReactViews
+        jsx: hapiReactViews,
       },
-      relativeTo: path.join(__dirname, '../../../')
+      relativeTo: path.join(__dirname, '../../../'),
     };
 
     const request = {
       method: 'GET',
-      url
+      url,
     };
 
     try {

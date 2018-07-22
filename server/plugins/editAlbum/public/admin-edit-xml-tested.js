@@ -8,7 +8,7 @@ const schema = {
   ref_name: 'ref.name',
   ref_src: 'ref.source',
   geo_lat: 'geo.lat',
-  geo_lon: 'geo.lon'
+  geo_lon: 'geo.lon',
 };
 function SaveToJson(event) {
   function examineThumbs(i, thumb) {

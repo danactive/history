@@ -22,10 +22,10 @@ const routeWalkPath = {
     validate: {
       query: {
         path: validation.sourceFolder,
-        raw: validation.raw
-      }
-    }
-  }
+        raw: validation.raw,
+      },
+    },
+  },
 };
 
 const routeBundle = {
@@ -34,9 +34,9 @@ const routeBundle = {
   options: {
     tags: ['static'],
     handler: {
-      file: 'plugins/walk/public/assets/bundle.js'
-    }
-  }
+      file: 'plugins/walk/public/assets/bundle.js',
+    },
+  },
 };
 
 const register = (server) => {
@@ -52,7 +52,7 @@ const register = (server) => {
 const plugin = {
   register,
   name: 'walk',
-  version: '0.4.0'
+  version: '0.4.0',
 };
 
 module.exports = { plugin };

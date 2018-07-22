@@ -17,10 +17,10 @@ Album.propTypes = {
   album: propTypes.shape({
     items: propTypes.arrayOf(propTypes.shape({
       $: propTypes.shape({
-        id: propTypes.string
-      })
-    })).isRequired
-  }).isRequired
+        id: propTypes.string,
+      }),
+    })).isRequired,
+  }).isRequired,
 };
 
 module.exports = Album;

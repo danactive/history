@@ -29,7 +29,7 @@ function Page({ galleries }) {
 }
 
 Page.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired
+  galleries: propTypes.arrayOf(propTypes.string).isRequired,
 };
 
 module.exports = Page;

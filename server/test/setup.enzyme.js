@@ -15,7 +15,7 @@ function copyProps(src, target) {
 global.window = window;
 global.document = window.document;
 global.navigator = {
-  userAgent: 'node.js'
+  userAgent: 'node.js',
 };
 global._ = _;
 global.fetch = fetch;
