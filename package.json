@@ -98,7 +98,7 @@
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "url-loader": "^1.0.1",
-    "webpack-cli": "^2.0.8",
+    "webpack-cli": "^3.1.0",
     "wreck": "^14.0.2"
   },
   "description": "Your personal history storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption, friends (characters)... in XML albums.",
