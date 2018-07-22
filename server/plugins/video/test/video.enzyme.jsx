@@ -3,7 +3,7 @@ import enzyme from 'enzyme';
 import React from 'react';
 import test from 'tape';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import Video from '../components/video';
 
 test('Video - Video (React Component)', { skip: false }, (describe) => {

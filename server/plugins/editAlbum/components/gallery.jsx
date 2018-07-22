@@ -6,9 +6,17 @@ class GalleryDropdown extends React.Component {
   constructor(props) {
     super(props);
 
-    this.galleryOptions = this.props.galleries.map((gallery) => {
+    const {
+      galleries
+    } = props;
+
+    this.galleryOptions = galleries.map((gallery) => {
       const id = `gallery-${gallery}`;
-      return <option key={id} value={gallery}>{gallery}</option>;
+      return (
+        <option key={id} value={gallery}>
+          {gallery}
+        </option>
+      );
     });
   }
 
@@ -17,7 +25,9 @@ class GalleryDropdown extends React.Component {
       <section>
         Gallery
         <select id="editGalleries" tabIndex="1" onChange={GetGalleryNames}>
-          <option key="gallery-none" value="">Select gallery</option>
+          <option key="gallery-none" value="">
+            Select gallery
+          </option>
           {this.galleryOptions}
         </select>
         <input type="button" id="changeGallery" value="View" />

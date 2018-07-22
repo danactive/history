@@ -19,7 +19,11 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
   describe.test('* Thumbnail image and caption', (assert) => {
     const wrapper = shallow(<Thumb item={item} />);
     assert.ok(wrapper.contains(<img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />));
-    assert.ok(wrapper.contains(<div className="albumBoxPhotoCaption">{item.thumbCaption}</div>));
+    assert.ok(wrapper.contains(
+      <div className="albumBoxPhotoCaption">
+        {item.thumbCaption}
+      </div>
+    ));
     assert.end();
   });
 
