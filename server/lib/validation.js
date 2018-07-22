@@ -21,7 +21,7 @@ module.exports = {
   w: joi.number(),
   h: joi.number(),
   xml: joi.string().required().regex(/<item\b[^>]*>(.*?)<\/item>/)
-    .example('<item id="1"><filename>2016-12-31-37.jpg</filename></item>' +
-      '<item id="2"><filename>2016-12-31-64.jpg</filename></item>' +
-      '<item id="3"><filename>2016-12-31-90.jpg</filename></item>')
+    .example('<item id="1"><filename>2016-12-31-37.jpg</filename></item>'
+      + '<item id="2"><filename>2016-12-31-64.jpg</filename></item>'
+      + '<item id="3"><filename>2016-12-31-90.jpg</filename></item>')
 };

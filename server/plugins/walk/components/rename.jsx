@@ -51,6 +51,7 @@ function Rename() {
     <button
       key="rename"
       onClick={onClick}
+      type="button"
     >
       Rename
     </button>,
