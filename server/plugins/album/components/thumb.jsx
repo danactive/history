@@ -26,7 +26,9 @@ function Thumb({ item }) {
           <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
         </a>
       </div>
-      <div className="albumBoxPhotoCaption">{item.thumbCaption}</div>
+      <div className="albumBoxPhotoCaption">
+        {item.thumbCaption}
+      </div>
     </li>
   );
 }

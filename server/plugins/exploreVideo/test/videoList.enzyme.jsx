@@ -3,7 +3,7 @@ import enzyme from 'enzyme';
 import React from 'react';
 import test from 'tape';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import mock from './fixtures/youtube.json';
 import VideoList from '../components/videoList';
 import VideoListItem from '../components/videoListItem';
