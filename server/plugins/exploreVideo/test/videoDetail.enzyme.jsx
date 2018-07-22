@@ -3,7 +3,7 @@ import enzyme from 'enzyme';
 import React from 'react';
 import test from 'tape';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import mock from './fixtures/youtube.json';
 import VideoDetail from '../components/videoDetail';
 
@@ -23,9 +23,11 @@ test('Explore Video - Video Detail (React Component)', (describe) => {
   describe.test('* Render iframe element', (assert) => {
     const wrapper = shallow(<VideoDetail video={mock.items[0]} />);
     const props = wrapper.find('iframe').props();
+    const {
+      src
+    } = props;
 
-
-    const actual = props.src;
+    const actual = src;
     const expected = 'https://www.youtube.com/embed/92ISlO9U-84';
     assert.equal(actual, expected, 'YouTube address');
 

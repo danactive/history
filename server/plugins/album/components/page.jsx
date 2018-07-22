@@ -9,7 +9,9 @@ function Page({ album }) {
   return (
     <html lang="en">
       <head>
-        <title>History</title>
+        <title>
+          History
+        </title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
         <link href="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css" rel="stylesheet" />
         <link href="./album/static/album.css" rel="stylesheet" />
@@ -17,11 +19,15 @@ function Page({ album }) {
       </head>
       <body>
         <div id="divToolbox">
-          <button id="linkMap">Map this album</button>
+          <button id="linkMap" type="button">
+            Map this album
+          </button>
         </div>
         <div style={clearLeft} />
         <div id="mapBox" className="hide" />
-        <div id="albumBox"><Album album={album} /></div>
+        <div id="albumBox">
+          <Album album={album} />
+        </div>
         <script src="./album/static/jquery.js" />
         <script src="./album/static/lib/color-thief.js" />
         <script src="https://api.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js" />

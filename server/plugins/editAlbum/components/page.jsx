@@ -1,3 +1,5 @@
+/* eslint jsx-a11y/label-has-for: 0 */
+// ESLint seems to have a bug, it dislikes htmlFor ref_src
 const propTypes = require('prop-types');
 const React = require('react');
 
@@ -16,10 +18,16 @@ function textField({ label, tabIndex }) {
 }
 
 function Page(props) {
+  const {
+    galleries,
+    state
+  } = props;
   return (
     <html lang="en">
       <head>
-        <title>History</title>
+        <title>
+          History
+        </title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
         <link rel="stylesheet" href="./album/static/lib/fluid960gs-reset.css" />
         <link rel="stylesheet" href="./album/static/lib/fluid960gs-text.css" />
@@ -29,21 +37,31 @@ function Page(props) {
       <body>
         <div className="container_16">
           <div className="grid_8">
-            <section id="galleryDropdown" dangerouslySetInnerHTML={{ __html: props.galleries }} />
+            <section id="galleryDropdown" dangerouslySetInnerHTML={{ __html: galleries }} />
             <div>
               Album
               <select id="editAlbums" tabIndex="2">
-                <option value="">Edit these album photos</option>
+                <option value="">
+                  Edit these album photos
+                </option>
               </select>
               <input type="button" id="changeAlbum" value="View" />
             </div>
             <div>
               Sort by
               <select id="sortGallery" tabIndex="3">
-                <option value="">XML</option>
-                <option>City</option>
-                <option>Location</option>
-                <option value="filename">Date</option>
+                <option value="">
+                  XML
+                </option>
+                <option>
+                  City
+                </option>
+                <option>
+                  Location
+                </option>
+                <option value="filename">
+                  Date
+                </option>
               </select>
               <input type="button" id="changeSort" value="Sort" />
             </div>
@@ -52,8 +70,14 @@ function Page(props) {
           <div id="right" className="grid_8">
             <form>
               <fieldset>
-                <legend>Edit Photo Meta Data</legend>
-                <p><b>Generate XML then copy to album XML document.</b></p>
+                <legend>
+                  Edit Photo Meta Data
+                </legend>
+                <p>
+                  <b>
+                    Generate XML then copy to album XML document.
+                  </b>
+                </p>
                 <p>
                   <label htmlFor="filename">
                     Filename
@@ -69,9 +93,15 @@ function Page(props) {
                   <label htmlFor="ref_src">
                     <select id="ref_src" tabIndex="8">
                       <option />
-                      <option value="facebook">Facebook</option>
-                      <option value="google">Google</option>
-                      <option value="wikipedia">Wikipedia</option>
+                      <option value="facebook">
+                        Facebook
+                      </option>
+                      <option value="google">
+                        Google
+                      </option>
+                      <option value="wikipedia">
+                        Wikipedia
+                      </option>
                     </select>
                   </label>
                   <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
@@ -90,7 +120,8 @@ function Page(props) {
                 <input type="submit" value="Save" id="saveToJson" tabIndex="12" />
               </fieldset>
             </form>
-            <textarea id="rawAlbumJson" /><textarea id="rawAlbumJsonToXml" />
+            <textarea id="rawAlbumJson" />
+            <textarea id="rawAlbumJsonToXml" />
             <div id="photoPreview" />
           </div>
         </div>
@@ -98,7 +129,7 @@ function Page(props) {
         <script src="./album/static/lib/json_to_xml.js" />
         <script src="./album/static/admin-edit-xml-tested.js" />
         <script src="./album/static/edit_admin_xml.js" />
-        <script id="app-state" dangerouslySetInnerHTML={{ __html: props.state }} />
+        <script id="app-state" dangerouslySetInnerHTML={{ __html: state }} />
         <script src="./album/static/assets/bundle.js" />
       </body>
     </html>

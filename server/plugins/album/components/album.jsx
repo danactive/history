@@ -6,7 +6,11 @@ const Thumb = require('./thumb.jsx');
 function Album({ album }) {
   const thumbs = album.items.map(item => <Thumb key={item.$.id} item={item} />);
 
-  return <ul>{thumbs}</ul>;
+  return (
+    <ul>
+      {thumbs}
+    </ul>
+  );
 }
 
 Album.propTypes = {
