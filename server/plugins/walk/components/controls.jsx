@@ -14,7 +14,9 @@ function assembleControls(dateComponent) {
   if (hasImage) {
     return (
       <section>
-        <span>{dateComponent}</span>
+        <span>
+          {dateComponent}
+        </span>
         <Rename />
       </section>
     );
