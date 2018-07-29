@@ -9,9 +9,10 @@
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
     "start": "npm run webpack && node .",
-    "test": "npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
+    "test": "npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js && npm run test:jest",
     "test:cover": "nyc report --reporter=html",
     "test:react": "babel-tape-runner server/plugins/*/test/*.enzyme.jsx app/components/*/test/*.enzyme.jsx | faucet",
+    "test:jest": "jest",
     "debug:test:react": "node $NODE_DEBUG_OPTION ./node_modules/babel-tape-runner/bin/babel-tape-runner server/plugins/*/test/*.enzyme.jsx | faucet",
     "webpack": "webpack --config webpack.js",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
@@ -89,6 +90,7 @@
     "faucet": "^0.0.1",
     "file-loader": "^1.0.0",
     "jsdom": "^11.0.0",
+    "jest": "^23.4.2",
     "lodash": "^4.17.4",
     "node-fetch": "^2.0.0",
     "nyc": "^12.0.2",
@@ -130,6 +132,10 @@
   },
   "readmeFilename": "README.md",
   "tuxharness": "./tuxharness.js",
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/?(*.)+(jest).js?(x)"]
+  },
   "nyc": {
     "exclude": [
       "**/cases.js",
