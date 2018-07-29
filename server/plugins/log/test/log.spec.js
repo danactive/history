@@ -9,7 +9,7 @@ tape('Log', { skip: false }, (describe) => {
       assert.ok(message.indexOf(testMessage) > -1, 'Message found');
       assert.ok(message.indexOf(moduleName) > -1, 'Module name found');
       assert.end();
-    }
+    },
   });
 
   describe.test('* Operational message', (assert) => {

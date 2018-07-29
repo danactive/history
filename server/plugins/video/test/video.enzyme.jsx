@@ -3,7 +3,7 @@ import enzyme from 'enzyme';
 import React from 'react';
 import test from 'tape';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import Video from '../components/video';
 
 test('Video - Video (React Component)', { skip: false }, (describe) => {
@@ -15,7 +15,7 @@ test('Video - Video (React Component)', { skip: false }, (describe) => {
     w: 800,
     h: 600,
     gallery: 'test',
-    sources: '2012-fireplace.mp4,2012-fireplace.webm'
+    sources: '2012-fireplace.mp4,2012-fireplace.webm',
   };
 
   describe.test('* Parent element', (assert) => {

@@ -108,7 +108,7 @@ test('Read album XML', { skip: false }, (describe) => {
           filename: '2016-Image-Filename.jpg',
           photoDesc: 'Desc',
           photoCity: 'City',
-          thumbCaption: 'Caption'
+          thumbCaption: 'Caption',
         },
         {
           $: { id: 2 },
@@ -117,9 +117,9 @@ test('Read album XML', { skip: false }, (describe) => {
           size: { w: 1280, h: 720 },
           photoDesc: 'Desc',
           photoCity: 'City',
-          thumbCaption: 'Caption'
-        }]
-      }
+          thumbCaption: 'Caption',
+        }],
+      },
     };
     const result = lib.templatePrepare(mock);
     assert.notDeepEqual(result, mock, 'Clone result, not pass by reference');
@@ -130,17 +130,17 @@ test('Read album XML', { skip: false }, (describe) => {
     assert.equal(result.album.items[0].title, 'City: Desc', 'Title');
     assert.equal(
       result.album.items[0].thumbPath,
-      '/static/gallery-demo/media/thumbs/2016/2016-Image-Filename.jpg', 'Thumb Path'
+      '/static/gallery-demo/media/thumbs/2016/2016-Image-Filename.jpg', 'Thumb Path',
     );
     assert.equal(
       result.album.items[0].mediaPath,
-      '/static/gallery-demo/media/photos/2016/2016-Image-Filename.jpg', 'Photo Path'
+      '/static/gallery-demo/media/photos/2016/2016-Image-Filename.jpg', 'Photo Path',
     );
     assert.equal(result.album.items[1].caption, 'Caption', 'Video Caption');
     assert.equal(result.album.items[1].thumbCaption, 'Video: Caption', 'Video Thumb Caption');
     assert.equal(
       result.album.items[1].mediaPath,
-      '/view/video?sources=2016-Video-Filename.mov,2016-Video-Filename.avi&w=1280&h=720&gallery=demo', 'Video Path'
+      '/view/video?sources=2016-Video-Filename.mov,2016-Video-Filename.avi&w=1280&h=720&gallery=demo', 'Video Path',
     );
 
     assert.end();

@@ -30,14 +30,14 @@ function onClick() {
     source_folder: sourceFolder,
     preview: false,
     raw: true,
-    rename_associated: true
+    rename_associated: true,
   };
   const options = {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   };
 
   return fetch('/admin/rename', options)
@@ -51,10 +51,11 @@ function Rename() {
     <button
       key="rename"
       onClick={onClick}
+      type="button"
     >
       Rename
     </button>,
-    <textarea key="console" id="console" style={{ padding: '1em', fontFamily: '"Montserrat", "sans-serif"', fontSize: '1em' }} />
+    <textarea key="console" id="console" style={{ padding: '1em', fontFamily: '"Montserrat", "sans-serif"', fontSize: '1em' }} />,
   ];
 }
 

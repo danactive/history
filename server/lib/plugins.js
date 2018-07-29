@@ -39,9 +39,9 @@ const plugins = [
   { plugin: libWalk },
   {
     plugin: hapiSwagger,
-    options: { info: { title: 'history API', version: pkg.version } }
+    options: { info: { title: 'history API', version: pkg.version } },
   },
-  { plugin: lout }
+  { plugin: lout },
 ];
 
 module.exports = plugins;

@@ -2,6 +2,7 @@
 const React = require('react');
 
 const credentials = require('../../../credentials');
+const logger = require('../../log');
 const SearchBar = require('./searchBar.jsx');
 const VideoList = require('./videoList.jsx');
 const VideoDetail = require('./videoDetail.jsx');
@@ -13,7 +14,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       videos: [],
-      selectedVideo: null
+      selectedVideo: null,
     };
   }
 
@@ -24,8 +25,8 @@ class App extends React.Component {
 
     const order = (options.searchOrder) ? `&order=${options.searchOrder}` : '';
 
-    const geoAddress = `https://content.googleapis.com/youtube/v3/search?location=${searchValue}&locationRadius=1km&maxResults=5${order}` +
-    `&part=id,snippet&type=video&videoEmbeddable=true&key=${API_KEY}&videoLiscense=any`;
+    const geoAddress = `https://content.googleapis.com/youtube/v3/search?location=${searchValue}&locationRadius=1km&maxResults=5${order}`
+    + `&part=id,snippet&type=video&videoEmbeddable=true&key=${API_KEY}&videoLiscense=any`;
     const keywordAddress = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${API_KEY}&q=${searchValue}&type=video${order}`;
 
     const address = (Number(searchValue.split(',')[0])) ? geoAddress : keywordAddress;
@@ -39,20 +40,24 @@ class App extends React.Component {
       .then((payload) => {
         this.setState({
           videos: payload.items,
-          selectedVideo: payload.items[0]
+          selectedVideo: payload.items[0],
         });
       })
-      .catch(error => console.log(error.message));
+      .catch(error => logger.debug(error.message));
   }
 
   render() {
+    const {
+      selectedVideo,
+      videos,
+    } = this.state;
     const videoSearch = _.debounce((searchValue, options) => this.videoSearch(searchValue, options), 400);
 
     return (
       <section id="video-component">
         <SearchBar onSearchChange={videoSearch} />
-        <VideoDetail video={this.state.selectedVideo} />
-        <VideoList onVideoSelect={selectedVideo => this.setState({ selectedVideo })} videos={this.state.videos} />
+        <VideoDetail video={selectedVideo} />
+        <VideoList onVideoSelect={currentVideo => this.setState({ selectedVideo: currentVideo })} videos={videos} />
       </section>
     );
   }

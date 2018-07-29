@@ -5,7 +5,7 @@ function createMap(containerId) {
     container: containerId,
     style: 'mapbox://styles/mapbox/satellite-streets-v10',
     center: [-103.59179687498357, 40.66995747013945],
-    zoom: 3
+    zoom: 3,
   });
 
   window.map.on('load', () => {
@@ -17,7 +17,7 @@ function createMap(containerId) {
       data: `/geojson?album_stem=${albumStem}&gallery=${gallery}`,
       cluster: true,
       clusterMaxZoom: 14, // Max zoom to cluster points on
-      clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+      clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
     });
 
     window.map.addLayer({
@@ -32,8 +32,8 @@ function createMap(containerId) {
           stops: [
             [0, '#51bbd6'],
             [100, '#f1f075'],
-            [750, '#f28cb1']
-          ]
+            [750, '#f28cb1'],
+          ],
         },
         'circle-radius': {
           property: 'point_count',
@@ -41,10 +41,10 @@ function createMap(containerId) {
           stops: [
             [0, 20],
             [100, 30],
-            [750, 40]
-          ]
-        }
-      }
+            [750, 40],
+          ],
+        },
+      },
     });
 
     window.map.addLayer({
@@ -55,8 +55,8 @@ function createMap(containerId) {
       layout: {
         'text-field': '{point_count_abbreviated}',
         'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-        'text-size': 12
-      }
+        'text-size': 12,
+      },
     });
 
     window.map.addLayer({
@@ -68,8 +68,8 @@ function createMap(containerId) {
         'circle-color': '#11b4da',
         'circle-radius': 8,
         'circle-stroke-width': 1,
-        'circle-stroke-color': '#fff'
-      }
+        'circle-stroke-color': '#fff',
+      },
     });
   });
 }
@@ -77,6 +77,6 @@ function createMap(containerId) {
 // If Node.js then export as public
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
   module.exports = {
-    createMap
+    createMap,
   };
 }

@@ -31,7 +31,7 @@ cases.push({
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.end();
-  }
+  },
 });
 
 cases.push({
@@ -61,7 +61,7 @@ cases.push({
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.end();
-  }
+  },
 });
 
 cases.push({
@@ -87,7 +87,7 @@ cases.push({
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.end();
-  }
+  },
 });
 
 module.exports = { cases };

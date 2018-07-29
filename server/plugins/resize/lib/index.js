@@ -18,22 +18,22 @@ const register = (server) => {
       tags: ['api'],
       validate: {
         payload: {
-          source_path: validation.sourceFolder
-        }
+          source_path: validation.sourceFolder,
+        },
       },
       response: {
         schema: {
-          resize: validation.resize
-        }
-      }
-    }
+          resize: validation.resize,
+        },
+      },
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'resize',
-  version: '0.3.0'
+  version: '0.3.0',
 };
 
 module.exports = { plugin };

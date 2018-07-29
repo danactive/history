@@ -26,7 +26,9 @@ function Thumb({ item }) {
           <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
         </a>
       </div>
-      <div className="albumBoxPhotoCaption">{item.thumbCaption}</div>
+      <div className="albumBoxPhotoCaption">
+        {item.thumbCaption}
+      </div>
     </li>
   );
 }
@@ -39,9 +41,9 @@ Thumb.propTypes = {
     mediaPath: propTypes.string.isRequired,
     geo: propTypes.shape({
       lat: propTypes.number,
-      lon: propTypes.number
-    })
-  })
+      lon: propTypes.number,
+    }),
+  }),
 };
 
 Thumb.defaultProps = {
@@ -49,9 +51,9 @@ Thumb.defaultProps = {
     caption: 'Thumbnail',
     geo: {
       lat: null,
-      lon: null
-    }
-  }
+      lon: null,
+    },
+  },
 };
 
 module.exports = Thumb;

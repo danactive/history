@@ -7,7 +7,7 @@ function createLogger(moduleName, options = {}) {
   return {
     debug: message => output(message),
     operational: message => output(message),
-    panic: message => output(message)
+    panic: message => output(message),
   };
 }
 

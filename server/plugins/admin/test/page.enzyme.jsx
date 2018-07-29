@@ -13,7 +13,11 @@ test('View Admin - Page (React Component)', { skip: false }, (describe) => {
 
   describe.test('* Page loads', (assert) => {
     const wrapper = shallow(<Page />);
-    assert.ok(wrapper.contains(<a href="/edit/album">Edit Album</a>));
+    assert.ok(wrapper.contains(
+      <a href="/edit/album">
+        Edit Album
+      </a>,
+    ));
     assert.end();
   });
 });

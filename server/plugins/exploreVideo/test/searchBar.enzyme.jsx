@@ -4,7 +4,7 @@ import React from 'react';
 import test from 'tape';
 import sinon from 'sinon';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import SearchBar from '../components/searchBar';
 
 const { shallow } = enzyme;
@@ -51,22 +51,26 @@ test('Explore Video - Search Bar', (describe) => {
 test('Explore Video - Search Bar (React Component)', (describe) => {
   describe.test('* Render input element', (assert) => {
     const wrapper = shallow(<SearchBar onSearchChange={() => {}} />);
-    const props = wrapper.find('input').props();
+    const {
+      placeholder,
+      title,
+      value,
+    } = wrapper.find('input').props();
     let actual;
     let expected;
 
 
-    actual = props.placeholder;
+    actual = placeholder;
     expected = SearchBar.defaults.instruction;
     assert.equal(actual, expected, 'Placeholder');
 
 
-    actual = props.title;
+    actual = title;
     expected = SearchBar.defaults.instruction;
     assert.equal(actual, expected, 'Title');
 
 
-    actual = props.value;
+    actual = value;
     expected = SearchBar.defaults.geocode;
     assert.equal(actual, expected, 'Value');
 

@@ -41,8 +41,8 @@ Video.propTypes = {
     w: propTypes.number.isRequired,
     h: propTypes.number.isRequired,
     gallery: propTypes.string.isRequired,
-    sources: propTypes.string.isRequired
-  }).isRequired
+    sources: propTypes.string.isRequired,
+  }).isRequired,
 };
 
 module.exports = Video;

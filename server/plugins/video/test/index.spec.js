@@ -24,19 +24,19 @@ tape('Verify /video route', { skip: false }, (describe) => {
       w: 1280,
       h: 720,
       raw: true,
-      sources
+      sources,
     })}`;
 
     const viewsConfig = {
       engines: {
-        jsx: hapiReactViews
+        jsx: hapiReactViews,
       },
-      relativeTo: path.join(__dirname, '../../../')
+      relativeTo: path.join(__dirname, '../../../'),
     };
 
     const request = {
       method: 'GET',
-      url
+      url,
     };
 
     try {

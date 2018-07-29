@@ -22,17 +22,17 @@ const register = (server) => {
           w: validation.w,
           h: validation.h,
           raw: validation.raw,
-          sources: validation.sources
-        }
-      }
-    }
+          sources: validation.sources,
+        },
+      },
+    },
   });
 };
 
 const plugin = {
   register,
   name: 'video',
-  version: '0.2.0'
+  version: '0.2.0',
 };
 
 module.exports = { plugin };

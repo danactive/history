@@ -3,7 +3,7 @@ import enzyme from 'enzyme';
 import test from 'tape';
 import React from 'react';
 
-import '../../../../server/test/setup.enzyme';
+import '../../../test/setup.enzyme';
 import App from '../components/app';
 
 test('Explore Video - App', (describe) => {

@@ -29,7 +29,7 @@ const album = {
         }
 
         return album.form.schema.dom;
-      }
+      },
     },
     Clear: () => {
       album.form.schema.GetDom()
@@ -122,7 +122,7 @@ const album = {
         $('#geo_lat').val(geocode[0].trim());
         $('#geo_lon').val(geocode[1].trim());
       }
-    }
+    },
   },
   photo: {
     recentIndex: 0, // for selecting a photo range & keyboard nav
@@ -163,7 +163,7 @@ const album = {
         '/media/photos/',
         filename.substr(0, filename.indexOf('-')),
         '/',
-        filename
+        filename,
       ].join('');
       $('#photoPreview').css('background-image', `url(${photoPath})`);
     },
@@ -204,7 +204,7 @@ const album = {
           $('#listPhotos').append(newDiv).append(`<span>${sortLabel}</span>`);
         }
       });
-    }
+    },
   },
   json: {}, // current album data
   Generate: () => { // output album.xml
@@ -221,7 +221,7 @@ const album = {
         .html(['<img src="../static/gallery-', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join(''))
         .appendTo('#listPhotos');
     });
-  }
+  },
 };
 const ConvertXmlToJson = (xmlData) => {
   album.json = $.parseJSON(util.xml.convertToJsonString(xmlData, ''));
@@ -293,7 +293,7 @@ $(window).ready(() => {
       left: 37,
       up: 38,
       right: 39,
-      down: 40
+      down: 40,
     };
     if ($e.which === arrow.left) {
       math = -1;

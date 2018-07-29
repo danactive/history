@@ -33,7 +33,7 @@ tape('Server', { skip: false }, (describe) => {
     const html = 'class="liAlbumPhoto"><div class="albumBoxPhotoImg"><a href="/static/gallery-demo/media/photos/2004/2004-01-04-01.jpg" rel="set"';
     const urlStem = `/view/album?${querystring.stringify({
       gallery: config.defaultGallery,
-      album_stem: config.defaultAlbum
+      album_stem: config.defaultAlbum,
     })}`;
     await checkHtml({ assert, html, urlStem });
 

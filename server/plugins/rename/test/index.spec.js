@@ -22,8 +22,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       payload: {
         filenames: ['aitch.html', 'gee.gif', 'em.md'],
         prefix,
-        source_folder: '/test/fixtures/renameable/FAKE'
-      }
+        source_folder: '/test/fixtures/renameable/FAKE',
+      },
     };
 
     try {
@@ -47,8 +47,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         filenames: ['aitch.html', 'gee.gif', 'em.md'],
         prefix,
         raw: true,
-        source_folder: '/test/fixtures/renameable'
-      }
+        source_folder: '/test/fixtures/renameable',
+      },
     };
 
     try {
@@ -70,9 +70,9 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
 
       actual = response.result.xml;
-      expected = `<item id="100"><filename>${prefix}-37.jpg</filename></item>` +
-        `<item id="101"><filename>${prefix}-64.jpg</filename></item>` +
-        `<item id="102"><filename>${prefix}-90.jpg</filename></item>`;
+      expected = `<item id="100"><filename>${prefix}-37.jpg</filename></item>`
+        + `<item id="101"><filename>${prefix}-64.jpg</filename></item>`
+        + `<item id="102"><filename>${prefix}-90.jpg</filename></item>`;
       assert.equal(actual, expected, 'XML response is expected');
 
 
@@ -105,8 +105,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
         prefix,
         raw: true,
         rename_associated: true,
-        source_folder: '/test/fixtures/renameable'
-      }
+        source_folder: '/test/fixtures/renameable',
+      },
     };
 
     try {

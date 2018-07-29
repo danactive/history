@@ -8,20 +8,28 @@ function Page({ galleries }) {
   return (
     <html lang="en">
       <head>
-        <title>History</title>
+        <title>
+          History
+        </title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
       </head>
       <body>
-        <h1>Photo Galleries</h1>
-        <ul>{galleryList}</ul>
-        <a href="/admin">Admin</a>
+        <h1>
+          Photo Galleries
+        </h1>
+        <ul>
+          {galleryList}
+        </ul>
+        <a href="/admin">
+          Admin
+        </a>
       </body>
     </html>
   );
 }
 
 Page.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired
+  galleries: propTypes.arrayOf(propTypes.string).isRequired,
 };
 
 module.exports = Page;

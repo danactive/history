@@ -13,9 +13,13 @@ const VideoListItem = ({ index, video, onVideoSelect }) => {
 
   return (
     <div className="video-list-media" onClick={() => onVideoSelect(video)} onKeyPress={handleKeyPress} role="button" tabIndex={tabOffset + index}>
-      <div className="media-thumbnail"><img src={imageUrl} alt="Video thumbnail" /></div>
+      <div className="media-thumbnail">
+        <img src={imageUrl} alt="Video thumbnail" />
+      </div>
 
-      <div className="media-heading">{video.snippet.title}</div>
+      <div className="media-heading">
+        {video.snippet.title}
+      </div>
     </div>
   );
 };
@@ -27,12 +31,12 @@ VideoListItem.propTypes = {
     snippet: propTypes.shape({
       thumbnails: propTypes.shape({
         default: propTypes.shape({
-          url: propTypes.string.isRequired
-        }).isRequired
+          url: propTypes.string.isRequired,
+        }).isRequired,
       }).isRequired,
-      title: propTypes.string.isRequired
-    }).isRequired
-  }).isRequired
+      title: propTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 module.exports = VideoListItem;

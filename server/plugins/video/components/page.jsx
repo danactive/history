@@ -9,7 +9,9 @@ function Page({ video }) {
   return (
     <html lang="en">
       <head>
-        <title>History</title>
+        <title>
+          History
+        </title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
       </head>
       <body style={body}>
@@ -20,7 +22,7 @@ function Page({ video }) {
 }
 
 Page.propTypes = {
-  video: propTypes.shape().isRequired
+  video: propTypes.shape().isRequired,
 };
 
 module.exports = Page;
