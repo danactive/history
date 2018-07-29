@@ -1901,7 +1901,7 @@ cliui@^4.0.0:
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
 
-clone@^2.0.0:
+clone@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
 
@@ -2909,7 +2909,7 @@ eslint-plugin-jsx-a11y@^6.0.3:
     has "^1.0.3"
     jsx-ast-utils "^2.0.1"
 
-eslint-plugin-markdown@^1.0.0-beta.7:
+eslint-plugin-markdown@^1.0.0-beta.6:
   version "1.0.0-beta.8"
   resolved "https://registry.yarnpkg.com/eslint-plugin-markdown/-/eslint-plugin-markdown-1.0.0-beta.8.tgz#8d10707fdc551dc28ed9e14bd03c18f776e2fb76"
   dependencies:
