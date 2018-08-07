@@ -96,7 +96,7 @@
     "nyc": "^12.0.2",
     "sinon": "^6.0.1",
     "standard-version": "^4.0.0",
-    "style-loader": "^0.21.0",
+    "style-loader": "^0.22.0",
     "tape": "^4.6.3",
     "tape-catch": "^1.0.6",
     "url-loader": "^1.0.1",
