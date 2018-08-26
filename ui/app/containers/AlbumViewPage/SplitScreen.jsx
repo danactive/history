@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import PhotoImg from '../../components/PhotoImg';
 import SlippyMap from '../SlippyMap';
 
-function SplitScreen({ currentMemory }) {
+function SplitScreen({ currentMemory, items }) {
   if (currentMemory) {
     return (
       <div>
@@ -14,7 +14,8 @@ function SplitScreen({ currentMemory }) {
           onClick={() => console.log('Photo clicked')} // eslint-disable-line no-console
         />
         <SlippyMap
-          current={currentMemory}
+          geo={currentMemory.geo}
+          items={items}
         />
       </div>
     );
@@ -25,13 +26,18 @@ function SplitScreen({ currentMemory }) {
 
 SplitScreen.defaultProps = {
   currentMemory: null,
+  items: null,
 };
 
 SplitScreen.propTypes = {
   currentMemory: PropTypes.shape({
+    geo: PropTypes.arrayOf(PropTypes.number),
     photoLink: PropTypes.string,
     thumbLink: PropTypes.string,
   }),
+  items: PropTypes.arrayOf(PropTypes.shape({
+    geo: PropTypes.arrayOf(PropTypes.number),
+  })),
 };
 
 export default SplitScreen;

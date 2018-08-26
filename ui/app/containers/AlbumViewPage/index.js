@@ -52,6 +52,7 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
         <FormattedMessage {...messages.header} />
         <SplitScreen
           currentMemory={currentMemory}
+          items={memories}
         />
         <InfiniteThumbs loading={albumLoading} error={albumError} items={memories} />
       </div>
