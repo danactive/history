@@ -21,6 +21,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
+    "ajv": "^6.5.3",
     "app-root-path": "^2.0.1",
     "async": "^2.1.2",
     "babel-cli": "^6.18.0",
