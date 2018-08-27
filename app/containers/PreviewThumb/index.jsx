@@ -12,7 +12,7 @@ const PreviewThumb = ({ filename }) => {
 
 
 PreviewThumb.propTypes = {
-  filename: propTypes.string.isRequired
+  filename: propTypes.string.isRequired,
 };
 
 module.exports = PreviewThumb;

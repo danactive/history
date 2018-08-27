@@ -2,19 +2,19 @@ import propTypes from 'prop-types';
 import React from 'react';
 
 // Renders an image, enforcing the usage of the alt="" attribute
-const Img = props => <img className={props.className} src={props.src} alt={props.alt} />;
+const Img = ({ alt, className, src }) => <img className={className} src={src} alt={alt} />;
 
 Img.defaultProps = {
-  className: null
+  className: null,
 };
 
 Img.propTypes = {
   src: propTypes.oneOfType([
     propTypes.string,
-    propTypes.object
+    propTypes.object,
   ]).isRequired,
   alt: propTypes.string.isRequired,
-  className: propTypes.string
+  className: propTypes.string,
 };
 
 export default Img;

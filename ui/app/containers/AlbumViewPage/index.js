@@ -13,7 +13,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from 'containers/InfiniteThumbs/Loadable';
-import PhotoImg from 'components/PhotoImg';
+import SplitScreen from './SplitScreen.jsx';
 
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
@@ -43,23 +43,17 @@ export class AlbumViewPage extends React.PureComponent { // eslint-disable-line 
       memories,
     } = this.props;
 
-    const photo = (currentMemory) ? (
-      <PhotoImg
-        highsrc={currentMemory.photoLink}
-        lowsrc={currentMemory.thumbLink}
-        onClick={() => console.log('Photo clicked')} // eslint-disable-line no-console
-      />
-    ) : '';
-
     return (
       <div>
         <Helmet>
-          <title>AlbumViewPage</title>
+          <title>History - Album</title>
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
         <FormattedMessage {...messages.header} />
-
-        {photo}
+        <SplitScreen
+          currentMemory={currentMemory}
+          items={memories}
+        />
         <InfiniteThumbs loading={albumLoading} error={albumError} items={memories} />
       </div>
     );

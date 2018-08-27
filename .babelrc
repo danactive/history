@@ -3,7 +3,4 @@
     "env",
     "react"
   ],
-  "plugins": [
-    "transform-runtime"
-  ]
 }
