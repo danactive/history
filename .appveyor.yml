@@ -25,7 +25,6 @@ test_script:
   - yarn lint
   - yarn test
   - yarn test:react
-  - yarn test:unit
 
 build_script:
   - yarn run webpack

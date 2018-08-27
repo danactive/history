@@ -1,8 +1,15 @@
-/* global expect, test */
+/* global expect, shallow, test */
+import React from 'react';
+
 import {
   transformMapOptions,
   transformSourceOptions,
 } from '../options';
+import SlippyMap from '../index';
+
+jest.mock('react-mapbox-gl', () => jest.fn(() => {}));
+
+const shallowComponent = (props = {}) => shallow(<SlippyMap {...props} />);
 
 const getFeatureCollection = () => ({
   features: [],
@@ -82,14 +89,11 @@ describe('<SlippyMap />', () => {
     });
   });
 
-  // CI has error
-  // Cannot create styled-component for component: [object Object].
+  it('should render an <SlippyMap /> component', () => {
+    expect.hasAssertions();
 
-  // it('should render an <SlippyMap /> component', () => {
-  //   expect.hasAssertions();
-  //
-  //   const received = shallowComponent().children().length;
-  //   const expected = 4;
-  //   expect(received).toEqual(expected);
-  // });
+    const received = shallowComponent().children().length;
+    const expected = 4;
+    expect(received).toEqual(expected);
+  });
 });
