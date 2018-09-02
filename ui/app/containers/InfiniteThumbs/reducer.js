@@ -10,16 +10,20 @@ import {
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_THUMBS_SUCCESS,
   PAGE_SIZE,
+  NEXT_MEMORY,
+  PREV_MEMORY,
 } from '../AlbumViewPage/constants';
 import { insertPage } from '../AlbumViewPage/paging';
 
 const albumInitialState = fromJS({
-  demo: {
-    sample: {
-      memories: [],
+  albums: {
+    demo: {
+      sample: {
+        memories: [],
+      },
     },
   },
-});
+}).get('albums');
 
 export default function reducer(state = albumInitialState, action) {
   const gallery = state.get('gallery');
@@ -65,6 +69,23 @@ export default function reducer(state = albumInitialState, action) {
           ['currentMemory', 'photoLink'],
           action.photoLink,
         );
+
+    case NEXT_MEMORY:
+    case PREV_MEMORY: {
+      const memories = state.getIn([gallery, album, 'memories']);
+      const currentMemoryId = state.getIn(['currentMemory', 'id']) || 0;
+      const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
+      const adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
+      const findIndex = memories[adjacentMemoryIndex].id;
+      return state
+        .set(
+          'currentMemory',
+          state
+            .getIn([gallery, album, 'memories'])
+            .filter((item) => item.id === findIndex)[0],
+          {}
+        );
+    }
 
     default:
       return state;
