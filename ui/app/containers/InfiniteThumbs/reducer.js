@@ -16,14 +16,12 @@ import {
 import { insertPage } from '../AlbumViewPage/paging';
 
 const albumInitialState = fromJS({
-  albums: {
-    demo: {
-      sample: {
-        memories: [],
-      },
+  demo: {
+    sample: {
+      memories: [],
     },
   },
-}).get('albums');
+});
 
 export default function reducer(state = albumInitialState, action) {
   const gallery = state.get('gallery');
@@ -38,7 +36,7 @@ export default function reducer(state = albumInitialState, action) {
 
     case LOAD_ALBUM_SUCCESS:
       return state
-        .setIn([gallery, album, 'memories'], action.memories);
+        .setIn([gallery, album, 'memories'], action.memories); // memories is an Array (not Immutable)
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS:
@@ -50,7 +48,7 @@ export default function reducer(state = albumInitialState, action) {
             pageSize: PAGE_SIZE,
             page: action.page,
             list: state.getIn([gallery, album, 'memories']),
-          })
+          }) // memories from insertPage is an Array (not Immutable)
         );
 
     case CHOOSE_MEMORY:
@@ -59,7 +57,7 @@ export default function reducer(state = albumInitialState, action) {
           'currentMemory',
           state
             .getIn([gallery, album, 'memories'])
-            .filter((item) => item.id === action.id)[0],
+            .filter((item) => item.id === action.id)[0], // currentMemory is an Object (not Immutable)
           {}
         );
 
@@ -75,14 +73,21 @@ export default function reducer(state = albumInitialState, action) {
       const memories = state.getIn([gallery, album, 'memories']);
       const currentMemoryId = state.getIn(['currentMemory', 'id']) || 0;
       const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
-      const adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
+      let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
+
+      const carouselEnd = adjacentMemoryIndex >= memories.length;
+      if (carouselEnd) adjacentMemoryIndex = adjacentMemoryIndex - memories.length;
+
+      const carouselBegin = adjacentMemoryIndex < 0;
+      if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
+
       const findIndex = memories[adjacentMemoryIndex].id;
       return state
         .set(
           'currentMemory',
           state
             .getIn([gallery, album, 'memories'])
-            .filter((item) => item.id === findIndex)[0],
+            .filter((item) => item.id === findIndex)[0], // currentMemory is an Object (not Immutable)
           {}
         );
     }
