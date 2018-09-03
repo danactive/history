@@ -33,7 +33,7 @@ export const selectNextPage = (state) => {
   return {
     gallery,
     album,
-    memories: albumState.getIn([gallery, album, 'memories']),
+    memories: albumState.getIn([gallery, album, 'memories']), // memories is an Array (not Immutable)
     page: pageState.get('page'),
   };
 };

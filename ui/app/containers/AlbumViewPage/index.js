@@ -1,9 +1,4 @@
-/**
- *
- * AlbumViewPage
- *
- */
-
+/* global document */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,12 +7,15 @@ import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import InfiniteThumbs from 'containers/InfiniteThumbs/Loadable';
+import InfiniteThumbs from '../InfiniteThumbs/Loadable';
 import SplitScreen from './SplitScreen.jsx';
 
-import injectSaga from 'utils/injectSaga';
-import injectReducer from 'utils/injectReducer';
-import { loadAlbum } from './actions';
+import injectSaga from '../../utils/injectSaga';
+import injectReducer from '../../utils/injectReducer';
+import {
+  chooseAdjacentMemory,
+  loadAlbum,
+} from './actions';
 import {
   makeSelectMemories,
   makeSelectAlbumLoading,
@@ -29,7 +27,25 @@ import albumReducer from '../InfiniteThumbs/reducer';
 import saga from './saga';
 import messages from './messages';
 
-export class AlbumViewPage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+const handleKey = ({ adjacentMemory, event }) => {
+  const { key } = event;
+
+  event.preventDefault();
+
+  if (key === 'ArrowLeft') return adjacentMemory(-1);
+  if (key === 'ArrowRight') return adjacentMemory(1);
+};
+
+export class AlbumViewPage extends React.PureComponent {
+  componentDidMount() {
+    const { adjacentMemory } = this.props;
+    document.addEventListener('keydown', event => handleKey({ event, adjacentMemory }));
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', handleKey);
+  }
+
   componentWillMount() {
     const { onLoad, match: { params }, location: { search: querystring } } = this.props;
     if (params.album) onLoad(querystring, params.album);
@@ -89,6 +105,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
+    adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
   };
 }
 

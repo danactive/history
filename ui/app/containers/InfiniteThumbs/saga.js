@@ -6,6 +6,10 @@ import { normalizeError } from 'utils/error';
 import { CHOOSE_MEMORY } from './constants';
 import { selectCurrentMemory } from './selectors';
 import { photoLoadError, photoLoadSuccess } from './actions';
+import {
+  NEXT_MEMORY,
+  PREV_MEMORY,
+} from '../AlbumViewPage/constants';
 
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
@@ -43,5 +47,5 @@ export function* getPhotoPathsOnDropbox() {
 
 // ROOT saga manages WATCHER lifecycle
 export default function* InfiniteThumbsSagaWatcher() {
-  yield takeEvery(CHOOSE_MEMORY, getPhotoPathsOnDropbox);
+  yield takeEvery([CHOOSE_MEMORY, NEXT_MEMORY, PREV_MEMORY], getPhotoPathsOnDropbox);
 }
