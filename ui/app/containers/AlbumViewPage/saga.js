@@ -41,8 +41,11 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
 
 
 export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
-  // eslint-disable-next-line redux-saga/yield-effects
-  return thumbs.map((thumb) => call([dbx, 'filesGetTemporaryLink'], argsThumbImgPath({ gallery, filename: thumb.filename })));
+  const queueSagaCalls = thumb => call(
+    [dbx, 'filesGetTemporaryLink'],
+    argsThumbImgPath({ gallery, filename: thumb.filename }),
+  );
+  return thumbs.map(queueSagaCalls);
 }
 
 
@@ -65,11 +68,12 @@ export function* getThumbPathsOnDropbox() {
   try {
     const { gallery, album, memories, page: prevPage } = yield select(selectNextPage);
     if (!memories || memories.length === 0) {
-      throw new Error(`Empty or malformed album; memories=(${memories})`);
+      throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
     }
 
     const page = prevPage + 1;
     const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
+
     const hasMore = (PAGE_SIZE * page) < memories.length;
 
     const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));

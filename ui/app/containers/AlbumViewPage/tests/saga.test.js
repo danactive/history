@@ -1,10 +1,9 @@
-/* eslint-disable redux-saga/yield-effects */
 import Dropbox from 'dropbox';
 
 import { all, call, put, select } from 'redux-saga/effects';
 
-import { normalizeError } from 'utils/error';
-import request, { parseTextXml } from 'utils/request';
+import { normalizeError } from '../../../utils/error';
+import request, { parseTextXml } from '../../../utils/request';
 
 import {
   getAlbumFileOnDropbox,
@@ -19,10 +18,6 @@ import {
   LOAD_NEXT_THUMB_PAGE_ERROR,
 } from '../constants';
 import { thumbsLoaded } from '../actions';
-
-describe('AlbumViewPage thumbFilenameCalls', () => {
-
-});
 
 describe('AlbumViewPage Saga', () => {
   describe('getAlbumFileOnDropbox', () => {
@@ -131,22 +126,39 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should second yield an Effect all', () => {
+        const array1toLength = Array.from({ length: 17 }, (v, k) => (
+          { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` })
+        );
         const args = {
           gallery: fixtures.gallery,
           album: fixtures.album,
-          memories: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          memories: array1toLength,
           page: 2,
         };
         const received = generator.next(args).value;
-        const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], argsThumbImgPath(args))]);
+        const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], argsThumbImgPath({ gallery: fixtures.gallery, filename: '2015-12-25-17.jpg' }))]);
         expect(received).toEqual(expected);
       });
 
       it('should third yield an Effect put', () => {
-        const dropboxResults = [{ link: 'dropbox.com' }];
+        const dropboxResults = [
+          { link: 'dropbox.com' },
+        ];
+        const args = {
+          gallery: fixtures.gallery,
+          album: fixtures.album,
+          newMemories: [
+            {
+              id: 17,
+              filename: '2015-12-25-17.jpg',
+              thumbLink: 'dropbox.com',
+            },
+          ],
+          page: 3,
+        };
 
         const received = generator.next(dropboxResults).value;
-        const expected = put(thumbsLoaded(dropboxResults));
+        const expected = put(thumbsLoaded(args));
         expect(received).toEqual(expected);
       });
 
@@ -168,10 +180,16 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should second yield an Effect put', () => {
-        const received = generator.next().value;
+        const args = {
+          memories: [],
+        };
+        const received = generator.next(args).value;
+        // Unit test cannot reproduce error stack so delete
+        delete received.PUT.action.error.debug;
 
         const error = {
-          message: 'Empty or malformed album',
+          message: 'Empty or malformed album; memories=([])',
+          type: 'normalized message and stack',
         };
         const expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
 

@@ -6,6 +6,7 @@ export const normalizeError = (error) => {
       message: dotProp.get(error, 'error.error_summary'),
       status: dotProp.get(error, 'status'),
       debug: dotProp.get(error, 'response.req._data.path'),
+      type: 'normalized error_summary',
     };
   }
 
@@ -13,6 +14,7 @@ export const normalizeError = (error) => {
     return {
       debug: error.stack,
       message: error.message,
+      type: 'normalized message and stack',
     };
   }
 

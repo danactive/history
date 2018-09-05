@@ -6,11 +6,10 @@ function checkAll(list) {
   expect(list[2].id).toEqual(3);
   expect(list[3].id).toEqual(4);
   expect(list[4].id).toEqual(5);
-  expect(list[5].id).toEqual(6);
 }
 
 const PAGE_SIZE = 2;
-const fixtures = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }];
+const fixtures = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
 
 describe('Get Page', () => {
   it('should get the zero page', () => {
@@ -21,7 +20,7 @@ describe('Get Page', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should get the first page', () => {
+  it('first page should be full', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 1 });
     let received;
     let expected;
@@ -33,9 +32,13 @@ describe('Get Page', () => {
     received = result[1].id;
     expected = 2;
     expect(received).toEqual(expected);
+
+    received = result[2];
+    expected = undefined;
+    expect(received).toEqual(expected);
   });
 
-  it('should get the second page', () => {
+  it('second page should be full', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 2 });
     let received;
     let expected;
@@ -47,9 +50,13 @@ describe('Get Page', () => {
     received = result[1].id;
     expected = 4;
     expect(received).toEqual(expected);
+
+    received = result[2];
+    expected = undefined;
+    expect(received).toEqual(expected);
   });
 
-  it('should get the third page', () => {
+  it('third page should be partial', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 3 });
     let received;
     let expected;
@@ -58,12 +65,12 @@ describe('Get Page', () => {
     expected = 5;
     expect(received).toEqual(expected);
 
-    received = result[1].id;
-    expected = 6;
+    received = result[1];
+    expected = undefined;
     expect(received).toEqual(expected);
   });
 
-  it('should get the fourth page', () => {
+  it('fourth page should be empty', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 4 });
 
     const received = result[0];
@@ -77,7 +84,6 @@ describe('Get Page', () => {
     expect(fixtures[2].id).toEqual(3);
     expect(fixtures[3].id).toEqual(4);
     expect(fixtures[4].id).toEqual(5);
-    expect(fixtures[5].id).toEqual(6);
   });
 });
 
@@ -101,7 +107,6 @@ describe('Insert Page', () => {
     expect(fixtures[2].id).toEqual(newList[2].id);
     expect(fixtures[3].id).toEqual(newList[3].id);
     expect(fixtures[4].id).toEqual(newList[4].id);
-    expect(fixtures[5].id).toEqual(newList[5].id);
     checkAll(fixtures);
   });
 
@@ -113,7 +118,6 @@ describe('Insert Page', () => {
     expect(insert[0].id).toEqual(newList[2].id);
     expect(insert[1].id).toEqual(newList[3].id);
     expect(fixtures[4].id).toEqual(newList[4].id);
-    expect(fixtures[5].id).toEqual(newList[5].id);
     checkAll(fixtures);
   });
 
@@ -125,7 +129,6 @@ describe('Insert Page', () => {
     expect(fixtures[2].id).toEqual(newList[2].id);
     expect(fixtures[3].id).toEqual(newList[3].id);
     expect(insert[0].id).toEqual(newList[4].id);
-    expect(insert[1].id).toEqual(newList[5].id);
     checkAll(fixtures);
   });
 
