@@ -1,6 +1,7 @@
 import Dropbox from 'dropbox';
 
 import { all, call, put, select } from 'redux-saga/effects';
+import { cloneableGenerator } from 'redux-saga/utils';
 
 import { normalizeError } from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
@@ -26,18 +27,21 @@ describe('AlbumViewPage Saga', () => {
       const generator = getAlbumFileOnDropbox(fixtures);
 
       it('should first yield an Effect call', () => {
+        expect.hasAssertions();
         const received = generator.next().value;
         const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
         expect(received).toEqual(expected);
       });
 
       it('should second yield an Effect call', () => {
+        expect.hasAssertions();
         const received = generator.next({ link: 'fake address' }).value;
         const expected = call(request, 'fake address');
         expect(received).toEqual(expected);
       });
 
       it('should third yield an Effect put', () => {
+        expect.hasAssertions();
         const xmlAlbum = `<album>
           <meta>
             <gallery>demo</gallery>
@@ -79,6 +83,7 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should be done', () => {
+        expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
         expect(received).toEqual(expected);
@@ -90,12 +95,14 @@ describe('AlbumViewPage Saga', () => {
       const generator = getAlbumFileOnDropbox(fixtures);
 
       it('should first yield an Effect call', () => {
+        expect.hasAssertions();
         const received = generator.next().value;
         const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
         expect(received).toEqual(expected);
       });
 
       it('should second yield an Error put', () => {
+        expect.hasAssertions();
         const error = new Error('Something went wrong');
 
         const received = generator.throw(error).value;
@@ -104,6 +111,7 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should be done', () => {
+        expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
         expect(received).toEqual(expected);
@@ -120,12 +128,14 @@ describe('AlbumViewPage Saga', () => {
       const generator = getThumbPathsOnDropbox(fixtures);
 
       it('should first yield an Effect select', () => {
+        expect.hasAssertions();
         const received = generator.next().value;
         const expected = select(selectNextPage);
         expect(received).toEqual(expected);
       });
 
       it('should second yield an Effect all', () => {
+        expect.hasAssertions();
         const array1toLength = Array.from({ length: 17 }, (v, k) => (
           { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` })
         );
@@ -141,6 +151,7 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should third yield an Effect put', () => {
+        expect.hasAssertions();
         const dropboxResults = [
           { link: 'dropbox.com' },
         ];
@@ -163,68 +174,67 @@ describe('AlbumViewPage Saga', () => {
       });
 
       it('should be done', () => {
+        expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
         expect(received).toEqual(expected);
       });
     });
 
-    describe('Failure - empty selector', () => {
+    describe('Failure', () => {
       const fixtures = { thumbs: [], gallery: 'demo' };
-      const generator = getThumbPathsOnDropbox(fixtures);
+      const generator = cloneableGenerator(getThumbPathsOnDropbox)(fixtures);
 
-      it('should first yield an Effect select', () => {
-        const received = generator.next().value;
-        const expected = select(selectNextPage);
-        expect(received).toEqual(expected);
-      });
+      generator.next();  // first yield an Effect select
 
-      it('should second yield an Effect put', () => {
+      it('should receive an empty selector', () => {
+        expect.hasAssertions();
+
+        // cloning the generator before sending data
+        const genClone = generator.clone();
+
+        let received;
+        let expected;
+
         const args = {
           memories: [],
         };
-        const received = generator.next(args).value;
+        received = genClone.next(args).value;
         // Unit test cannot reproduce error stack so delete
-        delete received.PUT.action.error.debug;
+        delete received.PUT.action.error.stack;
 
         const error = {
           message: 'Empty or malformed album; memories=([])',
           type: 'normalized message and stack',
         };
-        const expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
+        expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
 
+        expect(received).toEqual(expected);
+
+
+        received = genClone.next().done;
+        expected = true;
         expect(received).toEqual(expected);
       });
 
-      it('should be done', () => {
-        const received = generator.next().done;
-        const expected = true;
-        expect(received).toEqual(expected);
-      });
-    });
+      it('should catch error', () => {
+        expect.hasAssertions();
 
-    describe('Failure - catch error', () => {
-      const fixtures = { thumbs: [], gallery: 'demo' };
-      const generator = getThumbPathsOnDropbox(fixtures);
+        // cloning the generator before sending data
+        const genClone = generator.clone();
 
-      it('should first yield an Effect select', () => {
-        const received = generator.next().value;
-        const expected = select(selectNextPage);
-        expect(received).toEqual(expected);
-      });
+        let received;
+        let expected;
 
-      it('should second yield an Effect put', () => {
         const error = new Error('Something went wrong');
 
-        const received = generator.throw(error).value;
-        const expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
+        received = generator.throw(error).value;
+        expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
 
         expect(received).toEqual(expected);
-      });
 
-      it('should be done', () => {
-        const received = generator.next().done;
-        const expected = true;
+        received = generator.next().done;
+        expected = true;
         expect(received).toEqual(expected);
       });
     });

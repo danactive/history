@@ -1,18 +1,25 @@
 import dotProp from 'dot-prop';
 
 export const normalizeError = (error) => {
-  if (error.error_summary) {
+  const message = dotProp.get(error, 'error.error_summary');
+
+  if (message) {
+    const action = (message === 'path/not_found/.') ? 'hide-thumb' : undefined;
+
     return {
-      message: dotProp.get(error, 'error.error_summary'),
+      message,
       status: dotProp.get(error, 'status'),
-      debug: dotProp.get(error, 'response.req._data.path'),
       type: 'normalized error_summary',
+      ui: {
+        action,
+        title: `Dropbox asset is missing (${dotProp.get(error, 'response.req._data.path')})`,
+      }
     };
   }
 
   if (error.message && error.stack) {
     return {
-      debug: error.stack,
+      stack: error.stack,
       message: error.message,
       type: 'normalized message and stack',
     };
