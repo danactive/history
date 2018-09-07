@@ -4,7 +4,8 @@ export const normalizeError = (error) => {
   const message = dotProp.get(error, 'error.error_summary');
 
   if (message) {
-    const action = (message === 'path/not_found/.') ? 'hide-thumb' : undefined;
+    const action = (message.includes('path/not_found')) ? 'add-placeholder-to-thumbLink' : undefined;
+    const path = dotProp.get(error, 'response.req._data.path');
 
     return {
       message,
@@ -12,7 +13,8 @@ export const normalizeError = (error) => {
       type: 'normalized error_summary',
       ui: {
         action,
-        title: `Dropbox asset is missing (${dotProp.get(error, 'response.req._data.path')})`,
+        path,
+        title: `Dropbox asset is missing (${path})`,
       }
     };
   }

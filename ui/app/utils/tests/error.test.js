@@ -3,7 +3,7 @@ import { normalizeError } from '../error';
 describe('error', () => {
   describe('normalizeError', () => {
     it('Dropbox error summary', () => {
-      const message = 'path/not_found/.';
+      const message = 'path/not_found/..';
       const path = '/public/gallery-dan/media/thumbs/2015/2015-12-02-62.jpg';
       const status = 409;
 
@@ -26,7 +26,8 @@ describe('error', () => {
         status,
         type: 'normalized error_summary',
         ui: {
-          action: 'hide-thumb',
+          action: 'add-placeholder-to-thumbLink',
+          path,
           title: `Dropbox asset is missing (${path})`,
         }
       };
