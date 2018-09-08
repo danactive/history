@@ -23,8 +23,12 @@ import { makeSelectThumbsError } from './selectors';
 import saga from './saga';
 
 
-function showUiError(error) {
+function showAlbumError(error) {
   return <div>{`Something went wrong, please try again! Reason (${error.message})`}</div>;
+}
+
+function showThumbsError(error) {
+  return <div>{error.ui.title}</div>;
 }
 
 function InfiniteThumbs(props) {
@@ -39,11 +43,7 @@ function InfiniteThumbs(props) {
   } = props;
 
   if (albumError !== false) {
-    return showUiError(albumError);
-  }
-
-  if (thumbsError !== false) {
-    return showUiError(thumbsError);
+    return showAlbumError(albumError);
   }
 
   if (loading) {
@@ -57,6 +57,15 @@ function InfiniteThumbs(props) {
   );
 
   const html = items.filter(hasThumbLink).map(thumbImages);
+
+  if (thumbsError !== false) {
+    return (
+      <div>
+        {html}
+        {showThumbsError(thumbsError)}
+      </div>
+    );
+  }
 
   return (
     <InfiniteScroll

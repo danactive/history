@@ -228,12 +228,12 @@ describe('AlbumViewPage Saga', () => {
 
         const error = new Error('Something went wrong');
 
-        received = generator.throw(error).value;
+        received = genClone.throw(error).value;
         expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
 
         expect(received).toEqual(expected);
 
-        received = generator.next().done;
+        received = genClone.next().done;
         expected = true;
         expect(received).toEqual(expected);
       });
