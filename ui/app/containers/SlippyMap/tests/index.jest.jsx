@@ -1,4 +1,4 @@
-/* global expect, shallow, test */
+/* global describe, expect, jest, it, shallow */
 import React from 'react';
 
 import {
