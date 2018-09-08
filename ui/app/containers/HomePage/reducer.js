@@ -19,7 +19,7 @@ import {
 } from './constants';
 
 // The initial state of the App
-const initialState = fromJS({
+export const initialState = fromJS({
   username: '',
   galleryLoading: false,
   galleryError: false,
@@ -29,8 +29,7 @@ function homeReducer(state = initialState, action) {
   switch (action.type) {
     case CHANGE_USERNAME:
       // Delete prefixed '@' from the github username
-      return state
-        .set('username', action.name.replace(/@/gi, ''));
+      return state.set('username', action.name.replace(/@/gi, ''));
 
     case LOAD_GALLERIES:
       return state

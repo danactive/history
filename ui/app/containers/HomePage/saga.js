@@ -27,7 +27,8 @@ export function* getRepos() {
 
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
-  const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+  const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
+  const dbx = new Dropbox({ accessToken });
 
   try {
     const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });

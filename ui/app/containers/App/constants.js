@@ -12,4 +12,3 @@
 export const LOAD_REPOS = 'history/App/LOAD_REPOS';
 export const LOAD_REPOS_SUCCESS = 'history/App/LOAD_REPOS_SUCCESS';
 export const LOAD_REPOS_ERROR = 'history/App/LOAD_REPOS_ERROR';
-export const DEFAULT_LOCALE = 'en';
