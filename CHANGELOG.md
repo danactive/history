@@ -2,6 +2,69 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.4.0"></a>
+# [3.4.0](https://github.com/danactive/history/compare/v3.3.0...v3.4.0) (2018-09-09)
+
+
+### Bug Fixes
+
+* **AlbumListItem Container:** Update links to read gallery name dynamically ([a7c47cd](https://github.com/danactive/history/commit/a7c47cd))
+* **AlbumViewPage Container:** Add saga tests ([e66406e](https://github.com/danactive/history/commit/e66406e))
+* **AlbumViewPage Container:** Update gallery name to read dynamically ([714ca9c](https://github.com/danactive/history/commit/714ca9c))
+* **GalleryList Component:** Change to GenericList with component passed in ([7a383b3](https://github.com/danactive/history/commit/7a383b3))
+* **Lint:** Remove disable comma of AirBnb ([1251c3c](https://github.com/danactive/history/commit/1251c3c))
+* **package:** update babel-eslint to version 9.0.0 ([f0b0d34](https://github.com/danactive/history/commit/f0b0d34))
+* **package:** update dotenv to version 6.0.0 ([7debc27](https://github.com/danactive/history/commit/7debc27))
+* **package:** update enzyme-adapter-react-16 to version 1.2.0 ([3b4d65f](https://github.com/danactive/history/commit/3b4d65f))
+* **package:** update enzyme-adapter-react-16 to version 1.3.0 ([8339604](https://github.com/danactive/history/commit/8339604)), closes [#286](https://github.com/danactive/history/issues/286)
+* **package:** Update lodash due to vulnerability ([adb4e51](https://github.com/danactive/history/commit/adb4e51))
+* **package:** update react-dates to version 17.1.1 ([fe6f5de](https://github.com/danactive/history/commit/fe6f5de)), closes [#271](https://github.com/danactive/history/issues/271)
+* **package:** update react-dates to version 18.0.0 ([18a6c4c](https://github.com/danactive/history/commit/18a6c4c))
+* **package:** update react-dates to version 18.0.0 ([59cbe84](https://github.com/danactive/history/commit/59cbe84))
+* **Rename:** Update galleryName to gallery and albumName to album ([5aed53e](https://github.com/danactive/history/commit/5aed53e))
+* **Slippy Map:** Disable test due to mysterious unit test error in CI ([77a180d](https://github.com/danactive/history/commit/77a180d))
+* **Slippy Map:** Disable test due to mysterious unit test error in CI ([31e8b89](https://github.com/danactive/history/commit/31e8b89))
+* **Slippy Map:** Update tests into smaller steps ([0d3c9a3](https://github.com/danactive/history/commit/0d3c9a3))
+* **UI:** Update dependencies with UI lint dependencies ([8db3516](https://github.com/danactive/history/commit/8db3516))
+
+
+### Features
+
+* **Album View:** Add keyboard events for arrow to choose adjacent memory ([61644ae](https://github.com/danactive/history/commit/61644ae))
+* **AlbumViewPage:** Update thumb pagination to lazy load with infinite scroll ([faebc11](https://github.com/danactive/history/commit/faebc11))
+* **AlbumViewPage Container:** Add click event to memory thumbnails to get details [[#2](https://github.com/danactive/history/issues/2)] ([7b4eb4d](https://github.com/danactive/history/commit/7b4eb4d))
+* **AlbumViewPage Container:** Add page to list thumbnail images in album ([d9bc267](https://github.com/danactive/history/commit/d9bc267))
+* **AlbumViewPage Container:** Update actions to only share each page of memory objects, not the entire album [[#3](https://github.com/danactive/history/issues/3)] ([04e47f7](https://github.com/danactive/history/commit/04e47f7))
+* **AlbumViewPage Container:** Update page with improved auto paging ([5cfd500](https://github.com/danactive/history/commit/5cfd500))
+* **AlbumViewPage Container:** Update page with manual thumb page request ([8286e4a](https://github.com/danactive/history/commit/8286e4a))
+* **AlbumViewPage Container:** Update page with manual thumb page request and indicate more thumbs available ([270b357](https://github.com/danactive/history/commit/270b357))
+* **AlbumViewPage Container:** Update saga to request thumb paths in pages ([96f412e](https://github.com/danactive/history/commit/96f412e))
+* **AlbumViewPage Container:** Update store path for thumbs to album ([d7614d9](https://github.com/danactive/history/commit/d7614d9))
+* **AlbumViewPage Container:** Update store to support multiple albums [[#1](https://github.com/danactive/history/issues/1)] ([e239f6e](https://github.com/danactive/history/commit/e239f6e))
+* **AlbumViewPage Container:** Update thumb filenames to Dropbox resource links ([b7fd389](https://github.com/danactive/history/commit/b7fd389))
+* **AlbumViewPage Container:** Update thumbnail to allow onClick [[#2](https://github.com/danactive/history/issues/2)] ([79b45a7](https://github.com/danactive/history/commit/79b45a7))
+* **boilerplate:** Update react-boilerplate to v3.5 ([1ef8ec6](https://github.com/danactive/history/commit/1ef8ec6))
+* **GalleryList Component:** Add list and item components to display dropbox gallery names ([a7d44e7](https://github.com/danactive/history/commit/a7d44e7))
+* **GalleryViewPage Container:** Add page to list albums in gallery; Utils request supports XML ([13bc680](https://github.com/danactive/history/commit/13bc680))
+* **GalleryViewPage Container:** Update first album name to all album names ([87e5895](https://github.com/danactive/history/commit/87e5895))
+* **GalleryViewPage Container:** Update output to display all album names ([233e804](https://github.com/danactive/history/commit/233e804))
+* **History-app:** Add React.js front-end UI to history project ([7673a24](https://github.com/danactive/history/commit/7673a24))
+* **HomePage container:** Add dropbox action create and saga to auth and get default path ([e4d0587](https://github.com/danactive/history/commit/e4d0587))
+* **InfiniteThumbs Container:** Add picture element to display high or low res source [[#4](https://github.com/danactive/history/issues/4)] ([909351f](https://github.com/danactive/history/commit/909351f))
+* **InfiniteThumbs Container:** Update choose memory to request Dropbox link for photo [[#4](https://github.com/danactive/history/issues/4)] ([6981c6d](https://github.com/danactive/history/commit/6981c6d))
+* **React:** Update from v15.6 to v16.0 ([a71f046](https://github.com/danactive/history/commit/a71f046))
+* **React Boilerplate:** Update from v3.5 to v3.6 ([863619a](https://github.com/danactive/history/commit/863619a))
+* **Slippy Map:** Add new container for Mapbox ([0ea1457](https://github.com/danactive/history/commit/0ea1457))
+* **Slippy Map:** Update map with clustering ([0f686da](https://github.com/danactive/history/commit/0f686da))
+* **ThumbListItem Container:** Update thumb filenames to images ([3b63d9d](https://github.com/danactive/history/commit/3b63d9d))
+* **Unit Test:** Add jest unit test runner ([f273c52](https://github.com/danactive/history/commit/f273c52))
+* **Unit Test:** Update unit test to run Jest ([30579c1](https://github.com/danactive/history/commit/30579c1))
+* **View Album:** Update error to gracefully fail ([7e355eb](https://github.com/danactive/history/commit/7e355eb))
+* **View Album:** Update error to gracefully fail ([f324ee4](https://github.com/danactive/history/commit/f324ee4))
+* **View Album:** Update thumbs from Dropbox to keep processed images ([5db629d](https://github.com/danactive/history/commit/5db629d))
+
+
+
 <a name="3.3.0"></a>
 # [3.3.0](https://github.com/danactive/history/compare/v3.2.0...v3.3.0) (2018-04-07)
 
