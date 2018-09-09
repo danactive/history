@@ -16,10 +16,11 @@ export const makeSelectThumbsError = () => createSelector(
 
 export const selectCurrentMemory = (state) => {
   const albumState = selectAlbum(state);
+  const currentMemory = albumState.get('currentMemory');
 
   return {
     gallery: albumState.get('gallery'),
     album: albumState.get('album'),
-    currentMemory: albumState.get('currentMemory'),
+    currentMemory: (currentMemory) ? currentMemory.toJS() : null,
   };
 };

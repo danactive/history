@@ -20,6 +20,7 @@ import ReposList from 'components/ReposList';
 import GenericList from 'components/GenericList';
 import GalleryListItem from 'containers/GalleryListItem';
 import AtPrefix from './AtPrefix';
+import CenteredSection from './CenteredSection';
 import Form from './Form';
 import Input from './Input';
 import Section from './Section';
@@ -62,13 +63,18 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
       <article>
         <Helmet>
           <title>History - View Galleries</title>
-          <meta name="description" content="A React.js Boilerplate application homepage" />
+          <meta
+            name="description"
+            content="A React.js Boilerplate application homepage"
+          />
         </Helmet>
         <div>
-          <H2>
-            <FormattedMessage {...messages.galleriesHeader} />
-          </H2>
-          <GenericList {...galleryListProps} />
+          <CenteredSection>
+            <H2>
+              <FormattedMessage {...messages.galleriesHeader} />
+            </H2>
+            <GenericList {...galleryListProps} />
+          </CenteredSection>
           <Section>
             <H2>
               <FormattedMessage {...messages.trymeHeader} />
@@ -99,14 +105,8 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 HomePage.propTypes = {
   onLoad: PropTypes.func.isRequired,
   repoLoading: PropTypes.bool,
-  repoError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-  repos: PropTypes.oneOfType([
-    PropTypes.array,
-    PropTypes.bool,
-  ]),
+  repoError: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  repos: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
   onSubmitForm: PropTypes.func,
   username: PropTypes.string,
   onChangeUsername: PropTypes.func,
@@ -121,8 +121,8 @@ HomePage.propTypes = {
 export function mapDispatchToProps(dispatch) {
   return {
     onLoad: () => dispatch(loadGalleries()),
-    onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
-    onSubmitForm: (evt) => {
+    onChangeUsername: evt => dispatch(changeUsername(evt.target.value)),
+    onSubmitForm: evt => {
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadRepos());
     },
@@ -139,7 +139,10 @@ const mapStateToProps = createStructuredSelector({
   galleryError: makeSelectGalleryError(),
 });
 
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
+const withConnect = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+);
 
 const withReducer = injectReducer({ key: 'home', reducer });
 const withSaga = injectSaga({ key: 'home', saga });

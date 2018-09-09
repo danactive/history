@@ -1,20 +1,15 @@
-/**
- *
- * InfiniteThumbs
- *
- */
-
-import React from 'react';
+import dotProp from 'dot-prop';
 import PropTypes from 'prop-types';
+import React from 'react';
+import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import injectSaga from 'utils/injectSaga';
+import injectSaga from '../../utils/injectSaga';
 
-import InfiniteScroll from 'react-infinite-scroller';
-import LoadingIndicator from 'components/LoadingIndicator';
-import ThumbImg from 'components/ThumbImg';
+import LoadingIndicator from '../../components/LoadingIndicator';
+import ThumbImg from '../../components/ThumbImg';
 
 import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
@@ -24,7 +19,8 @@ import saga from './saga';
 
 
 function showAlbumError(error) {
-  return <div>{`Something went wrong, please try again! Reason (${error.message})`}</div>;
+  const message = dotProp.get(error, 'ui.title', error.message);
+  return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
 }
 
 function showThumbsError(error) {
@@ -72,7 +68,7 @@ function InfiniteThumbs(props) {
       pageStart={0}
       loadMore={nextPage}
       hasMore={hasMore}
-      loader={<LoadingIndicator />}
+      loader={<LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />}
       threshold={500}
     >
       {html}

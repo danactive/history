@@ -55,9 +55,11 @@ export default function reducer(state = albumInitialState, action) {
       return state
         .set(
           'currentMemory',
-          state
-            .getIn([gallery, album, 'memories'])
-            .filter((item) => item.id === action.id)[0], // currentMemory is an Object (not Immutable)
+          fromJS(
+            state
+              .getIn([gallery, album, 'memories'])
+              .filter((item) => item.id === action.id)[0]
+          ),
           {}
         );
 
@@ -85,9 +87,11 @@ export default function reducer(state = albumInitialState, action) {
       return state
         .set(
           'currentMemory',
-          state
-            .getIn([gallery, album, 'memories'])
-            .filter((item) => item.id === findIndex)[0], // currentMemory is an Object (not Immutable)
+          fromJS(
+            state
+              .getIn([gallery, album, 'memories'])
+              .filter((item) => item.id === findIndex)[0]
+          ),
           {}
         );
     }
