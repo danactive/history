@@ -66,7 +66,7 @@ export function transformMapOptions(geo = []) {
 
   if (point) {
     options.center = point;
-    options.zoom = [14];
+    options.zoom = [16];
   }
 
   return options;
@@ -80,9 +80,12 @@ const clusterOptions = {
       property: 'point_count',
       type: 'interval',
       stops: [
-        [0, '#51bbd6'],
-        [100, '#f1f075'],
-        [750, '#f28cb1'],
+        // https://color.adobe.com/Vitamin-C-color-theme-492199/?showPublished=true
+        [0, '#FD7400'],
+        [8, '#FFE11A'],
+        [20, '#BEDB39'],
+        [40, '#1F8A70'],
+        [70, '#004358'],
       ],
     },
     'circle-radius': {
@@ -107,6 +110,9 @@ const clusterLabelOptions = {
     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
     'text-size': 12,
   },
+  paint: {
+    'text-color': '#000',
+  },
   filter: ['has', 'point_count'],
   sourceId: 'thumbs',
 };
@@ -115,8 +121,8 @@ const unclusterOptions = {
   id: 'unclustered-point',
   type: 'circle',
   paint: {
-    'circle-color': '#11b4da',
-    'circle-radius': 8,
+    'circle-color': '#FD7400',
+    'circle-radius': 5,
     'circle-stroke-width': 1,
     'circle-stroke-color': '#fff',
   },
