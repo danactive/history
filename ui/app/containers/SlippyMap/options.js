@@ -1,12 +1,33 @@
+const validatePoint = ([longitude = null, latitude = null]) => ({
+  latitude,
+  longitude,
+  isInvalidPoint: longitude === 0
+  || latitude === 0
+  || longitude === undefined
+  || latitude === undefined
+  || longitude === null
+  || latitude === null
+  || Number.isNaN(latitude)
+  || Number.isNaN(longitude)
+});
+
 export function transformSourceOptions(items = []) {
-  const features = items.map(item => ({
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
-      coordinates: [item.geo[0], item.geo[1]],
-    },
-    properties: {},
-  }));
+  const hasGeo = item => !validatePoint(item.geo).isInvalidPoint;
+  const features = items.filter(hasGeo).map((item) => {
+    const {
+      latitude,
+      longitude,
+    } = validatePoint(item.geo);
+
+    return {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [longitude, latitude],
+      },
+      properties: {},
+    };
+  });
 
   const data = {
     type: 'FeatureCollection',
@@ -28,17 +49,12 @@ export function transformSourceOptions(items = []) {
 }
 
 export function transformMapOptions(geo = []) {
-  const [longitude = null, latitude = null] = geo;
-
-  const invalidPoint = (
-    longitude === 0
-    || latitude === 0
-    || longitude === undefined
-    || latitude === undefined
-    || longitude === null
-    || latitude === null
-  );
-  const point = invalidPoint ? null : [longitude, latitude];
+  const {
+    isInvalidPoint,
+    latitude,
+    longitude,
+  } = validatePoint(geo);
+  const point = isInvalidPoint ? null : [longitude, latitude];
 
   const options = {
     containerStyle: {
