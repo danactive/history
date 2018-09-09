@@ -45,6 +45,10 @@ export const normalizeError = (error) => {
       stack: error.stack,
       message: error.message,
       type: 'normalized message and stack',
+      ui: {
+        action: undefined,
+        title: error.message,
+      }
     };
   }
 

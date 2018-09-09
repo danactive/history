@@ -1,23 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
-import PhotoImg from '../../components/PhotoImg';
+import SlippyPhoto from '../SlippyPhoto';
 import SlippyMap from '../SlippyMap';
+
+const Split = styled.section`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-areas: "left right";
+`;
+
+const Left = styled.section`
+  grid-area: left;
+`;
+
+const Right = styled.section`
+  grid-area: right;
+`;
 
 function SplitScreen({ currentMemory, items }) {
   if (currentMemory) {
     return (
-      <div>
-        <PhotoImg
-          highsrc={currentMemory.photoLink}
-          lowsrc={currentMemory.thumbLink}
-          onClick={() => console.log('Photo clicked')} // eslint-disable-line no-console
-        />
-        <SlippyMap
-          geo={currentMemory.geo}
-          items={items}
-        />
-      </div>
+      <Split>
+        <Left key="splitLeft">
+          <SlippyPhoto
+            geo={currentMemory.geo}
+            items={items}
+          />
+        </Left>
+        <Right key="splitRight">
+          <SlippyMap
+            geo={currentMemory.geo}
+            items={items}
+          />
+        </Right>
+      </Split>
     );
   }
 

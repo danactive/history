@@ -81,6 +81,10 @@ describe('error', () => {
       const expected = {
         message: 'Message',
         type: 'normalized message and stack',
+        ui: {
+          action: undefined,
+          title: 'Message',
+        }
       };
       expect(actual).toEqual(expected);
       expect(actualDebug).toEqual(expect.stringContaining('Error: Message'));
