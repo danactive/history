@@ -30,7 +30,7 @@ const getMapStyle = currentMemory => ({
 
 const getMapOptions = currentMemory => ({
   containerStyle: {
-    height: '100vh',
+    height: '100%',
     width: '100%',
   },
   maxZoom: 7,

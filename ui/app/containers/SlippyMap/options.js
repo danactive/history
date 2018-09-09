@@ -58,7 +58,7 @@ export function transformMapOptions(geo = []) {
 
   const options = {
     containerStyle: {
-      height: '100vh',
+      height: '100%',
       width: '100%',
     },
     style: 'mapbox://styles/mapbox/satellite-streets-v10',

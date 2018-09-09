@@ -7,16 +7,18 @@ import SlippyMap from '../SlippyMap';
 
 const Split = styled.section`
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 60% 40%;
   grid-template-areas: "left right";
 `;
 
 const Left = styled.section`
   grid-area: left;
+  height: 80vh;
 `;
 
 const Right = styled.section`
   grid-area: right;
+  height: 80vh;
 `;
 
 function SplitScreen({ currentMemory, items }) {

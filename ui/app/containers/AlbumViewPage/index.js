@@ -25,7 +25,6 @@ import {
 import pageReducer from './reducer';
 import albumReducer from '../InfiniteThumbs/reducer';
 import saga from './saga';
-import messages from './messages';
 
 export class AlbumViewPage extends React.PureComponent {
   constructor(props) {
@@ -71,7 +70,6 @@ export class AlbumViewPage extends React.PureComponent {
           <title>History - Album</title>
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
-        <FormattedMessage {...messages.header} />
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}
