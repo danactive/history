@@ -25,8 +25,7 @@ function SplitScreen({ currentMemory, items }) {
       <Split>
         <Left key="splitLeft">
           <SlippyPhoto
-            geo={currentMemory.geo}
-            items={items}
+            currentMemory={currentMemory}
           />
         </Left>
         <Right key="splitRight">
