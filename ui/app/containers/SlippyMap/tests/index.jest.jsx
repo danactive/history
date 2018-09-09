@@ -110,7 +110,7 @@ describe('<SlippyMap />', () => {
       expect.assertions(testData.length * 2);
 
       testData.forEach(testDatum => runOneTest(testDatum, 'center', testDatum));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [14]));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [16]));
     });
   });
 

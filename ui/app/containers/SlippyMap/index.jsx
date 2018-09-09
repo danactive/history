@@ -25,7 +25,7 @@ const SlippyMap = ({ items, geo }) => (
 
 SlippyMap.defaultProps = {
   current: {
-    geo: []
+    geo: [],
   },
   items: [],
 };
