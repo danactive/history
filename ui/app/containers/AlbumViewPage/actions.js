@@ -1,9 +1,3 @@
-/*
- *
- * AlbumViewPage actions
- *
- */
-
 import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
@@ -12,6 +6,8 @@ import {
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_ERROR,
   LOAD_THUMBS_SUCCESS,
+  NEXT_MEMORY,
+  PREV_MEMORY,
 } from './constants';
 
 function parseQueryString(find, from) {
@@ -74,5 +70,19 @@ export function thumbsLoaded({ gallery, album, newMemories, page }) {
     newMemories,
     page,
     hasMore: false,
+  };
+}
+
+export function chooseAdjacentMemory(adjacentInt) {
+  if (adjacentInt > 0) {
+    return {
+      type: NEXT_MEMORY,
+      adjacentInt,
+    };
+  }
+
+  return {
+    type: PREV_MEMORY,
+    adjacentInt,
   };
 }

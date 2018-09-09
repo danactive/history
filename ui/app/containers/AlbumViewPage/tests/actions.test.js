@@ -1,11 +1,14 @@
 import {
   albumLoadError,
+  chooseAdjacentMemory,
   nextPageError,
 } from '../actions';
 
 import {
   LOAD_ALBUM_ERROR,
   LOAD_NEXT_THUMB_PAGE_ERROR,
+  PREV_MEMORY,
+  NEXT_MEMORY,
 } from '../constants';
 
 describe('AlbumViewPage actions', () => {
@@ -31,6 +34,24 @@ describe('AlbumViewPage actions', () => {
         error: fixture.error,
       };
       expect(nextPageError(fixture.error)).toEqual(expected);
+    });
+  });
+
+  describe('Keyboard controls next or previous memory', () => {
+    it('has a next memory', () => {
+      const expected = {
+        type: NEXT_MEMORY,
+        adjacentInt: 1,
+      };
+      expect(chooseAdjacentMemory(1)).toEqual(expected);
+    });
+
+    it('has a previous memory', () => {
+      const expected = {
+        type: PREV_MEMORY,
+        adjacentInt: -1,
+      };
+      expect(chooseAdjacentMemory(-1)).toEqual(expected);
     });
   });
 });

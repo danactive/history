@@ -4,7 +4,7 @@ import { parseItemNode } from '../transformXmlToJson';
 
 describe('AlbumViewPage Transform XML to JSON', () => {
   async function getItem() {
-    const albumXml = await JSDOM.fromFile('app/containers/AlbumViewPage/tests/fixtures/schema.xml');
+    const albumXml = await JSDOM.fromFile('fixtures/schema.xml');
     const item = albumXml.window.document.querySelectorAll('item')[0];
     const json = parseItemNode(item);
     return json;
