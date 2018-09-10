@@ -32,7 +32,7 @@ function SplitScreen({ currentMemory, items }) {
         </Left>
         <Right key="splitRight">
           <SlippyMap
-            geo={currentMemory.geo}
+            coordinates={currentMemory.coordinates}
             items={items}
           />
         </Right>
@@ -50,12 +50,12 @@ SplitScreen.defaultProps = {
 
 SplitScreen.propTypes = {
   currentMemory: PropTypes.shape({
-    geo: PropTypes.arrayOf(PropTypes.number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
     photoLink: PropTypes.string,
     thumbLink: PropTypes.string,
   }),
   items: PropTypes.arrayOf(PropTypes.shape({
-    geo: PropTypes.arrayOf(PropTypes.number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
   })),
 };
 

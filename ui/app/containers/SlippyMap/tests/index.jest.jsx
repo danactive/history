@@ -45,7 +45,7 @@ describe('<SlippyMap />', () => {
     it('should return a GeoJSON Feature Collection with Feature', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions([{ geo: [1, 2] }]).geoJsonSource.data;
+      const received = transformSourceOptions([{ coordinates: [1, 2] }]).geoJsonSource.data;
       const expected = getFeatureCollection();
       expected.features.push(getFeature({ latitude: 2, longitude: 1 }));
       expect(received).toEqual(expected);
@@ -54,7 +54,7 @@ describe('<SlippyMap />', () => {
     it('should return a GeoJSON Feature Collection with suppressed Feature due to missing lat, long', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions([{ geo: [] }]).geoJsonSource.data;
+      const received = transformSourceOptions([{ coordinates: [] }]).geoJsonSource.data;
       const expected = getFeatureCollection();
       expect(received).toEqual(expected);
     });
@@ -62,7 +62,7 @@ describe('<SlippyMap />', () => {
     it('should return a GeoJSON Feature Collection with suppressed Feature due to NaN, NaN', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions([{ geo: [NaN, NaN] }]).geoJsonSource.data;
+      const received = transformSourceOptions([{ coordinates: [NaN, NaN] }]).geoJsonSource.data;
       const expected = getFeatureCollection();
       expect(received).toEqual(expected);
     });
@@ -70,7 +70,7 @@ describe('<SlippyMap />', () => {
     it('should return a GeoJSON Feature Collection with Feature and suppressed Feature', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions([{ geo: [1, 2] }, { geo: [] }]).geoJsonSource.data;
+      const received = transformSourceOptions([{ coordinates: [1, 2] }, { coordinates: [] }]).geoJsonSource.data;
       const expected = getFeatureCollection();
       expected.features.push(getFeature({ latitude: 2, longitude: 1 }));
       expect(received).toEqual(expected);

@@ -14,8 +14,8 @@ const Map = ReactMapboxGl({
   accessToken: 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw',
 });
 
-const SlippyMap = ({ items, geo }) => (
-  <Map {...transformMapOptions(geo)}>
+const SlippyMap = ({ items, coordinates }) => (
+  <Map {...transformMapOptions(coordinates)}>
     <Source {...transformSourceOptions(items)} />
     <Layer {...clusterOptions} />
     <Layer {...clusterLabelOptions} />
@@ -25,17 +25,17 @@ const SlippyMap = ({ items, geo }) => (
 
 SlippyMap.defaultProps = {
   current: {
-    geo: [],
+    coordinates: [],
   },
   items: [],
 };
 
 SlippyMap.propTypes = {
   current: PropTypes.shape({
-    geo: PropTypes.arrayOf(PropTypes.number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
   }),
   items: PropTypes.arrayOf(PropTypes.shape({
-    geo: PropTypes.arrayOf(PropTypes.number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
   })),
 };
 

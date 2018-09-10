@@ -12,12 +12,12 @@ const validatePoint = ([longitude = null, latitude = null]) => ({
 });
 
 export function transformSourceOptions(items = []) {
-  const hasGeo = item => !validatePoint(item.geo).isInvalidPoint;
+  const hasGeo = item => !validatePoint(item.coordinates).isInvalidPoint;
   const features = items.filter(hasGeo).map((item) => {
     const {
       latitude,
       longitude,
-    } = validatePoint(item.geo);
+    } = validatePoint(item.coordinates);
 
     return {
       type: 'Feature',
@@ -48,12 +48,12 @@ export function transformSourceOptions(items = []) {
   return options;
 }
 
-export function transformMapOptions(geo = []) {
+export function transformMapOptions(coordinates = []) {
   const {
     isInvalidPoint,
     latitude,
     longitude,
-  } = validatePoint(geo);
+  } = validatePoint(coordinates);
   const point = isInvalidPoint ? null : [longitude, latitude];
 
   const options = {

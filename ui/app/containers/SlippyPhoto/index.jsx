@@ -20,7 +20,7 @@ SlippyPhoto.defaultProps = {
 
 SlippyPhoto.propTypes = {
   currentMemory: PropTypes.shape({
-    geo: PropTypes.arrayOf(PropTypes.number),
+    coordinates: PropTypes.arrayOf(PropTypes.number),
   }),
 };
 

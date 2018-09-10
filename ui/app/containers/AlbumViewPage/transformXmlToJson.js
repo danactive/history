@@ -11,17 +11,25 @@ function parseFromNode(ascendant) {
 
 export function parseItemNode(item) {
   const parseNode = parseFromNode(item);
-  return {
+  let coordinateAccuracy = Number(parseNode('accuracy'));
+
+  const object = {
     id: item.getAttribute('id'),
     filename: parseNode('filename'),
     city: parseNode('photo_city'),
     location: parseNode('photo_loc'),
     description: parseNode('photo_desc'),
-    geo: [parseFloat(parseNode('lon')), parseFloat(parseNode('lat'))],
+    coordinates: [parseFloat(parseNode('lon')), parseFloat(parseNode('lat'))],
     caption: parseNode('thumb_caption'),
     photoLink: null, // Dropbox hosted url,
     thumbLink: null, // Dropbox hosted url
   };
+
+  if (coordinateAccuracy !== 0 && !Number.isNaN(coordinateAccuracy)) {
+    object.coordinateAccuracy = coordinateAccuracy;
+  }
+
+  return object;
 }
 
 export function getItemNodes(dom) {
