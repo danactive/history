@@ -11,9 +11,8 @@ const validatePoint = ([longitude = null, latitude = null]) => ({
   || Number.isNaN(longitude)
 });
 
-export function transformSourceOptions(items = []) {
-  const hasGeo = item => !validatePoint(item.coordinates).isInvalidPoint;
-  const features = items.filter(hasGeo).map((item) => {
+export function transformSourceOptions({ items = [] }) {
+  const geoJsonFeature = (item) => {
     const {
       latitude,
       longitude,
@@ -25,9 +24,14 @@ export function transformSourceOptions(items = []) {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      properties: {},
+      properties: {
+        accuracy: item.coordinateAccuracy,
+      },
     };
-  });
+  };
+
+  const hasGeo = item => !validatePoint(item.coordinates).isInvalidPoint;
+  const features = items.filter(hasGeo).map(geoJsonFeature);
 
   const data = {
     type: 'FeatureCollection',
@@ -40,7 +44,7 @@ export function transformSourceOptions(items = []) {
       type: 'geojson',
       data,
       cluster: true,
-      clusterMaxZoom: 14, // Max zoom to cluster points on
+      clusterMaxZoom: 13, // Max zoom to cluster points on
       clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
     },
   };
@@ -48,7 +52,7 @@ export function transformSourceOptions(items = []) {
   return options;
 }
 
-export function transformMapOptions(coordinates = []) {
+export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
   const {
     isInvalidPoint,
     latitude,
@@ -65,8 +69,10 @@ export function transformMapOptions(coordinates = []) {
   };
 
   if (point) {
+    const zoom = coordinateAccuracy || 16;
+
     options.center = point;
-    options.zoom = [16];
+    options.zoom = [zoom];
   }
 
   return options;
@@ -117,8 +123,8 @@ const clusterLabelOptions = {
   sourceId: 'thumbs',
 };
 
-const unclusterOptions = {
-  id: 'unclustered-point',
+const markerOptions = {
+  id: 'unclustered-marker',
   type: 'circle',
   paint: {
     'circle-color': '#FD7400',
@@ -130,8 +136,27 @@ const unclusterOptions = {
   sourceId: 'thumbs',
 };
 
+export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
+  const radius = coordinateAccuracy * 5;
+
+  return {
+    id: 'inaccurate-marker',
+    type: 'circle',
+    paint: {
+      'circle-radius': radius,
+      'circle-stroke-width': 2,
+      'circle-blur': 0.4,
+      'circle-stroke-color': '#FFFFFF',
+      'circle-stroke-opacity': 0.85,
+      'circle-opacity': 0,
+    },
+    filter: ['has', 'accuracy'],
+    sourceId: 'thumbs',
+  };
+}
+
 export {
   clusterOptions,
   clusterLabelOptions,
-  unclusterOptions,
+  markerOptions,
 }

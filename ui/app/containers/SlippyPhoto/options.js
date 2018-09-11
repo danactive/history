@@ -33,8 +33,6 @@ const getMapOptions = currentMemory => ({
     height: '100%',
     width: '100%',
   },
-  maxZoom: 7,
-  minZoom: 4.5,
   zoom: [5],
   center: [8.75, 4.625],
   style: getMapStyle(currentMemory),

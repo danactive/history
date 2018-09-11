@@ -32,7 +32,7 @@ function SplitScreen({ currentMemory, items }) {
         </Left>
         <Right key="splitRight">
           <SlippyMap
-            coordinates={currentMemory.coordinates}
+            currentMemory={currentMemory}
             items={items}
           />
         </Right>
