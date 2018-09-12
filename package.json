@@ -75,7 +75,7 @@
     "@mapbox/geojsonhint": "^2.0.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-stage-3": "^6.24.1",
-    "babel-tape-runner": "^2.0.1",
+    "babel-tape-runner": "^3.0.0",
     "calipers": "^2.0.0",
     "calipers-jpeg": "^2.0.0",
     "codeclimate-test-reporter": "^0.5.0",
