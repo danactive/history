@@ -10,7 +10,7 @@
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
     "start": "npm run webpack && node .",
-    "test": "npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
+    "test": "npm run test:jest && npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
     "test:react": "babel-tape-runner server/plugins/*/test/*.enzyme.jsx app/components/*/test/*.enzyme.jsx | faucet",
     "test:jest": "jest ui",
