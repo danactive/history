@@ -11,7 +11,7 @@ const validatePoint = ([longitude = null, latitude = null]) => ({
   || Number.isNaN(longitude)
 });
 
-export function transformSourceOptions({ items = [] }) {
+export function transformSourceOptions({ items = [] } = {}) {
   const geoJsonFeature = (item) => {
     const {
       latitude,
