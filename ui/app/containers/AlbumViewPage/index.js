@@ -25,30 +25,35 @@ import {
 import pageReducer from './reducer';
 import albumReducer from '../InfiniteThumbs/reducer';
 import saga from './saga';
-import messages from './messages';
-
-const handleKey = ({ adjacentMemory, event }) => {
-  const { key } = event;
-
-  event.preventDefault();
-
-  if (key === 'ArrowLeft') return adjacentMemory(-1);
-  if (key === 'ArrowRight') return adjacentMemory(1);
-};
 
 export class AlbumViewPage extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.handleKey = this.handleKey.bind(this);
+  }
+
   componentDidMount() {
-    const { adjacentMemory } = this.props;
-    document.addEventListener('keydown', event => handleKey({ event, adjacentMemory }));
+    document.addEventListener('keyup', this.handleKey); // must reference function to be removable
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', handleKey);
+    document.removeEventListener('keyup', this.handleKey);
   }
 
   componentWillMount() {
     const { onLoad, match: { params }, location: { search: querystring } } = this.props;
     if (params.album) onLoad(querystring, params.album);
+  }
+
+  handleKey(event) {
+    const { adjacentMemory } = this.props;
+    const { key } = event;
+
+    event.preventDefault();
+
+    if (key === 'ArrowLeft') return adjacentMemory(-1);
+    if (key === 'ArrowRight') return adjacentMemory(1);
   }
 
   render() {
@@ -65,7 +70,6 @@ export class AlbumViewPage extends React.PureComponent {
           <title>History - Album</title>
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
-        <FormattedMessage {...messages.header} />
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}
