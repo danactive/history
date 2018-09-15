@@ -1,4 +1,4 @@
-const getMapStyle = currentMemory => ({
+const getMapStyle = (currentMemory = {}) => ({
   version: 8,
   name: 'Photo',
   sources: {

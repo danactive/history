@@ -57,9 +57,9 @@ describe('albumReducer', () => {
         adjacentInt: 1,
       };
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = {
+      const expected = fromJS({
         id: 3,
-      };
+      });
 
       expect(actual).toEqual(expected);
     });
@@ -71,9 +71,9 @@ describe('albumReducer', () => {
         adjacentInt: -1,
       };
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = {
+      const expected = fromJS({
         id: 1,
-      };
+      })
 
       expect(actual).toEqual(expected);
     });
@@ -85,9 +85,9 @@ describe('albumReducer', () => {
         adjacentInt: 2,
       };
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = {
+      const expected = fromJS({
         id: 1,
-      };
+      })
 
       expect(actual).toEqual(expected);
     });
@@ -99,9 +99,9 @@ describe('albumReducer', () => {
         adjacentInt: -2,
       };
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = {
+      const expected = fromJS({
         id: 3,
-      };
+      })
 
       expect(actual).toEqual(expected);
     });
