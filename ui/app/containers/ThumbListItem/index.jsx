@@ -1,16 +1,10 @@
-/**
- *
- * ThumbListItem
- *
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import ListItem from 'components/ListItem';
-import ThumbImg from 'components/ThumbImg';
+import ListItem from '../../components/ListItem';
+import ThumbImg from '../../components/ThumbImg';
 
 function ThumbListItem({ item }) {
   const content = (
@@ -22,9 +16,13 @@ function ThumbListItem({ item }) {
   );
 }
 
+ThumbListItem.defaultProps = {
+  item: {},
+};
+
 ThumbListItem.propTypes = {
   // dispatch: PropTypes.func.isRequired,
-  item: PropTypes.object,
+  item: PropTypes.shape(),
 };
 
 

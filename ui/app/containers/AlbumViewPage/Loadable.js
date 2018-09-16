@@ -1,9 +1,3 @@
-/**
- *
- * Asynchronously loads the component for GalleryViewPage
- *
- */
-
 import Loadable from 'react-loadable';
 
 export default Loadable({
