@@ -1,18 +1,18 @@
 /* global describe, expect, jest, it, shallow */
 import React from 'react';
 
-import SlippyMap from '../index';
+import SlippyPhoto from '../index';
 
 jest.mock('react-mapbox-gl', () => jest.fn(() => {}));
 
-const shallowComponent = (props = {}) => shallow(<SlippyMap {...props} />);
+const shallowComponent = (props = {}) => shallow(<SlippyPhoto {...props} />);
 
-describe('<SlippyMap />', () => {
-  it('should render an <SlippyMap /> component', () => {
+describe('<SlippyPhoto />', () => {
+  it('should render an <SlippyPhoto /> component', () => {
     expect.hasAssertions();
 
     const received = shallowComponent().children().length;
-    const expected = 5;
+    const expected = 0;
     expect(received).toEqual(expected);
   });
 });

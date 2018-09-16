@@ -67,7 +67,7 @@ describe('AlbumViewPage Saga', () => {
           city: 'Vancouver, BC',
           description: '',
           filename: '2001-03-21-01.jpg',
-          geo: [-123.1, 49.25],
+          coordinates: [-123.1, 49.25],
           id: '1',
           thumbLink: null,
           location: 'Granville Island',

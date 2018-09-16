@@ -1,9 +1,3 @@
-/**
- *
- * GalleryViewPage
- *
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,11 +6,11 @@ import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import GenericList from 'components/GenericList';
-import AlbumListItem from 'containers/AlbumListItem';
+import GenericList from '../../components/GenericList';
+import AlbumListItem from '../AlbumListItem';
 
-import injectSaga from 'utils/injectSaga';
-import injectReducer from 'utils/injectReducer';
+import injectSaga from '../../utils/injectSaga';
+import injectReducer from '../../utils/injectReducer';
 import { loadGallery } from './actions';
 import { makeSelectAlbums, makeSelectGalleryLoading, makeSelectGalleryError } from './selectors';
 import reducer from './reducer';
@@ -72,7 +66,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoad: (gallery) => dispatch(loadGallery(gallery)),
+    onLoad: gallery => dispatch(loadGallery(gallery)),
   };
 }
 

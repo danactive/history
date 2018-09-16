@@ -3,12 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from '../InfiniteThumbs/Loadable';
-import SplitScreen from './SplitScreen.jsx';
+import SplitScreen from './SplitScreen';
 
 import injectSaga from '../../utils/injectSaga';
 import injectReducer from '../../utils/injectReducer';
@@ -25,30 +24,38 @@ import {
 import pageReducer from './reducer';
 import albumReducer from '../InfiniteThumbs/reducer';
 import saga from './saga';
-import messages from './messages';
-
-const handleKey = ({ adjacentMemory, event }) => {
-  const { key } = event;
-
-  event.preventDefault();
-
-  if (key === 'ArrowLeft') return adjacentMemory(-1);
-  if (key === 'ArrowRight') return adjacentMemory(1);
-};
 
 export class AlbumViewPage extends React.PureComponent {
-  componentDidMount() {
-    const { adjacentMemory } = this.props;
-    document.addEventListener('keydown', event => handleKey({ event, adjacentMemory }));
-  }
+  constructor(props) {
+    super(props);
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', handleKey);
+    this.handleKey = this.handleKey.bind(this);
   }
 
   componentWillMount() {
     const { onLoad, match: { params }, location: { search: querystring } } = this.props;
     if (params.album) onLoad(querystring, params.album);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleKey); // must reference function to be removable
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleKey);
+  }
+
+  handleKey(event) {
+    const { adjacentMemory } = this.props;
+    const { key } = event;
+
+    event.preventDefault();
+
+    if (key === 'ArrowLeft') {
+      adjacentMemory(-1);
+      return;
+    }
+    if (key === 'ArrowRight') adjacentMemory(1);
   }
 
   render() {
@@ -65,7 +72,6 @@ export class AlbumViewPage extends React.PureComponent {
           <title>History - Album</title>
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
-        <FormattedMessage {...messages.header} />
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}
@@ -77,6 +83,7 @@ export class AlbumViewPage extends React.PureComponent {
 }
 
 AlbumViewPage.propTypes = {
+  adjacentMemory: PropTypes.func.isRequired,
   memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
   currentMemory: PropTypes.object,
   albumLoading: PropTypes.bool,
