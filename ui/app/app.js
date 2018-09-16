@@ -18,7 +18,7 @@ import createHistory from 'history/createBrowserHistory';
 import 'sanitize.css/sanitize.css';
 
 // Import root app
-import App from 'containers/App';
+import App from 'containers/App/index';
 
 // Import Language Provider
 import LanguageProvider from 'containers/LanguageProvider';

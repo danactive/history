@@ -1,12 +1,9 @@
-/**
- * Test the HomePage
- */
-
+/* global describe, expect, it, jest */
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import { IntlProvider } from 'react-intl';
 
-import ReposList from 'components/ReposList';
+import ReposList from '../../../components/ReposList';
 import { HomePage, mapDispatchToProps } from '../index';
 import { changeUsername } from '../actions';
 import { loadRepos } from '../../App/actions';

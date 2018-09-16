@@ -4,7 +4,7 @@ import { parseItemNode } from '../transformXmlToJson';
 
 describe('View Album - Transform XML 2.0 to JSON', () => {
   async function getItem() {
-    const albumXml = await JSDOM.fromFile('fixtures/schema2.0.xml');
+    const albumXml = await JSDOM.fromFile('ui/app/containers/AlbumViewPage/tests/fixtures/schema2.0.xml');
     const item = albumXml.window.document.querySelectorAll('item')[0];
     const json = parseItemNode(item);
     return json;
@@ -32,7 +32,7 @@ describe('View Album - Transform XML 2.0 to JSON', () => {
 
 describe('View Album - Transform XML 2.1 to JSON', () => {
   async function getItem() {
-    const albumXml = await JSDOM.fromFile('fixtures/schema2.1.xml');
+    const albumXml = await JSDOM.fromFile('ui/app/containers/AlbumViewPage/tests/fixtures/schema2.1.xml');
     const item = albumXml.window.document.querySelectorAll('item')[0];
     const json = parseItemNode(item);
     return json;

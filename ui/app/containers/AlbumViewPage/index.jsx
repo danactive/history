@@ -3,12 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { FormattedMessage } from 'react-intl';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from '../InfiniteThumbs/Loadable';
-import SplitScreen from './SplitScreen.jsx';
+import SplitScreen from './SplitScreen';
 
 import injectSaga from '../../utils/injectSaga';
 import injectReducer from '../../utils/injectReducer';
@@ -33,6 +32,11 @@ export class AlbumViewPage extends React.PureComponent {
     this.handleKey = this.handleKey.bind(this);
   }
 
+  componentWillMount() {
+    const { onLoad, match: { params }, location: { search: querystring } } = this.props;
+    if (params.album) onLoad(querystring, params.album);
+  }
+
   componentDidMount() {
     document.addEventListener('keyup', this.handleKey); // must reference function to be removable
   }
@@ -41,19 +45,17 @@ export class AlbumViewPage extends React.PureComponent {
     document.removeEventListener('keyup', this.handleKey);
   }
 
-  componentWillMount() {
-    const { onLoad, match: { params }, location: { search: querystring } } = this.props;
-    if (params.album) onLoad(querystring, params.album);
-  }
-
   handleKey(event) {
     const { adjacentMemory } = this.props;
     const { key } = event;
 
     event.preventDefault();
 
-    if (key === 'ArrowLeft') return adjacentMemory(-1);
-    if (key === 'ArrowRight') return adjacentMemory(1);
+    if (key === 'ArrowLeft') {
+      adjacentMemory(-1);
+      return;
+    }
+    if (key === 'ArrowRight') adjacentMemory(1);
   }
 
   render() {
@@ -81,6 +83,7 @@ export class AlbumViewPage extends React.PureComponent {
 }
 
 AlbumViewPage.propTypes = {
+  adjacentMemory: PropTypes.func.isRequired,
   memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
   currentMemory: PropTypes.object,
   albumLoading: PropTypes.bool,

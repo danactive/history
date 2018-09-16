@@ -1,9 +1,10 @@
+/* global describe, expect, it */
 // import React from 'react';
 // import { shallow } from 'enzyme';
 
-// import { GalleryViewPage } from '../index';
+// import { InfiniteThumbs } from '../index';
 
-describe('<GalleryViewPage />', () => {
+describe('<InfiniteThumbs />', () => {
   it('Expect to have unit tests specified', () => {
     expect(true).toEqual(false);
   });
