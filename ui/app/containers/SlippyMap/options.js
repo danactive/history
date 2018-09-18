@@ -132,7 +132,7 @@ const markerOptions = {
     'circle-stroke-width': 1,
     'circle-stroke-color': '#fff',
   },
-  filter: ['!has', 'point_count'],
+  filter: ['all', ['!has', 'point_count'], ['!has', 'accuracy']],
   sourceId: 'thumbs',
 };
 
