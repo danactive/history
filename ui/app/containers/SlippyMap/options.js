@@ -69,10 +69,8 @@ export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
   };
 
   if (point) {
-    const zoom = coordinateAccuracy || 16;
-
     options.center = point;
-    options.zoom = [zoom];
+    options.zoom = [coordinateAccuracy || 16];
   }
 
   return options;

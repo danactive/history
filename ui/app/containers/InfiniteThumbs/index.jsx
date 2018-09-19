@@ -49,7 +49,12 @@ function InfiniteThumbs(props) {
   const hasThumbLink = item => item.thumbLink !== null;
 
   const thumbImages = item => (
-    <ThumbImg onClick={() => selectThumb(item.id)} src={item.thumbLink} alt={item.filename} key={`thumb-${item.filename}`} />
+    <ThumbImg
+      alt={item.filename}
+      key={`thumb-${item.filename}`}
+      onClick={() => selectThumb(item.id)}
+      src={item.thumbLink}
+    />
   );
 
   const html = items.filter(hasThumbLink).map(thumbImages);
