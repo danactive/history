@@ -69,10 +69,8 @@ export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
   };
 
   if (point) {
-    const zoom = coordinateAccuracy || 16;
-
     options.center = point;
-    options.zoom = [zoom];
+    options.zoom = [coordinateAccuracy || 17];
   }
 
   return options;
@@ -132,7 +130,7 @@ const markerOptions = {
     'circle-stroke-width': 1,
     'circle-stroke-color': '#fff',
   },
-  filter: ['!has', 'point_count'],
+  filter: ['all', ['!has', 'point_count'], ['!has', 'accuracy']],
   sourceId: 'thumbs',
 };
 
