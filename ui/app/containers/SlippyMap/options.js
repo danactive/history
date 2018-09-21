@@ -70,7 +70,7 @@ export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
 
   if (point) {
     options.center = point;
-    options.zoom = [coordinateAccuracy || 16];
+    options.zoom = [coordinateAccuracy || 17];
   }
 
   return options;
