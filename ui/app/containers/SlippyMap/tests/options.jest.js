@@ -103,7 +103,19 @@ describe('<SlippyMap /> options', () => {
       expect.assertions(testData.length * 2);
 
       testData.forEach(testDatum => runOneTest(testDatum, 'center', testDatum));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [16]));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [17]));
+    });
+
+    it('should have not a centre and zoom', () => {
+      const testData = [
+        [null, null],
+        [undefined, undefined],
+        [NaN, NaN],
+      ];
+      expect.assertions(testData.length * 2);
+
+      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
 
     it('should have not a centre and zoom', () => {
