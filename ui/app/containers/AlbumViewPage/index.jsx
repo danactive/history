@@ -7,6 +7,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from '../InfiniteThumbs/Loadable';
+import PhotoHeader from '../PhotoHeader';
 import SplitScreen from './SplitScreen';
 
 import injectSaga from '../../utils/injectSaga';
@@ -72,6 +73,7 @@ export class AlbumViewPage extends React.PureComponent {
           <title>History - Album</title>
           <meta name="description" content="Description of AlbumViewPage" />
         </Helmet>
+        <PhotoHeader currentMemory={currentMemory} />
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}

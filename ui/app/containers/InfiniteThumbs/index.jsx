@@ -17,7 +17,6 @@ import { chooseMemory } from './actions';
 import { makeSelectThumbsError } from './selectors';
 import saga from './saga';
 
-
 function showAlbumError(error) {
   const message = dotProp.get(error, 'ui.title', error.message);
   return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
