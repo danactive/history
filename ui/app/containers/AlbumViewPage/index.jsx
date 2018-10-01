@@ -7,6 +7,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import InfiniteThumbs from '../InfiniteThumbs/Loadable';
+import PhotoHeader from '../../components/PhotoHeader/Loadable';
 import SplitScreen from './SplitScreen';
 
 import injectSaga from '../../utils/injectSaga';
@@ -16,10 +17,11 @@ import {
   loadAlbum,
 } from './actions';
 import {
-  makeSelectMemories,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
+  makeSelectAlbumName,
   makeSelectCurrentMemory,
+  makeSelectMemories,
 } from './selectors';
 import pageReducer from './reducer';
 import albumReducer from '../InfiniteThumbs/reducer';
@@ -62,6 +64,7 @@ export class AlbumViewPage extends React.PureComponent {
     const {
       albumLoading,
       albumError,
+      albumName,
       currentMemory,
       memories,
     } = this.props;
@@ -69,9 +72,9 @@ export class AlbumViewPage extends React.PureComponent {
     return (
       <div>
         <Helmet>
-          <title>History - Album</title>
-          <meta name="description" content="Description of AlbumViewPage" />
+          <title>{`${albumName}  Album`}</title>
         </Helmet>
+        <PhotoHeader currentMemory={currentMemory} />
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}
@@ -84,29 +87,31 @@ export class AlbumViewPage extends React.PureComponent {
 
 AlbumViewPage.propTypes = {
   adjacentMemory: PropTypes.func.isRequired,
-  memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  currentMemory: PropTypes.object,
   albumLoading: PropTypes.bool,
+  albumName: PropTypes.string,
   albumError: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.bool,
   ]),
-  onLoad: PropTypes.func.isRequired,
+  currentMemory: PropTypes.object,
   match: PropTypes.shape({ // router
     params: PropTypes.shape({
       album: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
+  memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
   location: PropTypes.shape({ // router
     search: PropTypes.string.isRequired,
   }).isRequired,
+  onLoad: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
-  memories: makeSelectMemories(),
   albumLoading: makeSelectAlbumLoading(),
   albumError: makeSelectAlbumError(),
+  albumName: makeSelectAlbumName(),
   currentMemory: makeSelectCurrentMemory(),
+  memories: makeSelectMemories(),
 });
 
 function mapDispatchToProps(dispatch) {
