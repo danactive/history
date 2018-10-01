@@ -1,17 +1,22 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-export const selectPage = (state) => state.get('albumViewPage');
-export const selectAlbum = (state) => state.get('albums');
+export const selectPage = state => state.get('albumViewPage');
+export const selectAlbum = state => state.get('albums');
 
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
-  (pageState) => pageState.get('albumLoading')
+  pageState => pageState.get('albumLoading'),
 );
 
 export const makeSelectAlbumError = () => createSelector(
   selectPage,
-  (pageState) => pageState.get('albumError')
+  pageState => pageState.get('albumError'),
+);
+
+export const makeSelectAlbumName = () => createSelector(
+  selectAlbum,
+  albumState => albumState.get('album'),
 );
 
 export const makeSelectMemories = () => createSelector(
@@ -21,7 +26,7 @@ export const makeSelectMemories = () => createSelector(
     const album = albumState.get('album');
 
     return albumState.getIn([gallery, album, 'memories'], []);
-  }
+  },
 );
 
 export const selectNextPage = (state) => {
