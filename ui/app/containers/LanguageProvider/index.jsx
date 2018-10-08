@@ -15,15 +15,20 @@ import { IntlProvider } from 'react-intl';
 import { makeSelectLocale } from './selectors';
 
 export class LanguageProvider extends React.PureComponent {
-  // eslint-disable-line react/prefer-stateless-function
   render() {
+    const {
+      children,
+      locale,
+      messages,
+    } = this.props;
+
     return (
       <IntlProvider
-        locale={this.props.locale}
-        key={this.props.locale}
-        messages={this.props.messages[this.props.locale]}
+        locale={locale}
+        key={locale}
+        messages={messages[locale]}
       >
-        {React.Children.only(this.props.children)}
+        {React.Children.only(children)}
       </IntlProvider>
     );
   }

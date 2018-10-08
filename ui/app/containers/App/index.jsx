@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
 import AlbumViewPage from '../AlbumViewPage/Loadable';
-import HomePage from '../HomePage/Loadable.jsx';
+import HomePage from '../HomePage/Loadable';
 import FeaturePage from '../FeaturePage/Loadable';
 import GalleryViewPage from '../GalleryViewPage/Loadable';
 import NotFoundPage from '../NotFoundPage/Loadable';

@@ -1,4 +1,4 @@
-import Section from './Section.jsx';
+import Section from './Section';
 
 const CenteredSection = Section.extend`
   text-align: center;

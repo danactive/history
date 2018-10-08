@@ -12,13 +12,18 @@ import { makeSelectLocale } from '../LanguageProvider/selectors';
 
 export class LocaleToggle extends React.PureComponent {
   render() {
+    const {
+      locale,
+      onLocaleToggle,
+    } = this.props;
+
     return (
       <Wrapper>
         <Toggle
-          value={this.props.locale}
+          value={locale}
           values={appLocales}
           messages={messages}
-          onToggle={this.props.onLocaleToggle}
+          onToggle={onLocaleToggle}
         />
       </Wrapper>
     );

@@ -1,6 +1,5 @@
-/* global describe, expect, it */
+/* global describe, expect, it, shallow */
 import React from 'react';
-import { shallow } from 'enzyme';
 
 import CenteredSection from '../CenteredSection';
 

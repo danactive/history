@@ -1,13 +1,9 @@
-import { fromJS } from 'immutable';
-
-import homeReducer from '../reducer';
+import homeReducer, { initialState } from '../reducer';
 
 describe('homeReducer', () => {
   let state;
   beforeEach(() => {
-    state = fromJS({
-      username: '',
-    });
+    state = initialState;
   });
 
   it('should return the initial state', () => {
