@@ -14,7 +14,7 @@ import {
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
 } from '../constants';
 
-import reducer from '../../InfiniteThumbs/reducer';
+import reducer from '../../App/reducer';
 
 let state;
 

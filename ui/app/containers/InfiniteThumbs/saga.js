@@ -3,9 +3,9 @@ import { call, put, select, takeEvery } from 'redux-saga/effects';
 
 import { normalizeError } from 'utils/error';
 
-import { CHOOSE_MEMORY } from './constants';
-import { selectCurrentMemory } from './selectors';
-import { photoLoadError, photoLoadSuccess } from './actions';
+import { CHOOSE_MEMORY } from '../App/constants';
+import { selectCurrentMemory } from '../App/selectors';
+import { photoLoadError, photoLoadSuccess } from '../App/actions';
 import {
   NEXT_MEMORY,
   PREV_MEMORY,
