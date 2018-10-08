@@ -24,7 +24,7 @@ import {
   makeSelectMemories,
 } from './selectors';
 import pageReducer from './reducer';
-import albumReducer from '../InfiniteThumbs/reducer';
+import albumReducer from '../App/reducer';
 import saga from './saga';
 
 export class AlbumViewPage extends React.PureComponent {

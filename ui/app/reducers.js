@@ -43,7 +43,7 @@ export function routeReducer(state = routeInitialState, action) {
 export default function createReducer(injectedReducers) {
   return combineReducers({
     route: routeReducer,
-    global: globalReducer,
+    album: globalReducer,
     language: languageProviderReducer,
     ...injectedReducers,
   });

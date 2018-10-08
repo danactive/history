@@ -13,8 +13,8 @@ import ThumbImg from '../../components/ThumbImg';
 
 import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
-import { chooseMemory } from './actions';
-import { makeSelectThumbsError } from './selectors';
+import { chooseMemory } from '../App/actions';
+import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
 function showAlbumError(error) {

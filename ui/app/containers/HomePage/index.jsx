@@ -1,9 +1,3 @@
-/*
- * HomePage
- *
- * This is the first thing users see of our App, at the '/' route
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
@@ -14,22 +8,14 @@ import { createStructuredSelector } from 'reselect';
 
 import injectReducer from '../../utils/injectReducer';
 import injectSaga from '../../utils/injectSaga';
-import { makeSelectRepos, makeSelectRepoLoading, makeSelectRepoError } from '../App/selectors';
 import H2 from '../../components/H2';
-import ReposList from '../../components/ReposList';
 import GenericList from '../../components/GenericList';
-import GalleryListItem from '../GalleryListItem';
-import AtPrefix from './AtPrefix';
+import GalleryListItem from '../GalleryListItem/index';
 import CenteredSection from './CenteredSection';
-import Form from './Form';
-import Input from './Input';
-import Section from './Section';
 import messages from './messages';
 
-import { loadRepos } from '../App/actions';
-import { changeUsername, loadGalleries } from './actions';
+import { loadGalleries } from './actions';
 import {
-  makeSelectUsername,
   makeSelectGalleries,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
@@ -43,38 +29,13 @@ export class HomePage extends React.PureComponent {
     onLoad();
   }
 
-  /**
-   * when initial state username is not null, submit the form to load repos
-   */
-  componentDidMount() {
-    const {
-      onSubmitForm,
-      username,
-    } = this.props;
-
-    if (username && username.trim().length > 0) {
-      onSubmitForm();
-    }
-  }
-
   render() {
     const {
       galleries,
       galleryError,
       galleryLoading,
-      onChangeUsername,
-      onSubmitForm,
-      repos,
-      repoError,
-      repoLoading,
-      username,
     } = this.props;
 
-    const reposListProps = {
-      loading: repoLoading,
-      error: repoError,
-      repos,
-    };
     const galleryListProps = {
       loading: galleryLoading,
       error: galleryError,
@@ -98,27 +59,6 @@ export class HomePage extends React.PureComponent {
             </H2>
             <GenericList {...galleryListProps} />
           </CenteredSection>
-          <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
-            <Form onSubmit={onSubmitForm}>
-              <label htmlFor="username">
-                <FormattedMessage {...messages.trymeMessage} />
-                <AtPrefix>
-                  <FormattedMessage {...messages.trymeAtPrefix} />
-                </AtPrefix>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="mxstbr"
-                  value={username}
-                  onChange={onChangeUsername}
-                />
-              </label>
-            </Form>
-            <ReposList {...reposListProps} />
-          </Section>
         </div>
       </article>
     );
@@ -127,12 +67,6 @@ export class HomePage extends React.PureComponent {
 
 HomePage.propTypes = {
   onLoad: PropTypes.func.isRequired,
-  repoLoading: PropTypes.bool,
-  repoError: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
-  repos: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
-  onSubmitForm: PropTypes.func,
-  username: PropTypes.string,
-  onChangeUsername: PropTypes.func,
   galleries: PropTypes.arrayOf(PropTypes.shape).isRequired,
   galleryLoading: PropTypes.bool,
   galleryError: PropTypes.oneOfType([
@@ -144,19 +78,10 @@ HomePage.propTypes = {
 export function mapDispatchToProps(dispatch) {
   return {
     onLoad: () => dispatch(loadGalleries()),
-    onChangeUsername: evt => dispatch(changeUsername(evt.target.value)),
-    onSubmitForm: (evt) => {
-      if (evt !== undefined && evt.preventDefault) evt.preventDefault();
-      dispatch(loadRepos());
-    },
   };
 }
 
 const mapStateToProps = createStructuredSelector({
-  repos: makeSelectRepos(),
-  username: makeSelectUsername(),
-  repoLoading: makeSelectRepoLoading(),
-  repoError: makeSelectRepoError(),
   galleries: makeSelectGalleries(),
   galleryLoading: makeSelectGalleryLoading(),
   galleryError: makeSelectGalleryError(),

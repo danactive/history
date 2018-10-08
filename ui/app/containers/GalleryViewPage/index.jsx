@@ -7,7 +7,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
 import GenericList from '../../components/GenericList';
-import AlbumListItem from '../AlbumListItem';
+import AlbumListItem from '../AlbumListItem/index';
 
 import injectSaga from '../../utils/injectSaga';
 import injectReducer from '../../utils/injectReducer';
