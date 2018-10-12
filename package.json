@@ -49,7 +49,7 @@
     "joi": "^13.6.0",
     "jquery-colorbox": "^1.6.4",
     "lout": "^11.1.0",
-    "mapbox-gl": "^0.49.0",
+    "mapbox-gl": "^0.50.0",
     "mime-types": "^2.1.12",
     "mkdirp": "^0.5.0",
     "moment": "^2.20.1",
