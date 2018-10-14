@@ -10,7 +10,11 @@ const Img = styled(NormalImg)`
   height: 2.82rem;
 `;
 
-const Thumb = ({ onClick, src }) => <A onClick={onClick}><Img src={src} alt="Preview thumbnail image (scaled down dimensions)" /></A>;
+const Thumb = ({ onClick, src }) => (
+  <A onClick={onClick}>
+    <Img src={src} alt="Preview thumbnail image (scaled down dimensions)" />
+  </A>
+);
 
 Thumb.propTypes = {
   onClick: propTypes.func.isRequired,

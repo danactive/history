@@ -22,6 +22,10 @@ script:
   - yarn test
 
 after_success:
+  - mv ui/package-skip-to-test.json ui/package.json
+  - cd ui
+  - yarn install
+  - yarn test
   - yarn ci-cover:coveralls
   - yarn ci-cover:prep-codeclimate
   - yarn ci-cover:codeclimate
