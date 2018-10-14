@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const Gallery = require('./gallery.jsx');
@@ -27,9 +26,5 @@ function Page({ galleries }) {
     </html>
   );
 }
-
-Page.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired,
-};
 
 module.exports = Page;

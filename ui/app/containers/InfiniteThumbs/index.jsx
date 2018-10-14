@@ -1,5 +1,4 @@
 import dotProp from 'dot-prop';
-import PropTypes from 'prop-types';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
@@ -79,19 +78,6 @@ function InfiniteThumbs(props) {
     </InfiniteScroll>
   );
 }
-
-InfiniteThumbs.propTypes = {
-  loading: PropTypes.bool,
-  error: PropTypes.any,
-  items: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  hasMore: PropTypes.bool,
-  nextPage: PropTypes.func.isRequired,
-  selectThumb: PropTypes.func.isRequired,
-  thumbsError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-};
 
 const mapStateToProps = createStructuredSelector({
   hasMore: makeSelectMoreThumbs(),

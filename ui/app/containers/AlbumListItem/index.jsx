@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
@@ -18,11 +17,6 @@ function AlbumListItem({ item, gallery }) {
     <ListItem key={`albums-list-item-${item.id}`} item={content} />
   );
 }
-
-AlbumListItem.propTypes = {
-  gallery: PropTypes.string.isRequired,
-  item: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   gallery: makeSelectGallery(),

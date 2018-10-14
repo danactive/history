@@ -1,6 +1,5 @@
 /* global document */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
@@ -84,27 +83,6 @@ export class AlbumViewPage extends React.PureComponent {
     );
   }
 }
-
-AlbumViewPage.propTypes = {
-  adjacentMemory: PropTypes.func.isRequired,
-  albumLoading: PropTypes.bool,
-  albumName: PropTypes.string,
-  albumError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-  currentMemory: PropTypes.object,
-  match: PropTypes.shape({ // router
-    params: PropTypes.shape({
-      album: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  location: PropTypes.shape({ // router
-    search: PropTypes.string.isRequired,
-  }).isRequired,
-  onLoad: PropTypes.func.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   albumLoading: makeSelectAlbumLoading(),

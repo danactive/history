@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import ReactMapboxGl from 'react-mapbox-gl';
 
 import {
@@ -13,15 +12,5 @@ const Map = ReactMapboxGl({
 const SlippyPhoto = ({ currentMemory }) => (
   <Map {...getMapOptions(currentMemory)} />
 );
-
-SlippyPhoto.defaultProps = {
-  currentMemory: {},
-};
-
-SlippyPhoto.propTypes = {
-  currentMemory: PropTypes.shape({
-    coordinates: PropTypes.arrayOf(PropTypes.number),
-  }),
-};
 
 export default SlippyPhoto;

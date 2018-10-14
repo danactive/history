@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -15,16 +14,6 @@ function ThumbListItem({ item }) {
     <ListItem key={`thumbs-list-item-${item.id}`} item={content} />
   );
 }
-
-ThumbListItem.defaultProps = {
-  item: {},
-};
-
-ThumbListItem.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
-  item: PropTypes.shape(),
-};
-
 
 function mapDispatchToProps(dispatch) {
   return {

@@ -79,7 +79,6 @@
           "app"
         ],
         "plugins": [
-          "transform-react-remove-prop-types",
           "transform-react-inline-elements",
           "transform-react-constant-elements"
         ]
@@ -165,7 +164,6 @@
     "jsdom": "^11.3.0",
     "lodash": "4.17.10",
     "minimist": "1.2.0",
-    "prop-types": "15.6.1",
     "react": "16.4.1",
     "react-dom": "16.4.1",
     "react-helmet": "5.2.0",
@@ -199,7 +197,6 @@
     "babel-plugin-transform-react-constant-elements": "6.23.0",
     "babel-plugin-transform-react-inline-elements": "6.22.0",
     "babel-plugin-transform-react-jsx-source": "6.22.0",
-    "babel-plugin-transform-react-remove-prop-types": "0.4.13",
     "babel-preset-env": "1.7.0",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
@@ -29,11 +28,6 @@ export class LocaleToggle extends React.PureComponent {
     );
   }
 }
-
-LocaleToggle.propTypes = {
-  onLocaleToggle: PropTypes.func,
-  locale: PropTypes.string,
-};
 
 const mapStateToProps = createSelector(makeSelectLocale(), locale => ({
   locale,
