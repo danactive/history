@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Ul from './Ul';
 import Wrapper from './Wrapper';
@@ -24,10 +23,5 @@ function List(props) {
     </Wrapper>
   );
 }
-
-List.propTypes = {
-  component: PropTypes.func.isRequired,
-  items: PropTypes.array,
-};
 
 export default List;

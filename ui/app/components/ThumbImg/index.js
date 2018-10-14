@@ -1,4 +1,3 @@
-import propTypes from 'prop-types';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -15,10 +14,5 @@ const Thumb = ({ onClick, src }) => (
     <Img src={src} alt="Preview thumbnail image (scaled down dimensions)" />
   </A>
 );
-
-Thumb.propTypes = {
-  onClick: propTypes.func.isRequired,
-  src: propTypes.string.isRequired,
-};
 
 export default Thumb;

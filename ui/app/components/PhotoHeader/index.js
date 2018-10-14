@@ -1,5 +1,4 @@
 import React from "react";
-// import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
 function PhotoHeader({ currentMemory }) {
@@ -17,7 +16,5 @@ function PhotoHeader({ currentMemory }) {
     <p key="headerDescription">{description}</p>,
   ];
 }
-
-PhotoHeader.propTypes = {};
 
 export default PhotoHeader;

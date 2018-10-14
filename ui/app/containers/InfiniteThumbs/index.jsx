@@ -16,16 +16,14 @@ import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
-function showAlbumError(error) {
+const showAlbumError = (error) => {
   const message = dotProp.get(error, 'ui.title', error.message);
   return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
-}
+};
 
-function showThumbsError(error) {
-  return <div>{error.ui.title}</div>;
-}
+const showThumbsError = error => <div>{error.ui.title}</div>;
 
-function InfiniteThumbs(props) {
+const InfiniteThumbs = (props) => {
   const {
     loading,
     error: albumError,
@@ -77,7 +75,7 @@ function InfiniteThumbs(props) {
       {html}
     </InfiniteScroll>
   );
-}
+};
 
 const mapStateToProps = createStructuredSelector({
   hasMore: makeSelectMoreThumbs(),
