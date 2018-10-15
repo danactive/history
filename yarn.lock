@@ -6799,9 +6799,9 @@ react-loadable@5.4.0:
   dependencies:
     prop-types "^15.5.0"
 
-react-mapbox-gl@^3.8.0:
-  version "3.9.2"
-  resolved "https://registry.yarnpkg.com/react-mapbox-gl/-/react-mapbox-gl-3.9.2.tgz#3e88a77385e9d6bc2397d64204ae291c68e864ae"
+react-mapbox-gl@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-mapbox-gl/-/react-mapbox-gl-4.0.0.tgz#bdfc41acfb62601af2f006b710a5177b8b9e3b3c"
   dependencies:
     "@turf/bbox" "4.7.3"
     "@turf/helpers" "4.7.3"
