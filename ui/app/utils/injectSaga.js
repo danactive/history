@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import hoistNonReactStatics from "hoist-non-react-statics";
 
 import getInjectors from "./sagaInjectors";
@@ -45,9 +44,6 @@ export default ({ key, saga, mode }) => WrappedComponent => {
   }
 
   InjectSaga.WrappedComponent = WrappedComponent;
-  InjectSaga.contextTypes = {
-    store: PropTypes.object.isRequired
-  };
   InjectSaga.displayName = `withSaga(${WrappedComponent.displayName ||
   WrappedComponent.name ||
   "Component"})`;
