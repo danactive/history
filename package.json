@@ -63,7 +63,7 @@
     "react-infinite-scroller": "^1.1.1",
     "react-intl": "^2.6.0",
     "react-loadable": "5.4.0",
-    "react-mapbox-gl": "^3.8.0",
+    "react-mapbox-gl": "^4.0.0",
     "react-moment-proptypes": "^1.5.0",
     "react-redux": "5.0.7",
     "react-router-dom": "4.3.1",
