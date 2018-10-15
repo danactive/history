@@ -2,3 +2,5 @@ server/plugins/*/public/assets/**/*.js
 server/plugins/*/public/lib/**/*.js
 
 ui/node_modules
+
+Loadable.jsx
