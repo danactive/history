@@ -12,6 +12,10 @@ function Thumb({ item }) {
     if (item.ref.source === 'wikipedia') {
       title.push(`<a href='https://en.wikipedia.org/wiki/${item.ref.name}' target='_blank'>Wiki</a>`);
     }
+
+    if (item.ref.source === 'youtube') {
+      title.push(`<a href='https://www.youtube.com/watch?v=${item.ref.name}' target='_blank'>YouTube</a>`);
+    }
   }
 
   if (item.geo && item.geo.lat) {
