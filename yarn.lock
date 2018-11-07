@@ -2999,9 +2999,9 @@ eslint-plugin-react@^7.9.1:
     jsx-ast-utils "^2.0.1"
     prop-types "^15.6.2"
 
-eslint-plugin-redux-saga@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-redux-saga/-/eslint-plugin-redux-saga-0.9.0.tgz#a0532f865a436d42fa797cfbc665c5308a6554df"
+eslint-plugin-redux-saga@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-redux-saga/-/eslint-plugin-redux-saga-0.10.0.tgz#62001c4e235b4607c9d7ac3dc087f9c5b173c91d"
 
 eslint-restricted-globals@^0.1.1:
   version "0.1.1"
