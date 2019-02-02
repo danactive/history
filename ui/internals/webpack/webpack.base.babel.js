@@ -4,7 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-require('dotenv').config();
+require('dotenv').config(); // *********** HISTORY CUSTOM not React Boilerplate
 
 // Remove this line once the following warning goes away (it was meant for webpack loader authors not users):
 // 'DeprecationWarning: loaderUtils.parseQuery() received a non-string value which can be problematic,
@@ -27,6 +27,7 @@ module.exports = options => ({
   module: {
     rules: [
       {
+        // *********** HISTORY CUSTOM not React Boilerplate
         test: /\.jsx?$/, // Transform all .js or .jsx files required somewhere with Babel
         exclude: /node_modules/,
         use: {
@@ -115,13 +116,8 @@ module.exports = options => ({
     ],
   },
   plugins: options.plugins.concat([
-    new webpack.ProvidePlugin({
-      // make fetch available
-      fetch: 'exports-loader?self.fetch!whatwg-fetch',
-    }),
-
     // Always expose NODE_ENV to webpack, in order to use `process.env.NODE_ENV`
-    // inside your code for any environment checks; UglifyJS will automatically
+    // inside your code for any environment checks; Terser will automatically
     // drop any unreachable code.
     new webpack.DefinePlugin({
       'process.env': {

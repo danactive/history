@@ -1,3 +1,5 @@
+// *********** HISTORY CUSTOM not React Boilerplate
+
 import { normalizeError } from '../error';
 
 describe('error', () => {

@@ -6,7 +6,7 @@ import {
   NEXT_MEMORY,
 } from '../../AlbumViewPage/constants';
 
-describe('albumReducer', () => {
+describe('appReducer', () => {
   it('should return the initial state', () => {
     const action = {};
     const state = undefined;

@@ -1,12 +1,7 @@
-/**
- *
- * Asynchronously loads the component for GalleryList
- *
- */
+import loadable from 'loadable-components';
 
-import Loadable from 'react-loadable';
+import LoadingIndicator from '../LoadingIndicator';
 
-export default Loadable({
-  loader: () => import('./index'),
-  loading: () => null,
+export default loadable(() => import('./index'), {
+  LoadingComponent: LoadingIndicator,
 });

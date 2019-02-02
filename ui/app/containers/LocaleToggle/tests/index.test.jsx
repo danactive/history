@@ -5,7 +5,7 @@ import { shallow, mount } from 'enzyme';
 
 import LocaleToggle, { mapDispatchToProps } from '../index';
 import { changeLocale } from '../../LanguageProvider/actions';
-import LanguageProvider from '../../LanguageProvider/index';
+import LanguageProvider from '../../LanguageProvider';
 
 import configureStore from '../../../configureStore';
 import { translationMessages } from '../../../i18n';
