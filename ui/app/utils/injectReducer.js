@@ -1,7 +1,8 @@
-import React from "react";
-import hoistNonReactStatics from "hoist-non-react-statics";
+import React from 'react';
+import PropTypes from 'prop-types';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
-import getInjectors from "./reducerInjectors";
+import getInjectors from './reducerInjectors';
 
 /**
  * Dynamically injects a reducer
@@ -12,15 +13,15 @@ import getInjectors from "./reducerInjectors";
  */
 export default ({ key, reducer }) => WrappedComponent => {
   class ReducerInjector extends React.Component {
-    constructor(...args) {
-      var _temp;
+    static WrappedComponent = WrappedComponent;
 
-      return (
-        (_temp = super(...args)),
-          (this.injectors = getInjectors(this.context.store)),
-          _temp
-      );
-    }
+    static contextTypes = {
+      store: PropTypes.object.isRequired,
+    };
+
+    static displayName = `withReducer(${WrappedComponent.displayName ||
+      WrappedComponent.name ||
+      'Component'})`;
 
     componentWillMount() {
       const { injectReducer } = this.injectors;
@@ -28,14 +29,12 @@ export default ({ key, reducer }) => WrappedComponent => {
       injectReducer(key, reducer);
     }
 
+    injectors = getInjectors(this.context.store);
+
     render() {
-      return React.createElement(WrappedComponent, this.props);
+      return <WrappedComponent {...this.props} />;
     }
   }
 
-  ReducerInjector.WrappedComponent = WrappedComponent;
-  ReducerInjector.displayName = `withReducer(${WrappedComponent.displayName ||
-  WrappedComponent.name ||
-  "Component"})`;
   return hoistNonReactStatics(ReducerInjector, WrappedComponent);
 };

@@ -1,3 +1,5 @@
+// *********** HISTORY CUSTOM not React Boilerplate
+
 import dotProp from 'dot-prop';
 
 export const normalizeError = (error) => {
