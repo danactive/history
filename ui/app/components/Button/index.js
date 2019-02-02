@@ -7,7 +7,6 @@
  */
 
 import React, { Children } from 'react';
-import PropTypes from 'prop-types';
 
 import A from './A';
 import StyledButton from './StyledButton';
@@ -32,12 +31,5 @@ function Button(props) {
 
   return <Wrapper>{button}</Wrapper>;
 }
-
-Button.propTypes = {
-  handleRoute: PropTypes.func,
-  href: PropTypes.string,
-  onClick: PropTypes.func,
-  children: PropTypes.node.isRequired,
-};
 
 export default Button;

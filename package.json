@@ -28,6 +28,7 @@
     "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^10.0.0",
+    "babel-jest": "^23.6.0",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.16.0",
@@ -54,7 +55,6 @@
     "mkdirp": "^0.5.0",
     "moment": "^2.20.1",
     "node-notifier": "^5.0.1",
-    "prop-types": "^15.5.10",
     "react": "^16.5.1",
     "react-addons-shallow-compare": "^15.6.2",
     "react-dates": "^18.0.4",
@@ -64,7 +64,6 @@
     "react-intl": "^2.6.0",
     "react-loadable": "5.4.0",
     "react-mapbox-gl": "^3.8.0",
-    "react-moment-proptypes": "^1.5.0",
     "react-redux": "5.0.7",
     "react-router-dom": "4.3.1",
     "react-test-renderer": "^16.5.1",
@@ -150,7 +149,7 @@
     "setupFiles": [
       "./test/jestsetup.js"
     ],
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "testMatch": [
       "**/?(*.)+(jest).js?(x)"
     ]

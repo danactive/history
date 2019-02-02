@@ -13,7 +13,7 @@ describe('<List />', () => {
   it('should pass all items props to rendered component', () => {
     const items = [{ id: 1, name: 'Hello' }, { id: 2, name: 'World' }];
 
-    const component = ({ item }) => <ListItem>{item.name}</ListItem>; // eslint-disable-line react/prop-types
+    const component = ({ item }) => <ListItem>{item.name}</ListItem>;
 
     const renderedComponent = shallow(
       <List items={items} component={component} />,

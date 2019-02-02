@@ -1,9 +1,7 @@
-/* global describe, expect, jest, it, shallow */
+/* global describe, expect, it, shallow */
 import React from 'react';
 
 import SlippyPhoto from '../index';
-
-jest.mock('react-mapbox-gl', () => jest.fn(() => {}));
 
 const shallowComponent = (props = {}) => shallow(<SlippyPhoto {...props} />);
 

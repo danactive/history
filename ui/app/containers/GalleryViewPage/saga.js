@@ -1,7 +1,7 @@
 import Dropbox from 'dropbox';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import request from 'utils/request';
+import request from '../../utils/request';
 
 import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';

@@ -5,7 +5,6 @@
 */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import List from 'components/List';
 import ListItem from 'components/ListItem';
@@ -29,12 +28,5 @@ function GenericList({ loading, error, items, component }) {
 
   return null;
 }
-
-GenericList.propTypes = {
-  component: PropTypes.func.isRequired,
-  loading: PropTypes.bool,
-  error: PropTypes.any,
-  items: PropTypes.any,
-};
 
 export default GenericList;

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled, { keyframes } from 'styled-components';
 
 const circleFadeDelay = keyframes`
@@ -43,11 +42,6 @@ const Circle = props => {
     }
   `;
   return <CirclePrimitive />;
-};
-
-Circle.propTypes = {
-  delay: PropTypes.number,
-  rotate: PropTypes.number,
 };
 
 export default Circle;

@@ -69,6 +69,7 @@ describe('AlbumViewPage Saga', () => {
           filename: '2001-03-21-01.jpg',
           coordinates: [-123.1, 49.25],
           id: '1',
+          photoLink: null,
           thumbLink: null,
           location: 'Granville Island',
         };
@@ -200,14 +201,17 @@ describe('AlbumViewPage Saga', () => {
           memories: [],
         };
         received = genClone.next(args).value;
-        // Unit test cannot reproduce error stack so delete
-        delete received.PUT.action.error.stack;
 
         const error = {
           message: 'Empty or malformed album; memories=([])',
           type: 'normalized message and stack',
+          stack: true,
         };
         expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
+
+        // Unit test cannot reproduce error stack so delete
+        delete expected.PUT.action.error.stack;
+        delete received.PUT.action.error.stack;
 
         expect(received).toEqual(expected);
 

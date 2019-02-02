@@ -1,8 +1,8 @@
 import Dropbox from 'dropbox';
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 
-import { normalizeError } from 'utils/error';
-import request from 'utils/request';
+import { normalizeError } from '../../utils/error';
+import request from '../../utils/request';
 
 import { LOAD_ALBUM, LOAD_NEXT_THUMB_PAGE, PAGE_SIZE } from './constants';
 import {
