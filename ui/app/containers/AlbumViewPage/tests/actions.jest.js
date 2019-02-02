@@ -1,3 +1,5 @@
+/* global describe, expect, test */
+
 import { fromJS } from 'immutable';
 
 import {
@@ -23,8 +25,6 @@ import {
 
 import reducer from '../../App/reducer';
 
-let state;
-
 describe('AlbumViewPage actions', () => {
   const fixture = {
     memories: { link: 'thumbnail.jpg' },
@@ -32,7 +32,7 @@ describe('AlbumViewPage actions', () => {
   };
 
   describe('Load album', () => {
-    it('has an error with a type of LOAD_ALBUM_ERROR', () => {
+    test('has an error with a type of LOAD_ALBUM_ERROR', () => {
       const expected = {
         type: LOAD_ALBUM_ERROR,
         error: fixture.error,
@@ -42,7 +42,7 @@ describe('AlbumViewPage actions', () => {
   });
 
   describe('Load next page of thumbs', () => {
-    it('has an error with a type of LOAD_NEXT_THUMB_PAGE_ERROR', () => {
+    test('has an error with a type of LOAD_NEXT_THUMB_PAGE_ERROR', () => {
       const expected = {
         type: LOAD_NEXT_THUMB_PAGE_ERROR,
         error: fixture.error,
@@ -52,7 +52,7 @@ describe('AlbumViewPage actions', () => {
   });
 
   describe('Keyboard controls next or previous memory', () => {
-    it('has a next memory', () => {
+    test('has a next memory', () => {
       const expected = {
         type: NEXT_MEMORY,
         adjacentInt: 1,
@@ -60,7 +60,7 @@ describe('AlbumViewPage actions', () => {
       expect(chooseAdjacentMemory(1)).toEqual(expected);
     });
 
-    it('has a previous memory', () => {
+    test('has a previous memory', () => {
       const expected = {
         type: PREV_MEMORY,
         adjacentInt: -1,
@@ -71,13 +71,14 @@ describe('AlbumViewPage actions', () => {
 });
 
 describe('Load album hosted on Dropbox', () => {
+  // memories
   const fixtures = {
-    memories: { filename: '2017-12-25.jpg' },
+    memories: [{ filename: '2017-12-25.jpg' }],
   };
 
-  it('Page load event dispatches loadAlbum action', () => {});
+  test('Page load event dispatches loadAlbum action', () => {});
 
-  it('action loadAlbum will request with a type of LOAD_ALBUM', () => {
+  test('action loadAlbum will request with a type of LOAD_ALBUM', () => {
     const expected = {
       type: LOAD_ALBUM,
       gallery: 'demo',
@@ -87,7 +88,7 @@ describe('Load album hosted on Dropbox', () => {
     expect(loadAlbum('?gallery=demo&another=true', 'sample')).toEqual(expected);
   });
 
-  it('reducer should store the action loadAlbum', () => {
+  test('reducer should store the action loadAlbum', () => {
     const received = reducer(fromJS({}), loadAlbum('?gallery=demo', 'sample'));
     const expected = fromJS({})
       .set('gallery', 'demo')
@@ -95,12 +96,11 @@ describe('Load album hosted on Dropbox', () => {
       .setIn(['demo', 'sample', 'memories'], []);
 
     expect(received).toEqual(expected);
-    state = expected;
   });
 
-  it('saga worker puts albumLoadSuccess', () => {});
+  test('saga worker puts albumLoadSuccess', () => {});
 
-  it('action after successful saga with a type of LOAD_ALBUM_SUCCESS', () => {
+  test('action after successful saga with a type of LOAD_ALBUM_SUCCESS', () => {
     const sagaResult = {
       gallery: 'demo',
       album: 'sample',
@@ -117,7 +117,12 @@ describe('Load album hosted on Dropbox', () => {
     expect(received).toEqual(expected);
   });
 
-  it('reducer should store the action albumLoadSuccess', () => {
+  test('reducer should store the action albumLoadSuccess', () => {
+    const state = fromJS({})
+      .set('gallery', 'demo')
+      .set('album', 'sample')
+      .setIn(['demo', 'sample', 'memories'], []);
+
     const sagaResult = {
       gallery: 'demo',
       album: 'sample',
@@ -128,7 +133,6 @@ describe('Load album hosted on Dropbox', () => {
       .setIn(['demo', 'sample', 'memories'], fixtures.memories);
 
     expect(received).toEqual(expected);
-    state = expected;
   });
 });
 
@@ -136,14 +140,15 @@ describe('Load next thumb page', () => {
   const fixtures = {
     gallery: 'demo',
     album: 'sample',
-    memories: { link: 'thumbnail.jpg', filename: '2017-12-25.jpg' },
+    memories: [{ link: 'thumbnail.jpg', filename: '2017-12-25.jpg' }],
+    newMemories: [{ link: 'thumbnail-two.jpg', filename: '2017-12-31.jpg' }],
     page: 2,
     error: { error: 'error', message: 'message' },
   };
 
-  it('InfiniteScroll dispatches loadNextPage action', () => {});
+  test('InfiniteScroll dispatches loadNextPage action', () => {});
 
-  it('action loadNextPage will request with a type of LOAD_NEXT_THUMB_PAGE', () => {
+  test('action loadNextPage will request with a type of LOAD_NEXT_THUMB_PAGE', () => {
     const expected = {
       type: LOAD_NEXT_THUMB_PAGE,
     };
@@ -152,9 +157,9 @@ describe('Load next thumb page', () => {
     expect(received).toEqual(expected);
   });
 
-  it('saga worker puts nextPageSuccess', () => {});
+  test('saga worker puts nextPageSuccess', () => {});
 
-  it('action nextPageSuccess will request with a type of LOAD_NEXT_THUMB_PAGE_SUCCESS', () => {
+  test('action nextPageSuccess will request with a type of LOAD_NEXT_THUMB_PAGE_SUCCESS', () => {
     const args = {
       gallery: fixtures.gallery,
       album: fixtures.album,
@@ -169,19 +174,25 @@ describe('Load next thumb page', () => {
     expect(nextPageSuccess(args)).toEqual(expected);
   });
 
-  it('reducer should store the action nextPageSuccess', () => {
+  test('reducer should store the action nextPageSuccess', () => {
+    const state = fromJS({})
+      .set('gallery', 'demo')
+      .set('album', 'sample')
+      .setIn(['demo', 'sample', 'memories'], fixtures.memories);
+
     const gallery = state.get('gallery');
     const album = state.get('album');
     const args = {
       gallery: fixtures.gallery,
       memories: fixtures.memories,
+      newMemories: fixtures.newMemories,
       page: fixtures.page,
       hasMore: fixtures.hasMore,
     };
 
     const received = reducer(state, nextPageSuccess(args));
     const expected = state
-      .setIn([gallery, album, 'memories'], fixtures.memories);
+      .setIn([gallery, album, 'memories'], fixtures.memories.concat(fixtures.newMemories));
 
     expect(received).toEqual(expected);
   });
