@@ -1,4 +1,4 @@
-/* global __dirname, require */
+/* global require */
 const Dropbox = require('dropbox');
 
 const { createTransform } = require('./dropbox');

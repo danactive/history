@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 
 import ListItem from '../../components/ListItem';
-import { capitalize } from '../../utils/strings';
+import capitalize from '../../utils/strings';
 
 function removePrefix(name) {
   return name.replace(/gallery-/gi, '');

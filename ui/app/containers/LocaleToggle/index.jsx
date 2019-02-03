@@ -9,7 +9,7 @@ import { appLocales } from '../../i18n';
 import { changeLocale } from '../LanguageProvider/actions';
 import { makeSelectLocale } from '../LanguageProvider/selectors';
 
-export class LocaleToggle extends React.PureComponent {
+class LocaleToggle extends React.PureComponent {
   render() {
     const {
       locale,

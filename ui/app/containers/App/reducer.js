@@ -105,5 +105,3 @@ export default function reducer(state = albumInitialState, action) {
       return state;
   }
 }
-
-export default appReducer;
