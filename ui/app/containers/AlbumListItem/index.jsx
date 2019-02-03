@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import ListItem from '../../components/ListItem';
-import { capitalize } from '../../utils/strings';
+import capitalize from '../../utils/strings';
 import { makeSelectGallery } from './selectors';
 
 function AlbumListItem({ item, gallery }) {

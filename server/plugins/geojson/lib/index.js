@@ -1,4 +1,4 @@
-/* global __dirname, require */
+/* global require */
 const json = require('./json');
 const validation = require('../../../lib/validation');
 

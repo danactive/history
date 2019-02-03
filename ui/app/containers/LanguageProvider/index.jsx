@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl';
 
 import { makeSelectLocale } from './selectors';
 
-export class LanguageProvider extends React.PureComponent {
+class LanguageProvider extends React.PureComponent {
   render() {
     const {
       children,
@@ -24,6 +24,8 @@ export class LanguageProvider extends React.PureComponent {
     );
   }
 }
+
+export { LanguageProvider as LanguageProviderUnconnected };
 
 const mapStateToProps = createSelector(makeSelectLocale(), locale => ({
   locale,

@@ -1,3 +1,4 @@
+/* global beforeAll, describe, jest, expect, test */
 import React from 'react';
 import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router-dom';
@@ -17,7 +18,7 @@ describe('<LocaleToggle />', () => {
     store = configureStore({}, browserHistory);
   });
 
-  it('should render the default language messages', () => {
+  test('should render the default language messages', () => {
     const renderedComponent = shallow(
       <Provider store={store}>
         <LanguageProvider messages={translationMessages}>
@@ -28,7 +29,7 @@ describe('<LocaleToggle />', () => {
     expect(renderedComponent.contains(<LocaleToggle />)).toBe(true);
   });
 
-  it('should present the default `en` english language option', () => {
+  test('should present the default `en` english language option', () => {
     const renderedComponent = mount(
       <Provider store={store}>
         <LanguageProvider messages={translationMessages}>
@@ -43,13 +44,13 @@ describe('<LocaleToggle />', () => {
 
   describe('mapDispatchToProps', () => {
     describe('onLocaleToggle', () => {
-      it('should be injected', () => {
+      test('should be injected', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
         expect(result.onLocaleToggle).toBeDefined();
       });
 
-      it('should dispatch changeLocale when called', () => {
+      test('should dispatch changeLocale when called', () => {
         const dispatch = jest.fn();
         const result = mapDispatchToProps(dispatch);
         const locale = 'de';

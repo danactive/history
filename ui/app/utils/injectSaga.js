@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
 import getInjectors from './sagaInjectors';
@@ -17,16 +16,6 @@ import getInjectors from './sagaInjectors';
  */
 export default ({ key, saga, mode }) => WrappedComponent => {
   class InjectSaga extends React.Component {
-    static WrappedComponent = WrappedComponent;
-
-    static contextTypes = {
-      store: PropTypes.object.isRequired,
-    };
-
-    static displayName = `withSaga(${WrappedComponent.displayName ||
-      WrappedComponent.name ||
-      'Component'})`;
-
     componentWillMount() {
       const { injectSaga } = this.injectors;
 
@@ -39,12 +28,17 @@ export default ({ key, saga, mode }) => WrappedComponent => {
       ejectSaga(key);
     }
 
-    injectors = getInjectors(this.context.store);
-
     render() {
       return <WrappedComponent {...this.props} />;
     }
   }
+
+  InjectSaga.injectors = getInjectors(this.context.store);
+  InjectSaga.WrappedComponent = WrappedComponent;
+  InjectSaga.displayName = `withSaga(${WrappedComponent.displayName
+  || WrappedComponent.name
+  || 'Component'})`;
+
 
   return hoistNonReactStatics(InjectSaga, WrappedComponent);
 };
