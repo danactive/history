@@ -16,15 +16,15 @@ install:
   - set PATH=%CD%\gm;%PATH%
   # Get the wanted version of Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - yarn install
+  - npm ci
 
 test_script:
   - node --version
   - npm --version
   - gm version
-  - yarn lint
-  - yarn test
-  - yarn test:react
+  - npm run lint
+  - npm test
+  - npm run test:react
 
 build_script:
-  - yarn run webpack
+  - npm run webpack
