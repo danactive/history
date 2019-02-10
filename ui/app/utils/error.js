@@ -2,7 +2,7 @@
 
 import dotProp from 'dot-prop';
 
-export const normalizeError = (error) => {
+export default (error) => {
   const errorSummary = dotProp.get(error, 'error.error_summary');
 
   if (errorSummary) {

@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import Dropbox from 'dropbox';
 
 import {
@@ -5,7 +6,7 @@ import {
 } from 'redux-saga/effects';
 import { cloneableGenerator } from 'redux-saga/utils';
 
-import { normalizeError } from '../../../utils/error';
+import normalizeError from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
 
 import {
@@ -28,21 +29,21 @@ describe('AlbumViewPage Saga', () => {
       const fixtures = { album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(fixtures);
 
-      it('should first yield an Effect call', () => {
+      test('should first yield an Effect call', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
         expect(received).toEqual(expected);
       });
 
-      it('should second yield an Effect call', () => {
+      test('should second yield an Effect call', () => {
         expect.hasAssertions();
         const received = generator.next({ link: 'fake address' }).value;
         const expected = call(request, 'fake address');
         expect(received).toEqual(expected);
       });
 
-      it('should third yield an Effect put', () => {
+      test('should third yield an Effect put', () => {
         expect.hasAssertions();
         const xmlAlbum = `<album>
           <meta>
@@ -85,7 +86,7 @@ describe('AlbumViewPage Saga', () => {
         expect(received).toEqual(expected);
       });
 
-      it('should be done', () => {
+      test('should be done', () => {
         expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
@@ -97,14 +98,14 @@ describe('AlbumViewPage Saga', () => {
       const fixtures = { album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(fixtures);
 
-      it('should first yield an Effect call', () => {
+      test('should first yield an Effect call', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
         expect(received).toEqual(expected);
       });
 
-      it('should second yield an Error put', () => {
+      test('should second yield an Error put', () => {
         expect.hasAssertions();
         const error = new Error('Something went wrong');
 
@@ -113,7 +114,7 @@ describe('AlbumViewPage Saga', () => {
         expect(received).toEqual(expected);
       });
 
-      it('should be done', () => {
+      test('should be done', () => {
         expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
@@ -130,29 +131,30 @@ describe('AlbumViewPage Saga', () => {
       };
       const generator = getThumbPathsOnDropbox(fixtures);
 
-      it('should first yield an Effect select', () => {
+      test('should first yield an Effect select', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = select(selectNextPage);
         expect(received).toEqual(expected);
       });
 
-      it('should second yield an Effect all', () => {
+      test('should second yield an Effect all', () => {
         expect.hasAssertions();
         const array1toLength = Array.from({ length: 17 }, (v, k) => (
           { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` }));
-        const args = {
+        const receivedArgs = {
           gallery: fixtures.gallery,
           album: fixtures.album,
           memories: array1toLength,
           page: 2,
         };
-        const received = generator.next(args).value;
-        const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], argsThumbImgPath({ gallery: fixtures.gallery, filename: '2015-12-25-17.jpg' }))]);
+        const received = generator.next(receivedArgs).value;
+        const expectedArgs = argsThumbImgPath({ gallery: fixtures.gallery, filename: '2015-12-25-17.jpg' });
+        const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], expectedArgs)]);
         expect(received).toEqual(expected);
       });
 
-      it('should third yield an Effect put', () => {
+      test('should third yield an Effect put', () => {
         expect.hasAssertions();
         const dropboxResults = [
           { link: 'dropbox.com' },
@@ -175,7 +177,7 @@ describe('AlbumViewPage Saga', () => {
         expect(received).toEqual(expected);
       });
 
-      it('should be done', () => {
+      test('should be done', () => {
         expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
@@ -189,7 +191,7 @@ describe('AlbumViewPage Saga', () => {
 
       generator.next(); // first yield an Effect select
 
-      it('should receive an empty selector', () => {
+      test('should receive an empty selector', () => {
         expect.hasAssertions();
 
         // cloning the generator before sending data
@@ -222,7 +224,7 @@ describe('AlbumViewPage Saga', () => {
         expect(received).toEqual(expected);
       });
 
-      it('should catch error', () => {
+      test('should catch error', () => {
         expect.hasAssertions();
 
         // cloning the generator before sending data

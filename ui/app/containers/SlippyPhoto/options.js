@@ -38,6 +38,4 @@ const getMapOptions = currentMemory => ({
   style: getMapStyle(currentMemory),
 });
 
-export {
-  getMapOptions,
-};
+export default getMapOptions;

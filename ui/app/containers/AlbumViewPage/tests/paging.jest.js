@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import { getPage, insertPage } from '../paging';
 
 function checkAll(list) {
@@ -12,7 +13,7 @@ const PAGE_SIZE = 2;
 const fixtures = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
 
 describe('Get Page', () => {
-  it('should get the zero page', () => {
+  test('should get the zero page', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 0 });
 
     const received = result[0];
@@ -20,7 +21,7 @@ describe('Get Page', () => {
     expect(received).toEqual(expected);
   });
 
-  it('first page should be full', () => {
+  test('first page should be full', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 1 });
     let received;
     let expected;
@@ -33,12 +34,12 @@ describe('Get Page', () => {
     expected = 2;
     expect(received).toEqual(expected);
 
-    received = result[2];
+    received = result[2]; // eslint-disable-line prefer-destructuring
     expected = undefined;
     expect(received).toEqual(expected);
   });
 
-  it('second page should be full', () => {
+  test('second page should be full', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 2 });
     let received;
     let expected;
@@ -51,12 +52,12 @@ describe('Get Page', () => {
     expected = 4;
     expect(received).toEqual(expected);
 
-    received = result[2];
+    received = result[2]; // eslint-disable-line prefer-destructuring
     expected = undefined;
     expect(received).toEqual(expected);
   });
 
-  it('third page should be partial', () => {
+  test('third page should be partial', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 3 });
     let received;
     let expected;
@@ -65,12 +66,12 @@ describe('Get Page', () => {
     expected = 5;
     expect(received).toEqual(expected);
 
-    received = result[1];
+    received = result[1]; // eslint-disable-line prefer-destructuring
     expected = undefined;
     expect(received).toEqual(expected);
   });
 
-  it('fourth page should be empty', () => {
+  test('fourth page should be empty', () => {
     const result = getPage({ pageSize: PAGE_SIZE, list: fixtures, page: 4 });
 
     const received = result[0];
@@ -78,7 +79,7 @@ describe('Get Page', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should not effect fixture', () => {
+  test('should not effect fixture', () => {
     expect(fixtures[0].id).toEqual(1);
     expect(fixtures[1].id).toEqual(2);
     expect(fixtures[2].id).toEqual(3);
@@ -88,11 +89,11 @@ describe('Get Page', () => {
 });
 
 describe('Insert Page', () => {
-  it('should not effect fixture', () => {
+  test('should not effect fixture', () => {
     checkAll(fixtures);
   });
 
-  it('should not insert page 0', () => {
+  test('should not insert page 0', () => {
     const insert = [{ id: 'apple' }, { id: 'banana' }];
     const newList = insertPage({
       page: 0, insert, pageSize: PAGE_SIZE, list: fixtures,
@@ -101,7 +102,7 @@ describe('Insert Page', () => {
     checkAll(fixtures);
   });
 
-  it('should insert page 1', () => {
+  test('should insert page 1', () => {
     const insert = [{ id: 'apple' }, { id: 'banana' }];
     const newList = insertPage({
       page: 1, insert, pageSize: PAGE_SIZE, list: fixtures,
@@ -114,7 +115,7 @@ describe('Insert Page', () => {
     checkAll(fixtures);
   });
 
-  it('should insert page 2', () => {
+  test('should insert page 2', () => {
     const insert = [{ id: 'cherry' }, { id: 'durrian' }];
     const newList = insertPage({
       page: 2, insert, pageSize: PAGE_SIZE, list: fixtures,
@@ -127,7 +128,7 @@ describe('Insert Page', () => {
     checkAll(fixtures);
   });
 
-  it('should insert page 3', () => {
+  test('should insert page 3', () => {
     const insert = [{ id: 'eggplant' }, { id: 'fig' }];
     const newList = insertPage({
       page: 3, insert, pageSize: PAGE_SIZE, list: fixtures,
@@ -140,7 +141,7 @@ describe('Insert Page', () => {
     checkAll(fixtures);
   });
 
-  it('should not effect fixture', () => {
+  test('should not effect fixture', () => {
     checkAll(fixtures);
   });
 });

@@ -8,6 +8,4 @@ const makeSelectGallery = () => createSelector(
   routeState => routeState.get('gallery') || '',
 );
 
-export {
-  makeSelectGallery,
-};
+export default makeSelectGallery;

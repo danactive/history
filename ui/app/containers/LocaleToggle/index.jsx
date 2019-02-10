@@ -6,7 +6,7 @@ import Toggle from '../../components/Toggle';
 import Wrapper from './Wrapper';
 import messages from './messages';
 import { appLocales } from '../../i18n';
-import { changeLocale } from '../LanguageProvider/actions';
+import changeLocale from '../LanguageProvider/actions';
 import { makeSelectLocale } from '../LanguageProvider/selectors';
 
 class LocaleToggle extends React.PureComponent {

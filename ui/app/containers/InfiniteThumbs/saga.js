@@ -3,7 +3,7 @@ import {
   call, put, select, takeEvery,
 } from 'redux-saga/effects';
 
-import { normalizeError } from '../../utils/error';
+import normalizeError from '../../utils/error';
 
 import { CHOOSE_MEMORY } from '../App/constants';
 import { selectCurrentMemory } from '../App/selectors';

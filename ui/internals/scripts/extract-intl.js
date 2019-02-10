@@ -159,6 +159,6 @@ memoryTask.then(files => {
       }
     }
 
-    process.exit();
+    process.extest();
   });
 });

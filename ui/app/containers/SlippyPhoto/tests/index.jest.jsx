@@ -6,7 +6,7 @@ import SlippyPhoto from '../index';
 const shallowComponent = (props = {}) => shallow(<SlippyPhoto {...props} />);
 
 describe('<SlippyPhoto />', () => {
-  it('should render an <SlippyPhoto /> component', () => {
+  test('should render an <SlippyPhoto /> component', () => {
     expect.hasAssertions();
 
     const received = shallowComponent().children().length;
