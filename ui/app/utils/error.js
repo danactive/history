@@ -17,7 +17,7 @@ export const normalizeError = (error) => {
         action,
         path,
         title: `Dropbox asset is missing (${path})`,
-      }
+      },
     };
   }
 
@@ -37,7 +37,7 @@ export const normalizeError = (error) => {
         action,
         path,
         title: `Dropbox auth is incorrect (${path})`,
-      }
+      },
     };
   }
 
@@ -50,7 +50,7 @@ export const normalizeError = (error) => {
       ui: {
         action: undefined,
         title: error.message,
-      }
+      },
     };
   }
 

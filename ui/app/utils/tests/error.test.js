@@ -31,7 +31,7 @@ describe('error', () => {
           action: 'missing-thumbLink',
           path,
           title: `Dropbox asset is missing (${path})`,
-        }
+        },
       };
       expect(actual).toEqual(expected);
     });
@@ -55,7 +55,7 @@ describe('error', () => {
             _data: {
               path,
             },
-          }
+          },
         },
       };
       const actual = normalizeError(error);
@@ -67,7 +67,7 @@ describe('error', () => {
           action: 'incorrect-auth',
           path,
           title: `Dropbox auth is incorrect (${path})`,
-        }
+        },
       };
       expect(actual).toEqual(expected);
     });
@@ -86,7 +86,7 @@ describe('error', () => {
         ui: {
           action: undefined,
           title: 'Message',
-        }
+        },
       };
       expect(actual).toEqual(expected);
       expect(actualDebug).toEqual(expect.stringContaining('Error: Message'));

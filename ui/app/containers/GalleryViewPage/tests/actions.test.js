@@ -12,7 +12,7 @@ describe('GalleryViewPage actions', () => {
       const gallery = 'default';
       const expected = {
         type: LOAD_GALLERY,
-        gallery
+        gallery,
       };
       expect(loadGallery(gallery)).toEqual(expected);
     });

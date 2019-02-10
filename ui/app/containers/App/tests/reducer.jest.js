@@ -46,7 +46,7 @@ describe('appReducer', () => {
           { id: 1 },
           { id: 2 },
           { id: 3 },
-        ]
+        ],
       );
     }
 
@@ -73,7 +73,7 @@ describe('appReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 1,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });
@@ -87,7 +87,7 @@ describe('appReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 1,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });
@@ -101,7 +101,7 @@ describe('appReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 3,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });

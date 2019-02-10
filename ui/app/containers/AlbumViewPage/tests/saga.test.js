@@ -1,6 +1,8 @@
 import Dropbox from 'dropbox';
 
-import { all, call, put, select } from 'redux-saga/effects';
+import {
+  all, call, put, select,
+} from 'redux-saga/effects';
 import { cloneableGenerator } from 'redux-saga/utils';
 
 import { normalizeError } from '../../../utils/error';
@@ -138,8 +140,7 @@ describe('AlbumViewPage Saga', () => {
       it('should second yield an Effect all', () => {
         expect.hasAssertions();
         const array1toLength = Array.from({ length: 17 }, (v, k) => (
-          { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` })
-        );
+          { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` }));
         const args = {
           gallery: fixtures.gallery,
           album: fixtures.album,
@@ -186,7 +187,7 @@ describe('AlbumViewPage Saga', () => {
       const fixtures = { thumbs: [], gallery: 'demo' };
       const generator = cloneableGenerator(getThumbPathsOnDropbox)(fixtures);
 
-      generator.next();  // first yield an Effect select
+      generator.next(); // first yield an Effect select
 
       it('should receive an empty selector', () => {
         expect.hasAssertions();

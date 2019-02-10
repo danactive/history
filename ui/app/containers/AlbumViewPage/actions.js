@@ -44,7 +44,9 @@ export function loadNextPage() {
   };
 }
 
-export function nextPageSuccess({ gallery, album, newMemories, page }) {
+export function nextPageSuccess({
+  gallery, album, newMemories, page,
+}) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
     gallery,
@@ -62,7 +64,9 @@ export function nextPageError(error) {
   };
 }
 
-export function thumbsLoaded({ gallery, album, newMemories, page }) {
+export function thumbsLoaded({
+  gallery, album, newMemories, page,
+}) {
   return {
     type: LOAD_THUMBS_SUCCESS,
     gallery,

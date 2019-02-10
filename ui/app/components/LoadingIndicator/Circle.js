@@ -17,15 +17,15 @@ const circleFadeDelayRule = css`
   ${circleFadeDelay} 1.2s infinite ease-in-out both;
 `;
 
-const Circle = props => {
+const Circle = (props) => {
   const CirclePrimitive = styled.div`
     width: 100%;
     height: 100%;
     position: absolute;
     left: 0;
     top: 0;
-    ${props.rotate &&
-      `
+    ${props.rotate
+      && `
       -webkit-transform: rotate(${props.rotate}deg);
       -ms-transform: rotate(${props.rotate}deg);
       transform: rotate(${props.rotate}deg);
@@ -38,8 +38,8 @@ const Circle = props => {
       background-color: #999;
       border-radius: 100%;
       animation: ${circleFadeDelayRule};
-      ${props.delay &&
-        `
+      ${props.delay
+        && `
         -webkit-animation-delay: ${props.delay}s;
         animation-delay: ${props.delay}s;
       `};

@@ -1,5 +1,7 @@
 import Dropbox from 'dropbox';
-import { all, call, put, select, takeEvery } from 'redux-saga/effects';
+import {
+  all, call, put, select, takeEvery,
+} from 'redux-saga/effects';
 
 import { normalizeError } from '../../utils/error';
 import request from '../../utils/request';
@@ -66,7 +68,9 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
 export function* getThumbPathsOnDropbox() {
   try {
-    const { gallery, album, memories, page: prevPage } = yield select(selectNextPage);
+    const {
+      gallery, album, memories, page: prevPage,
+    } = yield select(selectNextPage);
     if (!memories || memories.length === 0) {
       throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
     }
@@ -80,11 +84,15 @@ export function* getThumbPathsOnDropbox() {
     const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links
-      yield put(thumbsLoaded({ gallery, album, newMemories: linkedMemories, page }));
+      yield put(thumbsLoaded({
+        gallery, album, newMemories: linkedMemories, page,
+      }));
       return;
     }
 
-    yield put(nextPageSuccess({ gallery, album, newMemories: linkedMemories, page }));
+    yield put(nextPageSuccess({
+      gallery, album, newMemories: linkedMemories, page,
+    }));
   } catch (error) {
     yield put(nextPageError(normalizeError(error)));
   }

@@ -10,7 +10,9 @@ import List from 'components/List';
 import ListItem from 'components/ListItem';
 import LoadingIndicator from 'components/LoadingIndicator';
 
-function GenericList({ loading, error, items, component }) {
+function GenericList({
+  loading, error, items, component,
+}) {
   if (loading) {
     return <List component={LoadingIndicator} />;
   }

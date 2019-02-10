@@ -3,10 +3,9 @@ import { shallow } from 'enzyme';
 
 import PhotoHeader from '../index';
 
-const shallowComponent = (props = {}) =>
-  shallow(
-    <PhotoHeader {...props} />,
-  );
+const shallowComponent = (props = {}) => shallow(
+  <PhotoHeader {...props} />,
+);
 
 describe('<PhotoHeader />', () => {
   it('should show nothing when no current memory', () => {

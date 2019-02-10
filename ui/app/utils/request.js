@@ -56,5 +56,4 @@ export default function request(url, options) {
     .then(checkStatus)
     .then(parseJSON)
     .then(parseTextXml); // *********** HISTORY CUSTOM not React Boilerplate
-
 }

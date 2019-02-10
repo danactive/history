@@ -50,7 +50,7 @@ export default function reducer(state = albumInitialState, action) {
             pageSize: PAGE_SIZE,
             page: action.page,
             list: state.getIn([gallery, album, 'memories']),
-          }) // memories from insertPage is an Array (not Immutable)
+          }), // memories from insertPage is an Array (not Immutable)
         );
     }
 
@@ -61,9 +61,9 @@ export default function reducer(state = albumInitialState, action) {
           fromJS(
             state
               .getIn([gallery, album, 'memories'])
-              .filter((item) => item.id === action.id)[0]
+              .filter(item => item.id === action.id)[0],
           ),
-          {}
+          {},
         );
     }
 
@@ -83,7 +83,7 @@ export default function reducer(state = albumInitialState, action) {
       let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
 
       const carouselEnd = adjacentMemoryIndex >= memories.length;
-      if (carouselEnd) adjacentMemoryIndex = adjacentMemoryIndex - memories.length;
+      if (carouselEnd) adjacentMemoryIndex -= memories.length;
 
       const carouselBegin = adjacentMemoryIndex < 0;
       if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
@@ -95,9 +95,9 @@ export default function reducer(state = albumInitialState, action) {
           fromJS(
             state
               .getIn([gallery, album, 'memories'])
-              .filter((item) => item.id === findIndex)[0]
+              .filter(item => item.id === findIndex)[0],
           ),
-          {}
+          {},
         );
     }
 

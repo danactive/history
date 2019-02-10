@@ -6,12 +6,13 @@ const logger = require('./logger');
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
+
 const isDev = process.env.NODE_ENV !== 'production';
-const ngrok =
-  (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-    ? require('ngrok')
-    : false;
+const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
+  ? require('ngrok')
+  : false;
 const { resolve } = require('path');
+
 const app = express();
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
@@ -36,7 +37,7 @@ app.get('*.js', (req, res, next) => {
 });
 
 // Start your app.
-app.listen(port, host, async err => {
+app.listen(port, host, async (err) => {
   if (err) {
     return logger.error(err.message);
   }
