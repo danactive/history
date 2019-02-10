@@ -24,7 +24,7 @@ tape('Files', { skip: false }, (describe) => {
     let expected;
 
 
-    actual = unit({
+    actual = untest({
       ext: 'jpg',
       mediumType: 'video',
     });
@@ -32,7 +32,7 @@ tape('Files', { skip: false }, (describe) => {
     assert.equal(actual, expected, 'jpg video');
 
 
-    actual = unit({
+    actual = untest({
       ext: 'jpg',
       mediumType: 'image',
     });
@@ -40,7 +40,7 @@ tape('Files', { skip: false }, (describe) => {
     assert.equal(actual, expected, 'jpg image');
 
 
-    actual = unit({
+    actual = untest({
       ext: 'JPG',
       mediumType: 'image',
     });
@@ -48,7 +48,7 @@ tape('Files', { skip: false }, (describe) => {
     assert.equal(actual, expected, 'JPG image');
 
 
-    actual = unit({
+    actual = untest({
       ext: 'JPg',
       mediumType: 'image',
     });

@@ -62,7 +62,7 @@ function getThumbPath(item, gallery) {
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
   const imageFilename = jpgFilenameInsensitive(filename);
-  const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
+  const year = imageFilename.indexOf('-') >= 0 && imageFilename.spltest('-')[0];
   return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
 

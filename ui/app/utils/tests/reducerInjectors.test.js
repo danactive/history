@@ -1,3 +1,4 @@
+/* global beforeEach, describe, expect, jest, test */
 /**
  * Test injectors
  */
@@ -32,7 +33,7 @@ describe('reducer injectors', () => {
       store = configureStore({}, memoryHistory);
     });
 
-    it('should return injectors', () => {
+    test('should return injectors', () => {
       expect(getInjectors(store)).toEqual(
         expect.objectContaining({
           injectReducer: expect.any(Function),
@@ -40,7 +41,7 @@ describe('reducer injectors', () => {
       );
     });
 
-    it('should throw if passed invalid store shape', () => {
+    test('should throw if passed invalid store shape', () => {
       Reflect.deleteProperty(store, 'dispatch');
 
       expect(() => getInjectors(store)).toThrow();
@@ -53,25 +54,25 @@ describe('reducer injectors', () => {
       injectReducer = injectReducerFactory(store, true);
     });
 
-    it('should check a store if the second argument is falsy', () => {
+    test('should check a store if the second argument is falsy', () => {
       const inject = injectReducerFactory({});
 
       expect(() => inject('test', reducer)).toThrow();
     });
 
-    it('it should not check a store if the second argument is true', () => {
+    test('it should not check a store if the second argument is true', () => {
       Reflect.deleteProperty(store, 'dispatch');
 
       expect(() => injectReducer('test', reducer)).not.toThrow();
     });
 
-    it("should validate a reducer and reducer's key", () => {
+    test("should validate a reducer and reducer's key", () => {
       expect(() => injectReducer('', reducer)).toThrow();
       expect(() => injectReducer(1, reducer)).toThrow();
       expect(() => injectReducer(1, 1)).toThrow();
     });
 
-    it('given a store, it should provide a function to inject a reducer', () => {
+    test('given a store, it should provide a function to inject a reducer', () => {
       injectReducer('test', reducer);
 
       const actual = store.getState().get('test');
@@ -80,7 +81,7 @@ describe('reducer injectors', () => {
       expect(actual.toJS()).toEqual(expected.toJS());
     });
 
-    it('should not assign reducer if already existing', () => {
+    test('should not assign reducer if already existing', () => {
       store.replaceReducer = jest.fn();
       injectReducer('test', reducer);
       injectReducer('test', reducer);
@@ -88,7 +89,7 @@ describe('reducer injectors', () => {
       expect(store.replaceReducer).toHaveBeenCalledTimes(1);
     });
 
-    it('should assign reducer if different implementation for hot reloading', () => {
+    test('should assign reducer if different implementation for hot reloading', () => {
       store.replaceReducer = jest.fn();
       injectReducer('test', reducer);
       injectReducer('test', identity);

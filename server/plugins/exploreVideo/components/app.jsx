@@ -29,7 +29,7 @@ class App extends React.Component {
     + `&part=id,snippet&type=video&videoEmbeddable=true&key=${API_KEY}&videoLiscense=any`;
     const keywordAddress = `https://www.googleapis.com/youtube/v3/search?part=snippet&key=${API_KEY}&q=${searchValue}&type=video${order}`;
 
-    const address = (Number(searchValue.split(',')[0])) ? geoAddress : keywordAddress;
+    const address = (Number(searchValue.spltest(',')[0])) ? geoAddress : keywordAddress;
 
     // most views
     // https://www.googleapis.com/youtube/v3/search?part=snippet&order=viewCount&publishedAfter=

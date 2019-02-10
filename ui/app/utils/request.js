@@ -1,3 +1,4 @@
+/* global fetch, window */
 /**
  * Parses the JSON returned by a network request
  *

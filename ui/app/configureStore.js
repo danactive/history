@@ -1,3 +1,4 @@
+/* global window */
 /**
  * Create the store with dynamic reducers
  */

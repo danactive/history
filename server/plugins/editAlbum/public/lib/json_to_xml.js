@@ -11,10 +11,10 @@ util.xml.formatPretty = function (xml) {
 	var contexp = /(<.+>)(.+\n)/g;
 	xml = xml.replace(reg, '$1\n$2$3').replace(wsexp, '$1\n').replace(contexp, '$1\n$2');
 	var formatted = '';
-	var lines = xml.split('\n');
+	var lines = xml.spltest('\n');
 	var indent = 0;
 	var lastType = 'other';
-	// 4 types of tags - single, closing, opening, other (text, doctype, comment) - 4*4 = 16 transitions 
+	// 4 types of tags - single, closing, opening, other (text, doctype, comment) - 4*4 = 16 transitions
 	var transitions = {
 		'single->single': 0,
 		'single->closing': -1,
@@ -63,7 +63,7 @@ util.xml.formatPretty = function (xml) {
 License: http://creativecommons.org/licenses/LGPL/2.1/
 Version: 0.9
 Author:  Stefan Goessner/2006
-Web:     http://goessner.net/ 
+Web:     http://goessner.net/
 */
 
 /* Dan d/l from http://goessner.net/download/prj/jsonxml/
@@ -124,7 +124,7 @@ util.json.convertToXml = function (o, tab) {
 	License: http://creativecommons.org/licenses/LGPL/2.1/
    Version: 0.9
 	Author:  Stefan Goessner/2006
-	Web:     http://goessner.net/ 
+	Web:     http://goessner.net/
 */
 
 /* Dan d/l from http://goessner.net/download/prj/jsonxml/
@@ -298,7 +298,7 @@ util.xml.convertToJsonString = function (xml, tab) {
 	return "{\n" + tab + (tab ? json.replace(/\t/g, tab) : json.replace(/\t|\n/g, "")) + "\n}";
 };
 // http://stackoverflow.com/questions/6507293/convert-xml-to-string-with-jquery
-util.xml.convertToString = function (xmlData) { 
+util.xml.convertToString = function (xmlData) {
 
 	var xmlString;
 	//IE

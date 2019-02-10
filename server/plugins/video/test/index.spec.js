@@ -59,7 +59,7 @@ tape('Verify /video route', { skip: false }, (describe) => {
       }
 
 
-      actual = response.result.video.sources.split(',').length;
+      actual = response.result.video.sources.spltest(',').length;
       expected = 2;
       assert.equal(actual, expected, 'Source elements count');
     } catch (error) {

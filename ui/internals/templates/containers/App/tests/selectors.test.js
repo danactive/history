@@ -1,10 +1,11 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
-import { makeSelectLocation } from 'containers/App/selectors';
+import makeSelectLocation from '../selectors';
 
 describe('makeSelectLocation', () => {
   const locationStateSelector = makeSelectLocation();
-  it('should select the location', () => {
+  test('should select the location', () => {
     const mockedState = fromJS({
       router: { location: { pathname: '/foo' } },
     });

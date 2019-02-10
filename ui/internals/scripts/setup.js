@@ -72,7 +72,7 @@ function dontClearRepo(nl, callback) {
 /**
  * Initializes git again
  */
-function initGit(callback) {
+function initGtest(callback) {
   exec(
     'git init && git add . && git commit -m "Initial commit"',
     addCheckMark.bind(null, callback),
@@ -126,14 +126,14 @@ function installDepsCallback(error) {
   if (error) {
     process.stderr.write(error);
     process.stdout.write('\n');
-    process.exit(1);
+    process.extest(1);
   }
 
   deleteFileInCurrentDir('setup.js', () => {
     if (clearRepo) {
       interval = animateProgress('Initialising new repository');
       process.stdout.write('Initialising new repository');
-      initGit(() => {
+      initGtest(() => {
         clearInterval(interval);
         endProcess();
       });
@@ -147,5 +147,5 @@ function installDepsCallback(error) {
  */
 function endProcess() {
   process.stdout.write('\nDone!');
-  process.exit(0);
+  process.extest(0);
 }

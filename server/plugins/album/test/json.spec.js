@@ -153,32 +153,32 @@ test('Read album XML', { skip: false }, (describe) => {
     let expected;
 
 
-    actual = unit('filename.jpg');
+    actual = untest('filename.jpg');
     expected = 'filename.jpg';
     assert.equal(actual, expected, 'jpg');
 
 
-    actual = unit('filename.JPG');
+    actual = untest('filename.JPG');
     expected = 'filename.JPG';
     assert.equal(actual, expected, 'JPG');
 
 
-    actual = unit('filename.JPg');
+    actual = untest('filename.JPg');
     expected = 'filename.JPg';
     assert.equal(actual, expected, 'JPg');
 
 
-    actual = unit('filename.JPeG');
+    actual = untest('filename.JPeG');
     expected = 'filename.jpg';
     assert.equal(actual, expected, 'JPeG');
 
 
-    actual = unit('filename.jpeg');
+    actual = untest('filename.jpeg');
     expected = 'filename.jpg';
     assert.equal(actual, expected, 'jpeg');
 
 
-    actual = unit('filename.png');
+    actual = untest('filename.png');
     expected = 'filename.jpg';
     assert.equal(actual, expected, 'png');
 

@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import {
   loadGallery,
 } from '../actions';
@@ -8,7 +9,7 @@ import {
 
 describe('GalleryViewPage actions', () => {
   describe('loadGallery', () => {
-    it('has a type of LOAD_GALLERY', () => {
+    test('has a type of LOAD_GALLERY', () => {
       const gallery = 'default';
       const expected = {
         type: LOAD_GALLERY,

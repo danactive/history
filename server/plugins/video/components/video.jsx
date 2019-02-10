@@ -18,7 +18,7 @@ function segmentVideoPath({ componentName, video }) {
 }
 
 function renderComponent({ componentName, video }) {
-  return video.sources.split(',').map(segmentVideoPath({ componentName, video }));
+  return video.sources.spltest(',').map(segmentVideoPath({ componentName, video }));
 }
 
 function Video({ video }) {

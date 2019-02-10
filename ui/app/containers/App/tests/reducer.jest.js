@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
 import albumReducer from '../reducer';
@@ -7,7 +8,7 @@ import {
 } from '../../AlbumViewPage/constants';
 
 describe('appReducer', () => {
-  it('should return the initial state', () => {
+  test('should return the initial state', () => {
     const action = {};
     const state = undefined;
     const expected = fromJS({
@@ -50,7 +51,7 @@ describe('appReducer', () => {
       );
     }
 
-    it('should be one after ID two', () => {
+    test('should be one after ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: NEXT_MEMORY,
@@ -64,7 +65,7 @@ describe('appReducer', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should be one before ID two', () => {
+    test('should be one before ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: PREV_MEMORY,
@@ -78,7 +79,7 @@ describe('appReducer', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should be two after ID two', () => {
+    test('should be two after ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: NEXT_MEMORY,
@@ -92,7 +93,7 @@ describe('appReducer', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should be two before ID two', () => {
+    test('should be two before ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: PREV_MEMORY,

@@ -32,7 +32,7 @@ function SaveToJson(event) {
       if (xPath.indexOf('.') === -1) {
         jsonPhoto[xPath] = fieldValue;
       } else { // dot syntax found
-        xmlNameArray = xPath.split('.');
+        xmlNameArray = xPath.spltest('.');
         if (!jsonPhoto[xmlNameArray[0]]) { // create object if missing from JSON
           jsonPhoto[xmlNameArray[0]] = {};
         }

@@ -25,7 +25,7 @@ const album = {
       },
       GetDom: () => {
         if (!album.form.schema.dom) {
-          album.form.schema.Init();
+          album.form.schema.Intest();
         }
 
         return album.form.schema.dom;
@@ -102,7 +102,7 @@ const album = {
         if (xmlName.indexOf('.') === -1) {
           fieldValue = data[xmlName];
         } else { // dot syntax found
-          const xmlNameArray = xmlName.split('.');
+          const xmlNameArray = xmlName.spltest('.');
           if (data[xmlNameArray[0]]) {
             fieldValue = data[xmlNameArray[0]][xmlNameArray[1]];
           }
@@ -118,7 +118,7 @@ const album = {
     },
     SplitGeoOnPaste: function SplitGeoOnPaste() {
       if (this.value.indexOf(',') !== -1) {
-        const geocode = this.value.split(',');
+        const geocode = this.value.spltest(',');
         $('#geo_lat').val(geocode[0].trim());
         $('#geo_lon').val(geocode[1].trim());
       }

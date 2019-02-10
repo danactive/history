@@ -6,7 +6,7 @@
 
 import { fromJS } from 'immutable';
 
-import { normalizeError } from '../../utils/error';
+import normalizeError from '../../utils/error';
 
 import {
   LOAD_ALBUM,
