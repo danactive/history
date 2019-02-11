@@ -1,4 +1,4 @@
-/* global describe, expect, it, shallow */
+/* global describe, expect, test, shallow */
 import React from 'react';
 
 import SlippyPhoto from '../index';

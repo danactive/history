@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global describe, expect, jest, test */
 /**
  * Testing our Button component
  */

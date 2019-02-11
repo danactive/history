@@ -1,15 +1,14 @@
-/**
- *
- * LocaleToggle
- *
- */
-
 import React from 'react';
 
 import Select from './Select';
 import ToggleOption from '../ToggleOption';
 
-function Toggle({ messages, onToggle, value, values }) {
+const Toggle = ({
+  messages,
+  onToggle,
+  value,
+  values,
+}) => {
   let content = <option>--</option>;
 
   // If we have items, render them
@@ -24,6 +23,6 @@ function Toggle({ messages, onToggle, value, values }) {
       {content}
     </Select>
   );
-}
+};
 
 export default Toggle;
