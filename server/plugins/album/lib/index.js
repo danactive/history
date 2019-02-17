@@ -1,5 +1,5 @@
 /* global require */
-const Dropbox = require('dropbox');
+const { Dropbox } = require('dropbox');
 
 const { createTransform } = require('./dropbox');
 const jsonAlbum = require('./json');

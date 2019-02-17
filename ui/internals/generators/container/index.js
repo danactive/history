@@ -178,7 +178,7 @@ module.exports = {
     if (data.wantLoadable) {
       actions.push({
         type: 'add',
-        path: '../../app/containers/{{properCase name}}/Loadable.js',
+        path: '../../app/containers/{{properCase name}}/Loadable.jsx',
         templateFile: './component/loadable.js.hbs',
         abortOnFail: true,
       });

@@ -1,4 +1,4 @@
-import Dropbox from 'dropbox';
+import { Dropbox } from 'dropbox';
 import {
   call,
   put,

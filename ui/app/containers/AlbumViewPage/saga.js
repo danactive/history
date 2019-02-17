@@ -1,4 +1,4 @@
-import Dropbox from 'dropbox';
+import { Dropbox } from 'dropbox';
 import {
   all, call, put, select, takeEvery,
 } from 'redux-saga/effects';

@@ -1,5 +1,5 @@
 /* global describe, expect, test */
-import Dropbox from 'dropbox';
+import { Dropbox } from 'dropbox';
 
 import {
   all, call, put, select,

@@ -5,3 +5,5 @@ ui/node_modules
 
 Loadable.jsx
 /ui/app/containers/App/index.jsx
+/ui/app/app.jsx
+/ui/internals/templates/app.jsx

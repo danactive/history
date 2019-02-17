@@ -1,7 +1,20 @@
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
-
 import getInjectors from './sagaInjectors';
+
+function defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    });
+  } else {
+    obj[key] = value; // eslint-disable-line no-param-reassign
+  }
+  return obj;
+}
 
 /**
  * Dynamically injects a saga, passes component's props as saga arguments
@@ -14,31 +27,48 @@ import getInjectors from './sagaInjectors';
  *   - constants.ONCE_TILL_UNMOUNT—behaves like 'RESTART_ON_REMOUNT' but never runs it again.
  *
  */
+
 export default ({ key, saga, mode }) => (WrappedComponent) => {
   class InjectSaga extends React.Component {
+    constructor(...args) {
+      super(...args);
+
+      const { store } = this.context;
+
+      defineProperty(this, 'injectors', getInjectors(store));
+    }
+
     componentWillMount() {
       const { injectSaga } = this.injectors;
-
-      injectSaga(key, { saga, mode }, this.props);
+      injectSaga(
+        key,
+        {
+          saga,
+          mode,
+        },
+        this.props,
+      );
     }
 
     componentWillUnmount() {
       const { ejectSaga } = this.injectors;
-
       ejectSaga(key);
     }
 
     render() {
-      return <WrappedComponent {...this.props} />;
+      return React.createElement(WrappedComponent, this.props);
     }
   }
 
-  InjectSaga.injectors = getInjectors(this.context.store);
-  InjectSaga.WrappedComponent = WrappedComponent;
-  InjectSaga.displayName = `withSaga(${WrappedComponent.displayName
-  || WrappedComponent.name
-  || 'Component'})`;
+  defineProperty(InjectSaga, 'WrappedComponent', WrappedComponent);
 
+  defineProperty(
+    InjectSaga,
+    'displayName',
+    `withSaga(${WrappedComponent.displayName
+    || WrappedComponent.name
+    || 'Component'})`,
+  );
 
   return hoistNonReactStatics(InjectSaga, WrappedComponent);
 };
