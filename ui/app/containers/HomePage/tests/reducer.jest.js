@@ -1,3 +1,4 @@
+/* global beforeEach, describe, expect, test */
 import homeReducer, { initialState } from '../reducer';
 
 describe('homeReducer', () => {
@@ -6,7 +7,7 @@ describe('homeReducer', () => {
     state = initialState;
   });
 
-  it('should return the initial state', () => {
+  test('should return the initial state', () => {
     const expectedResult = state;
     expect(homeReducer(undefined, {})).toEqual(expectedResult);
   });

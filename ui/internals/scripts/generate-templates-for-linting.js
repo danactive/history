@@ -29,7 +29,7 @@ const reportErrorsFor = title => err => {
       prettyStringify(err),
     ),
   );
-  process.exit(1);
+  process.extest(1);
 };
 
 // Generated tests are designed to fail, which would in turn fail CI builds
