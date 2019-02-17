@@ -46,6 +46,10 @@ export default ({ key, reducer }) => (WrappedComponent) => {
 
   defineProperty(ReducerInjector, 'WrappedComponent', WrappedComponent);
 
+  defineProperty(ReducerInjector, 'contextTypes', {
+    store: () => {},
+  });
+
   defineProperty(
     ReducerInjector,
     'displayName',

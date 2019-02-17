@@ -62,6 +62,10 @@ export default ({ key, saga, mode }) => (WrappedComponent) => {
 
   defineProperty(InjectSaga, 'WrappedComponent', WrappedComponent);
 
+  defineProperty(InjectSaga, 'contextTypes', {
+    store: () => {},
+  });
+
   defineProperty(
     InjectSaga,
     'displayName',
