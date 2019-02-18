@@ -51,7 +51,7 @@ export const makeSelectNextPage = () => createSelector(
 
 export const makeSelectMoreThumbs = () => createSelector(
   selectPage,
-  (pageState) => pageState.get('hasMore')
+  pageState => pageState.get('hasMore'),
 );
 
 export const makeSelectCurrentMemory = () => createSelector(
@@ -59,5 +59,5 @@ export const makeSelectCurrentMemory = () => createSelector(
   (albumState) => {
     const currentMemory = albumState.get('currentMemory');
     return (currentMemory) ? currentMemory.toJS() : null;
-  }
+  },
 );

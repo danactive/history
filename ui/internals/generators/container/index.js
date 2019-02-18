@@ -23,7 +23,7 @@ module.exports = {
       name: 'name',
       message: 'What should it be called?',
       default: 'Form',
-      validate: value => {
+      validate: (value) => {
         if (/.+/.test(value)) {
           return componentExists(value)
             ? 'A component or container with this name already exists'
@@ -65,7 +65,7 @@ module.exports = {
       message: 'Do you want to load resources asynchronously?',
     },
   ],
-  actions: data => {
+  actions: (data) => {
     // Generate index.js and index.test.js
     var componentTemplate; // eslint-disable-line no-var
 
@@ -178,7 +178,7 @@ module.exports = {
     if (data.wantLoadable) {
       actions.push({
         type: 'add',
-        path: '../../app/containers/{{properCase name}}/Loadable.js',
+        path: '../../app/containers/{{properCase name}}/Loadable.jsx',
         templateFile: './component/loadable.js.hbs',
         abortOnFail: true,
       });

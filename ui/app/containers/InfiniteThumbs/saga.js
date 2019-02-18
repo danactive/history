@@ -1,7 +1,9 @@
-import Dropbox from 'dropbox';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { Dropbox } from 'dropbox';
+import {
+  call, put, select, takeEvery,
+} from 'redux-saga/effects';
 
-import { normalizeError } from 'utils/error';
+import normalizeError from '../../utils/error';
 
 import { CHOOSE_MEMORY } from '../App/constants';
 import { selectCurrentMemory } from '../App/selectors';
@@ -38,7 +40,9 @@ export function* getPhotoPathsOnDropbox() {
     const { filename, id } = currentMemory;
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsPhotoXmlPath({ gallery, filename }));
 
-    yield put(photoLoadSuccess({ gallery, album, id, photoLink: xmlUrl.link }));
+    yield put(photoLoadSuccess({
+      gallery, album, id, photoLink: xmlUrl.link,
+    }));
   } catch (error) {
     yield put(photoLoadError(normalizeError(error)));
   }

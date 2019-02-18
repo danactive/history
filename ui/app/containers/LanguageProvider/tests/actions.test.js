@@ -1,10 +1,11 @@
-import { changeLocale } from '../actions';
+/* global describe, expect, test */
+import changeLocale from '../actions';
 
-import { CHANGE_LOCALE } from '../constants';
+import CHANGE_LOCALE from '../constants';
 
 describe('LanguageProvider actions', () => {
   describe('Change Local Action', () => {
-    it('has a type of CHANGE_LOCALE', () => {
+    test('has a type of CHANGE_LOCALE', () => {
       const expected = {
         type: CHANGE_LOCALE,
         locale: 'de',

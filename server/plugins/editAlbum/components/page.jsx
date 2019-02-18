@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 function textField({ label, tabIndex }) {
@@ -126,15 +125,5 @@ function Page(props) {
     </html>
   );
 }
-
-textField.propTypes = {
-  label: propTypes.string.isRequired,
-  tabIndex: propTypes.number.isRequired,
-};
-
-Page.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired,
-  state: propTypes.string.isRequired,
-};
 
 module.exports = Page;

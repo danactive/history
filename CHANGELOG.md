@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.5.0](https://github.com/danactive/history/compare/v3.4.0...v3.5.0) (2019-02-18)
+
+
+### Bug Fixes
+
+* **Album View:** Widen column to fullscreen ([6f3187a](https://github.com/danactive/history/commit/6f3187a))
+* **Browser:** Verified UI and root work in browser ([a630faf](https://github.com/danactive/history/commit/a630faf))
+* **CI:** Rename UI package for Travis step ([b4b5de2](https://github.com/danactive/history/commit/b4b5de2))
+* **Coordinates:** Update geo property to coordinates in the UI ([32a2611](https://github.com/danactive/history/commit/32a2611))
+* **Infinite Thumbs:** Move to global reducer and remove repository loading ([559fb87](https://github.com/danactive/history/commit/559fb87))
+* **Lint:** Apply more to Airbnb lint rules ([30661f7](https://github.com/danactive/history/commit/30661f7))
+* **package:** update babel-eslint to version 10.0.0 ([cf10651](https://github.com/danactive/history/commit/cf10651))
+* **package:** update babel-eslint to version 10.0.0 ([eef5176](https://github.com/danactive/history/commit/eef5176))
+* **package:** update mapbox-gl to version 0.49.0 ([1a38035](https://github.com/danactive/history/commit/1a38035))
+* **package:** update mapbox-gl to version 0.51.0 ([e26ee7d](https://github.com/danactive/history/commit/e26ee7d))
+* **package:** update react-intl to version 2.6.0 ([815aa9d](https://github.com/danactive/history/commit/815aa9d))
+* **package:** update react-intl to version 2.6.0 ([ebb14fc](https://github.com/danactive/history/commit/ebb14fc))
+* **package:** update reselect to version 4.0.0 ([d7ea0a9](https://github.com/danactive/history/commit/d7ea0a9))
+* **React Boilerplate:** Lint with auto fix ([8b7306b](https://github.com/danactive/history/commit/8b7306b))
+* **React Boilerplate:** Prop-Types removal ([894aede](https://github.com/danactive/history/commit/894aede))
+* **Slippy Map:** Hide marker with approximate coordiantes for XML schema v2.1 ([2cd58b1](https://github.com/danactive/history/commit/2cd58b1))
+* **Slippy Map:** Only allow one arrow keyboard press. Prevent rapid fire ([5112c8d](https://github.com/danactive/history/commit/5112c8d))
+* **Slippy Map:** Prevent missing geo coordinates from plotting on Mapbox ([3e75edf](https://github.com/danactive/history/commit/3e75edf))
+* **Slippy Map:** update test to pass ([bb5307a](https://github.com/danactive/history/commit/bb5307a))
+* **Split Screen:** Show more photo less map ([63f7868](https://github.com/danactive/history/commit/63f7868))
+
+
+### Features
+
+* **Album:** Add reference for hyperlink: Youtube ([ad33c38](https://github.com/danactive/history/commit/ad33c38))
+* **GitHub Template:** Add template for Feature request ([2375792](https://github.com/danactive/history/commit/2375792))
+* **Header:** Remove banner image ([23badd0](https://github.com/danactive/history/commit/23badd0))
+* **package:** Remove yarn with npm ([90aefa9](https://github.com/danactive/history/commit/90aefa9))
+* **Photo Header:** Add location, city, and description ([cd32a26](https://github.com/danactive/history/commit/cd32a26))
+* **React Boilerplate:** Lint and Tests pass ([80eb38c](https://github.com/danactive/history/commit/80eb38c))
+* **React Boilerplate:** Update from v3.6 to v3.7 ([cd4272a](https://github.com/danactive/history/commit/cd4272a))
+* **Slippy Map:** Handle photos with approximate coordiantes for XML schema v2.1 ([a70ad76](https://github.com/danactive/history/commit/a70ad76))
+* **Slippy Map:** Update colour to swatch Vitamin C ([e9807ae](https://github.com/danactive/history/commit/e9807ae))
+* **Slippy Photo:** Display photo on black background with touch pad interaction (warning static dimensions which resizes photo) ([37c6765](https://github.com/danactive/history/commit/37c6765))
+* **Slippy Photo:** Duplicate Slippy Map for Photo ([a7e4288](https://github.com/danactive/history/commit/a7e4288))
+
+
+
 <a name="3.4.0"></a>
 # [3.4.0](https://github.com/danactive/history/compare/v3.3.0...v3.4.0) (2018-09-09)
 
