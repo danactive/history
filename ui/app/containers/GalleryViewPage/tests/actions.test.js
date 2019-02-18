@@ -1,18 +1,21 @@
+/* global describe, expect, test */
+import {
+  loadGallery,
+} from '../actions';
 
 import {
-  defaultAction,
-} from '../actions';
-import {
-  DEFAULT_ACTION,
+  LOAD_GALLERY,
 } from '../constants';
 
 describe('GalleryViewPage actions', () => {
-  describe('Default Action', () => {
-    it('has a type of DEFAULT_ACTION', () => {
+  describe('loadGallery', () => {
+    test('has a type of LOAD_GALLERY', () => {
+      const gallery = 'default';
       const expected = {
-        type: DEFAULT_ACTION,
+        type: LOAD_GALLERY,
+        gallery,
       };
-      expect(defaultAction()).toEqual(expected);
+      expect(loadGallery(gallery)).toEqual(expected);
     });
   });
 });

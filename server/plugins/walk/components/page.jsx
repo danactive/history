@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const Contents = require('./contents.jsx');
@@ -24,9 +23,5 @@ function Page({ files }) {
     </html>
   );
 }
-
-Page.propTypes = {
-  files: propTypes.arrayOf(propTypes.shape()).isRequired,
-};
 
 module.exports = Page;
