@@ -1,6 +1,6 @@
 {
   "name": "history",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "scripts": {
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "npm run lint:ui && npm run lint:js && npm run lint:docs",
