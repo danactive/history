@@ -1,21 +1,23 @@
 /* global document */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
 
-import InfiniteThumbs from '../InfiniteThumbs/Loadable';
-import PhotoHeader from '../../components/PhotoHeader/Loadable';
+import InfiniteThumbs from '../InfiniteThumbs';
+import PhotoHeader from '../../components/PhotoHeader';
 import SplitScreen from './SplitScreen';
 
-import injectSaga from '../../utils/injectSaga';
 import injectReducer from '../../utils/injectReducer';
+import injectSaga from '../../utils/injectSaga';
+
 import {
   chooseAdjacentMemory,
   loadAlbum,
 } from './actions';
+import albumReducer from '../App/reducer';
+import pageReducer from './reducer';
 import {
   makeSelectAlbumLoading,
   makeSelectAlbumError,
@@ -23,11 +25,9 @@ import {
   makeSelectCurrentMemory,
   makeSelectMemories,
 } from './selectors';
-import pageReducer from './reducer';
-import albumReducer from '../App/reducer';
 import saga from './saga';
 
-export class AlbumViewPage extends React.PureComponent {
+class AlbumViewPage extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -62,64 +62,50 @@ export class AlbumViewPage extends React.PureComponent {
 
   render() {
     const {
-      albumLoading,
       albumError,
+      albumLoading,
       albumName,
       currentMemory,
       memories,
     } = this.props;
 
     return (
-      <div>
+      <main>
         <Helmet>
           <title>{`${albumName}  Album`}</title>
         </Helmet>
-        <PhotoHeader currentMemory={currentMemory} />
+
+        <PhotoHeader
+          currentMemory={currentMemory}
+        />
+
         <SplitScreen
           currentMemory={currentMemory}
           items={memories}
         />
-        <InfiniteThumbs loading={albumLoading} error={albumError} items={memories} />
-      </div>
+
+        <InfiniteThumbs
+          error={albumError}
+          items={memories}
+          loading={albumLoading}
+        />
+      </main>
     );
   }
 }
 
-AlbumViewPage.propTypes = {
-  adjacentMemory: PropTypes.func.isRequired,
-  albumLoading: PropTypes.bool,
-  albumName: PropTypes.string,
-  albumError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-  currentMemory: PropTypes.object,
-  match: PropTypes.shape({ // router
-    params: PropTypes.shape({
-      album: PropTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
-  memories: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  location: PropTypes.shape({ // router
-    search: PropTypes.string.isRequired,
-  }).isRequired,
-  onLoad: PropTypes.func.isRequired,
-};
-
 const mapStateToProps = createStructuredSelector({
-  albumLoading: makeSelectAlbumLoading(),
   albumError: makeSelectAlbumError(),
+  albumLoading: makeSelectAlbumLoading(),
   albumName: makeSelectAlbumName(),
   currentMemory: makeSelectCurrentMemory(),
   memories: makeSelectMemories(),
 });
 
-function mapDispatchToProps(dispatch) {
-  return {
-    onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
-    adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
-  };
-}
+const mapDispatchToProps = dispatch => ({
+  onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
+  adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
+});
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 const withPageReducer = injectReducer({ key: 'albumViewPage', reducer: pageReducer });

@@ -1,11 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 
 import ListItem from '../../components/ListItem';
-import { capitalize } from '../../utils/strings';
+import capitalize from '../../utils/strings';
 
 function removePrefix(name) {
   return name.replace(/gallery-/gi, '');
@@ -21,12 +20,6 @@ function GalleryListItem({ item }) {
     <ListItem key={`gallery-list-item-${item.id}`} item={content} />
   );
 }
-
-GalleryListItem.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
-  item: PropTypes.object,
-};
-
 
 function mapDispatchToProps(dispatch) {
   return {

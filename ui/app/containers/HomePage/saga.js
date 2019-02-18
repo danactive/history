@@ -1,11 +1,10 @@
-import Dropbox from 'dropbox';
+import { Dropbox } from 'dropbox';
 import {
   call,
   put,
   takeLatest,
 } from 'redux-saga/effects';
 
-import { reposLoaded, repoLoadingError } from '../App/actions';
 import { galleriesLoaded, galleriesLoadingError } from './actions';
 import { LOAD_GALLERIES } from './constants';
 
