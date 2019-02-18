@@ -1,4 +1,4 @@
-/* global describe, expect, jest, it, shallow */
+/* global describe, expect, test */
 import {
   transformMapOptions,
   transformSourceOptions,
@@ -27,7 +27,7 @@ const getFeature = (params) => {
 
 describe('<SlippyMap /> options', () => {
   describe('transformSourceOptions', () => {
-    it('should return a GeoJSON Feature Collection', () => {
+    test('should return a GeoJSON Feature Collection', () => {
       expect.hasAssertions();
 
       const received = transformSourceOptions().geoJsonSource.data;
@@ -35,7 +35,7 @@ describe('<SlippyMap /> options', () => {
       expect(received).toEqual(expected);
     });
 
-    it('should return a GeoJSON Feature Collection with Feature', () => {
+    test('should return a GeoJSON Feature Collection with Feature', () => {
       expect.hasAssertions();
 
       const received = transformSourceOptions({ items: [{ coordinates: [1, 2] }] }).geoJsonSource.data;
@@ -44,7 +44,7 @@ describe('<SlippyMap /> options', () => {
       expect(received).toEqual(expected);
     });
 
-    it('should return a GeoJSON Feature Collection with suppressed Feature due to missing lat, long', () => {
+    test('should return a GeoJSON Feature Collection with suppressed Feature due to missing lat, long', () => {
       expect.hasAssertions();
 
       const received = transformSourceOptions({ items: [{ coordinates: [] }] }).geoJsonSource.data;
@@ -52,7 +52,7 @@ describe('<SlippyMap /> options', () => {
       expect(received).toEqual(expected);
     });
 
-    it('should return a GeoJSON Feature Collection with suppressed Feature due to NaN, NaN', () => {
+    test('should return a GeoJSON Feature Collection with suppressed Feature due to NaN, NaN', () => {
       expect.hasAssertions();
 
       const received = transformSourceOptions({ items: [{ coordinates: [NaN, NaN] }] }).geoJsonSource.data;
@@ -60,7 +60,7 @@ describe('<SlippyMap /> options', () => {
       expect(received).toEqual(expected);
     });
 
-    it('should return a GeoJSON Feature Collection with Feature and suppressed Feature', () => {
+    test('should return a GeoJSON Feature Collection with Feature and suppressed Feature', () => {
       expect.hasAssertions();
 
       const received = transformSourceOptions({ items: [{ coordinates: [1, 2] }, { coordinates: [] }] }).geoJsonSource.data;
@@ -76,7 +76,7 @@ describe('<SlippyMap /> options', () => {
       expect(received).toEqual(value);
     };
 
-    it('should not have a centre and zoom', () => {
+    test('should not have a centre and zoom', () => {
       const testData = [
         undefined,
         [0],
@@ -91,7 +91,7 @@ describe('<SlippyMap /> options', () => {
       testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
 
-    it('should have a centre and zoom', () => {
+    test('should have a centre and zoom', () => {
       const testData = [
         [1, 1],
         [-12, 34],
@@ -106,7 +106,7 @@ describe('<SlippyMap /> options', () => {
       testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [17]));
     });
 
-    it('should have not a centre and zoom', () => {
+    test('should have not a centre and zoom', () => {
       const testData = [
         [null, null],
         [undefined, undefined],
@@ -118,7 +118,7 @@ describe('<SlippyMap /> options', () => {
       testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
 
-    it('should have not a centre and zoom', () => {
+    test('should have not a centre and zoom', () => {
       const testData = [
         [null, null],
         [undefined, undefined],

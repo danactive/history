@@ -1,4 +1,4 @@
-/* global __dirname, require */
+/* global require */
 
 const gallery = require('../../gallery/lib/gallery');
 
