@@ -1,3 +1,4 @@
+/* global beforeEach, describe, expect, test */
 import { fromJS } from 'immutable';
 
 import pageReducer from '../reducer';
@@ -28,19 +29,19 @@ describe('pageReducer', () => {
     });
   });
 
-  it('should return the initial state', () => {
+  test('should return the initial state', () => {
     const expected = state;
     expect(pageReducer(undefined, {})).toEqual(expected);
   });
 
-  it('should handle the loadAlbum action correctly', () => {
+  test('should handle the loadAlbum action correctly', () => {
     const received = pageReducer(state, loadAlbum(`?gallery=${fixtures.gallery}&another=false`, 'sample'));
     const expected = state.set('albumLoading', true);
 
     expect(received).toEqual(expected);
   });
 
-  it('should handle the albumLoadSuccess action correctly', () => {
+  test('should handle the albumLoadSuccess action correctly', () => {
     const received = pageReducer(state, albumLoadSuccess(fixtures.gallery, 'sample'));
     const expected = state
       .set('albumLoading', false)
@@ -51,7 +52,7 @@ describe('pageReducer', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should handle the albumLoadError action correctly', () => {
+  test('should handle the albumLoadError action correctly', () => {
     const received = pageReducer(state, albumLoadError(fixtures.error));
     const expected = state
       .set('albumError', fixtures.error)
@@ -60,7 +61,7 @@ describe('pageReducer', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should handle the nextPageSuccess action correctly', () => {
+  test('should handle the nextPageSuccess action correctly', () => {
     const args = {
       gallery: fixtures.gallery,
       thumbs: fixtures.thumbs,
@@ -77,7 +78,7 @@ describe('pageReducer', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should handle the nextPageError action correctly', () => {
+  test('should handle the nextPageError action correctly', () => {
     const received = pageReducer(state, nextPageError(fixtures.error));
     const expected = state
       .set('thumbsError', fixtures.error)
@@ -86,7 +87,7 @@ describe('pageReducer', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should handle the thumbsLoaded action correctly', () => {
+  test('should handle the thumbsLoaded action correctly', () => {
     const received = pageReducer(state, thumbsLoaded(fixtures.error));
     const expected = state
       .set('thumbsLoading', false)

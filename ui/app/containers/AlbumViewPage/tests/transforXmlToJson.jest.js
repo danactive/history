@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import { JSDOM } from 'jsdom';
 
 import { parseItemNode } from '../transformXmlToJson';
@@ -10,7 +11,7 @@ describe('View Album - Transform XML 2.0 to JSON', () => {
     return json;
   }
 
-  it('should transform to regular JSON schema', async () => {
+  test('should transform to regular JSON schema', async () => {
     const received = await getItem();
     const expected = {
       caption: 'Airport',
@@ -38,7 +39,7 @@ describe('View Album - Transform XML 2.1 to JSON', () => {
     return json;
   }
 
-  it('should transform to regular JSON schema', async () => {
+  test('should transform to regular JSON schema', async () => {
     const received = await getItem();
     const expected = {
       caption: 'Airport',
