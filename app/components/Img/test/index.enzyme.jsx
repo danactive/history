@@ -35,7 +35,7 @@ test('Component - <Img />', (describe) => {
 
   describe.test('should not have a className attribute', (assert) => {
     const actual = renderComponent().prop('className');
-    const expected = null;
+    const expected = undefined;
     assert.equal(actual, expected);
     assert.end();
   });

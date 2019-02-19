@@ -11,10 +11,13 @@ import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
+import GlobalStyle from '../../global-styles';
+
 const AppWrapper = styled.div`
   margin: 0 auto;
   display: flex;
   min-height: 100%;
+  padding: 0 16px;
   flex-direction: column;
 `;
 
@@ -34,6 +37,7 @@ export default function App() {
         <Route path="" component={NotFoundPage} />
       </Switch>
       <Footer />
+      <GlobalStyle />
     </AppWrapper>
   );
 }

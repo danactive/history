@@ -1,6 +1,4 @@
 /* global URL, window */
-
-const propTypes = require('prop-types');
 const React = require('react');
 
 class SearchBar extends React.Component {
@@ -93,9 +91,5 @@ class SearchBar extends React.Component {
     );
   }
 }
-
-SearchBar.propTypes = {
-  onSearchChange: propTypes.func.isRequired,
-};
 
 module.exports = SearchBar;

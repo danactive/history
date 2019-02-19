@@ -11,7 +11,7 @@ function parseFromNode(ascendant) {
 
 export function parseItemNode(item) {
   const parseNode = parseFromNode(item);
-  let coordinateAccuracy = Number(parseNode('accuracy'));
+  const coordinateAccuracy = Number(parseNode('accuracy'));
 
   const object = {
     id: item.getAttribute('id'),
