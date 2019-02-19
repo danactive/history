@@ -1,17 +1,16 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
-import { makeSelectLocation } from '../selectors';
+import makeSelectLocation from '../selectors';
 
 describe('makeSelectLocation', () => {
-  it('should select the location', () => {
-    const route = fromJS({
-      location: { pathname: '/foo' },
-    });
+  const locationStateSelector = makeSelectLocation();
+  test('should select the location', () => {
     const mockedState = fromJS({
-      route,
+      router: { location: { pathname: '/foo' } },
     });
-    expect(makeSelectLocation()(mockedState)).toEqual(
-      route.get('location').toJS(),
+    expect(locationStateSelector(mockedState)).toEqual(
+      mockedState.getIn(['router', 'location']).toJS(),
     );
   });
 });

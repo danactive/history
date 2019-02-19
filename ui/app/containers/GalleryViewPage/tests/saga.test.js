@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 /**
  * Test  sagas
  */
@@ -9,7 +10,7 @@
 // const generator = defaultSaga();
 
 describe('defaultSaga Saga', () => {
-  it('Expect to have unit tests specified', () => {
+  test('Expect to have unit tests specified', () => {
     expect(true).toEqual(true);
   });
 });

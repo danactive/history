@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
 import albumReducer from '../reducer';
@@ -6,8 +7,8 @@ import {
   NEXT_MEMORY,
 } from '../../AlbumViewPage/constants';
 
-describe('albumReducer', () => {
-  it('should return the initial state', () => {
+describe('appReducer', () => {
+  test('should return the initial state', () => {
     const action = {};
     const state = undefined;
     const expected = fromJS({
@@ -46,11 +47,11 @@ describe('albumReducer', () => {
           { id: 1 },
           { id: 2 },
           { id: 3 },
-        ]
+        ],
       );
     }
 
-    it('should be one after ID two', () => {
+    test('should be one after ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: NEXT_MEMORY,
@@ -64,7 +65,7 @@ describe('albumReducer', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should be one before ID two', () => {
+    test('should be one before ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: PREV_MEMORY,
@@ -73,12 +74,12 @@ describe('albumReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 1,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });
 
-    it('should be two after ID two', () => {
+    test('should be two after ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: NEXT_MEMORY,
@@ -87,12 +88,12 @@ describe('albumReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 1,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });
 
-    it('should be two before ID two', () => {
+    test('should be two before ID two', () => {
       const stateWithArrayMemories = getState();
       const action = {
         type: PREV_MEMORY,
@@ -101,7 +102,7 @@ describe('albumReducer', () => {
       const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
       const expected = fromJS({
         id: 3,
-      })
+      });
 
       expect(actual).toEqual(expected);
     });
