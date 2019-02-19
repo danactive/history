@@ -1,5 +1,4 @@
 import dotProp from 'dot-prop';
-import PropTypes from 'prop-types';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
@@ -17,16 +16,14 @@ import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
-function showAlbumError(error) {
+const showAlbumError = (error) => {
   const message = dotProp.get(error, 'ui.title', error.message);
   return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
-}
+};
 
-function showThumbsError(error) {
-  return <div>{error.ui.title}</div>;
-}
+const showThumbsError = error => <div>{error.ui.title}</div>;
 
-function InfiniteThumbs(props) {
+const InfiniteThumbs = (props) => {
   const {
     loading,
     error: albumError,
@@ -78,19 +75,6 @@ function InfiniteThumbs(props) {
       {html}
     </InfiniteScroll>
   );
-}
-
-InfiniteThumbs.propTypes = {
-  loading: PropTypes.bool,
-  error: PropTypes.any,
-  items: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  hasMore: PropTypes.bool,
-  nextPage: PropTypes.func.isRequired,
-  selectThumb: PropTypes.func.isRequired,
-  thumbsError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
 };
 
 const mapStateToProps = createStructuredSelector({

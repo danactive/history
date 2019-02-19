@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import {
   chooseMemory,
 } from '../actions';
@@ -6,9 +7,9 @@ import {
   CHOOSE_MEMORY,
 } from '../constants';
 
-describe('InfiniteThumbs actions', () => {
+describe('App Actions', () => {
   describe('Choose memory', () => {
-    it('has will request with a type of CHOOSE_MEMORY', () => {
+    test('has will request with a type of CHOOSE_MEMORY', () => {
       const expected = {
         type: CHOOSE_MEMORY,
         id: 911,
