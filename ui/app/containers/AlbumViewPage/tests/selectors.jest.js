@@ -1,3 +1,4 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
 import {
@@ -9,7 +10,7 @@ import {
 } from '../selectors';
 
 describe('Memorized selectors', () => {
-  it('should select the album view page state', () => {
+  test('should select the album view page state', () => {
     const pageState = fromJS({
       albumLoading: false,
     });
@@ -21,7 +22,7 @@ describe('Memorized selectors', () => {
     expect(received).toEqual(expected);
   });
 
-  it('should select the album state', () => {
+  test('should select the album state', () => {
     const albumState = fromJS({
       thumbs: [],
     });
@@ -36,7 +37,7 @@ describe('Memorized selectors', () => {
 
 describe('makeSelectAlbumLoading', () => {
   const albumLoadingSelector = makeSelectAlbumLoading();
-  it('should select the album loading boolean', () => {
+  test('should select the album loading boolean', () => {
     const mockedState = fromJS({
       albumViewPage: {
         albumLoading: false,
@@ -48,7 +49,7 @@ describe('makeSelectAlbumLoading', () => {
 
 describe('makeSelectMemories', () => {
   const memoriesSelector = makeSelectMemories();
-  it('should select the album memories', () => {
+  test('should select the album memories', () => {
     const mockedState = fromJS({
       albums: {
         gallery: 'demo',
@@ -66,7 +67,7 @@ describe('makeSelectMemories', () => {
 });
 
 describe('selectNextPage', () => {
-  it('should select the next page', () => {
+  test('should select the next page', () => {
     const mockedState = fromJS({
       albumViewPage: {
         page: 1,

@@ -1,4 +1,4 @@
-import Dropbox from 'dropbox';
+import { Dropbox } from 'dropbox';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
 import request from '../../utils/request';
