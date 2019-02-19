@@ -1,3 +1,4 @@
+/* global describe, beforeEach, expect, test */
 /**
  * Test injectors
  */
@@ -19,11 +20,11 @@ describe('checkStore', () => {
     };
   });
 
-  it('should not throw if passed valid store shape', () => {
+  test('should not throw if passed valid store shape', () => {
     expect(() => checkStore(store)).not.toThrow();
   });
 
-  it('should throw if passed invalid store shape', () => {
+  test('should throw if passed invalid store shape', () => {
     expect(() => checkStore({})).toThrow();
     expect(() => checkStore({ ...store, injectedSagas: null })).toThrow();
     expect(() => checkStore({ ...store, injectedReducers: null })).toThrow();

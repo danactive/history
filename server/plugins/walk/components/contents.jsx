@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const Placeholder = require('./placeholder');
@@ -34,14 +33,5 @@ function Contents({ files }) {
     </ul>
   );
 }
-
-Contents.propTypes = {
-  files: propTypes.arrayOf(propTypes.shape({
-    ext: propTypes.string,
-    filename: propTypes.string.isRequired,
-    path: propTypes.string.isRequired,
-    mediumType: propTypes.string.isRequired,
-  })).isRequired,
-};
 
 module.exports = Contents;

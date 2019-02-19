@@ -4,9 +4,9 @@
  *
  */
 
-import { CHANGE_LOCALE } from './constants';
+import CHANGE_LOCALE from './constants';
 
-export function changeLocale(languageLocale) {
+export default function changeLocale(languageLocale) {
   return {
     type: CHANGE_LOCALE,
     locale: languageLocale,

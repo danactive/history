@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const Album = require('./album.jsx');
@@ -39,9 +38,5 @@ function Page({ album }) {
     </html>
   );
 }
-
-Page.propTypes = {
-  album: propTypes.shape().isRequired,
-};
 
 module.exports = Page;

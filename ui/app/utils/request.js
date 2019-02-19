@@ -1,13 +1,12 @@
-import 'whatwg-fetch';
-
+/* global fetch, window */
 /**
- * Parses if network response returned is JSON then parse otherwise return raw
+ * Parses the JSON returned by a network request
  *
  * @param  {object} response A response from a network request
  *
- * @return {object}          The parsed JSON, or raw other type from the request
+ * @return {object}          The parsed JSON from the request
  */
-function parseResponse(response) {
+function parseJSON(response) {
   if (response.status === 204 || response.status === 205) {
     return null;
   }
@@ -19,6 +18,7 @@ function parseResponse(response) {
   return response.json();
 }
 
+// *********** HISTORY CUSTOM not React Boilerplate
 // Convert text to XML document or return response
 export function parseTextXml(response) {
   if (typeof response === 'string') {
@@ -55,6 +55,6 @@ function checkStatus(response) {
 export default function request(url, options) {
   return fetch(url, options)
     .then(checkStatus)
-    .then(parseResponse)
-    .then(parseTextXml);
+    .then(parseJSON)
+    .then(parseTextXml); // *********** HISTORY CUSTOM not React Boilerplate
 }

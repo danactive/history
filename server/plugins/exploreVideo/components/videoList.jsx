@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 const VideoListItem = require('./videoListItem.jsx');
 
@@ -14,11 +13,6 @@ const VideoList = (props) => {
       {videoItems}
     </nav>
   );
-};
-
-VideoList.propTypes = {
-  onVideoSelect: propTypes.func.isRequired,
-  videos: propTypes.arrayOf(propTypes.shape()).isRequired,
 };
 
 module.exports = VideoList;
