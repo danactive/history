@@ -1,7 +1,5 @@
-function capitalize(words) {
-  return words.replace(/(?:^|\s)\S/g, (a) => a.toUpperCase());
-}
+// *********** HISTORY CUSTOM not React Boilerplate
 
-export {
-  capitalize,
-};
+const capitalize = words => words.replace(/(?:^|\s)\S/g, a => a.toUpperCase());
+
+export default capitalize;

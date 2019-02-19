@@ -61,7 +61,7 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
     assert.end();
   });
 
-  describe.test('* Title - Wikipedia', (assert) => {
+  describe.test('* Reference - Wikipedia', (assert) => {
     item.ref = {
       name: 'Vancouver_International_Airport',
       source: 'wikipedia',
@@ -71,6 +71,21 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
     const titleHtml = '<a href=\'https://en.wikipedia.org/wiki/Vancouver_International_Airport\' target=\'_blank\'>Wiki</a>';
 
     assert.equal(title, titleHtml, 'Has title with Wikipedia link');
+
+    delete item.ref;
+    assert.end();
+  });
+
+  describe.test('* Reference - YouTube', (assert) => {
+    item.ref = {
+      name: 'YeeCunkIaco',
+      source: 'youtube',
+    };
+    const wrapper = mount(<Thumb item={item} />);
+    const { title } = wrapper.find('a').props();
+    const titleHtml = '<a href=\'https://www.youtube.com/watch?v=YeeCunkIaco\' target=\'_blank\'>YouTube</a>';
+
+    assert.equal(title, titleHtml, 'Has title with YouTube link');
 
     delete item.ref;
     assert.end();

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import SlippyPhoto from '../SlippyPhoto';
@@ -42,21 +41,5 @@ function SplitScreen({ currentMemory, items }) {
 
   return null;
 }
-
-SplitScreen.defaultProps = {
-  currentMemory: null,
-  items: null,
-};
-
-SplitScreen.propTypes = {
-  currentMemory: PropTypes.shape({
-    coordinates: PropTypes.arrayOf(PropTypes.number),
-    photoLink: PropTypes.string,
-    thumbLink: PropTypes.string,
-  }),
-  items: PropTypes.arrayOf(PropTypes.shape({
-    coordinates: PropTypes.arrayOf(PropTypes.number),
-  })),
-};
 
 export default SplitScreen;

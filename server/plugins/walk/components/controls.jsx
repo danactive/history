@@ -1,6 +1,5 @@
 /* global document */
 import moment from 'moment';
-import momentPropTypes from 'react-moment-proptypes';
 import 'react-dates/initialize';
 import { isInclusivelyBeforeDay, SingleDatePicker } from 'react-dates';
 import React from 'react';
@@ -64,15 +63,5 @@ class Controls extends React.Component {
     return assembleControls(dateComponent);
   }
 }
-
-Controls.defaultProps = {
-  date: moment(),
-};
-
-const datePropType = momentPropTypes.momentObj;
-
-Controls.propTypes = {
-  date: datePropType,
-};
 
 module.exports = Controls;

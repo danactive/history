@@ -1,9 +1,10 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
 import { selectLanguage } from '../selectors';
 
 describe('selectLanguage', () => {
-  it('should select the global state', () => {
+  test('should select the global state', () => {
     const globalState = fromJS({});
     const mockedState = fromJS({
       language: globalState,

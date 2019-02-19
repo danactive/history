@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
@@ -46,17 +45,6 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
     );
   }
 }
-
-GalleryViewPage.propTypes = {
-  albums: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  galleryLoading: PropTypes.bool,
-  galleryError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-  onLoad: PropTypes.func.isRequired,
-  match: PropTypes.object.isRequired,
-};
 
 const mapStateToProps = createStructuredSelector({
   albums: makeSelectAlbums(),

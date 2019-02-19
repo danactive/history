@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 function Placeholder({ file }) {
@@ -13,11 +12,5 @@ function Placeholder({ file }) {
     </li>
   );
 }
-
-Placeholder.propTypes = {
-  file: propTypes.shape({
-    filename: propTypes.string.isRequired,
-  }).isRequired,
-};
 
 module.exports = Placeholder;
