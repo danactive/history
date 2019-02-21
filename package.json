@@ -58,7 +58,7 @@
     "mkdirp": "^0.5.0",
     "moment": "^2.20.1",
     "node-notifier": "^5.0.1",
-    "react": "^16.5.1",
+    "react": "^16.8.3",
     "react-addons-shallow-compare": "^15.6.2",
     "react-dates": "^19.0.3",
     "react-dom": "16.6.0",
