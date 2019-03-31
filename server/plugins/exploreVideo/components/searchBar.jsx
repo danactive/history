@@ -15,10 +15,12 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchOrder,
       searchValue,
     } = this.state;
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -26,10 +28,13 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchOrder,
     } = this.state;
+
     this.setState({ searchValue });
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -37,10 +42,13 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchValue,
     } = this.state;
+
     this.setState({ searchOrder });
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -66,6 +74,7 @@ class SearchBar extends React.Component {
     const {
       searchValue,
     } = this.state;
+
     return (
       <section id="search-bar">
         <input
