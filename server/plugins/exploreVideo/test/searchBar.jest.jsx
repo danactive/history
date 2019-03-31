@@ -1,55 +1,43 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
+/* global describe, expect, jest, shallow, test */
 import React from 'react';
-import test from 'tape';
-import sinon from 'sinon';
 
-import '../../../test/setup.enzyme';
 import SearchBar from '../components/searchBar';
 
-const { shallow } = enzyme;
-
-enzyme.configure({ adapter: new Adapter() });
-
-test('Explore Video - Search Bar', (describe) => {
-  describe.test('* Retrieve web address from browser', (assert) => {
+describe('Explore Video - Search Bar', () => {
+  test('* Retrieve web address from browser', () => {
     const actual = SearchBar.getQS();
     const expected = '';
-    assert.equal(actual, expected, 'Not supported in Node.js');
 
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('* Parse geocode from web address', (assert) => {
+  test('* Parse geocode from web address', () => {
     let actual;
     let expected;
 
     actual = SearchBar.getGeoCode('');
     expected = '';
-    assert.equal(actual, expected, 'Blank');
+    expect(actual).toEqual(expected);
 
 
     actual = SearchBar.getGeoCode('https://vancouver.bc.ca/address');
     expected = '';
-    assert.equal(actual, expected, 'URI');
+    expect(actual).toEqual(expected);
 
 
     actual = SearchBar.getGeoCode('https://vancouver.bc.ca/address?geo=49.25,-123.1');
     expected = '49.25,-123.1';
-    assert.equal(actual, expected, 'URI and query string');
+    expect(actual).toEqual(expected);
 
 
     actual = SearchBar.getGeoCode('?city=darwin&geo=-12.45,130.833333&tld=au');
     expected = '-12.45,130.833333';
-    assert.equal(actual, expected, 'Query string with multiple params');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 });
 
-test('Explore Video - Search Bar (React Component)', (describe) => {
-  describe.test('* Render input element', (assert) => {
+describe('Explore Video - Search Bar (React Component)', () => {
+  test('* Render input element', () => {
     const wrapper = shallow(<SearchBar onSearchChange={() => {}} />);
     const {
       placeholder,
@@ -62,37 +50,32 @@ test('Explore Video - Search Bar (React Component)', (describe) => {
 
     actual = placeholder;
     expected = SearchBar.defaults.instruction;
-    assert.equal(actual, expected, 'Placeholder');
+    expect(actual).toEqual(expected);
 
 
     actual = title;
     expected = SearchBar.defaults.instruction;
-    assert.equal(actual, expected, 'Title');
+    expect(actual).toEqual(expected);
 
 
     actual = value;
     expected = SearchBar.defaults.geocode;
-    assert.equal(actual, expected, 'Value');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('* Simulates event(s)', (assert) => {
-    const onSearchChange = sinon.spy();
-    const wrapper = shallow(<SearchBar onSearchChange={onSearchChange} />);
+  test('* Simulates event(s)', () => {
+    const searchChangeEvent = jest.fn();
+    const searchKeyword = 'vancouver';
 
+    const wrapper = shallow(<SearchBar onSearchChange={searchChangeEvent} />);
+    expect(searchChangeEvent).toHaveBeenCalledTimes(1);
 
-    assert.ok(onSearchChange.calledOnce, 'Search not executed');
-    wrapper.find('input').simulate('change', { target: { value: 'boring' } });
-    assert.ok(onSearchChange.calledTwice, 'Search executed');
+    wrapper.find('input').simulate('change', { target: { value: searchKeyword } });
+    expect(searchChangeEvent).toHaveBeenLastCalledWith(searchKeyword, { searchOrder: SearchBar.defaults.searchOrder });
 
 
     const actual = wrapper.find('input').props().value;
-    const expected = 'boring';
-    assert.equal(actual, expected, 'Search input value');
-
-
-    assert.end();
+    const expected = searchKeyword;
+    expect(actual).toEqual(expected);
   });
 });

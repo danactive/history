@@ -109,7 +109,6 @@
     "jsdom": "^14.0.0",
     "lodash": "^4.17.11",
     "nyc": "^13.3.0",
-    "sinon": "^6.3.3",
     "standard-version": "^5.0.0",
     "style-loader": "^0.23.0",
     "tape": "^4.6.3",
