@@ -1,26 +1,18 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
-import React from 'react';
-import test from 'tape';
+/* global describe, expect, shallow, test */
 
-import '../../../test/setup.enzyme';
+import React from 'react';
+
 import mock from './fixtures/youtube.json';
 import VideoDetail from '../components/videoDetail';
 
-test('Explore Video - Video Detail (React Component)', (describe) => {
-  const { shallow } = enzyme;
-
-  enzyme.configure({ adapter: new Adapter() });
-
-  describe.test('* Render component with missing video object', (assert) => {
+describe('Explore Video - Video Detail (React Component)', () => {
+  test('* Render component with missing video object', () => {
     const actual = shallow(<VideoDetail />).html();
     const expected = '<section>Loading...</section>';
-    assert.equal(actual, expected, 'Missing video');
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('* Render iframe element', (assert) => {
+  test('* Render iframe element', () => {
     const wrapper = shallow(<VideoDetail video={mock.items[0]} />);
     const props = wrapper.find('iframe').props();
     const {
@@ -29,13 +21,10 @@ test('Explore Video - Video Detail (React Component)', (describe) => {
 
     const actual = src;
     const expected = 'https://www.youtube.com/embed/92ISlO9U-84';
-    assert.equal(actual, expected, 'YouTube address');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('* Render video text elements', (assert) => {
+  test('* Render video text elements', () => {
     const wrapper = shallow(<VideoDetail video={mock.items[0]} />);
     const videoTitle = wrapper.find('#video-text');
     let actual;
@@ -44,14 +33,11 @@ test('Explore Video - Video Detail (React Component)', (describe) => {
 
     actual = videoTitle.find('#video-title').props().children;
     expected = mock.items[0].snippet.title;
-    assert.equal(actual, expected, 'Video title');
+    expect(actual).toEqual(expected);
 
 
     actual = videoTitle.find('#video-description').props().children;
     expected = mock.items[0].snippet.description;
-    assert.equal(actual, expected, 'Video description');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 });
