@@ -1,18 +1,15 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
-import test from 'tape';
+/* global describe, expect, shallow, test */
 import React from 'react';
 
-import '../../../test/setup.enzyme';
 import App from '../components/app';
 
-test('Explore Video - App', (describe) => {
-  const { shallow } = enzyme;
+describe('Explore Video - App', () => {
+  global._ = {
+    debounce: () => {},
+  };
 
-  enzyme.configure({ adapter: new Adapter() });
-
-  describe.test('* YouTube API Video Search', async (assert) => {
-    assert.plan(4);
+  test('* YouTube API Video Search', async () => {
+    expect.assertions(4);
 
     const wrapper = shallow(<App />);
     let actual;
@@ -25,14 +22,14 @@ test('Explore Video - App', (describe) => {
 
       actual = wrapper.state('selectedVideo');
       expected = null;
-      assert.equal(actual, expected, 'Constructor value selectedVideo');
+      expect(actual).toEqual(expected);
 
 
       actual = wrapper.state('videos').length;
       expected = 0;
-      assert.equal(actual, expected, 'Constructor value videos');
-    } catch (e) {
-      assert.fail(e);
+      expect(actual).toEqual(expected);
+    } catch (err) {
+      expect(err).toBeUndefined();
     }
 
 
@@ -42,14 +39,14 @@ test('Explore Video - App', (describe) => {
 
       actual = wrapper.state('selectedVideo').kind;
       expected = 'youtube#searchResult';
-      assert.equal(actual, expected, 'Live API call returns YouTube data');
+      expect(actual).toEqual(expected);
 
 
       actual = wrapper.state('videos').length;
-      expected = 0;
-      assert.ok(actual > expected, 'Constructor value videos');
-    } catch (e) {
-      assert.fail(e);
+      expected = 5;
+      expect(actual).toEqual(expected);
+    } catch (err) {
+      expect(err).toBeUndefined();
     }
   });
 });
