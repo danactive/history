@@ -1,67 +1,62 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
-import React from 'react';
-import test from 'tape';
+/* global describe, expect, mount, shallow, test */
 
-import '../../../test/setup.enzyme';
+import React from 'react';
+
 import Thumb from '../components/thumb';
 
-test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
+describe('View Album - Thumb (React Component)', () => {
   const item = {
     mediaPath: 'c',
     thumbCaption: 'a',
     thumbPath: 'b',
   };
-  const { shallow, mount } = enzyme;
 
-  enzyme.configure({ adapter: new Adapter() });
-
-  describe.test('* Thumbnail image and caption', (assert) => {
+  test('* Thumbnail image and caption', () => {
     const wrapper = shallow(<Thumb item={item} />);
-    assert.ok(wrapper.contains(<img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />));
-    assert.ok(wrapper.contains(
+
+    expect(wrapper.contains(
+      <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
+    )).toBeTruthy();
+
+    expect(wrapper.contains(
       <div className="albumBoxPhotoCaption">
         {item.thumbCaption}
       </div>,
-    ));
-    assert.end();
+    )).toBeTruthy();
   });
 
-  describe.test('* Thumbnail missing geocode', (assert) => {
+  test('* Thumbnail missing geocode', () => {
     const wrapper = mount(<Thumb item={item} />);
     const liProps = wrapper.find('li').props();
-    assert.notOk(liProps['data-lon'], 'Missing longitude');
-    assert.notOk(liProps['data-lat'], 'Missing latitude');
-    assert.end();
+
+    expect(liProps['data-lon']).toBeFalsy();
+    expect(liProps['data-lat']).toBeFalsy();
   });
 
-  describe.test('* Thumbnail has geocode', (assert) => {
+  test('* Thumbnail has geocode', () => {
     item.geo = {
       lat: 1,
       lon: 0,
     };
     const wrapper = mount(<Thumb item={item} />);
     const liProps = wrapper.find('li').props();
-    assert.equal(liProps['data-lon'], 0, 'Has longitude');
-    assert.equal(liProps['data-lat'], 1, 'Has latitude');
+    expect(liProps['data-lon']).toEqual(0);
+    expect(liProps['data-lat']).toEqual(1);
 
     delete item.geo;
-
-    assert.end();
   });
 
-  describe.test('* Title - Photo City', (assert) => {
+  test('* Title - Photo City', () => {
     item.photoCity = 'Vancouver, BC';
     const wrapper = mount(<Thumb item={item} />);
     const { title } = wrapper.find('a').props();
 
-    assert.equal(title, item.photoCity, 'Has title with Photo City');
+    expect(title).toEqual(item.photoCity);
 
     delete item.photoCity;
-    assert.end();
   });
 
-  describe.test('* Reference - Wikipedia', (assert) => {
+  test('* Reference - Wikipedia', () => {
     item.ref = {
       name: 'Vancouver_International_Airport',
       source: 'wikipedia',
@@ -70,13 +65,12 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
     const { title } = wrapper.find('a').props();
     const titleHtml = '<a href=\'https://en.wikipedia.org/wiki/Vancouver_International_Airport\' target=\'_blank\'>Wiki</a>';
 
-    assert.equal(title, titleHtml, 'Has title with Wikipedia link');
+    expect(title).toEqual(titleHtml);
 
     delete item.ref;
-    assert.end();
   });
 
-  describe.test('* Reference - YouTube', (assert) => {
+  test('* Reference - YouTube', () => {
     item.ref = {
       name: 'YeeCunkIaco',
       source: 'youtube',
@@ -85,9 +79,8 @@ test('View Album - Thumb (React Component)', { skip: false }, (describe) => {
     const { title } = wrapper.find('a').props();
     const titleHtml = '<a href=\'https://www.youtube.com/watch?v=YeeCunkIaco\' target=\'_blank\'>YouTube</a>';
 
-    assert.equal(title, titleHtml, 'Has title with YouTube link');
+    expect(title).toEqual(titleHtml);
 
     delete item.ref;
-    assert.end();
   });
 });
