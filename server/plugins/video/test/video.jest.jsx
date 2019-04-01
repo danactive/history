@@ -1,16 +1,10 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
-import React from 'react';
-import test from 'tape';
+/* global describe, expect, mount, test */
 
-import '../../../test/setup.enzyme';
+import React from 'react';
+
 import Video from '../components/video';
 
-test('Video - Video (React Component)', { skip: false }, (describe) => {
-  const { mount } = enzyme;
-
-  enzyme.configure({ adapter: new Adapter() });
-
+describe('Video - Video (React Component)', () => {
   const item = {
     w: 800,
     h: 600,
@@ -18,23 +12,22 @@ test('Video - Video (React Component)', { skip: false }, (describe) => {
     sources: '2012-fireplace.mp4,2012-fireplace.webm',
   };
 
-  describe.test('* Parent element', (assert) => {
+  test('* Parent element', () => {
     const wrapper = mount(<Video video={item} />);
     const liProps = wrapper.find('video').props();
-    assert.equal(liProps.width, 800, 'Width');
-    assert.equal(liProps.height, 600, 'Height');
-    assert.equal(liProps.poster, '/static/gallery-test/media/photos/2012/2012-fireplace.jpg', 'Poster');
-    assert.equal(liProps.controls, true, 'Controls');
-    assert.equal(liProps.preload, 'auto', 'Preload');
-    assert.equal(liProps.autoPlay, 'true', 'Autoplay');
-    assert.end();
+
+    expect(liProps.width).toEqual(800);
+    expect(liProps.height).toEqual(600);
+    expect(liProps.poster).toEqual('/static/gallery-test/media/photos/2012/2012-fireplace.jpg');
+    expect(liProps.controls).toEqual(true);
+    expect(liProps.preload).toEqual('auto');
+    expect(liProps.autoPlay).toEqual('true');
   });
 
-  describe.test('* Source element', (assert) => {
+  test('* Source element', () => {
     const wrapper = mount(<Video video={item} />);
     const sources = wrapper.find('source');
-    assert.equal(sources.length, 2, 'Count');
-    assert.ok(sources.find('source').first().props().type.includes('video/mp4'), 'Source codec match');
-    assert.end();
+    expect(sources.length).toEqual(2);
+    expect(sources.find('source').first().props().type.includes('video/mp4')).toBeTruthy();
   });
 });
