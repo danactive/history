@@ -1,57 +1,47 @@
-import { configure, shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+/* global describe, expect, shallow, test */
 import React from 'react';
-import test from 'tape';
 
 import Img from '../index';
 
-test('Component - <Img />', (describe) => {
-  configure({ adapter: new Adapter() });
-
+describe('Component - <Img />', () => {
   const src = 'test.png';
   const alt = 'test';
   const renderComponent = (props = {}) => shallow(<Img src={src} alt={alt} {...props} />);
 
-  describe.test('should render an <img> tag', (assert) => {
+  test('should render an <img> tag', () => {
     const actual = renderComponent().is('img');
     const expected = true;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('should match src attribute value', (assert) => {
+  test('should match src attribute value', () => {
     const actual = renderComponent().prop('src');
     const expected = src;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('should match alt attribute value', (assert) => {
+  test('should match alt attribute value', () => {
     const actual = renderComponent().prop('alt');
     const expected = alt;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('should not have a className attribute', (assert) => {
+  test('should not have a className attribute', () => {
     const actual = renderComponent().prop('className');
     const expected = undefined;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('should adopt a className attribute', (assert) => {
+  test('should adopt a className attribute', () => {
     const className = 'test';
     const actual = renderComponent({ className }).hasClass(className);
     const expected = true;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 
-  describe.test('should not adopt a srcset attribute', (assert) => {
+  test('should not adopt a srcset attribute', () => {
     const actual = renderComponent({ srcset: 'test-HD.png 2x' }).prop('srcset');
     const expected = undefined;
-    assert.equal(actual, expected);
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 });
