@@ -21,7 +21,7 @@ describe('Video - Video (React Component)', () => {
     expect(liProps.poster).toEqual('/static/gallery-test/media/photos/2012/2012-fireplace.jpg');
     expect(liProps.controls).toEqual(true);
     expect(liProps.preload).toEqual('auto');
-    expect(liProps.autoPlay).toEqual('true');
+    expect(liProps.autoPlay).toEqual(true);
   });
 
   test('* Source element', () => {

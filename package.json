@@ -13,7 +13,7 @@
     "test": "npm run test:jest && npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
     "test:react": "babel-tape-runner server/plugins/*/test/*.enzyme.jsx app/components/*/test/*.enzyme.jsx | faucet",
-    "test:jest": "jest ui",
+    "test:jest": "jest",
     "debug:test:react": "node $NODE_DEBUG_OPTION ./node_modules/babel-tape-runner/bin/babel-tape-runner server/plugins/*/test/*.enzyme.jsx | faucet",
     "webpack": "webpack --config webpack.js",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",

@@ -15,7 +15,7 @@ describe('View Album - Thumb (React Component)', () => {
     const wrapper = shallow(<Thumb item={item} />);
 
     expect(wrapper.contains(
-      <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />
+      <img src={item.thumbPath} alt={item.thumbCaption} title={item.caption} />,
     )).toBeTruthy();
 
     expect(wrapper.contains(
