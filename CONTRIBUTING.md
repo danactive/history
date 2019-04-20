@@ -29,7 +29,6 @@
 	* `npm run lint:filter server/plugins/video` apply lint to only video plugin folder
 * `npm test` execute unit tests with code coverage report
 	* `npm run test:all --plugin=editAlbum` test and filter to specific plugin
-	* `npm run test:react` test React.js views across all plugins
 
 ## Technologies
 

@@ -24,7 +24,6 @@ test_script:
   - gm version
   - npm run lint
   - npm test
-  - npm run test:react
 
 build_script:
   - npm run webpack
