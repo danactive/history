@@ -64,7 +64,7 @@
     "compression": "1.7.3",
     "connected-react-router": "4.5.0",
     "cross-env": "5.2.0",
-    "dot-prop": "^4.0.0",
+    "dot-prop": "^5.0.0",
     "dotenv": "^7.0.0",
     "dropbox": "^4.0.16",
     "express": "4.16.4",
