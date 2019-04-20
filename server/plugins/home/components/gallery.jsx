@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 function Gallery({ gallery }) {
@@ -12,9 +11,5 @@ function Gallery({ gallery }) {
     </li>
   );
 }
-
-Gallery.propTypes = {
-  gallery: propTypes.string.isRequired,
-};
 
 module.exports = Gallery;

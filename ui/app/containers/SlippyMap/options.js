@@ -8,7 +8,7 @@ const validatePoint = ([longitude = null, latitude = null]) => ({
   || longitude === null
   || latitude === null
   || Number.isNaN(latitude)
-  || Number.isNaN(longitude)
+  || Number.isNaN(longitude),
 });
 
 export function transformSourceOptions({ items = [] } = {}) {
@@ -157,4 +157,4 @@ export {
   clusterOptions,
   clusterLabelOptions,
   markerOptions,
-}
+};

@@ -1,9 +1,10 @@
+/* global describe, expect, test */
 import { fromJS } from 'immutable';
 
-import { selectHome, makeSelectUsername } from '../selectors';
+import { selectHome } from '../selectors';
 
 describe('selectHome', () => {
-  it('should select the home state', () => {
+  test('should select the home state', () => {
     const homeState = fromJS({
       userData: {},
     });

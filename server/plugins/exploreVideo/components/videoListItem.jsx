@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 function handleKeyPress(event) {
@@ -22,21 +21,6 @@ const VideoListItem = ({ index, video, onVideoSelect }) => {
       </div>
     </div>
   );
-};
-
-VideoListItem.propTypes = {
-  index: propTypes.number.isRequired,
-  onVideoSelect: propTypes.func.isRequired,
-  video: propTypes.shape({
-    snippet: propTypes.shape({
-      thumbnails: propTypes.shape({
-        default: propTypes.shape({
-          url: propTypes.string.isRequired,
-        }).isRequired,
-      }).isRequired,
-      title: propTypes.string.isRequired,
-    }).isRequired,
-  }).isRequired,
 };
 
 module.exports = VideoListItem;

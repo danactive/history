@@ -51,6 +51,7 @@ class App extends React.Component {
       selectedVideo,
       videos,
     } = this.state;
+
     const videoSearch = _.debounce((searchValue, options) => this.videoSearch(searchValue, options), 400);
 
     return (

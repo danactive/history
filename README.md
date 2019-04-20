@@ -16,8 +16,8 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 | License | [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT) |
 
 ## Installation
-1. Node.js v8.6.x LTS [Download](https://nodejs.org/)
-1. Install project dependencies `npm install` (`yarn` is used for development)
+1. Node.js v10.15.x LTS [Download](https://nodejs.org/)
+1. Install project dependencies `npm install`
 1. Optional [configuration](#environment-configuration)
 1. Start web server `npm start`
 1. View address in browser (printed in terminal on successful load)

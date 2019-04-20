@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -64,16 +63,6 @@ export class HomePage extends React.PureComponent {
     );
   }
 }
-
-HomePage.propTypes = {
-  onLoad: PropTypes.func.isRequired,
-  galleries: PropTypes.arrayOf(PropTypes.shape).isRequired,
-  galleryLoading: PropTypes.bool,
-  galleryError: PropTypes.oneOfType([
-    PropTypes.object,
-    PropTypes.bool,
-  ]),
-};
 
 export function mapDispatchToProps(dispatch) {
   return {

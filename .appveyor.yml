@@ -1,6 +1,6 @@
 environment:
   matrix:
-    - nodejs_version: "8"
+    - nodejs_version: "10"
 
 matrix:
   fast_finish: true # build fail immediately once one of the job fails
@@ -16,15 +16,14 @@ install:
   - set PATH=%CD%\gm;%PATH%
   # Get the wanted version of Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - yarn install
+  - npm ci
 
 test_script:
   - node --version
   - npm --version
   - gm version
-  - yarn lint
-  - yarn test
-  - yarn test:react
+  - npm run lint
+  - npm test
 
 build_script:
-  - yarn run webpack
+  - npm run webpack

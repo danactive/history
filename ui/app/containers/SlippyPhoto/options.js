@@ -23,7 +23,7 @@ const getMapStyle = (currentMemory = {}) => ({
     {
       id: 'overlay',
       source: 'overlay',
-      type: 'raster'
+      type: 'raster',
     },
   ],
 });
@@ -38,6 +38,4 @@ const getMapOptions = currentMemory => ({
   style: getMapStyle(currentMemory),
 });
 
-export {
-  getMapOptions,
-}
+export default getMapOptions;

@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const utils = require('../../utils');
@@ -29,20 +28,11 @@ function Video({ video }) {
 
   /* eslint-disable jsx-a11y/media-has-caption */
   return (
-    <video width={video.w} height={video.h} poster={poster} controls preload="auto" autoPlay="true">
+    <video width={video.w} height={video.h} poster={poster} controls preload="auto" autoPlay>
       {sources}
       {tracks}
     </video>
   );
 }
-
-Video.propTypes = {
-  video: propTypes.shape({
-    w: propTypes.number.isRequired,
-    h: propTypes.number.isRequired,
-    gallery: propTypes.string.isRequired,
-    sources: propTypes.string.isRequired,
-  }).isRequired,
-};
 
 module.exports = Video;
