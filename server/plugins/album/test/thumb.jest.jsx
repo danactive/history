@@ -1,15 +1,19 @@
-/* global describe, expect, mount, shallow, test */
+/* global beforeEach, describe, expect, mount, shallow, test */
 
 import React from 'react';
 
 import Thumb from '../components/thumb';
 
 describe('View Album - Thumb (React Component)', () => {
-  const item = {
-    mediaPath: 'c',
-    thumbCaption: 'a',
-    thumbPath: 'b',
-  };
+  let item = {};
+
+  beforeEach(() => {
+    item = {
+      mediaPath: 'c',
+      thumbCaption: 'a',
+      thumbPath: 'b',
+    };
+  });
 
   test('* Thumbnail image and caption', () => {
     const wrapper = shallow(<Thumb item={item} />);
@@ -38,12 +42,11 @@ describe('View Album - Thumb (React Component)', () => {
       lat: 1,
       lon: 0,
     };
+
     const wrapper = mount(<Thumb item={item} />);
     const liProps = wrapper.find('li').props();
     expect(liProps['data-lon']).toEqual(0);
     expect(liProps['data-lat']).toEqual(1);
-
-    delete item.geo;
   });
 
   test('* Title - Photo City', () => {
@@ -52,8 +55,6 @@ describe('View Album - Thumb (React Component)', () => {
     const { title } = wrapper.find('a').props();
 
     expect(title).toEqual(item.photoCity);
-
-    delete item.photoCity;
   });
 
   test('* Reference - Wikipedia', () => {
@@ -61,13 +62,12 @@ describe('View Album - Thumb (React Component)', () => {
       name: 'Vancouver_International_Airport',
       source: 'wikipedia',
     };
+
     const wrapper = mount(<Thumb item={item} />);
     const { title } = wrapper.find('a').props();
     const titleHtml = '<a href=\'https://en.wikipedia.org/wiki/Vancouver_International_Airport\' target=\'_blank\'>Wiki</a>';
 
     expect(title).toEqual(titleHtml);
-
-    delete item.ref;
   });
 
   test('* Reference - YouTube', () => {
@@ -75,12 +75,11 @@ describe('View Album - Thumb (React Component)', () => {
       name: 'YeeCunkIaco',
       source: 'youtube',
     };
+
     const wrapper = mount(<Thumb item={item} />);
     const { title } = wrapper.find('a').props();
     const titleHtml = '<a href=\'https://www.youtube.com/watch?v=YeeCunkIaco\' target=\'_blank\'>YouTube</a>';
 
     expect(title).toEqual(titleHtml);
-
-    delete item.ref;
   });
 });
