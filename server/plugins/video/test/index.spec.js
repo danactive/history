@@ -6,7 +6,7 @@ tape('Verify /video route', { skip: false }, (describe) => {
   const inert = require('inert');
   const path = require('path');
   const querystring = require('querystring');
-  const typy = require('typy');
+  const { t: typy } = require('typy');
   const vision = require('vision');
 
   const lib = require('../lib');

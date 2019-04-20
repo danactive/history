@@ -3,7 +3,7 @@ const tape = require('tape-catch');
 tape('Verify /walk route', { skip: false }, (describe) => {
   const hapi = require('hapi');
   const inert = require('inert');
-  const typy = require('typy');
+  const { t: typy } = require('typy');
   const vision = require('vision');
 
   const lib = require('../lib');
