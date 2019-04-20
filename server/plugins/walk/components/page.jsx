@@ -15,8 +15,7 @@ function Page({ files }) {
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
       </head>
       <body>
-        <section id="controls" data-has-image={hasImage} />
-        <Contents files={files} />
+        <Contents files={files} showControls={hasImage} />
         <script src="../walk/static/utils.js" />
         <script src="../walk/static/assets/bundle.js" />
       </body>
