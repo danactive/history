@@ -6,22 +6,25 @@ env:
 addons:
   apt:
     packages:
-    - graphicsmagick
+      - graphicsmagick
 
 node_js:
-  - "8"
+  - "10"
 
 before_script:
   - node --version
   - npm --version
   - gm version
-  - yarn lint
-  - yarn test:react
+  - npm run lint
 
 script:
-  - yarn test
+  - npm test
 
 after_success:
-  - yarn ci-cover:coveralls
-  - yarn ci-cover:prep-codeclimate
-  - yarn ci-cover:codeclimate
+  - mv ui/package-skip-to-test.json ui/package.json
+  - cd ui
+  - npm ci
+  - npm test
+  - npm run ci-cover:coveralls
+  - npm run ci-cover:prep-codeclimate
+  - npm run ci-cover:codeclimate

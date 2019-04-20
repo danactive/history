@@ -1,35 +1,26 @@
-/**
- * The global state selectors
- */
-
 import { createSelector } from 'reselect';
 
-const selectGlobal = state => state.get('global');
+// Memorized selectors
+export const selectPage = state => state.get('albumViewPage');
+export const selectAlbum = state => state.get('albums');
 
-const selectRoute = state => state.get('route');
+export const makeSelectThumbsLoading = () => createSelector(
+  selectPage,
+  pageState => pageState.get('thumbsLoading') || false,
+);
 
-const makeSelectCurrentUser = () =>
-  createSelector(selectGlobal, globalState => globalState.get('currentUser'));
+export const makeSelectThumbsError = () => createSelector(
+  selectPage,
+  pageState => pageState.get('thumbsError'),
+);
 
-const makeSelectRepoLoading = () =>
-  createSelector(selectGlobal, globalState => globalState.get('loading'));
+export const selectCurrentMemory = (state) => {
+  const albumState = selectAlbum(state);
+  const currentMemory = albumState.get('currentMemory');
 
-const makeSelectRepoError = () =>
-  createSelector(selectGlobal, globalState => globalState.get('error'));
-
-const makeSelectRepos = () =>
-  createSelector(selectGlobal, globalState =>
-    globalState.getIn(['userData', 'repositories']),
-  );
-
-const makeSelectLocation = () =>
-  createSelector(selectRoute, routeState => routeState.get('location').toJS());
-
-export {
-  selectGlobal,
-  makeSelectCurrentUser,
-  makeSelectRepoLoading,
-  makeSelectRepoError,
-  makeSelectRepos,
-  makeSelectLocation,
+  return {
+    gallery: albumState.get('gallery'),
+    album: albumState.get('album'),
+    currentMemory: (currentMemory) ? currentMemory.toJS() : null,
+  };
 };

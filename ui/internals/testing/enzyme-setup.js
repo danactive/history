@@ -1,4 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import fetch from 'isomorphic-fetch';
 
 configure({ adapter: new Adapter() });
+
+global.fetch = fetch;

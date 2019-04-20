@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const VideoDetail = ({ video }) => {
@@ -28,14 +27,6 @@ const VideoDetail = ({ video }) => {
       </section>
     </main>
   );
-};
-
-VideoDetail.defaultProps = {
-  video: null,
-};
-
-VideoDetail.propTypes = {
-  video: propTypes.shape(),
 };
 
 module.exports = VideoDetail;

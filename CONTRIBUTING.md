@@ -24,15 +24,11 @@
 ## Commit message
 * Strictly enforced [changelog convention](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md)
 
-# Developement
-Ensure yarn is installed globally `npm install yarn --global`
-
 ## CLI commands
-* `yarn lint` enforces code syntax quality
-	* `yarn lint:filter plugins/video` apply lint to only video plugin folder
-* `yarn test` execute unit tests with code coverage report
-	* `yarn test:all --plugin=editAlbum` test and filter to specific plugin
-	* `yarn test:react` test React.js views across all plugins
+* `npm run lint` enforces code syntax quality
+	* `npm run lint:filter server/plugins/video` apply lint to only video plugin folder
+* `npm test` execute unit tests with code coverage report
+	* `npm run test:all --plugin=editAlbum` test and filter to specific plugin
 
 ## Technologies
 
@@ -59,8 +55,8 @@ To use the administration tools
 * [GraphicsMagick](https://www.npmjs.com/package/gm) Install GraphicsMagick before npm
 
 ### Adding dependencies to project
-* Update **package.json** with `yarn`
-	* Install project dependencies `yarn add [module]`
+* Update **package.json** with `npm`
+	* Install project dependencies `npm install [module]`
 
 ## Photo/video album XML schemas
 ### Current schema (2.0)

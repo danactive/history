@@ -1,17 +1,14 @@
-/* global document */
 import moment from 'moment';
-import momentPropTypes from 'react-moment-proptypes';
 import 'react-dates/initialize';
 import { isInclusivelyBeforeDay, SingleDatePicker } from 'react-dates';
 import React from 'react';
 
 import Rename from './rename';
 
-function assembleControls(dateComponent) {
-  const domControl = document.getElementById('controls');
-  const hasImage = (domControl && domControl.getAttribute('data-has-image') === 'true');
+// This component is breaking since React is rendered on the server
 
-  if (hasImage) {
+function assembleControls(dateComponent, showControls) {
+  if (showControls) {
     return (
       <section>
         <span>
@@ -48,10 +45,10 @@ class Controls extends React.Component {
 
   render() {
     const { focused, date } = this.state;
+    const { showControls } = this.props;
 
     const dateComponent = (
       <SingleDatePicker
-        {...this.props}
         key="date_input"
         date={date}
         focused={focused}
@@ -61,18 +58,8 @@ class Controls extends React.Component {
       />
     );
 
-    return assembleControls(dateComponent);
+    return assembleControls(dateComponent, !!showControls);
   }
 }
-
-Controls.defaultProps = {
-  date: moment(),
-};
-
-const datePropType = momentPropTypes.momentObj;
-
-Controls.propTypes = {
-  date: datePropType,
-};
 
 module.exports = Controls;

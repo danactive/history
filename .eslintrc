@@ -3,6 +3,6 @@
     "rules": {
         "max-len": [2, 150, 4],
 		"jsx-a11y/tabindex-no-positive": "off",
-		"react/jsx-one-expression-per-line": 0
-	}
+		"react/prop-types": "off"
+	},
 }

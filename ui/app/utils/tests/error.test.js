@@ -1,8 +1,10 @@
-import { normalizeError } from '../error';
+// *********** HISTORY CUSTOM not React Boilerplate
+/* global describe, expect, test */
+import normalizeError from '../error';
 
 describe('error', () => {
   describe('normalizeError', () => {
-    it('Dropbox error with summary', () => {
+    test('Dropbox error with summary', () => {
       const message = 'path/not_found/..';
       const path = '/public/gallery-dan/media/thumbs/2015/2015-12-02-62.jpg';
       const status = 409;
@@ -29,12 +31,12 @@ describe('error', () => {
           action: 'missing-thumbLink',
           path,
           title: `Dropbox asset is missing (${path})`,
-        }
+        },
       };
       expect(actual).toEqual(expected);
     });
 
-    it('Dropbox error with response', () => {
+    test('Dropbox error with response', () => {
       const message = 'Error in call to API function "files/get_temporary_link": The given OAuth 2 access token is malformed.';
       const path = '/public/gallery-dan/xml/album_cuba2015.xml';
       const status = 400;
@@ -53,7 +55,7 @@ describe('error', () => {
             _data: {
               path,
             },
-          }
+          },
         },
       };
       const actual = normalizeError(error);
@@ -65,12 +67,12 @@ describe('error', () => {
           action: 'incorrect-auth',
           path,
           title: `Dropbox auth is incorrect (${path})`,
-        }
+        },
       };
       expect(actual).toEqual(expected);
     });
 
-    it('Normal JavaScript error', () => {
+    test('Normal JavaScript error', () => {
       const error = new Error('Message');
       const actual = normalizeError(error);
 
@@ -81,6 +83,10 @@ describe('error', () => {
       const expected = {
         message: 'Message',
         type: 'normalized message and stack',
+        ui: {
+          action: undefined,
+          title: 'Message',
+        },
       };
       expect(actual).toEqual(expected);
       expect(actualDebug).toEqual(expect.stringContaining('Error: Message'));

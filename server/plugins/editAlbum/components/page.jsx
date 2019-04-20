@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 function textField({ label, tabIndex }) {
@@ -90,15 +89,10 @@ function Page(props) {
                 <p>
                   <select id="ref_src" tabIndex="8">
                     <option />
-                    <option value="facebook">
-                      Facebook
-                    </option>
-                    <option value="google">
-                      Google
-                    </option>
-                    <option value="wikipedia">
-                      Wikipedia
-                    </option>
+                    <option value="facebook">Facebook</option>
+                    <option value="google">Google</option>
+                    <option value="wikipedia">Wikipedia</option>
+                    <option value="youtube">YouTube</option>
                   </select>
                   <input type="text" id="ref_name" tabIndex="9" title="Keywords" />
                   <input type="checkbox" title="Check to disable editability" />
@@ -131,15 +125,5 @@ function Page(props) {
     </html>
   );
 }
-
-textField.propTypes = {
-  label: propTypes.string.isRequired,
-  tabIndex: propTypes.number.isRequired,
-};
-
-Page.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired,
-  state: propTypes.string.isRequired,
-};
 
 module.exports = Page;

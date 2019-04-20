@@ -5,13 +5,6 @@ engines:
          languages:
            javascript:
              mass_threshold: 70
-  eslint:
-    enabled: false
-    channel: "eslint-4"
-    config:
-        extensions:
-        - .js
-        - .jsx
 
 ratings:
    paths:

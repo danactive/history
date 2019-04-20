@@ -1,6 +1,6 @@
 environment:
   matrix:
-    - nodejs_version: "8"
+    - nodejs_version: "10"
 
 matrix:
   fast_finish: true # build fail immediately once one of the job fails
@@ -11,20 +11,19 @@ platform:
 
 install:
   # Install GraphicsMagick
-  - appveyor DownloadFile "http://ftp.icm.edu.pl/pub/unix/graphics/GraphicsMagick/windows/GraphicsMagick-1.3.26-Q16-win64-dll.exe"
-  - GraphicsMagick-1.3.26-Q16-win64-dll.exe /SP /VERYSILENT /NORESTART /NOICONS /DIR=%CD%\gm
+  - appveyor DownloadFile "http://ftp.icm.edu.pl/pub/unix/graphics/GraphicsMagick/windows/GraphicsMagick-1.3.30-Q16-win64-dll.exe"
+  - GraphicsMagick-1.3.30-Q16-win64-dll.exe /SP /VERYSILENT /NORESTART /NOICONS /DIR=%CD%\gm
   - set PATH=%CD%\gm;%PATH%
   # Get the wanted version of Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - yarn install
+  - npm ci
 
 test_script:
   - node --version
   - npm --version
   - gm version
-  - yarn lint
-  - yarn test
-  - yarn test:react
+  - npm run lint
+  - npm test
 
 build_script:
-  - yarn run webpack
+  - npm run webpack

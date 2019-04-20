@@ -1,6 +1,4 @@
 /* global URL, window */
-
-const propTypes = require('prop-types');
 const React = require('react');
 
 class SearchBar extends React.Component {
@@ -17,10 +15,12 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchOrder,
       searchValue,
     } = this.state;
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -28,10 +28,13 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchOrder,
     } = this.state;
+
     this.setState({ searchValue });
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -39,10 +42,13 @@ class SearchBar extends React.Component {
     const {
       onSearchChange,
     } = this.props;
+
     const {
       searchValue,
     } = this.state;
+
     this.setState({ searchOrder });
+
     onSearchChange(searchValue, { searchOrder });
   }
 
@@ -68,6 +74,7 @@ class SearchBar extends React.Component {
     const {
       searchValue,
     } = this.state;
+
     return (
       <section id="search-bar">
         <input
@@ -93,9 +100,5 @@ class SearchBar extends React.Component {
     );
   }
 }
-
-SearchBar.propTypes = {
-  onSearchChange: propTypes.func.isRequired,
-};
 
 module.exports = SearchBar;

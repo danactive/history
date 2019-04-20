@@ -1,5 +1,4 @@
 /* global GetGalleryNames */
-const propTypes = require('prop-types');
 const React = require('react');
 
 class GalleryDropdown extends React.Component {
@@ -35,9 +34,5 @@ class GalleryDropdown extends React.Component {
     );
   }
 }
-
-GalleryDropdown.propTypes = {
-  galleries: propTypes.arrayOf(propTypes.string).isRequired,
-};
 
 module.exports = GalleryDropdown;

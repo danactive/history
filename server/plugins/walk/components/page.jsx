@@ -1,4 +1,3 @@
-const propTypes = require('prop-types');
 const React = require('react');
 
 const Contents = require('./contents.jsx');
@@ -16,17 +15,12 @@ function Page({ files }) {
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
       </head>
       <body>
-        <section id="controls" data-has-image={hasImage} />
-        <Contents files={files} />
+        <Contents files={files} showControls={hasImage} />
         <script src="../walk/static/utils.js" />
         <script src="../walk/static/assets/bundle.js" />
       </body>
     </html>
   );
 }
-
-Page.propTypes = {
-  files: propTypes.arrayOf(propTypes.shape()).isRequired,
-};
 
 module.exports = Page;
