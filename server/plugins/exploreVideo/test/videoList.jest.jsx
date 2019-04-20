@@ -1,33 +1,24 @@
-import Adapter from 'enzyme-adapter-react-16';
-import enzyme from 'enzyme';
-import React from 'react';
-import test from 'tape';
+/* global describe, expect, shallow, test */
 
-import '../../../test/setup.enzyme';
+import React from 'react';
+
 import mock from './fixtures/youtube.json';
 import VideoList from '../components/videoList';
 import VideoListItem from '../components/videoListItem';
 
-const { shallow } = enzyme;
-
-enzyme.configure({ adapter: new Adapter() });
-
-test('Explore Video - VideoList (React Components)', (describe) => {
-  describe.test('* Render component', (assert) => {
+describe('Explore Video - VideoList (React Components)', () => {
+  test('* Render component', () => {
     const wrapper = shallow(<VideoList index="1" onVideoSelect={() => {}} videos={mock.items} />);
 
 
     const actual = wrapper.find('VideoListItem').length;
     const expected = mock.items.length;
-    assert.equal(actual, expected, 'Thumbnail count');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 });
 
-test('Explore Video - VideoListItem (React Components)', (describe) => {
-  describe.test('* Render video text elements', (assert) => {
+describe('Explore Video - VideoListItem (React Components)', () => {
+  test('* Render video text elements', () => {
     const wrapper = shallow(<VideoListItem index={1} onVideoSelect={() => {}} video={mock.items[0]} />);
     let actual;
     let expected;
@@ -35,14 +26,11 @@ test('Explore Video - VideoListItem (React Components)', (describe) => {
 
     actual = wrapper.find('.media-heading').props().children;
     expected = mock.items[0].snippet.title;
-    assert.equal(actual, expected, 'Video title');
+    expect(actual).toEqual(expected);
 
 
     actual = wrapper.find('.media-thumbnail').children().props().src;
     expected = mock.items[0].snippet.thumbnails.default.url;
-    assert.equal(actual, expected, 'Video thumbnail');
-
-
-    assert.end();
+    expect(actual).toEqual(expected);
   });
 });

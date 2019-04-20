@@ -16,7 +16,6 @@ before_script:
   - npm --version
   - gm version
   - npm run lint
-  - npm run test:react
 
 script:
   - npm test
