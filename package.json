@@ -96,7 +96,7 @@
     "eslint-plugin-redux-saga": "^1.0.0",
     "file-loader": "^3.0.1",
     "jest": "^23.6.0",
-    "jsdom": "^14.0.0",
+    "jsdom": "^15.0.0",
     "lodash": "^4.17.11",
     "nyc": "^13.3.0",
     "standard-version": "^5.0.0",
