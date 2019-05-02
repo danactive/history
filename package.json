@@ -31,7 +31,7 @@
     "camelcase": "^5.0.0",
     "clone": "^2.1.1",
     "dot-prop": "^5.0.0",
-    "dotenv": "^7.0.0",
+    "dotenv": "^8.0.0",
     "dropbox": "^4.0.16",
     "extend": "^3.0.0",
     "geojson": "^0.5.0",
