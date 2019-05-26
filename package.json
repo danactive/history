@@ -39,7 +39,7 @@
     "gm": "^1.23.0",
     "hapi": "^18.1.0",
     "hapi-react-views": "^10.0.0",
-    "hapi-swagger": "^9.1.1",
+    "hapi-swagger": "^10.0.0",
     "hoist-non-react-statics": "3.0.1",
     "immutable": "3.8.2",
     "inert": "^5.1.0",
