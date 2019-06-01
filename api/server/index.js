@@ -6,8 +6,8 @@ const notifier = require('node-notifier');
 
 require('tuxharness');
 
-const config = require('../config.json');
-const log = require('./plugins/log/index');
+const config = require('../../config.json');
+const log = require('./plugins/log');
 const plugins = require('./lib/plugins');
 
 const { port } = config;

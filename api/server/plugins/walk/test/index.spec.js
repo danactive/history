@@ -8,7 +8,7 @@ tape('Verify /walk route', { skip: false }, (describe) => {
 
   const lib = require('../lib');
   const testCases = require('./cases');
-  const testCaseDef = require('../../../../server/test/casesDefinition');
+  const testCaseDef = require('../../../test/casesDefinition');
   const utils = require('../../utils');
 
   const plugins = [inert, vision, lib];

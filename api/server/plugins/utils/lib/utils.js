@@ -6,7 +6,7 @@ const glob = require('glob');
 const mime = require('mime-types');
 const path = require('path');
 
-const configFile = require('../../../../config.json');
+const configFile = require('../../../../../config.json');
 
 const config = {
   get: dotpath => dotProp.get(configFile, dotpath),

@@ -16,6 +16,7 @@ install:
   - set PATH=%CD%\gm;%PATH%
   # Get the wanted version of Node
   - ps: Install-Product node $env:nodejs_version $env:platform
+  - cd api
   - npm ci
 
 test_script:

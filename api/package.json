@@ -3,9 +3,8 @@
   "version": "3.5.0",
   "scripts": {
     "harness": "node ./node_modules/tuxharness/index.js",
-    "lint": "npm run lint:ui && npm run lint:js && npm run lint:docs",
+    "lint": "npm run lint:js && npm run lint:docs",
     "lint:js": "eslint app server *.js --ext .js,.jsx",
-    "lint:ui": "eslint ui --ext .jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown .",
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",

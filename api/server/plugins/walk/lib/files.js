@@ -2,7 +2,7 @@ const globCallback = require('glob');
 const path = require('path');
 const { promisify } = require('util');
 
-const config = require('../../../../config.json');
+const config = require('../../../../../config.json');
 const utils = require('../../utils');
 
 const glob = promisify(globCallback);

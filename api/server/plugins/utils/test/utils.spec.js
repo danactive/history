@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Utilities', { skip: false }, (describe) => {
-  const lib = require('../');
+  const lib = require('../index');
   const path = require('path');
 
   describe.test('* Config - Get', (assert) => {

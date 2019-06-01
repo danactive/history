@@ -8,7 +8,7 @@ test('Verify /view/album route', { skip: false }, (describe) => {
   const path = require('path');
   const vision = require('vision');
 
-  const config = require('../../../../config.json');
+  const config = require('../../../../../config.json');
   const lib = require('../lib');
   const testCases = require('./cases');
   const testCaseDef = require('../../../test/casesDefinition');

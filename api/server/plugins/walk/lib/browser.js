@@ -6,7 +6,7 @@ const ReactDOM = require('react-dom');
 
 const browser = require('../../../lib/browser');
 const Controls = require('../components/controls.jsx');
-const PreviewThumbContainer = require('../../../../app/containers/PreviewThumb/index.jsx');
+const PreviewThumbContainer = require('../../../../app/containers/PreviewThumb');
 
 const PreviewThumb = React.createFactory(PreviewThumbContainer);
 

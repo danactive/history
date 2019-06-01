@@ -1,7 +1,7 @@
 /* global getQueryByName */
 import React from 'react';
 
-import ThumbImg from '../../components/ThumbImg/index';
+import ThumbImg from '../../components/ThumbImg';
 
 const PreviewThumb = ({ filename }) => {
   const imgPath = `/public/static/${getQueryByName('path')}/${filename}`;

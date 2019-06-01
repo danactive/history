@@ -8,7 +8,7 @@ tape('Verify / route', { skip: false }, (describe) => {
   const querystring = require('querystring');
   const vision = require('vision');
 
-  const config = require('../../../../config.json');
+  const config = require('../../../../../config.json');
   const lib = require('../lib');
   const utils = require('../../utils');
 

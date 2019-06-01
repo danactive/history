@@ -8,7 +8,7 @@
 * Enforced rules for new Issues
 	* Issue title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/issue/subject-must-be-in-tense)
 	* Issue description cannot be empty [read more...](https://gitmagic.io/rules/#/issue/body-cannot-be-empty)
-* New Issues will follow this [Issue Template](.github/ISSUE_TEMPLATE.md)
+* New Issues will follow this [Issue Template](../.github/ISSUE_TEMPLATE.md)
 * More with GitHub.com documentation on [Mastering Issues](https://guides.github.com/features/issues/)
 
 ## Pull Requests (code review)
@@ -17,7 +17,7 @@
 	* Commit message subject must include a GitHub issue [read more...](https://gitmagic.io/rules/#/commit/subject-must-include-github-issue)
 	* Pull request title must be in imperative, present tense (e.g. "add", "fix", "change") [read more...](https://gitmagic.io/rules/#/pull-request/subject-must-be-in-tense) 
 	* Pull request description must include a screenshot [read more...](https://gitmagic.io/rules/#/pull-request/body-must-include-screenshot)
-* New Pull Requests will follow this [PR Template](.github/PULL_REQUEST_TEMPLATE.md)
+* New Pull Requests will follow this [PR Template](../.github/PULL_REQUEST_TEMPLATE.md)
 * Write unit tests to match existing test coverage
 * More with GitHub.com documentation on [Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
 
