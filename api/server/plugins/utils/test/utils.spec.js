@@ -247,7 +247,7 @@ tape('Utilities', { skip: false }, (describe) => {
   describe.test('* File - Safe Public Path - Root', (assert) => {
     assert.plan(2);
 
-    const normalPath = path.normalize('/history/public');
+    const normalPath = path.normalize('/history/api/public');
 
     getSuccessPath({
       assert, testPath: '', expected: normalPath, message: 'Public folder system path (Blank)',
@@ -261,7 +261,7 @@ tape('Utilities', { skip: false }, (describe) => {
   describe.test('* File - Safe Public Path - File', (assert) => {
     assert.plan(1);
 
-    const normalPath = path.normalize('/history/public/fixtures/exists.txt');
+    const normalPath = path.normalize('/history/api/public/fixtures/exists.txt');
 
     getSuccessPath({
       assert, testPath: '/fixtures/exists.txt', expected: normalPath, message: 'Public folder with file',
@@ -272,8 +272,8 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.plan(2);
 
     const testPath = path.join(__dirname, '../../../../public/test/fixtures');
-    const normalFilePath = path.normalize('/history/public/test/fixtures/exists.txt');
-    const normalFolderPath = path.normalize('/history/public/test/fixtures');
+    const normalFilePath = path.normalize('/history/api/public/test/fixtures/exists.txt');
+    const normalFolderPath = path.normalize('/history/api/public/test/fixtures');
 
     getSuccessPath({
       assert, testPath: path.join(testPath, '/exists.txt'), expected: normalFilePath, message: 'Public folder absolute file',
