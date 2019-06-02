@@ -2,7 +2,7 @@ node_modules
 npm-debug.log
 
 public/todo
-server/plugins/*/public/assets
+api/server/plugins/*/public/assets
 
 coverage
 .nyc_output

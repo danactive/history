@@ -30,7 +30,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 See [CHANGELOG](CHANGELOG.md)
 
 ## Contributing to this open-source project
-See [CONTRIBUTING](CONTRIBUTING.md)
+See [CONTRIBUTING](api/CONTRIBUTING.md)
 
 ## Copyright
 See [LICENSE](LICENSE)

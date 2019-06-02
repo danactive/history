@@ -1,0 +1,2 @@
+server/plugins/*/public/assets/**/*.js
+server/plugins/*/public/lib/**/*.js

@@ -15,14 +15,15 @@ before_script:
   - node --version
   - npm --version
   - gm version
+  - cd api
+  - npm ci
   - npm run lint
 
 script:
   - npm test
 
 after_success:
-  - mv ui/package-skip-to-test.json ui/package.json
-  - cd ui
+  - cd ../ui
   - npm ci
   - npm test
   - npm run ci-cover:coveralls
