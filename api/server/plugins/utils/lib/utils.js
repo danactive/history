@@ -14,7 +14,7 @@ const config = {
 
 const env = {
   load: () => {
-    dotenv.config({ path: path.join(__dirname, '../../../.env') });
+    dotenv.config({ path: path.join(__dirname, '../../../../../.env') });
     process.env.HISTORY_ENV_LOADED = true;
     process.env.HISTORY_ENV_TESTED = 1;
   },
