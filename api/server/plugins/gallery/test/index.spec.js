@@ -12,7 +12,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
   const port = utils.config.get('port');
 
   describe.test('* Validate Gallery route', async (assert) => {
-    const relativeTo = path.join(__dirname, '../../../../', 'public');
+    const relativeTo = path.join(__dirname, '../../../../../', 'public');
     const server = hapi.Server({ port });
     server.path(relativeTo);
 

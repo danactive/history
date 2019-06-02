@@ -148,7 +148,7 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
 fileMethods.safePublicPath = rawDestinationPath => new Promise((resolve, reject) => {
   try {
     const normalizedDestinationPath = path.normalize(rawDestinationPath);
-    const publicPath = path.normalize(path.join(__dirname, '../../../../public'));
+    const publicPath = path.normalize(path.join(__dirname, '../../../../../public'));
     const isRawInPublic = normalizedDestinationPath.startsWith(publicPath);
     const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath);
 
