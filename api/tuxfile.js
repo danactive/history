@@ -19,7 +19,7 @@ module.exports = {
     port: 8001,
     static: {
       route: '/',
-      directory: '/public',
+      directory: '../public',
     },
     view: {
       engines: ['dust'],

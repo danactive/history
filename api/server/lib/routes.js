@@ -1,4 +1,5 @@
 const boom = require('boom');
+const path = require('path');
 
 function staticRoute({ pluginName, urlSegment }) {
   return {
@@ -9,7 +10,7 @@ function staticRoute({ pluginName, urlSegment }) {
       tags: ['static'],
       handler: {
         directory: {
-          path: `server/plugins/${pluginName}/public`,
+          path: path.join(__dirname, `../plugins/${pluginName}/public`),
           listing: true,
           index: false,
           redirectToSlash: true,
@@ -27,7 +28,7 @@ function staticRouteJquery({ urlSegment }) {
       description: 'jQuery library',
       tags: ['static', 'jQuery'],
       handler: {
-        file: 'server/plugins/utils/public/lib/jquery/dist/jquery.min.js',
+        file: path.join(__dirname, '../plugins/utils/public/lib/jquery/dist/jquery.min.js'),
       },
     },
   };
@@ -41,7 +42,7 @@ function staticRouteUtils({ urlSegment }) {
       description: 'Utility script',
       tags: ['static'],
       handler: {
-        file: 'server/plugins/utils/public/utils.js',
+        file: path.join(__dirname, '../plugins/utils/public/utils.js'),
       },
     },
   };

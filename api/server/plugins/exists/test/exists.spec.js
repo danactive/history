@@ -51,12 +51,12 @@ tape('Exists: Library', { skip: false }, (describe) => {
   });
 
   describe.test('* Real root absolute file exists', (assert) => {
-    const testPath = path.join(__dirname, '../../../../public/test/fixtures/exists.txt');
+    const testPath = path.join(__dirname, '../../../../../public/test/fixtures/exists.txt');
     successTest(assert, testPath);
   });
 
   describe.test('* Real root absolute folder exists', (assert) => {
-    const testPath = path.join(__dirname, '../../../../public/test/fixtures');
+    const testPath = path.join(__dirname, '../../../../../public/test/fixtures');
     successTest(assert, testPath);
   });
 

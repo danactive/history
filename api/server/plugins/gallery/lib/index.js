@@ -22,7 +22,8 @@ const register = server => new Promise(async (resolve) => {
       tags: ['static'],
       handler: {
         file: {
-          path: path.join(__dirname, '../../../../', 'public/xslt/gallery.xslt'),
+          confine: false,
+          path: path.join(__dirname, '../../../../../', 'public/xslt/gallery.xslt'),
         },
       },
     },
@@ -32,7 +33,8 @@ const register = server => new Promise(async (resolve) => {
     await gallery.getGalleries();
     const handleRoute = {
       directory: {
-        path: request => path.join(__dirname, '../../../../', `public/galleries/gallery-${request.params.gallery}`),
+        path: request => path.join(__dirname, '../../../../../', `public/galleries/gallery-${request.params.gallery}`),
+        listing: true,
       },
     };
     resolve(staticGalleryFolder(server, handleRoute));
