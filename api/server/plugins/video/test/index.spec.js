@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Verify /video route', { skip: false }, (describe) => {
-  const hapi = require('hapi');
+  const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
   const inert = require('inert');
   const path = require('path');
