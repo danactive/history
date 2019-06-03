@@ -1,7 +1,7 @@
 const tape = require('tape-catch');
 
 tape('Verify /walk route', { skip: false }, (describe) => {
-  const hapi = require('hapi');
+  const hapi = require('@hapi/hapi');
   const inert = require('inert');
   const { t: typy } = require('typy');
   const vision = require('vision');
