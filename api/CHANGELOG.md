@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.0.0](https://github.com/danactive/history/compare/v3.5.0...v4.0.0) (2019-06-03)
+
+
+### Bug Fixes
+
+* **Env:** Env variables are in the root, not in UI ([adfc57b](https://github.com/danactive/history/commit/adfc57b))
+* **package:** update babel-jest to version 24.1.0 ([80b64f5](https://github.com/danactive/history/commit/80b64f5))
+* **package:** update dot-prop to version 5.0.0 ([6f8d45e](https://github.com/danactive/history/commit/6f8d45e))
+* **package:** update dot-prop to version 5.0.0 ([dc7efca](https://github.com/danactive/history/commit/dc7efca))
+* **package:** update dotenv to version 7.0.0 ([788b60f](https://github.com/danactive/history/commit/788b60f))
+* **package:** update hapi to version 18.0.0 ([530d309](https://github.com/danactive/history/commit/530d309))
+* **package:** update hapi to version 18.1.0 ([466f5a9](https://github.com/danactive/history/commit/466f5a9))
+* **package:** update mapbox-gl to version 0.53.1 ([8641d50](https://github.com/danactive/history/commit/8641d50))
+* **package:** update react-dates to version 19.0.0 ([4a69574](https://github.com/danactive/history/commit/4a69574))
+* **package:** update react-dates to version 20.0.0 ([b8c9b69](https://github.com/danactive/history/commit/b8c9b69))
+* **package:** update react-dom to version 16.8.3 ([7614ea8](https://github.com/danactive/history/commit/7614ea8))
+* **package:** update react-redux to version 5.1.0 ([979500c](https://github.com/danactive/history/commit/979500c))
+* **package:** update redux-saga to version 1.0.1 ([7dfd6bf](https://github.com/danactive/history/commit/7dfd6bf)), closes [#309](https://github.com/danactive/history/issues/309)
+* package.json to reduce vulnerabilities ([69ba2bc](https://github.com/danactive/history/commit/69ba2bc))
+* **package:** update redux-saga to version 1.0.2 ([25d45e5](https://github.com/danactive/history/commit/25d45e5))
+* **package:** update typy to version 3.0.0 ([f6bf710](https://github.com/danactive/history/commit/f6bf710))
+* **package:** update typy to version 3.0.0 ([8f0954a](https://github.com/danactive/history/commit/8f0954a))
+* **Public:** Move from /api/public to /public shared for /ui ([a4dc79f](https://github.com/danactive/history/commit/a4dc79f))
+
+
+### Features
+
+* **CI:** Add monorepo support with Greenkeeper for latest dependencies ([d49a12e](https://github.com/danactive/history/commit/d49a12e))
+* **Repo:** First step to separate frontend (ui) from backend(api) ([f2784d0](https://github.com/danactive/history/commit/f2784d0))
+* **Repo:** UI version is based on react-boilerplat, API is now separate ([e907d3c](https://github.com/danactive/history/commit/e907d3c))
+
+
+### BREAKING CHANGES
+
+* **Repo:** Changelog is specific to API (not UI)
+
+
+
 # [3.5.0](https://github.com/danactive/history/compare/v3.4.0...v3.5.0) (2019-02-18)
 
 
