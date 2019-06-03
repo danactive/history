@@ -1,6 +1,35 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [4.1.0](https://github.com/danactive/history/compare/v4.0.0...v4.1.0) (2019-06-03)
+
+
+### Bug Fixes
+
+* **Babel:** Decrease babel config ([ccb48f6](https://github.com/danactive/history/commit/ccb48f6))
+* **package:** Remove dev dependency babel-tape-runner ([fded616](https://github.com/danactive/history/commit/fded616))
+* **package:** Update @hapi/joi to version 15.0.3 ([0da52f4](https://github.com/danactive/history/commit/0da52f4))
+* **package:** Update @hapi/wreck to version 15.0.1 ([4096fe6](https://github.com/danactive/history/commit/4096fe6))
+* **package:** Update app-root-path to version 2.2.1 ([a4ce5be](https://github.com/danactive/history/commit/a4ce5be))
+* **package:** Update dependency @hapi/hapi ([f7be9fc](https://github.com/danactive/history/commit/f7be9fc))
+* **package:** Update dotenv to version 8.0.0 ([fb1d7ab](https://github.com/danactive/history/commit/fb1d7ab))
+* **package:** Update eslint to version 5.13.0 ([18188f5](https://github.com/danactive/history/commit/18188f5))
+* **package:** Update eslint-plugin-import to version 2.17.3 ([613a3cd](https://github.com/danactive/history/commit/613a3cd))
+* **package:** Update eslint-plugin-jsx-a11y to version 6.2.1 ([becef19](https://github.com/danactive/history/commit/becef19))
+* **package:** Update eslint-plugin-react to version 7.13.0 ([ba78553](https://github.com/danactive/history/commit/ba78553))
+* **package:** Update hapi-swagger to version 10.0.0 ([7b0718e](https://github.com/danactive/history/commit/7b0718e))
+* **package:** Update minor deps ([e4335ad](https://github.com/danactive/history/commit/e4335ad))
+* **package:** Update nyc to version 14.1.1 ([d3f258f](https://github.com/danactive/history/commit/d3f258f))
+* **package:** Update standard-version to version 6.0.1 ([d3b5828](https://github.com/danactive/history/commit/d3b5828))
+* **README:** Update broken badges to show valid address ([185ac0f](https://github.com/danactive/history/commit/185ac0f))
+
+
+### Features
+
+* **Docker:** API, UI may start from Docker (does not support image processing) ([9c2e556](https://github.com/danactive/history/commit/9c2e556))
+
+
 
 # [4.0.0](https://github.com/danactive/history/compare/v3.5.0...v4.0.0) (2019-06-03)
 
