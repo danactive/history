@@ -1,13 +1,13 @@
-const joi = require('joi');
+const joi = require('@hapi/joi');
 
 module.exports = {
-  albumStem: joi.string().regex(/^[a-z0-9_-]{1,25}$/gi).required().example('country2017'),
+  albumStem: joi.string().regex(/^[a-z0-9_-]{1,25}$/i).required().example('country2017'),
   cloudProviders: joi.string().valid('dropbox'),
   filenames: joi.array().items(joi.string().regex(/^[-\w^&'@{}[\],$=!#().%+~ ]+$/))
     .min(1).max(80)
     .required()
     .example('["DSC01229.JPG"]'),
-  gallery: joi.string().regex(/^[a-z0-9_-]{1,25}$/gi).required().example('vacations'),
+  gallery: joi.string().regex(/^[a-z0-9_-]{1,25}$/i).required().example('vacations'),
   geocode: joi.string().regex(/(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/).example('49.25,-123.1'),
   prefix: joi.string().isoDate().raw().required()
     .example('2016-12-31'),
