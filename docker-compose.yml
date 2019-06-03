@@ -1,0 +1,17 @@
+version: '3'
+services:
+  web:
+    build: api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./public:/app/public:ro
+  ui:
+    build: ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./.env:/app/.env:ro
+      - ./public:/app/public:ro
