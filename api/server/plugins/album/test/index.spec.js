@@ -1,7 +1,7 @@
 const test = require('tape-catch');
 
 test('Verify /view/album route', { skip: false }, (describe) => {
-  const hapi = require('hapi');
+  const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
   const inert = require('inert');
   const querystring = require('querystring');

@@ -2,7 +2,7 @@ const tape = require('tape-catch');
 
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
-  const hapi = require('hapi');
+  const hapi = require('@hapi/hapi');
 
   const lib = require('../lib');
   const utils = require('../../utils');
