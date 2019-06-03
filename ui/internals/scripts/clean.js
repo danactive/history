@@ -39,7 +39,7 @@ shell.rm('-rf', 'app/utils');
 shell.mv('internals/templates/utils', 'app');
 
 // Replace the files in the root app/ folder
-shell.cp('internals/templates/app.js', 'app/app.js');
+shell.cp('internals/templates/app.jsx', 'app/app.jsx');
 shell.cp('internals/templates/global-styles.js', 'app/global-styles.js');
 shell.cp('internals/templates/i18n.js', 'app/i18n.js');
 shell.cp('internals/templates/index.html', 'app/index.html');

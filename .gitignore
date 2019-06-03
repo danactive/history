@@ -4,6 +4,7 @@ npm-debug.log
 public/todo
 api/server/plugins/*/public/assets
 
+build
 coverage
 .nyc_output
 tmp
