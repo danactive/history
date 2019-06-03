@@ -9,7 +9,7 @@
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
     "start": "npm run webpack && node .",
-    "test": "npm run test:jest && npm run webpack && nyc --extension .jsx babel-tape-runner server/plugins/*/test/*.spec.js",
+    "test": "npm run test:jest && npm run webpack && nyc --extension .jsx tape server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
     "test:jest": "jest",
     "webpack": "webpack --config webpack.js",
@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "@mapbox/geojsonhint": "^3.0.0",
-    "babel-tape-runner": "^2.0.1",
     "calipers": "^2.0.0",
     "calipers-jpeg": "^2.0.0",
     "codeclimate-test-reporter": "^0.5.0",
