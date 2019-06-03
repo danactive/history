@@ -34,13 +34,11 @@ module.exports = [
     module: {
       rules: [
         {
+          exclude: /(node_modules)/,
           test: /\.jsx$/,
           use: [
             {
               loader: 'babel-loader',
-              options: {
-                presets: ['react', 'env'],
-              },
             },
           ],
         },
