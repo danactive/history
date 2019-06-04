@@ -11,6 +11,7 @@ function parseJSON(response) {
     return null;
   }
 
+  // *********** HISTORY CUSTOM not React Boilerplate
   if (response.headers.get('Content-Type') === 'application/xml') {
     return response.text();
   }

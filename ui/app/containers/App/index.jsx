@@ -14,6 +14,7 @@ import Footer from '../../components/Footer';
 import GlobalStyle from '../../global-styles';
 
 const AppWrapper = styled.div`
+  max-width: calc(768px + 16px * 2);
   margin: 0 auto;
   display: flex;
   min-height: 100%;
@@ -27,7 +28,9 @@ export default function App() {
       <Helmet
         titleTemplate="%s - History"
         defaultTitle="History"
-      />
+      >
+        <meta name="description" content="History" />
+      </Helmet>
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />

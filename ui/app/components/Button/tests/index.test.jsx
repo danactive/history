@@ -4,56 +4,57 @@
  */
 
 import React from 'react';
-import { mount } from 'enzyme';
+import { fireEvent, render } from 'react-testing-library';
 
 import Button from '..';
 
 const handleRoute = () => {};
 const href = 'http://mxstbr.com';
 const children = <h1>Test</h1>;
-const renderComponent = (props = {}) => mount(
-  <Button href={href} {...props}>
-    {children}
-  </Button>,
-);
+const renderComponent = (props = {}) =>
+  render(
+    <Button href={href} {...props}>
+      {children}
+    </Button>,
+  );
 
 describe('<Button />', () => {
   test('should render an <a> tag if no route is specified', () => {
-    const renderedComponent = renderComponent({ href });
-    expect(renderedComponent.find('a')).toHaveLength(1);
+    const { container } = renderComponent({ href });
+    expect(container.querySelector('a')).not.toBeNull();
   });
 
   test('should render a <button> tag to change route if the handleRoute prop is specified', () => {
-    const renderedComponent = renderComponent({ handleRoute });
-    expect(renderedComponent.find('button')).toHaveLength(1);
+    const { container } = renderComponent({ handleRoute });
+    expect(container.querySelector('button')).toBeDefined();
   });
 
   test('should have children', () => {
-    const renderedComponent = renderComponent();
-    expect(renderedComponent.contains(children)).toEqual(true);
+    const { container } = renderComponent();
+    expect(container.querySelector('a').children).toHaveLength(1);
   });
 
   test('should handle click events', () => {
     const onClickSpy = jest.fn();
-    const renderedComponent = renderComponent({ onClick: onClickSpy });
-    renderedComponent.find('a').simulate('click');
+    const { container } = renderComponent({ onClick: onClickSpy });
+    fireEvent.click(container.querySelector('a'));
     expect(onClickSpy).toHaveBeenCalled();
   });
 
-  test('should have a className attribute', () => {
-    const renderedComponent = renderComponent();
-    expect(renderedComponent.find('a').prop('className')).toBeDefined();
+  test('should have a class attribute', () => {
+    const { container } = renderComponent();
+    expect(container.querySelector('a').hasAttribute('class')).toBe(true);
   });
 
   test('should not adopt a type attribute when rendering an <a> tag', () => {
     const type = 'text/html';
-    const renderedComponent = renderComponent({ href, type });
-    expect(renderedComponent.find('a').prop('type')).toBeUndefined();
+    const { container } = renderComponent({ href, type });
+    expect(container.querySelector(`a[type="${type}"]`)).toBeNull();
   });
 
   test('should not adopt a type attribute when rendering a button', () => {
     const type = 'submit';
-    const renderedComponent = renderComponent({ handleRoute, type });
-    expect(renderedComponent.find('button').prop('type')).toBeUndefined();
+    const { container } = renderComponent({ handleRoute, type });
+    expect(container.querySelector('button').getAttribute('type')).toBeNull();
   });
 });

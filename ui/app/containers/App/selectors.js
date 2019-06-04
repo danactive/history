@@ -1,26 +1,39 @@
+/**
+ * The global state selectors
+ */
+
 import { createSelector } from 'reselect';
+import { initialState } from './reducer';
 
 // Memorized selectors
-export const selectPage = state => state.get('albumViewPage');
-export const selectAlbum = state => state.get('albums');
+const selectAlbum = state => state.albums || initialState;
+const selectPage = state => state.albumViewPage;
 
-export const makeSelectThumbsLoading = () => createSelector(
+const makeSelectThumbsLoading = () => createSelector(
   selectPage,
-  pageState => pageState.get('thumbsLoading') || false,
+  pageState => pageState.thumbsLoading || false,
 );
 
-export const makeSelectThumbsError = () => createSelector(
+const makeSelectThumbsError = () => createSelector(
   selectPage,
-  pageState => pageState.get('thumbsError'),
+  pageState => pageState.thumbsError,
 );
 
-export const selectCurrentMemory = (state) => {
+const selectCurrentMemory = (state) => {
   const albumState = selectAlbum(state);
-  const currentMemory = albumState.get('currentMemory');
+  const { currentMemory } = albumState;
 
   return {
-    gallery: albumState.get('gallery'),
-    album: albumState.get('album'),
-    currentMemory: (currentMemory) ? currentMemory.toJS() : null,
+    gallery: albumState.gallery,
+    album: albumState.album,
+    currentMemory: currentMemory || null,
   };
+};
+
+export {
+  selectAlbum,
+  selectPage,
+  selectCurrentMemory,
+  makeSelectThumbsError,
+  makeSelectThumbsLoading,
 };

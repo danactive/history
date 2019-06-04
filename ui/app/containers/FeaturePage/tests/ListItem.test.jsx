@@ -1,32 +1,36 @@
 /* global describe, expect, mount, test */
 import React from 'react';
-import { enzymeFind } from 'styled-components/test-utils';
+import { render } from 'react-testing-library';
 
 import ListItem from '../ListItem';
 
 describe('<ListItem />', () => {
   test('should render an <li> tag', () => {
-    const wrapper = mount(<ListItem />);
-    const renderedComponent = enzymeFind(wrapper, ListItem);
-    expect(renderedComponent.type()).toEqual('li');
+    const {
+      container: { firstChild },
+    } = render(<ListItem />);
+    expect(firstChild.tagName).toEqual('LI');
   });
 
-  test('should have a className attribute', () => {
-    const wrapper = mount(<ListItem />);
-    const renderedComponent = enzymeFind(wrapper, ListItem);
-    expect(renderedComponent.prop('className')).toBeDefined();
+  test('should have a class attribute', () => {
+    const {
+      container: { firstChild },
+    } = render(<ListItem />);
+    expect(firstChild.hasAttribute('class')).toBe(true);
   });
 
   test('should adopt a valid attribute', () => {
     const id = 'test';
-    const wrapper = mount(<ListItem id={id} />);
-    const renderedComponent = enzymeFind(wrapper, ListItem);
-    expect(renderedComponent.prop('id')).toEqual(id);
+    const {
+      container: { firstChild },
+    } = render(<ListItem id={id} />);
+    expect(firstChild.id).toEqual(id);
   });
 
   test('should not adopt an invalid attribute', () => {
-    const wrapper = mount(<ListItem attribute="test" />);
-    const renderedComponent = enzymeFind(wrapper, ListItem);
-    expect(renderedComponent.prop('attribute')).toBeUndefined();
+    const {
+      container: { firstChild },
+    } = render(<ListItem attribute="test" />);
+    expect(firstChild.hasAttribute('attribute')).toBe(false);
   });
 });

@@ -1,16 +1,10 @@
 /**
  * COMMON WEBPACK CONFIGURATION
  */
-/* eslint-disable import/no-extraneous-dependencies */
+
 const path = require('path');
 const webpack = require('webpack');
 require('dotenv').config({ path: '../.env' }); // *********** HISTORY CUSTOM not React Boilerplate
-
-// Remove this line once the following warning goes away (it was meant for webpack loader authors not users):
-// 'DeprecationWarning: loaderUtils.parseQuery() received a non-string value which can be problematic,
-// see https://github.com/webpack/loader-utils/issues/56 parseQuery() will be replaced with getOptions()
-// in the next major version of loader-utils.'
-process.noDeprecation = true;
 
 module.exports = options => ({
   mode: options.mode,
@@ -27,8 +21,7 @@ module.exports = options => ({
   module: {
     rules: [
       {
-        // *********** HISTORY CUSTOM not React Boilerplate
-        test: /\.jsx?$/, // Transform all .js or .jsx files required somewhere with Babel
+        test: /\.jsx?$/, // Transform all .js and .jsx files required somewhere with Babel
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -119,17 +112,12 @@ module.exports = options => ({
     // Always expose NODE_ENV to webpack, in order to use `process.env.NODE_ENV`
     // inside your code for any environment checks; Terser will automatically
     // drop any unreachable code.
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-      },
-    }),
-
     // *********** HISTORY CUSTOM not React Boilerplate
     // TODO production mode should request this from the user via browser UI
     new webpack.EnvironmentPlugin({
       HISTORY_DROPBOX_ACCESS_TOKEN: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
       HISTORY_YOUTUBE_API_KEY: process.env.HISTORY_YOUTUBE_API_KEY,
+      NODE_ENV: 'development',
     }),
   ]),
   resolve: {

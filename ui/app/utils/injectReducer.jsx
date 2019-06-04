@@ -1,5 +1,7 @@
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { ReactReduxContext } from 'react-redux';
+
 import getInjectors from './reducerInjectors';
 
 function defineProperty(obj, key, value) {
@@ -26,17 +28,9 @@ function defineProperty(obj, key, value) {
 
 export default ({ key, reducer }) => (WrappedComponent) => {
   class ReducerInjector extends React.Component {
-    constructor(...args) {
-      super(...args);
-
-      const { store } = this.context;
-
-      defineProperty(this, 'injectors', getInjectors(store));
-    }
-
-    componentWillMount() {
-      const { injectReducer } = this.injectors;
-      injectReducer(key, reducer);
+    constructor(props, context) {
+      super(props, context);
+      getInjectors(context.store).injectReducer(key, reducer);
     }
 
     render() {
@@ -46,9 +40,7 @@ export default ({ key, reducer }) => (WrappedComponent) => {
 
   defineProperty(ReducerInjector, 'WrappedComponent', WrappedComponent);
 
-  defineProperty(ReducerInjector, 'contextTypes', {
-    store: () => {},
-  });
+  defineProperty(ReducerInjector, 'contextType', ReactReduxContext);
 
   defineProperty(
     ReducerInjector,
@@ -60,3 +52,15 @@ export default ({ key, reducer }) => (WrappedComponent) => {
 
   return hoistNonReactStatics(ReducerInjector, WrappedComponent);
 };
+
+const useInjectReducer = ({
+  key,
+  reducer,
+}) => {
+  const context = React.useContext(ReactReduxContext);
+  React.useEffect(() => {
+    getInjectors(context.store).injectReducer(key, reducer);
+  }, []);
+};
+
+export { useInjectReducer };

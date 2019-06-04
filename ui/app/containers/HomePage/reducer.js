@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable';
+import produce from 'immer';
 
 import {
   LOAD_GALLERIES,
@@ -7,31 +7,29 @@ import {
 } from './constants';
 
 // The initial state of the App
-export const initialState = fromJS({
-  galleryLoading: false,
+export const initialState = {
   galleryError: false,
-});
+  galleryLoading: false,
+};
 
-function homeReducer(state = initialState, action) {
+/* eslint-disable default-case, no-param-reassign */
+const homeReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOAD_GALLERIES:
-      return state
-        .set('galleryLoading', true)
-        .set('galleryError', false);
+      draft.galleryError = false;
+      draft.galleryLoading = true;
+      break;
 
     case LOAD_GALLERIES_SUCCESS:
-      return state
-        .set('galleryLoading', false)
-        .set('contents', action.galleries.entries);
+      draft.galleryLoading = false;
+      draft.contents = action.galleries.entries;
+      break;
 
     case LOAD_GALLERIES_ERROR:
-      return state
-        .set('galleryError', action.error)
-        .set('galleryLoading', false);
-
-    default:
-      return state;
+      draft.galleryError = action.error;
+      draft.galleryLoading = false;
+      break;
   }
-}
+});
 
 export default homeReducer;

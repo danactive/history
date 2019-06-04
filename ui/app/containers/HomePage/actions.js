@@ -12,14 +12,14 @@ export function loadGalleries() {
 
 export function galleriesLoaded(galleries) {
   return {
-    type: LOAD_GALLERIES_SUCCESS,
     galleries,
+    type: LOAD_GALLERIES_SUCCESS,
   };
 }
 
 export function galleriesLoadingError(error) {
   return {
-    type: LOAD_GALLERIES_ERROR,
     error,
+    type: LOAD_GALLERIES_ERROR,
   };
 }

@@ -1,17 +1,39 @@
-/* global describe, expect, test */
-import { fromJS } from 'immutable';
+/* global beforeEach, describe, expect, test */
+import produce from 'immer';
 
-import albumReducer from '../reducer';
+import appReducer from '../reducer';
 import {
-  PREV_MEMORY,
-  NEXT_MEMORY,
-} from '../../AlbumViewPage/constants';
+  chooseAdjacentMemory,
+} from '../../AlbumViewPage/actions';
 
+/* eslint-disable default-case, no-param-reassign */
 describe('appReducer', () => {
+  let state;
+  beforeEach(() => {
+    state = {
+      gallery: 'demo',
+      album: 'sample',
+      albums: {
+        currentMemory: {
+          id: 2,
+        },
+        demo: {
+          sample: {
+            memories: [
+              { id: 1 },
+              { id: 2 },
+              { id: 3 },
+            ],
+          },
+        },
+      },
+    };
+  });
+
   test('should return the initial state', () => {
-    const action = {};
-    const state = undefined;
-    const expected = fromJS({
+    const expectedResult = {
+      gallery: 'demo',
+      album: 'sample',
       albums: {
         demo: {
           sample: {
@@ -19,92 +41,41 @@ describe('appReducer', () => {
           },
         },
       },
-    }).get('albums');
-    const actual = albumReducer(state, action);
-    expect(actual).toEqual(expected);
+    };
+    expect(appReducer(undefined, {})).toEqual(expectedResult);
   });
 
-  describe('should return currentMemory', () => {
-    function getState() {
-      const stateWithImmutableMemories = fromJS({
-        albums: {
-          gallery: 'demo',
-          album: 'sample',
-          currentMemory: {
-            id: 2,
-          },
-          demo: {
-            sample: {
-              memories: [],
-            },
-          },
-        },
-      }).get('albums');
-
-      return stateWithImmutableMemories.setIn(
-        ['demo', 'sample', 'memories'],
-        [
-          { id: 1 },
-          { id: 2 },
-          { id: 3 },
-        ],
-      );
-    }
-
+  describe('should handle the currentMemory action correctly', () => {
     test('should be one after ID two', () => {
-      const stateWithArrayMemories = getState();
-      const action = {
-        type: NEXT_MEMORY,
-        adjacentInt: 1,
-      };
-      const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = fromJS({
-        id: 3,
+      const expectedResult = produce(state, (draft) => {
+        draft.albums.currentMemory.id = 3;
       });
 
-      expect(actual).toEqual(expected);
+      expect(appReducer(state, chooseAdjacentMemory(1))).toEqual(expectedResult);
     });
 
     test('should be one before ID two', () => {
-      const stateWithArrayMemories = getState();
-      const action = {
-        type: PREV_MEMORY,
-        adjacentInt: -1,
-      };
-      const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = fromJS({
-        id: 1,
+      const expectedResult = produce(state, (draft) => {
+        draft.albums.currentMemory.id = 1;
       });
 
-      expect(actual).toEqual(expected);
+      expect(appReducer(state, chooseAdjacentMemory(-1))).toEqual(expectedResult);
     });
 
     test('should be two after ID two', () => {
-      const stateWithArrayMemories = getState();
-      const action = {
-        type: NEXT_MEMORY,
-        adjacentInt: 2,
-      };
-      const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = fromJS({
-        id: 1,
+      const expectedResult = produce(state, (draft) => {
+        draft.albums.currentMemory.id = 1;
       });
 
-      expect(actual).toEqual(expected);
+      expect(appReducer(state, chooseAdjacentMemory(2))).toEqual(expectedResult);
     });
 
     test('should be two before ID two', () => {
-      const stateWithArrayMemories = getState();
-      const action = {
-        type: PREV_MEMORY,
-        adjacentInt: -2,
-      };
-      const actual = albumReducer(stateWithArrayMemories, action).get('currentMemory');
-      const expected = fromJS({
-        id: 3,
+      const expectedResult = produce(state, (draft) => {
+        draft.albums.currentMemory.id = 3;
       });
 
-      expect(actual).toEqual(expected);
+      expect(appReducer(state, chooseAdjacentMemory(-2))).toEqual(expectedResult);
     });
   });
 });

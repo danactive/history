@@ -1,11 +1,11 @@
 module.exports = {
   collectCoverageFrom: [
-    'app/**/*.{js,jsx}',
-    '!app/**/*.test.{js,jsx}',
-    '!app/*/RbGenerated*/*.{js,jsx}',
-    '!app/app.jsx',
-    '!app/global-styles.js',
-    '!app/*/*/Loadable.{js,jsx}',
+    'ui/app/**/*.{js,jsx}',
+    '!ui/app/**/*.test.{js,jsx}',
+    '!ui/app/*/RbGenerated*/*.{js,jsx}',
+    '!ui/app/app.jsx',
+    '!ui/app/global-styles.js',
+    '!ui/app/*/*/Loadable.{js,jsx}',
   ],
   coverageThreshold: {
     global: {
@@ -21,8 +21,11 @@ module.exports = {
     '.*\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/internals/mocks/image.js',
   },
-  setupTestFrameworkScriptFile: '<rootDir>/internals/testing/test-bundler.js',
-  setupFiles: ['raf/polyfill', '<rootDir>/internals/testing/enzyme-setup.js'],
-  testRegex: 'tests/.*\\.test\\.js$',
-  snapshotSerializers: ['enzyme-to-json/serializer'],
+  setupFilesAfterEnv: [
+    '<rootDir>/internals/testing/test-bundler.js',
+    'react-testing-library/cleanup-after-each',
+  ],
+  setupFiles: ['raf/polyfill'],
+  testRegex: 'tests/.*\\.(jest|test)\\.js|x$',
+  snapshotSerializers: [],
 };

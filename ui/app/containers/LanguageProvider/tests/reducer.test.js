@@ -1,16 +1,13 @@
 /* global describe, expect, test */
-import { fromJS } from 'immutable';
-
 import languageProviderReducer from '../reducer';
-import CHANGE_LOCALE from '../constants';
+import { CHANGE_LOCALE } from '../constants';
 
+/* eslint-disable default-case, no-param-reassign */
 describe('languageProviderReducer', () => {
   test('returns the initial state', () => {
-    expect(languageProviderReducer(undefined, {})).toEqual(
-      fromJS({
-        locale: 'en',
-      }),
-    );
+    expect(languageProviderReducer(undefined, {})).toEqual({
+      locale: 'en',
+    });
   });
 
   test('changes the locale', () => {
@@ -18,7 +15,7 @@ describe('languageProviderReducer', () => {
       languageProviderReducer(undefined, {
         type: CHANGE_LOCALE,
         locale: 'de',
-      }).toJS(),
+      }),
     ).toEqual({
       locale: 'de',
     });
