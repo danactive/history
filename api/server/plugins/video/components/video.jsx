@@ -28,7 +28,7 @@ function Video({ video }) {
 
   /* eslint-disable jsx-a11y/media-has-caption */
   return (
-    <video width={video.w} height={video.h} poster={poster} controls preload="auto" autoPlay>
+    <video width={video.w} height={video.h} poster={poster} controls preload="auto" autoPlay={false}>
       {sources}
       {tracks}
     </video>
