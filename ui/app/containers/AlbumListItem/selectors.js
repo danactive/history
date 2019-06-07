@@ -1,11 +1,14 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-const selectPage = state => state.get('galleryViewPage');
+const selectPage = state => state.galleryViewPage;
 
 const makeSelectGallery = () => createSelector(
   selectPage,
-  routeState => routeState.get('gallery') || '',
+  routeState => routeState.gallery || '',
 );
 
-export default makeSelectGallery;
+export {
+  selectPage,
+  makeSelectGallery,
+};
