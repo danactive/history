@@ -1,5 +1,5 @@
 /* global describe, expect, test */
-import { makeSelectLocation } from 'containers/App/selectors';
+import { makeSelectLocation } from '../selectors';
 
 describe('makeSelectLocation', () => {
   test('should select the location', () => {

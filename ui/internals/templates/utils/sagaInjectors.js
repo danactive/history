@@ -9,9 +9,9 @@ import { DAEMON, ONCE_TILL_UNMOUNT, RESTART_ON_REMOUNT } from './constants';
 const allowedModes = [RESTART_ON_REMOUNT, DAEMON, ONCE_TILL_UNMOUNT];
 
 const checkKey = key => invariant(
-    isString(key) && !isEmpty(key),
-    '(app/utils...) injectSaga: Expected `key` to be a non empty string',
-  );
+  isString(key) && !isEmpty(key),
+  '(app/utils...) injectSaga: Expected `key` to be a non empty string',
+);
 
 const checkDescriptor = (descriptor) => {
   const shape = {
