@@ -1,5 +1,5 @@
 /* global beforeEach, describe, expect, test */
-import { fromJS } from 'immutable';
+import produce from 'immer';
 
 import pageReducer from '../reducer';
 import {
@@ -11,6 +11,7 @@ import {
   thumbsLoaded,
 } from '../actions';
 
+/* eslint-disable default-case, no-param-reassign */
 describe('pageReducer', () => {
   let state;
   const fixtures = {
@@ -21,42 +22,54 @@ describe('pageReducer', () => {
   };
 
   beforeEach(() => {
-    state = fromJS({
+    state = {
       albumLoading: false,
       albumError: false,
       thumbsLoading: false,
       thumbsError: false,
-    });
+    };
   });
 
   test('should return the initial state', () => {
-    const expected = state;
+    const expected = {
+      albumLoading: false,
+      albumError: false,
+      thumbsLoading: false,
+      thumbsError: false,
+    };
     expect(pageReducer(undefined, {})).toEqual(expected);
   });
 
   test('should handle the loadAlbum action correctly', () => {
     const received = pageReducer(state, loadAlbum(`?gallery=${fixtures.gallery}&another=false`, 'sample'));
-    const expected = state.set('albumLoading', true);
+
+    const expected = produce(state, (draft) => {
+      draft.albumLoading = true;
+    });
 
     expect(received).toEqual(expected);
   });
 
   test('should handle the albumLoadSuccess action correctly', () => {
     const received = pageReducer(state, albumLoadSuccess(fixtures.gallery, 'sample'));
-    const expected = state
-      .set('albumLoading', false)
-      .set('thumbsLoading', true)
-      .set('page', fixtures.page)
-      .set('hasMore', fixtures.hasMore);
+
+    const expected = produce(state, (draft) => {
+      draft.albumLoading = false;
+      draft.thumbsLoading = true;
+      draft.page = fixtures.page;
+      draft.hasMore = fixtures.hasMore;
+    });
 
     expect(received).toEqual(expected);
   });
 
   test('should handle the albumLoadError action correctly', () => {
     const received = pageReducer(state, albumLoadError(fixtures.error));
-    const expected = state
-      .set('albumError', fixtures.error)
-      .set('albumLoading', false);
+
+    const expected = produce(state, (draft) => {
+      draft.albumError = fixtures.error;
+      draft.albumLoading = false;
+    });
 
     expect(received).toEqual(expected);
   });
@@ -70,29 +83,35 @@ describe('pageReducer', () => {
       hasMore: fixtures.hasMore,
     };
     const received = pageReducer(state, nextPageSuccess(args));
-    const expected = state
-      .set('thumbsLoading', false)
-      .set('page', fixtures.page)
-      .set('hasMore', fixtures.hasMore);
+
+    const expected = produce(state, (draft) => {
+      draft.thumbsLoading = false;
+      draft.page = fixtures.page;
+      draft.hasMore = fixtures.hasMore;
+    });
 
     expect(received).toEqual(expected);
   });
 
   test('should handle the nextPageError action correctly', () => {
     const received = pageReducer(state, nextPageError(fixtures.error));
-    const expected = state
-      .set('thumbsError', fixtures.error)
-      .set('thumbsLoading', false);
+
+    const expected = produce(state, (draft) => {
+      draft.thumbsError = fixtures.error;
+      draft.thumbsLoading = false;
+    });
 
     expect(received).toEqual(expected);
   });
 
   test('should handle the thumbsLoaded action correctly', () => {
     const received = pageReducer(state, thumbsLoaded(fixtures.error));
-    const expected = state
-      .set('thumbsLoading', false)
-      .remove('page')
-      .remove('hasMore');
+
+    const expected = produce(state, (draft) => {
+      draft.thumbsLoading = false;
+      delete draft.page;
+      delete draft.hasMore;
+    });
 
     expect(received).toEqual(expected);
   });
