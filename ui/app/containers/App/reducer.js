@@ -1,3 +1,4 @@
+import dotProp from 'dot-prop';
 import produce from 'immer';
 
 import {
@@ -34,23 +35,23 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
       draft.album = action.album;
-      draft.albums[action.gallery][action.album].memories = [];
+      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, []);
       break;
     }
 
     case LOAD_ALBUM_SUCCESS: {
-      draft.albums[state.gallery][state.album].memories = action.memories; // memories is an Array (not Immutable)
+      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, action.memories);
       break;
     }
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
-      draft.albums[state.gallery][state.album].memories = insertPage({
+      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, insertPage({
         insert: action.newMemories,
         pageSize: PAGE_SIZE,
         page: action.page,
         list: state.albums[state.gallery][state.album].memories,
-      }); // memories from insertPage is an Array (not Immutable)
+      }));
       break;
     }
 

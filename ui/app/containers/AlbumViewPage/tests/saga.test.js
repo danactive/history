@@ -1,10 +1,11 @@
 /* global describe, expect, test */
 import { Dropbox } from 'dropbox';
+import 'whatwg-fetch';
 
 import {
   all, call, put, select,
 } from 'redux-saga/effects';
-import { cloneableGenerator } from 'redux-saga/utils';
+import { cloneableGenerator } from '@redux-saga/testing-utils';
 
 import normalizeError from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
@@ -33,6 +34,8 @@ describe('AlbumViewPage Saga', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
+        // Unit test cannot reproduce global fetch so delete
+        delete received.fetch;
         expect(received).toEqual(expected);
       });
 
@@ -213,8 +216,8 @@ describe('AlbumViewPage Saga', () => {
         expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
 
         // Unit test cannot reproduce error stack so delete
-        delete expected.PUT.action.error.stack;
-        delete received.PUT.action.error.stack;
+        delete expected.payload.action.error.stack;
+        delete received.payload.action.error.stack;
 
         expect(received).toEqual(expected);
 
