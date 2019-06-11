@@ -3,13 +3,13 @@
 exports[`<App /> should render and match the snapshot 1`] = `
 <ForwardRef>
   <HelmetWrapper
-    defaultTitle="React.js Boilerplate"
+    defaultTitle="History"
     defer={true}
     encodeSpecialCharacters={true}
-    titleTemplate="%s - React.js Boilerplate"
+    titleTemplate="%s - History"
   >
     <meta
-      content="A React.js Boilerplate application"
+      content="History"
       name="description"
     />
   </HelmetWrapper>
@@ -22,7 +22,15 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
     <Route
       component={[Function]}
+      path="/album/view/:album"
+    />
+    <Route
+      component={[Function]}
       path="/features"
+    />
+    <Route
+      component={[Function]}
+      path="/gallery/view/:gallery"
     />
     <Route
       component={[Function]}
