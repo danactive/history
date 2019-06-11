@@ -20,11 +20,9 @@ import { insertPage } from '../AlbumViewPage/paging';
 export const initialState = {
   gallery: 'demo',
   album: 'sample',
-  albums: {
-    demo: {
-      sample: {
-        memories: [],
-      },
+  demo: {
+    sample: {
+      memories: [],
     },
   },
 };
@@ -35,41 +33,41 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
       draft.album = action.album;
-      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, []);
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, []);
       break;
     }
 
     case LOAD_ALBUM_SUCCESS: {
-      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, action.memories);
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, action.memories);
       break;
     }
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
-      draft.albums = dotProp.set({}, `${action.gallery}.${action.album}.memories`, insertPage({
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, insertPage({
         insert: action.newMemories,
         pageSize: PAGE_SIZE,
         page: action.page,
-        list: state.albums[state.gallery][state.album].memories,
+        list: state[state.gallery][state.album].memories,
       }));
       break;
     }
 
     case CHOOSE_MEMORY: {
-      const found = state.albums[state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
+      const found = state[state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
       draft.currentMemory = found || {};
       break;
     }
 
     case LOAD_PHOTO_SUCCESS: {
-      draft.albums.currentMemory.photoLink = action.photoLink;
+      draft.currentMemory.photoLink = action.photoLink;
       break;
     }
 
     case NEXT_MEMORY:
     case PREV_MEMORY: {
-      const { memories } = state.albums[state.gallery][state.album];
-      const currentMemoryId = state.albums.currentMemory.id || 0;
+      const { memories } = state[state.gallery][state.album];
+      const currentMemoryId = state.currentMemory.id || 0;
       const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
       let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
 
@@ -81,8 +79,8 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
 
       const findIndex = memories[adjacentMemoryIndex].id;
 
-      const found = state.albums[state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
-      draft.albums.currentMemory = found || {};
+      const found = state[state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
+      draft.currentMemory = found || {};
     }
   }
 });

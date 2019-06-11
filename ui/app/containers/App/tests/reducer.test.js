@@ -13,18 +13,16 @@ describe('appReducer', () => {
     state = {
       gallery: 'demo',
       album: 'sample',
-      albums: {
-        currentMemory: {
-          id: 2,
-        },
-        demo: {
-          sample: {
-            memories: [
-              { id: 1 },
-              { id: 2 },
-              { id: 3 },
-            ],
-          },
+      currentMemory: {
+        id: 2,
+      },
+      demo: {
+        sample: {
+          memories: [
+            { id: 1 },
+            { id: 2 },
+            { id: 3 },
+          ],
         },
       },
     };
@@ -34,11 +32,9 @@ describe('appReducer', () => {
     const expectedResult = {
       gallery: 'demo',
       album: 'sample',
-      albums: {
-        demo: {
-          sample: {
-            memories: [],
-          },
+      demo: {
+        sample: {
+          memories: [],
         },
       },
     };
@@ -48,7 +44,7 @@ describe('appReducer', () => {
   describe('should handle the currentMemory action correctly', () => {
     test('should be one after ID two', () => {
       const expectedResult = produce(state, (draft) => {
-        draft.albums.currentMemory.id = 3;
+        draft.currentMemory.id = 3;
       });
 
       expect(appReducer(state, chooseAdjacentMemory(1))).toEqual(expectedResult);
@@ -56,7 +52,7 @@ describe('appReducer', () => {
 
     test('should be one before ID two', () => {
       const expectedResult = produce(state, (draft) => {
-        draft.albums.currentMemory.id = 1;
+        draft.currentMemory.id = 1;
       });
 
       expect(appReducer(state, chooseAdjacentMemory(-1))).toEqual(expectedResult);
@@ -64,7 +60,7 @@ describe('appReducer', () => {
 
     test('should be two after ID two', () => {
       const expectedResult = produce(state, (draft) => {
-        draft.albums.currentMemory.id = 1;
+        draft.currentMemory.id = 1;
       });
 
       expect(appReducer(state, chooseAdjacentMemory(2))).toEqual(expectedResult);
@@ -72,7 +68,7 @@ describe('appReducer', () => {
 
     test('should be two before ID two', () => {
       const expectedResult = produce(state, (draft) => {
-        draft.albums.currentMemory.id = 3;
+        draft.currentMemory.id = 3;
       });
 
       expect(appReducer(state, chooseAdjacentMemory(-2))).toEqual(expectedResult);

@@ -6,7 +6,7 @@ import { createStructuredSelector } from 'reselect';
 
 import ListItem from '../../components/ListItem';
 import capitalize from '../../utils/strings';
-import makeSelectGallery from './selectors';
+import { makeSelectGallery } from './selectors';
 
 function AlbumListItem({ item, gallery }) {
   const content = (

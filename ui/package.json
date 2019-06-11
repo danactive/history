@@ -1,4 +1,5 @@
 {
+  "name": "history-ui",
   "version": "4.0.0",
   "description": "A highly scalable, offline-first foundation with the best DX and a focus on performance and best practices",
   "repository": {

@@ -6,19 +6,33 @@ export default (error) => {
   const errorSummary = dotProp.get(error, 'error.error_summary');
 
   if (errorSummary) {
-    const action = (errorSummary.includes('path/not_found')) ? 'missing-thumbLink' : undefined;
-    const path = dotProp.get(error, 'response.req._data.path');
+    let action;
+    let title = `Dropbox error (${errorSummary})`;
+    let path = null;
 
-    return {
+    if (errorSummary.includes('path/not_found')) {
+      action = 'missing-thumbLink';
+      path = dotProp.get(error, 'response.req._data.path', null);
+      title = `Dropbox asset is missing (${path})`;
+    }
+
+    if (errorSummary.includes('too_many_requests')) {
+      action = 'delay-reconnecting';
+      title = 'Dropbox too many requests';
+    }
+
+    const out = {
       message: errorSummary,
       status: dotProp.get(error, 'status'),
       type: 'normalized error_summary',
       ui: {
         action,
         path,
-        title: `Dropbox asset is missing (${path})`,
+        title,
       },
     };
+
+    return out;
   }
 
   const errorResponse = dotProp.get(error, 'response');

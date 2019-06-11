@@ -36,8 +36,7 @@ export class GalleryViewPage extends React.PureComponent { // eslint-disable-lin
     return (
       <div>
         <Helmet>
-          <title>GalleryViewPage</title>
-          <meta name="description" content="Description of GalleryViewPage" />
+          <title>Galleries</title>
         </Helmet>
         <FormattedMessage {...messages.header} />
         <GenericList {...albumListProps} />

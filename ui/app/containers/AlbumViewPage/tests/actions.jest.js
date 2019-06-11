@@ -94,11 +94,9 @@ describe('Load album hosted on Dropbox', () => {
     const expected = {
       gallery: 'demo',
       album: 'sample',
-      albums: {
-        demo: {
-          sample: {
-            memories: [],
-          },
+      demo: {
+        sample: {
+          memories: [],
         },
       },
     };
@@ -129,11 +127,9 @@ describe('Load album hosted on Dropbox', () => {
     const state = {
       gallery: 'demo',
       album: 'sample',
-      albums: {
-        demo: {
-          sample: {
-            memories: [],
-          },
+      demo: {
+        sample: {
+          memories: [],
         },
       },
     };
@@ -145,7 +141,7 @@ describe('Load album hosted on Dropbox', () => {
     };
     const received = reducer(state, albumLoadSuccess(sagaResult));
     const expected = produce(state, (draft) => {
-      draft.albums.demo.sample.memories = fixtures.memories;
+      draft.demo.sample.memories = fixtures.memories;
     });
 
     expect(received).toEqual(expected);
@@ -194,11 +190,9 @@ describe('Load next thumb page', () => {
     const state = {
       gallery: 'demo',
       album: 'sample',
-      albums: {
-        demo: {
-          sample: {
-            memories: fixtures.memories,
-          },
+      demo: {
+        sample: {
+          memories: fixtures.memories,
         },
       },
     };
@@ -218,7 +212,7 @@ describe('Load next thumb page', () => {
 
     const received = reducer(state, nextPageSuccess(args));
     const expected = produce(state, (draft) => {
-      draft.albums[gallery][album].memories = fixtures.memories.concat(fixtures.newMemories);
+      draft[gallery][album].memories = fixtures.memories.concat(fixtures.newMemories);
     });
 
     expect(received).toEqual(expected);
