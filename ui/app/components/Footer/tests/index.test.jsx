@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+/* global beforeAll, describe, expect, test */
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';

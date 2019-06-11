@@ -6,8 +6,7 @@ import Img from '..';
 
 const src = 'test.png';
 const alt = 'test';
-const renderComponent = (props = {}) =>
-  render(<Img src={src} alt={alt} {...props} />);
+const renderComponent = (props = {}) => render(<Img src={src} alt={alt} {...props} />);
 
 describe('<Img />', () => {
   test('should render an <img> tag', () => {

@@ -1,4 +1,4 @@
-/* global describe, expect, mount, test */
+/* global describe, expect, test */
 import React from 'react';
 import { render } from 'react-testing-library';
 import 'jest-dom/extend-expect';

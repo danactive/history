@@ -2,7 +2,7 @@
 
 import {
   selectPage,
-  makeSelectGalleries,
+  makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from '../selectors';
@@ -17,16 +17,16 @@ describe('selectPage', () => {
   });
 });
 
-describe('makeSelectGalleries', () => {
-  const galleriesSelector = makeSelectGalleries();
-  test('should select the gallery', () => {
-    const albums = ['demo'];
+describe('makeSelectAlbums', () => {
+  const albumsSelector = makeSelectAlbums();
+  test('should select the album', () => {
+    const albums = ['sample'];
     const mockedState = {
       galleryViewPage: {
         albums,
       },
     };
-    expect(galleriesSelector(mockedState)).toEqual(albums);
+    expect(albumsSelector(mockedState)).toEqual(albums);
   });
 });
 

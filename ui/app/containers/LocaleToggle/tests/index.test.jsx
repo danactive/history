@@ -4,9 +4,9 @@ import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router-dom';
 import { render } from 'react-testing-library';
 
-import LocaleToggle, { mapDispatchToProps } from '../index';
+import LocaleToggleComponent, { mapDispatchToProps } from '../index';
 import { changeLocale } from '../../LanguageProvider/actions';
-import LanguageProvider from '../../LanguageProvider';
+import LanguageProviderComponent from '../../LanguageProvider';
 
 import configureStore from '../../../configureStore';
 import { translationMessages } from '../../../i18n';
@@ -21,9 +21,9 @@ describe('<LocaleToggle />', () => {
   test('should match the snapshot', () => {
     const { container } = render(
       <Provider store={store}>
-        <LanguageProvider messages={translationMessages}>
-          <LocaleToggle />
-        </LanguageProvider>
+        <LanguageProviderComponent messages={translationMessages}>
+          <LocaleToggleComponent />
+        </LanguageProviderComponent>
       </Provider>,
     );
     expect(container.firstChild).toMatchSnapshot();
@@ -32,9 +32,9 @@ describe('<LocaleToggle />', () => {
   test('should present the default `en` english language option', () => {
     const { container } = render(
       <Provider store={store}>
-        <LanguageProvider messages={translationMessages}>
-          <LocaleToggle />
-        </LanguageProvider>
+        <LanguageProviderComponent messages={translationMessages}>
+          <LocaleToggleComponent />
+        </LanguageProviderComponent>
       </Provider>,
     );
     expect(container.querySelector('option[value="en"]')).not.toBeNull();
