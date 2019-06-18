@@ -1,15 +1,30 @@
 /* global describe, expect, test */
 
 import {
+  selectGlobal,
   selectPage,
   makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from '../selectors';
 
+describe('selectGlobal', () => {
+  test('should select the page state', () => {
+    const fixture = {
+      gallery: 'demo',
+    };
+    const mockedState = {
+      global: fixture,
+    };
+    expect(selectGlobal(mockedState)).toEqual(fixture);
+  });
+});
+
 describe('selectPage', () => {
   test('should select the page state', () => {
-    const fixture = 'demo';
+    const fixture = {
+      galleryLoading: true,
+    };
     const mockedState = {
       galleryViewPage: fixture,
     };
@@ -22,7 +37,7 @@ describe('makeSelectAlbums', () => {
   test('should select the album', () => {
     const albums = ['sample'];
     const mockedState = {
-      galleryViewPage: {
+      global: {
         albums,
       },
     };
