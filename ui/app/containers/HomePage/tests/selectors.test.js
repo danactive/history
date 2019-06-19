@@ -13,7 +13,9 @@ describe('selectHome', () => {
       contents: {},
     };
     const mockedState = {
-      home: homeState,
+      mediaGallery: {
+        home: homeState,
+      },
     };
     expect(selectHome(mockedState)).toEqual(homeState);
   });
@@ -24,8 +26,10 @@ describe('makeSelectGalleries', () => {
   test('should select the gallery', () => {
     const contents = ['entity'];
     const mockedState = {
-      home: {
-        contents,
+      mediaGallery: {
+        home: {
+          contents,
+        },
       },
     };
     expect(galleriesSelector(mockedState)).toEqual(contents);
@@ -37,8 +41,10 @@ describe('makeSelectGalleryLoading', () => {
   test('should select the loading status', () => {
     const galleryLoading = true;
     const mockedState = {
-      home: {
-        galleryLoading,
+      mediaGallery: {
+        home: {
+          galleryLoading,
+        },
       },
     };
     expect(galleryLoadingSelector(mockedState)).toEqual(galleryLoading);
@@ -50,8 +56,10 @@ describe('makeSelectGalleryError', () => {
   test('should select the error status', () => {
     const galleryError = true;
     const mockedState = {
-      home: {
-        galleryError,
+      mediaGallery: {
+        home: {
+          galleryError,
+        },
       },
     };
     expect(galleryErrorSelector(mockedState)).toEqual(galleryError);

@@ -14,7 +14,9 @@ describe('selectAlbum', () => {
       anything: '',
     };
     const mockedState = {
-      albums: albumState,
+      mediaGallery: {
+        albums: albumState,
+      },
     };
     expect(selectAlbum(mockedState)).toEqual(albumState);
   });
@@ -26,7 +28,9 @@ describe('selectPage', () => {
       albums: '',
     };
     const mockedState = {
-      albumViewPage: pageState,
+      mediaGallery: {
+        albumViewPage: pageState,
+      },
     };
     expect(selectPage(mockedState)).toEqual(pageState);
   });
@@ -40,7 +44,9 @@ describe('selectCurrentMemory', () => {
       currentMemory: null,
     };
     const mockedState = {
-      albumViewPage: albumState,
+      mediaGallery: {
+        albumViewPage: albumState,
+      },
     };
     expect(selectCurrentMemory(mockedState)).toEqual(albumState);
   });
@@ -51,8 +57,10 @@ describe('makeSelectThumbsLoading', () => {
   test('should select the error status', () => {
     const thumbsLoading = true;
     const mockedState = {
-      albumViewPage: {
-        thumbsLoading,
+      mediaGallery: {
+        albumViewPage: {
+          thumbsLoading,
+        },
       },
     };
     expect(galleryErrorSelector(mockedState)).toEqual(thumbsLoading);
@@ -64,8 +72,10 @@ describe('makeSelectThumbsError', () => {
   test('should select the loading status', () => {
     const thumbsError = true;
     const mockedState = {
-      albumViewPage: {
-        thumbsError,
+      mediaGallery: {
+        albumViewPage: {
+          thumbsError,
+        },
       },
     };
     expect(galleryLoadingSelector(mockedState)).toEqual(thumbsError);

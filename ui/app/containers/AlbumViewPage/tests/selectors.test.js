@@ -1,7 +1,7 @@
 /* global describe, expect, test */
 
 import {
-  selectAlbum,
+  selectMedia,
   selectPage,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
@@ -16,21 +16,25 @@ describe('Memorized selectors', () => {
       albumLoading: false,
     };
     const mockedState = {
-      albumViewPage: pageState,
+      mediaGallery: {
+        albumViewPage: pageState,
+      },
     };
     const received = selectPage(mockedState);
     const expected = pageState;
     expect(received).toEqual(expected);
   });
 
-  test('should select the album state', () => {
+  test('should select the media state', () => {
     const albumState = {
       thumbs: [],
     };
     const mockedState = {
-      albums: albumState,
+      mediaGallery: {
+        albums: albumState,
+      },
     };
-    const received = selectAlbum(mockedState);
+    const received = selectMedia(mockedState);
     const expected = albumState;
     expect(received).toEqual(expected);
   });
@@ -40,8 +44,10 @@ describe('makeSelectAlbumLoading', () => {
   const albumLoadingSelector = makeSelectAlbumLoading();
   test('should select the album loading boolean', () => {
     const mockedState = {
-      albumViewPage: {
-        albumLoading: false,
+      mediaGallery: {
+        albumViewPage: {
+          albumLoading: false,
+        },
       },
     };
     expect(albumLoadingSelector(mockedState)).toEqual(false);
@@ -52,8 +58,10 @@ describe('makeSelectAlbumError', () => {
   const albumErrorSelector = makeSelectAlbumError();
   test('should select the album error message', () => {
     const mockedState = {
-      albumViewPage: {
-        albumError: false,
+      mediaGallery: {
+        albumViewPage: {
+          albumError: false,
+        },
       },
     };
     expect(albumErrorSelector(mockedState)).toEqual(false);
@@ -65,8 +73,10 @@ describe('makeSelectAlbumName', () => {
   test('should select the album error message', () => {
     const album = 'sample';
     const mockedState = {
-      albums: {
-        album,
+      mediaGallery: {
+        albums: {
+          album,
+        },
       },
     };
     expect(albumNameSelector(mockedState)).toEqual(album);
@@ -77,12 +87,14 @@ describe('makeSelectMemories', () => {
   const memoriesSelector = makeSelectMemories();
   test('should select the album memories', () => {
     const mockedState = {
-      albums: {
-        gallery: 'demo',
-        album: 'sample',
-        demo: {
-          sample: {
-            memories: [{ filename: '2017-12-25.jpg' }],
+      mediaGallery: {
+        albums: {
+          gallery: 'demo',
+          album: 'sample',
+          demo: {
+            sample: {
+              memories: [{ filename: '2017-12-25.jpg' }],
+            },
           },
         },
       },
@@ -95,15 +107,17 @@ describe('makeSelectMemories', () => {
 describe('selectNextPage', () => {
   test('should select the next page', () => {
     const mockedState = {
-      albumViewPage: {
-        page: 1,
-      },
-      albums: {
-        gallery: 'demo',
-        album: 'sample',
-        demo: {
-          sample: {
-            memories: [],
+      mediaGallery: {
+        albumViewPage: {
+          page: 1,
+        },
+        albums: {
+          gallery: 'demo',
+          album: 'sample',
+          demo: {
+            sample: {
+              memories: [],
+            },
           },
         },
       },

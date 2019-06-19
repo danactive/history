@@ -90,7 +90,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withSaga = injectSaga({ key: 'albums', saga });
+const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
   withConnect,

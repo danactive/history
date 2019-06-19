@@ -77,8 +77,8 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-const withReducer = injectReducer({ key: 'home', reducer });
-const withSaga = injectSaga({ key: 'home', saga });
+const withReducer = injectReducer({ key: 'mediaGallery', reducer });
+const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
   withReducer,

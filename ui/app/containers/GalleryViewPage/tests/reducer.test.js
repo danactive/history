@@ -21,8 +21,8 @@ describe('galleryViewPageReducer', () => {
   test('should handle the loadGalleries action correctly', () => {
     const fixture = 'demo';
     const expectedResult = produce(state, (draft) => {
-      draft.galleryLoading = true;
-      draft.galleryError = false;
+      draft.galleryViewPage.galleryLoading = true;
+      draft.galleryViewPage.galleryError = false;
       draft.gallery = fixture;
     });
 

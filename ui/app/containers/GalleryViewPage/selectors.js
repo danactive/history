@@ -1,12 +1,12 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-const selectGlobal = state => state.global;
-const selectPage = state => state.galleryViewPage;
+const selectMedia = state => state.mediaGallery;
+const selectPage = state => state.mediaGallery.galleryViewPage;
 
 const makeSelectAlbums = () => createSelector(
-  selectGlobal,
-  globalState => globalState.albums || [],
+  selectMedia,
+  mediaState => mediaState.albums || [],
 );
 
 const makeSelectGalleryLoading = () => createSelector(
@@ -20,7 +20,7 @@ const makeSelectGalleryError = () => createSelector(
 );
 
 export {
-  selectGlobal,
+  selectMedia,
   selectPage,
   makeSelectAlbums,
   makeSelectGalleryLoading,

@@ -6,8 +6,10 @@ import {
 } from './constants';
 
 export const initialState = {
-  galleryLoading: false,
-  galleryError: false,
+  galleryViewPage: {
+    galleryLoading: false,
+    galleryError: false,
+  },
 };
 
 function parseFromNode(ascendant) {
@@ -37,21 +39,21 @@ function parseAlbum(albumXml) {
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOAD_GALLERY: {
-      draft.galleryLoading = true;
-      draft.galleryError = false;
+      draft.galleryViewPage.galleryLoading = true;
+      draft.galleryViewPage.galleryError = false;
       draft.gallery = action.gallery;
       break;
     }
 
     case LOAD_GALLERY_SUCCESS: {
-      draft.galleryLoading = false;
+      draft.galleryViewPage.galleryLoading = false;
       draft.albums = Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum);
       break;
     }
 
     case LOAD_GALLERY_ERROR: {
-      draft.galleryError = action.error;
-      draft.galleryLoading = false;
+      draft.galleryViewPage.galleryError = action.error;
+      draft.galleryViewPage.galleryLoading = false;
       break;
     }
   }

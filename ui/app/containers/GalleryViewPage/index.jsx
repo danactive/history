@@ -59,8 +59,8 @@ function mapDispatchToProps(dispatch) {
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-const withReducer = injectReducer({ key: 'galleryViewPage', reducer });
-const withSaga = injectSaga({ key: 'galleryViewPage', saga });
+const withReducer = injectReducer({ key: 'mediaGallery', reducer });
+const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
   withReducer,

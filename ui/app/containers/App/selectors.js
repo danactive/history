@@ -6,8 +6,8 @@ import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
 // Memorized selectors
-const selectAlbum = state => state.albums || initialState;
-const selectPage = state => state.albumViewPage;
+const selectAlbum = state => state.mediaGallery.albums || initialState;
+const selectPage = state => state.mediaGallery.albumViewPage;
 
 const makeSelectThumbsLoading = () => createSelector(
   selectPage,
