@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-export const selectMedia = state => state.mediaGallery;
 export const selectPage = state => state.mediaGallery.albumViewPage;
+export const selectAlbum = state => state.mediaGallery.albums;
 
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
@@ -15,41 +15,41 @@ export const makeSelectAlbumError = () => createSelector(
 );
 
 export const makeSelectAlbumName = () => createSelector(
-  selectMedia,
-  mediaState => mediaState.album,
+  selectAlbum,
+  albumState => albumState.album,
 );
 
 export const makeSelectMemories = () => createSelector(
-  selectMedia,
-  (mediaState) => {
+  selectAlbum,
+  (albumState) => {
     const {
       album,
       gallery,
-    } = mediaState;
+    } = albumState;
 
-    return mediaState[gallery][album].memories || [];
+    return albumState[gallery][album].memories || [];
   },
 );
 
 export const selectNextPage = (state) => {
   const pageState = selectPage(state);
-  const mediaState = selectMedia(state);
+  const albumState = selectAlbum(state);
   const {
     album,
     gallery,
-  } = mediaState;
+  } = albumState;
 
   return {
     album,
     gallery,
-    memories: mediaState[gallery][album].memories, // memories is an Array (not Immutable)
+    memories: albumState[gallery][album].memories, // memories is an Array (not Immutable)
     page: pageState.page,
   };
 };
 
 export const makeSelectNextPage = () => createSelector(
   selectPage,
-  selectMedia,
+  selectAlbum,
   selectNextPage,
 );
 
@@ -59,11 +59,11 @@ export const makeSelectMoreThumbs = () => createSelector(
 );
 
 export const makeSelectCurrentMemory = () => createSelector(
-  selectMedia,
-  (mediaState) => {
+  selectAlbum,
+  (albumState) => {
     const {
       currentMemory,
-    } = mediaState;
+    } = albumState;
 
     return currentMemory || null;
   },

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-const selectPage = state => state.galleryViewPage;
+const selectPage = state => state.mediaGallery.galleryViewPage;
 
 const makeSelectGallery = () => createSelector(
   selectPage,

@@ -1,7 +1,7 @@
 /* global describe, expect, test */
 
 import {
-  selectMedia,
+  selectAlbum,
   selectPage,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
@@ -25,7 +25,7 @@ describe('Memorized selectors', () => {
     expect(received).toEqual(expected);
   });
 
-  test('should select the media state', () => {
+  test('should select the album state', () => {
     const albumState = {
       thumbs: [],
     };
@@ -34,7 +34,7 @@ describe('Memorized selectors', () => {
         albums: albumState,
       },
     };
-    const received = selectMedia(mockedState);
+    const received = selectAlbum(mockedState);
     const expected = albumState;
     expect(received).toEqual(expected);
   });

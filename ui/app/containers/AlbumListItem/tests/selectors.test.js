@@ -11,7 +11,9 @@ describe('selectPage', () => {
       gallery: {},
     };
     const mockedState = {
-      galleryViewPage: pageState,
+      mediaGallery: {
+        galleryViewPage: pageState,
+      },
     };
     expect(selectPage(mockedState)).toEqual(pageState);
   });
@@ -22,8 +24,10 @@ describe('makeSelectGallery', () => {
   test('should select the gallery', () => {
     const gallery = 'demo';
     const mockedState = {
-      galleryViewPage: {
-        gallery,
+      mediaGallery: {
+        galleryViewPage: {
+          gallery,
+        },
       },
     };
     expect(galleriesSelector(mockedState)).toEqual(gallery);
