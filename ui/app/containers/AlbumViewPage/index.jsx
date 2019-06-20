@@ -16,7 +16,6 @@ import {
   chooseAdjacentMemory,
   loadAlbum,
 } from './actions';
-import albumReducer from '../App/reducer';
 import pageReducer from './reducer';
 import {
   makeSelectAlbumLoading,
@@ -108,13 +107,11 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withPageReducer = injectReducer({ key: 'albumViewPage', reducer: pageReducer });
-const withAlbumReducer = injectReducer({ key: 'albums', reducer: albumReducer });
-const withSaga = injectSaga({ key: 'albumViewPage', saga });
+const withPageReducer = injectReducer({ key: 'mediaGallery', reducer: pageReducer });
+const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
   withPageReducer,
-  withAlbumReducer,
   withSaga,
   withConnect,
 )(AlbumViewPage);

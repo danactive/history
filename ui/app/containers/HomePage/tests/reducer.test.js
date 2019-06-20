@@ -22,7 +22,7 @@ describe('homeReducer', () => {
 
   test('should handle the loadGalleries action correctly', () => {
     const expectedResult = produce(state, (draft) => {
-      draft.galleryLoading = true;
+      draft.galleryViewPage.galleryLoading = true;
     });
 
     expect(homeReducer(state, loadGalleries())).toEqual(expectedResult);
@@ -31,8 +31,8 @@ describe('homeReducer', () => {
   test('should handle the galleriesLoaded action correctly', () => {
     const fixture = { entries: [{ name: 'gallery-demo', path_lower: '/public/gallery-demo' }] };
     const expectedResult = produce(state, (draft) => {
-      draft.galleryLoading = false;
-      draft.contents = fixture.entries;
+      draft.galleryViewPage.galleryLoading = false;
+      draft.galleryViewPage.contents = fixture.entries;
     });
 
     expect(homeReducer(state, galleriesLoaded(fixture))).toEqual(expectedResult);
@@ -41,7 +41,7 @@ describe('homeReducer', () => {
   test('should handle the galleriesLoadingError action correctly', () => {
     const fixture = { type: 'ReferenceError' };
     const expectedResult = produce(state, (draft) => {
-      draft.galleryError = fixture;
+      draft.galleryViewPage.galleryError = fixture;
     });
 
     expect(homeReducer(state, galleriesLoadingError(fixture))).toEqual(expectedResult);
