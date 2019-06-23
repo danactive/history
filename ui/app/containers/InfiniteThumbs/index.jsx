@@ -23,6 +23,17 @@ const showAlbumError = (error) => {
 
 const showThumbsError = error => <div>{error.ui.title}</div>;
 
+const hasThumbLink = item => item.thumbLink !== null;
+
+const thumbImages = selectThumb => item => (
+  <ThumbImg
+    alt={item.filename}
+    key={`thumb-${item.filename}`}
+    onClick={() => selectThumb(item.id)}
+    src={item.thumbLink}
+  />
+);
+
 const InfiniteThumbs = (props) => {
   const {
     loading,
@@ -34,6 +45,8 @@ const InfiniteThumbs = (props) => {
     thumbsError,
   } = props;
 
+  const applyThumbImages = thumbImages(selectThumb);
+
   if (albumError !== false) {
     return showAlbumError(albumError);
   }
@@ -42,18 +55,7 @@ const InfiniteThumbs = (props) => {
     return <LoadingIndicator />;
   }
 
-  const hasThumbLink = item => item.thumbLink !== null;
-
-  const thumbImages = item => (
-    <ThumbImg
-      alt={item.filename}
-      key={`thumb-${item.filename}`}
-      onClick={() => selectThumb(item.id)}
-      src={item.thumbLink}
-    />
-  );
-
-  const html = items.filter(hasThumbLink).map(thumbImages);
+  const html = items.filter(hasThumbLink).map(applyThumbImages);
 
   if (thumbsError !== false) {
     return (
