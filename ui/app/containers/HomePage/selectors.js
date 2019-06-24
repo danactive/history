@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
-const selectHome = state => state.mediaGallery.home || initialState;
+const selectHome = state => state.mediaGallery.galleryViewPage || initialState;
 
 const makeSelectGalleries = () => createSelector(
   selectHome,

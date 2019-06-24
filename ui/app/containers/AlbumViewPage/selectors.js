@@ -1,8 +1,10 @@
+import dotProp from 'dot-prop';
 import { createSelector } from 'reselect';
 
 // Memorized selectors
+export const selectAlbum = state => state.mediaGallery.albums || [];
 export const selectPage = state => state.mediaGallery.albumViewPage;
-export const selectAlbum = state => state.mediaGallery.albums;
+export const selectSection = state => state.mediaGallery;
 
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
@@ -20,14 +22,14 @@ export const makeSelectAlbumName = () => createSelector(
 );
 
 export const makeSelectMemories = () => createSelector(
-  selectAlbum,
-  (albumState) => {
+  selectSection,
+  (sectionState) => {
     const {
       album,
       gallery,
-    } = albumState;
+    } = sectionState;
 
-    return albumState[gallery][album].memories || [];
+    return dotProp.get(sectionState, `${gallery}.${album}.memories`, []);
   },
 );
 

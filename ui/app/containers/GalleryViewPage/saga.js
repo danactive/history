@@ -1,5 +1,7 @@
+/* global window */
 import { Dropbox } from 'dropbox';
 import { call, put, takeLatest } from 'redux-saga/effects';
+import 'whatwg-fetch';
 
 import request from '../../utils/request';
 
@@ -8,7 +10,10 @@ import { galleryLoaded, galleryLoadingError } from './actions';
 
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleryFile({ gallery }) {
-  const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+  const dbx = new Dropbox({
+    accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+    fetch: window.fetch,
+  });
 
   try {
     const galleryFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${gallery}/xml/gallery.xml` });

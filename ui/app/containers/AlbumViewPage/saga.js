@@ -1,7 +1,9 @@
+/* global window */
 import { Dropbox } from 'dropbox';
 import {
   all, call, put, select, takeEvery,
 } from 'redux-saga/effects';
+import 'whatwg-fetch';
 
 import normalizeError from '../../utils/error';
 import request from '../../utils/request';
@@ -18,7 +20,10 @@ import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 import { getPage } from './paging';
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+const dbx = new Dropbox({
+  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  fetch: window.fetch,
+});
 
 
 export const argsAlbumXmlPath = ({ gallery, album }) => ({
@@ -53,9 +58,13 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 
 // saga WORKER for LOAD_ALBUM
 export function* getAlbumFileOnDropbox({ gallery, album }) {
+  console.log('getAlbumFileOnDropbox');
   try {
+    console.log('getAlbumFileOnDropbox1', dbx, dbx.filesGetTemporaryLink, argsAlbumXmlPath({ gallery, album }));
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
+    console.log('getAlbumFileOnDropbox2', xmlUrl.link);
     const xmlFile = yield call(request, xmlUrl.link);
+    console.log('getAlbumFileOnDropbox3', xmlFile);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
 
     yield put(albumLoadSuccess({ gallery, album, memories }));

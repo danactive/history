@@ -1,7 +1,9 @@
+/* global window */
 import { Dropbox } from 'dropbox';
 import {
   call, put, select, takeEvery,
 } from 'redux-saga/effects';
+import 'whatwg-fetch';
 
 import normalizeError from '../../utils/error';
 
@@ -14,8 +16,10 @@ import {
 } from '../AlbumViewPage/constants';
 
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
-
+const dbx = new Dropbox({
+  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  fetch: window.fetch,
+});
 
 const getYear = (filename = '') => filename.substr(0, 4);
 

@@ -14,10 +14,12 @@ import {
 import { insertPage } from './paging';
 
 const initialState = {
-  albumLoading: false,
-  albumError: false,
-  thumbsLoading: false,
-  thumbsError: false,
+  albumViewPage: {
+    albumLoading: false,
+    albumError: false,
+    thumbsLoading: false,
+    thumbsError: false,
+  },
 };
 
 /* eslint-disable default-case, no-param-reassign */
