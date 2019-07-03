@@ -8,7 +8,11 @@ import ListItem from '../../components/ListItem';
 import capitalize from '../../utils/strings';
 import { makeSelectGallery } from './selectors';
 
-function AlbumListItem({ item, gallery }) {
+const AlbumListItem = ({ item, gallery }) => {
+  if (!item || !gallery) {
+    return (<ListItem key="albums-list-item" item={<div>Invalid album</div>} />);
+  }
+
   const content = (
     <Link to={`/album/view/${item.name}?gallery=${gallery}`}>{capitalize(item.name)}</Link>
   );
@@ -16,7 +20,7 @@ function AlbumListItem({ item, gallery }) {
   return (
     <ListItem key={`albums-list-item-${item.id}`} item={content} />
   );
-}
+};
 
 const mapStateToProps = createStructuredSelector({
   gallery: makeSelectGallery(),

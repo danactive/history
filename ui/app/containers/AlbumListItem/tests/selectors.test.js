@@ -1,11 +1,11 @@
 /* global describe, expect, test */
 
 import {
-  selectPage,
+  selectSection,
   makeSelectGallery,
 } from '../selectors';
 
-describe('selectPage', () => {
+describe('selectSection', () => {
   test('should select the page state', () => {
     const pageState = {
       gallery: {},
@@ -15,7 +15,7 @@ describe('selectPage', () => {
         galleryViewPage: pageState,
       },
     };
-    expect(selectPage(mockedState)).toEqual(pageState);
+    expect(selectSection(mockedState)).toEqual(pageState);
   });
 });
 
