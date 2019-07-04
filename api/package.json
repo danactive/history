@@ -15,7 +15,9 @@
     "webpack": "webpack --config webpack.js",
     "ci-cover:coveralls": "nyc report --reporter=text-lcov | coveralls",
     "ci-cover:prep-codeclimate": "nyc report --reporter=text-lcov > coverage.lcov",
-    "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov"
+    "ci-cover:codeclimate": "codeclimate-test-reporter < coverage.lcov",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "main": "server/index.js",
   "dependencies": {
@@ -53,7 +55,8 @@
     "tuxharness": "^2.0.4",
     "vision": "^5.3.1",
     "webpack": "^4.32.2",
-    "xml2js": "^0.4.17"
+    "xml2js": "^0.4.17",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@mapbox/geojsonhint": "^3.0.0",
@@ -127,5 +130,6 @@
       "**/cases.js",
       "**/*.spec.js"
     ]
-  }
+  },
+  "snyk": true
 }
