@@ -16,12 +16,15 @@ import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
-const showAlbumError = (error) => {
-  const message = dotProp.get(error, 'ui.title', error.message);
-  return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
+const showAlbumError = (error = {}) => {
+  const message = dotProp.get(error, 'ui.title', error.message) || 'mystery';
+  return <div>{`Something went wrong loading the album, please try again! Reason (${message})`}</div>;
 };
 
-const showThumbsError = error => <div>{error.ui.title}</div>;
+const showThumbsError = (error = {}) => {
+  const message = dotProp.get(error, 'ui.title', error.message) || 'mystery';
+  return <div>{`Something went wrong loading a thumbnail, please try again! Reason (${message})`}</div>;
+};
 
 const hasThumbLink = item => item.thumbLink !== null;
 
@@ -45,8 +48,6 @@ const InfiniteThumbs = (props) => {
     thumbsError,
   } = props;
 
-  const applyThumbImages = thumbImages(selectThumb);
-
   if (albumError !== false) {
     return showAlbumError(albumError);
   }
@@ -54,6 +55,8 @@ const InfiniteThumbs = (props) => {
   if (loading) {
     return <LoadingIndicator />;
   }
+
+  const applyThumbImages = thumbImages(selectThumb);
 
   const html = items.filter(hasThumbLink).map(applyThumbImages);
 
