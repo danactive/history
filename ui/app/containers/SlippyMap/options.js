@@ -12,11 +12,11 @@ const validatePoint = ([longitude = null, latitude = null]) => ({
 });
 
 export function transformSourceOptions({ items = [] } = {}) {
-  const geoJsonFeature = (item) => {
+  const geoJsonFeature = (currentMemory) => {
     const {
       latitude,
       longitude,
-    } = validatePoint(item.coordinates);
+    } = validatePoint(currentMemory.coordinates);
 
     return {
       type: 'Feature',
@@ -25,7 +25,7 @@ export function transformSourceOptions({ items = [] } = {}) {
         coordinates: [longitude, latitude],
       },
       properties: {
-        accuracy: item.coordinateAccuracy,
+        accuracy: currentMemory.coordinateAccuracy,
       },
     };
   };
