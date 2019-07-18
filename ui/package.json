@@ -41,7 +41,7 @@
     "test:watch": "cross-env NODE_ENV=test jest --watchAll",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prettify": "prettier --write",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "STORYBOOK_HISTORY_DROPBOX_ACCESS_TOKEN=u3U1Ru9cFEIAAAAAAABiR2iGRJk25T7_tArrjUrMnfuCLLnPHa_rVp8aRJbyafPm start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
   "browserslist": [

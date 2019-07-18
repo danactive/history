@@ -5,6 +5,7 @@ import {
 } from './constants';
 
 export function chooseMemory(id) {
+  console.log('action chooseMemory; id ', id);
   return {
     type: CHOOSE_MEMORY,
     id,
@@ -14,6 +15,7 @@ export function chooseMemory(id) {
 export function photoLoadSuccess({
   gallery, album, id, photoLink,
 }) {
+  console.log('action photoLoadSuccess');
   return {
     type: LOAD_PHOTO_SUCCESS,
     gallery,

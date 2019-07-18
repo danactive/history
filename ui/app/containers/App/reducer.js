@@ -25,6 +25,7 @@ export const initialState = {
 const appReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case CHOOSE_MEMORY: {
+      console.error('reducer CHOOSE_MEMORY: state ', state);
       const found = state[state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
       draft.currentMemory = found || {};
       break;

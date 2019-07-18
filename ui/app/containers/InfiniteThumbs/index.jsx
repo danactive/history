@@ -57,7 +57,7 @@ const InfiniteThumbs = (props) => {
   }
 
   const applyThumbImages = thumbImages(selectThumb);
-
+console.log('InfiniteThumbs items', items);
   const html = items.filter(hasThumbLink).map(applyThumbImages);
 
   if (thumbsError !== false) {

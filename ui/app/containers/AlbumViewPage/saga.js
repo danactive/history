@@ -58,15 +58,15 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 
 // saga WORKER for LOAD_ALBUM
 export function* getAlbumFileOnDropbox({ gallery, album }) {
-  console.log('getAlbumFileOnDropbox');
+  console.log('AlbumViewPage/saga getAlbumFileOnDropbox');
   try {
-    console.log('getAlbumFileOnDropbox1', dbx, dbx.filesGetTemporaryLink, argsAlbumXmlPath({ gallery, album }));
+    console.log('getAlbumFileOnDropbox1 obj', dbx, 'method', dbx.filesGetTemporaryLink, 'args', argsAlbumXmlPath({ gallery, album }));
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
-    console.log('getAlbumFileOnDropbox2', xmlUrl.link);
+    console.log('getAlbumFileOnDropbox2', xmlUrl);
     const xmlFile = yield call(request, xmlUrl.link);
     console.log('getAlbumFileOnDropbox3', xmlFile);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
-
+    console.log('out', albumLoadSuccess({ gallery, album, memories }));
     yield put(albumLoadSuccess({ gallery, album, memories }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
