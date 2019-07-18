@@ -21,11 +21,11 @@ const makeSelectThumbsError = () => createSelector(
 
 const selectCurrentMemory = (state) => {
   const albumState = selectAlbum(state);
-  const { currentMemory } = albumState;
+  const { gallery, album, currentMemory } = albumState;
 
   return {
-    gallery: albumState.gallery,
-    album: albumState.album,
+    gallery,
+    album,
     currentMemory: currentMemory || null,
   };
 };

@@ -18,7 +18,7 @@ export default function createReducer(injectedReducers = {}) {
     global: globalReducer,
     language: languageProviderReducer,
     router: connectRouter(history),
-    mediaGallery: albumReducer,
+    mediaGallery: albumReducer, // *********** HISTORY CUSTOM not React Boilerplate
     ...injectedReducers,
   });
 

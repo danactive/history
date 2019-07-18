@@ -13,6 +13,7 @@ import {
 export const initialState = {
   gallery: 'demo',
   album: 'sample',
+  albums: [],
   demo: {
     sample: {
       memories: [],

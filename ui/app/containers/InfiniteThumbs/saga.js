@@ -15,9 +15,10 @@ import {
   PREV_MEMORY,
 } from '../AlbumViewPage/constants';
 
+const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN || process.env.STORYBOOK_HISTORY_DROPBOX_ACCESS_TOKEN;
 
 const dbx = new Dropbox({
-  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  accessToken,
   fetch: window.fetch,
 });
 
