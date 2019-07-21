@@ -83,7 +83,7 @@ console.log('InfiniteThumbs items', items);
 };
 
 const mapStateToProps = createStructuredSelector({
-  hasMore: makeSelectMoreThumbs(),
+  // hasMore: makeSelectMoreThumbs(),
   thumbsError: makeSelectThumbsError(),
 });
 

@@ -29,8 +29,9 @@ const store = configureStore({}, null, createEnhancer())
 const state = {
   mediaGallery: {
     albumViewPage: {
-      thumbsError: 'sdfsdfsdf',
-      album: 1,
+      thumbsError: false,
+      hasMore: false,
+      page: 1,
     },
     albums: {
       gallery: 'demo',
@@ -38,6 +39,37 @@ const state = {
       currentMemory: {
         filename: '2001-03-21-01.jpg',
         id: 1,
+      },
+      demo: {
+        sample: {
+          memories: [
+            {
+              id: 1,
+              filename: '2001-03-21-01.jpg',
+              thumbLink: thumb1,
+            },
+            {
+              id: 2,
+              filename: '2004-01-04-01.jpg',
+              thumbLink: thumb2,
+            },
+            {
+              id: 3,
+              filename: '2005-07-30-01.jpg',
+              thumbLink: thumb3,
+            },
+            {
+              id: 4,
+              filename: '2012-fireplace.jpg',
+              thumbLink: thumb4,
+            },
+            {
+              id: 5,
+              filename: '2014-02-08-14.jpg',
+              thumbLink: null,
+            },
+          ],
+        },
       },
     },
   },
@@ -87,6 +119,7 @@ const withReduxDecorator = withRedux(addons)(withReduxSettings);
 const props = {
   error: false,
   loading: true,
+  hasMore: true,
   items: [
     {
       id: 1,
@@ -111,7 +144,7 @@ const props = {
     {
       id: 5,
       filename: '2014-02-08-14.jpg',
-      thumbLink: thumb5,
+      thumbLink: null,
     },
   ],
 };
@@ -127,7 +160,13 @@ storiesOf('InfiniteThumbs', module)
     });
 
     return (
-      <div style={{width: 200}}>
+      <div style={{
+        width: 200,
+        height: 80,
+        'overflow-y': 'auto',
+        background: 'red',
+      }}
+      >
         <InfiniteThumbs {...newProps} />
       </div>
     );

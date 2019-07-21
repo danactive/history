@@ -1,7 +1,7 @@
 /* global window */
 import { Dropbox } from 'dropbox';
 import {
-  call, put, select, takeEvery,
+  all, call, put, select, takeEvery,
 } from 'redux-saga/effects';
 import 'whatwg-fetch';
 
@@ -13,7 +13,17 @@ import { photoLoadError, photoLoadSuccess } from '../App/actions';
 import {
   NEXT_MEMORY,
   PREV_MEMORY,
+  LOAD_NEXT_THUMB_PAGE,
+  PAGE_SIZE,
 } from '../AlbumViewPage/constants';
+import {
+  nextPageSuccess,
+  nextPageError,
+  thumbsLoaded,
+} from '../AlbumViewPage/actions';
+import { selectNextPage } from '../AlbumViewPage/selectors';
+import { getPage } from '../AlbumViewPage/paging';
+import { argsThumbImgPath } from '../AlbumViewPage/saga';
 
 const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN || process.env.STORYBOOK_HISTORY_DROPBOX_ACCESS_TOKEN;
 
@@ -54,7 +64,59 @@ export function* getPhotoPathsOnDropbox() {
 }
 
 
+export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
+  console.log('thumbFilenameCallsDropbox gallery', gallery, 'thumbs', thumbs);
+  const queueSagaCalls = thumb => call(
+    [dbx, 'filesGetTemporaryLink'],
+    argsThumbImgPath({ gallery, filename: thumb.filename }),
+  );
+  return thumbs.map(queueSagaCalls);
+}
+
+
+// saga WORKER for LOAD_NEXT_THUMB_PAGE
+export function* getThumbPathsOnDropbox() {
+  console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 1');
+  try {
+    console.log('yield select(selectNextPage) 2',yield select(selectNextPage));
+    const {
+      gallery, album, memories, page: prevPage,
+    } = yield select(selectNextPage);
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE gallery 3', gallery, 'album', album);
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE memories 4', memories, 'prevPage', prevPage);
+    if (!memories || memories.length === 0) {
+      throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
+    }
+
+    const page = prevPage + 1;
+    const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE pagedMemories 5', pagedMemories, gallery);
+
+    const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));
+    const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
+
+    const hasMore = (PAGE_SIZE * page) < memories.length;
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE hasMore', hasMore);
+
+    if (!hasMore) { // all pages processed so thumbs all have Dropbox links
+      yield put(thumbsLoaded({
+        gallery, album, newMemories: linkedMemories, page,
+      }));
+      return;
+    }
+
+    yield put(nextPageSuccess({
+      gallery, album, newMemories: linkedMemories, page,
+    }));
+  } catch (error) {
+    console.log('yield select(selectNextPage) error', error);
+    yield put(nextPageError(normalizeError(error)));
+  }
+}
+
+
 // ROOT saga manages WATCHER lifecycle
 export default function* InfiniteThumbsSagaWatcher() {
   yield takeEvery([CHOOSE_MEMORY, NEXT_MEMORY, PREV_MEMORY], getPhotoPathsOnDropbox);
+  yield takeEvery(LOAD_NEXT_THUMB_PAGE, getThumbPathsOnDropbox);
 }

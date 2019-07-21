@@ -9,7 +9,8 @@ import {
   LOAD_ALBUM_ERROR,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_ERROR,
-  LOAD_THUMBS_SUCCESS, PAGE_SIZE,
+  LOAD_THUMBS_SUCCESS,
+  PAGE_SIZE,
 } from './constants';
 import { insertPage } from './paging';
 
@@ -24,6 +25,7 @@ const initialState = {
 
 /* eslint-disable default-case, no-param-reassign */
 const reducer = (state = initialState, action) => produce(state, (draft) => {
+  console.log('PAGE_SIZE', PAGE_SIZE);
   switch (action.type) {
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {

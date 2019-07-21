@@ -47,15 +47,6 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
 };
 
 
-export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
-  const queueSagaCalls = thumb => call(
-    [dbx, 'filesGetTemporaryLink'],
-    argsThumbImgPath({ gallery, filename: thumb.filename }),
-  );
-  return thumbs.map(queueSagaCalls);
-}
-
-
 // saga WORKER for LOAD_ALBUM
 export function* getAlbumFileOnDropbox({ gallery, album }) {
   console.log('AlbumViewPage/saga getAlbumFileOnDropbox');
@@ -74,42 +65,7 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 }
 
 
-// saga WORKER for LOAD_NEXT_THUMB_PAGE
-export function* getThumbPathsOnDropbox() {
-  try {
-    const {
-      gallery, album, memories, page: prevPage,
-    } = yield select(selectNextPage);
-    if (!memories || memories.length === 0) {
-      throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
-    }
-
-    const page = prevPage + 1;
-    const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
-
-    const hasMore = (PAGE_SIZE * page) < memories.length;
-
-    const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));
-    const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
-
-    if (!hasMore) { // all pages processed so thumbs all have Dropbox links
-      yield put(thumbsLoaded({
-        gallery, album, newMemories: linkedMemories, page,
-      }));
-      return;
-    }
-
-    yield put(nextPageSuccess({
-      gallery, album, newMemories: linkedMemories, page,
-    }));
-  } catch (error) {
-    yield put(nextPageError(normalizeError(error)));
-  }
-}
-
-
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
   yield takeEvery(LOAD_ALBUM, getAlbumFileOnDropbox);
-  yield takeEvery(LOAD_NEXT_THUMB_PAGE, getThumbPathsOnDropbox);
 }
