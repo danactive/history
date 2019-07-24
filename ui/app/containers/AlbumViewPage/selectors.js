@@ -33,14 +33,16 @@ export const makeSelectMemories = () => createSelector(
   },
 );
 
-export const selectNextPage = (state) => {
+export const selectNextPage = (state = {}) => {
+  console.log('selectors selectNextPage state ', state);
   const pageState = selectPage(state);
   const albumState = selectAlbum(state);
+  console.log('selectors selectNextPage 1 pageState ', pageState, 'albumState', albumState);
   const {
     album,
     gallery,
   } = albumState;
-
+  console.log('selectors selectNextPage 2 gallery ', gallery, 'album', album, 'albumState', albumState);
   return {
     album,
     gallery,

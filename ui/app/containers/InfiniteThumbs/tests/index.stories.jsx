@@ -9,11 +9,6 @@ import { Provider } from 'react-redux';
 
 import configureStore from '../../../configureStore';
 import InfiniteThumbs from '..';
-import thumb1 from '../../../../../public/galleries/gallery-demo/media/thumbs/2001/2001-03-21-01.jpg';
-import thumb2 from '../../../../../public/galleries/gallery-demo/media/thumbs/2004/2004-01-04-01.jpg';
-import thumb3 from '../../../../../public/galleries/gallery-demo/media/thumbs/2005/2005-07-30-01.jpg';
-import thumb4 from '../../../../../public/galleries/gallery-demo/media/thumbs/2012/2012-fireplace.jpg';
-import thumb5 from '../../../../../public/galleries/gallery-demo/media/thumbs/2014/2014-02-08-14.jpg';
 
 const createEnhancer = () => {
   const enhancers = [];
@@ -46,27 +41,22 @@ const state = {
             {
               id: 1,
               filename: '2001-03-21-01.jpg',
-              thumbLink: thumb1,
             },
             {
               id: 2,
               filename: '2004-01-04-01.jpg',
-              thumbLink: thumb2,
             },
             {
               id: 3,
               filename: '2005-07-30-01.jpg',
-              thumbLink: thumb3,
             },
             {
               id: 4,
               filename: '2012-fireplace.jpg',
-              thumbLink: thumb4,
             },
             {
               id: 5,
               filename: '2014-02-08-14.jpg',
-              thumbLink: null,
             },
           ],
         },
@@ -124,27 +114,22 @@ const props = {
     {
       id: 1,
       filename: '2001-03-21-01.jpg',
-      thumbLink: thumb1,
     },
     {
       id: 2,
       filename: '2004-01-04-01.jpg',
-      thumbLink: thumb2,
     },
     {
       id: 3,
       filename: '2005-07-30-01.jpg',
-      thumbLink: thumb3,
     },
     {
       id: 4,
       filename: '2012-fireplace',
-      thumbLink: thumb4,
     },
     {
       id: 5,
       filename: '2014-02-08-14.jpg',
-      thumbLink: null,
     },
   ],
 };

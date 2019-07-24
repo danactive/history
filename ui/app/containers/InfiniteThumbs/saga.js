@@ -78,7 +78,7 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 export function* getThumbPathsOnDropbox() {
   console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 1');
   try {
-    console.log('yield select(selectNextPage) 2',yield select(selectNextPage));
+    console.log('yield select(selectNextPage) 2', yield select(selectNextPage));
     const {
       gallery, album, memories, page: prevPage,
     } = yield select(selectNextPage);
@@ -96,7 +96,7 @@ export function* getThumbPathsOnDropbox() {
     const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
 
     const hasMore = (PAGE_SIZE * page) < memories.length;
-    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE hasMore', hasMore);
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE hasMore 6', hasMore);
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links
       yield put(thumbsLoaded({
@@ -105,6 +105,7 @@ export function* getThumbPathsOnDropbox() {
       return;
     }
 
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 7', gallery, album, linkedMemories, page);
     yield put(nextPageSuccess({
       gallery, album, newMemories: linkedMemories, page,
     }));

@@ -25,15 +25,16 @@ const initialState = {
 
 /* eslint-disable default-case, no-param-reassign */
 const reducer = (state = initialState, action) => produce(state, (draft) => {
-  console.log('PAGE_SIZE', PAGE_SIZE);
+  console.log('PAGE_SIZE', PAGE_SIZE, ' type ', action.type);
   switch (action.type) {
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
+      console.log('success gallery', state.albums.gallery, 'album', state.albums.album, 'albums', state.albums);
       draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, insertPage({
         insert: action.newMemories,
         pageSize: PAGE_SIZE,
         page: action.page,
-        list: state[state.gallery][state.album].memories,
+        list: state.albums[state.albums.gallery][state.albums.album].memories,
       }));
     }
 
@@ -69,6 +70,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case LOAD_NEXT_THUMB_PAGE_ERROR: {
+      console.log('AlbumViewPage reducer LOAD_NEXT_THUMB_PAGE_ERROR', action.error);
       draft.thumbsError = action.error;
       draft.thumbsLoading = false;
       break;
