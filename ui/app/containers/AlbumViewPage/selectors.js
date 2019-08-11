@@ -33,34 +33,11 @@ export const makeSelectMemories = () => createSelector(
   },
 );
 
-export const selectNextPage = (state = {}) => {
-  console.log('selectors selectNextPage state ', state);
-  const pageState = selectPage(state);
-  const albumState = selectAlbum(state);
-  console.log('selectors selectNextPage 1 pageState ', pageState, 'albumState', albumState);
-  const {
-    album,
-    gallery,
-  } = albumState;
-  console.log('selectors selectNextPage 2 gallery ', gallery, 'album', album, 'albumState', albumState);
-  return {
-    album,
-    gallery,
-    memories: albumState[gallery][album].memories, // memories is an Array (not Immutable)
-    page: pageState.page,
-  };
-};
-
-export const makeSelectNextPage = () => createSelector(
-  selectPage,
-  selectAlbum,
-  selectNextPage,
-);
-
-export const makeSelectMoreThumbs = () => createSelector(
-  selectPage,
-  pageState => pageState.hasMore,
-);
+// export const makeSelectNextPage = () => createSelector(
+//   selectPage,
+//   selectAlbum,
+//   selectNextPage,
+// );
 
 export const makeSelectCurrentMemory = () => createSelector(
   selectAlbum,

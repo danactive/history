@@ -18,7 +18,7 @@ import {
 } from './actions';
 import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
-import { getPage } from './paging';
+// import { getPage } from './paging';
 
 const dbx = new Dropbox({
   accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
@@ -29,22 +29,6 @@ const dbx = new Dropbox({
 export const argsAlbumXmlPath = ({ gallery, album }) => ({
   path: `/public/gallery-${gallery}/xml/album_${album}.xml`,
 });
-
-
-const getYear = (filename = '') => filename.substr(0, 4);
-
-
-const replaceFileExtWithJpg = (filename = '') => `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
-
-
-export const argsThumbImgPath = ({ gallery, filename }) => {
-  const year = getYear(filename);
-  const jpgFilename = replaceFileExtWithJpg(filename);
-
-  return {
-    path: `/public/gallery-${gallery}/media/thumbs/${year}/${jpgFilename}`,
-  };
-};
 
 
 // saga WORKER for LOAD_ALBUM

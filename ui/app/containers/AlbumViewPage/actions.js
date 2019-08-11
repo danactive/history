@@ -45,7 +45,10 @@ export function loadNextPage() {
 }
 
 export function nextPageSuccess({
-  gallery, album, newMemories, page,
+  album,
+  gallery,
+  newMemories,
+  page,
 }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
@@ -64,18 +67,7 @@ export function nextPageError(error) {
   };
 }
 
-export function thumbsLoaded({
-  gallery, album, newMemories, page,
-}) {
-  return {
-    type: LOAD_THUMBS_SUCCESS,
-    gallery,
-    album,
-    newMemories,
-    page,
-    hasMore: false,
-  };
-}
+
 
 export function chooseAdjacentMemory(adjacentInt) {
   if (adjacentInt > 0) {

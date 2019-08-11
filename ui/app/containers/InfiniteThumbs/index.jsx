@@ -5,16 +5,19 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
+import injectReducer from '../../utils/injectReducer';
 import injectSaga from '../../utils/injectSaga';
 
 import LoadingIndicator from '../../components/LoadingIndicator';
 import ThumbImg from '../../components/ThumbImg';
 
-import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
+import { makeSelectMoreThumbs } from './selectors';
+import albumReducer from './albumReducer';
+import pageReducer from './pageReducer';
 
 const showAlbumError = (error = {}) => {
   const message = dotProp.get(error, 'ui.title', error.message) || 'mystery';
@@ -26,7 +29,7 @@ const showThumbsError = (error = {}) => {
   return <div>{`Something went wrong loading a thumbnail, please try again! Reason (${message})`}</div>;
 };
 
-const hasThumbLink = item => item.thumbLink !== null;
+const hasThumbLink = item => item.thumbLink;
 
 const thumbImages = selectThumb => item => (
   <ThumbImg
@@ -39,13 +42,13 @@ const thumbImages = selectThumb => item => (
 
 const InfiniteThumbs = (props) => {
   const {
-    loading,
-    error: albumError,
-    items,
-    nextPage,
-    hasMore,
-    selectThumb,
-    thumbsError,
+    error: albumError, // props
+    items, // props
+    loading, // props
+    nextPage, // dispatch
+    hasMore, // dispatch
+    selectThumb, // state
+    thumbsError, // state
   } = props;
 
   if (albumError !== false) {
@@ -56,10 +59,10 @@ const InfiniteThumbs = (props) => {
     return <LoadingIndicator />;
   }
 
-  const applyThumbImages = thumbImages(selectThumb);
-console.log('InfiniteThumbs items', items);
-  const html = items.filter(hasThumbLink).map(applyThumbImages);
-
+  const showThumbImage = thumbImages(selectThumb);
+console.log('InfiniteThumbs items', items, items.filter(hasThumbLink));
+  const html = items.filter(hasThumbLink).map(showThumbImage);
+console.log('InfiniteThumbs html', html);
   if (thumbsError !== false) {
     return (
       <div>
@@ -83,7 +86,7 @@ console.log('InfiniteThumbs items', items);
 };
 
 const mapStateToProps = createStructuredSelector({
-  // hasMore: makeSelectMoreThumbs(),
+  hasMore: makeSelectMoreThumbs(),
   thumbsError: makeSelectThumbsError(),
 });
 
@@ -95,9 +98,13 @@ function mapDispatchToProps(dispatch) {
 }
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
+const withAlbumReducer = injectReducer({ key: 'mediaGallery', reducer: albumReducer });
+const withPageReducer = injectReducer({ key: 'infiniteThumbs', reducer: pageReducer });
 const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
+  withAlbumReducer,
+  withPageReducer,
   withConnect,
   withSaga,
 )(InfiniteThumbs);
