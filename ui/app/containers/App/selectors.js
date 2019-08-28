@@ -14,11 +14,6 @@ const makeSelectThumbsLoading = () => createSelector(
   pageState => pageState.thumbsLoading || false,
 );
 
-const makeSelectThumbsError = () => createSelector(
-  selectPage,
-  pageState => pageState.thumbsError,
-);
-
 const selectCurrentMemory = (state) => {
   const albumState = selectAlbum(state);
   const { gallery, album, currentMemory } = albumState;
@@ -34,6 +29,5 @@ export {
   selectAlbum,
   selectPage,
   selectCurrentMemory,
-  makeSelectThumbsError,
   makeSelectThumbsLoading,
 };

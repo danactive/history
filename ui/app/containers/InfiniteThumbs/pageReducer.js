@@ -16,6 +16,7 @@ import { insertPage } from './paging';
 const initialState = {
   page: 0,
   hasMore: true,
+  thumbsError: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */

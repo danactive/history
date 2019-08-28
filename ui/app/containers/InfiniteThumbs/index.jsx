@@ -13,9 +13,11 @@ import ThumbImg from '../../components/ThumbImg';
 
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
-import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
-import { makeSelectMoreThumbs } from './selectors';
+import {
+  makeSelectMoreThumbs,
+  makeSelectThumbsError,
+} from './selectors';
 import albumReducer from './albumReducer';
 import pageReducer from './pageReducer';
 
@@ -86,8 +88,8 @@ console.log('InfiniteThumbs html', html);
 };
 
 const mapStateToProps = createStructuredSelector({
-  hasMore: makeSelectMoreThumbs(),
-  thumbsError: makeSelectThumbsError(),
+  hasMore: () => true, //makeSelectMoreThumbs(),
+  thumbsError: () => false, //makeSelectThumbsError(),
 });
 
 function mapDispatchToProps(dispatch) {

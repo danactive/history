@@ -1,5 +1,4 @@
 import addons from '@storybook/addons';
-import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import withReduxEnhancer from 'addon-redux/enhancer';
 import produce from 'immer';
@@ -20,7 +19,7 @@ const createEnhancer = () => {
   return enhancers;
 };
 
-const store = configureStore({}, null, createEnhancer())
+const store = configureStore({}, null, createEnhancer());
 const state = {
   mediaGallery: {
     albumViewPage: {
@@ -107,9 +106,7 @@ const withReduxSettings = {
 const withReduxDecorator = withRedux(addons)(withReduxSettings);
 
 const props = {
-  error: false,
   loading: true,
-  hasMore: true,
   items: [
     {
       id: 1,
@@ -155,5 +152,4 @@ storiesOf('InfiniteThumbs', module)
         <InfiniteThumbs {...newProps} />
       </div>
     );
-  })
-;
+  });

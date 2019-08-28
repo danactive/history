@@ -2,7 +2,7 @@ import dotProp from 'dot-prop';
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-export const selectAlbum = state => state.mediaGallery.albums || [];
+export const selectAlbum = state => state.mediaGallery || [];
 export const selectPage = state => state.infiniteThumbs;
 export const selectSection = state => state.mediaGallery;
 
@@ -23,6 +23,11 @@ export const makeSelectMemories = () => createSelector(
   },
 );
 
+export const makeSelectThumbsError = () => createSelector(
+  selectPage,
+  pageState => pageState.thumbsError,
+);
+
 export const selectNextPage = (state = {}) => {
   console.log('selectors selectNextPage state ', state);
   const pageState = selectPage(state);
@@ -33,6 +38,12 @@ export const selectNextPage = (state = {}) => {
     gallery,
   } = albumState;
   console.log('selectors selectNextPage 2 gallery ', gallery, 'album', album, 'albumState', albumState);
+  console.log({
+    album,
+    gallery,
+    memories: albumState[gallery][album].memories, // memories is an Array (not Immutable)
+    page: pageState.page,
+  });
   return {
     album,
     gallery,

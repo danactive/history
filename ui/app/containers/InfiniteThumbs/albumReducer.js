@@ -13,7 +13,15 @@ import {
 } from './constants';
 import { insertPage } from './paging';
 
-const initialState = {};
+const initialState = {
+  gallery: 'demo',
+  album: 'sample',
+  demo: {
+    sample: {
+      memories: {},
+    },
+  },
+};
 
 /* eslint-disable default-case, no-param-reassign */
 const albumReducer = (state = initialState, action) => produce(state, (draft) => {

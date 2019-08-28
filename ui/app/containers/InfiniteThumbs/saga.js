@@ -85,7 +85,7 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 export function* getThumbPathsOnDropbox({ PAGE_SIZE }) { // unit test overwrite constants
   console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 1');
   try {
-    // console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE yield select(selectNextPage) 2', yield select(selectNextPage));
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE yield select(selectNextPage) 2', yield select(selectNextPage));
     const {
       gallery, album, memories, page: prevPage,
     } = yield select(selectNextPage);
