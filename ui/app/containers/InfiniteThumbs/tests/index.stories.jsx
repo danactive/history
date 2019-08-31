@@ -19,88 +19,94 @@ const createEnhancer = () => {
   return enhancers;
 };
 
-const store = configureStore({}, null, createEnhancer());
+const store = configureStore({ mediaGallery: { stories: 'line22' } }, null, createEnhancer());
 const state = {
   mediaGallery: {
-    albumViewPage: {
-      thumbsError: false,
-      hasMore: false,
-      page: 1,
-    },
-    albums: {
-      gallery: 'demo',
-      album: 'sample',
-      currentMemory: {
-        filename: '2001-03-21-01.jpg',
-        id: 1,
-      },
-      demo: {
-        sample: {
-          memories: [
-            {
-              id: 1,
-              filename: '2001-03-21-01.jpg',
-            },
-            {
-              id: 2,
-              filename: '2004-01-04-01.jpg',
-            },
-            {
-              id: 3,
-              filename: '2005-07-30-01.jpg',
-            },
-            {
-              id: 4,
-              filename: '2012-fireplace.jpg',
-            },
-            {
-              id: 5,
-              filename: '2014-02-08-14.jpg',
-            },
-          ],
-        },
-      },
+    gallery: 'demo',
+    dan: {
+      brooks: true,
     },
   },
+  // infiniteThumbs: {
+  //   thumbsError: false,
+  //   hasMore: false,
+  //   page: 1,
+  // },
+  // mediaGallery: {
+  //   albums: {
+  //     gallery: 'demo',
+  //     album: 'sample',
+  //     currentMemory: {
+  //       filename: '2001-03-21-01.jpg',
+  //       id: 1,
+  //     },
+  //     demo: {
+  //       sample: {
+  //         memories: [
+  //           {
+  //             id: 1,
+  //             filename: '2001-03-21-01.jpg',
+  //           },
+  //           {
+  //             id: 2,
+  //             filename: '2004-01-04-01.jpg',
+  //           },
+  //           {
+  //             id: 3,
+  //             filename: '2005-07-30-01.jpg',
+  //           },
+  //           {
+  //             id: 4,
+  //             filename: '2012-fireplace.jpg',
+  //           },
+  //           {
+  //             id: 5,
+  //             filename: '2014-02-08-14.jpg',
+  //           },
+  //         ],
+  //       },
+  //     },
+  //   },
+  // },
 };
 
 const withReduxSettings = {
   Provider,
   store,
   state,
-  actions: [
-    {
-      name: 'real',
-      action: {
-        type: 'app/InfiniteThumbs/CHOOSE_MEMORY',
-        id: 1,
-      },
-    },
-    {
-      name: 'Loading done',
-      action: {
-        type: 'blah',
-        dan: 2,
-        mediaGallery: {
-          albumViewPage: {
-            thumbsError: false,
-          },
-        },
-      },
-    },
-    {
-      name: 'Loading',
-      action: {
-        type: 'blah2',
-        mediaGallery: {
-          albumViewPage: {
-            thumbsError: true,
-            dan: 1,
-          },
-        },
-      },
-    },
-  ],
+  // actions: [
+  //   {
+  //     name: 'real',
+  //     action: {
+  //       type: 'app/InfiniteThumbs/CHOOSE_MEMORY',
+  //       id: 1,
+  //     },
+  //   },
+  //   {
+  //     name: 'Loading done',
+  //     action: {
+  //       type: 'blah',
+  //       dan: 2,
+  //       mediaGallery: {
+  //         albumViewPage: {
+  //           thumbsError: false,
+  //         },
+  //       },
+  //     },
+  //   },
+  //   {
+  //     name: 'Loading',
+  //     action: {
+  //       type: 'blah2',
+  //       mediaGallery: {
+  //         albumViewPage: {
+  //           thumbsError: true,
+  //           dan: 1,
+  //         },
+  //       },
+  //     },
+  //   },
+  // ],
 };
 
 const withReduxDecorator = withRedux(addons)(withReduxSettings);
@@ -133,23 +139,24 @@ const props = {
 
 storiesOf('InfiniteThumbs', module)
   .addDecorator(withReduxDecorator)
-  .add('Default', () => <InfiniteThumbs />)
-  .add('Loading', () => <InfiniteThumbs {...props} />)
-  .add('Many thumbs', () => {
-    /* eslint-disable no-param-reassign */
-    const newProps = produce(props, (draftState) => {
-      draftState.loading = false;
-    });
-
-    return (
-      <div style={{
-        width: 200,
-        height: 80,
-        'overflow-y': 'auto',
-        background: 'red',
-      }}
-      >
-        <InfiniteThumbs {...newProps} />
-      </div>
-    );
-  });
+  .add('Default', () => <InfiniteThumbs />);
+  // .add('Loading', () => <InfiniteThumbs {...props} />)
+  // .add('Many thumbs', () => {
+  //   /* eslint-disable no-param-reassign */
+  //   const newProps = produce(props, (draftState) => {
+  //     draftState.loading = false;
+  //     draftState.error = false;
+  //   });
+  //
+  //   return (
+  //     <div style={{
+  //       width: 200,
+  //       height: 80,
+  //       'overflow-y': 'auto',
+  //       background: 'red',
+  //     }}
+  //     >
+  //       <InfiniteThumbs {...newProps} />
+  //     </div>
+  //   );
+  // });

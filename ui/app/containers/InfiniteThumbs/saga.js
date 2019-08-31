@@ -82,10 +82,11 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 
 
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
-export function* getThumbPathsOnDropbox({ PAGE_SIZE }) { // unit test overwrite constants
+export function* getThumbPathsOnDropbox({ PAGE_SIZE: unitTestPageSize }) { // unit test overwrite constants
   console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 1');
   try {
-    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE yield select(selectNextPage) 2', yield select(selectNextPage));
+    const pageSize = PAGE_SIZE || unitTestPageSize;
+    // console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE yield select(selectNextPage) 2', yield select(selectNextPage));
     const {
       gallery, album, memories, page: prevPage,
     } = yield select(selectNextPage);
@@ -96,14 +97,15 @@ export function* getThumbPathsOnDropbox({ PAGE_SIZE }) { // unit test overwrite 
     }
 
     const page = prevPage + 1;
-    const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
+    console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE 4.5 (page)', page, '(pageSize)', pageSize, 'list', memories);
+    const pagedMemories = getPage({ page, pageSize, list: memories });
     console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE pagedMemories 5', pagedMemories, gallery);
 
     const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));
     console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE dropboxResults 6', dropboxResults);
     const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
     console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE linkedMemories 7', linkedMemories);
-    const hasMore = (PAGE_SIZE * page) < memories.length;
+    const hasMore = (pageSize * page) < memories.length;
     console.log('saga WORKER for LOAD_NEXT_THUMB_PAGE hasMore 8', hasMore);
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links

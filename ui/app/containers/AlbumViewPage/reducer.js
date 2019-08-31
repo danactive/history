@@ -19,6 +19,7 @@ const initialState = {
     albumError: false,
     thumbsLoading: false,
     thumbsError: false,
+    comment: 'app set this as a reducer, it overwrites the storybook state',
   },
 };
 

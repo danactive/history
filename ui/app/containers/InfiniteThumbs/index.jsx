@@ -21,13 +21,13 @@ import {
 import albumReducer from './albumReducer';
 import pageReducer from './pageReducer';
 
-const showAlbumError = (error = {}) => {
-  const message = dotProp.get(error, 'ui.title', error.message) || 'mystery';
+const showAlbumError = (error = { message: 'mystery' }) => {
+  const message = dotProp.get(error, 'ui.title', error.message);
   return <div>{`Something went wrong loading the album, please try again! Reason (${message})`}</div>;
 };
 
-const showThumbsError = (error = {}) => {
-  const message = dotProp.get(error, 'ui.title', error.message) || 'mystery';
+const showThumbsError = (error = { message: 'mystery' }) => {
+  const message = dotProp.get(error, 'ui.title', error.message);
   return <div>{`Something went wrong loading a thumbnail, please try again! Reason (${message})`}</div>;
 };
 
@@ -65,6 +65,7 @@ const InfiniteThumbs = (props) => {
 console.log('InfiniteThumbs items', items, items.filter(hasThumbLink));
   const html = items.filter(hasThumbLink).map(showThumbImage);
 console.log('InfiniteThumbs html', html);
+console.log('thumbsError', thumbsError);
   if (thumbsError !== false) {
     return (
       <div>
@@ -88,7 +89,7 @@ console.log('InfiniteThumbs html', html);
 };
 
 const mapStateToProps = createStructuredSelector({
-  hasMore: () => true, //makeSelectMoreThumbs(),
+  hasMore: () => makeSelectMoreThumbs(),
   thumbsError: () => false, //makeSelectThumbsError(),
 });
 
@@ -100,13 +101,13 @@ function mapDispatchToProps(dispatch) {
 }
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withAlbumReducer = injectReducer({ key: 'mediaGallery', reducer: albumReducer });
+// const withAlbumReducer = injectReducer({ key: 'mediaGallery', reducer: albumReducer });
 const withPageReducer = injectReducer({ key: 'infiniteThumbs', reducer: pageReducer });
 const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
 export default compose(
-  withAlbumReducer,
-  withPageReducer,
+  // withAlbumReducer,
+  // withPageReducer,
   withConnect,
   withSaga,
 )(InfiniteThumbs);

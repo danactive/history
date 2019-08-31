@@ -21,7 +21,7 @@ const initialState = {
 
 /* eslint-disable default-case, no-param-reassign */
 const albumReducer = (state = initialState, action) => produce(state, (draft) => {
-  console.log('PAGE_SIZE', PAGE_SIZE, ' type ', action.type);
+  console.log('PAGE_SIZE', PAGE_SIZE, ' type ', action.type, ' state ', state);
   switch (action.type) {
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {

@@ -10,16 +10,7 @@ import {
 } from '../AlbumViewPage/constants';
 
 // The initial state of the App
-export const initialState = {
-  gallery: 'demo',
-  album: 'sample',
-  albums: [],
-  demo: {
-    sample: {
-      memories: [],
-    },
-  },
-};
+export const initialState = {};
 
 /* eslint-disable default-case, no-param-reassign */
 const appReducer = (state = initialState, action) => produce(state, (draft) => {
