@@ -10,7 +10,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   const plugins = [lib];
   const prefix = '2016-10-16';
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
 
   describe.test('* Caught fake source folder', async (assert) => {
     const server = hapi.Server({ port });

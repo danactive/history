@@ -1,5 +1,8 @@
 const resizeMod = require('./resize');
 const validation = require('../../../lib/validation');
+const utils = require('../../utils');
+
+const uiPort = utils.config.get('uiPort');
 
 const handler = request => new Promise((reply) => {
   const sourcePath = request.payload.source_path;
@@ -15,6 +18,9 @@ const register = (server) => {
     path: '/resize',
     options: {
       handler,
+      cors: {
+        origin: [`http://localhost:${uiPort}`],
+      },
       tags: ['api'],
       validate: {
         payload: {

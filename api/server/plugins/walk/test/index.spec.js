@@ -12,7 +12,7 @@ tape('Verify /walk route', { skip: false }, (describe) => {
   const utils = require('../../utils');
 
   const plugins = [inert, vision, lib];
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
   const url = '/admin/walk-path';
 
   testCaseDef.execHapi({

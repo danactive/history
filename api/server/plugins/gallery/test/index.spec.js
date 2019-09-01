@@ -9,7 +9,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
   const utils = require('../../utils');
 
   const plugins = [inert, lib];
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
 
   describe.test('* Validate Gallery route', async (assert) => {
     const relativeTo = path.join(__dirname, '../../../../../', 'public');

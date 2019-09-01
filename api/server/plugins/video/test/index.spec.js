@@ -13,7 +13,7 @@ tape('Verify /video route', { skip: false }, (describe) => {
   const utils = require('../../utils');
 
   const plugins = [inert, vision, lib];
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
 
   describe.test('* Valid React.js view', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
