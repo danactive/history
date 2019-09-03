@@ -26,6 +26,7 @@ export function* callResizeApi({ filename }) {
 
     yield put(resizeImageSuccess(response));
   } catch (error) {
+    console.log('error', error);
     yield put(resizeImageFailed(error));
   }
 }

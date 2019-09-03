@@ -10,7 +10,7 @@ import { resizeImage } from './actions';
 
 const ResizePage = (props) => {
   const {
-    onResizeImage, // dispatch
+    triggerResizeImage, // dispatch
   } = props;
 
   return (
@@ -25,7 +25,7 @@ const ResizePage = (props) => {
 
       <Formik
         initialValues={{ filename: '/todo/originals/2019-08-31-99.jpg' }}
-        onSubmit={values => onResizeImage(values.filename)}
+        onSubmit={values => triggerResizeImage(values.filename)}
       >
         {({
           values,
@@ -55,7 +55,7 @@ const ResizePage = (props) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    onResizeImage: filename => dispatch(resizeImage(filename)),
+    triggerResizeImage: filename => dispatch(resizeImage(filename)),
   };
 }
 

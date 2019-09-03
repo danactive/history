@@ -40,7 +40,7 @@ function checkStatus(response) {
     return response;
   }
 
-  const error = new Error(response.statusText);
+  const error = new Error(response.message || response.statusText);
   error.response = response;
   throw error;
 }
@@ -55,7 +55,7 @@ function checkStatus(response) {
  */
 export default function request(url, options) {
   return fetch(url, options)
-    .then(checkStatus)
     .then(parseJSON)
-    .then(parseTextXml); // *********** HISTORY CUSTOM not React Boilerplate
+    .then(parseTextXml) // *********** HISTORY CUSTOM not React Boilerplate
+    .then(checkStatus); // *********** HISTORY CUSTOM modified React Boilerplate
 }
