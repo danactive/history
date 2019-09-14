@@ -40,7 +40,7 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.equal(lib.file.type(), false, 'No argument');
     assert.equal(lib.file.type('file.type'), 'type', 'Normal type');
     assert.equal(lib.file.type('.gitignore'), 'gitignore', 'Dot file');
-    assert.equal(lib.file.type('test.eslintrc'), 'eslintrc', 'Long type');
+    assert.equal(lib.file.type('test.eslintrc.js'), 'eslintrc', 'Long type');
     assert.equal(lib.file.type('jquery.min.js'), 'js', 'Double type');
     assert.equal(lib.file.type('image.JPG'), 'JPG', 'Uppercase type');
     assert.equal(lib.file.type('image.JPeG'), 'JPeG', 'Mixed case type');
@@ -53,7 +53,7 @@ tape('Utilities', { skip: false }, (describe) => {
 
   describe.test('* File - Get Mime Type', (assert) => {
     assert.equal(lib.file.mimeType(), false, 'No argument');
-    assert.equal(lib.file.mimeType('test.eslintrc'), false, 'Unsupported type');
+    assert.equal(lib.file.mimeType('test.eslintrc.js'), false, 'Unsupported type');
     assert.equal(lib.file.mimeType('jquery.min.js'), 'application/javascript', 'JavaScript');
     assert.equal(lib.file.mimeType('image.JPG'), 'image/jpeg', 'Uppercase JPEG');
     assert.equal(lib.file.mimeType('image.JPeG'), 'image/jpeg', 'Mixed case JPEG');
