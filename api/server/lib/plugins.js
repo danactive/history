@@ -12,6 +12,7 @@ const viewAlbum = require('../plugins/album/lib');
 const editAlbum = require('../plugins/editAlbum/lib');
 const exploreVideo = require('../plugins/exploreVideo/lib');
 const libGallery = require('../plugins/gallery/lib');
+const generatePreview = require('../plugins/generatePreview/lib');
 const libGeojson = require('../plugins/geojson/lib');
 const libHome = require('../plugins/home/lib');
 const libPublic = require('../plugins/public/lib');
@@ -30,6 +31,7 @@ const plugins = [
   { plugin: editAlbum, routes: { prefix: '/edit' } },
   { plugin: exploreVideo, routes: { prefix: '/explore' } },
   { plugin: libGallery },
+  { plugin: generatePreview },
   { plugin: libGeojson, routes: { prefix: '/geojson' } },
   { plugin: libHome },
   { plugin: libPublic },
