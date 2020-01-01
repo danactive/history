@@ -4,12 +4,12 @@ const utils = require('../../utils');
 
 const uiPort = utils.config.get('uiPort');
 
-const handler = request => new Promise((reply) => {
+const handler = request => new Promise((resolve) => {
   const sourcePath = request.payload.source_path;
 
   resizeMod.resize(sourcePath)
-    .then(() => reply({ resize: true }))
-    .catch(reply);
+    .then(() => resolve({ resize: true }))
+    .catch(resolve);
 });
 
 const register = (server) => {

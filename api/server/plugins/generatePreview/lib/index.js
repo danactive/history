@@ -1,20 +1,17 @@
-const boom = require('boom');
-const gm = require('gm');
-
+const resizeMod = require('./resize');
 const validation = require('../../../lib/validation');
-const existsMod = require('../../exists/lib/exists');
 const utils = require('../../utils');
 
 const uiPort = utils.config.get('uiPort');
 
 const handler = async (request) => {
   try {
-    const sourcePath = request.payload.source_path;
-    const safePath = await utils.file.safePublicPath(sourcePath);
-    const absolutePath = await existsMod.pathExists(safePath);
-    return { absolutePath };
+    const sourcePath = request.payload.image_path;
+
+    const out = await resizeMod.resize(sourcePath);
+    return out;
   } catch (error) {
-    return boom.boomify(error);
+    return error;
   }
 };
 
@@ -30,7 +27,7 @@ const register = (server) => {
       tags: ['api', 'jpg', 'resize', 'generator', 'thumbnail'],
       validate: {
         payload: {
-          source_path: validation.sourceFolder,
+          image_path: validation.sourceFolder,
         },
       },
       // response: {
