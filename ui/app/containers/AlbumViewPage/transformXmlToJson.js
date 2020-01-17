@@ -12,6 +12,8 @@ function parseFromNode(ascendant) {
 export function parseItemNode(item) {
   const parseNode = parseFromNode(item);
   const coordinateAccuracy = Number(parseNode('accuracy'));
+  const referenceName = parseNode('name');
+  const referenceSource = parseNode('source');
 
   const object = {
     id: item.getAttribute('id'),
@@ -27,6 +29,10 @@ export function parseItemNode(item) {
 
   if (coordinateAccuracy !== 0 && !Number.isNaN(coordinateAccuracy)) {
     object.coordinateAccuracy = coordinateAccuracy;
+  }
+
+  if (referenceName && referenceSource) {
+    object.reference = [referenceSource, referenceName];
   }
 
   return object;
