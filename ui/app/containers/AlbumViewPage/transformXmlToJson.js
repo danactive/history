@@ -2,7 +2,7 @@ function parseFromNode(ascendant) {
   return (descendant) => {
     const tags = ascendant.getElementsByTagName(descendant);
     if (tags.length > 0) {
-      return tags[0].innerHTML;
+      return tags[0].innerHTML.replace(/&amp;/g, '&');
     }
 
     return '';
