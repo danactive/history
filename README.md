@@ -8,7 +8,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 ## Project Status:
 | Service | Status |
 |---|---|
-| CI | [![Build Status](https://api.travis-ci.com/danactive/history.png?branch=master)](https://travis-ci.com/danactive/history) [![Windows build status](https://ci.appveyor.com/api/projects/status/df0s6b0wrdv0akkd?svg=true)](https://ci.appveyor.com/project/danactive/history/branch/master) |
+| CI | [![Build Status](https://api.travis-ci.com/danactive/history.png?branch=master)](https://travis-ci.com/danactive/history) |
 | Dependencies | [![Dependencies Status](https://david-dm.org/danactive/history.svg)](https://david-dm.org/danactive/history) [![DevDependencies Status](https://david-dm.org/danactive/history/dev-status.svg)](https://david-dm.org/danactive/history#info=devDependencies) |
 | Code Quality | [![Code Climate](https://codeclimate.com/github/danactive/history/badges/gpa.svg)](https://codeclimate.com/github/danactive/history) [![BCH compliance](https://bettercodehub.com/edge/badge/danactive/history?branch=master)](https://bettercodehub.com/) |
 | Security | [![Known Vulnerabilities](https://snyk.io/test/github/danactive/history/badge.svg)](https://app.snyk.io/org/danactive/project/ca45a886-fc61-402f-9cd1-69bf22b35f24) |
