@@ -3,20 +3,20 @@
 exports[`<FeaturePage /> should render its heading 1`] = `
 <div>
   <h1
-    class="H1-sc-1an4bu4-0 eLDtEw"
+    class="H1-sc-1uot0yo-0 bDgQAS"
   >
     <span>
       Features
     </span>
   </h1>
   <ul
-    class="List-sc-1t1x2dq-0 ccmPdF"
+    class="List-sc-138w4f3-0 cHgJsU"
   >
     <li
-      class="ListItem-i8efkl-0 kUTPGe"
+      class="ListItem-sc-1c9jtyc-0 hSpqUS"
     >
       <p
-        class="ListItemTitle-t3ovm4-0 dsYPki"
+        class="ListItemTitle-sc-1s9zedg-0 bCPNtP"
       >
         <span>
           Quick scaffolding
@@ -30,10 +30,10 @@ exports[`<FeaturePage /> should render its heading 1`] = `
       </p>
     </li>
     <li
-      class="ListItem-i8efkl-0 kUTPGe"
+      class="ListItem-sc-1c9jtyc-0 hSpqUS"
     >
       <p
-        class="ListItemTitle-t3ovm4-0 dsYPki"
+        class="ListItemTitle-sc-1s9zedg-0 bCPNtP"
       >
         <span>
           Instant feedback
@@ -51,10 +51,10 @@ exports[`<FeaturePage /> should render its heading 1`] = `
       </p>
     </li>
     <li
-      class="ListItem-i8efkl-0 kUTPGe"
+      class="ListItem-sc-1c9jtyc-0 hSpqUS"
     >
       <p
-        class="ListItemTitle-t3ovm4-0 dsYPki"
+        class="ListItemTitle-sc-1s9zedg-0 bCPNtP"
       >
         <span>
           Industry-standard routing
@@ -72,10 +72,10 @@ exports[`<FeaturePage /> should render its heading 1`] = `
       </p>
     </li>
     <li
-      class="ListItem-i8efkl-0 kUTPGe"
+      class="ListItem-sc-1c9jtyc-0 hSpqUS"
     >
       <p
-        class="ListItemTitle-t3ovm4-0 dsYPki"
+        class="ListItemTitle-sc-1s9zedg-0 bCPNtP"
       >
         <span>
           Offline-first
@@ -91,10 +91,10 @@ exports[`<FeaturePage /> should render its heading 1`] = `
       </p>
     </li>
     <li
-      class="ListItem-i8efkl-0 kUTPGe"
+      class="ListItem-sc-1c9jtyc-0 hSpqUS"
     >
       <p
-        class="ListItemTitle-t3ovm4-0 dsYPki"
+        class="ListItemTitle-sc-1s9zedg-0 bCPNtP"
       >
         <span>
           Complete i18n Standard Internationalization & Pluralization

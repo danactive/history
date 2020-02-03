@@ -2,10 +2,10 @@
 
 exports[`<LocaleToggle /> should match the snapshot 1`] = `
 <div
-  class="Wrapper-ubnoo8-0 iGcvVP"
+  class="Wrapper-yfxp35-0 jzVOKa"
 >
   <select
-    class="Select-sc-19ubqap-0 izskqM"
+    class="Select-sc-18ukqgz-0 hhmEXC"
   >
     <option
       value="en"
