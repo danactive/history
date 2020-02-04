@@ -1,6 +1,6 @@
 import { Dropbox } from 'dropbox';
 import {
-  all, call, put, select, takeEvery,
+  all, call, put, select, takeLatest,
 } from 'redux-saga/effects';
 
 import normalizeError from '../../utils/error';
@@ -101,6 +101,6 @@ export function* getThumbPathsOnDropbox() {
 
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
-  yield takeEvery(LOAD_ALBUM, getAlbumFileOnDropbox);
-  yield takeEvery(LOAD_NEXT_THUMB_PAGE, getThumbPathsOnDropbox);
+  yield takeLatest(LOAD_ALBUM, getAlbumFileOnDropbox);
+  yield takeLatest(LOAD_NEXT_THUMB_PAGE, getThumbPathsOnDropbox);
 }
