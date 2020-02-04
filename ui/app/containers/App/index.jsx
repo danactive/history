@@ -27,7 +27,9 @@ export default function App() {
       <Helmet
         titleTemplate="%s - History"
         defaultTitle="History"
-      />
+      >
+        <meta name="description" content="History" />
+      </Helmet>
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />

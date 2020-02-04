@@ -1,32 +1,28 @@
-/* global describe, expect, mount, test */
+/* global describe, expect, test */
 import React from 'react';
-import { enzymeFind } from 'styled-components/test-utils';
+import { render } from 'react-testing-library';
 
 import Wrapper from '../Wrapper';
 
 describe('<Wrapper />', () => {
   test('should render an <div> tag', () => {
-    const wrapper = mount(<Wrapper />);
-    const renderedComponent = enzymeFind(wrapper, Wrapper);
-    expect(renderedComponent.type()).toEqual('div');
+    const { container } = render(<Wrapper />);
+    expect(container.querySelector('div')).not.toBeNull();
   });
 
-  test('should have a className attribute', () => {
-    const wrapper = mount(<Wrapper />);
-    const renderedComponent = enzymeFind(wrapper, Wrapper);
-    expect(renderedComponent.prop('className')).toBeDefined();
+  test('should have a class attribute', () => {
+    const { container } = render(<Wrapper />);
+    expect(container.querySelector('div').hasAttribute('class')).toBe(true);
   });
 
   test('should adopt a valid attribute', () => {
     const id = 'test';
-    const wrapper = mount(<Wrapper id={id} />);
-    const renderedComponent = enzymeFind(wrapper, Wrapper);
-    expect(renderedComponent.prop('id')).toEqual(id);
+    const { container } = render(<Wrapper id={id} />);
+    expect(container.querySelector('div').id).toEqual(id);
   });
 
   test('should not adopt an invalid attribute', () => {
-    const wrapper = mount(<Wrapper attribute="test" />);
-    const renderedComponent = enzymeFind(wrapper, Wrapper);
-    expect(renderedComponent.prop('attribute')).toBeUndefined();
+    const { container } = render(<Wrapper attribute="test" />);
+    expect(container.querySelector('div[attribute="test"]')).toBeNull();
   });
 });

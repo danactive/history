@@ -1,12 +1,6 @@
-/*
- *
- * LanguageProvider actions
- *
- */
+import { CHANGE_LOCALE } from './constants';
 
-import CHANGE_LOCALE from './constants';
-
-export default function changeLocale(languageLocale) {
+export function changeLocale(languageLocale) { // eslint-disable-line
   return {
     type: CHANGE_LOCALE,
     locale: languageLocale,

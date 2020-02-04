@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Header /> should render a div 1`] = `
+<div>
+  <div
+    class="NavBar-bu7wgb-0 fpbRhS"
+  >
+    <a
+      class="HeaderLink-sc-1fnrd1i-0 vhtPY"
+      href="/"
+    >
+      <span>
+        Home
+      </span>
+    </a>
+    <a
+      class="HeaderLink-sc-1fnrd1i-0 vhtPY"
+      href="/features"
+    >
+      <span>
+        Features
+      </span>
+    </a>
+  </div>
+</div>
+`;

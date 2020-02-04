@@ -17,3 +17,4 @@ exclude_paths:
    - "server/plugins/editAlbum/public/lib/json_to_xml.js"
    - "server/plugins/editAlbum/public/admin-edit-xml-tested.js"
    - "server/plugins/editAlbum/public/edit_admin_xml.js"
+   - "ui"

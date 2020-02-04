@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<App /> should render and match the snapshot 1`] = `
+<ForwardRef>
+  <HelmetWrapper
+    defaultTitle="History"
+    defer={true}
+    encodeSpecialCharacters={true}
+    titleTemplate="%s - History"
+  >
+    <meta
+      content="History"
+      name="description"
+    />
+  </HelmetWrapper>
+  <Header />
+  <Switch>
+    <Route
+      component={[Function]}
+      exact={true}
+      path="/"
+    />
+    <Route
+      component={[Function]}
+      path="/album/view/:album"
+    />
+    <Route
+      component={[Function]}
+      path="/features"
+    />
+    <Route
+      component={[Function]}
+      path="/gallery/view/:gallery"
+    />
+    <Route
+      component={[Function]}
+      path=""
+    />
+  </Switch>
+  <Footer />
+  <GlobalStyleComponent />
+</ForwardRef>
+`;

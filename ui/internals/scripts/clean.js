@@ -3,12 +3,12 @@ const addCheckMark = require('./helpers/checkmark.js');
 
 if (!shell.which('git')) {
   shell.echo('Sorry, this script requires git');
-  shell.extest(1);
+  shell.exit(1);
 }
 
 if (!shell.test('-e', 'internals/templates')) {
   shell.echo('The example is deleted already.');
-  shell.extest(1);
+  shell.exit(1);
 }
 
 process.stdout.write('Cleanup started...');
@@ -57,7 +57,7 @@ if (
     .code !== 0
 ) {
   shell.echo('\nError: Git commit failed');
-  shell.extest(1);
+  shell.exit(1);
 }
 
 shell.echo('\nCleanup done. Happy Coding!!!');

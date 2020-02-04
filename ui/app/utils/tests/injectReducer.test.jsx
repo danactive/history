@@ -4,18 +4,19 @@
  */
 
 import { memoryHistory } from 'react-router-dom';
-import { shallow } from 'enzyme';
 import React from 'react';
-import { identity } from 'lodash';
+import { Provider } from 'react-redux';
+import renderer from 'react-test-renderer';
+import { render } from 'react-testing-library';
 
 import configureStore from '../../configureStore';
-import injectReducer from '../injectReducer';
+import injectReducer, { useInjectReducer } from '../injectReducer';
 import * as reducerInjectors from '../reducerInjectors';
 
 // Fixtures
 const Component = () => null;
 
-const reducer = identity;
+const reducer = s => s;
 
 describe('injectReducer decorator', () => {
   let store;
@@ -36,7 +37,11 @@ describe('injectReducer decorator', () => {
   });
 
   test('should inject a given reducer', () => {
-    shallow(<ComponentWithReducer />, { context: { store } });
+    renderer.create(
+      <Provider store={store}>
+        <ComponentWithReducer />
+      </Provider>,
+    );
 
     expect(injectors.injectReducer).toHaveBeenCalledTimes(1);
     expect(injectors.injectReducer).toHaveBeenCalledWith('test', reducer);
@@ -51,10 +56,44 @@ describe('injectReducer decorator', () => {
 
   test('should propagate props', () => {
     const props = { testProp: 'test' };
-    const renderedComponent = shallow(<ComponentWithReducer {...props} />, {
-      context: { store },
-    });
+    const renderedComponent = renderer.create(
+      <Provider store={store}>
+        <ComponentWithReducer {...props} />
+      </Provider>,
+    );
+    const {
+      props: { children },
+    } = renderedComponent.getInstance();
 
-    expect(renderedComponent.prop('testProp')).toBe('test');
+    expect(children.props).toEqual(props);
+  });
+});
+
+describe('useInjectReducer hook', () => {
+  let store;
+  let injectors;
+  let ComponentWithReducer;
+
+  beforeAll(() => {
+    injectors = {
+      injectReducer: jest.fn(),
+    };
+    reducerInjectors.default = jest.fn().mockImplementation(() => injectors);
+    store = configureStore({}, memoryHistory);
+    ComponentWithReducer = () => {
+      useInjectReducer({ key: 'test', reducer });
+      return null;
+    };
+  });
+
+  test('should inject a given reducer', () => {
+    render(
+      <Provider store={store}>
+        <ComponentWithReducer />
+      </Provider>,
+    );
+
+    expect(injectors.injectReducer).toHaveBeenCalledTimes(1);
+    expect(injectors.injectReducer).toHaveBeenCalledWith('test', reducer);
   });
 });

@@ -1,17 +1,16 @@
 /* eslint consistent-return:0 import/order:0 */
 
 const express = require('express');
-const logger = require('./logger');
+const ngrokMod = require('ngrok');
+const { resolve } = require('path');
 
+const logger = require('./logger');
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
 
 const isDev = process.env.NODE_ENV !== 'production';
-const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-  ? require('ngrok')
-  : false;
-const { resolve } = require('path');
+const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel ? ngrokMod : false;
 
 const app = express();
 

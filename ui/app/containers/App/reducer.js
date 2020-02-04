@@ -1,4 +1,5 @@
-import { fromJS } from 'immutable';
+import dotProp from 'dot-prop';
+import produce from 'immer';
 
 import {
   CHOOSE_MEMORY,
@@ -15,70 +16,58 @@ import {
 } from '../AlbumViewPage/constants';
 import { insertPage } from '../AlbumViewPage/paging';
 
-const albumInitialState = fromJS({
+// The initial state of the App
+export const initialState = {
+  gallery: 'demo',
+  album: 'sample',
   demo: {
     sample: {
       memories: [],
     },
   },
-});
+};
 
-export default function reducer(state = albumInitialState, action) {
-  const gallery = state.get('gallery');
-  const album = state.get('album');
-
+/* eslint-disable default-case, no-param-reassign */
+const appReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOAD_ALBUM: {
-      return state
-        .set('gallery', action.gallery)
-        .set('album', action.album)
-        .setIn([action.gallery, action.album, 'memories'], []);
+      draft.gallery = action.gallery;
+      draft.album = action.album;
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, []);
+      break;
     }
 
     case LOAD_ALBUM_SUCCESS: {
-      return state
-        .setIn([gallery, album, 'memories'], action.memories); // memories is an Array (not Immutable)
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, action.memories);
+      break;
     }
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
-      return state
-        .setIn(
-          [gallery, album, 'memories'],
-          insertPage({
-            insert: action.newMemories,
-            pageSize: PAGE_SIZE,
-            page: action.page,
-            list: state.getIn([gallery, album, 'memories']),
-          }), // memories from insertPage is an Array (not Immutable)
-        );
+      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, insertPage({
+        insert: action.newMemories,
+        pageSize: PAGE_SIZE,
+        page: action.page,
+        list: state[state.gallery][state.album].memories,
+      }));
+      break;
     }
 
     case CHOOSE_MEMORY: {
-      return state
-        .set(
-          'currentMemory',
-          fromJS(
-            state
-              .getIn([gallery, album, 'memories'])
-              .filter(item => item.id === action.id)[0],
-          ),
-          {},
-        );
+      const found = state[state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
+      draft.currentMemory = found || {};
+      break;
     }
 
     case LOAD_PHOTO_SUCCESS: {
-      return state
-        .setIn(
-          ['currentMemory', 'photoLink'],
-          action.photoLink,
-        );
+      draft.currentMemory.photoLink = action.photoLink;
+      break;
     }
 
     case NEXT_MEMORY:
     case PREV_MEMORY: {
-      const memories = state.getIn([gallery, album, 'memories']);
-      const currentMemoryId = state.getIn(['currentMemory', 'id']) || 0;
+      const { memories } = state[state.gallery][state.album];
+      const currentMemoryId = state.currentMemory.id || 0;
       const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
       let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
 
@@ -89,19 +78,11 @@ export default function reducer(state = albumInitialState, action) {
       if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
 
       const findIndex = memories[adjacentMemoryIndex].id;
-      return state
-        .set(
-          'currentMemory',
-          fromJS(
-            state
-              .getIn([gallery, album, 'memories'])
-              .filter(item => item.id === findIndex)[0],
-          ),
-          {},
-        );
-    }
 
-    default:
-      return state;
+      const found = state[state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
+      draft.currentMemory = found || {};
+    }
   }
-}
+});
+
+export default appReducer;

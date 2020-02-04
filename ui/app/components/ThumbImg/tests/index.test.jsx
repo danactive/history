@@ -1,5 +1,6 @@
-/* global describe, expect, mount, shallow, test */
+/* global describe, expect, test */
 import React from 'react';
+import { render } from 'react-testing-library';
 
 import ThumbImg from '..';
 
@@ -8,42 +9,33 @@ describe('Component - <ThumbImg />', () => {
     alt: 'Preview thumbnail image (scaled down dimensions)',
     src: 'test.png',
   };
-  const shallowComponent = (props = {}) => shallow(<ThumbImg src={expectedValues.src} {...props} />);
-  const mountComponent = (props = {}) => mount(<ThumbImg src={expectedValues.src} {...props} />);
 
-  test('should render an <ThumbImg__Img> component', () => {
-    const received = mountComponent().exists('ThumbImg__Img');
-    const expected = true;
+  test('should render a component', () => {
+    const { container } = render(<ThumbImg />);
+    const received = container.querySelector('img').className;
+    const expected = expect.stringContaining('ThumbImg__Img');
     expect(received).toEqual(expected);
   });
 
+
   test('should match src attribute value', () => {
-    const received = mountComponent().find('img').prop('src');
-    const expected = expectedValues.src;
+    const { container } = render(<ThumbImg src={expectedValues.src} />);
+    const received = container.querySelector('img').src;
+    const expected = expect.stringContaining(expectedValues.src);
     expect(received).toEqual(expected);
   });
 
   test('should have an alt attribute value', () => {
-    const received = mountComponent().find('img').prop('alt');
-    expect(received).toEqual(expectedValues.alt);
-  });
-
-  test('should not have a className attribute value', () => {
-    const received = shallowComponent().prop('className');
-    const expected = undefined;
-    expect(received).toEqual(expected);
-  });
-
-  test('should not adopt a className attribute', () => {
-    const className = 'test';
-    const received = shallowComponent({ className }).hasClass(className);
-    const expected = false;
+    const { container } = render(<ThumbImg />);
+    const received = container.querySelector('img').alt;
+    const expected = expectedValues.alt;
     expect(received).toEqual(expected);
   });
 
   test('should not adopt a srcset attribute', () => {
-    const received = shallowComponent({ srcset: 'test-HD.png 2x' }).prop('srcset');
-    const expected = undefined;
+    const { container } = render(<ThumbImg srcset="test-HD.png 2x" />);
+    const received = container.querySelector('img').srcset;
+    const expected = 'null';
     expect(received).toEqual(expected);
   });
 });

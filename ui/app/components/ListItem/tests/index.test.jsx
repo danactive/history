@@ -1,17 +1,20 @@
-/* global describe, expect, mount, test */
+/* global describe, expect, test */
 import React from 'react';
+import { render } from 'react-testing-library';
+import 'jest-dom/extend-expect';
 
 import ListItem from '..';
 
 describe('<ListItem />', () => {
-  test('should have a className', () => {
-    const renderedComponent = mount(<ListItem className="test" />);
-    expect(renderedComponent.find('li').prop('className')).toBeDefined();
+  test('should have a class', () => {
+    const { container } = render(<ListItem className="test" />);
+    expect(container.querySelector('li').hasAttribute('class')).toBe(true);
   });
 
   test('should render the content passed to it', () => {
-    const content = <div>Hello world!</div>;
-    const renderedComponent = mount(<ListItem item={content} />);
-    expect(renderedComponent.contains(content)).toBe(true);
+    const content = <div data-testid="test">Hello world!</div>;
+    const { getByTestId } = render(<ListItem item={content} />);
+    expect(getByTestId('test').tagName).toEqual('DIV');
+    expect(getByTestId('test')).toHaveTextContent('Hello world!');
   });
 });

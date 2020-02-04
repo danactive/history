@@ -1,24 +1,25 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-const selectPage = state => state.get('galleryViewPage');
+const selectPage = state => state.galleryViewPage;
 
 const makeSelectAlbums = () => createSelector(
   selectPage,
-  homeState => homeState.get('albums') || [],
+  homeState => homeState.albums || [],
 );
 
 const makeSelectGalleryLoading = () => createSelector(
   selectPage,
-  pageState => pageState.get('galleryLoading'),
+  pageState => pageState.galleryLoading,
 );
 
 const makeSelectGalleryError = () => createSelector(
   selectPage,
-  pageState => pageState.get('galleryError'),
+  pageState => pageState.galleryError,
 );
 
 export {
+  selectPage,
   makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,

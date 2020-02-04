@@ -1,6 +1,6 @@
 /* global describe, expect, test */
-
-import { fromJS } from 'immutable';
+/* eslint-disable no-param-reassign */
+import produce from 'immer';
 
 import {
   albumLoadError,
@@ -89,11 +89,17 @@ describe('Load album hosted on Dropbox', () => {
   });
 
   test('reducer should store the action loadAlbum', () => {
-    const received = reducer(fromJS({}), loadAlbum('?gallery=demo', 'sample'));
-    const expected = fromJS({})
-      .set('gallery', 'demo')
-      .set('album', 'sample')
-      .setIn(['demo', 'sample', 'memories'], []);
+    const action = loadAlbum('?gallery=demo', 'sample');
+    const received = reducer({}, action);
+    const expected = {
+      gallery: 'demo',
+      album: 'sample',
+      demo: {
+        sample: {
+          memories: [],
+        },
+      },
+    };
 
     expect(received).toEqual(expected);
   });
@@ -118,10 +124,15 @@ describe('Load album hosted on Dropbox', () => {
   });
 
   test('reducer should store the action albumLoadSuccess', () => {
-    const state = fromJS({})
-      .set('gallery', 'demo')
-      .set('album', 'sample')
-      .setIn(['demo', 'sample', 'memories'], []);
+    const state = {
+      gallery: 'demo',
+      album: 'sample',
+      demo: {
+        sample: {
+          memories: [],
+        },
+      },
+    };
 
     const sagaResult = {
       gallery: 'demo',
@@ -129,8 +140,9 @@ describe('Load album hosted on Dropbox', () => {
       memories: fixtures.memories,
     };
     const received = reducer(state, albumLoadSuccess(sagaResult));
-    const expected = state
-      .setIn(['demo', 'sample', 'memories'], fixtures.memories);
+    const expected = produce(state, (draft) => {
+      draft.demo.sample.memories = fixtures.memories;
+    });
 
     expect(received).toEqual(expected);
   });
@@ -175,14 +187,22 @@ describe('Load next thumb page', () => {
   });
 
   test('reducer should store the action nextPageSuccess', () => {
-    const state = fromJS({})
-      .set('gallery', 'demo')
-      .set('album', 'sample')
-      .setIn(['demo', 'sample', 'memories'], fixtures.memories);
+    const state = {
+      gallery: 'demo',
+      album: 'sample',
+      demo: {
+        sample: {
+          memories: fixtures.memories,
+        },
+      },
+    };
 
-    const gallery = state.get('gallery');
-    const album = state.get('album');
+    const {
+      album,
+      gallery,
+    } = state;
     const args = {
+      album: fixtures.album,
       gallery: fixtures.gallery,
       memories: fixtures.memories,
       newMemories: fixtures.newMemories,
@@ -191,8 +211,9 @@ describe('Load next thumb page', () => {
     };
 
     const received = reducer(state, nextPageSuccess(args));
-    const expected = state
-      .setIn([gallery, album, 'memories'], fixtures.memories.concat(fixtures.newMemories));
+    const expected = produce(state, (draft) => {
+      draft[gallery][album].memories = fixtures.memories.concat(fixtures.newMemories);
+    });
 
     expect(received).toEqual(expected);
   });

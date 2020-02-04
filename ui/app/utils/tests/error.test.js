@@ -4,7 +4,7 @@ import normalizeError from '../error';
 
 describe('error', () => {
   describe('normalizeError', () => {
-    test('Dropbox error with summary', () => {
+    test('Dropbox error with summary child', () => {
       const message = 'path/not_found/..';
       const path = '/public/gallery-dan/media/thumbs/2015/2015-12-02-62.jpg';
       const status = 409;
@@ -31,6 +31,35 @@ describe('error', () => {
           action: 'missing-thumbLink',
           path,
           title: `Dropbox asset is missing (${path})`,
+        },
+      };
+      expect(actual).toEqual(expected);
+    });
+
+    test('Dropbox error too many requests', () => {
+      const message = 'too_many_requests/...';
+
+      const error = {
+        error: {
+          error_summary: message,
+          error: {
+            reason: {
+              '.tag': 'too_many_requests',
+            },
+            retry_after: 300,
+          },
+        },
+        status: 429,
+      };
+      const actual = normalizeError(error);
+      const expected = {
+        message,
+        status: 429,
+        type: 'normalized error_summary',
+        ui: {
+          action: 'delay-reconnecting',
+          path: null,
+          title: 'Dropbox too many requests',
         },
       };
       expect(actual).toEqual(expected);

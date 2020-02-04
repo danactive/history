@@ -1,20 +1,14 @@
-/*
- *
- * GalleryViewPage reducer
- *
- */
-
-import { fromJS } from 'immutable';
+import produce from 'immer';
 import {
   LOAD_GALLERY,
   LOAD_GALLERY_SUCCESS,
   LOAD_GALLERY_ERROR,
 } from './constants';
 
-const initialState = fromJS({
+export const initialState = {
   galleryLoading: false,
   galleryError: false,
-});
+};
 
 function parseFromNode(ascendant) {
   return (descendant) => {
@@ -39,27 +33,28 @@ function parseAlbum(albumXml) {
   };
 }
 
-function galleryViewPageReducer(state = initialState, action) {
+/* eslint-disable default-case, no-param-reassign */
+const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
-    case LOAD_GALLERY:
-      return state
-        .set('galleryLoading', true)
-        .set('galleryError', false)
-        .set('gallery', action.gallery);
+    case LOAD_GALLERY: {
+      draft.galleryLoading = true;
+      draft.galleryError = false;
+      draft.gallery = action.gallery;
+      break;
+    }
 
-    case LOAD_GALLERY_SUCCESS:
-      return state
-        .set('galleryLoading', false)
-        .set('albums', Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum));
+    case LOAD_GALLERY_SUCCESS: {
+      draft.galleryLoading = false;
+      draft.albums = Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum);
+      break;
+    }
 
-    case LOAD_GALLERY_ERROR:
-      return state
-        .set('galleryError', action.error)
-        .set('galleryLoading', false);
-
-    default:
-      return state;
+    case LOAD_GALLERY_ERROR: {
+      draft.galleryError = action.error;
+      draft.galleryLoading = false;
+      break;
+    }
   }
-}
+});
 
-export default galleryViewPageReducer;
+export default reducer;

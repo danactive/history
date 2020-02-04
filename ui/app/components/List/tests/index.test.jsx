@@ -1,36 +1,27 @@
 /* global describe, expect, test */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from 'react-testing-library';
 
-import ListItem from '../../ListItem';
 import List from '..';
 
 describe('<List />', () => {
-  test('should render the component if no items are passed', () => {
-    const renderedComponent = shallow(<List component={ListItem} />);
-    expect(renderedComponent.find(ListItem)).toBeDefined();
+  test('should render the passed component if no items are passed', () => {
+    const component = () => <li>test</li>; // eslint-disable-line react/prop-types
+    const { container } = render(<List component={component} />);
+    expect(container.querySelector('li')).not.toBeNull();
   });
 
   test('should pass all items props to rendered component', () => {
     const items = [{ id: 1, name: 'Hello' }, { id: 2, name: 'World' }];
 
-    const component = ({ item }) => <ListItem>{item.name}</ListItem>;
+    const component = ({ item }) => <li>{item.name}</li>; // eslint-disable-line react/prop-types
 
-    const renderedComponent = shallow(
+    const { container, getByText } = render(
       <List items={items} component={component} />,
     );
-    expect(renderedComponent.find(component)).toHaveLength(2);
-    expect(
-      renderedComponent
-        .find(component)
-        .at(0)
-        .prop('item'),
-    ).toBe(items[0]);
-    expect(
-      renderedComponent
-        .find(component)
-        .at(1)
-        .prop('item'),
-    ).toBe(items[1]);
+    const elements = container.querySelectorAll('li');
+    expect(elements).toHaveLength(2);
+    expect(getByText(items[0].name)).not.toBeNull();
+    expect(getByText(items[1].name)).not.toBeNull();
   });
 });

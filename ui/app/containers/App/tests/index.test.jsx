@@ -1,24 +1,15 @@
-/* global describe, expect, shallow, test */
+/* global describe, expect, test */
 import React from 'react';
-import { Route } from 'react-router-dom';
+import ShallowRenderer from 'react-test-renderer/shallow';
 
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
 import App from '../index';
 
+const renderer = new ShallowRenderer();
+
 describe('<App />', () => {
-  test('should render the header', () => {
-    const renderedComponent = shallow(<App />);
-    expect(renderedComponent.find(Header)).toHaveLength(1);
-  });
-
-  test('should render some routes', () => {
-    const renderedComponent = shallow(<App />);
-    expect(renderedComponent.find(Route)).not.toHaveLength(0);
-  });
-
-  test('should render the footer', () => {
-    const renderedComponent = shallow(<App />);
-    expect(renderedComponent.find(Footer)).toHaveLength(1);
+  test('should render and match the snapshot', () => {
+    renderer.render(<App />);
+    const renderedOutput = renderer.getRenderOutput();
+    expect(renderedOutput).toMatchSnapshot();
   });
 });

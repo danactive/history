@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Footer /> should render and match the snapshot 1`] = `
+<footer
+  className="Wrapper-sc-1pb97k0-0 fjmkpY"
+>
+  <section>
+    <span>
+      This project is licensed under the MIT license.
+    </span>
+  </section>
+  <section>
+    <div
+      className="Wrapper-yfxp35-0 jzVOKa"
+    >
+      <select
+        className="Select-sc-18ukqgz-0 hhmEXC"
+        onChange={[Function]}
+        value="en"
+      >
+        <option
+          value="en"
+        >
+          en
+        </option>
+        <option
+          value="de"
+        >
+          de
+        </option>
+      </select>
+    </div>
+  </section>
+  <section>
+    <span>
+      
+      Made with love by 
+      <a
+        className="A-sc-1op0cl1-0 kDkXnw"
+        href="https://twitter.com/danactive"
+      >
+        Dan BROOKS
+      </a>
+      .
+    
+    </span>
+  </section>
+</footer>
+`;

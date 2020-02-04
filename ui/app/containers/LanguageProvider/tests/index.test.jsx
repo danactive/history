@@ -1,11 +1,11 @@
 /* global beforeAll, describe, expect, test */
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { render } from 'react-testing-library';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router-dom';
 
-import ConnectedLanguageProvider, { LanguageProviderUnconnected as LanguageProvider } from '../index';
+import ConnectedLanguageProvider, { LanguageProvider } from '../index';
 import configureStore from '../../../configureStore';
 
 import { translationMessages } from '../../../i18n';
@@ -21,12 +21,12 @@ const messages = defineMessages({
 describe('<LanguageProvider />', () => {
   test('should render its children', () => {
     const children = <h1>Test</h1>;
-    const renderedComponent = shallow(
+    const { container } = render(
       <LanguageProvider messages={messages} locale="en">
         {children}
       </LanguageProvider>,
     );
-    expect(renderedComponent.contains(children)).toBe(true);
+    expect(container.firstChild).not.toBeNull();
   });
 });
 
@@ -38,17 +38,13 @@ describe('<ConnectedLanguageProvider />', () => {
   });
 
   test('should render the default language messages', () => {
-    const renderedComponent = mount(
+    const { queryByText } = render(
       <Provider store={store}>
         <ConnectedLanguageProvider messages={translationMessages}>
           <FormattedMessage {...messages.someMessage} />
         </ConnectedLanguageProvider>
       </Provider>,
     );
-    expect(
-      renderedComponent.contains(
-        <FormattedMessage {...messages.someMessage} />,
-      ),
-    ).toBe(true);
+    expect(queryByText(messages.someMessage.defaultMessage)).not.toBeNull();
   });
 });

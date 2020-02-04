@@ -1,12 +1,31 @@
-/* global describe, expect, test */
-import { fromJS } from 'immutable';
-import galleryViewPageReducer from '../reducer';
+/* global beforeEach, describe, expect, test */
+import produce from 'immer';
 
+import galleryViewPageReducer, { initialState } from '../reducer';
+import {
+  loadGallery,
+} from '../actions';
+
+/* eslint-disable default-case, no-param-reassign */
 describe('galleryViewPageReducer', () => {
-  test('returns the initial state', () => {
-    expect(galleryViewPageReducer(undefined, {})).toEqual(fromJS({
-      galleryError: false,
-      galleryLoading: false,
-    }));
+  let state;
+  beforeEach(() => {
+    state = initialState;
+  });
+
+  test('should return the initial state', () => {
+    const expectedResult = state;
+    expect(galleryViewPageReducer(undefined, {})).toEqual(expectedResult);
+  });
+
+  test('should handle the loadGalleries action correctly', () => {
+    const fixture = 'demo';
+    const expectedResult = produce(state, (draft) => {
+      draft.galleryLoading = true;
+      draft.galleryError = false;
+      draft.gallery = fixture;
+    });
+
+    expect(galleryViewPageReducer(state, loadGallery(fixture))).toEqual(expectedResult);
   });
 });

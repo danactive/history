@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 const circleFadeDelay = keyframes`
   0%,
@@ -11,10 +11,6 @@ const circleFadeDelay = keyframes`
   40% {
     opacity: 1;
   }
-`;
-
-const circleFadeDelayRule = css`
-  ${circleFadeDelay} 1.2s infinite ease-in-out both;
 `;
 
 const Circle = ({ delay, rotate }) => {
@@ -37,7 +33,7 @@ const Circle = ({ delay, rotate }) => {
       height: 15%;
       background-color: #999;
       border-radius: 100%;
-      animation: ${circleFadeDelayRule};
+      animation: ${circleFadeDelay} 1.2s infinite ease-in-out both;
       ${delay
         && `
         -webkit-animation-delay: ${delay}s;

@@ -1,45 +1,49 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-export const selectPage = state => state.get('albumViewPage');
-export const selectAlbum = state => state.get('albums');
+export const selectPage = state => state.albumViewPage;
+export const selectAlbum = state => state.albums;
 
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
-  pageState => pageState.get('albumLoading'),
+  pageState => pageState.albumLoading,
 );
 
 export const makeSelectAlbumError = () => createSelector(
   selectPage,
-  pageState => pageState.get('albumError'),
+  pageState => pageState.albumError,
 );
 
 export const makeSelectAlbumName = () => createSelector(
   selectAlbum,
-  albumState => albumState.get('album'),
+  albumState => albumState.album,
 );
 
 export const makeSelectMemories = () => createSelector(
   selectAlbum,
   (albumState) => {
-    const gallery = albumState.get('gallery');
-    const album = albumState.get('album');
+    const {
+      album,
+      gallery,
+    } = albumState;
 
-    return albumState.getIn([gallery, album, 'memories'], []);
+    return albumState[gallery][album].memories || [];
   },
 );
 
 export const selectNextPage = (state) => {
   const pageState = selectPage(state);
   const albumState = selectAlbum(state);
-  const gallery = albumState.get('gallery');
-  const album = albumState.get('album');
+  const {
+    album,
+    gallery,
+  } = albumState;
 
   return {
-    gallery,
     album,
-    memories: albumState.getIn([gallery, album, 'memories']), // memories is an Array (not Immutable)
-    page: pageState.get('page'),
+    gallery,
+    memories: albumState[gallery][album].memories, // memories is an Array (not Immutable)
+    page: pageState.page,
   };
 };
 
@@ -51,13 +55,16 @@ export const makeSelectNextPage = () => createSelector(
 
 export const makeSelectMoreThumbs = () => createSelector(
   selectPage,
-  pageState => pageState.get('hasMore'),
+  pageState => pageState.hasMore,
 );
 
 export const makeSelectCurrentMemory = () => createSelector(
   selectAlbum,
   (albumState) => {
-    const currentMemory = albumState.get('currentMemory');
-    return (currentMemory) ? currentMemory.toJS() : null;
+    const {
+      currentMemory,
+    } = albumState;
+
+    return currentMemory || null;
   },
 );

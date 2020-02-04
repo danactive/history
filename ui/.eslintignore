@@ -1,4 +1,5 @@
 Loadable.jsx
 app/containers/App/index.jsx
 app/app.jsx
-internals/templates/app.jsx
+internals
+app/utils

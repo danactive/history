@@ -1,27 +1,32 @@
 /* global describe, expect, test */
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from 'react-testing-library';
 
 import PhotoHeader from '..';
 
-const shallowComponent = (props = {}) => shallow(
-  <PhotoHeader {...props} />,
-);
-
 describe('<PhotoHeader />', () => {
   test('should show nothing when no current memory', () => {
-    const component = shallowComponent();
-    expect(component.type()).toEqual(null);
+    const { container } = render(<PhotoHeader />);
+    const received = container.querySelector('div');
+    expect(received).toBeNull();
   });
 
   test('should show nothing when no current memory', () => {
-    const component = shallowComponent({ currentMemory: null });
-    expect(component.type()).toEqual(null);
+    const { container } = render(<PhotoHeader currentMemory={null} />);
+    const received = container.querySelector('div');
+    expect(received).toBeNull();
   });
 
   test('should have a city', () => {
+    expect.assertions(2);
+
     const city = 'Vancouver';
-    const component = shallowComponent({ currentMemory: { city } });
-    expect(component.contains(city)).toEqual(true);
+    const { container, getByText } = render(<PhotoHeader currentMemory={{ city }} />);
+    const received = getByText(new RegExp(city));
+
+    expect(received).not.toBeNull();
+
+    const elements = container.querySelectorAll('h1');
+    expect(elements).toHaveLength(1);
   });
 });
