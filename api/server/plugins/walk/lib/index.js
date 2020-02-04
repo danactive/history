@@ -3,21 +3,17 @@ const routes = require('../../../lib/routes');
 const files = require('./files');
 const validation = require('../../../lib/validation');
 
-const handler = ({ query: { path, raw: isRaw } }, reply) => new Promise((resolve) => {
-  const viewPath = 'plugins/walk/components/page.jsx';
-  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
-  const handleError = routes.createErrorReply(resolve);
-
-  files.listFiles(path)
-    .then(handleResponse)
-    .catch(handleError);
-});
-
 const routeWalkPath = {
   method: 'GET',
   path: '/admin/walk-path',
   options: {
-    handler,
+    handler: async function handler({ query: { path } }) {
+      try {
+        return files.listFiles(path);
+      } catch (e) {
+        return routes.wrapError(e);
+      }
+    },
     tags: ['api', 'react'],
     validate: {
       query: {
@@ -28,25 +24,8 @@ const routeWalkPath = {
   },
 };
 
-const routeBundle = {
-  method: 'GET',
-  path: '/walk/static/bundle.js',
-  options: {
-    tags: ['static'],
-    handler: {
-      file: 'plugins/walk/public/assets/bundle.js',
-    },
-  },
-};
-
 const register = (server) => {
   server.route(routeWalkPath);
-
-  server.route(routes.staticRoute({ pluginName: 'walk', urlSegment: 'walk' }));
-
-  server.route(routes.staticRouteUtils({ urlSegment: 'walk' }));
-
-  server.route(routeBundle);
 };
 
 const plugin = {
