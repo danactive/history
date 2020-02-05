@@ -34,21 +34,6 @@ module.exports = (plop) => {
   });
   plop.addHelper('curly', (object, open) => (open ? '{' : '}'));
   plop.setActionType('prettify', (answers, config) => {
-    const folderPath = `${path.join(
-      __dirname,
-      '/../../app/',
-      config.path,
-      plop.getHelper('properCase')(answers.name),
-      '**',
-      '**.js',
-    )}`;
-
-    try {
-      execSync(`npm run prettify -- "${folderPath}"`);
-      return folderPath;
-    } catch (err) {
-      throw err;
-    }
   });
   plop.setActionType('backup', (answers, config) => {
     try {

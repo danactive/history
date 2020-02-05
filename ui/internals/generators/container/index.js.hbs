@@ -1,15 +1,8 @@
-/**
- *
- * {{properCase name }}
- *
- */
-
 {{#if memo}}
 import React, { memo } from 'react';
 {{else}}
 import React from 'react';
 {{/if}}
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 {{#if wantHeaders}}
 import { Helmet } from 'react-helmet';
@@ -44,7 +37,13 @@ export function {{ properCase name }}() {
   {{#if wantSaga}}
   useInjectSaga({ key: '{{ camelCase name }}', saga });
   {{/if}}
+  {{#if wantActionsAndReducer}}
 
+  {{else}}
+    {{#if wantSaga}}
+
+    {{/if}}
+  {{/if}}
   return (
     <div>
     {{#if wantHeaders}}
@@ -59,10 +58,6 @@ export function {{ properCase name }}() {
     </div>
   );
 }
-
-{{ properCase name }}.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
 
 {{#if wantActionsAndReducer}}
 const mapStateToProps = createStructuredSelector({
