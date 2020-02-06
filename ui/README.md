@@ -1,5 +1,5 @@
 # history-app
-Photo gallery presentation layer. See `history` for admin tools
+Photo gallery presentation layer (frontend). See [history-api for the backend including APIs](../api)
 
 ## Environment configuration
 1. Create a `.env` file in the project root
