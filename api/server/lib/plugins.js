@@ -10,7 +10,6 @@ utils.env.load();
 const libAdmin = require('../plugins/admin/lib');
 const viewAlbum = require('../plugins/album/lib');
 const editAlbum = require('../plugins/editAlbum/lib');
-const exploreVideo = require('../plugins/exploreVideo/lib');
 const libGallery = require('../plugins/gallery/lib');
 const libGeojson = require('../plugins/geojson/lib');
 const libHome = require('../plugins/home/lib');
@@ -28,7 +27,6 @@ const plugins = [
   { plugin: libAdmin, routes: { prefix: '/admin' } },
   { plugin: viewAlbum, routes: { prefix: '/view' } },
   { plugin: editAlbum, routes: { prefix: '/edit' } },
-  { plugin: exploreVideo, routes: { prefix: '/explore' } },
   { plugin: libGallery },
   { plugin: libGeojson, routes: { prefix: '/geojson' } },
   { plugin: libHome },

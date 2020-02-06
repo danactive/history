@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 function handleKeyPress(event) {
   if (event.key === 'Enter') {
@@ -6,7 +6,7 @@ function handleKeyPress(event) {
   }
 }
 
-const VideoListItem = ({ index, video, onVideoSelect }) => {
+export default function VideoListItem({ index, video, onVideoSelect }) {
   const tabOffset = 2;
   const imageUrl = video.snippet.thumbnails.default.url;
 
@@ -21,6 +21,4 @@ const VideoListItem = ({ index, video, onVideoSelect }) => {
       </div>
     </div>
   );
-};
-
-module.exports = VideoListItem;
+}
