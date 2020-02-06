@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
+import AdminLandingPage from '../AdminLandingPage/Loadable';
 import AlbumViewPage from '../AlbumViewPage/Loadable';
 import HomePage from '../HomePage/Loadable';
 import FeaturePage from '../FeaturePage/Loadable';
@@ -33,6 +34,7 @@ export default function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route exact path="/admin" component={AdminLandingPage} />
         <Route path="/album/view/:album" component={AlbumViewPage} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/gallery/view/:gallery" component={GalleryViewPage} />
