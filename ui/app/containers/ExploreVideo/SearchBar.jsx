@@ -1,7 +1,7 @@
 /* global URL, window */
-const React = require('react');
+import React from 'react';
 
-class SearchBar extends React.Component {
+export default class SearchBar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -100,5 +100,3 @@ class SearchBar extends React.Component {
     );
   }
 }
-
-module.exports = SearchBar;

@@ -1,15 +1,14 @@
-/* global _, fetch */
-const React = require('react');
+/* global fetch */
+import React from 'react';
+import _ from 'lodash';
 
-const credentials = require('../../../credentials');
-const logger = require('../../log');
-const SearchBar = require('./searchBar.jsx');
-const VideoList = require('./videoList.jsx');
-const VideoDetail = require('./videoDetail.jsx');
+import SearchBar from './SearchBar';
+import VideoList from './VideoList';
+import VideoDetail from './VideoDetail';
 
-const API_KEY = credentials.youtube.api_key;
+const API_KEY = process.env.HISTORY_YOUTUBE_API_KEY;
 
-class App extends React.Component {
+export default class ExploreVideo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,7 +42,7 @@ class App extends React.Component {
           selectedVideo: payload.items[0],
         });
       })
-      .catch(error => logger.debug(error.message));
+      .catch(error => console.debug(error.message));
   }
 
   render() {
@@ -63,5 +62,3 @@ class App extends React.Component {
     );
   }
 }
-
-module.exports = App;

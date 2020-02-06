@@ -3,7 +3,7 @@
 import React from 'react';
 
 import mock from './fixtures/youtube.json';
-import VideoDetail from '../components/videoDetail';
+import VideoDetail from '../VideoDetail';
 
 describe('Explore Video - Video Detail (React Component)', () => {
   test('* Render component with missing video object', () => {

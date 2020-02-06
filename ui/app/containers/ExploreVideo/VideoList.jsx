@@ -1,7 +1,7 @@
-const React = require('react');
-const VideoListItem = require('./videoListItem.jsx');
+import React from 'react';
+import VideoListItem from './VideoListItem';
 
-const VideoList = (props) => {
+export default function VideoList(props) {
   const {
     onVideoSelect,
     videos,
@@ -13,6 +13,4 @@ const VideoList = (props) => {
       {videoItems}
     </nav>
   );
-};
-
-module.exports = VideoList;
+}

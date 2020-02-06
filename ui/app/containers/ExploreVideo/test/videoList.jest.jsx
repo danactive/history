@@ -3,8 +3,8 @@
 import React from 'react';
 
 import mock from './fixtures/youtube.json';
-import VideoList from '../components/videoList';
-import VideoListItem from '../components/videoListItem';
+import VideoList from '../VideoList';
+import VideoListItem from '../VideoListItem';
 
 describe('Explore Video - VideoList (React Components)', () => {
   test('* Render component', () => {

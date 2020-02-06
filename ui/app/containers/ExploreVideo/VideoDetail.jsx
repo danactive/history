@@ -1,6 +1,6 @@
-const React = require('react');
+import React from 'react';
 
-const VideoDetail = ({ video }) => {
+export default function VideoDetail({ video }) {
   if (!video) {
     return (
       <section>
@@ -27,6 +27,4 @@ const VideoDetail = ({ video }) => {
       </section>
     </main>
   );
-};
-
-module.exports = VideoDetail;
+}

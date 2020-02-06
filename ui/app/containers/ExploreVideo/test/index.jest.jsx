@@ -1,7 +1,8 @@
 /* global describe, expect, shallow, test */
 import React from 'react';
+import { render } from 'react-testing-library';
 
-import App from '../components/app';
+import App from '../index';
 
 describe('Explore Video - App', () => {
   global._ = {

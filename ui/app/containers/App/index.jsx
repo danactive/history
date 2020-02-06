@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
 import AlbumViewPage from '../AlbumViewPage/Loadable';
+import ExploreVideo from '../ExploreVideo';
 import HomePage from '../HomePage/Loadable';
 import FeaturePage from '../FeaturePage/Loadable';
 import GalleryViewPage from '../GalleryViewPage/Loadable';
@@ -35,6 +36,7 @@ export default function App() {
         <Route exact path="/" component={HomePage} />
         <Route path="/album/view/:album" component={AlbumViewPage} />
         <Route path="/features" component={FeaturePage} />
+        <Route path="/explore" component={ExploreVideo} />
         <Route path="/gallery/view/:gallery" component={GalleryViewPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>

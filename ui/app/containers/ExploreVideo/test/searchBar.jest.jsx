@@ -1,7 +1,7 @@
 /* global describe, expect, jest, shallow, test */
 import React from 'react';
 
-import SearchBar from '../components/searchBar';
+import SearchBar from '../SearchBar';
 
 describe('Explore Video - Search Bar', () => {
   test('* Retrieve web address from browser', () => {
