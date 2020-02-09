@@ -11,6 +11,7 @@ import GalleryViewPage from '../GalleryViewPage/Loadable';
 import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Walk from '../Walk/Loadable';
 
 import GlobalStyle from '../../global-styles';
 
@@ -24,24 +25,25 @@ const AppWrapper = styled.div`
 
 export default function App() {
   return (
-    <AppWrapper>
-      <Helmet
-        titleTemplate="%s - History"
-        defaultTitle="History"
-      >
-        <meta name="description" content="History" />
-      </Helmet>
-      <Header />
+      <AppWrapper>
+        <Helmet
+          titleTemplate="%s - History"
+          defaultTitle="History"
+        >
+          <meta name="description" content="History" />
+        </Helmet>
+        <Header />
       <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/admin" component={AdminLandingPage} />
-        <Route path="/album/view/:album" component={AlbumViewPage} />
-        <Route path="/features" component={FeaturePage} />
-        <Route path="/gallery/view/:gallery" component={GalleryViewPage} />
-        <Route path="" component={NotFoundPage} />
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/admin" component={AdminLandingPage} />
+          <Route exact path="/admin/walk" component={Walk} />
+          <Route path="/album/view/:album" component={AlbumViewPage} />
+          <Route path="/features" component={FeaturePage} />
+          <Route path="/gallery/view/:gallery" component={GalleryViewPage} />
+          <Route path="" component={NotFoundPage} />
       </Switch>
-      <Footer />
-      <GlobalStyle />
-    </AppWrapper>
+        <Footer />
+        <GlobalStyle />
+      </AppWrapper>
   );
 }
