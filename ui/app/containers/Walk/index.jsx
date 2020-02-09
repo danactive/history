@@ -1,26 +1,57 @@
-const React = require('react');
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet';
+import { createStructuredSelector } from 'reselect';
+import { compose } from 'redux';
 
-const Contents = require('./contents.jsx');
-const walkFiles = require('../lib/files');
+import { useInjectSaga } from '../../utils/injectSaga';
+import { useInjectReducer } from '../../utils/injectReducer';
+import actions from './actions';
+import makeSelectWalk from './selectors';
+import reducer from './reducer';
+import saga from './saga';
 
-function Page({ files }) {
-  const hasImage = files.some(walkFiles.areImages);
+import Contents from './contents';
+
+import walkUtils from './util';
+
+const { areImages } = walkUtils;
+
+function Walk({
+  getFilesByPath,
+  files,
+}) {
+  useInjectReducer({ key: 'walk', reducer });
+  useInjectSaga({ key: 'walk', saga });
+
+  useEffect(() => {
+    console.log('effect', getFilesByPath());
+  }, []);
+
+  console.log('files', files);
+  const hasImage = files.some(areImages);
 
   return (
-    <html lang="en">
-      <head>
-        <title>
-          History
-        </title>
-        <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-      </head>
-      <body>
-        <Contents files={files} showControls={hasImage} />
-        <script src="../walk/static/utils.js" />
-        <script src="../walk/static/assets/bundle.js" />
-      </body>
-    </html>
+    <div>
+      <Helmet>
+        <title>Walk</title>
+        <meta name="description" content="Description of Walk" />
+      </Helmet>
+      <Contents files={files} showControls={hasImage} />
+    </div>
   );
 }
 
-module.exports = Page;
+const mapStateToProps = createStructuredSelector({
+  files: makeSelectWalk(),
+});
+
+const mapDispatchToProps = dispatch => ({
+  getFilesByPath: () => dispatch(actions.getFilesByPath()),
+});
+
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
+
+export default compose(
+  withConnect,
+)(Walk);

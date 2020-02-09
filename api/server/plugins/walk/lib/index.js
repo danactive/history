@@ -14,7 +14,10 @@ const routeWalkPath = {
         return routes.wrapError(e);
       }
     },
-    tags: ['api', 'react'],
+    cors: {
+      origin: ['http://localhost:3000'],
+    },
+    tags: ['api'],
     validate: {
       query: {
         path: validation.sourceFolder,

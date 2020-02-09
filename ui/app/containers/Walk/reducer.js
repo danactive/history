@@ -1,17 +1,17 @@
-/*
- *
- * Walk reducer
- *
- */
 import produce from 'immer';
-import { DEFAULT_ACTION } from './constants';
+import { LIST_DIRECTORY_SUCCESS } from './constants';
 
-export const initialState = {};
+export const initialState = {
+  listing: {
+    files: [],
+  },
+};
 
 /* eslint-disable default-case, no-param-reassign */
-const walkReducer = (state = initialState, action) => produce(state, (/* draft */) => {
+const walkReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
-    case DEFAULT_ACTION:
+    case LIST_DIRECTORY_SUCCESS:
+      draft.listing = action.listing;
       break;
   }
 });
