@@ -59,4 +59,4 @@ function Rename() {
   ];
 }
 
-module.exports = Rename;
+export default Rename;

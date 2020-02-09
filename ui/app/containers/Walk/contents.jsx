@@ -1,11 +1,15 @@
-const React = require('react');
+import React from 'react';
 
-const Placeholder = require('./placeholder');
-const walkFiles = require('../lib/files');
+import Placeholder from './placeholder';
+
+import walkUtils from './util';
+import Rename from './rename';
+
+const { areImages } = walkUtils;
 
 function Contents({ files }) {
   const thumbs = files.map((file) => {
-    if (walkFiles.areImages(file)) {
+    if (areImages(file)) {
       return <Placeholder file={file} key={file.filename} />;
     }
 
@@ -34,4 +38,4 @@ function Contents({ files }) {
   );
 }
 
-module.exports = Contents;
+export default Contents;

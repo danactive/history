@@ -5,8 +5,6 @@ import React from 'react';
 
 import Rename from './rename';
 
-// This component is breaking since React is rendered on the server
-
 function assembleControls(dateComponent, showControls) {
   if (showControls) {
     return (
@@ -62,4 +60,4 @@ class Controls extends React.Component {
   }
 }
 
-module.exports = Controls;
+export default Controls;
