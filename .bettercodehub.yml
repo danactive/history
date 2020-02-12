@@ -1,2 +1,4 @@
 exclude:
   - /ui/*.*
+  - /api/server/plugins/editAlbum/public/lib/json_to_xml.js
+  - /api/server/plugins/album/public/lib/color-thief.js

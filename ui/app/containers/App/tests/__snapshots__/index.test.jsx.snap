@@ -22,6 +22,16 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
     <Route
       component={[Function]}
+      exact={true}
+      path="/admin"
+    />
+    <Route
+      component={[Function]}
+      exact={true}
+      path="/admin/walk"
+    />
+    <Route
+      component={[Function]}
       path="/album/view/:album"
     />
     <Route

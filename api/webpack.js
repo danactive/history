@@ -21,7 +21,6 @@ module.exports = [
     entry: {
       album: './server/plugins/album/lib/browser.js',
       editAlbum: './server/plugins/editAlbum/lib/browser.js',
-      exploreVideo: './server/plugins/exploreVideo/lib/browser.js',
     },
     resolve: {
       extensions: ['.css', '.js', '.jsx'],
