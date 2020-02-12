@@ -21,7 +21,6 @@ const routeWalkPath = {
     validate: {
       query: {
         path: validation.sourceFolder,
-        raw: validation.raw,
       },
     },
   },

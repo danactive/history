@@ -1,9 +1,10 @@
 import produce from 'immer';
-import { LIST_DIRECTORY_SUCCESS } from './constants';
+import { LIST_DIRECTORY_REQUEST, LIST_DIRECTORY_SUCCESS } from './constants';
 
 export const initialState = {
   listing: {
     files: [],
+    path: 'galleries',
   },
 };
 
@@ -11,7 +12,11 @@ export const initialState = {
 const walkReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LIST_DIRECTORY_SUCCESS:
-      draft.listing = action.listing;
+      draft.listing.files = action.files;
+      break;
+
+    case LIST_DIRECTORY_REQUEST:
+      draft.listing.path = action.path;
       break;
   }
 });

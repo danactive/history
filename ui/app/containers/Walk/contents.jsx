@@ -3,7 +3,6 @@ import React from 'react';
 import Placeholder from './placeholder';
 
 import walkUtils from './util';
-import Rename from './rename';
 
 const { areImages } = walkUtils;
 

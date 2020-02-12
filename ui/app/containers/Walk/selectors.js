@@ -3,10 +3,18 @@ import { initialState } from './reducer';
 
 const selectWalkDomain = state => state.walk || initialState;
 
-const makeSelectWalk = () => createSelector(
+const makeSelectFiles = () => createSelector(
   selectWalkDomain,
   substate => substate.listing.files,
 );
 
-export default makeSelectWalk;
-export { selectWalkDomain };
+const makeSelectPath = () => createSelector(
+  selectWalkDomain,
+  substate => substate.listing.path,
+);
+
+export default selectWalkDomain;
+export {
+  makeSelectPath,
+  makeSelectFiles,
+};

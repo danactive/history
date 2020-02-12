@@ -4,16 +4,17 @@ import {
   LIST_DIRECTORY_FAILURE,
 } from './constants';
 
-function getFilesByPath() {
+function getFilesByPath(path) {
   return {
     type: LIST_DIRECTORY_REQUEST,
+    path,
   };
 }
 
 function listingSuccess(listing) {
   return {
     type: LIST_DIRECTORY_SUCCESS,
-    listing,
+    files: listing.files,
   };
 }
 

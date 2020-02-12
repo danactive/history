@@ -7,7 +7,10 @@ import { compose } from 'redux';
 import { useInjectSaga } from '../../utils/injectSaga';
 import { useInjectReducer } from '../../utils/injectReducer';
 import actions from './actions';
-import makeSelectWalk from './selectors';
+import {
+  makeSelectFiles,
+  makeSelectPath,
+} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -17,18 +20,27 @@ import walkUtils from './util';
 
 const { areImages } = walkUtils;
 
+function parseQueryString(find, from) {
+  if (!find || !from) return '';
+  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
+}
+
 function Walk({
   getFilesByPath,
   files,
+  location: { search: querystring },
+  path: pathProp,
 }) {
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
 
+  const qsPath = parseQueryString('path', querystring);
+  const path = qsPath || pathProp;
+
   useEffect(() => {
-    console.log('effect', getFilesByPath());
+    getFilesByPath(path);
   }, []);
 
-  console.log('files', files);
   const hasImage = files.some(areImages);
 
   return (
@@ -43,11 +55,12 @@ function Walk({
 }
 
 const mapStateToProps = createStructuredSelector({
-  files: makeSelectWalk(),
+  files: makeSelectFiles(),
+  path: makeSelectPath(),
 });
 
 const mapDispatchToProps = dispatch => ({
-  getFilesByPath: () => dispatch(actions.getFilesByPath()),
+  getFilesByPath: path => dispatch(actions.getFilesByPath(path)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

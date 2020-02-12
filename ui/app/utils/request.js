@@ -45,6 +45,18 @@ function checkStatus(response) {
   throw error;
 }
 
+// *********** HISTORY CUSTOM not React Boilerplate
+/**
+ * Object to querystring
+ * @param {string} rawUrl
+ * @param {object|Array<Array>} params - example {lat:35.696233, long:139.570431} or [['lat', '35.696233'], ['long', '139.570431']]
+ */
+export function querystring(rawUrl, params) {
+  const url = new URL(rawUrl);
+  url.search = new URLSearchParams(params).toString();
+  return url.toString();
+}
+
 /**
  * Requests a URL, returning a promise
  *
