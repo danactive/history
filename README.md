@@ -17,11 +17,12 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 
 ## Installation
 
-### Docker
+### View (Read-only)
 1. `docker-compose up` Build and start history app (frontend and backend) 
 
-### Manual
+### Development
 1. Node.js v10.15.x LTS [Download](https://nodejs.org/)
+1. Folder **api** is the backend; **ui** is the frontend
 1. Install project dependencies `npm ci`
 1. Optional [configuration](#environment-configuration)
 1. Start web server `npm start`
