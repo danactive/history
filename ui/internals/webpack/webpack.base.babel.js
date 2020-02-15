@@ -117,7 +117,7 @@ module.exports = options => ({
     new webpack.EnvironmentPlugin({
       HISTORY_DROPBOX_ACCESS_TOKEN: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
       HISTORY_YOUTUBE_API_KEY: process.env.HISTORY_YOUTUBE_API_KEY,
-      NODE_ENV: 'development',
+      NODE_ENV: 'development', // default overwritten with process.env
     }),
   ]),
   resolve: {
