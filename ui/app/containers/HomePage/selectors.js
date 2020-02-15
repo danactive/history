@@ -3,9 +3,13 @@ import { initialState } from './reducer';
 
 const selectHome = state => state.home || initialState;
 
-const makeSelectGalleries = () => createSelector(
+const makeSelectItems = () => createSelector(
   selectHome,
-  homeState => homeState.contents || [],
+  homeState => homeState.galleries.dropbox.map(gallery => ({
+    name: gallery.name,
+    host: 'dropbox',
+    id: gallery.id,
+  })),
 );
 
 const makeSelectGalleryLoading = () => createSelector(
@@ -20,7 +24,7 @@ const makeSelectGalleryError = () => createSelector(
 
 export {
   selectHome,
-  makeSelectGalleries,
+  makeSelectItems,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 };

@@ -6,18 +6,13 @@ import { compose } from 'redux';
 import ListItem from '../../components/ListItem';
 import capitalize from '../../utils/strings';
 
-function removePrefix(name) {
-  return name.replace(/gallery-/gi, '');
-}
-
-function GalleryListItem({ item }) {
-  const gallery = removePrefix(item.name);
+function GalleryListItem({ item: { name: gallery, host, id } }) {
   const content = (
-    <Link to={`/gallery/view/${gallery}`}>{capitalize(gallery)}</Link>
+    <Link to={`/gallery/view/${host}/${gallery}`}>{capitalize(gallery)}</Link>
   );
 
   return (
-    <ListItem key={`gallery-list-item-${item.id}`} item={content} />
+    <ListItem key={`gallery-list-item-${id}`} item={content} />
   );
 }
 

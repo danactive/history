@@ -15,7 +15,7 @@ import messages from './messages';
 
 import { loadGalleries } from './actions';
 import {
-  makeSelectGalleries,
+  makeSelectItems,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from './selectors';
@@ -30,7 +30,7 @@ export class HomePage extends React.PureComponent {
 
   render() {
     const {
-      galleries,
+      items,
       galleryError,
       galleryLoading,
     } = this.props;
@@ -38,7 +38,7 @@ export class HomePage extends React.PureComponent {
     const galleryListProps = {
       loading: galleryLoading,
       error: galleryError,
-      items: galleries,
+      items,
       component: GalleryListItem,
     };
 
@@ -67,7 +67,7 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  galleries: makeSelectGalleries(),
+  items: makeSelectItems(),
   galleryLoading: makeSelectGalleryLoading(),
   galleryError: makeSelectGalleryError(),
 });

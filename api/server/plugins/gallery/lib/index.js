@@ -17,6 +17,16 @@ const staticGalleryFolder = (server, handler) => {
 const register = server => new Promise(async (resolve) => {
   server.route({
     method: 'GET',
+    path: '/gallery/list',
+    options: {
+      cors: { origin: ['http://localhost:3000'] },
+      tags: ['api'],
+      handler: async () => ({ galleries: await gallery.getGalleries() }),
+    },
+  });
+
+  server.route({
+    method: 'GET',
     path: '/static/xslt/gallery.xslt',
     options: {
       tags: ['static'],
@@ -46,7 +56,7 @@ const register = server => new Promise(async (resolve) => {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.2.0',
+  version: '0.3.0',
 };
 
 module.exports = { plugin };
