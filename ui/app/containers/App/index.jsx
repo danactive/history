@@ -34,10 +34,10 @@ export default function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route path="/album/view/:album" component={AlbumViewPage} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/explore" component={ExploreVideo} />
-        <Route path="/gallery/view/:host/:gallery" component={GalleryViewPage} />
+        <Route path="/view/:host/:gallery" component={GalleryViewPage} />
+        <Route path="/view/:host/:gallery/:album" component={AlbumViewPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       <Footer />

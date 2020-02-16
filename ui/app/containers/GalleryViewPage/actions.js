@@ -1,19 +1,14 @@
-/*
- *
- * GalleryViewPage actions
- *
- */
-
 import {
   LOAD_GALLERY,
   LOAD_GALLERY_SUCCESS,
   LOAD_GALLERY_ERROR,
 } from './constants';
 
-export function loadGallery(gallery) {
+export function loadGallery(host, gallery) {
   return {
     type: LOAD_GALLERY,
     gallery,
+    host,
   };
 }
 

@@ -6,11 +6,12 @@ import { createStructuredSelector } from 'reselect';
 
 import ListItem from '../../components/ListItem';
 import capitalize from '../../utils/strings';
-import { makeSelectGallery } from './selectors';
+import { makeSelectCritical } from '../App/selectors';
 
-function AlbumListItem({ item, gallery }) {
+function AlbumListItem({ item, critical }) {
+  const { gallery, host } = critical;
   const content = (
-    <Link to={`/album/view/${item.name}?gallery=${gallery}`}>{capitalize(item.name)}</Link>
+    <Link to={`/view/${host}/${gallery}/${item.name}`}>{capitalize(item.name)}</Link>
   );
 
   return (
@@ -19,7 +20,7 @@ function AlbumListItem({ item, gallery }) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  gallery: makeSelectGallery(),
+  critical: makeSelectCritical(),
 });
 
 const withConnect = connect(mapStateToProps);

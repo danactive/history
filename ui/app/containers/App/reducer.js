@@ -15,17 +15,33 @@ import {
   PREV_MEMORY,
 } from '../AlbumViewPage/constants';
 import { insertPage } from '../AlbumViewPage/paging';
+import { LOAD_GALLERY, LOAD_GALLERY_SUCCESS } from '../GalleryViewPage/constants';
 
 // The initial state of the App
-export const initialState = {
-  gallery: 'demo',
-  album: 'sample',
-  demo: {
-    sample: {
-      memories: [],
-    },
-  },
-};
+export const initialState = {};
+
+function parseFromNode(ascendant) {
+  return (descendant) => {
+    const tags = ascendant.getElementsByTagName(descendant);
+    if (tags.length === 1) {
+      return tags[0].innerHTML;
+    }
+
+    return '';
+  };
+}
+
+function parseAlbum(albumXml) {
+  const parseNode = parseFromNode(albumXml);
+  return {
+    id: parseNode('album_name'),
+    name: parseNode('album_name'),
+    h1: parseNode('album_h1'),
+    h2: parseNode('album_h2'),
+    year: parseNode('year'),
+    filename: parseNode('filename'),
+  };
+}
 
 /* eslint-disable default-case, no-param-reassign */
 const appReducer = (state = initialState, action) => produce(state, (draft) => {
@@ -81,6 +97,22 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
 
       const found = state[state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
       draft.currentMemory = found || {};
+      break;
+    }
+
+    case LOAD_GALLERY: {
+      draft.gallery = action.gallery;
+      draft.host = action.host;
+      break;
+    }
+
+    case LOAD_GALLERY_SUCCESS: {
+      draft[state.host] = {
+        [state.gallery]: {
+          albums: Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum),
+        },
+      };
+      break;
     }
   }
 });
