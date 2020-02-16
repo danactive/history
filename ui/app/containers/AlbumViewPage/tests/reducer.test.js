@@ -1,7 +1,8 @@
 /* global beforeEach, describe, expect, test */
 import produce from 'immer';
 
-import pageReducer from '../reducer';
+import json from '../../App/tests/fixtures/album';
+import pageReducer, { initialState } from '../reducer';
 import {
   loadAlbum,
   albumLoadSuccess,
@@ -14,34 +15,24 @@ import {
 /* eslint-disable default-case, no-param-reassign */
 describe('pageReducer', () => {
   let state;
-  const fixtures = {
+  const fixture = {
     gallery: 'demo',
     page: 0,
     hasMore: true,
     error: { message: 'Bad request' },
+    memories: json.memories,
   };
 
   beforeEach(() => {
-    state = {
-      albumLoading: false,
-      albumError: false,
-      thumbsLoading: false,
-      thumbsError: false,
-    };
+    state = initialState;
   });
 
-  test('should return the initial state', () => {
-    const expected = {
-      albumLoading: false,
-      albumError: false,
-      thumbsLoading: false,
-      thumbsError: false,
-    };
-    expect(pageReducer(undefined, {})).toEqual(expected);
+  test('initial state', () => {
+    expect(pageReducer(undefined, {})).toStrictEqual(initialState);
   });
 
-  test('should handle the loadAlbum action correctly', () => {
-    const received = pageReducer(state, loadAlbum(`?gallery=${fixtures.gallery}&another=false`, 'sample'));
+  test('loadAlbum action', () => {
+    const received = pageReducer(state, loadAlbum());
 
     const expected = produce(state, (draft) => {
       draft.albumLoading = true;
@@ -50,24 +41,24 @@ describe('pageReducer', () => {
     expect(received).toEqual(expected);
   });
 
-  test('should handle the albumLoadSuccess action correctly', () => {
-    const received = pageReducer(state, albumLoadSuccess(fixtures.gallery, 'sample'));
+  test('albumLoadSuccess action', () => {
+    const received = pageReducer(state, albumLoadSuccess(json.memories));
 
     const expected = produce(state, (draft) => {
       draft.albumLoading = false;
       draft.thumbsLoading = true;
-      draft.page = fixtures.page;
-      draft.hasMore = fixtures.hasMore;
+      draft.page = fixture.page;
+      draft.hasMore = fixture.hasMore;
     });
 
-    expect(received).toEqual(expected);
+    expect(received).toStrictEqual(expected);
   });
 
   test('should handle the albumLoadError action correctly', () => {
-    const received = pageReducer(state, albumLoadError(fixtures.error));
+    const received = pageReducer(state, albumLoadError(fixture.error));
 
     const expected = produce(state, (draft) => {
-      draft.albumError = fixtures.error;
+      draft.albumError = fixture.error;
       draft.albumLoading = false;
     });
 
@@ -76,28 +67,28 @@ describe('pageReducer', () => {
 
   test('should handle the nextPageSuccess action correctly', () => {
     const args = {
-      gallery: fixtures.gallery,
-      thumbs: fixtures.thumbs,
-      metaThumbs: fixtures.metaThumbs,
-      page: fixtures.page,
-      hasMore: fixtures.hasMore,
+      gallery: fixture.gallery,
+      thumbs: fixture.thumbs,
+      metaThumbs: fixture.metaThumbs,
+      page: fixture.page,
+      hasMore: fixture.hasMore,
     };
     const received = pageReducer(state, nextPageSuccess(args));
 
     const expected = produce(state, (draft) => {
       draft.thumbsLoading = false;
-      draft.page = fixtures.page;
-      draft.hasMore = fixtures.hasMore;
+      draft.page = fixture.page;
+      draft.hasMore = fixture.hasMore;
     });
 
     expect(received).toEqual(expected);
   });
 
   test('should handle the nextPageError action correctly', () => {
-    const received = pageReducer(state, nextPageError(fixtures.error));
+    const received = pageReducer(state, nextPageError(fixture.error));
 
     const expected = produce(state, (draft) => {
-      draft.thumbsError = fixtures.error;
+      draft.thumbsError = fixture.error;
       draft.thumbsLoading = false;
     });
 
@@ -105,7 +96,7 @@ describe('pageReducer', () => {
   });
 
   test('should handle the thumbsLoaded action correctly', () => {
-    const received = pageReducer(state, thumbsLoaded(fixtures.error));
+    const received = pageReducer(state, thumbsLoaded(fixture.error));
 
     const expected = produce(state, (draft) => {
       draft.thumbsLoading = false;

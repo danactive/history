@@ -11,7 +11,7 @@ import { makeSelectCritical } from '../App/selectors';
 function AlbumListItem({ item, critical }) {
   const { gallery, host } = critical;
   const content = (
-    <Link to={`/view/${host}/${gallery}/${item.name}`}>{capitalize(item.name)}</Link>
+    <Link to={`/view/${host}/${gallery}/${item.id}`}>{capitalize(item.name)}</Link>
   );
 
   return (

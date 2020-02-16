@@ -35,8 +35,8 @@ class AlbumViewPage extends React.PureComponent {
   }
 
   componentWillMount() {
-    const { onLoad, match: { params }, location: { search: querystring } } = this.props;
-    if (params.album) onLoad(querystring, params.album);
+    const { onLoad, match: { params: { album, gallery, host } } } = this.props;
+    if (album) onLoad(host, gallery, album);
   }
 
   componentDidMount() {
@@ -103,13 +103,13 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onLoad: (querystring, album) => dispatch(loadAlbum(querystring, album)),
+  onLoad: (host, gallery, album) => dispatch(loadAlbum(host, gallery, album)),
   adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
 const withPageReducer = injectReducer({ key: 'albumViewPage', reducer: pageReducer });
-const withAlbumReducer = injectReducer({ key: 'albums', reducer: albumReducer });
+const withAlbumReducer = injectReducer({ key: 'global', reducer: albumReducer });
 const withSaga = injectSaga({ key: 'albumViewPage', saga });
 
 export default compose(

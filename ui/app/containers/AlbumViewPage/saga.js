@@ -52,13 +52,17 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 
 
 // saga WORKER for LOAD_ALBUM
-export function* getAlbumFileOnDropbox({ gallery, album }) {
+export function* getAlbumFileOnDropbox({ album, gallery, host }) {
+  if (host !== 'dropbox') {
+    throw new ReferenceError('Only Dropbox host is supported');
+  }
+
   try {
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
     const xmlFile = yield call(request, xmlUrl.link);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoadSuccess({ gallery, album, memories }));
+    yield put(albumLoadSuccess(memories));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
@@ -69,8 +73,17 @@ export function* getAlbumFileOnDropbox({ gallery, album }) {
 export function* getThumbPathsOnDropbox() {
   try {
     const {
-      gallery, album, memories, page: prevPage,
+      album,
+      gallery,
+      host,
+      memories,
+      page: prevPage,
     } = yield select(selectNextPage);
+
+    if (host !== 'dropbox') {
+      throw new ReferenceError('Only Dropbox host is supported');
+    }
+
     if (!memories || memories.length === 0) {
       throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
     }

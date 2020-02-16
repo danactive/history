@@ -36,8 +36,8 @@ export default function App() {
         <Route exact path="/" component={HomePage} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/explore" component={ExploreVideo} />
-        <Route path="/view/:host/:gallery" component={GalleryViewPage} />
         <Route path="/view/:host/:gallery/:album" component={AlbumViewPage} />
+        <Route path="/view/:host/:gallery" component={GalleryViewPage} />
         <Route path="" component={NotFoundPage} />
       </Switch>
       <Footer />

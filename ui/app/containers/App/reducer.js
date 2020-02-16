@@ -48,29 +48,32 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
+      draft.host = action.host;
       draft.album = action.album;
-      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, []);
+      draft[action.host] = {
+        [action.gallery]: dotProp.set({}, `${action.album}.memories`, []),
+      };
       break;
     }
 
     case LOAD_ALBUM_SUCCESS: {
-      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, action.memories);
+      draft[state.host] = dotProp.set({}, `${state.gallery}.${state.album}.memories`, action.memories);
       break;
     }
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
-      draft[action.gallery] = dotProp.set({}, `${action.album}.memories`, insertPage({
+      draft[state.host] = dotProp.set({}, `${state.gallery}.${state.album}.memories`, insertPage({
         insert: action.newMemories,
         pageSize: PAGE_SIZE,
         page: action.page,
-        list: state[state.gallery][state.album].memories,
+        list: state[state.host][state.gallery][state.album].memories,
       }));
       break;
     }
 
     case CHOOSE_MEMORY: {
-      const found = state[state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
+      const found = state[state.host][state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
       draft.currentMemory = found || {};
       break;
     }
@@ -82,7 +85,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
 
     case NEXT_MEMORY:
     case PREV_MEMORY: {
-      const { memories } = state[state.gallery][state.album];
+      const { memories } = state[state.host][state.gallery][state.album];
       const currentMemoryId = state.currentMemory.id || 0;
       const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
       let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
@@ -95,7 +98,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
 
       const findIndex = memories[adjacentMemoryIndex].id;
 
-      const found = state[state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
+      const found = state[state.host][state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
       draft.currentMemory = found || {};
       break;
     }

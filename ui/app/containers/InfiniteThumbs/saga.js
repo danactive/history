@@ -6,7 +6,7 @@ import {
 import normalizeError from '../../utils/error';
 
 import { CHOOSE_MEMORY } from '../App/constants';
-import { selectCurrentMemory } from '../App/selectors';
+import { makeSelectCurrentMemory } from '../App/selectors';
 import { photoLoadError, photoLoadSuccess } from '../App/actions';
 import {
   NEXT_MEMORY,
@@ -36,7 +36,7 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 // saga WORKER for CHOOSE_MEMORY
 export function* getPhotoPathsOnDropbox() {
   try {
-    const { gallery, album, currentMemory } = yield select(selectCurrentMemory);
+    const { currentMemory, album, gallery } = yield select(makeSelectCurrentMemory());
     const { filename, id } = currentMemory;
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsPhotoXmlPath({ gallery, filename }));
 

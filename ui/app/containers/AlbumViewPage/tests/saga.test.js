@@ -27,7 +27,7 @@ import { thumbsLoaded } from '../actions';
 describe('AlbumViewPage Saga', () => {
   describe('getAlbumFileOnDropbox', () => {
     describe('Success', () => {
-      const fixtures = { album: 'sample', gallery: 'demo' };
+      const fixtures = { host: 'dropbox', album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(fixtures);
 
       test('should first yield an Effect call', () => {
@@ -82,8 +82,6 @@ describe('AlbumViewPage Saga', () => {
         const received = generator.next(parseTextXml(xmlAlbum)).value;
         const expected = put({
           type: LOAD_ALBUM_SUCCESS,
-          gallery: fixtures.gallery,
-          album: fixtures.album,
           memories: [jsonAlbum],
         });
         expect(received).toEqual(expected);
@@ -98,7 +96,7 @@ describe('AlbumViewPage Saga', () => {
     });
 
     describe('Failure', () => {
-      const fixtures = { album: 'sample', gallery: 'demo' };
+      const fixtures = { host: 'dropbox', album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(fixtures);
 
       test('should first yield an Effect call', () => {
@@ -129,6 +127,7 @@ describe('AlbumViewPage Saga', () => {
   describe('getThumbPathsOnDropbox', () => {
     describe('Success', () => {
       const fixtures = {
+        host: 'dropbox',
         gallery: 'demo',
         album: 'sample',
       };
@@ -146,6 +145,7 @@ describe('AlbumViewPage Saga', () => {
         const array1toLength = Array.from({ length: 17 }, (v, k) => (
           { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` }));
         const receivedArgs = {
+          host: fixtures.host,
           gallery: fixtures.gallery,
           album: fixtures.album,
           memories: array1toLength,
@@ -189,7 +189,7 @@ describe('AlbumViewPage Saga', () => {
     });
 
     describe('Failure', () => {
-      const fixtures = { thumbs: [], gallery: 'demo' };
+      const fixtures = { thumbs: [], gallery: 'demo', host: 'dropbox' };
       const generator = cloneableGenerator(getThumbPathsOnDropbox)(fixtures);
 
       generator.next(); // first yield an Effect select
@@ -204,6 +204,7 @@ describe('AlbumViewPage Saga', () => {
         let expected;
 
         const args = {
+          host: fixtures.host,
           memories: [],
         };
         received = genClone.next(args).value;

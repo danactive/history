@@ -1,7 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { compose } from 'redux';
 
 import ListItem from '../../components/ListItem';
 import capitalize from '../../utils/strings';
@@ -16,14 +14,4 @@ function GalleryListItem({ item: { name: gallery, host, id } }) {
   );
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(
-  withConnect,
-)(GalleryListItem);
+export default GalleryListItem;

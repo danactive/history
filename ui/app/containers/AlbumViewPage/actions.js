@@ -10,23 +10,18 @@ import {
   PREV_MEMORY,
 } from './constants';
 
-function parseQueryString(find, from) {
-  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
-}
-
-export function loadAlbum(querystring, album) {
+export function loadAlbum(host, gallery, album) {
   return {
     type: LOAD_ALBUM,
-    gallery: parseQueryString('gallery', querystring),
+    host,
+    gallery,
     album,
   };
 }
 
-export function albumLoadSuccess({ gallery, album, memories }) {
+export function albumLoadSuccess(memories) {
   return {
     type: LOAD_ALBUM_SUCCESS,
-    gallery,
-    album,
     memories,
   };
 }
@@ -45,12 +40,10 @@ export function loadNextPage() {
 }
 
 export function nextPageSuccess({
-  gallery, album, newMemories, page,
+  newMemories, page,
 }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
-    gallery,
-    album,
     newMemories,
     page,
     hasMore: true,
@@ -65,12 +58,10 @@ export function nextPageError(error) {
 }
 
 export function thumbsLoaded({
-  gallery, album, newMemories, page,
+  newMemories, page,
 }) {
   return {
     type: LOAD_THUMBS_SUCCESS,
-    gallery,
-    album,
     newMemories,
     page,
     hasMore: false,

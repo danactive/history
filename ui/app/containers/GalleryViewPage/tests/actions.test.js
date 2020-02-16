@@ -10,12 +10,14 @@ import {
 describe('GalleryViewPage actions', () => {
   describe('loadGallery', () => {
     test('has a type of LOAD_GALLERY', () => {
-      const gallery = 'default';
+      const gallery = 'demo';
+      const host = 'dropbox';
       const expected = {
         type: LOAD_GALLERY,
         gallery,
+        host,
       };
-      expect(loadGallery(gallery)).toEqual(expected);
+      expect(loadGallery(host, gallery)).toEqual(expected);
     });
   });
 });
