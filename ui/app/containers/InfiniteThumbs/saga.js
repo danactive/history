@@ -1,3 +1,4 @@
+/* global fetch */
 import { Dropbox } from 'dropbox';
 import {
   call, put, select, takeEvery,
@@ -14,7 +15,7 @@ import {
 } from '../AlbumViewPage/constants';
 
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
 
 const getYear = (filename = '') => filename.substr(0, 4);

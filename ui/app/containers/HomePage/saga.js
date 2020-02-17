@@ -1,3 +1,4 @@
+/* global fetch */
 import { Dropbox } from 'dropbox';
 import {
   all,
@@ -19,7 +20,7 @@ export function* getDropboxGalleries() {
       throw new ReferenceError('Dropbox access token is missing');
     }
 
-    const dbx = new Dropbox({ accessToken });
+    const dbx = new Dropbox({ accessToken, fetch });
 
     const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
     yield put(galleriesLoaded({ dropbox: galleries }));

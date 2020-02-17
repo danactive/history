@@ -1,3 +1,4 @@
+/* global fetch */
 import { Dropbox } from 'dropbox';
 import {
   all, call, put, select, takeLatest,
@@ -18,7 +19,7 @@ import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 import { getPage } from './paging';
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
 
 export const argsAlbumXmlPath = ({ gallery, album }) => ({
