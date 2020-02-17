@@ -69,7 +69,7 @@ cases.push({
   options: { skip: false },
   request: { path: 'test/fixtures/walkable', raw: true },
   success: async ({ assert, request, response }) => {
-    const publicPath = await utils.file.safePublicPath('/');
+    const publicPath = utils.file.safePublicPath('/');
 
     await response.files.forEach(async (file) => {
       try {

@@ -21,7 +21,7 @@ const pathExists = async (verifyPath) => {
   }
 
   try {
-    const verifiedPath = await utils.file.safePublicPath(verifyPath);
+    const verifiedPath = utils.file.safePublicPath(verifyPath);
     const stats = await getStat(verifiedPath);
 
     if (stats.isFile() || stats.isDirectory()) {

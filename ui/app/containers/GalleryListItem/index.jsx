@@ -6,7 +6,7 @@ import capitalize from '../../utils/strings';
 
 function GalleryListItem({ item: { name: gallery, host, id } }) {
   const content = (
-    <Link to={`/view/${host}/${gallery}`}>{capitalize(gallery)}</Link>
+    <Link to={`/view/${host}/${gallery}`}>{`${capitalize(gallery)} (${host})`}</Link>
   );
 
   return (

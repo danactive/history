@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -22,42 +22,38 @@ import {
 import reducer from './reducer';
 import saga from './saga';
 
-export class HomePage extends React.PureComponent {
-  componentWillMount() {
-    const { onLoad } = this.props;
+export function HomePage({
+  galleryError,
+  galleryLoading,
+  items,
+  onLoad,
+}) {
+  useEffect(() => {
     onLoad();
-  }
+  }, []);
 
-  render() {
-    const {
-      items,
-      galleryError,
-      galleryLoading,
-    } = this.props;
+  const galleryListProps = {
+    loading: galleryLoading,
+    error: galleryError,
+    items,
+    component: GalleryListItem,
+  };
 
-    const galleryListProps = {
-      loading: galleryLoading,
-      error: galleryError,
-      items,
-      component: GalleryListItem,
-    };
-
-    return (
-      <article>
-        <Helmet>
-          <title>View Galleries</title>
-        </Helmet>
-        <div>
-          <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.galleriesHeader} />
-            </H2>
-            <GenericList {...galleryListProps} />
-          </CenteredSection>
-        </div>
-      </article>
-    );
-  }
+  return (
+    <article>
+      <Helmet>
+        <title>View Galleries</title>
+      </Helmet>
+      <div>
+        <CenteredSection>
+          <H2>
+            <FormattedMessage {...messages.galleriesHeader} />
+          </H2>
+          <GenericList {...galleryListProps} />
+        </CenteredSection>
+      </div>
+    </article>
+  );
 }
 
 export function mapDispatchToProps(dispatch) {

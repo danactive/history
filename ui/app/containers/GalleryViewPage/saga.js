@@ -8,7 +8,7 @@ import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
 
 // Dropbox API v2 request/response handler
-export function* getDropboxGalleryFile(gallery) {
+export function* getGalleryFileOnDropbox(gallery) {
   const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
   try {
@@ -21,13 +21,22 @@ export function* getDropboxGalleryFile(gallery) {
   }
 }
 
-function* getGalleryFile({ gallery, host }) {
-  if (host !== 'dropbox') {
-    console.error('Only Dropbox is currently supported');
-    return;
-  }
+export function* getGalleryFileLocally(gallery) {
+  try {
+    const galleryFile = yield call(request, `http://localhost:8000/static/gallery-${gallery}/xml/gallery.xml`);
 
-  yield call(getDropboxGalleryFile, gallery);
+    yield put(galleryLoaded(galleryFile));
+  } catch (error) {
+    yield put(galleryLoadingError(error));
+  }
+}
+
+function* getGalleryFile({ gallery, host }) {
+  if (host === 'dropbox') {
+    yield call(getGalleryFileOnDropbox, gallery);
+  } else if (host === 'local') {
+    yield call(getGalleryFileLocally, gallery);
+  }
 }
 
 // ROOT saga manages WATCHER lifecycle

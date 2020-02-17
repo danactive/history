@@ -83,8 +83,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       const result = await libRename.renamePaths(sourceFolder, filenames, futureFilenames);
       const uniqueResult = new Set(result);
 
-      futureFilenames.forEach(async (filename) => {
-        const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+      futureFilenames.forEach((filename) => {
+        const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
         assert.ok(uniqueResult.has(fullPath), `Full path matches future path (${fullPath})`);
       });
     } catch (error) {
@@ -144,8 +144,8 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       const result = await libRename.renamePaths(sourceFolder, filenames, futureFilenames);
       const uniqueResult = new Set(result);
 
-      futureFilenames.forEach(async (filename) => {
-        const publicPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+      futureFilenames.forEach((filename) => {
+        const publicPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
         assert.ok(uniqueResult.has(publicPath), `Public path matches future path (${publicPath})`);
       });
     } catch (error) {

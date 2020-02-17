@@ -5,11 +5,11 @@ const selectHome = state => state.homePage || initialState;
 
 const makeSelectItems = () => createSelector(
   selectHome,
-  homeState => homeState.galleries.dropbox.map(gallery => ({
-    name: gallery.name,
-    host: 'dropbox',
-    id: gallery.id,
-  })),
+  homeState => Object.keys(homeState.galleries)
+    .reduce((list, host) => {
+      list.push(homeState.galleries[host].map(gallery => ({ ...gallery, host })));
+      return list;
+    }, []).flat(),
 );
 
 const makeSelectGalleryLoading = () => createSelector(

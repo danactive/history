@@ -32,7 +32,7 @@ export function* getDropboxGalleries() {
 function* getLocalFolders() {
   try {
     const { galleries } = yield call(request, 'http://localhost:8000/gallery/list');
-    yield put(galleriesLoaded({ local: galleries }));
+    yield put(galleriesLoaded({ local: galleries.map(name => ({ name, id: `local-${name}` })) }));
   } catch (error) {
     yield put(galleriesLoadingError(error));
   }
