@@ -13,7 +13,14 @@ const plugins = require('./lib/plugins');
 const { port } = config;
 const logger = log.createLogger('server');
 
-const server = hapi.Server({ port });
+const server = hapi.Server({
+  port,
+  routes: {
+    cors: {
+      origin: ['http://localhost:3000'],
+    },
+  },
+});
 
 function announceStart() {
   logger.operational(`Server running at ${server.info.uri}`);

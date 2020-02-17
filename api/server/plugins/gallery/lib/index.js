@@ -20,7 +20,6 @@ routeTable.push({
   method: 'GET',
   path: '/gallery/list',
   options: {
-    cors: { origin: ['http://localhost:3000'] },
     tags: ['api'],
     handler: async () => ({ galleries: await gallery.getGalleries() }),
   },

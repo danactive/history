@@ -19,7 +19,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@hapi/hapi": "^18.3.1",
+    "@hapi/hapi": "^18.4.1",
     "@hapi/joi": "^15.0.3",
     "app-root-path": "^2.2.1",
     "async": "^2.1.2",
