@@ -50,9 +50,13 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
       draft.gallery = action.gallery;
       draft.host = action.host;
       draft.album = action.album;
-      draft[action.host] = {
-        [action.gallery]: dotProp.set({}, `${action.album}.memories`, []),
-      };
+
+      // if no memories set default
+      if (!dotProp.has(state, `${action.host}.${action.gallery}.${action.album}.memories`)) {
+        draft[action.host] = {
+          [action.gallery]: dotProp.set({}, `${action.album}.memories`, []),
+        };
+      }
       break;
     }
 

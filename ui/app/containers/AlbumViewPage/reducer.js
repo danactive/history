@@ -44,7 +44,7 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
       draft.thumbsLoading = false;
       draft.page = action.page;
-      draft.hasMore = action.hasMore;
+      draft.hasMore = (action.host === 'local') ? false : action.hasMore;
       break;
     }
 

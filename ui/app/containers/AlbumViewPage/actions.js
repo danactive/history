@@ -19,10 +19,11 @@ export function loadAlbum(host, gallery, album) {
   };
 }
 
-export function albumLoadSuccess(memories) {
+export function albumLoadSuccess({ memories, host }) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     memories,
+    host,
   };
 }
 

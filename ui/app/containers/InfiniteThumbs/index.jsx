@@ -34,6 +34,10 @@ const InfiniteThumbs = (props) => {
     thumbsError,
   } = props;
 
+  if (!items.length) {
+    return null;
+  }
+
   if (albumError !== false) {
     return showAlbumError(albumError);
   }

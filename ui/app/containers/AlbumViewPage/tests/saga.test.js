@@ -15,6 +15,7 @@ import {
   argsAlbumXmlPath,
   getThumbPathsOnDropbox,
   argsThumbImgPath,
+  videoExtToJpg,
 } from '../saga';
 import { selectNextPage } from '../selectors';
 import {
@@ -248,6 +249,21 @@ describe('AlbumViewPage Saga', () => {
         expected = true;
         expect(received).toEqual(expected);
       });
+    });
+  });
+
+  describe('videoExtToJpg', () => {
+    test('No filename change', () => {
+      expect.hasAssertions();
+
+      expect(videoExtToJpg('abc.txt')).toEqual('abc.txt');
+      expect(videoExtToJpg('abc.jpg')).toEqual('abc.jpg');
+    });
+
+    test('Filename changes from video to image', () => {
+      expect.hasAssertions();
+
+      expect(videoExtToJpg('abc.mp4')).toEqual('abc.jpg');
     });
   });
 });
