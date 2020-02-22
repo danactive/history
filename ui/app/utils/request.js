@@ -29,6 +29,7 @@ export function parseTextXml(response) {
 
   return response;
 }
+
 /**
  * Checks if a network request came back fine, and throws an error if not
  *
@@ -46,6 +47,15 @@ function checkStatus(response) {
   throw error;
 }
 
+function fetchWithTimeout(url, options, timeout = 1700) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`HTTP request timeout reached at ${timeout}`)), timeout)
+    )
+  ]);
+}
+
 /**
  * Requests a URL, returning a promise
  *
@@ -55,7 +65,7 @@ function checkStatus(response) {
  * @return {object}           The response data
  */
 export default function request(url, options) {
-  return fetch(url, options)
+  return fetchWithTimeout(url, options)
     .then(checkStatus)
     .then(parseJSON)
     .then(parseTextXml); // *********** HISTORY CUSTOM not React Boilerplate

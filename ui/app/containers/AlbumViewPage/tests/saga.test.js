@@ -3,9 +3,8 @@ import { Dropbox } from 'dropbox';
 import 'whatwg-fetch';
 
 import {
-  all, call, put, select,
+  call, put, select,
 } from 'redux-saga/effects';
-import { cloneableGenerator } from '@redux-saga/testing-utils';
 
 import normalizeError from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
@@ -13,20 +12,18 @@ import request, { parseTextXml } from '../../../utils/request';
 import {
   getAlbumFileOnDropbox,
   argsAlbumXmlPath,
-  getThumbPathsOnDropbox,
-  argsThumbImgPath,
-  videoExtToJpg,
+  getThumbPaths,
+  videoExtToJpg, getThumbPathsOnDropbox,
 } from '../saga';
 import { selectNextPage } from '../selectors';
 import {
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
-  LOAD_NEXT_THUMB_PAGE_ERROR,
 } from '../constants';
-import { thumbsLoaded } from '../actions';
+import albumFixture from '../../App/tests/fixtures/album';
 
 describe('AlbumViewPage Saga', () => {
-  describe('getAlbumFileOnDropbox', () => {
+  describe('getAlbumFile on Dropbox', () => {
     describe('Success', () => {
       const fixtures = { host: 'dropbox', album: 'sample', gallery: 'demo' };
       const generator = getAlbumFileOnDropbox(fixtures);
@@ -83,6 +80,9 @@ describe('AlbumViewPage Saga', () => {
         const received = generator.next(parseTextXml(xmlAlbum)).value;
         const expected = put({
           type: LOAD_ALBUM_SUCCESS,
+          host: 'dropbox',
+          gallery: 'demo',
+          album: 'sample',
           memories: [jsonAlbum],
         });
         expect(received).toEqual(expected);
@@ -125,14 +125,15 @@ describe('AlbumViewPage Saga', () => {
     });
   });
 
-  describe('getThumbPathsOnDropbox', () => {
+  describe('getThumbPaths on Dropbox', () => {
     describe('Success', () => {
       const fixtures = {
         host: 'dropbox',
         gallery: 'demo',
         album: 'sample',
+        memories: albumFixture.memories,
       };
-      const generator = getThumbPathsOnDropbox(fixtures);
+      const generator = getThumbPaths(fixtures); // set state
 
       test('should first yield an Effect select', () => {
         expect.hasAssertions();
@@ -141,43 +142,17 @@ describe('AlbumViewPage Saga', () => {
         expect(received).toEqual(expected);
       });
 
-      test('should second yield an Effect all', () => {
+      test('should second yield an Effect call', () => {
         expect.hasAssertions();
-        const array1toLength = Array.from({ length: 17 }, (v, k) => (
-          { id: k + 1, filename: `2015-12-25-${k + 1}.jpg` }));
         const receivedArgs = {
           host: fixtures.host,
           gallery: fixtures.gallery,
           album: fixtures.album,
-          memories: array1toLength,
           page: 2,
         };
+
         const received = generator.next(receivedArgs).value;
-        const expectedArgs = argsThumbImgPath({ gallery: fixtures.gallery, filename: '2015-12-25-17.jpg' });
-        const expected = all([call([new Dropbox(), 'filesGetTemporaryLink'], expectedArgs)]);
-        expect(received).toEqual(expected);
-      });
-
-      test('should third yield an Effect put', () => {
-        expect.hasAssertions();
-        const dropboxResults = [
-          { link: 'dropbox.com' },
-        ];
-        const args = {
-          gallery: fixtures.gallery,
-          album: fixtures.album,
-          newMemories: [
-            {
-              id: 17,
-              filename: '2015-12-25-17.jpg',
-              thumbLink: 'dropbox.com',
-            },
-          ],
-          page: 3,
-        };
-
-        const received = generator.next(dropboxResults).value;
-        const expected = put(thumbsLoaded(args));
+        const expected = call(getThumbPathsOnDropbox, receivedArgs);
         expect(received).toEqual(expected);
       });
 
@@ -185,68 +160,6 @@ describe('AlbumViewPage Saga', () => {
         expect.hasAssertions();
         const received = generator.next().done;
         const expected = true;
-        expect(received).toEqual(expected);
-      });
-    });
-
-    describe('Failure', () => {
-      const fixtures = { thumbs: [], gallery: 'demo', host: 'dropbox' };
-      const generator = cloneableGenerator(getThumbPathsOnDropbox)(fixtures);
-
-      generator.next(); // first yield an Effect select
-
-      test('should receive an empty selector', () => {
-        expect.hasAssertions();
-
-        // cloning the generator before sending data
-        const genClone = generator.clone();
-
-        let received;
-        let expected;
-
-        const args = {
-          host: fixtures.host,
-          memories: [],
-        };
-        received = genClone.next(args).value;
-
-        const error = {
-          message: 'Empty or malformed album; memories=([])',
-          type: 'normalized message and stack',
-          stack: true,
-        };
-        expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
-
-        // Unit test cannot reproduce error stack so delete
-        delete expected.payload.action.error.stack;
-        delete received.payload.action.error.stack;
-
-        expect(received).toEqual(expected);
-
-
-        received = genClone.next().done;
-        expected = true;
-        expect(received).toEqual(expected);
-      });
-
-      test('should catch error', () => {
-        expect.hasAssertions();
-
-        // cloning the generator before sending data
-        const genClone = generator.clone();
-
-        let received;
-        let expected;
-
-        const error = new Error('Something went wrong');
-
-        received = genClone.throw(error).value;
-        expected = put({ type: LOAD_NEXT_THUMB_PAGE_ERROR, error: normalizeError(error) });
-
-        expect(received).toEqual(expected);
-
-        received = genClone.next().done;
-        expected = true;
         expect(received).toEqual(expected);
       });
     });

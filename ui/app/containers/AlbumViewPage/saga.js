@@ -61,44 +61,55 @@ export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
 
 
 // saga WORKER for LOAD_ALBUM
-export function* getAlbumFileOnDropbox({ album, gallery, host }) {
+export function* getAlbumFileOnDropbox({ host, gallery, album }) {
   try {
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
     const xmlFile = yield call(request, xmlUrl.link);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoadSuccess({ host, memories }));
+    yield put(albumLoadSuccess({
+      memories,
+      host,
+      gallery,
+      album,
+    }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
 }
 
-export function* getAlbumFileLocally({ album, gallery, host }) {
+export function* getAlbumFileLocally({ host, gallery, album }) {
   try {
     const xmlFile = yield call(request, `http://localhost:8000/view/album/${gallery}/${album}`);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
-    yield put(albumLoadSuccess({ host, memories }));
+    yield put(albumLoadSuccess({
+      memories,
+      host,
+      gallery,
+      album,
+    }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
 }
 
 
-export function* getAlbumFile({ album, gallery, host }) {
+export function* getAlbumFile({ host, gallery, album }) {
   if (host === 'dropbox') {
-    yield call(getAlbumFileOnDropbox, { album, gallery, host });
+    yield call(getAlbumFileOnDropbox, { host, gallery, album });
   } else if (host === 'local') {
-    yield call(getAlbumFileLocally, { album, gallery, host });
+    yield call(getAlbumFileLocally, { host, gallery, album });
   }
 }
 
 
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
 export function* getThumbPathsOnDropbox({
-  album,
-  gallery,
   memories,
   page: prevPage,
+  host,
+  gallery,
+  album,
 }) {
   try {
     if (!memories || memories.length === 0) {
@@ -115,13 +126,22 @@ export function* getThumbPathsOnDropbox({
 
     if (!hasMore) { // all pages processed so thumbs all have Dropbox links
       yield put(thumbsLoaded({
-        gallery, album, newMemories: linkedMemories, page,
+        newMemories: linkedMemories,
+        page,
+        host,
+        gallery,
+        album,
       }));
       return;
     }
 
     yield put(nextPageSuccess({
-      gallery, album, newMemories: linkedMemories, page,
+      newMemories: linkedMemories,
+      hasMore,
+      page,
+      host,
+      gallery,
+      album,
     }));
   } catch (error) {
     yield put(nextPageError(normalizeError(error)));
@@ -129,20 +149,29 @@ export function* getThumbPathsOnDropbox({
 }
 
 export function* getThumbPathsLocally({
-  gallery,
   memories: missingPathMemories,
+  host,
+  gallery,
+  album,
 }) {
   try {
     if (!missingPathMemories || missingPathMemories.length === 0) {
       throw new Error(`Empty or malformed album; missingPathMemories=(${JSON.stringify(missingPathMemories)})`);
     }
 
-    const memories = missingPathMemories.map(memory => ({
+    const newMemories = missingPathMemories.map(memory => ({
       ...memory,
       thumbLink: `http://localhost:8000/static/gallery-${gallery}/media/thumbs/${getYear(memory.filename)}/${videoExtToJpg(memory.filename)}`,
     }));
 
-    yield put(albumLoadSuccess({ memories, host: 'local' }));
+    yield put(nextPageSuccess({
+      newMemories,
+      page: 1,
+      hasMore: false,
+      host,
+      gallery,
+      album,
+    }));
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }

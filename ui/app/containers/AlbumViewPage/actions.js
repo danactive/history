@@ -10,7 +10,7 @@ import {
   PREV_MEMORY,
 } from './constants';
 
-export function loadAlbum(host, gallery, album) {
+export function loadAlbum({ host, gallery, album }) {
   return {
     type: LOAD_ALBUM,
     host,
@@ -19,11 +19,18 @@ export function loadAlbum(host, gallery, album) {
   };
 }
 
-export function albumLoadSuccess({ memories, host }) {
+export function albumLoadSuccess({
+  memories,
+  host,
+  gallery,
+  album,
+}) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     memories,
     host,
+    gallery,
+    album,
   };
 }
 
@@ -34,20 +41,29 @@ export function albumLoadError(error) {
   };
 }
 
-export function loadNextPage() {
+export function loadNextPage(nextPageNum) {
   return {
     type: LOAD_NEXT_THUMB_PAGE,
+    nextPageNum,
   };
 }
 
 export function nextPageSuccess({
-  newMemories, page,
+  newMemories,
+  hasMore,
+  page,
+  host,
+  gallery,
+  album,
 }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
     newMemories,
     page,
-    hasMore: true,
+    hasMore,
+    host,
+    gallery,
+    album,
   };
 }
 
@@ -59,13 +75,20 @@ export function nextPageError(error) {
 }
 
 export function thumbsLoaded({
-  newMemories, page,
+  newMemories,
+  page,
+  host,
+  gallery,
+  album,
 }) {
   return {
     type: LOAD_THUMBS_SUCCESS,
     newMemories,
     page,
     hasMore: false,
+    host,
+    gallery,
+    album,
   };
 }
 

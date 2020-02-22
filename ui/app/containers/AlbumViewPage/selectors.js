@@ -37,7 +37,7 @@ export const makeSelectMemories = () => createSelector(
 );
 
 export const selectNextPage = (state) => {
-  const pageState = selectPage(state);
+  const { page } = selectPage(state);
   const globalState = selectGlobal(state);
   const {
     album,
@@ -46,11 +46,11 @@ export const selectNextPage = (state) => {
   } = globalState;
 
   return {
-    album,
-    gallery,
+    memories: globalState[host][gallery][album].memories,
+    page,
     host,
-    memories: globalState[host][gallery][album].memories, // memories is an Array (not Immutable)
-    page: pageState.page,
+    gallery,
+    album,
   };
 };
 

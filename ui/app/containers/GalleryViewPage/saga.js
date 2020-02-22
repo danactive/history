@@ -8,24 +8,24 @@ import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
 
 // Dropbox API v2 request/response handler
-export function* getGalleryFileOnDropbox(gallery) {
+export function* getGalleryFileOnDropbox({ host, gallery }) {
   const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
   try {
     const galleryFileUrl = yield call([dbx, dbx.filesGetTemporaryLink], { path: `/public/gallery-${gallery}/xml/gallery.xml` });
-    const galleryFile = yield call(request, galleryFileUrl.link);
+    const galleryXml = yield call(request, galleryFileUrl.link);
 
-    yield put(galleryLoaded(galleryFile));
+    yield put(galleryLoaded({ host, gallery, galleryXml }));
   } catch (error) {
     yield put(galleryLoadingError(error));
   }
 }
 
-export function* getGalleryFileLocally(gallery) {
+export function* getGalleryFileLocally({ host, gallery }) {
   try {
-    const galleryFile = yield call(request, `http://localhost:8000/static/gallery-${gallery}/xml/gallery.xml`);
+    const galleryXml = yield call(request, `http://localhost:8000/static/gallery-${gallery}/xml/gallery.xml`);
 
-    yield put(galleryLoaded(galleryFile));
+    yield put(galleryLoaded({ host, gallery, galleryXml }));
   } catch (error) {
     yield put(galleryLoadingError(error));
   }
@@ -33,9 +33,9 @@ export function* getGalleryFileLocally(gallery) {
 
 function* getGalleryFile({ gallery, host }) {
   if (host === 'dropbox') {
-    yield call(getGalleryFileOnDropbox, gallery);
+    yield call(getGalleryFileOnDropbox, { host, gallery });
   } else if (host === 'local') {
-    yield call(getGalleryFileLocally, gallery);
+    yield call(getGalleryFileLocally, { host, gallery });
   }
 }
 

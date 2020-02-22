@@ -4,7 +4,7 @@ import {
   LOAD_GALLERY_ERROR,
 } from './constants';
 
-export function loadGallery(host, gallery) {
+export function loadGallery({ host, gallery }) {
   return {
     type: LOAD_GALLERY,
     gallery,
@@ -12,9 +12,11 @@ export function loadGallery(host, gallery) {
   };
 }
 
-export function galleryLoaded(galleryXml) {
+export function galleryLoaded({ host, gallery, galleryXml }) {
   return {
     type: LOAD_GALLERY_SUCCESS,
+    host,
+    gallery,
     galleryXml,
   };
 }

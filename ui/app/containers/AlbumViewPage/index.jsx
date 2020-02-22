@@ -1,5 +1,5 @@
 /* global document */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,29 +26,25 @@ import {
   makeSelectMemories,
 } from './selectors';
 import saga from './saga';
+import LoadingIndicator from '../../components/LoadingIndicator';
 
-class AlbumViewPage extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.handleKey = this.handleKey.bind(this);
-  }
-
-  componentWillMount() {
-    const { onLoad, match: { params: { album, gallery, host } } } = this.props;
-    if (album) onLoad(host, gallery, album);
-  }
-
-  componentDidMount() {
-    document.addEventListener('keyup', this.handleKey); // must reference function to be removable
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.handleKey);
-  }
-
-  handleKey(event) {
-    const { adjacentMemory } = this.props;
+function AlbumViewPage({
+  onLoad,
+  match: {
+    params: {
+      host,
+      gallery,
+      album,
+    },
+  },
+  albumError,
+  albumLoading,
+  albumName,
+  adjacentMemory,
+  currentMemory,
+  memories,
+}) {
+  function handleKey(event) {
     const { key } = event;
 
     event.preventDefault();
@@ -60,38 +56,43 @@ class AlbumViewPage extends React.PureComponent {
     if (key === 'ArrowRight') adjacentMemory(1);
   }
 
-  render() {
-    const {
-      albumError,
-      albumLoading,
-      albumName,
-      currentMemory,
-      memories,
-    } = this.props;
+  useEffect(() => {
+    if (album) onLoad({ host, gallery, album });
+    document.addEventListener('keyup', handleKey); // must reference function to be removable
 
+    return () => { // cleanup
+      document.removeEventListener('keyup', handleKey);
+    };
+  }, []);
+
+  if (albumLoading) {
     return (
-      <main>
-        <Helmet>
-          <title>{`${albumName}  Album`}</title>
-        </Helmet>
-
-        <PhotoHeader
-          currentMemory={currentMemory}
-        />
-
-        <SplitScreen
-          currentMemory={currentMemory}
-          items={memories}
-        />
-
-        <InfiniteThumbs
-          error={albumError}
-          items={memories}
-          loading={albumLoading}
-        />
-      </main>
+      <LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />
     );
   }
+
+  return (
+    <main>
+      <Helmet>
+        <title>{`${albumName}  Album`}</title>
+      </Helmet>
+
+      <PhotoHeader
+        currentMemory={currentMemory}
+      />
+
+      <SplitScreen
+        currentMemory={currentMemory}
+        items={memories}
+      />
+
+      <InfiniteThumbs
+        error={albumError}
+        items={memories}
+        loading={albumLoading}
+      />
+    </main>
+  );
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -103,7 +104,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onLoad: (host, gallery, album) => dispatch(loadAlbum(host, gallery, album)),
+  onLoad: ({ host, gallery, album }) => dispatch(loadAlbum({ host, gallery, album })),
   adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
 });
 

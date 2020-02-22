@@ -17,7 +17,7 @@ describe('GalleryViewPage actions', () => {
         gallery,
         host,
       };
-      expect(loadGallery(host, gallery)).toEqual(expected);
+      expect(loadGallery({ host, gallery })).toEqual(expected);
     });
   });
 });

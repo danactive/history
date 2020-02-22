@@ -16,6 +16,7 @@ import {
 describe('pageReducer', () => {
   let state;
   const fixture = {
+    host: 'dropbox',
     gallery: 'demo',
     page: 0,
     hasMore: true,
@@ -32,7 +33,7 @@ describe('pageReducer', () => {
   });
 
   test('loadAlbum action', () => {
-    const received = pageReducer(state, loadAlbum());
+    const received = pageReducer(state, loadAlbum({ host: '', gallery: '', album: '' }));
 
     const expected = produce(state, (draft) => {
       draft.albumLoading = true;
@@ -67,6 +68,7 @@ describe('pageReducer', () => {
 
   test('should handle the nextPageSuccess action correctly', () => {
     const args = {
+      host: fixture.host,
       gallery: fixture.gallery,
       thumbs: fixture.thumbs,
       metaThumbs: fixture.metaThumbs,

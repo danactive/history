@@ -45,29 +45,43 @@ function parseAlbum(albumXml) {
 
 /* eslint-disable default-case, no-param-reassign */
 const appReducer = (state = initialState, action) => produce(state, (draft) => {
+  function setMemories(newMemories) {
+    if (!dotProp.has(state, action.host)) {
+      draft[action.host] = {};
+    }
+
+    if (!dotProp.has(state, `${action.host}.${action.gallery}`)) {
+      draft[action.host][action.gallery] = {};
+    }
+
+    if (!dotProp.has(state, `${action.host}.${action.gallery}.${action.album}`)) {
+      draft[action.host][action.gallery][action.album] = {};
+    }
+
+    if (newMemories) {
+      draft[action.host][action.gallery][action.album].memories = newMemories;
+    } else if (!dotProp.has(state, `${action.host}.${action.gallery}.${action.album}.memories`)) {
+      draft[action.host][action.gallery][action.album].memories = [];
+    }
+  }
+
   switch (action.type) {
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
       draft.host = action.host;
       draft.album = action.album;
-
-      // if no memories set default
-      if (!dotProp.has(state, `${action.host}.${action.gallery}.${action.album}.memories`)) {
-        draft[action.host] = {
-          [action.gallery]: dotProp.set({}, `${action.album}.memories`, []),
-        };
-      }
+      setMemories();
       break;
     }
 
     case LOAD_ALBUM_SUCCESS: {
-      draft[state.host] = dotProp.set({}, `${state.gallery}.${state.album}.memories`, action.memories);
+      setMemories(action.memories);
       break;
     }
 
     case LOAD_THUMBS_SUCCESS:
     case LOAD_NEXT_THUMB_PAGE_SUCCESS: {
-      draft[state.host] = dotProp.set({}, `${state.gallery}.${state.album}.memories`, insertPage({
+      setMemories(insertPage({
         insert: action.newMemories,
         pageSize: PAGE_SIZE,
         page: action.page,
@@ -108,17 +122,25 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case LOAD_GALLERY: {
-      draft.gallery = action.gallery;
       draft.host = action.host;
+      draft.gallery = action.gallery;
+      draft.album = '';
       break;
     }
 
     case LOAD_GALLERY_SUCCESS: {
-      draft[state.host] = {
-        [state.gallery]: {
-          albums: Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum),
-        },
-      };
+      if (!dotProp.has(state, action.host)) {
+        draft[action.host] = {};
+      }
+
+      if (!dotProp.has(state, `${action.host}.${action.gallery}`)) {
+        draft[action.host][action.gallery] = {};
+      }
+
+      if (!dotProp.has(state, `${action.host}.${action.gallery}.albums`)) {
+        draft[action.host][action.gallery].albums = Array.from(action.galleryXml.getElementsByTagName('album')).map(parseAlbum);
+      }
+
       break;
     }
   }

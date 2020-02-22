@@ -26,6 +26,6 @@ describe('galleryViewPageReducer', () => {
       draft.gallery = fixture;
     });
 
-    expect(galleryViewPageReducer(state, loadGallery(fixture))).toEqual(expectedResult);
+    expect(galleryViewPageReducer(state, loadGallery({ host: 'dropbox', gallery: fixture }))).toEqual(expectedResult);
   });
 });

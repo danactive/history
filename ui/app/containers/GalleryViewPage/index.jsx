@@ -54,7 +54,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    onLoad: (host, gallery) => dispatch(loadGallery(host, gallery)),
+    onLoad: (host, gallery) => dispatch(loadGallery({ host, gallery })),
   };
 }
 
