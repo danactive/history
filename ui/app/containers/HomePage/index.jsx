@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
@@ -15,49 +15,45 @@ import messages from './messages';
 
 import { loadGalleries } from './actions';
 import {
-  makeSelectGalleries,
+  makeSelectItems,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export class HomePage extends React.PureComponent {
-  componentWillMount() {
-    const { onLoad } = this.props;
+export function HomePage({
+  galleryError,
+  galleryLoading,
+  items,
+  onLoad,
+}) {
+  useEffect(() => {
     onLoad();
-  }
+  }, []);
 
-  render() {
-    const {
-      galleries,
-      galleryError,
-      galleryLoading,
-    } = this.props;
+  const galleryListProps = {
+    loading: galleryLoading,
+    error: galleryError,
+    items,
+    component: GalleryListItem,
+  };
 
-    const galleryListProps = {
-      loading: galleryLoading,
-      error: galleryError,
-      items: galleries,
-      component: GalleryListItem,
-    };
-
-    return (
-      <article>
-        <Helmet>
-          <title>View Galleries</title>
-        </Helmet>
-        <div>
-          <CenteredSection>
-            <H2>
-              <FormattedMessage {...messages.galleriesHeader} />
-            </H2>
-            <GenericList {...galleryListProps} />
-          </CenteredSection>
-        </div>
-      </article>
-    );
-  }
+  return (
+    <article>
+      <Helmet>
+        <title>View Galleries</title>
+      </Helmet>
+      <div>
+        <CenteredSection>
+          <H2>
+            <FormattedMessage {...messages.galleriesHeader} />
+          </H2>
+          <GenericList {...galleryListProps} />
+        </CenteredSection>
+      </div>
+    </article>
+  );
 }
 
 export function mapDispatchToProps(dispatch) {
@@ -67,7 +63,7 @@ export function mapDispatchToProps(dispatch) {
 }
 
 const mapStateToProps = createStructuredSelector({
-  galleries: makeSelectGalleries(),
+  items: makeSelectItems(),
   galleryLoading: makeSelectGalleryLoading(),
   galleryError: makeSelectGalleryError(),
 });
@@ -77,8 +73,8 @@ const withConnect = connect(
   mapDispatchToProps,
 );
 
-const withReducer = injectReducer({ key: 'home', reducer });
-const withSaga = injectSaga({ key: 'home', saga });
+const withReducer = injectReducer({ key: 'homePage', reducer });
+const withSaga = injectSaga({ key: 'homePage', saga });
 
 export default compose(
   withReducer,

@@ -81,7 +81,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
 
       assert.ok(response, 'Has response');
 
-      const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+      const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
       const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
       const resultsPhoto = await calipers.measure(photoPath);
       assert.equal(resultsPhoto.pages[0].width, photoDims.width, 'Photo width measured');

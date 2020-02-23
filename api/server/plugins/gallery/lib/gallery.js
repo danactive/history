@@ -6,7 +6,7 @@ const utils = require('../../utils');
 const readDir = promisify(fs.readdir);
 
 async function galleriesContents() {
-  const galleriesPath = await utils.file.safePublicPath('/galleries');
+  const galleriesPath = utils.file.safePublicPath('/galleries');
   const fsContents = await readDir(galleriesPath);
   return fsContents;
 }

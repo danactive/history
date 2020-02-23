@@ -11,8 +11,8 @@ import {
   LOAD_THUMBS_SUCCESS,
 } from './constants';
 
-const initialState = {
-  albumLoading: false,
+export const initialState = {
+  albumLoading: true,
   albumError: false,
   thumbsLoading: false,
   thumbsError: false,

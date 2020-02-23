@@ -41,7 +41,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
     await plugin.resize(originalRelativeFile);
 
     try {
-      const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+      const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
       const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
 
       const resultPhoto = await calipers.measure(photoPath);

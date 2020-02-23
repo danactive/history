@@ -38,7 +38,7 @@ const InfiniteThumbs = (props) => {
     return showAlbumError(albumError);
   }
 
-  if (loading) {
+  if (loading || !items.length) {
     return <LoadingIndicator />;
   }
 
@@ -84,7 +84,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    nextPage: () => dispatch(loadNextPage()),
+    nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
     selectThumb: id => dispatch(chooseMemory(id)),
   };
 }

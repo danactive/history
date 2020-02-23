@@ -1,12 +1,8 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
+const selectGlobal = state => state.global;
 const selectPage = state => state.galleryViewPage;
-
-const makeSelectAlbums = () => createSelector(
-  selectPage,
-  homeState => homeState.albums || [],
-);
 
 const makeSelectGalleryLoading = () => createSelector(
   selectPage,
@@ -18,9 +14,22 @@ const makeSelectGalleryError = () => createSelector(
   pageState => pageState.galleryError,
 );
 
+const makeSelectItems = () => createSelector(
+  selectGlobal,
+  (globalState) => {
+    if (globalState
+      && globalState[globalState.host]
+      && globalState[globalState.host][globalState.gallery]
+      && globalState[globalState.host][globalState.gallery].albums) {
+      return globalState[globalState.host][globalState.gallery].albums.map(album => ({ name: album.h1, id: album.id }));
+    }
+    return [];
+  },
+);
+
 export {
   selectPage,
-  makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
+  makeSelectItems,
 };
