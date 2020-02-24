@@ -1,5 +1,7 @@
 const tape = require('tape-catch');
 
+const existsChecker = require('../../exists/lib/exists');
+
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
   const hapi = require('@hapi/hapi');
@@ -78,16 +80,31 @@ tape('Verify /resize route', { skip: false }, (describe) => {
     try {
       await server.register(plugins);
       const response = await server.inject(request);
-
       assert.ok(response, 'Has response');
 
+      if (response.statusCode !== 200) {
+        assert.equal(response.statusCode, 200, JSON.stringify(response.result));
+      }
+
+      await existsChecker.pathExists(originalRelativeFile);
+      assert.ok(originalRelativeFile, `Original image file found at relative ${originalRelativeFile}`);
+
       const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
+      await existsChecker.pathExists(originalAbsoluteFile);
+      assert.ok(originalAbsoluteFile, `Original image file found at ${originalAbsoluteFile}`);
+
       const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
+      await existsChecker.pathExists(photoPath);
+      assert.ok(originalRelativeFile, `Photo image file found at ${photoPath}`);
+
       const resultsPhoto = await calipers.measure(photoPath);
-      assert.equal(resultsPhoto.pages[0].width, photoDims.width, 'Photo width measured');
-      assert.ok(resultsPhoto.pages[0].height <= photoDims.height, 'Photo height measured');
+      assert.equal(resultsPhoto.pages[0].width, photoDims.width, `Photo width measured at ${photoDims.width}`);
+      assert.ok(resultsPhoto.pages[0].height <= photoDims.height, `Photo height measured at ${photoDims.height}`);
 
       const thumbPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, THUMB_FOLDER_NAME);
+      await existsChecker.pathExists(thumbPath);
+      assert.ok(originalRelativeFile, `Thumb image file found at ${thumbPath}`);
+
       const resultsThumb = await calipers.measure(thumbPath);
       assert.equal(resultsThumb.pages[0].width, thumbDims.width, 'Thumb width measured');
       assert.ok(resultsThumb.pages[0].height <= thumbDims.height, 'Thumb height measured');

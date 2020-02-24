@@ -28,7 +28,7 @@ function resize(sourcePath) {
             const thumbPath = originalPath.replace('originals', 'thumbs');
 
             if (errOrient) {
-              errors.push(`Original orientation write error: ${errOrient}`);
+              errors.push(`Resize original: ${errOrient.message}`);
             }
 
             function possibleCompletion() {
@@ -38,7 +38,7 @@ function resize(sourcePath) {
                   meta: {
                     error: {
                       count: errors.length,
-                      message: errors.join('; '),
+                      message: errors,
                     },
                   },
                   payload: {
@@ -56,7 +56,7 @@ function resize(sourcePath) {
               .resize(photoDims.width, photoDims.height)
               .write(photoPath, (errResize) => {
                 if (errResize) {
-                  errors.push(`Photo resize write error: ${errResize}`);
+                  errors.push(`Resize photo: ${errResize.message}`);
                 }
                 possibleCompletion();
               });
@@ -66,7 +66,7 @@ function resize(sourcePath) {
               .noProfile()
               .write(thumbPath, (errResize) => {
                 if (errResize) {
-                  errors.push(`Thumbnail resize write error: ${errResize}`);
+                  errors.push(`Resize thumbnail:  ${errResize.message}`);
                 }
                 possibleCompletion();
               });
