@@ -2,7 +2,6 @@
 
 import {
   selectPage,
-  makeSelectAlbums,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from '../selectors';
@@ -14,19 +13,6 @@ describe('selectPage', () => {
       galleryViewPage: fixture,
     };
     expect(selectPage(mockedState)).toEqual(fixture);
-  });
-});
-
-describe('makeSelectAlbums', () => {
-  const albumsSelector = makeSelectAlbums();
-  test('should select the album', () => {
-    const albums = ['sample'];
-    const mockedState = {
-      galleryViewPage: {
-        albums,
-      },
-    };
-    expect(albumsSelector(mockedState)).toEqual(albums);
   });
 });
 

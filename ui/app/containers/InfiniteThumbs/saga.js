@@ -1,3 +1,4 @@
+/* global fetch */
 import { Dropbox } from 'dropbox';
 import {
   call, put, select, takeEvery,
@@ -6,7 +7,7 @@ import {
 import normalizeError from '../../utils/error';
 
 import { CHOOSE_MEMORY } from '../App/constants';
-import { selectCurrentMemory } from '../App/selectors';
+import { makeSelectCurrentMemory } from '../App/selectors';
 import { photoLoadError, photoLoadSuccess } from '../App/actions';
 import {
   NEXT_MEMORY,
@@ -14,7 +15,7 @@ import {
 } from '../AlbumViewPage/constants';
 
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN });
+const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
 
 const getYear = (filename = '') => filename.substr(0, 4);
@@ -36,7 +37,7 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 // saga WORKER for CHOOSE_MEMORY
 export function* getPhotoPathsOnDropbox() {
   try {
-    const { gallery, album, currentMemory } = yield select(selectCurrentMemory);
+    const { currentMemory, album, gallery } = yield select(makeSelectCurrentMemory());
     const { filename, id } = currentMemory;
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsPhotoXmlPath({ gallery, filename }));
 

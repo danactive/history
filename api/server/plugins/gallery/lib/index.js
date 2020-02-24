@@ -14,20 +14,33 @@ const staticGalleryFolder = (server, handler) => {
   });
 };
 
-const register = server => new Promise(async (resolve) => {
-  server.route({
-    method: 'GET',
-    path: '/static/xslt/gallery.xslt',
-    options: {
-      tags: ['static'],
-      handler: {
-        file: {
-          confine: false,
-          path: path.join(__dirname, '../../../../../', 'public/xslt/gallery.xslt'),
-        },
+const routeTable = [];
+
+routeTable.push({
+  method: 'GET',
+  path: '/gallery/list',
+  options: {
+    tags: ['api'],
+    handler: async () => ({ galleries: await gallery.getGalleries() }),
+  },
+});
+
+routeTable.push({
+  method: 'GET',
+  path: '/static/xslt/gallery.xslt',
+  options: {
+    tags: ['static'],
+    handler: {
+      file: {
+        confine: false,
+        path: path.join(__dirname, '../../../../../', 'public/xslt/gallery.xslt'),
       },
     },
-  });
+  },
+});
+
+const register = server => new Promise(async (resolve) => {
+  routeTable.forEach(routeDefiniation => server.route(routeDefiniation));
 
   try {
     await gallery.getGalleries();
@@ -46,7 +59,7 @@ const register = server => new Promise(async (resolve) => {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.2.0',
+  version: '0.4.0',
 };
 
 module.exports = { plugin };

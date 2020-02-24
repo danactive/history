@@ -198,22 +198,27 @@ tape('Utilities', { skip: false }, (describe) => {
   function getFailurePath({
     assert, testPath, message,
   }) {
-    lib.file.safePublicPath(testPath)
-      .then(() => assert.fail('Safe path incorrectly found'))
-      .catch((error) => {
-        if (error.isBoom) {
-          assert.pass(message);
-        }
-      });
+    try {
+      lib.file.safePublicPath(testPath);
+      assert.fail('Safe path incorrectly found');
+    } catch (error) {
+      if (error.isBoom) {
+        assert.pass(message);
+      } else {
+        assert.fail('Error should be boom');
+      }
+    }
   }
 
   function getSuccessPath({
     assert, testPath, expected, message,
   }) {
-    lib.file.safePublicPath(testPath)
-      // .then(actual => assert.ok(actual.endsWith(expected), `${message} actual=(${actual}) expected=(${expected});`))
-      .then(actual => assert.ok(actual.endsWith(expected), message))
-      .catch(() => assert.fail(`Safe path incorrectly missed (${testPath});`));
+    try {
+      const actual = lib.file.safePublicPath(testPath);
+      assert.ok(actual.endsWith(expected), message);
+    } catch (e) {
+      assert.fail(`Safe path incorrectly missed (${testPath});`);
+    }
   }
 
   describe.test('* File - Safe Public Path - Throws an exception', (assert) => {

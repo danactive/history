@@ -1,7 +1,7 @@
 /* global describe, expect, test */
 
 import {
-  selectAlbum,
+  selectGlobal,
   selectPage,
   makeSelectAlbumLoading,
   makeSelectAlbumError,
@@ -23,15 +23,15 @@ describe('Memorized selectors', () => {
     expect(received).toEqual(expected);
   });
 
-  test('should select the album state', () => {
-    const albumState = {
-      thumbs: [],
+  test('should select the global state', () => {
+    const globalState = {
+      gallery: 'demo',
     };
     const mockedState = {
-      albums: albumState,
+      global: globalState,
     };
-    const received = selectAlbum(mockedState);
-    const expected = albumState;
+    const received = selectGlobal(mockedState);
+    const expected = globalState;
     expect(received).toEqual(expected);
   });
 });

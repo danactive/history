@@ -1,11 +1,15 @@
 import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
-const selectHome = state => state.home || initialState;
+const selectHome = state => state.homePage || initialState;
 
-const makeSelectGalleries = () => createSelector(
+const makeSelectItems = () => createSelector(
   selectHome,
-  homeState => homeState.contents || [],
+  homeState => Object.keys(homeState.galleries)
+    .reduce((list, host) => {
+      list.push(homeState.galleries[host].map(gallery => ({ ...gallery, host })));
+      return list;
+    }, []).flat(),
 );
 
 const makeSelectGalleryLoading = () => createSelector(
@@ -20,7 +24,7 @@ const makeSelectGalleryError = () => createSelector(
 
 export {
   selectHome,
-  makeSelectGalleries,
+  makeSelectItems,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 };

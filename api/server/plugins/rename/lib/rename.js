@@ -36,7 +36,7 @@ Renamed file paths
 @return {Promise}
 */
 function renamePaths(sourceFolder, filenames, futureFilenames, { preview, renameAssociated } = {}) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const renamedFilenames = [];
     const q = async.queue((rename, next) => {
       function renameFile() {
@@ -62,8 +62,12 @@ function renamePaths(sourceFolder, filenames, futureFilenames, { preview, rename
     }, 2);
 
     {
-      const fullPath = await utils.file.safePublicPath(sourceFolder)
-        .catch(error => reject(Boom.boomify(error)));
+      let fullPath;
+      try {
+        fullPath = utils.file.safePublicPath(sourceFolder);
+      } catch (error) {
+        reject(Boom.boomify(error));
+      }
 
       const transformFilenames = (pair, cb) => {
         if (renameAssociated) {

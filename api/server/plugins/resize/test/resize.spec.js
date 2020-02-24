@@ -39,14 +39,14 @@ tape('Verify resize library', { skip: false }, (describe) => {
 
   describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, async (assert) => {
     const originalRelativeFile = path.join(fixturesPath, 'originals/2016-07-12.jpg');
-    const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+    const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
 
     try {
       await existsChecker.pathExists(originalRelativeFile);
 
       assert.ok(originalRelativeFile, `Original image file found at relative ${originalRelativeFile}`);
 
-      await plugin.resize(originalRelativeFile);
+    await plugin.resize(originalRelativeFile);
 
       await existsChecker.pathExists(originalAbsoluteFile);
       assert.ok(originalAbsoluteFile, `Original image file found at ${originalAbsoluteFile}`);
@@ -55,6 +55,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
     }
 
     try {
+      const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
       const photoPath = originalAbsoluteFile.replace(ORIGINAL_FOLDER_NAME, PHOTO_FOLDER_NAME);
 
       await existsChecker.pathExists(photoPath);

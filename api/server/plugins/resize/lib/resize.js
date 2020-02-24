@@ -76,8 +76,13 @@ function resize(sourcePath) {
       }
     }
 
-    utils.file.safePublicPath(sourcePath)
-      .then(existsMod.pathExists)
+    let safePath;
+    try {
+      safePath = utils.file.safePublicPath(sourcePath);
+    } catch (error) {
+      reject(boom.boomify(error));
+    }
+    existsMod.pathExists(safePath)
       .then(transformImages)
       .catch(error => reject(boom.boomify(error)));
   });

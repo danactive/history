@@ -89,7 +89,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
       await existsChecker.pathExists(originalRelativeFile);
       assert.ok(originalRelativeFile, `Original image file found at relative ${originalRelativeFile}`);
 
-      const originalAbsoluteFile = await utils.file.safePublicPath(originalRelativeFile);
+      const originalAbsoluteFile = utils.file.safePublicPath(originalRelativeFile);
       await existsChecker.pathExists(originalAbsoluteFile);
       assert.ok(originalAbsoluteFile, `Original image file found at ${originalAbsoluteFile}`);
 

@@ -2,7 +2,6 @@
 
 import {
   selectHome,
-  makeSelectGalleries,
   makeSelectGalleryLoading,
   makeSelectGalleryError,
 } from '../selectors';
@@ -16,19 +15,6 @@ describe('selectHome', () => {
       home: homeState,
     };
     expect(selectHome(mockedState)).toEqual(homeState);
-  });
-});
-
-describe('makeSelectGalleries', () => {
-  const galleriesSelector = makeSelectGalleries();
-  test('should select the gallery', () => {
-    const contents = ['entity'];
-    const mockedState = {
-      home: {
-        contents,
-      },
-    };
-    expect(galleriesSelector(mockedState)).toEqual(contents);
   });
 });
 

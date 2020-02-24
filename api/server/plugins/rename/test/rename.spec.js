@@ -56,8 +56,8 @@ tape('Verify rename library', { skip: false }, (describe) => {
         const result = await plugin.renamePaths(sourceFolder, filenames, futureFilenames);
         const uniqueResult = new Set(result);
 
-        futureFilenames.forEach(async (filename) => {
-          const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+        futureFilenames.forEach((filename) => {
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
         });
       } catch (error) {
@@ -103,8 +103,8 @@ tape('Verify rename library', { skip: false }, (describe) => {
         const result = await plugin.renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false });
         const uniqueResult = new Set(result);
 
-        futureFilenames.forEach(async (filename) => {
-          const publicPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+        futureFilenames.forEach((filename) => {
+          const publicPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(publicPath), `Public path matches future path (${publicPath})`);
         });
 
@@ -138,7 +138,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
         const uniqueResult = new Set(result);
 
         expectedFilenames.forEach(async (filename) => {
-          const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+          const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
           assert.ok(uniqueResult.has(fullPath), 'Full path matches future path');
 
           await exist.pathExists(`${sourceFolder}/${filename}`);
@@ -166,8 +166,8 @@ tape('Verify rename library', { skip: false }, (describe) => {
       const result = await plugin.renamePaths(sourceFolder, originals, expectedTemp, { preview: true, renameAssociated: true });
       const uniqueResult = new Set(result);
 
-      expectedOriginal.forEach(async (filename) => {
-        const fullPath = await utils.file.safePublicPath(path.join(sourceFolder, filename));
+      expectedOriginal.forEach((filename) => {
+        const fullPath = utils.file.safePublicPath(path.join(sourceFolder, filename));
         assert.notOk(uniqueResult.has(fullPath), `Preview path misses existing path (${filename})`);
       });
 
