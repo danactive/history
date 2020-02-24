@@ -1,102 +1,63 @@
 /* global URL, window */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-export default class SearchBar extends React.Component {
-  constructor(props) {
-    super(props);
+const defaults = {
+  geocode: '13.7524000,100.5021833',
+  instruction: 'Keyword or GeoCode',
+  searchOrder: 'relevance',
+};
 
-    const geocode = SearchBar.getGeoCode(SearchBar.getQS());
-    const searchValue = geocode || SearchBar.defaults.geocode;
-    const { searchOrder } = SearchBar.defaults;
-    this.state = { searchValue, searchOrder };
-  }
+const getQS = () => ((typeof URL === 'undefined') ? '' : new URL(window.location.href).search);
 
-  componentDidMount() {
-    const {
-      onSearchChange,
-    } = this.props;
+// output sample '49.25,-123.1' or ''
+function getGeoCode(qs) {
+  const matches = /(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/.exec(qs);
+  return (matches) ? matches[0] : '';
+}
 
-    const {
-      searchOrder,
-      searchValue,
-    } = this.state;
+export default function SearchBar({
+  onSearchChange: changeSearch,
+}) {
+  const [searchOrder, setSearchOrder] = useState(defaults.searchOrder);
+  const [searchValue, setSearchValue] = useState(getGeoCode(getQS()) || defaults.geocode);
 
-    onSearchChange(searchValue, { searchOrder });
-  }
+  useEffect(() => {
+    changeSearch(searchValue, { searchOrder });
+  }, []);
 
-  onSearchChange(searchValue) {
-    const {
-      onSearchChange,
-    } = this.props;
+  const handleSearchChange = (keyword) => {
+    setSearchValue(keyword);
 
-    const {
-      searchOrder,
-    } = this.state;
+    changeSearch(keyword, { searchOrder });
+  };
 
-    this.setState({ searchValue });
+  const onOrderChange = (order) => {
+    setSearchOrder(order);
 
-    onSearchChange(searchValue, { searchOrder });
-  }
+    changeSearch(searchValue, { searchOrder: order });
+  };
 
-  onOrderChange(searchOrder) {
-    const {
-      onSearchChange,
-    } = this.props;
-
-    const {
-      searchValue,
-    } = this.state;
-
-    this.setState({ searchOrder });
-
-    onSearchChange(searchValue, { searchOrder });
-  }
-
-  static get defaults() {
-    return {
-      geocode: '13.7524000,100.5021833',
-      instruction: 'Keyword or GeoCode',
-      searchOrder: 'relevance',
-    };
-  }
-
-  static getQS() {
-    return (typeof URL === 'undefined') ? '' : new URL(window.location.href).search;
-  }
-
-  // output sample '49.25,-123.1' or ''
-  static getGeoCode(qs) {
-    const matches = /(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/.exec(qs);
-    return (matches) ? matches[0] : '';
-  }
-
-  render() {
-    const {
-      searchValue,
-    } = this.state;
-
-    return (
-      <section id="search-bar">
-        <input
-          onChange={event => this.onSearchChange(event.target.value)}
-          placeholder={SearchBar.defaults.instruction}
-          title={SearchBar.defaults.instruction}
-          value={searchValue}
-          tabIndex="1"
-        />
-        <select
-          defaultValue="relevance"
-          onChange={event => this.onOrderChange(event.target.value)}
-          tabIndex="2"
-        >
-          <option value="date">
-            Date of creation
-          </option>
-          <option value="relevance">
-            Relevance
-          </option>
-        </select>
-      </section>
-    );
-  }
+  return (
+    <section id="search-bar">
+      <input
+        onChange={event => handleSearchChange(event.target.value)}
+        placeholder={defaults.instruction}
+        title={defaults.instruction}
+        value={searchValue}
+        tabIndex="1"
+      />
+      <select
+        defaultValue="relevance"
+        onChange={event => onOrderChange(event.target.value)}
+        tabIndex="2"
+      >
+        <option value="date">
+          Date of creation
+        </option>
+        <option value="relevance">
+          Relevance
+        </option>
+      </select>
+    </section>
+  );
 }

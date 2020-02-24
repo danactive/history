@@ -8,7 +8,7 @@ const glob = promisify(globCallback);
 
 async function listFiles(destPath = '') {
   try {
-    const publicPath = await utils.file.safePublicPath('/');
+    const publicPath = utils.file.safePublicPath('/');
     const globPath = path.join(publicPath, destPath);
 
     if (!globPath.startsWith(publicPath)) {

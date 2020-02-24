@@ -81,22 +81,25 @@ describe('Load album hosted on Dropbox', () => {
   test('action loadAlbum will request with a type of LOAD_ALBUM', () => {
     const expected = {
       type: LOAD_ALBUM,
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
     };
-    expect(loadAlbum('?fake=true&gallery=demo&third=true', 'sample')).toEqual(expected);
-    expect(loadAlbum('?gallery=demo&another=true', 'sample')).toEqual(expected);
+    expect(loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' })).toEqual(expected);
   });
 
   test('reducer should store the action loadAlbum', () => {
-    const action = loadAlbum('?gallery=demo', 'sample');
+    const action = loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' });
     const received = reducer({}, action);
     const expected = {
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
-      demo: {
-        sample: {
-          memories: [],
+      dropbox: {
+        demo: {
+          sample: {
+            memories: [],
+          },
         },
       },
     };
@@ -108,6 +111,7 @@ describe('Load album hosted on Dropbox', () => {
 
   test('action after successful saga with a type of LOAD_ALBUM_SUCCESS', () => {
     const sagaResult = {
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
       memories: fixtures.memories,
@@ -135,6 +139,7 @@ describe('Load album hosted on Dropbox', () => {
     };
 
     const sagaResult = {
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
       memories: fixtures.memories,
@@ -150,6 +155,7 @@ describe('Load album hosted on Dropbox', () => {
 
 describe('Load next thumb page', () => {
   const fixtures = {
+    host: 'dropbox',
     gallery: 'demo',
     album: 'sample',
     memories: [{ link: 'thumbnail.jpg', filename: '2017-12-25.jpg' }],
@@ -173,6 +179,7 @@ describe('Load next thumb page', () => {
 
   test('action nextPageSuccess will request with a type of LOAD_NEXT_THUMB_PAGE_SUCCESS', () => {
     const args = {
+      host: fixtures.host,
       gallery: fixtures.gallery,
       album: fixtures.album,
       newMemories: fixtures.memories,
@@ -188,11 +195,14 @@ describe('Load next thumb page', () => {
 
   test('reducer should store the action nextPageSuccess', () => {
     const state = {
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
-      demo: {
-        sample: {
-          memories: fixtures.memories,
+      dropbox: {
+        demo: {
+          sample: {
+            memories: fixtures.memories,
+          },
         },
       },
     };
@@ -202,6 +212,7 @@ describe('Load next thumb page', () => {
       gallery,
     } = state;
     const args = {
+      host: fixtures.host,
       album: fixtures.album,
       gallery: fixtures.gallery,
       memories: fixtures.memories,

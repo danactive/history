@@ -32,10 +32,6 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
     <Route
       component={[Function]}
-      path="/album/view/:album"
-    />
-    <Route
-      component={[Function]}
       path="/features"
     />
     <Route
@@ -44,7 +40,11 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
     <Route
       component={[Function]}
-      path="/gallery/view/:gallery"
+      path="/view/:host/:gallery/:album"
+    />
+    <Route
+      component={[Function]}
+      path="/view/:host/:gallery"
     />
     <Route
       component={[Function]}

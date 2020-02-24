@@ -1,5 +1,5 @@
 /* global fetch */
-import React from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 
 import SearchBar from './SearchBar';
@@ -8,16 +8,11 @@ import VideoDetail from './VideoDetail';
 
 const API_KEY = process.env.HISTORY_YOUTUBE_API_KEY;
 
-export default class ExploreVideo extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      videos: [],
-      selectedVideo: null,
-    };
-  }
+export default function ExploreVideo() {
+  const [videos, setVideos] = useState([]);
+  const [selectedVideo, selectVideo] = useState(null);
 
-  videoSearch(searchValue, options = {}) {
+  const fetchVideos = (searchValue, options = {}) => {
     if (!searchValue) {
       return undefined;
     }
@@ -37,28 +32,19 @@ export default class ExploreVideo extends React.Component {
     return fetch(address)
       .then(response => response.json())
       .then((payload) => {
-        this.setState({
-          videos: payload.items,
-          selectedVideo: payload.items[0],
-        });
+        setVideos(payload.items);
+        selectVideo(payload.items[0]);
       })
       .catch(error => console.debug(error.message));
-  }
+  };
 
-  render() {
-    const {
-      selectedVideo,
-      videos,
-    } = this.state;
+  const videoSearch = _.debounce((searchValue, options) => fetchVideos(searchValue, options), 400);
 
-    const videoSearch = _.debounce((searchValue, options) => this.videoSearch(searchValue, options), 400);
-
-    return (
-      <section id="video-component">
-        <SearchBar onSearchChange={videoSearch} />
-        <VideoDetail video={selectedVideo} />
-        <VideoList onVideoSelect={currentVideo => this.setState({ selectedVideo: currentVideo })} videos={videos} />
-      </section>
-    );
-  }
+  return (
+    <section id="video-component">
+      <SearchBar onSearchChange={videoSearch} />
+      <VideoDetail video={selectedVideo} />
+      <VideoList onVideoSelect={selectVideo} videos={videos} />
+    </section>
+  );
 }

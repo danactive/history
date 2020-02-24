@@ -10,24 +10,27 @@ import {
   PREV_MEMORY,
 } from './constants';
 
-function parseQueryString(find, from) {
-  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
-}
-
-export function loadAlbum(querystring, album) {
+export function loadAlbum({ host, gallery, album }) {
   return {
     type: LOAD_ALBUM,
-    gallery: parseQueryString('gallery', querystring),
+    host,
+    gallery,
     album,
   };
 }
 
-export function albumLoadSuccess({ gallery, album, memories }) {
+export function albumLoadSuccess({
+  memories,
+  host,
+  gallery,
+  album,
+}) {
   return {
     type: LOAD_ALBUM_SUCCESS,
+    memories,
+    host,
     gallery,
     album,
-    memories,
   };
 }
 
@@ -38,22 +41,29 @@ export function albumLoadError(error) {
   };
 }
 
-export function loadNextPage() {
+export function loadNextPage(nextPageNum) {
   return {
     type: LOAD_NEXT_THUMB_PAGE,
+    nextPageNum,
   };
 }
 
 export function nextPageSuccess({
-  gallery, album, newMemories, page,
+  newMemories,
+  hasMore,
+  page,
+  host,
+  gallery,
+  album,
 }) {
   return {
     type: LOAD_NEXT_THUMB_PAGE_SUCCESS,
-    gallery,
-    album,
     newMemories,
     page,
-    hasMore: true,
+    hasMore,
+    host,
+    gallery,
+    album,
   };
 }
 
@@ -65,15 +75,20 @@ export function nextPageError(error) {
 }
 
 export function thumbsLoaded({
-  gallery, album, newMemories, page,
+  newMemories,
+  page,
+  host,
+  gallery,
+  album,
 }) {
   return {
     type: LOAD_THUMBS_SUCCESS,
-    gallery,
-    album,
     newMemories,
     page,
     hasMore: false,
+    host,
+    gallery,
+    album,
   };
 }
 

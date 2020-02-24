@@ -1,24 +1,11 @@
 /* global describe, expect, test */
 
 import {
-  selectAlbum,
   selectPage,
-  selectCurrentMemory,
+  makeSelectCurrentMemory,
   makeSelectThumbsError,
   makeSelectThumbsLoading,
 } from '../selectors';
-
-describe('selectAlbum', () => {
-  test('should select the album state', () => {
-    const albumState = {
-      anything: '',
-    };
-    const mockedState = {
-      albums: albumState,
-    };
-    expect(selectAlbum(mockedState)).toEqual(albumState);
-  });
-});
 
 describe('selectPage', () => {
   test('should select the page state', () => {
@@ -32,17 +19,19 @@ describe('selectPage', () => {
   });
 });
 
-describe('selectCurrentMemory', () => {
+describe('makeSelectCurrentMemory', () => {
   test('should select the current memory', () => {
-    const albumState = {
+    const currentMemorySelector = makeSelectCurrentMemory();
+    const globalState = {
+      host: 'dropbox',
       gallery: 'demo',
       album: 'sample',
       currentMemory: null,
     };
     const mockedState = {
-      albumViewPage: albumState,
+      global: globalState,
     };
-    expect(selectCurrentMemory(mockedState)).toEqual(albumState);
+    expect(currentMemorySelector(mockedState)).toEqual(globalState);
   });
 });
 

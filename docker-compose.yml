@@ -1,12 +1,12 @@
 version: '3'
 services:
-  web:
+  api:
     build: api
     ports:
       - "8000:8000"
     volumes:
       - ./config.json:/app/config.json:ro
-      - ./public:/app/public:ro
+      - ./public:/app/public:ro # Unit tests need no readonly mode so remove `:ro`
   ui:
     build: ui
     ports:
