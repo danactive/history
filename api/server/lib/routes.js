@@ -54,9 +54,14 @@ const createErrorReply = reply => (error) => {
   reply(boomError);
 };
 
+function wrapError(error) {
+  return (error.isBoom) ? error : boom.boomify(error);
+}
+
 module.exports = {
   createErrorReply,
   staticRoute,
   staticRouteJquery,
   staticRouteUtils,
+  wrapError,
 };

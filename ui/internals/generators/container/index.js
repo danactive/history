@@ -32,7 +32,7 @@ module.exports = {
       type: 'confirm',
       name: 'wantHeaders',
       default: false,
-      message: 'Do you want headers?',
+      message: 'Do you want helmet headers?',
     },
     {
       type: 'confirm',
@@ -65,13 +65,13 @@ module.exports = {
     const actions = [
       {
         type: 'add',
-        path: '../../app/containers/{{properCase name}}/index.js',
+        path: '../../app/containers/{{properCase name}}/index.jsx',
         templateFile: './container/index.js.hbs',
         abortOnFail: true,
       },
       {
         type: 'add',
-        path: '../../app/containers/{{properCase name}}/tests/index.test.js',
+        path: '../../app/containers/{{properCase name}}/tests/index.test.jsx',
         templateFile: './container/test.js.hbs',
         abortOnFail: true,
       },

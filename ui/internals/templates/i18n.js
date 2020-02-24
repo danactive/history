@@ -16,7 +16,6 @@ addLocaleData(enLocaleData);
 
 const DEFAULT_LOCALE = 'en';
 
-// prettier-ignore
 const appLocales = [
   'en',
 ];

@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
+import AdminLandingPage from '../AdminLandingPage/Loadable';
 import AlbumViewPage from '../AlbumViewPage/Loadable';
 import ExploreVideo from '../ExploreVideo';
 import HomePage from '../HomePage/Loadable';
@@ -11,6 +12,7 @@ import GalleryViewPage from '../GalleryViewPage/Loadable';
 import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Walk from '../Walk/Loadable';
 
 import GlobalStyle from '../../global-styles';
 
@@ -34,6 +36,8 @@ export default function App() {
       <Header />
       <Switch>
         <Route exact path="/" component={HomePage} />
+        <Route exact path="/admin" component={AdminLandingPage} />
+        <Route exact path="/admin/walk" component={Walk} />
         <Route path="/features" component={FeaturePage} />
         <Route path="/explore" component={ExploreVideo} />
         <Route path="/view/:host/:gallery/:album" component={AlbumViewPage} />

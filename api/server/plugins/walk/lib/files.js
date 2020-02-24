@@ -2,7 +2,6 @@ const globCallback = require('glob');
 const path = require('path');
 const { promisify } = require('util');
 
-const config = require('../../../../../config.json');
 const utils = require('../../utils');
 
 const glob = promisify(globCallback);
@@ -37,11 +36,6 @@ async function listFiles(destPath = '') {
   }
 }
 
-function areImages(file) {
-  return (file.mediumType === 'image' && config.supportedFileTypes.photo.includes(file.ext.toLowerCase()));
-}
-
 module.exports = {
-  areImages,
   listFiles,
 };

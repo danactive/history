@@ -21,7 +21,6 @@ module.exports = [
     entry: {
       album: './server/plugins/album/lib/browser.js',
       editAlbum: './server/plugins/editAlbum/lib/browser.js',
-      walk: './server/plugins/walk/lib/browser.js',
     },
     resolve: {
       extensions: ['.css', '.js', '.jsx'],

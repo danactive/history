@@ -42,7 +42,7 @@ describe('<{{ properCase name }} />', () => {
    *
    * @see {@link https://jestjs.io/docs/en/api#testskipname-fn}
    */
-  it.skip('Should render and match the snapshot', () => {
+  test.skip('Should render and match the snapshot', () => {
 {{#if wantMessages}}
     const {
       container: { firstChild },

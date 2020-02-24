@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 function Placeholder({ file }) {
   return (
@@ -13,4 +13,4 @@ function Placeholder({ file }) {
   );
 }
 
-module.exports = Placeholder;
+export default Placeholder;
