@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/danactive/history/compare/v4.1.0...v5.0.0) (2020-02-28)
+
+
+* Merge pull request #382 from danactive/breaking-boilerplate-35-40 ([ff964fc](https://github.com/danactive/history/commit/ff964fc)), closes [#382](https://github.com/danactive/history/issues/382)
+
+
+### Bug Fixes
+
+* **CI:** Enable unit test execution with travis as frontend ([269042d](https://github.com/danactive/history/commit/269042d))
+* **Home:** Display missing Dropbox access token error ([cf05069](https://github.com/danactive/history/commit/cf05069))
+* **Infinite Thumbs:** Prevent loop errors ([4493a3f](https://github.com/danactive/history/commit/4493a3f))
+* **Photo Header:** Decode XML ampersand ([6e6a140](https://github.com/danactive/history/commit/6e6a140))
+* **React Boilerplate:** Correct eslint rules path ([f101833](https://github.com/danactive/history/commit/f101833))
+* **React Boilerplate:** Lint with AirBnb rules ([509748b](https://github.com/danactive/history/commit/509748b))
+* **React Boilerplate:** Lint with AirBnb rules ([cfe6be7](https://github.com/danactive/history/commit/cfe6be7))
+* **React Boilerplate:** Update snapshot tests ([a45fb69](https://github.com/danactive/history/commit/a45fb69))
+* **React Boilerplate:** Update to Airbnb lint, drop PropTypes, prettier ([e9a427c](https://github.com/danactive/history/commit/e9a427c))
+* **React Boilerplate:** Upgrade Loading in all containers (no tests) ([e0a4e8e](https://github.com/danactive/history/commit/e0a4e8e))
+* **React Boilerplate:** Upgrade reducers in all containers (tested) ([a88636f](https://github.com/danactive/history/commit/a88636f))
+* **React Boilerplate:** Upgrade remaining test files ([22e0192](https://github.com/danactive/history/commit/22e0192))
+* **React Boilerplate:** Upgrade selectors in all containers (tested) ([eefdb3a](https://github.com/danactive/history/commit/eefdb3a))
+* **React Boilerplate:** Verify in browser (too many requests) ([30bf84f](https://github.com/danactive/history/commit/30bf84f))
+* **Resize:** Improve error message when GraphicsMagick is missing ([8d41757](https://github.com/danactive/history/commit/8d41757))
+* **Video:** Add CLI command using Docker for ffmpeg video conversion ([b100db8](https://github.com/danactive/history/commit/b100db8))
+* **Video:** Show video poster until video is played, stop autoplay ([86748eb](https://github.com/danactive/history/commit/86748eb))
+* api/package.json & api/package-lock.json to reduce vulnerabilities ([4de28c9](https://github.com/danactive/history/commit/4de28c9))
+
+
+### Features
+
+* **Admin:** Add a landing page ([ad3fd6b](https://github.com/danactive/history/commit/ad3fd6b))
+* **Album View:** Add Dropbox host to address ([9e75991](https://github.com/danactive/history/commit/9e75991))
+* **Album View:** Add Local host to view album ([26e7696](https://github.com/danactive/history/commit/26e7696))
+* **Album View:** Update actions to avoid state; easier for debugging ([4eceffd](https://github.com/danactive/history/commit/4eceffd))
+* **API Server:** All routes enable CORS to allow UI to HTTP Request cross domains ([f86cb97](https://github.com/danactive/history/commit/f86cb97))
+* **CI:** Drop Windows build ([9952971](https://github.com/danactive/history/commit/9952971))
+* **CI:** Exclude React from server side best practices ([7a3bd1f](https://github.com/danactive/history/commit/7a3bd1f))
+* **Docker:** Add Graphicsmagick ([0619f64](https://github.com/danactive/history/commit/0619f64))
+* **Explore Video:** Move YouTube player components from API to UI ([020b2f7](https://github.com/danactive/history/commit/020b2f7))
+* **Explore Video:** Update components from Node.js to browser code ([c6ac5ff](https://github.com/danactive/history/commit/c6ac5ff))
+* **Gallery:** Add Dropbox host to address ([637f4d4](https://github.com/danactive/history/commit/637f4d4))
+* **Gallery View:** Add Dropbox host to address ([66743d1](https://github.com/danactive/history/commit/66743d1))
+* **Gallery View:** Add Local host to view galleries ([e84fca8](https://github.com/danactive/history/commit/e84fca8))
+* **Photo Header:** Display reference source ([e31344d](https://github.com/danactive/history/commit/e31344d))
+* **React Boilerplate:** Upgrade common files from v3.5 to v4.0 ([dcbf4bf](https://github.com/danactive/history/commit/dcbf4bf))
+* **Walk:** Display directory listing ([521ce5a](https://github.com/danactive/history/commit/521ce5a))
+* **Walk:** Display directory listing with page reload ([a21edd5](https://github.com/danactive/history/commit/a21edd5))
+* **Walk:** Link from Admin ([91f7f54](https://github.com/danactive/history/commit/91f7f54))
+* **Walk:** Separate API by simplifing without React on server ([e38adc9](https://github.com/danactive/history/commit/e38adc9))
+
+
+### BREAKING CHANGES
+
+* upgrade React Boilerplate from v3.5 to v4.0
+* **React Boilerplate:** React Hooks, Immer, react-testing-library
+
+
+
 ## [4.1.0](https://github.com/danactive/history/compare/v4.0.0...v4.1.0) (2019-06-03)
 
 
