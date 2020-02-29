@@ -13,7 +13,7 @@ test('Verify /view/album route', { skip: false }, (describe) => {
   const testCases = require('./cases');
   const testCaseDef = require('../../../test/casesDefinition');
 
-  const SAMPLE_IMAGE_COUNT = 5;
+  const SAMPLE_IMAGE_COUNT = 6;
   const plugins = [inert, vision, lib];
 
   testCaseDef.execHapi({

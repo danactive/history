@@ -103,7 +103,7 @@ cases.push({
   successView: (assert, result) => {
     assert.ok(result, 'Has response');
     const actual = result.album.items.length;
-    const expected = 5;
+    const expected = 6;
     assert.equal(actual, expected, 'Photo count');
     assert.end();
   },
