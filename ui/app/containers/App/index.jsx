@@ -7,7 +7,6 @@ import AdminLandingPage from '../AdminLandingPage/Loadable';
 import AlbumViewPage from '../AlbumViewPage/Loadable';
 import ExploreVideo from '../ExploreVideo';
 import HomePage from '../HomePage/Loadable';
-import FeaturePage from '../FeaturePage/Loadable';
 import GalleryViewPage from '../GalleryViewPage/Loadable';
 import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
@@ -38,7 +37,6 @@ export default function App() {
         <Route exact path="/" component={HomePage} />
         <Route exact path="/admin" component={AdminLandingPage} />
         <Route exact path="/admin/walk" component={Walk} />
-        <Route path="/features" component={FeaturePage} />
         <Route path="/explore" component={ExploreVideo} />
         <Route path="/view/:host/:gallery/:album" component={AlbumViewPage} />
         <Route path="/view/:host/:gallery" component={GalleryViewPage} />

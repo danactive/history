@@ -5,11 +5,11 @@
  */
 import { defineMessages } from 'react-intl';
 
-export const scope = 'history.containers.HomePage';
+export const scope = 'app.containers.HomePage';
 
 export default defineMessages({
   galleriesHeader: {
-    id: 'history.containers.HomePage.galleries.header',
+    id: 'app.containers.HomePage.galleries.header',
     defaultMessage: 'Photo galleries',
   },
 });

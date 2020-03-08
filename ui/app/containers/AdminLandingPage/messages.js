@@ -5,15 +5,11 @@
  */
 import { defineMessages } from 'react-intl';
 
-export const scope = 'app.components.Header';
+export const scope = 'app.containers.HomePage';
 
 export default defineMessages({
-  home: {
-    id: `${scope}.home`,
-    defaultMessage: 'Home',
-  },
-  admin: {
-    id: `${scope}.admin`,
+  header: {
+    id: 'app.containers.AdminLandingPage.header',
     defaultMessage: 'Admin',
   },
 });

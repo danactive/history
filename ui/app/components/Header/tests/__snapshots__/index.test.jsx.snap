@@ -15,10 +15,10 @@ exports[`<Header /> should render a div 1`] = `
     </a>
     <a
       class="HeaderLink-sc-1fnrd1i-0 vhtPY"
-      href="/features"
+      href="/admin"
     >
       <span>
-        Features
+        Admin
       </span>
     </a>
   </div>

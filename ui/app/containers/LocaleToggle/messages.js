@@ -5,7 +5,7 @@
  */
 import { defineMessages } from 'react-intl';
 
-export const scope = 'history.containers.LocaleToggle';
+export const scope = 'app.containers.LocaleToggle';
 
 export default defineMessages({
   en: {
@@ -15,5 +15,9 @@ export default defineMessages({
   de: {
     id: `${scope}.de`,
     defaultMessage: 'de',
+  },
+  ja: {
+    id: `${scope}.ja`,
+    defaultMessage: 'ja',
   },
 });

@@ -10,7 +10,7 @@ describe('<ToggleOption />', () => {
     const defaultEnMessage = 'someContent';
     const message = defineMessages({
       enMessage: {
-        id: 'history.containers.LocaleToggle.en',
+        id: 'app.containers.LocaleToggle.en',
         defaultMessage: defaultEnMessage,
       },
     });
