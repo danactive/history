@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.0.1](https://github.com/danactive/history/compare/v5.0.0...v5.0.1) (2020-03-08)
+
+
+### Bug Fixes
+
+* **Home:** Allow local galleries only to load ([9fcceaf](https://github.com/danactive/history/commit/9fcceaf))
+* **Infinite Thumbs:** Allow local galleries only to load ([19ad618](https://github.com/danactive/history/commit/19ad618))
+
+
+
 ## [5.0.0](https://github.com/danactive/history/compare/v4.1.0...v5.0.0) (2020-02-28)
 
 
