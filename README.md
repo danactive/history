@@ -18,7 +18,8 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 ## Installation
 
 ### View (Read-only)
-1. `docker-compose up` Build and start history app (frontend and backend) 
+1. `docker-compose up` Build and start history app (both frontend and backend)
+1.  View frontend at http://localhost:3000
 
 ### Development
 1. Node.js v10.15.x LTS [Download](https://nodejs.org/)

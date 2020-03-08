@@ -17,7 +17,7 @@ export function* getDropboxGalleries() {
     const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
 
     if (!accessToken) {
-      throw new ReferenceError('Dropbox access token is missing');
+      return;
     }
 
     const dbx = new Dropbox({ accessToken, fetch });
