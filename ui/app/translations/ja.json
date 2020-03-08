@@ -1,0 +1,12 @@
+{
+  "app.containers.GalleryViewPage.header": "フォトギャラリーを選択してください",
+  "boilerplate.components.Footer.author.message": "しゅみのプロジェクト {author}.",
+  "boilerplate.components.Footer.license.message": "このプロジェクトは、MITライセンスの下でライセンスされています。",
+  "boilerplate.components.Header.admin": "特徴",
+  "boilerplate.components.Header.home": "ホーム",
+  "boilerplate.containers.NotFoundPage.header": "ページが見つかりません",
+  "history.containers.HomePage.galleries.header": "写真ギャラリー",
+  "history.containers.LocaleToggle.de": "ドイツご",
+  "history.containers.LocaleToggle.en": "エイご",
+  "history.containers.LocaleToggle.ja": "日本語"
+}
