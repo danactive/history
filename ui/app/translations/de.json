@@ -1,12 +1,13 @@
 {
   "app.containers.GalleryViewPage.header": "Wählen Sie eine Fotogalerie",
-  "boilerplate.components.Footer.author.message": "Haustierprojekt von {author}.",
-  "boilerplate.components.Footer.license.message": "Dieses Projekt wird unter der MIT-Lizenz veröffentlicht.",
-  "boilerplate.components.Header.admin": "Eigenschaften",
-  "boilerplate.components.Header.home": "Zuhause",
-  "boilerplate.containers.NotFoundPage.header": "Seite nicht gefunden.",
-  "history.containers.HomePage.galleries.header": "Fotogalerien",
-  "history.containers.LocaleToggle.de": "Deutsche",
-  "history.containers.LocaleToggle.en": "Englisch",
-  "history.containers.LocaleToggle.ja": "Japanisch"
+  "app.components.Footer.author.message": "Haustierprojekt von {author}.",
+  "app.components.Footer.license.message": "Dieses Projekt wird unter der MIT-Lizenz veröffentlicht.",
+  "app.components.Header.admin": "Eigenschaften",
+  "app.components.Header.home": "Zuhause",
+  "app.containers.NotFoundPage.header": "Seite nicht gefunden.",
+  "app.containers.AdminLandingPage.header": "Eigenschaften",
+  "app.containers.HomePage.galleries.header": "Fotogalerien",
+  "app.containers.LocaleToggle.de": "Deutsche",
+  "app.containers.LocaleToggle.en": "Englisch",
+  "app.containers.LocaleToggle.ja": "Japanisch"
 }

@@ -11,11 +11,11 @@ describe('<Toggle />', () => {
     const defaultDeMessage = 'someOtherContent';
     const messages = defineMessages({
       en: {
-        id: 'history.containers.LocaleToggle.en',
+        id: 'app.containers.LocaleToggle.en',
         defaultMessage: defaultEnMessage,
       },
       de: {
-        id: 'history.containers.LocaleToggle.en',
+        id: 'app.containers.LocaleToggle.en',
         defaultMessage: defaultDeMessage,
       },
     });

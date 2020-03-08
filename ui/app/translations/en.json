@@ -1,12 +1,13 @@
 {
   "app.containers.GalleryViewPage.header": "Choose a photo gallery",
-  "boilerplate.components.Footer.author.message": "Pet project by {author}.",
-  "boilerplate.components.Footer.license.message": "This project is licensed under the MIT license.",
-  "boilerplate.components.Header.admin": "Admin",
-  "boilerplate.components.Header.home": "Home",
-  "boilerplate.containers.NotFoundPage.header": "Page not found.",
-  "history.containers.HomePage.galleries.header": "Photo galleries",
-  "history.containers.LocaleToggle.de": "German",
-  "history.containers.LocaleToggle.en": "English",
-  "history.containers.LocaleToggle.ja": "Japanese"
+  "app.components.Footer.author.message": "Pet project by {author}.",
+  "app.components.Footer.license.message": "This project is licensed under the MIT license.",
+  "app.components.Header.admin": "Admin",
+  "app.components.Header.home": "Home",
+  "app.containers.NotFoundPage.header": "Page not found.",
+  "app.containers.AdminLandingPage.header": "Admin",
+  "app.containers.HomePage.galleries.header": "Photo galleries",
+  "app.containers.LocaleToggle.de": "German",
+  "app.containers.LocaleToggle.en": "English",
+  "app.containers.LocaleToggle.ja": "Japanese"
 }
