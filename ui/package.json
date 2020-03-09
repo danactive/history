@@ -95,7 +95,7 @@
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
     "styled-components": "4.2.0",
-    "webpack": "4.30.0",
+    "webpack": "4.42.0",
     "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {
