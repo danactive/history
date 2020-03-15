@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type="text/xsl" href="../../xslt/album.xslt"?>
-<!-- This XML associates photos and videos with meta data: geocode, caption, friends (characters)... -->
 <album>
 	<meta>
 		<gallery>demo</gallery>
@@ -62,9 +61,24 @@
 		<photo_city>Vancouver International Airport, BC</photo_city>
 		<photo_loc>YVR</photo_loc>
 		<thumb_caption>Airport</thumb_caption>
-		<photo_desc></photo_desc>
+		<photo_desc/>
 		<ref>
 			<name>Vancouver_International_Airport</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="6">
+		<filename>2020-02-28-40.jpg</filename>
+		<geo>
+			<lat>49.287434</lat>
+			<lon>-123.117035</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Brass Fish Tavern</photo_loc>
+		<thumb_caption>Tavern</thumb_caption>
+		<photo_desc>Located in the iconic art deco  Marine building</photo_desc>
+		<ref>
+			<name>Marine_Building</name>
 			<source>wikipedia</source>
 		</ref>
 	</item>

@@ -1,17 +1,11 @@
-const getMapStyle = (currentMemory = {}) => ({
+const getMapStyle = ({ coordinates, url }) => ({
   version: 8,
   name: 'Photo',
   sources: {
-    overlay: {
+    photoSrc: {
       type: 'image',
-      url: currentMemory.photoLink || currentMemory.thumbLink,
-      coordinates: [
-        // long lat
-        [0, 9.25], // top left
-        [17.5, 9.25], // top right
-        [17.5, 0], // bottom right
-        [0, 0], // bottom left
-      ],
+      url,
+      coordinates,
     },
   },
   layers: [
@@ -21,21 +15,21 @@ const getMapStyle = (currentMemory = {}) => ({
       paint: { 'background-color': '#111' },
     },
     {
-      id: 'overlay',
-      source: 'overlay',
+      id: 'photoId',
+      source: 'photoSrc',
       type: 'raster',
     },
   ],
 });
 
-const getMapOptions = currentMemory => ({
+const getMapOptions = source => ({
   containerStyle: {
     height: '100%',
     width: '100%',
   },
   zoom: [5],
   center: [8.75, 4.625],
-  style: getMapStyle(currentMemory),
+  style: getMapStyle(source),
 });
 
 export default getMapOptions;
