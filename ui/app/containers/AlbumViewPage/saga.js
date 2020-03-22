@@ -7,7 +7,12 @@ import {
 import normalizeError from '../../utils/error';
 import request from '../../utils/request';
 
-import { LOAD_ALBUM, LOAD_NEXT_THUMB_PAGE, PAGE_SIZE } from './constants';
+import {
+  LOAD_ALBUM,
+  LOAD_ALBUM_SUCCESS,
+  LOAD_NEXT_THUMB_PAGE,
+  PAGE_SIZE,
+} from './constants';
 import {
   albumLoadSuccess,
   albumLoadError,
@@ -188,8 +193,22 @@ export function* getThumbPaths() {
   }
 }
 
+export function* preloadFirst() {
+  // const {
+  //   page,
+  //   memories,
+  //   album,
+  //   gallery,
+  //   host,
+  // } = yield select(selectNextPage);
+  //
+  // console.log('page', page);
+  // console.log('memories', memories);
+}
+
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
   yield takeLatest(LOAD_ALBUM, getAlbumFile);
+  yield takeLatest(LOAD_ALBUM_SUCCESS, preloadFirst);
   yield takeLatest(LOAD_NEXT_THUMB_PAGE, getThumbPaths);
 }

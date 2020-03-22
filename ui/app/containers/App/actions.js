@@ -12,10 +12,15 @@ export function chooseMemory(id) {
 }
 
 export function photoLoadSuccess({
-  gallery, album, id, photoLink,
+  host,
+  gallery,
+  album,
+  id,
+  photoLink,
 }) {
   return {
     type: LOAD_PHOTO_SUCCESS,
+    host,
     gallery,
     album,
     id,

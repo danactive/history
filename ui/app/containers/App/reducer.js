@@ -97,6 +97,9 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case LOAD_PHOTO_SUCCESS: {
+      const memoryIndex = draft[action.host][action.gallery][action.album].memories.findIndex(memory => memory.id === action.id);
+      draft[action.host][action.gallery][action.album].memories[memoryIndex].photoLink = action.photoLink;
+
       draft.currentMemory.photoLink = action.photoLink;
       break;
     }

@@ -8,6 +8,7 @@ import normalizeError from '../../utils/error';
 
 import { CHOOSE_MEMORY } from '../App/constants';
 import { makeSelectCurrentMemory } from '../App/selectors';
+import { makeSelectMemories } from '../AlbumViewPage/selectors';
 import { photoLoadError, photoLoadSuccess } from '../App/actions';
 import {
   NEXT_MEMORY,
@@ -34,40 +35,80 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 
 
 // saga WORKER for CHOOSE_MEMORY
-export function* getPhotoPathsOnDropbox({ currentMemory, album, gallery }) {
+export function* getPhotoPathsOnDropbox({
+  currentMemory,
+  host,
+  gallery,
+  album,
+}) {
   try {
     const { filename, id } = currentMemory;
     const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsPhotoXmlPath({ gallery, filename }));
 
     yield put(photoLoadSuccess({
-      gallery, album, id, photoLink: xmlUrl.link,
+      id,
+      photoLink: xmlUrl.link,
+      host,
+      gallery,
+      album,
     }));
   } catch (error) {
     yield put(photoLoadError(normalizeError(error)));
   }
 }
 
-export function* getPhotoPathsLocally({ currentMemory, album, gallery }) {
+export function* getPhotoPathsLocally({
+  id,
+  currentMemory,
+  host,
+  gallery,
+  album,
+}) {
   yield put(photoLoadSuccess({
-    id: new Date().toISOString(),
+    id,
     photoLink: currentMemory.thumbLink.replace('thumbs', 'photos'),
+    host,
     gallery,
     album,
   }));
 }
 
-export function* getPhotoPaths() {
-  const args = yield select(makeSelectCurrentMemory());
+export function* getCurrentMemoryPhotoPath({ id }) {
+  const {
+    currentMemory,
+    host,
+    gallery,
+    album,
+  } = yield select(makeSelectCurrentMemory());
 
-  if (args.host === 'dropbox') {
-    yield call(getPhotoPathsOnDropbox, args);
-  } else if (args.host === 'local') {
-    yield call(getPhotoPathsLocally, args);
+  const memories = yield select(makeSelectMemories());
+  const { photoLink } = memories.find(memory => memory.id === id);
+
+  if (photoLink !== null) {
+    return;
+  }
+
+  if (host === 'dropbox') {
+    yield call(getPhotoPathsOnDropbox, {
+      id,
+      currentMemory,
+      host,
+      gallery,
+      album,
+    });
+  } else if (host === 'local') {
+    yield call(getPhotoPathsLocally, {
+      id,
+      currentMemory,
+      host,
+      gallery,
+      album,
+    });
   }
 }
 
 
 // ROOT saga manages WATCHER lifecycle
 export default function* InfiniteThumbsSagaWatcher() {
-  yield takeEvery([CHOOSE_MEMORY, NEXT_MEMORY, PREV_MEMORY], getPhotoPaths);
+  yield takeEvery([CHOOSE_MEMORY, NEXT_MEMORY, PREV_MEMORY], getCurrentMemoryPhotoPath);
 }
