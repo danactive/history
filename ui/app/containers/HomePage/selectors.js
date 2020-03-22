@@ -14,17 +14,23 @@ const makeSelectItems = () => createSelector(
 
 const makeSelectGalleryLoading = () => createSelector(
   selectHome,
-  homeState => homeState.galleryLoading,
+  homeState => homeState.galleryLoadings.includes(true),
 );
 
-const makeSelectGalleryError = () => createSelector(
+const makeSelectGalleryErrors = () => createSelector(
   selectHome,
-  homeState => homeState.galleryError,
+  (homeState) => {
+    if (homeState.galleryErrors.includes(false) === true) {
+      return false;
+    }
+
+    return { message: 'All galleries failed to load' };
+  },
 );
 
 export {
   selectHome,
   makeSelectItems,
   makeSelectGalleryLoading,
-  makeSelectGalleryError,
+  makeSelectGalleryErrors,
 };

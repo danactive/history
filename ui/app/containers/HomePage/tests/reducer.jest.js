@@ -4,7 +4,7 @@ import produce from 'immer';
 import homeReducer, { initialState } from '../reducer';
 import {
   loadGalleries,
-  galleriesLoaded,
+  galleriesLoadingSuccess,
   galleriesLoadingError,
 } from '../actions';
 
@@ -22,26 +22,26 @@ describe('homeReducer', () => {
 
   test('should handle the loadGalleries action correctly', () => {
     const expectedResult = produce(state, (draft) => {
-      draft.galleryLoading = true;
+      draft.galleryLoadings = true;
     });
 
     expect(homeReducer(state, loadGalleries())).toEqual(expectedResult);
   });
 
-  test('should handle the galleriesLoaded action correctly', () => {
+  test('should handle the galleriesLoadingSuccess action correctly', () => {
     const fixture = { entries: [{ name: 'gallery-demo', path_lower: '/public/gallery-demo' }] };
     const expectedResult = produce(state, (draft) => {
-      draft.galleryLoading = false;
+      draft.galleryLoadings = false;
       draft.contents = fixture.entries;
     });
 
-    expect(homeReducer(state, galleriesLoaded(fixture))).toEqual(expectedResult);
+    expect(homeReducer(state, galleriesLoadingSuccess(fixture))).toEqual(expectedResult);
   });
 
   test('should handle the galleriesLoadingError action correctly', () => {
     const fixture = { type: 'ReferenceError' };
     const expectedResult = produce(state, (draft) => {
-      draft.galleryError = fixture;
+      draft.galleryErrors = fixture;
     });
 
     expect(homeReducer(state, galleriesLoadingError(fixture))).toEqual(expectedResult);

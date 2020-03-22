@@ -3,7 +3,7 @@
 import {
   selectHome,
   makeSelectGalleryLoading,
-  makeSelectGalleryError,
+  makeSelectGalleryErrors,
 } from '../selectors';
 
 describe('selectHome', () => {
@@ -19,27 +19,27 @@ describe('selectHome', () => {
 });
 
 describe('makeSelectGalleryLoading', () => {
-  const galleryLoadingSelector = makeSelectGalleryLoading();
+  const galleryLoadingsSelector = makeSelectGalleryLoading();
   test('should select the loading status', () => {
-    const galleryLoading = true;
+    const galleryLoadings = true;
     const mockedState = {
       home: {
-        galleryLoading,
+        galleryLoadings,
       },
     };
-    expect(galleryLoadingSelector(mockedState)).toEqual(galleryLoading);
+    expect(galleryLoadingsSelector(mockedState)).toEqual(galleryLoadings);
   });
 });
 
-describe('makeSelectGalleryError', () => {
-  const galleryErrorSelector = makeSelectGalleryError();
+describe('makeSelectGalleryErrors', () => {
+  const galleryErrorsSelector = makeSelectGalleryErrors();
   test('should select the error status', () => {
-    const galleryError = true;
+    const galleryErrors = true;
     const mockedState = {
       home: {
-        galleryError,
+        galleryErrors,
       },
     };
-    expect(galleryErrorSelector(mockedState)).toEqual(galleryError);
+    expect(galleryErrorsSelector(mockedState)).toEqual(galleryErrors);
   });
 });

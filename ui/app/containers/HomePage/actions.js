@@ -10,7 +10,7 @@ export function loadGalleries() {
   };
 }
 
-export function galleriesLoaded(galleries) {
+export function galleriesLoadingSuccess(galleries) {
   return {
     galleries,
     type: LOAD_GALLERIES_SUCCESS,
