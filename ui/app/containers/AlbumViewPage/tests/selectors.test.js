@@ -65,7 +65,7 @@ describe('makeSelectAlbumName', () => {
   test('should select the album error message', () => {
     const album = 'sample';
     const mockedState = {
-      albums: {
+      global: {
         album,
       },
     };
@@ -77,12 +77,15 @@ describe('makeSelectMemories', () => {
   const memoriesSelector = makeSelectMemories();
   test('should select the album memories', () => {
     const mockedState = {
-      albums: {
+      global: {
+        host: 'local',
         gallery: 'demo',
         album: 'sample',
-        demo: {
-          sample: {
-            memories: [{ filename: '2017-12-25.jpg' }],
+        local: {
+          demo: {
+            sample: {
+              memories: [{ filename: '2017-12-25.jpg' }],
+            },
           },
         },
       },
@@ -98,17 +101,21 @@ describe('selectNextPage', () => {
       albumViewPage: {
         page: 1,
       },
-      albums: {
+      global: {
+        host: 'local',
         gallery: 'demo',
         album: 'sample',
-        demo: {
-          sample: {
-            memories: [],
+        local: {
+          demo: {
+            sample: {
+              memories: [],
+            },
           },
         },
       },
     };
     const expected = {
+      host: 'local',
       gallery: 'demo',
       album: 'sample',
       memories: [],
