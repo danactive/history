@@ -17,13 +17,13 @@ import { loadGalleries } from './actions';
 import {
   makeSelectItems,
   makeSelectGalleryLoading,
-  makeSelectGalleryError,
+  makeSelectGalleryErrors,
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
 export function HomePage({
-  galleryError,
+  galleryErrors,
   galleryLoading,
   items,
   onLoad,
@@ -34,7 +34,7 @@ export function HomePage({
 
   const galleryListProps = {
     loading: galleryLoading,
-    error: galleryError,
+    error: galleryErrors,
     items,
     component: GalleryListItem,
   };
@@ -65,7 +65,7 @@ export function mapDispatchToProps(dispatch) {
 const mapStateToProps = createStructuredSelector({
   items: makeSelectItems(),
   galleryLoading: makeSelectGalleryLoading(),
-  galleryError: makeSelectGalleryError(),
+  galleryErrors: makeSelectGalleryErrors(),
 });
 
 const withConnect = connect(

@@ -7,7 +7,7 @@ import {
 
 import {
   loadGalleries,
-  galleriesLoaded,
+  galleriesLoadingSuccess,
   galleriesLoadingError,
 } from '../actions';
 
@@ -20,14 +20,14 @@ describe('Home Actions', () => {
     expect(loadGalleries()).toEqual(expectedResult);
   });
 
-  test('galleriesLoaded', () => {
+  test('galleriesLoadingSuccess', () => {
     const galleries = ['gallery'];
     const expectedResult = {
       galleries,
       type: LOAD_GALLERIES_SUCCESS,
     };
 
-    expect(galleriesLoaded(galleries)).toEqual(expectedResult);
+    expect(galleriesLoadingSuccess(galleries)).toEqual(expectedResult);
   });
 
   test('galleriesLoadingError', () => {

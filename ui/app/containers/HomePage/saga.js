@@ -8,7 +8,7 @@ import {
 } from 'redux-saga/effects';
 
 import request from '../../utils/request';
-import { galleriesLoaded, galleriesLoadingError } from './actions';
+import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
 import { LOAD_GALLERIES } from './constants';
 
 // Dropbox API v2 request/response handler
@@ -17,14 +17,18 @@ export function* getDropboxGalleries() {
     const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
 
     if (!accessToken) {
+      const error = new ReferenceError('.env is missing HISTORY_DROPBOX_ACCESS_TOKEN');
+      console.error(error);
+      yield put(galleriesLoadingError(error));
       return;
     }
 
     const dbx = new Dropbox({ accessToken, fetch });
 
     const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
-    yield put(galleriesLoaded({ dropbox: galleries }));
+    yield put(galleriesLoadingSuccess({ dropbox: galleries }));
   } catch (error) {
+    console.error(error);
     yield put(galleriesLoadingError(error));
   }
 }
@@ -32,8 +36,9 @@ export function* getDropboxGalleries() {
 function* getLocalFolders() {
   try {
     const { galleries } = yield call(request, 'http://localhost:8000/gallery/list');
-    yield put(galleriesLoaded({ local: galleries.map(name => ({ name, id: `local-${name}` })) }));
+    yield put(galleriesLoadingSuccess({ local: galleries.map(name => ({ name, id: `local-${name}` })) }));
   } catch (error) {
+    console.error(error);
     yield put(galleriesLoadingError(error));
   }
 }

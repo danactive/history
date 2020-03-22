@@ -6,10 +6,10 @@ import {
   LOAD_GALLERIES_ERROR,
 } from './constants';
 
-// The initial state of the App
+// The initial state of the HomePage
 export const initialState = {
-  galleryError: false,
-  galleryLoading: false,
+  galleryErrors: [false, false],
+  galleryLoadings: [false, false],
   galleries: {
     dropbox: [],
     local: [],
@@ -20,12 +20,12 @@ export const initialState = {
 const homeReducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
     case LOAD_GALLERIES:
-      draft.galleryError = false;
-      draft.galleryLoading = true;
+      draft.galleryLoadings = [true, true];
+      draft.galleryErrors = [false, false];
       break;
 
     case LOAD_GALLERIES_SUCCESS:
-      draft.galleryLoading = false;
+      draft.galleryLoadings[draft.galleryLoadings.indexOf(true)] = false;
       if (action.galleries && action.galleries.dropbox && action.galleries.dropbox.entries) {
         draft.galleries.dropbox = action.galleries.dropbox.entries.map(item => ({
           id: item.id,
@@ -38,8 +38,8 @@ const homeReducer = (state = initialState, action) => produce(state, (draft) => 
       break;
 
     case LOAD_GALLERIES_ERROR:
-      draft.galleryError = action.error;
-      draft.galleryLoading = false;
+      draft.galleryErrors[draft.galleryErrors.indexOf(false)] = action.error.message;
+      draft.galleryLoadings[draft.galleryLoadings.indexOf(true)] = false;
       break;
   }
 });
