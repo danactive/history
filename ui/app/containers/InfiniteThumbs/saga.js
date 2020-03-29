@@ -9,11 +9,8 @@ import normalizeError from '../../utils/error';
 import { CHOOSE_MEMORY } from '../App/constants';
 import { makeSelectCurrentMemory } from '../App/selectors';
 import { makeSelectMemories } from '../AlbumViewPage/selectors';
-import { photoLoadError, photoLoadSuccess } from '../App/actions';
-import {
-  NEXT_MEMORY,
-  PREV_MEMORY,
-} from '../AlbumViewPage/constants';
+import { chooseMemory, photoLoadError, photoLoadSuccess } from '../App/actions';
+import { NEXT_MEMORY, PREV_MEMORY } from '../AlbumViewPage/constants';
 
 const dbx = (process.env.HISTORY_DROPBOX_ACCESS_TOKEN) ? new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch }) : null;
 
@@ -34,7 +31,7 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 };
 
 
-// saga WORKER for CHOOSE_MEMORY
+// saga WORKER for CHOOSE_MEMORY for Dropbox gallery
 export function* getPhotoPathsOnDropbox({
   currentMemory,
   host,
@@ -57,6 +54,7 @@ export function* getPhotoPathsOnDropbox({
   }
 }
 
+// saga WORKER for CHOOSE_MEMORY for local gallery
 export function* getPhotoPathsLocally({
   id,
   currentMemory,
@@ -73,6 +71,7 @@ export function* getPhotoPathsLocally({
   }));
 }
 
+// saga WORKER for CHOOSE_MEMORY
 export function* getCurrentMemoryPhotoPath({ id }) {
   const {
     currentMemory,
@@ -107,8 +106,35 @@ export function* getCurrentMemoryPhotoPath({ id }) {
   }
 }
 
+export const determineAdjacentInCarousel = ({ adjacentInt, currentMemory, memories }) => {
+  const currentMemoryId = currentMemory.id || 0;
+  const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
+  let adjacentMemoryIndex = currentMemoryIndex + adjacentInt;
+
+  const carouselEnd = adjacentMemoryIndex >= memories.length;
+  if (carouselEnd) adjacentMemoryIndex -= memories.length;
+
+  const carouselBegin = adjacentMemoryIndex < 0;
+  if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
+
+  const findIndex = memories[adjacentMemoryIndex].id;
+
+  return findIndex;
+};
+
+// saga WORKER for NEXT_MEMORY, PREV_MEMORY
+export function* calculateAdjacentMemoryId({ adjacentInt }) {
+  const { currentMemory } = yield select(makeSelectCurrentMemory());
+  const memories = yield select(makeSelectMemories());
+
+  const findIndex = determineAdjacentInCarousel({ adjacentInt, currentMemory, memories });
+
+  yield put(chooseMemory(findIndex));
+}
+
 
 // ROOT saga manages WATCHER lifecycle
 export default function* InfiniteThumbsSagaWatcher() {
-  yield takeEvery([CHOOSE_MEMORY, NEXT_MEMORY, PREV_MEMORY], getCurrentMemoryPhotoPath);
+  yield takeEvery([CHOOSE_MEMORY], getCurrentMemoryPhotoPath);
+  yield takeEvery([NEXT_MEMORY, PREV_MEMORY], calculateAdjacentMemoryId);
 }

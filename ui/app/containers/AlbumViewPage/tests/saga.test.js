@@ -20,7 +20,7 @@ import {
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
 } from '../constants';
-import albumFixture from '../../App/tests/fixtures/album';
+import albumFixture from '../../App/tests/fixtures/album.json';
 
 describe('AlbumViewPage Saga', () => {
   describe('getAlbumFile on Dropbox', () => {
