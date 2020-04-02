@@ -1,7 +1,8 @@
 import React from 'react';
+import ImageGallery from 'react-image-gallery';
 import styled from 'styled-components';
+import 'react-image-gallery/styles/css/image-gallery.css';
 
-import SlippyPhoto from '../SlippyPhoto';
 import SlippyMap from '../SlippyMap';
 
 const Split = styled.section`
@@ -21,13 +22,16 @@ const Right = styled.section`
 `;
 
 function SplitScreen({ currentMemory, items }) {
+  const toCarousel = item => ({
+    original: item.photoLink,
+    thumbnail: item.thumbLink,
+  });
+
   if (currentMemory) {
     return (
       <Split>
         <Left key="splitLeft">
-          <SlippyPhoto
-            currentMemory={currentMemory}
-          />
+          <ImageGallery items={items.map(toCarousel)} />
         </Left>
         <Right key="splitRight">
           <SlippyMap
