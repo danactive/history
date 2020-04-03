@@ -8,4 +8,3 @@ export const LOAD_THUMBS_SUCCESS = 'app/AlbumViewPage/LOAD_THUMBS_SUCCESS';
 export const NEXT_MEMORY = 'app/AlbumViewPage/NEXT_MEMORY';
 export const PREV_MEMORY = 'app/AlbumViewPage/PREV_MEMORY';
 export const PAGE_SIZE = 8;
-export const PRELOAD_PHOTO = 'app/AlbumView/PRELOAD_PHOTO';

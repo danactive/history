@@ -98,7 +98,9 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
       const memoryIndex = draft[action.host][action.gallery][action.album].memories.findIndex(memory => memory.id === action.id);
       draft[action.host][action.gallery][action.album].memories[memoryIndex].photoLink = action.photoLink;
 
-      draft.currentMemory.photoLink = action.photoLink;
+      if (draft.currentMemory && action.setCurrentMemory) {
+        draft.currentMemory.photoLink = action.photoLink;
+      }
       break;
     }
 

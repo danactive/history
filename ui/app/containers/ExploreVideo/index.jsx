@@ -35,7 +35,7 @@ export default function ExploreVideo() {
         setVideos(payload.items);
         selectVideo(payload.items[0]);
       })
-      .catch(error => console.debug(error.message));
+      .catch(error => console.debug(error.message)); // eslint-disable-line no-console
   };
 
   const videoSearch = _.debounce((searchValue, options) => fetchVideos(searchValue, options), 400);

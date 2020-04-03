@@ -14,17 +14,19 @@ export function chooseMemory(id) {
 export function photoLoadSuccess({
   host,
   gallery,
+  setCurrentMemory,
   album,
   id,
   photoLink,
 }) {
   return {
     type: LOAD_PHOTO_SUCCESS,
+    id,
+    photoLink,
+    setCurrentMemory,
     host,
     gallery,
     album,
-    id,
-    photoLink,
   };
 }
 
