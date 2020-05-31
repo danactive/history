@@ -6,6 +6,7 @@ import {
   LOAD_PHOTO_SUCCESS,
 } from './constants';
 import {
+  CLEAR_MEMORY,
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
@@ -64,6 +65,11 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
   }
 
   switch (action.type) {
+    case CLEAR_MEMORY: {
+      draft.currentMemory = undefined;
+      break;
+    }
+
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
       draft.host = action.host;

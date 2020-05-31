@@ -14,6 +14,7 @@ import injectSaga from '../../utils/injectSaga';
 
 import {
   chooseAdjacentMemory,
+  cleanCurrentMemory,
   loadAlbum,
 } from './actions';
 import albumReducer from '../App/reducer';
@@ -30,6 +31,7 @@ import LoadingIndicator from '../../components/LoadingIndicator';
 
 function AlbumViewPage({
   onLoad,
+  onUnload,
   match: {
     params: {
       host,
@@ -62,6 +64,7 @@ function AlbumViewPage({
 
     return () => { // cleanup
       document.removeEventListener('keyup', handleKey);
+      onUnload();
     };
   }, []);
 
@@ -106,6 +109,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   onLoad: ({ host, gallery, album }) => dispatch(loadAlbum({ host, gallery, album })),
   adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
+  onUnload: () => dispatch(cleanCurrentMemory()),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

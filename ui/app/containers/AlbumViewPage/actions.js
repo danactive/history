@@ -6,9 +6,16 @@ import {
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_ERROR,
   LOAD_THUMBS_SUCCESS,
+  CLEAR_MEMORY,
   NEXT_MEMORY,
   PREV_MEMORY,
 } from './constants';
+
+export function cleanCurrentMemory() {
+  return {
+    type: CLEAR_MEMORY,
+  };
+}
 
 export function loadAlbum({ host, gallery, album }) {
   return {
