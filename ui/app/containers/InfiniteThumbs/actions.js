@@ -1,8 +1,17 @@
-import PRELOAD_PHOTO from './constants';
+import {
+  PRELOAD_PHOTO,
+  SKIP_PRELOAD_PHOTO,
+} from './constants';
 
-export default function preloadPhoto(adjacentInt) {
+export function preloadPhoto(count) {
   return {
     type: PRELOAD_PHOTO,
-    adjacentInt,
+    count,
+  };
+}
+
+export function skipPreloadPhoto() {
+  return {
+    type: SKIP_PRELOAD_PHOTO,
   };
 }

@@ -11,8 +11,8 @@ import { makeSelectCurrentMemory } from '../App/selectors';
 import { makeSelectMemories } from '../AlbumViewPage/selectors';
 import { chooseMemory, photoLoadError, photoLoadSuccess } from '../App/actions';
 import { NEXT_MEMORY, PREV_MEMORY } from '../AlbumViewPage/constants';
-import PRELOAD_PHOTO from './constants';
-import preloadPhoto from './actions';
+import { PRELOAD_PHOTO } from './constants';
+import { preloadPhoto, skipPreloadPhoto } from './actions';
 
 const dbx = (process.env.HISTORY_DROPBOX_ACCESS_TOKEN) ? new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch }) : null;
 
@@ -94,13 +94,18 @@ export const determineAdjacentInCarousel = ({ adjacentInt = null, currentMemory 
     if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
   }
 
-  const findIndex = memories[adjacentMemoryIndex].id;
-
-  return findIndex;
+  return {
+    id: memories[adjacentMemoryIndex].id,
+    index: adjacentMemoryIndex,
+  };
 };
 
 // saga WORKER for CHOOSE_MEMORY
-export function* getMemoryPhotoPath({ id, setCurrentMemory = true }) {
+export function* getMemoryPhotoPath({
+  id,
+  index,
+  setCurrentMemory = true,
+}) {
   const {
     currentMemory,
     host,
@@ -109,7 +114,7 @@ export function* getMemoryPhotoPath({ id, setCurrentMemory = true }) {
   } = yield select(makeSelectCurrentMemory());
 
   const memories = yield select(makeSelectMemories());
-  const memory = memories.find(m => m.id === id);
+  const memory = index ? memories[index] : memories.find(m => m.id === id);
 
   if (memory.thumbLink === null) {
     return;
@@ -136,7 +141,7 @@ export function* getMemoryPhotoPath({ id, setCurrentMemory = true }) {
       });
     }
   } else if (currentMemory) {
-    yield put(preloadPhoto(1));
+    yield put(preloadPhoto());
   }
 }
 
@@ -145,30 +150,37 @@ export function* calculateAdjacentMemoryId({ adjacentInt }) {
   const memories = yield select(makeSelectMemories());
   const { currentMemory } = yield select(makeSelectCurrentMemory());
 
-  const findIndex = determineAdjacentInCarousel({ adjacentInt, currentMemory, memories });
+  const adjacent = determineAdjacentInCarousel({ adjacentInt, currentMemory, memories });
 
-  yield put(chooseMemory(findIndex));
+  yield put(chooseMemory(adjacent));
 }
 
 // saga WORKER for PRELOAD_PHOTO
-export function* preloadAdjacentMemoryId({ adjacentInt }) {
+export function* preloadAdjacentMemoryId({ count = 1 }) {
   const memories = yield select(makeSelectMemories());
 
-  if (adjacentInt) {
-    const { currentMemory } = yield select(makeSelectCurrentMemory());
-    const findIndex = determineAdjacentInCarousel({ adjacentInt, currentMemory, memories });
+  const memoriesAwaitingPhoto = memories.filter(memory => memory.photoLink === null);
 
-    const skipPreload = memories.find(m => m.id === findIndex).photoLink;
-    if (skipPreload) {
-      return;
-    }
-
-    yield call(getMemoryPhotoPath, { id: findIndex, setCurrentMemory: false });
+  if (memoriesAwaitingPhoto.length === 0) {
+    put(skipPreloadPhoto());
     return;
   }
 
-  const findIndex = determineAdjacentInCarousel({ memories });
-  yield call(getMemoryPhotoPath, { id: findIndex, setCurrentMemory: false });
+  const { currentMemory } = yield select(makeSelectCurrentMemory());
+
+  if (currentMemory) {
+    // TODO preload next to current
+  }
+
+  for (let i = 0; i < count; i += 1) {
+    const findId = memoriesAwaitingPhoto[i].id;
+    const memoryIndex = memories.findIndex(memory => memory.id === findId);
+    yield call(getMemoryPhotoPath, {
+      id: findId,
+      index: memoryIndex,
+      setCurrentMemory: false,
+    });
+  }
 }
 
 

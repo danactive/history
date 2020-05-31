@@ -13,7 +13,7 @@ import ThumbImg from '../../components/ThumbImg';
 import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
-import preloadPhoto from './actions';
+import { preloadPhoto } from './actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
@@ -50,11 +50,11 @@ const InfiniteThumbs = (props) => {
 
   const hasThumbLink = item => item.thumbLink !== null;
 
-  const thumbImages = item => (
+  const thumbImages = (item, index) => (
     <ThumbImg
       alt={item.filename}
       key={`thumb-${item.filename}`}
-      onClick={() => selectThumb(item.id)}
+      onClick={() => selectThumb(item.id, index)}
       src={item.thumbLink}
     />
   );
@@ -90,9 +90,9 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    preloadFirstPhoto: () => dispatch(preloadPhoto()),
+    preloadFirstPhoto: () => dispatch(preloadPhoto(4)),
     nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
-    selectThumb: id => dispatch(chooseMemory(id)),
+    selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
   };
 }
 

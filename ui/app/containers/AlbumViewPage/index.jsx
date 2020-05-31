@@ -86,7 +86,7 @@ function AlbumViewPage({
 
       <SplitScreen
         currentMemory={currentMemory}
-        items={memories}
+        memories={memories}
       />
 
       <InfiniteThumbs

@@ -6,11 +6,11 @@ import {
   LOAD_PHOTO_SUCCESS,
 } from './constants';
 import {
-  CLEAR_MEMORY,
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_THUMBS_SUCCESS,
+  CLEAR_MEMORY,
   PAGE_SIZE,
 } from '../AlbumViewPage/constants';
 import { insertPage } from '../AlbumViewPage/paging';
@@ -95,7 +95,7 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case CHOOSE_MEMORY: {
-      const found = state[state.host][state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
+      const found = state[state.host][state.gallery][state.album].memories.find(item => item.id === action.id);
       draft.currentMemory = found || {};
       break;
     }

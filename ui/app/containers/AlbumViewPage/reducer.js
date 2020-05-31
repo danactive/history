@@ -10,7 +10,6 @@ import {
   LOAD_NEXT_THUMB_PAGE_ERROR,
   LOAD_THUMBS_SUCCESS,
 } from './constants';
-import { LOAD_PHOTO_SUCCESS } from '../App/constants';
 
 export const initialState = {
   albumLoading: true,
@@ -59,11 +58,6 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.thumbsLoading = false;
       delete draft.page;
       delete draft.hasMore;
-      break;
-    }
-
-    case LOAD_PHOTO_SUCCESS: {
-      draft.memoryId = action.id;
       break;
     }
   }

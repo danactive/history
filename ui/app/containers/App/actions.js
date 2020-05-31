@@ -4,10 +4,11 @@ import {
   LOAD_PHOTO_SUCCESS,
 } from './constants';
 
-export function chooseMemory(id) {
+export function chooseMemory({ id, index }) {
   return {
     type: CHOOSE_MEMORY,
     id,
+    index,
   };
 }
 

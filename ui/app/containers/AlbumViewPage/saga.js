@@ -10,6 +10,7 @@ import request from '../../utils/request';
 import {
   LOAD_ALBUM,
   LOAD_NEXT_THUMB_PAGE,
+  SLIDE_TO_MEMORY,
   PAGE_SIZE,
 } from './constants';
 import {
@@ -23,6 +24,7 @@ import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 import { getPage } from './paging';
 import config from '../../../../config.json';
+import { chooseMemory } from '../App/actions';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
@@ -193,8 +195,16 @@ export function* getThumbPaths() {
 }
 
 
+export function* dispatchChooseMemory({ index }) {
+  const { memories } = yield select(selectNextPage);
+
+  yield put(chooseMemory({ id: memories[index].id, index }));
+}
+
+
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
+  yield takeLatest(SLIDE_TO_MEMORY, dispatchChooseMemory);
   yield takeLatest(LOAD_ALBUM, getAlbumFile);
   yield takeLatest(LOAD_NEXT_THUMB_PAGE, getThumbPaths);
 }

@@ -17,19 +17,27 @@ describe('InfiniteThumbs Saga', () => {
       };
 
       test('should be one after ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: 1, ...testState })).toEqual(3);
+        const expected = determineAdjacentInCarousel({ adjacentInt: 1, ...testState });
+        expect(expected.id).toEqual(3);
+        expect(expected.index).toEqual(2);
       });
 
       test('should be one before ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: -1, ...testState })).toEqual(1);
+        const expected = determineAdjacentInCarousel({ adjacentInt: -1, ...testState });
+        expect(expected.id).toEqual(1);
+        expect(expected.index).toEqual(0);
       });
 
       test('should be two after ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: 2, ...testState })).toEqual(1);
+        const expected = determineAdjacentInCarousel({ adjacentInt: 2, ...testState });
+        expect(expected.id).toEqual(1);
+        expect(expected.index).toEqual(0);
       });
 
       test('should be two before ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: -2, ...testState })).toEqual(3);
+        const expected = determineAdjacentInCarousel({ adjacentInt: -2, ...testState });
+        expect(expected.id).toEqual(3);
+        expect(expected.index).toEqual(2);
       });
     });
 
@@ -47,11 +55,15 @@ describe('InfiniteThumbs Saga', () => {
       };
 
       test('should be one after ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: 1, ...testState })).toEqual(3);
+        const expected = determineAdjacentInCarousel({ adjacentInt: 1, ...testState });
+        expect(expected.id).toEqual(3);
+        expect(expected.index).toEqual(2);
       });
 
       test('should be two after ID two', () => {
-        expect(determineAdjacentInCarousel({ adjacentInt: 2, ...testState })).toEqual(4);
+        const expected = determineAdjacentInCarousel({ adjacentInt: 2, ...testState });
+        expect(expected.id).toEqual(4);
+        expect(expected.index).toEqual(3);
       });
     });
   });

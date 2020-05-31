@@ -9,6 +9,7 @@ import {
   CLEAR_MEMORY,
   NEXT_MEMORY,
   PREV_MEMORY,
+  SLIDE_TO_MEMORY,
 } from './constants';
 
 export function cleanCurrentMemory() {
@@ -110,5 +111,12 @@ export function chooseAdjacentMemory(adjacentInt) {
   return {
     type: PREV_MEMORY,
     adjacentInt,
+  };
+}
+
+export function slideToAdjacentMemory(index) {
+  return {
+    type: SLIDE_TO_MEMORY,
+    index,
   };
 }

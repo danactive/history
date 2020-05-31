@@ -1,9 +1,13 @@
 import React from 'react';
 import ImageGallery from 'react-image-gallery';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 import styled from 'styled-components';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 import SlippyMap from '../SlippyMap';
+
+import { slideToAdjacentMemory } from './actions';
 
 const Split = styled.section`
   display: grid;
@@ -21,7 +25,11 @@ const Right = styled.section`
   height: 80vh;
 `;
 
-function SplitScreen({ currentMemory, items }) {
+function SplitScreen({
+  currentMemory,
+  slideTo,
+  memories,
+}) {
   const toCarousel = item => ({
     original: item.photoLink,
     thumbnail: item.thumbLink,
@@ -31,12 +39,18 @@ function SplitScreen({ currentMemory, items }) {
     return (
       <Split>
         <Left key="splitLeft">
-          <ImageGallery items={items.map(toCarousel)} />
+          <ImageGallery
+            onBeforeSlide={slideTo}
+            items={memories.filter(item => item.photoLink).map(toCarousel)}
+            showThumbnails={false}
+            disableKeyDown
+            startIndex={memories.findIndex(m => m.id === currentMemory.id)}
+          />
         </Left>
         <Right key="splitRight">
           <SlippyMap
             currentMemory={currentMemory}
-            items={items}
+            items={memories}
           />
         </Right>
       </Split>
@@ -46,4 +60,12 @@ function SplitScreen({ currentMemory, items }) {
   return null;
 }
 
-export default SplitScreen;
+const mapDispatchToProps = dispatch => ({
+  slideTo: index => dispatch(slideToAdjacentMemory(index)),
+});
+
+const withConnect = connect(null, mapDispatchToProps);
+
+export default compose(
+  withConnect,
+)(SplitScreen);
