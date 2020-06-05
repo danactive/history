@@ -141,7 +141,7 @@ export function* getMemoryPhotoPath({
       });
     }
   } else if (currentMemory) {
-    yield put(preloadPhoto());
+    yield put(preloadPhoto(1));
   }
 }
 
@@ -156,20 +156,32 @@ export function* calculateAdjacentMemoryId({ adjacentInt }) {
 }
 
 // saga WORKER for PRELOAD_PHOTO
-export function* preloadAdjacentMemoryId({ count = 1 }) {
+export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
   const memories = yield select(makeSelectMemories());
-
   const memoriesAwaitingPhoto = memories.filter(memory => memory.photoLink === null);
 
   if (memoriesAwaitingPhoto.length === 0) {
-    put(skipPreloadPhoto());
+    yield put(skipPreloadPhoto());
     return;
   }
 
   const { currentMemory } = yield select(makeSelectCurrentMemory());
 
   if (currentMemory) {
-    // TODO preload next to current
+    const currentMemoryIndex = memories.findIndex(memory => memory.id === currentMemory.id);
+    const findMemory = memoriesAwaitingPhoto.find(m => m.id === memories[currentMemoryIndex + 1].id);
+
+    if (!findMemory) {
+      yield put(skipPreloadPhoto());
+      return;
+    }
+
+    yield call(getMemoryPhotoPath, {
+      id: findMemory.id,
+      index: currentMemoryIndex + 1,
+      setCurrentMemory: false,
+    });
+    return;
   }
 
   for (let i = 0; i < count; i += 1) {
@@ -186,7 +198,7 @@ export function* preloadAdjacentMemoryId({ count = 1 }) {
 
 // ROOT saga manages WATCHER lifecycle
 export default function* InfiniteThumbsSagaWatcher() {
-  yield takeEvery([CHOOSE_MEMORY], getMemoryPhotoPath);
+  yield takeEvery(CHOOSE_MEMORY, getMemoryPhotoPath);
   yield takeEvery([NEXT_MEMORY, PREV_MEMORY], calculateAdjacentMemoryId);
-  yield takeEvery([PRELOAD_PHOTO], preloadAdjacentMemoryId);
+  yield takeEvery(PRELOAD_PHOTO, preloadAdjacentMemoryId);
 }

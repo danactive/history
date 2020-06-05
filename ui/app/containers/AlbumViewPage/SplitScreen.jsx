@@ -31,7 +31,7 @@ function SplitScreen({
   memories,
 }) {
   const toCarousel = item => ({
-    original: item.photoLink,
+    original: item.photoLink || item.thumbLink,
     thumbnail: item.thumbLink,
   });
 
@@ -41,9 +41,10 @@ function SplitScreen({
         <Left key="splitLeft">
           <ImageGallery
             onBeforeSlide={slideTo}
-            items={memories.filter(item => item.photoLink).map(toCarousel)}
-            showThumbnails={false}
+            items={memories.filter(item => item.thumbLink).map(toCarousel)}
             disableKeyDown
+            showThumbnails={false}
+            slideDuration={550}
             startIndex={memories.findIndex(m => m.id === currentMemory.id)}
           />
         </Left>

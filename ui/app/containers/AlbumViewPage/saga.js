@@ -15,6 +15,9 @@ import {
   PAGE_SIZE,
 } from './constants';
 import {
+  LOAD_PHOTO_SUCCESS,
+} from '../App/constants';
+import {
   albumLoadSuccess,
   albumLoadError,
   nextPageSuccess,
@@ -28,6 +31,7 @@ import { getPage } from './paging';
 import config from '../../../../config.json';
 import { chooseMemory } from '../App/actions';
 import { preloadPhoto } from '../InfiniteThumbs/actions';
+import { preloadAdjacentMemoryId } from '../InfiniteThumbs/saga';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
@@ -218,10 +222,18 @@ export function* preloadPhotos() {
 }
 
 
+export function* ensureNextPhotoLoaded({ setCurrentMemory }) {
+  if (setCurrentMemory) {
+    yield call(preloadAdjacentMemoryId);
+  }
+}
+
+
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
   yield takeLatest(SLIDE_TO_MEMORY, dispatchChooseMemory);
   yield takeLatest(LOAD_ALBUM, getAlbumFile);
   yield takeLatest(LOAD_NEXT_THUMB_PAGE, getThumbPaths);
   yield takeLatest(LOAD_ENOUGH_THUMBS, preloadPhotos);
+  yield takeLatest(LOAD_PHOTO_SUCCESS, ensureNextPhotoLoaded);
 }
