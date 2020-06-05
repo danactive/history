@@ -2,6 +2,7 @@ import {
   LOAD_ALBUM,
   LOAD_ALBUM_SUCCESS,
   LOAD_ALBUM_ERROR,
+  LOAD_ENOUGH_THUMBS,
   LOAD_NEXT_THUMB_PAGE,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_ERROR,
@@ -118,5 +119,12 @@ export function slideToAdjacentMemory(index) {
   return {
     type: SLIDE_TO_MEMORY,
     index,
+  };
+}
+
+
+export function enoughThumbsLoaded() {
+  return {
+    type: LOAD_ENOUGH_THUMBS,
   };
 }

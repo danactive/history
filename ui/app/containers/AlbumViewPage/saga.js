@@ -10,6 +10,7 @@ import request from '../../utils/request';
 import {
   LOAD_ALBUM,
   LOAD_NEXT_THUMB_PAGE,
+  LOAD_ENOUGH_THUMBS,
   SLIDE_TO_MEMORY,
   PAGE_SIZE,
 } from './constants';
@@ -19,12 +20,14 @@ import {
   nextPageSuccess,
   nextPageError,
   thumbsLoaded,
+  enoughThumbsLoaded,
 } from './actions';
 import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 import { getPage } from './paging';
 import config from '../../../../config.json';
 import { chooseMemory } from '../App/actions';
+import { preloadPhoto } from '../InfiniteThumbs/actions';
 
 const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
 
@@ -138,6 +141,8 @@ export function* getThumbPathsOnDropbox({
         gallery,
         album,
       }));
+
+      yield put(enoughThumbsLoaded());
       return;
     }
 
@@ -149,6 +154,10 @@ export function* getThumbPathsOnDropbox({
       gallery,
       album,
     }));
+
+    if (page === 1) {
+      yield put(enoughThumbsLoaded());
+    }
   } catch (error) {
     yield put(nextPageError(normalizeError(error)));
   }
@@ -178,6 +187,8 @@ export function* getThumbPathsLocally({
       gallery,
       album,
     }));
+
+    yield put(enoughThumbsLoaded());
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
@@ -202,9 +213,15 @@ export function* dispatchChooseMemory({ index }) {
 }
 
 
+export function* preloadPhotos() {
+  yield put(preloadPhoto(4));
+}
+
+
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {
   yield takeLatest(SLIDE_TO_MEMORY, dispatchChooseMemory);
   yield takeLatest(LOAD_ALBUM, getAlbumFile);
   yield takeLatest(LOAD_NEXT_THUMB_PAGE, getThumbPaths);
+  yield takeLatest(LOAD_ENOUGH_THUMBS, preloadPhotos);
 }

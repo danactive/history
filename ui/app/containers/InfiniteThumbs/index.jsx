@@ -1,5 +1,5 @@
 import dotProp from 'dot-prop';
-import React, { useEffect } from 'react';
+import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -13,7 +13,6 @@ import ThumbImg from '../../components/ThumbImg';
 import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
-import { preloadPhoto } from './actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
@@ -33,7 +32,6 @@ const InfiniteThumbs = (props) => {
     hasMore,
     selectThumb,
     thumbsError,
-    preloadFirstPhoto,
   } = props;
 
   if (albumError !== false) {
@@ -43,10 +41,6 @@ const InfiniteThumbs = (props) => {
   if (loading || !items.length) {
     return <LoadingIndicator />;
   }
-
-  useEffect(() => {
-    preloadFirstPhoto();
-  }, []);
 
   const hasThumbLink = item => item.thumbLink !== null;
 
@@ -90,7 +84,6 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    preloadFirstPhoto: () => dispatch(preloadPhoto(4)),
     nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
     selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
   };
