@@ -1,7 +1,7 @@
 /* global beforeEach, describe, expect, test */
 import produce from 'immer';
 
-import json from '../../App/tests/fixtures/album';
+import json from '../../App/tests/fixtures/album.json';
 import pageReducer, { initialState } from '../reducer';
 import {
   loadAlbum,

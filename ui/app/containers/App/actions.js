@@ -4,22 +4,30 @@ import {
   LOAD_PHOTO_SUCCESS,
 } from './constants';
 
-export function chooseMemory(id) {
+export function chooseMemory({ id, index }) {
   return {
     type: CHOOSE_MEMORY,
     id,
+    index,
   };
 }
 
 export function photoLoadSuccess({
-  gallery, album, id, photoLink,
+  host,
+  gallery,
+  setCurrentMemory,
+  album,
+  id,
+  photoLink,
 }) {
   return {
     type: LOAD_PHOTO_SUCCESS,
-    gallery,
-    album,
     id,
     photoLink,
+    setCurrentMemory,
+    host,
+    gallery,
+    album,
   };
 }
 

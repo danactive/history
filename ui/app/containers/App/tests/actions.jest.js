@@ -22,7 +22,7 @@ describe('App Actions', () => {
         id: fixture,
       };
 
-      expect(chooseMemory(fixture)).toEqual(expectedResult);
+      expect(chooseMemory({ id: fixture })).toEqual(expectedResult);
     });
   });
 

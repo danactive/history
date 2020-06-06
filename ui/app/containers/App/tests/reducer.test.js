@@ -2,11 +2,8 @@
 import produce from 'immer';
 
 import appReducer, { initialState } from '../reducer';
-import {
-  albumLoadSuccess,
-  chooseAdjacentMemory, loadAlbum,
-} from '../../AlbumViewPage/actions';
-import json from './fixtures/album';
+import { albumLoadSuccess, loadAlbum } from '../../AlbumViewPage/actions';
+import json from './fixtures/album.json';
 
 /* eslint-disable default-case, no-param-reassign */
 describe('appReducer', () => {
@@ -63,58 +60,5 @@ describe('appReducer', () => {
     });
 
     expect(received).toStrictEqual(expected);
-  });
-
-  describe('should handle the currentMemory action correctly', () => {
-    const testState = {
-      host: 'dropbox',
-      gallery: 'demo',
-      album: 'sample',
-      dropbox: {
-        demo: {
-          sample: {
-            memories: [
-              { id: 1 },
-              { id: 2 },
-              { id: 3 },
-            ],
-          },
-        },
-      },
-      currentMemory: {
-        id: 2,
-      },
-    };
-    test('should be one after ID two', () => {
-      const expectedResult = produce(testState, (draft) => {
-        draft.currentMemory.id = 3;
-      });
-
-      expect(appReducer(testState, chooseAdjacentMemory(1))).toEqual(expectedResult);
-    });
-
-    test('should be one before ID two', () => {
-      const expectedResult = produce(testState, (draft) => {
-        draft.currentMemory.id = 1;
-      });
-
-      expect(appReducer(testState, chooseAdjacentMemory(-1))).toEqual(expectedResult);
-    });
-
-    test('should be two after ID two', () => {
-      const expectedResult = produce(testState, (draft) => {
-        draft.currentMemory.id = 1;
-      });
-
-      expect(appReducer(testState, chooseAdjacentMemory(2))).toEqual(expectedResult);
-    });
-
-    test('should be two before ID two', () => {
-      const expectedResult = produce(testState, (draft) => {
-        draft.currentMemory.id = 3;
-      });
-
-      expect(appReducer(testState, chooseAdjacentMemory(-2))).toEqual(expectedResult);
-    });
   });
 });

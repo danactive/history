@@ -10,9 +10,8 @@ import {
   LOAD_ALBUM_SUCCESS,
   LOAD_NEXT_THUMB_PAGE_SUCCESS,
   LOAD_THUMBS_SUCCESS,
+  CLEAR_MEMORY,
   PAGE_SIZE,
-  NEXT_MEMORY,
-  PREV_MEMORY,
 } from '../AlbumViewPage/constants';
 import { insertPage } from '../AlbumViewPage/paging';
 import { LOAD_GALLERY, LOAD_GALLERY_SUCCESS } from '../GalleryViewPage/constants';
@@ -66,6 +65,11 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
   }
 
   switch (action.type) {
+    case CLEAR_MEMORY: {
+      draft.currentMemory = undefined;
+      break;
+    }
+
     case LOAD_ALBUM: {
       draft.gallery = action.gallery;
       draft.host = action.host;
@@ -91,33 +95,18 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case CHOOSE_MEMORY: {
-      const found = state[state.host][state.gallery][state.album].memories.filter(item => item.id === action.id)[0];
+      const found = state[state.host][state.gallery][state.album].memories.find(item => item.id === action.id);
       draft.currentMemory = found || {};
       break;
     }
 
     case LOAD_PHOTO_SUCCESS: {
-      draft.currentMemory.photoLink = action.photoLink;
-      break;
-    }
+      const memoryIndex = draft[action.host][action.gallery][action.album].memories.findIndex(memory => memory.id === action.id);
+      draft[action.host][action.gallery][action.album].memories[memoryIndex].photoLink = action.photoLink;
 
-    case NEXT_MEMORY:
-    case PREV_MEMORY: {
-      const { memories } = state[state.host][state.gallery][state.album];
-      const currentMemoryId = state.currentMemory.id || 0;
-      const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
-      let adjacentMemoryIndex = currentMemoryIndex + action.adjacentInt;
-
-      const carouselEnd = adjacentMemoryIndex >= memories.length;
-      if (carouselEnd) adjacentMemoryIndex -= memories.length;
-
-      const carouselBegin = adjacentMemoryIndex < 0;
-      if (carouselBegin) adjacentMemoryIndex = memories.length + adjacentMemoryIndex;
-
-      const findIndex = memories[adjacentMemoryIndex].id;
-
-      const found = state[state.host][state.gallery][state.album].memories.filter(item => item.id === findIndex)[0];
-      draft.currentMemory = found || {};
+      if (draft.currentMemory && action.setCurrentMemory) {
+        draft.currentMemory.photoLink = action.photoLink;
+      }
       break;
     }
 

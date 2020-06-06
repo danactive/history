@@ -11,6 +11,9 @@ import request from '../../utils/request';
 import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
 import { LOAD_GALLERIES } from './constants';
 
+// eslint-disable-next-line no-console
+const logError = message => console.error(message);
+
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
   try {
@@ -18,7 +21,7 @@ export function* getDropboxGalleries() {
 
     if (!accessToken) {
       const error = new ReferenceError('.env is missing HISTORY_DROPBOX_ACCESS_TOKEN');
-      console.error(error);
+      logError(error);
       yield put(galleriesLoadingError(error));
       return;
     }
@@ -28,7 +31,7 @@ export function* getDropboxGalleries() {
     const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
     yield put(galleriesLoadingSuccess({ dropbox: galleries }));
   } catch (error) {
-    console.error(error);
+    logError(error);
     yield put(galleriesLoadingError(error));
   }
 }
@@ -38,7 +41,7 @@ function* getLocalFolders() {
     const { galleries } = yield call(request, 'http://localhost:8000/gallery/list');
     yield put(galleriesLoadingSuccess({ local: galleries.map(name => ({ name, id: `local-${name}` })) }));
   } catch (error) {
-    console.error(error);
+    logError(error);
     yield put(galleriesLoadingError(error));
   }
 }

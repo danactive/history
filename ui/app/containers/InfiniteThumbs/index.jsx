@@ -44,11 +44,11 @@ const InfiniteThumbs = (props) => {
 
   const hasThumbLink = item => item.thumbLink !== null;
 
-  const thumbImages = item => (
+  const thumbImages = (item, index) => (
     <ThumbImg
       alt={item.filename}
       key={`thumb-${item.filename}`}
-      onClick={() => selectThumb(item.id)}
+      onClick={() => selectThumb(item.id, index)}
       src={item.thumbLink}
     />
   );
@@ -85,7 +85,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch) {
   return {
     nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
-    selectThumb: id => dispatch(chooseMemory(id)),
+    selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
   };
 }
 

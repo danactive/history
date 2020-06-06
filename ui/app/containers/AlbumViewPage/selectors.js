@@ -4,6 +4,26 @@ import { createSelector } from 'reselect';
 export const selectGlobal = state => state.global;
 export const selectPage = state => state.albumViewPage;
 
+export const selectNextPage = createSelector(
+  selectGlobal,
+  selectPage,
+  (globalState, pageState) => {
+    const {
+      album,
+      gallery,
+      host,
+    } = globalState;
+
+    return {
+      memories: globalState[host][gallery][album].memories,
+      page: pageState.page,
+      host,
+      gallery,
+      album,
+    };
+  },
+);
+
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
   pageState => pageState.albumLoading,
@@ -34,30 +54,6 @@ export const makeSelectMemories = () => createSelector(
 
     return [];
   },
-);
-
-export const selectNextPage = (state) => {
-  const { page } = selectPage(state);
-  const globalState = selectGlobal(state);
-  const {
-    album,
-    gallery,
-    host,
-  } = globalState;
-
-  return {
-    memories: globalState[host][gallery][album].memories,
-    page,
-    host,
-    gallery,
-    album,
-  };
-};
-
-export const makeSelectNextPage = () => createSelector(
-  selectPage,
-  selectGlobal,
-  selectNextPage,
 );
 
 export const makeSelectMoreThumbs = () => createSelector(
