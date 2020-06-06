@@ -43,7 +43,7 @@
     "jquery-colorbox": "^1.6.4",
     "lout": "^11.2.3",
     "mime-types": "^2.1.26",
-    "node-notifier": "^5.4.3",
+    "node-notifier": "^7.0.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "styled-components": "^4.4.1",
