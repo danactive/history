@@ -58,7 +58,7 @@ function renamePaths(sourceFolder, filenames, futureFilenames, { preview, rename
 
       exists.pathExists(rename.oldName)
         .then(renameFile)
-        .catch(error => reject(Boom.boomify(error)));
+        .catch((error) => reject(Boom.boomify(error)));
     }, 2);
 
     {

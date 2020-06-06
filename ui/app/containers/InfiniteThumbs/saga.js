@@ -84,7 +84,7 @@ export const determineAdjacentInCarousel = ({ adjacentInt = null, currentMemory 
     adjacentMemoryIndex = 0;
   } else {
     const currentMemoryId = currentMemory.id;
-    const currentMemoryIndex = memories.findIndex(item => item.id === currentMemoryId);
+    const currentMemoryIndex = memories.findIndex((item) => item.id === currentMemoryId);
     adjacentMemoryIndex = currentMemoryIndex + adjacentInt;
 
     const carouselEnd = adjacentMemoryIndex >= memories.length;
@@ -114,7 +114,7 @@ export function* getMemoryPhotoPath({
   } = yield select(makeSelectCurrentMemory());
 
   const memories = yield select(makeSelectMemories());
-  const memory = index ? memories[index] : memories.find(m => m.id === id);
+  const memory = index ? memories[index] : memories.find((m) => m.id === id);
 
   if (memory.thumbLink === null) {
     return;
@@ -158,7 +158,7 @@ export function* calculateAdjacentMemoryId({ adjacentInt }) {
 // saga WORKER for PRELOAD_PHOTO
 export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
   const memories = yield select(makeSelectMemories());
-  const memoriesAwaitingPhoto = memories.filter(memory => memory.photoLink === null);
+  const memoriesAwaitingPhoto = memories.filter((memory) => memory.photoLink === null);
 
   if (memoriesAwaitingPhoto.length === 0) {
     yield put(skipPreloadPhoto());
@@ -168,8 +168,8 @@ export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
   const { currentMemory } = yield select(makeSelectCurrentMemory());
 
   if (currentMemory) {
-    const currentMemoryIndex = memories.findIndex(memory => memory.id === currentMemory.id);
-    const findMemory = memoriesAwaitingPhoto.find(m => m.id === memories[currentMemoryIndex + 1].id);
+    const currentMemoryIndex = memories.findIndex((memory) => memory.id === currentMemory.id);
+    const findMemory = memoriesAwaitingPhoto.find((m) => m.id === memories[currentMemoryIndex + 1].id);
 
     if (!findMemory) {
       yield put(skipPreloadPhoto());
@@ -186,7 +186,7 @@ export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
 
   for (let i = 0; i < count; i += 1) {
     const findId = memoriesAwaitingPhoto[i].id;
-    const memoryIndex = memories.findIndex(memory => memory.id === findId);
+    const memoryIndex = memories.findIndex((memory) => memory.id === findId);
     yield call(getMemoryPhotoPath, {
       id: findId,
       index: memoryIndex,

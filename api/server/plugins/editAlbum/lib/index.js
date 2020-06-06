@@ -1,4 +1,3 @@
-/* global require */
 const gallery = require('../../gallery/lib/gallery');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
@@ -12,7 +11,7 @@ const handler = ({ query: { raw: isRaw } }, reply) => new Promise((resolve) => {
   };
   const viewPath = 'plugins/editAlbum/components/page.jsx';
 
-  const handleResponse = json => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
+  const handleResponse = (json) => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
   const handleError = routes.createErrorReply(reply);
 
   gallery.getGalleries()

@@ -25,13 +25,13 @@ export function LocaleToggle({
   );
 }
 
-const mapStateToProps = createSelector(makeSelectLocale(), locale => ({
+const mapStateToProps = createSelector(makeSelectLocale(), (locale) => ({
   locale,
 }));
 
 export function mapDispatchToProps(dispatch) {
   return {
-    onLocaleToggle: evt => dispatch(changeLocale(evt.target.value)),
+    onLocaleToggle: (evt) => dispatch(changeLocale(evt.target.value)),
     dispatch,
   };
 }

@@ -1,5 +1,3 @@
-/* global __dirname, require */
-
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
 const notifier = require('node-notifier');

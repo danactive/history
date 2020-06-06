@@ -27,7 +27,7 @@ const homeReducer = (state = initialState, action) => produce(state, (draft) => 
     case LOAD_GALLERIES_SUCCESS:
       draft.galleryLoadings[draft.galleryLoadings.indexOf(true)] = false;
       if (action.galleries && action.galleries.dropbox && action.galleries.dropbox.entries) {
-        draft.galleries.dropbox = action.galleries.dropbox.entries.map(item => ({
+        draft.galleries.dropbox = action.galleries.dropbox.entries.map((item) => ({
           id: item.id,
           name: item.name.replace(/gallery-/gi, ''),
         }));

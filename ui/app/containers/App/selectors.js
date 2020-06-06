@@ -1,17 +1,17 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-const selectGlobal = state => state.global;
-const selectPage = state => state.albumViewPage;
+const selectGlobal = (state) => state.global;
+const selectPage = (state) => state.albumViewPage;
 
 const makeSelectThumbsLoading = () => createSelector(
   selectPage,
-  pageState => pageState.thumbsLoading || false,
+  (pageState) => pageState.thumbsLoading || false,
 );
 
 const makeSelectCritical = () => createSelector(
   selectGlobal,
-  globalState => ({
+  (globalState) => ({
     host: globalState.host,
     gallery: globalState.gallery,
   }),
@@ -19,12 +19,12 @@ const makeSelectCritical = () => createSelector(
 
 const makeSelectThumbsError = () => createSelector(
   selectPage,
-  pageState => pageState.thumbsError,
+  (pageState) => pageState.thumbsError,
 );
 
 const makeSelectCurrentMemory = () => createSelector(
   selectGlobal,
-  globalState => ({
+  (globalState) => ({
     currentMemory: globalState.currentMemory,
     album: globalState.album,
     gallery: globalState.gallery,

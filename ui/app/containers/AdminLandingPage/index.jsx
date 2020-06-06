@@ -25,7 +25,7 @@ export function AdminLandingPage({
   );
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   navToWalk: () => dispatch(push('/admin/walk')),
 });
 

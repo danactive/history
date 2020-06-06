@@ -88,7 +88,7 @@ function Page(props) {
                 {textField({ label: 'Description', tabIndex: 7 })}
                 <p>
                   <select id="ref_src" tabIndex="8">
-                    <option />
+                    <option value="">None</option>
                     <option value="facebook">Facebook</option>
                     <option value="google">Google</option>
                     <option value="wikipedia">Wikipedia</option>

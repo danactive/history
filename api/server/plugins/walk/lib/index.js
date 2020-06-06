@@ -1,4 +1,3 @@
-/* global require */
 const routes = require('../../../lib/routes');
 const files = require('./files');
 const validation = require('../../../lib/validation');

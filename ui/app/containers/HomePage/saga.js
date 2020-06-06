@@ -12,7 +12,7 @@ import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
 import { LOAD_GALLERIES } from './constants';
 
 // eslint-disable-next-line no-console
-const logError = message => console.error(message);
+const logError = (message) => console.error(message);
 
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
@@ -39,7 +39,7 @@ export function* getDropboxGalleries() {
 function* getLocalFolders() {
   try {
     const { galleries } = yield call(request, 'http://localhost:8000/gallery/list');
-    yield put(galleriesLoadingSuccess({ local: galleries.map(name => ({ name, id: `local-${name}` })) }));
+    yield put(galleriesLoadingSuccess({ local: galleries.map((name) => ({ name, id: `local-${name}` })) }));
   } catch (error) {
     logError(error);
     yield put(galleriesLoadingError(error));

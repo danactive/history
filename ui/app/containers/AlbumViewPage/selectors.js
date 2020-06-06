@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 
 // Memorized selectors
-export const selectGlobal = state => state.global;
-export const selectPage = state => state.albumViewPage;
+export const selectGlobal = (state) => state.global;
+export const selectPage = (state) => state.albumViewPage;
 
 export const selectNextPage = createSelector(
   selectGlobal,
@@ -26,17 +26,17 @@ export const selectNextPage = createSelector(
 
 export const makeSelectAlbumLoading = () => createSelector(
   selectPage,
-  pageState => pageState.albumLoading,
+  (pageState) => pageState.albumLoading,
 );
 
 export const makeSelectAlbumError = () => createSelector(
   selectPage,
-  pageState => pageState.albumError,
+  (pageState) => pageState.albumError,
 );
 
 export const makeSelectAlbumName = () => createSelector(
   selectGlobal,
-  albumState => albumState.album,
+  (albumState) => albumState.album,
 );
 
 export const makeSelectMemories = () => createSelector(
@@ -58,7 +58,7 @@ export const makeSelectMemories = () => createSelector(
 
 export const makeSelectMoreThumbs = () => createSelector(
   selectPage,
-  pageState => pageState.hasMore,
+  (pageState) => pageState.hasMore,
 );
 
 export const makeSelectCurrentMemory = () => createSelector(

@@ -58,6 +58,6 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
     }
 
 
-    errors.forEach(error => testPerError(error));
+    errors.forEach((error) => testPerError(error));
   });
 });

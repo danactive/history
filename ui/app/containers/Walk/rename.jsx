@@ -3,7 +3,7 @@ import React from 'react';
 
 function getAllFilenames() {
   const previews = Array.from(document.querySelectorAll('.preview'));
-  const filenames = previews.map(p => p.getAttribute('data-filename'));
+  const filenames = previews.map((p) => p.getAttribute('data-filename'));
 
   return filenames;
 }
@@ -41,7 +41,7 @@ function onClick() {
   };
 
   return fetch('/admin/rename', options)
-    .then(response => response.json())
+    .then((response) => response.json())
     .then(output)
     .catch(output);
 }

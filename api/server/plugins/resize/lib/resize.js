@@ -84,7 +84,7 @@ function resize(sourcePath) {
     }
     existsMod.pathExists(safePath)
       .then(transformImages)
-      .catch(error => reject(boom.boomify(error)));
+      .catch((error) => reject(boom.boomify(error)));
   });
 }
 

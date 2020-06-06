@@ -22,7 +22,7 @@ export function LanguageProvider({
 }
 
 
-const mapStateToProps = createSelector(makeSelectLocale(), locale => ({
+const mapStateToProps = createSelector(makeSelectLocale(), (locale) => ({
   locale,
 }));
 

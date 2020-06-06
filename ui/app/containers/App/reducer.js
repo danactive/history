@@ -95,13 +95,13 @@ const appReducer = (state = initialState, action) => produce(state, (draft) => {
     }
 
     case CHOOSE_MEMORY: {
-      const found = state[state.host][state.gallery][state.album].memories.find(item => item.id === action.id);
+      const found = state[state.host][state.gallery][state.album].memories.find((item) => item.id === action.id);
       draft.currentMemory = found || {};
       break;
     }
 
     case LOAD_PHOTO_SUCCESS: {
-      const memoryIndex = draft[action.host][action.gallery][action.album].memories.findIndex(memory => memory.id === action.id);
+      const memoryIndex = draft[action.host][action.gallery][action.album].memories.findIndex((memory) => memory.id === action.id);
       draft[action.host][action.gallery][action.album].memories[memoryIndex].photoLink = action.photoLink;
 
       if (draft.currentMemory && action.setCurrentMemory) {

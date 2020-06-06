@@ -30,7 +30,7 @@ export function transformSourceOptions({ items = [] } = {}) {
     };
   };
 
-  const hasGeo = item => !validatePoint(item.coordinates).isInvalidPoint;
+  const hasGeo = (item) => !validatePoint(item.coordinates).isInvalidPoint;
   const features = items.filter(hasGeo).map(geoJsonFeature);
 
   const data = {

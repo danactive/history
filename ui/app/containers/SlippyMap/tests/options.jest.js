@@ -87,8 +87,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
     });
 
     test('should have a centre and zoom', () => {
@@ -102,8 +102,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach(testDatum => runOneTest(testDatum, 'center', testDatum));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [17]));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'center', testDatum));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', [17]));
     });
 
     test('should have not a centre and zoom', () => {
@@ -114,8 +114,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
     });
 
     test('should have not a centre and zoom', () => {
@@ -126,8 +126,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
-      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
+      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
     });
   });
 });

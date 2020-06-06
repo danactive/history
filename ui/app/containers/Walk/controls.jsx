@@ -52,7 +52,7 @@ class Controls extends React.Component {
         focused={focused}
         onDateChange={this.onDateChange}
         onFocusChange={this.onFocusChange}
-        isOutsideRange={day => !isInclusivelyBeforeDay(day, moment())}
+        isOutsideRange={(day) => !isInclusivelyBeforeDay(day, moment())}
       />
     );
 

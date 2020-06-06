@@ -1,6 +1,6 @@
 const tape = require('tape-catch');
 
-tape('Verify / route', { skip: false }, (describe) => {
+tape('Verify home / route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
   const inert = require('inert');
@@ -15,7 +15,7 @@ tape('Verify / route', { skip: false }, (describe) => {
   const plugins = [inert, vision, lib];
   const port = utils.config.get('port');
 
-  describe.test('* Verify / route', { skip: false }, async (assert) => {
+  describe.test('* Check home response', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
 
     const url = `/?${querystring.stringify({

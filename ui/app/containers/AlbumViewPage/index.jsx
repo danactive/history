@@ -106,9 +106,9 @@ const mapStateToProps = createStructuredSelector({
   memories: makeSelectMemories(),
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onLoad: ({ host, gallery, album }) => dispatch(loadAlbum({ host, gallery, album })),
-  adjacentMemory: adjacentInt => dispatch(chooseAdjacentMemory(adjacentInt)),
+  adjacentMemory: (adjacentInt) => dispatch(chooseAdjacentMemory(adjacentInt)),
   onUnload: () => dispatch(cleanCurrentMemory()),
 });
 

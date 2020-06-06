@@ -37,7 +37,7 @@ test('Read album XML', { skip: false }, (describe) => {
             testCase.successJson(assert, response);
           }
         })
-        .catch(error => testCase.error(assert, error));
+        .catch((error) => testCase.error(assert, error));
     });
   });
 

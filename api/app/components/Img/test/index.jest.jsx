@@ -6,7 +6,7 @@ import Img from '../index';
 describe('Component - <Img />', () => {
   const src = 'test.png';
   const alt = 'test';
-  const renderComponent = (props = {}) => shallow(<Img src={src} alt={alt} {...props} />);
+  const renderComponent = ({ className, srcset } = {}) => shallow(<Img src={src} alt={alt} className={className} srcset={srcset} />);
 
   test('should render an <img> tag', () => {
     const actual = renderComponent().is('img');

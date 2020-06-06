@@ -9,7 +9,7 @@ const utils = require('../../utils');
 const validation = require('../../../lib/validation');
 
 function title(item) {
-  const presentable = (...values) => values.every(value => value !== undefined && value !== '');
+  const presentable = (...values) => values.every((value) => value !== undefined && value !== '');
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
     return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`;
   }
@@ -145,7 +145,7 @@ function ensureSafePath(name, value, reject) {
 
 
 const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
-  const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [name => camelCase(name)] };
+  const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] };
   const parser = new xml2js.Parser(options);
 
   const xmlPath = path.join(

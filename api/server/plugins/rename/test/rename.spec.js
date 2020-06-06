@@ -1,4 +1,3 @@
-/* global require */
 const tape = require('tape-catch');
 
 tape('Verify rename library', { skip: false }, (describe) => {
