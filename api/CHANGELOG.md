@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/danactive/history/compare/v5.0.1...v5.1.0) (2020-06-06)
+
+
+### Features
+
+* **Album View Page:** Clear Current Memory when switching albums ([39aa53f](https://github.com/danactive/history/commit/39aa53f0cfd59e951817220f4f004cbb0605f9a2))
+* **Album View Page:** Next/Prev arrows will load cached photo image when possible ([5d9ce5b](https://github.com/danactive/history/commit/5d9ce5b82d696dfa96fa31b3d8c12950cf0a02fc))
+* **Album View Page:** Replace PhotoSlippy with Fullscreen Image Gallery ([5552117](https://github.com/danactive/history/commit/5552117e0a249d2366ecad4f15a8be6cabf93cbf))
+* **Album View Page:** Save photoLink in memories for local ([9dee9af](https://github.com/danactive/history/commit/9dee9af30ca1da1c359b8b3a29574aa31a80bcc1))
+* **Album View Page:** Slideshow keyboard and GUI display 4 preloaded ([9ba112e](https://github.com/danactive/history/commit/9ba112e4d018d03b8e341fc5c52da4a07ab19cd2))
+* **Feature:** Remove Feature page and replace with Admin Landing Page ([6b8ee37](https://github.com/danactive/history/commit/6b8ee3710e2e5f8f8824efee1312e636304a59c2))
+* **Home Page:** Display gallery load failures only when none succeed ([6392eb2](https://github.com/danactive/history/commit/6392eb2682c291903d700d0720bc24de8c88ab89))
+* **Infinite Scroll:** Add preload call on load ([124c7ae](https://github.com/danactive/history/commit/124c7aeb7ad4fc6b9f9b7834483358c5b91bed7b))
+* **Language:** Add Japanese ([d6b6a6f](https://github.com/danactive/history/commit/d6b6a6ff151bcf35487b9fe1d12b7e6cad9e327c))
+* **Sample Gallery:** Add vertical photograph to demo sample gallery ([c8ecfce](https://github.com/danactive/history/commit/c8ecfce332f12e40492aa8626b1a5bb0ee94d537))
+
+
+### Bug Fixes
+
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([b5ca37b](https://github.com/danactive/history/commit/b5ca37b20d3ca49293f958450486d266eb7243a8))
+* upgrade immer from 3.0.0 to 3.3.0 ([b03f078](https://github.com/danactive/history/commit/b03f0789872ea54ee75882c04bc43f8923018658))
+* upgrade multiple dependencies with Snyk ([8d6300d](https://github.com/danactive/history/commit/8d6300d6daf23516e83df61aeea0978cb4da37cf))
+* upgrade styled-components from 4.2.0 to 4.4.1 ([3954a39](https://github.com/danactive/history/commit/3954a397f9d8485753b27e849c3a6bd5df1f8857))
+* upgrade webpack from 4.30.0 to 4.42.0 ([01795e4](https://github.com/danactive/history/commit/01795e4ec5c06b2460397f06b46484c01018f5c7))
+* upgrade webpack from 4.41.6 to 4.42.0 ([d6bbdfe](https://github.com/danactive/history/commit/d6bbdfecd00a82ba0ef911ea755aaf687b7bfd70))
+* **Album View Page:** Ensure next photo is preloaded ([fd60559](https://github.com/danactive/history/commit/fd605590fb503f6f7dbac6014f3468e2ce975efd))
+* **Album View Page:** Preload photos after thumbnail page successful ([c34d4cc](https://github.com/danactive/history/commit/c34d4ccfbebfb065052ce3de16e3bc58f5c80a30))
+
 ### [5.0.1](https://github.com/danactive/history/compare/v5.0.0...v5.0.1) (2020-03-08)
 
 
