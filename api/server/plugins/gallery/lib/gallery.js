@@ -12,12 +12,12 @@ async function galleriesContents() {
 }
 
 const getGalleries = () => new Promise((resolve, reject) => {
-  const hasPrefix = filename => filename.startsWith('gallery-');
-  const parseName = filename => filename.substr(8);
+  const hasPrefix = (filename) => filename.startsWith('gallery-');
+  const parseName = (filename) => filename.substr(8);
 
   galleriesContents()
-    .then(filenames => resolve(filenames.filter(hasPrefix).map(parseName)))
-    .catch(error => reject(error));
+    .then((filenames) => resolve(filenames.filter(hasPrefix).map(parseName)))
+    .catch((error) => reject(error));
 });
 
 module.exports = {

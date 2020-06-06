@@ -21,7 +21,7 @@ const showAlbumError = (error) => {
   return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
 };
 
-const showThumbsError = error => <div>{error.ui.title}</div>;
+const showThumbsError = (error) => <div>{error.ui.title}</div>;
 
 const InfiniteThumbs = (props) => {
   const {
@@ -42,7 +42,7 @@ const InfiniteThumbs = (props) => {
     return <LoadingIndicator />;
   }
 
-  const hasThumbLink = item => item.thumbLink !== null;
+  const hasThumbLink = (item) => item.thumbLink !== null;
 
   const thumbImages = (item, index) => (
     <ThumbImg
@@ -84,7 +84,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
+    nextPage: (nextPageNum) => dispatch(loadNextPage(nextPageNum)),
     selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
   };
 }

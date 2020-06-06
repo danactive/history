@@ -1,4 +1,4 @@
-/* global URL, window */
+/* global window */
 import React, { useEffect, useState } from 'react';
 
 const defaults = {
@@ -40,7 +40,7 @@ export default function SearchBar({
   return (
     <section id="search-bar">
       <input
-        onChange={event => handleSearchChange(event.target.value)}
+        onChange={(event) => handleSearchChange(event.target.value)}
         placeholder={defaults.instruction}
         title={defaults.instruction}
         value={searchValue}
@@ -48,7 +48,7 @@ export default function SearchBar({
       />
       <select
         defaultValue="relevance"
-        onChange={event => onOrderChange(event.target.value)}
+        onChange={(event) => onOrderChange(event.target.value)}
         tabIndex="2"
       >
         <option value="date">

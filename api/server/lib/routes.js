@@ -48,7 +48,7 @@ function staticRouteUtils({ urlSegment }) {
   };
 }
 
-const createErrorReply = reply => (error) => {
+const createErrorReply = (reply) => (error) => {
   const boomError = (error.isBoom) ? error : boom.boomify(error);
 
   reply(boomError);

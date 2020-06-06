@@ -1,4 +1,3 @@
-/* global JSON, require */
 const tape = require('tape-catch');
 const existsChecker = require('../../exists/lib/exists');
 
@@ -20,7 +19,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
 
   describe.test('* Catch fake source', { skip: false }, (assert) => {
     plugin.resize('FAKE')
-      .then(response => assert.fail(JSON.stringify(response)))
+      .then((response) => assert.fail(JSON.stringify(response)))
       .catch((error) => {
         assert.ok(error, 'Caught expected error');
         assert.end();
@@ -30,7 +29,7 @@ tape('Verify resize library', { skip: false }, (describe) => {
   describe.test('* Catch non-JPEG file', { skip: false }, (assert) => {
     const pngPath = path.join(fixturesPath, 'Capture.PNG');
     plugin.resize(pngPath)
-      .then(response => assert.fail(JSON.stringify(response)))
+      .then((response) => assert.fail(JSON.stringify(response)))
       .catch((error) => {
         assert.ok(error, 'Caught expected error');
         assert.end();

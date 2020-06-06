@@ -18,9 +18,9 @@ function uniqueFiles(sourceFilenames) {
 module.exports.uniqueFiles = uniqueFiles;
 
 function videoTypeInList(sourceFilenames, sourceFile) {
-  const filenameSet = sourceFilenames.filter(s => s.indexOf(sourceFile) === 0);
-  const media = filenameSet.map(f => utils.file.mediumType(utils.file.mimeType(utils.file.type(f))));
-  const videoFiles = media.filter(m => m === 'video');
+  const filenameSet = sourceFilenames.filter((s) => s.indexOf(sourceFile) === 0);
+  const media = filenameSet.map((f) => utils.file.mediumType(utils.file.mimeType(utils.file.type(f))));
+  const videoFiles = media.filter((m) => m === 'video');
   return videoFiles.length > 0;
 }
 module.exports.videoTypeInList = videoTypeInList;

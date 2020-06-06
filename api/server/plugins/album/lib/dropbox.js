@@ -5,7 +5,7 @@ const logger = log.createLogger('Album Dropbox');
 
 
 function determineError(e) {
-  const wrap = msg => `error (${msg})`;
+  const wrap = (msg) => `error (${msg})`;
 
   if (e.error && e.error.message) {
     return wrap(e.error.message);
@@ -40,7 +40,7 @@ function createTransform(dbx) {
   return async (response, field) => {
     try {
       const out = utils.clone(response);
-      const promises = response.album.items.map(item => getImagePath(dbx, item[field]));
+      const promises = response.album.items.map((item) => getImagePath(dbx, item[field]));
       const urls = await Promise.all(promises);
 
       response.album.items.forEach((item, index) => {

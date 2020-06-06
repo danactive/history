@@ -1,4 +1,3 @@
-/* global require */
 const path = require('path');
 
 const gallery = require('./gallery');
@@ -39,22 +38,22 @@ routeTable.push({
   },
 });
 
-const register = server => new Promise(async (resolve) => {
-  routeTable.forEach(routeDefiniation => server.route(routeDefiniation));
+async function register(server) {
+  routeTable.forEach((routeDefiniation) => server.route(routeDefiniation));
 
   try {
     await gallery.getGalleries();
     const handleRoute = {
       directory: {
-        path: request => path.join(__dirname, '../../../../../', `public/galleries/gallery-${request.params.gallery}`),
+        path: (request) => path.join(__dirname, '../../../../../', `public/galleries/gallery-${request.params.gallery}`),
         listing: true,
       },
     };
-    resolve(staticGalleryFolder(server, handleRoute));
+    return staticGalleryFolder(server, handleRoute);
   } catch (error) {
-    resolve(staticGalleryFolder(server, () => error));
+    return staticGalleryFolder(server, () => error);
   }
-});
+}
 
 const plugin = {
   register,

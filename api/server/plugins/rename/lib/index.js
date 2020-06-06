@@ -4,9 +4,9 @@ const renamer = require('./rename');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
-const formatJson = json => ({ xml: json.xml, filenames: json.filenames });
+const formatJson = (json) => ({ xml: json.xml, filenames: json.filenames });
 
-const handler = request => new Promise((reply) => {
+const handler = (request) => new Promise((reply) => {
   const {
     filenames: fromFilenames,
     prefix,
@@ -15,7 +15,7 @@ const handler = request => new Promise((reply) => {
     source_folder: sourceFolder,
   } = request.payload;
 
-  const handleResponse = json => reply(formatJson(json));
+  const handleResponse = (json) => reply(formatJson(json));
   const handleError = routes.createErrorReply(reply);
 
   const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix);

@@ -8,5 +8,5 @@ module.exports.dataToGeojson = (gallery, albumStem) => new Promise((resolve, rej
       const jsonData = convertor.parse(albumData.album.items, { Point: ['geo.lat', 'geo.lon'] });
       resolve(jsonData);
     })
-    .catch(error => reject(error));
+    .catch((error) => reject(error));
 });

@@ -9,7 +9,7 @@ function List({ component, items }) {
 
   // If we have items, render them
   if (items) {
-    content = items.map(item => (
+    content = items.map((item) => (
       <ComponentToRender key={`item-${item.id}`} item={item} />
     ));
   } else {

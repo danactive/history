@@ -42,7 +42,7 @@ export const argsAlbumXmlPath = ({ gallery, album }) => ({
 
 
 const getYear = (filename = '') => filename.substr(0, 4);
-const getFileExt = filename => filename.match(/\.[0-9a-z]+$/i)[0].substring(1);
+const getFileExt = (filename) => filename.match(/\.[0-9a-z]+$/i)[0].substring(1);
 export const videoExtToJpg = (filename) => {
   if (config.supportedFileTypes.video.includes(getFileExt(filename))) {
     return filename.replace(getFileExt(filename), 'jpg');
@@ -65,7 +65,7 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
 
 
 export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
-  const queueSagaCalls = thumb => call(
+  const queueSagaCalls = (thumb) => call(
     [dbx, 'filesGetTemporaryLink'],
     argsThumbImgPath({ gallery, filename: thumb.filename }),
   );
@@ -178,7 +178,7 @@ export function* getThumbPathsLocally({
       throw new Error(`Empty or malformed album; missingPathMemories=(${JSON.stringify(missingPathMemories)})`);
     }
 
-    const newMemories = missingPathMemories.map(memory => ({
+    const newMemories = missingPathMemories.map((memory) => ({
       ...memory,
       thumbLink: `http://localhost:8000/static/gallery-${gallery}/media/thumbs/${getYear(memory.filename)}/${videoExtToJpg(memory.filename)}`,
     }));

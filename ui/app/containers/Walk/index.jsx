@@ -59,8 +59,8 @@ const mapStateToProps = createStructuredSelector({
   path: makeSelectPath(),
 });
 
-const mapDispatchToProps = dispatch => ({
-  getFilesByPath: path => dispatch(actions.getFilesByPath(path)),
+const mapDispatchToProps = (dispatch) => ({
+  getFilesByPath: (path) => dispatch(actions.getFilesByPath(path)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);

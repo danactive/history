@@ -13,7 +13,7 @@ const Toggle = ({
 
   // If we have items, render them
   if (values) {
-    content = values.map(item => (
+    content = values.map((item) => (
       <ToggleOption key={item} value={item} message={messages[item]} />
     ));
   }

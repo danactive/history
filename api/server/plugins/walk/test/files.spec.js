@@ -14,7 +14,7 @@ tape('Files', { skip: false }, (describe) => {
             testCase.successJson({ assert, request: testCase.request, response });
           }
         })
-        .catch(error => testCase.error(assert, error));
+        .catch((error) => testCase.error(assert, error));
     });
   });
 });

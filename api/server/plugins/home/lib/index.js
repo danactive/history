@@ -1,16 +1,17 @@
-/* global require */
-
 const gallery = require('../../gallery/lib/gallery');
 
-const handler = (request, reply) => new Promise(async (resolve) => {
+async function handler(request, reply) {
   const isRaw = request.query.raw;
   const viewPath = 'plugins/home/components/page.jsx';
-  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
-
   const galleries = await gallery.getGalleries();
+  const out = { galleries };
 
-  handleResponse({ galleries });
-});
+  if (isRaw) {
+    return out;
+  }
+
+  return reply.view(viewPath, out);
+}
 
 const register = (server) => {
   server.route({

@@ -1,16 +1,15 @@
-/* global require */
 const json = require('./json');
 const validation = require('../../../lib/validation');
 
-const handler = request => new Promise((reply) => {
+const handler = (request) => new Promise((reply) => {
   const {
     album_stem: albumStem,
     gallery,
   } = request.query;
 
   json.dataToGeojson(gallery, albumStem)
-    .then(geojsonData => reply(geojsonData))
-    .catch(error => reply(error));
+    .then((geojsonData) => reply(geojsonData))
+    .catch((error) => reply(error));
 });
 
 const register = (server) => {

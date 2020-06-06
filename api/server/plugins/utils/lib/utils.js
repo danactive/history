@@ -9,7 +9,7 @@ const path = require('path');
 const configFile = require('../../../../../config.json');
 
 const config = {
-  get: dotpath => dotProp.get(configFile, dotpath),
+  get: (dotpath) => dotProp.get(configFile, dotpath),
 };
 
 const env = {
@@ -71,7 +71,7 @@ const fileMethods = {
 
     return path.extname(filepath).substr(1);
   },
-  mimeType: extension => customMime(extension) || mime.lookup(extension),
+  mimeType: (extension) => customMime(extension) || mime.lookup(extension),
   mediumType: (extension) => {
     if (!extension) {
       return false;
@@ -95,8 +95,8 @@ const fileMethods = {
 
     return extension.split('/')[0];
   },
-  absolutePath: filepath => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
-  photoPath: filepath => filepath && filepath.replace('thumbs', 'photos'),
+  absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
+  photoPath: (filepath) => filepath && filepath.replace('thumbs', 'photos'),
 };
 
 fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {

@@ -1,14 +1,14 @@
 const cases = [];
 
 const normalize = {
-  statusCode: error => error.statusCode || error.output.statusCode,
+  statusCode: (error) => error.statusCode || error.output.statusCode,
 };
 
 cases.push({
   name: '* Catch missing gallery',
   options: { skip: false },
   request: {},
-  success: assert => assert.fail('Unexpected response found'),
+  success: (assert) => assert.fail('Unexpected response found'),
   error: (assert, error, options = {}) => {
     assert.ok(error, 'Caught expected error');
 
@@ -28,7 +28,7 @@ cases.push({
   request: {
     gallery: 'FAKE',
   },
-  success: assert => assert.fail('Unexpected response found'),
+  success: (assert) => assert.fail('Unexpected response found'),
   error: (assert, error, options = {}) => {
     assert.ok(error, 'Caught expected error');
 
@@ -49,7 +49,7 @@ cases.push({
     gallery: 'FAKE',
     album_stem: 'sample',
   },
-  success: assert => assert.fail('Unexpected response found'),
+  success: (assert) => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
@@ -64,7 +64,7 @@ cases.push({
     gallery: 'demo',
     album_stem: 'FAKE',
   },
-  success: assert => assert.fail('Unexpected response found'),
+  success: (assert) => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 404, 'Status code');
@@ -79,7 +79,7 @@ cases.push({
     gallery: 'demo',
     album_stem: 'invalid',
   },
-  success: assert => assert.fail('Unexpected response found'),
+  success: (assert) => assert.fail('Unexpected response found'),
   error: (assert, error) => {
     assert.ok(error, 'Caught expected error');
     assert.equal(normalize.statusCode(error), 403, 'Status code');

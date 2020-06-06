@@ -1,4 +1,3 @@
-/* global require */
 const { Dropbox } = require('dropbox');
 
 const { createTransform } = require('./dropbox');
@@ -33,8 +32,8 @@ const handler = (request, reply) => new Promise((resolve) => {
   } = request.query;
   const viewPath = 'plugins/album/components/page.jsx';
 
-  const applyCloud = response => ((cloud === 'dropbox') ? applyDropbox(response) : response);
-  const handleResponse = json => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
+  const applyCloud = (response) => ((cloud === 'dropbox') ? applyDropbox(response) : response);
+  const handleResponse = (json) => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
   const handleError = routes.createErrorReply(resolve);
 
   jsonAlbum.getAlbum(gallery, albumStem)
@@ -75,7 +74,7 @@ const register = (server) => {
       tags: ['static'],
       handler: {
         directory: {
-          path: request => utils.file.safePublicPath(`/galleries/gallery-${request.params.gallery}/xml/album_${request.params.album}.xml`),
+          path: (request) => utils.file.safePublicPath(`/galleries/gallery-${request.params.gallery}/xml/album_${request.params.album}.xml`),
           listing: false,
         },
       },
