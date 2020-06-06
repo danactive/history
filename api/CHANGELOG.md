@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.1](https://github.com/danactive/history/compare/v5.1.0...v5.1.1) (2020-06-06)
+
+
+### Bug Fixes
+
+* **DX:** Update eslint source to JS file ext ([a896f64](https://github.com/danactive/history/commit/a896f647bb0acec388c723a00b36ebf4c4542575))
+
 ## [5.1.0](https://github.com/danactive/history/compare/v5.0.1...v5.1.0) (2020-06-06)
 
 
