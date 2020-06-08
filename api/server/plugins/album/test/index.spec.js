@@ -12,16 +12,18 @@ test('Verify /view/album route', { skip: false }, (describe) => {
   const lib = require('../lib');
   const testCases = require('./cases');
   const testCaseDef = require('../../../test/casesDefinition');
+  const utils = require('../../utils');
 
   const SAMPLE_IMAGE_COUNT = 6;
   const plugins = [inert, vision, lib];
+  const port = utils.config.get('apiPort');
 
   testCaseDef.execHapi({
     describe, plugins, testCases, routeStem: '/album',
   });
 
   describe.test('* JavaScript library requirements', { skip: false }, async (assert) => {
-    const server = hapi.Server();
+    const server = hapi.Server({ port });
 
     const url = `/album?${querystring.stringify({
       album_stem: config.defaultAlbum,

@@ -8,7 +8,7 @@ const config = require('../../config.json');
 const log = require('./plugins/log');
 const plugins = require('./lib/plugins');
 
-const { port } = config;
+const { apiPort: port } = config;
 const logger = log.createLogger('server');
 
 const server = hapi.Server({

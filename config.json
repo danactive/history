@@ -1,5 +1,6 @@
 {
-  "port": 8000,
+  "apiPort": 8000,
+  "uiPort": 3000,
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
   "resizeDimensions": {

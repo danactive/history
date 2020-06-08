@@ -8,7 +8,7 @@ tape('Server', { skip: false }, (describe) => {
   const lib = require('../index');
   const utils = require('../plugins/utils');
 
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
 
   async function checkHtml({ assert, html, urlStem }) {
     try {

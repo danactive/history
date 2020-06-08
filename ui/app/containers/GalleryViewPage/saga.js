@@ -6,6 +6,7 @@ import request from '../../utils/request';
 
 import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
+import { apiPort as port } from '../../../../config.json';
 
 // Dropbox API v2 request/response handler
 export function* getGalleryFileOnDropbox({ host, gallery }) {
@@ -23,7 +24,7 @@ export function* getGalleryFileOnDropbox({ host, gallery }) {
 
 export function* getGalleryFileLocally({ host, gallery }) {
   try {
-    const galleryXml = yield call(request, `http://localhost:8000/static/gallery-${gallery}/xml/gallery.xml`);
+    const galleryXml = yield call(request, `http://localhost:${port}/static/gallery-${gallery}/xml/gallery.xml`);
 
     yield put(galleryLoaded({ host, gallery, galleryXml }));
   } catch (error) {
