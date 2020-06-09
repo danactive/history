@@ -3,12 +3,16 @@ const hapiReactViews = require('hapi-react-views');
 const path = require('path');
 const querystring = require('querystring');
 
+const config = require('../../../config.json');
+
+const { apiPort: port } = config;
+
 function execHapi({
   describe, plugins, routeStem, testCases,
 }) {
   testCases.cases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, async (assert) => {
-      const server = hapi.Server();
+      const server = hapi.Server({ port });
 
       const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
       const request = {

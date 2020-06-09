@@ -8,7 +8,7 @@ tape('GeoJSON Index', { skip: false }, (describe) => {
   const utils = require('../../utils');
 
   const plugins = [lib];
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
 
   describe.test('* Validate GeoJSON', async (assert) => {
     const server = hapi.Server({ port });

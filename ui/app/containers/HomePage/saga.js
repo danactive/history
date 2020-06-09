@@ -10,9 +10,10 @@ import {
 import request from '../../utils/request';
 import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
 import { LOAD_GALLERIES } from './constants';
+import { apiPort as port } from '../../../../config.json';
 
 // eslint-disable-next-line no-console
-const logError = (message) => console.error(message);
+const logError = (...message) => console.error(...message);
 
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
@@ -31,17 +32,17 @@ export function* getDropboxGalleries() {
     const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
     yield put(galleriesLoadingSuccess({ dropbox: galleries }));
   } catch (error) {
-    logError(error);
+    logError('getDropboxGalleries', error);
     yield put(galleriesLoadingError(error));
   }
 }
 
 function* getLocalFolders() {
   try {
-    const { galleries } = yield call(request, 'http://localhost:8000/gallery/list');
+    const { galleries } = yield call(request, `http://localhost:${port}/gallery/list`);
     yield put(galleriesLoadingSuccess({ local: galleries.map((name) => ({ name, id: `local-${name}` })) }));
   } catch (error) {
-    logError(error);
+    logError('getLocalFolders', error);
     yield put(galleriesLoadingError(error));
   }
 }

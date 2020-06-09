@@ -93,7 +93,7 @@ export function* getAlbumFileOnDropbox({ host, gallery, album }) {
 
 export function* getAlbumFileLocally({ host, gallery, album }) {
   try {
-    const xmlFile = yield call(request, `http://localhost:8000/view/album/${gallery}/${album}`);
+    const xmlFile = yield call(request, `http://localhost:${config.apiPort}/view/album/${gallery}/${album}`);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
     yield put(albumLoadSuccess({
       memories,
@@ -178,10 +178,15 @@ export function* getThumbPathsLocally({
       throw new Error(`Empty or malformed album; missingPathMemories=(${JSON.stringify(missingPathMemories)})`);
     }
 
-    const newMemories = missingPathMemories.map((memory) => ({
-      ...memory,
-      thumbLink: `http://localhost:8000/static/gallery-${gallery}/media/thumbs/${getYear(memory.filename)}/${videoExtToJpg(memory.filename)}`,
-    }));
+    const newMemories = missingPathMemories.map((memory) => {
+      const jpgFile = videoExtToJpg(memory.filename);
+      const year = getYear(memory.filename);
+
+      return {
+        ...memory,
+        thumbLink: `http://localhost:${config.apiPort}/static/gallery-${gallery}/media/thumbs/${year}/${jpgFile}`,
+      };
+    });
 
     yield put(nextPageSuccess({
       newMemories,

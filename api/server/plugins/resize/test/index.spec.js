@@ -10,7 +10,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   const utils = require('../../utils');
 
   const plugins = [lib];
-  const port = utils.config.get('port');
+  const port = utils.config.get('apiPort');
   const photoDims = utils.config.get('resizeDimensions.photo');
   const thumbDims = utils.config.get('resizeDimensions.thumb');
 
