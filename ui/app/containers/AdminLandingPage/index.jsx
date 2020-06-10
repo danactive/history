@@ -20,13 +20,17 @@ export function AdminLandingPage({
       <h1>
         <FormattedMessage {...messages.header} />
       </h1>
-      <A onClick={navToWalk}>Walk</A>
+      <ul>
+        <li><A onClick={navToWalk}>Walk</A></li>
+        <li><A onClick={navToWalk}>Resize</A></li>
+      </ul>
     </div>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({
   navToWalk: () => dispatch(push('/admin/walk')),
+  navToResize: () => dispatch(push('/admin/resize')),
 });
 
 const withConnect = connect(null, mapDispatchToProps);

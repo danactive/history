@@ -1,49 +1,48 @@
-const dotProp = require('dot-prop');
-
 const resizeMod = require('./resize');
 const validation = require('../../../lib/validation');
 const utils = require('../../utils');
 
 const uiPort = utils.config.get('uiPort');
 
-async function handler(request, h) {
-  const sourcePath = request.payload.source_path;
-
+const handler = async (request) => {
   try {
-    const response = await resizeMod.resize(sourcePath);
-    if (dotProp.get(response, 'meta.error.count', 0) > 0) {
-      return h.response(response.meta.error).code(500);
-    }
+    const sourcePath = request.payload.image_path;
 
-    return { resize: true };
+    const out = await resizeMod.resize(sourcePath);
+    return out;
   } catch (error) {
     return error;
   }
-}
+};
 
 const register = (server) => {
   server.route({
     method: 'POST',
-    path: '/resize',
+    path: '/generate-preview',
     options: {
       handler,
       cors: {
         origin: [`http://localhost:${uiPort}`],
       },
-      tags: ['api'],
+      tags: ['api', 'jpg', 'resize', 'generator', 'thumbnail'],
       validate: {
         payload: {
-          source_path: validation.sourceFolder,
+          image_path: validation.sourceFolder,
         },
       },
-      },
+      // response: {
+      //   schema: {
+      //     resize: validation.resize,
+      //   },
+      // },
+    },
   });
 };
 
 const plugin = {
   register,
-  name: 'resize',
-  version: '1.0.0',
+  name: 'generate-preview',
+  version: '0.1.0',
 };
 
 module.exports = { plugin };

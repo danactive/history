@@ -75,6 +75,7 @@
     "jsdom": "^15.2.1",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
+    "sharp": "^0.25.3",
     "standard-version": "^8.0.0",
     "style-loader": "^0.23.0",
     "tape": "^4.13.0",

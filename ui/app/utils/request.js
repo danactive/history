@@ -42,7 +42,7 @@ function checkStatus(response) {
     return response;
   }
 
-  const error = new Error(response.statusText);
+  const error = new Error(response.message || response.statusText);
   error.response = response;
   throw error;
 }
@@ -79,7 +79,7 @@ function fetchWithTimeout(url, options, timeout = 1700) {
  */
 export default function request(url, options) {
   return fetchWithTimeout(url, options)
-    .then(checkStatus)
+    .then(checkStatus) // *********** HISTORY CUSTOM modified React Boilerplate
     .then(parseJSON)
     .then(parseTextXml); // *********** HISTORY CUSTOM not React Boilerplate
 }
