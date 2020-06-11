@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/danactive/history/compare/v5.1.1...v5.2.0) (2020-06-11)
+
+
+### Features
+
+* **AlbumListItem:** Add storybook ([1b1b733](https://github.com/danactive/history/commit/1b1b73383248c62096f4af147d470a5cf9170002))
+* **DX:** Ports may be customized ([b1631a6](https://github.com/danactive/history/commit/b1631a69ff77fdd458fef56088ffa83232515e33))
+* **InfiniteThumbs:** Add storybook ([3b2894c](https://github.com/danactive/history/commit/3b2894c8441975d581701a451596322d6eace24d))
+* **Resize:** Add Admin folder with basic Resize functionality ([f6303e9](https://github.com/danactive/history/commit/f6303e9af11e8da0a80ac4de87d2353337da2acd))
+* **Resize Photo:** Admin page has a basic form that will resize to photo, thumb dims ([5f5366c](https://github.com/danactive/history/commit/5f5366c05ae03cbb4d85f67a3ae1b2f2960c1d12))
+* **SlippyMap:** Add storybook ([1cd08da](https://github.com/danactive/history/commit/1cd08da304ddd07a56fa0e516b4590574f1d263f))
+* **SlippyPhoto:** Add storybook ([541bf34](https://github.com/danactive/history/commit/541bf349d091e7343cad22db9d0d0917261cf239))
+* **Storybook:** Add Storybook to frontend ([d3939f2](https://github.com/danactive/history/commit/d3939f23b45fdf1d1f79fb5007dae99abadc082f))
+
+
+### Bug Fixes
+
+* **DX:** Update eslint source to JS file ext ([036532a](https://github.com/danactive/history/commit/036532a98b22268f3c6ae436677fe7fa2f24f8ec))
+* **Fetch:** Display JSON errors ([c87b2e7](https://github.com/danactive/history/commit/c87b2e76418f76058b2958e41205c622a8ad6ab7))
+* **Redux:** Storybook needs global and album reducer defined with initial state ([733dbf6](https://github.com/danactive/history/commit/733dbf61e4ed508a33b024d285c2620b18da1494))
+* ui/package.json, ui/package-lock.json & ui/.snyk to reduce vulnerabilities ([20e1630](https://github.com/danactive/history/commit/20e16306a75b7aeff08e8d1ccab85760c8e5a122))
+
 ### [5.1.1](https://github.com/danactive/history/compare/v5.1.0...v5.1.1) (2020-06-06)
 
 
