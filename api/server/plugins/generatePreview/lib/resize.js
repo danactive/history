@@ -1,5 +1,4 @@
 const boom = require('boom');
-const fs = require('fs');
 const sharp = require('sharp');
 
 const existsMod = require('../../exists/lib/exists');
@@ -13,10 +12,12 @@ async function transformImages(originalPath) {
     return boom.badRequest(`Transform supports JPEG images, not (${originalMimeType})`);
   }
 
-  return await sharp(originalPath)
+  const image = await sharp(originalPath)
     .rotate() // auto-orient based on the EXIF Orientation tag
     .resize(dimensions.width, dimensions.height)
-    .toFile('dan.png', (err, info) => info);
+    .toFile('output.png', (err, info) => info);
+
+  return image;
 }
 
 /**

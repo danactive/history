@@ -9,6 +9,7 @@ import A from '../../components/A';
 import messages from './messages';
 
 export function AdminLandingPage({
+  navToResize,
   navToWalk,
 }) {
   return (
@@ -22,7 +23,7 @@ export function AdminLandingPage({
       </h1>
       <ul>
         <li><A onClick={navToWalk}>Walk</A></li>
-        <li><A onClick={navToWalk}>Resize</A></li>
+        <li><A onClick={navToResize}>Resize</A></li>
       </ul>
     </div>
   );

@@ -36,7 +36,7 @@ const register = (server) => {
           source_path: validation.sourceFolder,
         },
       },
-      },
+    },
   });
 };
 
