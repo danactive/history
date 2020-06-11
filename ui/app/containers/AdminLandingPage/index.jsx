@@ -9,6 +9,7 @@ import A from '../../components/A';
 import messages from './messages';
 
 export function AdminLandingPage({
+  navToResize,
   navToWalk,
 }) {
   return (
@@ -20,13 +21,17 @@ export function AdminLandingPage({
       <h1>
         <FormattedMessage {...messages.header} />
       </h1>
-      <A onClick={navToWalk}>Walk</A>
+      <ul>
+        <li><A onClick={navToWalk}>Walk</A></li>
+        <li><A onClick={navToResize}>Resize</A></li>
+      </ul>
     </div>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({
   navToWalk: () => dispatch(push('/admin/walk')),
+  navToResize: () => dispatch(push('/admin/resize')),
 });
 
 const withConnect = connect(null, mapDispatchToProps);

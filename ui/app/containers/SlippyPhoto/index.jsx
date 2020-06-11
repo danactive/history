@@ -8,6 +8,7 @@ const Map = ReactMapboxGl({
 });
 
 const SlippyPhoto = ({ currentMemory }) => {
+  if (!currentMemory) return null;
   const { photoLink, thumbLink } = currentMemory;
   const url = photoLink || thumbLink;
 

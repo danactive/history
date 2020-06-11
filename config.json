@@ -5,7 +5,8 @@
   "defaultGallery": "demo",
   "resizeDimensions": {
     "photo": { "width": 800, "height": 600 },
-    "thumb": { "width": 185, "height": 45 }
+    "thumb": { "width": 185, "height": 45 },
+    "preview": { "width": 230, "height": 200 }
   },
   "supportedFileTypes": {
     "photo": ["jpg", "jpeg"],
