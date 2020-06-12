@@ -42,7 +42,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jquery-colorbox": "^1.6.4",
     "lout": "^11.2.3",
-    "mime-types": "^2.1.26",
+    "mime-types": "^2.1.27",
     "node-notifier": "^7.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -51,7 +51,7 @@
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
     "vision": "^5.3.1",
-    "webpack": "^4.42.0",
+    "webpack": "^4.43.0",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
