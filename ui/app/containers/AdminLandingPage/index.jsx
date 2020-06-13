@@ -2,10 +2,21 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 
-import A from '../../components/A';
 import messages from './messages';
 
+import A from '../../components/A';
+import ListItem from '../../components/ListItem';
+import GenericList from '../../components/GenericList';
+
 export function AdminLandingPage() {
+  const applyId = (n) => ({ ...n, id: n.label });
+  const navItems = [
+    { label: 'Walk', href: '/admin/walk' },
+    { label: 'Resize', href: '/admin/resize' },
+  ].map(applyId);
+
+  const ListComponent = ({ item }) => <ListItem item={<A href={item.href}>{item.label}</A>} />;
+
   return (
     <div>
       <Helmet>
@@ -15,10 +26,7 @@ export function AdminLandingPage() {
       <h1>
         <FormattedMessage {...messages.header} />
       </h1>
-      <ul>
-        <li><A href="/admin/walk">Walk</A></li>
-        <li><A href="/admin/resize">Resize</A></li>
-      </ul>
+      <GenericList items={navItems} error={false} loading={false} component={ListComponent} />
     </div>
   );
 }
