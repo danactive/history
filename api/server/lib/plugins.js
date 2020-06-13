@@ -29,7 +29,7 @@ const plugins = [
   { plugin: viewAlbum, routes: { prefix: '/view' } },
   { plugin: editAlbum, routes: { prefix: '/edit' } },
   { plugin: libGallery },
-  { plugin: generatePreview },
+  { plugin: generatePreview, routes: { prefix: '/preview' } },
   { plugin: libGeojson, routes: { prefix: '/geojson' } },
   { plugin: libHome },
   { plugin: libPublic },

@@ -11,7 +11,7 @@ import { makeSelectFiles, makeSelectPath } from './selectors';
 import { useInjectSaga } from '../../utils/injectSaga';
 import { useInjectReducer } from '../../utils/injectReducer';
 
-import Contents from './Contents';
+import ListFolders from './ListFolders';
 import GenericList from '../../components/GenericList';
 
 function parseQueryString(find, from) {
@@ -42,7 +42,7 @@ function Walk({
     </Helmet>,
     <GenericList
       key="walk-GenericList"
-      component={Contents}
+      component={ListFolders}
       items={files.map((f) => ({ id: f.path, ...f }))}
       loading={!files || files.length === 0}
       error={false}

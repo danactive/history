@@ -1,3 +1,4 @@
+const boom = require('boom');
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
 const notifier = require('node-notifier');
@@ -8,14 +9,27 @@ const config = require('../../config.json');
 const log = require('./plugins/log');
 const plugins = require('./lib/plugins');
 
-const { apiPort: port } = config;
+const { apiPort: port, uiPort } = config;
 const logger = log.createLogger('server');
 
 const server = hapi.Server({
   port,
   routes: {
     cors: {
-      origin: ['http://localhost:3000'],
+      origin: [`http://localhost:${uiPort}`],
+    },
+    validate: {
+      failAction: async (request, h, err) => {
+        if (process.env.NODE_ENV === 'production') {
+          // In prod, log a limited error message and throw the default Bad Request error.
+          console.error('ValidationError:', err.message);
+          throw boom.badRequest('Invalid request payload input');
+        } else {
+          // During development, log and respond with the full error.
+          console.error(err);
+          throw err;
+        }
+      },
     },
   },
 });

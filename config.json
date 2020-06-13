@@ -8,6 +8,7 @@
     "thumb": { "width": 185, "height": 45 },
     "preview": { "width": 230, "height": 200 }
   },
+  "previewFolderName":  "_preview",
   "supportedFileTypes": {
     "photo": ["jpg", "jpeg"],
     "video": ["mp4", "webm"]

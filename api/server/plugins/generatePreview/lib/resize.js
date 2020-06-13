@@ -1,23 +1,35 @@
 const boom = require('boom');
+const fs = require('fs');
 const sharp = require('sharp');
 
+const { previewFolderName } = require('../../../../../config.json');
 const existsMod = require('../../exists/lib/exists');
 const utils = require('../../utils');
 
 async function transformImages(originalPath) {
   const dimensions = utils.config.get('resizeDimensions.preview');
   const originalMimeType = utils.file.mimeType(originalPath);
+  const paths = originalPath.split('/');
+  const filename = paths.pop();
+  const sourcePath = paths.join('/');
 
   if (originalMimeType !== 'image/jpeg') {
     return boom.badRequest(`Transform supports JPEG images, not (${originalMimeType})`);
   }
 
-  const image = await sharp(originalPath)
-    .rotate() // auto-orient based on the EXIF Orientation tag
-    .resize(dimensions.width, dimensions.height)
-    .toFile('output.png', (err, info) => info);
+  const outFolder = `${sourcePath}/${previewFolderName}`;
+  const outPath = `${outFolder}/${filename}`;
+  try {
+    await fs.promises.mkdir(outFolder, { recursive: true }); // ensure folder exists without overwriting
+    const meta = await sharp(originalPath)
+      .rotate() // auto-orient based on the EXIF Orientation tag
+      .resize(dimensions.width, dimensions.height)
+      .toFile(outPath);
 
-  return image;
+    return { meta, path: outPath };
+  } catch (error) {
+    return { error: error.message, path: outPath };
+  }
 }
 
 /**
@@ -28,7 +40,8 @@ async function transformImages(originalPath) {
 const resize = async (sourcePath) => {
   try {
     const absolutePath = await existsMod.pathExists(sourcePath);
-    return await transformImages(absolutePath);
+    const out = await transformImages(absolutePath);
+    return out;
   } catch (error) {
     return boom.boomify(error);
   }

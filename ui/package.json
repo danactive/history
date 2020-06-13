@@ -98,10 +98,10 @@
     "redux-saga": "^1.1.3",
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
+    "snyk": "^1.339.1",
     "styled-components": "^4.4.1",
     "webpack": "^4.42.0",
-    "whatwg-fetch": "3.0.0",
-    "snyk": "^1.339.1"
+    "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {
     "@babel/cli": "7.4.3",
