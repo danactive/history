@@ -1,9 +1,3 @@
-/**
-*
-* GenericList
-*
-*/
-
 import React from 'react';
 
 import List from '../List';
@@ -11,7 +5,10 @@ import ListItem from '../ListItem';
 import LoadingIndicator from '../LoadingIndicator';
 
 function GenericList({
-  loading, error, items, component,
+  component,
+  items,
+  loading,
+  error,
 }) {
   if (loading) {
     return <List component={LoadingIndicator} />;

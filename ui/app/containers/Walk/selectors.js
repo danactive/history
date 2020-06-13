@@ -5,12 +5,12 @@ const selectWalkDomain = (state) => state.walk || initialState;
 
 const makeSelectFiles = () => createSelector(
   selectWalkDomain,
-  (substate) => substate.listing.files,
+  (pageState) => pageState.listing.files,
 );
 
 const makeSelectPath = () => createSelector(
   selectWalkDomain,
-  (substate) => substate.listing.path,
+  (pageState) => pageState.listing.path,
 );
 
 export default selectWalkDomain;

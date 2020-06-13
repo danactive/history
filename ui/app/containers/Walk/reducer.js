@@ -4,7 +4,6 @@ import { LIST_DIRECTORY_REQUEST, LIST_DIRECTORY_SUCCESS } from './constants';
 export const initialState = {
   listing: {
     files: [],
-    path: 'galleries',
   },
 };
 

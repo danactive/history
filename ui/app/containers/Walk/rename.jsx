@@ -40,6 +40,7 @@ function onClick() {
     body: JSON.stringify(data),
   };
 
+  // TODO replace with request and fetchWithTimeout
   return fetch('/admin/rename', options)
     .then((response) => response.json())
     .then(output)

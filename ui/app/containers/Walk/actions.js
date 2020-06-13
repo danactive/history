@@ -4,7 +4,7 @@ import {
   LIST_DIRECTORY_FAILURE,
 } from './constants';
 
-function getFilesByPath(path) {
+function listDirectory(path) {
   return {
     type: LIST_DIRECTORY_REQUEST,
     path,
@@ -26,7 +26,7 @@ function listingFailure(error) {
 }
 
 export default {
-  getFilesByPath,
+  listDirectory,
   listingSuccess,
   listingFailure,
 };

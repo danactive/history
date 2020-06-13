@@ -1,24 +1,18 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
-import { createStructuredSelector } from 'reselect';
+import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 
-import { useInjectSaga } from '../../utils/injectSaga';
-import { useInjectReducer } from '../../utils/injectReducer';
 import actions from './actions';
-import {
-  makeSelectFiles,
-  makeSelectPath,
-} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
+import { makeSelectFiles, makeSelectPath } from './selectors';
+import { useInjectSaga } from '../../utils/injectSaga';
+import { useInjectReducer } from '../../utils/injectReducer';
 
-import Contents from './contents';
-
-import walkUtils from './util';
-
-const { areImages } = walkUtils;
+import Contents from './Contents';
+import GenericList from '../../components/GenericList';
 
 function parseQueryString(find, from) {
   if (!find || !from) return '';
@@ -26,41 +20,43 @@ function parseQueryString(find, from) {
 }
 
 function Walk({
-  getFilesByPath,
+  doListDirectory,
   files,
   location: { search: querystring },
-  path: pathProp,
+  statePath,
 }) {
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
 
   const qsPath = parseQueryString('path', querystring);
-  const path = qsPath || pathProp;
+  const path = qsPath || statePath;
 
   useEffect(() => {
-    getFilesByPath(path);
-  }, []);
+    doListDirectory(path);
+  }, [doListDirectory, path]);
 
-  const hasImage = files.some(areImages);
-
-  return (
-    <div>
-      <Helmet>
-        <title>Walk</title>
-        <meta name="description" content="Description of Walk" />
-      </Helmet>
-      <Contents files={files} showControls={hasImage} />
-    </div>
-  );
+  return [
+    <Helmet key="walk-Helmet">
+      <title>Walk</title>
+      <meta name="description" content="Description of Walk" />
+    </Helmet>,
+    <GenericList
+      key="walk-GenericList"
+      component={Contents}
+      items={files.map((f) => ({ id: f.path, ...f }))}
+      loading={!files || files.length === 0}
+      error={false}
+    />,
+  ];
 }
 
 const mapStateToProps = createStructuredSelector({
   files: makeSelectFiles(),
-  path: makeSelectPath(),
+  statePath: makeSelectPath(),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getFilesByPath: (path) => dispatch(actions.getFilesByPath(path)),
+  doListDirectory: (path) => dispatch(actions.listDirectory(path)),
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
