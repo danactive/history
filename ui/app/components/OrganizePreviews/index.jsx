@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // a little function to help us with reordering the result
@@ -31,9 +31,7 @@ const getListStyle = (isDraggingOver) => ({
   width: 250,
 });
 
-function OrganizePreviews({ items: initialItems }) {
-  const [items, setItems] = useState(initialItems);
-
+function OrganizePreviews({ items, setItems }) {
   function onDragEnd(result) {
     // dropped outside the list
     if (!result.destination) {

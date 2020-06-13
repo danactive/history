@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -14,6 +14,7 @@ import walkUtils from './util';
 
 import GenericList from '../../components/GenericList';
 import ListFolders from './ListFolders';
+import Menu from './Menu';
 import OrganizePreviews from '../../components/OrganizePreviews';
 
 const { isImage } = walkUtils;
@@ -31,7 +32,7 @@ function Walk({
 }) {
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
-
+  const [stateItems, setItems] = useState([]);
   const qsPath = parseQueryString('path', querystring);
   const path = qsPath || statePath;
 
@@ -40,26 +41,46 @@ function Walk({
   }, [doListDirectory, path]);
 
   const loading = !files || files.length === 0;
+  const itemFiles = files.map((file) => ({
+    id: file.path,
+    content: file.filename,
+    ...file,
+  }));
+  const itemImages = itemFiles.filter((file) => isImage(file));
+  const hasImages = !loading && itemImages.length > 0;
 
   const Components = [
     <Helmet key="walk-Helmet">
       <title>Walk</title>
       <meta name="description" content="Description of Walk" />
     </Helmet>,
+    <Menu
+      key="walk-Menu"
+      showMenu={hasImages}
+      imageFilenames={stateItems.map((i) => i.filename)}
+      path={path}
+    />,
     <GenericList
       key="walk-GenericList"
       component={ListFolders}
-      items={files.map((f) => ({ id: f.path, ...f }))}
+      items={itemFiles}
       loading={loading}
       error={false}
     />,
   ];
 
-  const images = files.filter((f) => isImage(f));
-  if (!loading && images.length > 0) {
+  if (hasImages) {
+    let items = itemImages;
+    if (stateItems.length > 0) {
+      items = stateItems;
+    } else {
+      setItems(itemImages);
+    }
+
     Components.push(<OrganizePreviews
       key="walk-OrganizePreviews"
-      items={images.map((f) => ({ id: f.path, content: f.filename, ...f }))}
+      items={items}
+      setItems={setItems}
     />);
   }
 

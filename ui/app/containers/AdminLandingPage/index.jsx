@@ -15,6 +15,7 @@ export function AdminLandingPage() {
     { label: 'Resize', href: '/admin/resize' },
   ].map(applyId);
 
+  // TODO danactive change href to onChange to be SPA and decrease page loads
   const ListComponent = ({ item }) => <ListItem item={<A href={item.href}>{item.label}</A>} />;
 
   return (

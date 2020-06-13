@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import OrganizePreviews from '../index';
 
@@ -7,18 +7,18 @@ export default {
   component: OrganizePreviews,
 };
 
-export const OrganizePreviewStories = () => {
-  // fake data generator
-  const getItems = (count) => Array.from({ length: count }, (v, k) => k).map((k) => ({
+// fake data generator
+function getItems(count) {
+  return Array.from({ length: count }, (v, k) => k).map((k) => ({
     id: `item-${k}`,
     content: `item ${k + 1}`,
   }));
+}
+
+export const WithText = () => {
+  const [items, setItems] = useState(getItems(7));
 
   return (
-    <OrganizePreviews items={getItems(7)} />
+    <OrganizePreviews items={items} setItems={setItems} />
   );
-};
-
-OrganizePreviewStories.story = {
-  name: 'with text',
 };

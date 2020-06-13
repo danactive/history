@@ -10,7 +10,6 @@ import React, { Children } from 'react';
 
 import A from './A';
 import StyledButton from './StyledButton';
-import Wrapper from './Wrapper';
 
 function Button({
   children,
@@ -34,7 +33,7 @@ function Button({
     );
   }
 
-  return <Wrapper>{button}</Wrapper>;
+  return button;
 }
 
 export default Button;
