@@ -10,9 +10,13 @@ import saga from './saga';
 import { makeSelectFiles, makeSelectPath } from './selectors';
 import { useInjectSaga } from '../../utils/injectSaga';
 import { useInjectReducer } from '../../utils/injectReducer';
+import walkUtils from './util';
 
-import ListFolders from './ListFolders';
 import GenericList from '../../components/GenericList';
+import ListFolders from './ListFolders';
+import OrganizePreviews from '../../components/OrganizePreviews';
+
+const { isImage } = walkUtils;
 
 function parseQueryString(find, from) {
   if (!find || !from) return '';
@@ -35,7 +39,9 @@ function Walk({
     doListDirectory(path);
   }, [doListDirectory, path]);
 
-  return [
+  const loading = !files || files.length === 0;
+
+  const Components = [
     <Helmet key="walk-Helmet">
       <title>Walk</title>
       <meta name="description" content="Description of Walk" />
@@ -44,10 +50,20 @@ function Walk({
       key="walk-GenericList"
       component={ListFolders}
       items={files.map((f) => ({ id: f.path, ...f }))}
-      loading={!files || files.length === 0}
+      loading={loading}
       error={false}
     />,
   ];
+
+  const images = files.filter((f) => isImage(f));
+  if (!loading && images.length > 0) {
+    Components.push(<OrganizePreviews
+      key="walk-OrganizePreviews"
+      items={images.map((f) => ({ id: f.path, content: f.filename, ...f }))}
+    />);
+  }
+
+  return Components;
 }
 
 const mapStateToProps = createStructuredSelector({

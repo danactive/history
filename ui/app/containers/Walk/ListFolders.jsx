@@ -5,10 +5,10 @@ import ListItem from '../../components/ListItem';
 
 import walkUtils from './util';
 
-const { areImages } = walkUtils;
+const { isImage } = walkUtils;
 
 function Contents({ item: file }) {
-  if (areImages(file)) {
+  if (isImage(file)) {
     return null;
   }
 
