@@ -3,8 +3,6 @@ const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
 const notifier = require('node-notifier');
 
-require('tuxharness');
-
 const config = require('../../config.json');
 const log = require('./plugins/log');
 const plugins = require('./lib/plugins');
