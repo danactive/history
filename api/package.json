@@ -46,7 +46,7 @@
     "node-notifier": "^7.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "sharp": "^0.25.3",
+    "sharp": "^0.25.4",
     "styled-components": "^4.4.1",
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
