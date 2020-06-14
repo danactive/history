@@ -52,7 +52,7 @@
     "styled-components": "^4.4.1",
     "tap-webpack-plugin": "^2.0.0",
     "tuxharness": "^2.0.4",
-    "url-loader": "^2.3.0",
+    "url-loader": "^4.1.0",
     "vision": "^5.3.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
