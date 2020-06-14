@@ -15,7 +15,7 @@ describe('<List />', () => {
   test('should pass all items props to rendered component', () => {
     const items = [{ id: 1, name: 'Hello' }, { id: 2, name: 'World' }];
 
-    const component = ({ item, key }) => <li title={key}>{item.name}</li>;
+    const component = ({ item }) => <li>{item.name}</li>;
 
     const { container, getByText } = render(
       <List items={items} component={component} />,

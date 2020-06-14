@@ -7,7 +7,7 @@ import walkUtils from './util';
 
 const { isImage } = walkUtils;
 
-function Contents({ item: file }) {
+function ListFile({ item: file }) {
   if (isImage(file)) {
     return null;
   }
@@ -27,4 +27,4 @@ function Contents({ item: file }) {
   );
 }
 
-export default Contents;
+export default ListFile;

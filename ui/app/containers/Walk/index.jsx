@@ -13,16 +13,15 @@ import { useInjectReducer } from '../../utils/injectReducer';
 import walkUtils from './util';
 
 import GenericList from '../../components/GenericList';
-import ListFolders from './ListFolders';
+import ListFile from './ListFile';
 import Menu from './Menu';
 import OrganizePreviews from '../../components/OrganizePreviews';
 
-const { isImage } = walkUtils;
-
-function parseQueryString(find, from) {
-  if (!find || !from) return '';
-  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
-}
+const {
+  addUpFolderPath,
+  isImage,
+  parseQueryString,
+} = walkUtils;
 
 function Walk({
   doListDirectory,
@@ -46,6 +45,8 @@ function Walk({
     content: file.filename,
     ...file,
   }));
+  addUpFolderPath(itemFiles, path);
+
   const itemImages = itemFiles.filter((file) => isImage(file));
   const hasImages = !loading && itemImages.length > 0;
 
@@ -62,7 +63,7 @@ function Walk({
     />,
     <GenericList
       key="walk-GenericList"
-      component={ListFolders}
+      component={ListFile}
       items={itemFiles}
       loading={loading}
       error={false}
