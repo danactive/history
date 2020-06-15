@@ -18,9 +18,10 @@ import Menu from './Menu';
 import OrganizePreviews from '../../components/OrganizePreviews';
 
 const {
-  addUpFolderPath,
+  addParentDirectoryNav,
   isImage,
   parseQueryString,
+  organizeByMedia,
 } = walkUtils;
 
 function Walk({
@@ -45,7 +46,7 @@ function Walk({
     content: file.filename,
     ...file,
   }));
-  addUpFolderPath(itemFiles, path);
+  addParentDirectoryNav(itemFiles, path);
 
   const itemImages = itemFiles.filter((file) => isImage(file));
   const hasImages = !loading && itemImages.length > 0;
@@ -64,7 +65,7 @@ function Walk({
     <GenericList
       key="walk-GenericList"
       component={ListFile}
-      items={itemFiles}
+      items={organizeByMedia(itemFiles)}
       loading={loading}
       error={false}
     />,

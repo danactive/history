@@ -3,19 +3,13 @@ import React from 'react';
 import A from '../../components/A';
 import ListItem from '../../components/ListItem';
 
-import walkUtils from './util';
-
-const { isImage } = walkUtils;
-
 function ListFile({ item: file }) {
-  if (isImage(file)) {
-    return null;
-  }
+  if (!file) return null;
 
   if (file.mediumType === 'folder') {
     const Link = (
       <A href={`?path=${file.path}`}>
-        {file.filename}
+        {file.content}
       </A>
     );
 
@@ -23,7 +17,7 @@ function ListFile({ item: file }) {
   }
 
   return (
-    <ListItem item={file.filename} />
+    <ListItem item={file.content} />
   );
 }
 
