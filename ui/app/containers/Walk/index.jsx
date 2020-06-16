@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
+import { useDispatch, useSelector } from 'react-redux';
 
 import actions from './actions';
 import config from '../../../../config.json';
@@ -26,20 +24,20 @@ const {
 } = walkUtils;
 
 function Walk({
-  doListDirectory,
-  files,
   location: { search: querystring },
-  statePath,
 }) {
+  const dispatch = useDispatch();
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
+  const files = useSelector(makeSelectFiles());
+  const statePath = useSelector(makeSelectPath());
   const [stateItems, setItems] = useState([]);
   const qsPath = parseQueryString('path', querystring);
   const path = qsPath || statePath;
 
   useEffect(() => {
-    doListDirectory(path);
-  }, [doListDirectory, path]);
+    dispatch(actions.listDirectory(path));
+  }, [path]);
 
   const loading = !files || files.length === 0;
   const itemFiles = files.map((file) => ({
@@ -89,7 +87,7 @@ function Walk({
           <img
             key={`thumbnail-${item.filename}`}
             alt="No preview yet"
-            src={`http://localhost:8000/public/${path}/${item.filename}`}
+            src={`http://localhost:${config.apiPort}/public/${path}/${item.filename}`}
             width={config.resizeDimensions.preview.width}
             height={config.resizeDimensions.preview.height}
           />,
@@ -102,17 +100,4 @@ function Walk({
   return Components;
 }
 
-const mapStateToProps = createStructuredSelector({
-  files: makeSelectFiles(),
-  statePath: makeSelectPath(),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  doListDirectory: (path) => dispatch(actions.listDirectory(path)),
-});
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(
-  withConnect,
-)(Walk);
+export default Walk;

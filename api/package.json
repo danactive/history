@@ -2,6 +2,7 @@
   "name": "history",
   "version": "5.2.0",
   "scripts": {
+    "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "npm run lint:js && npm run lint:docs",
     "lint:js": "eslint app server *.js --ext .js,.jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown.js .",
@@ -50,6 +51,7 @@
     "style-loader": "^1.2.1",
     "styled-components": "^4.4.1",
     "tap-webpack-plugin": "^2.0.0",
+    "tuxharness": "^2.0.4",
     "url-loader": "^4.1.0",
     "vision": "^5.3.1",
     "webpack": "^4.43.0",
@@ -62,7 +64,7 @@
     "calipers": "^2.0.0",
     "calipers-jpeg": "^2.0.0",
     "codeclimate-test-reporter": "^0.5.0",
-    "coveralls": "^3.0.9",
+    "coveralls": "^3.1.0",
     "css-loader": "^2.1.0",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
@@ -110,6 +112,7 @@
     "npm": ">=6.4.1"
   },
   "readmeFilename": "README.md",
+  "tuxharness": "./tuxharness.js",
   "jest": {
     "setupFiles": [
       "./test/jestsetup.js"
