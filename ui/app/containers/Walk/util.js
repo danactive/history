@@ -137,19 +137,21 @@ function generateImageFilenames(fullCount = 6, extSet) {
 }
 
 function getJpgLike(fileGroup) {
-  const withJpg = fileGroup.find((file) => file.ext === 'JPG');
+  const isJpgLikeExt = (file = { ext: '' }) => file.ext === 'JPG' || file.ext === 'jpg';
+  const withJpg = fileGroup.find(isJpgLikeExt);
   if (withJpg) {
     return {
       ext: withJpg.ext,
-      index: fileGroup.findIndex((file) => file.ext === 'JPG'),
+      index: fileGroup.findIndex(isJpgLikeExt),
     };
   }
 
-  const withJpeg = fileGroup.find((file) => file.ext === 'JPEG');
+  const isJpegLikeExt = (file = { ext: '' }) => file.ext === 'JPEG' || file.ext === 'jpeg';
+  const withJpeg = fileGroup.find(isJpegLikeExt);
   if (withJpeg) {
     return {
       ext: withJpeg.ext,
-      index: fileGroup.findIndex((file) => file.ext === 'JPEG'),
+      index: fileGroup.findIndex(isJpegLikeExt),
     };
   }
 
@@ -166,6 +168,7 @@ function mergeMedia(items) {
       return items.flat.find((file) => file.name === name);
     }
 
+    // TODO danctive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
     const found = items.flat.find((file) => file.filename === fileGroup[jpgLike.index].filename);
     return {
       ...found,
