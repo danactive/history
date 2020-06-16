@@ -5,6 +5,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import actions from './actions';
+import config from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
 import { makeSelectFiles, makeSelectPath } from './selectors';
@@ -81,7 +82,19 @@ function Walk({
 
     Components.push(<OrganizePreviews
       key="walk-OrganizePreviews"
-      items={items}
+      items={items.map((item) => ({
+        ...item,
+        content: [
+          <span key={`label-${item.filename}`}>{item.filename}</span>,
+          <img
+            key={`thumbnail-${item.filename}`}
+            alt="No preview yet"
+            src={`http://localhost:8000/public/${path}/${item.filename}`}
+            width={config.resizeDimensions.preview.width}
+            height={config.resizeDimensions.preview.height}
+          />,
+        ],
+      }))}
       setItems={setItems}
     />);
   }
