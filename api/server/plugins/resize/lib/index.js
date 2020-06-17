@@ -12,6 +12,7 @@ async function handler(request, h) {
       return h.response(response.meta.error).code(500);
     }
 
+    // TODO danactive add property of photo and thumb output directories
     return { resize: true };
   } catch (error) {
     return error;
