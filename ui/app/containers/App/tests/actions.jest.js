@@ -1,17 +1,10 @@
-/* global describe, expect, test */
-
 import {
   CHOOSE_MEMORY,
   LOAD_PHOTO_ERROR,
   LOAD_PHOTO_SUCCESS,
 } from '../constants';
 
-import {
-  chooseMemory,
-  photoLoadError,
-  photoLoadSuccess,
-} from '../actions';
-
+import { chooseMemory, photoLoadError, photoLoadSuccess } from '../actions';
 
 describe('App Actions', () => {
   describe('chooseMemory', () => {

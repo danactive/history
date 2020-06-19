@@ -1,6 +1,5 @@
-/* global describe, expect, test */
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 
 import PhotoHeader from '..';
 
@@ -21,7 +20,9 @@ describe('<PhotoHeader />', () => {
     expect.assertions(2);
 
     const city = 'Vancouver';
-    const { container, getByText } = render(<PhotoHeader currentMemory={{ city }} />);
+    const { container, getByText } = render(
+      <PhotoHeader currentMemory={{ city }} />,
+    );
     const received = getByText(new RegExp(city));
 
     expect(received).not.toBeNull();

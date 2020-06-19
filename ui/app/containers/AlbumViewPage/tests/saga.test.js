@@ -1,10 +1,7 @@
-/* global describe, expect, test */
 import { Dropbox } from 'dropbox';
 import 'whatwg-fetch';
 
-import {
-  call, put, select,
-} from 'redux-saga/effects';
+import { call, put, select } from 'redux-saga/effects';
 
 import normalizeError from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
@@ -13,13 +10,11 @@ import {
   getAlbumFileOnDropbox,
   argsAlbumXmlPath,
   getThumbPaths,
-  videoExtToJpg, getThumbPathsOnDropbox,
+  videoExtToJpg,
+  getThumbPathsOnDropbox,
 } from '../saga';
 import { selectNextPage } from '../selectors';
-import {
-  LOAD_ALBUM_SUCCESS,
-  LOAD_ALBUM_ERROR,
-} from '../constants';
+import { LOAD_ALBUM_SUCCESS, LOAD_ALBUM_ERROR } from '../constants';
 import albumFixture from '../../App/tests/fixtures/album.json';
 
 describe('AlbumViewPage Saga', () => {
@@ -31,7 +26,10 @@ describe('AlbumViewPage Saga', () => {
       test('should first yield an Effect call', () => {
         expect.hasAssertions();
         const received = generator.next().value;
-        const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
+        const expected = call(
+          [new Dropbox(), 'filesGetTemporaryLink'],
+          argsAlbumXmlPath(fixtures),
+        );
         // Unit test cannot reproduce global fetch so delete
         delete received.fetch;
         expect(received).toEqual(expected);
@@ -103,7 +101,10 @@ describe('AlbumViewPage Saga', () => {
       test('should first yield an Effect call', () => {
         expect.hasAssertions();
         const received = generator.next().value;
-        const expected = call([new Dropbox(), 'filesGetTemporaryLink'], argsAlbumXmlPath(fixtures));
+        const expected = call(
+          [new Dropbox(), 'filesGetTemporaryLink'],
+          argsAlbumXmlPath(fixtures),
+        );
         expect(received).toEqual(expected);
       });
 
@@ -112,7 +113,10 @@ describe('AlbumViewPage Saga', () => {
         const error = new Error('Something went wrong');
 
         const received = generator.throw(error).value;
-        const expected = put({ type: LOAD_ALBUM_ERROR, error: normalizeError(error) });
+        const expected = put({
+          type: LOAD_ALBUM_ERROR,
+          error: normalizeError(error),
+        });
         expect(received).toEqual(expected);
       });
 

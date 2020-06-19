@@ -1,11 +1,9 @@
-/* global beforeAll, describe, expect, test */
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Provider } from 'react-redux';
-import { browserHistory } from 'react-router-dom';
 
-import ConnectedLanguageProvider, { LanguageProvider } from '../index';
+import LanguageProvider from '../index';
 import configureStore from '../../../configureStore';
 
 import { translationMessages } from '../../../i18n';
@@ -19,32 +17,35 @@ const messages = defineMessages({
 });
 
 describe('<LanguageProvider />', () => {
-  test('should render its children', () => {
-    const children = <h1>Test</h1>;
-    const { container } = render(
-      <LanguageProvider messages={messages} locale="en">
-        {children}
-      </LanguageProvider>,
-    );
-    expect(container.firstChild).not.toBeNull();
-  });
-});
-
-describe('<ConnectedLanguageProvider />', () => {
   let store;
 
-  beforeAll(() => {
-    store = configureStore({}, browserHistory);
+  beforeEach(() => {
+    store = configureStore({});
+  });
+
+  test('should render its children', () => {
+    const text = 'Test';
+    const children = <h1>{text}</h1>;
+    const { queryByText } = render(
+      <Provider store={store}>
+        <LanguageProvider messages={messages} locale="en">
+          {children}
+        </LanguageProvider>
+      </Provider>,
+    );
+    expect(queryByText(text)).toBeInTheDocument();
   });
 
   test('should render the default language messages', () => {
     const { queryByText } = render(
       <Provider store={store}>
-        <ConnectedLanguageProvider messages={translationMessages}>
+        <LanguageProvider messages={translationMessages}>
           <FormattedMessage {...messages.someMessage} />
-        </ConnectedLanguageProvider>
+        </LanguageProvider>
       </Provider>,
     );
-    expect(queryByText(messages.someMessage.defaultMessage)).not.toBeNull();
+    expect(
+      queryByText(messages.someMessage.defaultMessage),
+    ).toBeInTheDocument();
   });
 });

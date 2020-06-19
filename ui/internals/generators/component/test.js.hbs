@@ -7,15 +7,14 @@
  */
 
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 {{#if wantMessages}}
 import { IntlProvider } from 'react-intl';
 {{/if}}
-// import 'jest-dom/extend-expect'; // add some helpful assertions
 
 import {{ properCase name }} from '../index';
 {{#if wantMessages}}
-import { DEFAULT_LOCALE } from '../../../i18n';
+import { DEFAULT_LOCALE } from '../../../locales';
 {{/if}}
 
 describe('<{{ properCase name }} />', () => {
@@ -42,7 +41,7 @@ describe('<{{ properCase name }} />', () => {
    *
    * @see {@link https://jestjs.io/docs/en/api#testskipname-fn}
    */
-  test.skip('Should render and match the snapshot', () => {
+  it.skip('Should render and match the snapshot', () => {
 {{#if wantMessages}}
     const {
       container: { firstChild },

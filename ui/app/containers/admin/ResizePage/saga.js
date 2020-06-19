@@ -5,10 +5,7 @@ import request from '../../../utils/request';
 import { apiPort as port } from '../../../../../config.json';
 
 import { RESIZE_IMAGE } from './constants';
-import {
-  resizeImageFailed,
-  resizeImageSuccess,
-} from './actions';
+import { resizeImageFailed, resizeImageSuccess } from './actions';
 
 const HISTORY_API_ROOT = `http://localhost:${port}`;
 
@@ -23,11 +20,16 @@ export function* callResizeApi({ filename }) {
         source_path: filename,
       }),
     };
-    const response = yield call(request, `${HISTORY_API_ROOT}/admin/resize`, requestArgs);
+    const response = yield call(
+      request,
+      `${HISTORY_API_ROOT}/admin/resize`,
+      requestArgs,
+    );
 
     yield put(resizeImageSuccess(response));
   } catch (error) {
-    console.log('error', error);
+    // eslint-disable-next-line no-console
+    console.error('error', error);
     yield put(resizeImageFailed(error));
   }
 }

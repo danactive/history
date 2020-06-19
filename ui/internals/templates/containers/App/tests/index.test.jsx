@@ -1,8 +1,7 @@
-/* global describe, expect, test */
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 
-import App from '..';
+import App from '../index';
 
 const renderer = new ShallowRenderer();
 

@@ -1,10 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 import { createSelector } from 'reselect';
 
 const selectRouter = state => state.router;
 
-const makeSelectLocation = () => createSelector(
-  selectRouter,
-  routerState => routerState.location,
-);
+const makeSelectLocation = () =>
+  createSelector(selectRouter, routerState => routerState.location);
 
-export { makeSelectLocation }; // eslint-disable-line
+export { makeSelectLocation };

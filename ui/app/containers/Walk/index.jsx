@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
 import actions from './actions';
 import config from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
 import { makeSelectFiles, makeSelectPath } from './selectors';
-import { useInjectSaga } from '../../utils/injectSaga';
-import { useInjectReducer } from '../../utils/injectReducer';
 import walkUtils from './util';
 
 import GenericList from '../../components/GenericList';
@@ -23,9 +22,7 @@ const {
   organizeByMedia,
 } = walkUtils;
 
-function Walk({
-  location: { search: querystring },
-}) {
+function Walk({ location: { search: querystring } }) {
   const dispatch = useDispatch();
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
@@ -40,14 +37,14 @@ function Walk({
   }, [path]);
 
   const loading = !files || files.length === 0;
-  const itemFiles = files.map((file) => ({
+  const itemFiles = files.map(file => ({
     id: file.path,
     content: file.filename,
     ...file,
   }));
   addParentDirectoryNav(itemFiles, path);
 
-  const itemImages = itemFiles.filter((file) => isImage(file));
+  const itemImages = itemFiles.filter(file => isImage(file));
   const hasImages = !loading && itemImages.length > 0;
 
   const Components = [
@@ -58,7 +55,7 @@ function Walk({
     <Menu
       key="walk-Menu"
       showMenu={hasImages}
-      imageFilenames={stateItems.map((i) => i.filename)}
+      imageFilenames={stateItems.map(i => i.filename)}
       path={path}
     />,
     <GenericList
@@ -78,23 +75,25 @@ function Walk({
       setItems(itemImages);
     }
 
-    Components.push(<OrganizePreviews
-      key="walk-OrganizePreviews"
-      items={items.map((item) => ({
-        ...item,
-        content: [
-          <span key={`label-${item.filename}`}>{item.filename}</span>,
-          <img
-            key={`thumbnail-${item.filename}`}
-            alt="No preview yet"
-            src={`http://localhost:${config.apiPort}/public/${path}/${item.filename}`}
-            width={config.resizeDimensions.preview.width}
-            height={config.resizeDimensions.preview.height}
-          />,
-        ],
-      }))}
-      setItems={setItems}
-    />);
+    Components.push(
+      <OrganizePreviews
+        key="walk-OrganizePreviews"
+        items={items.map(item => ({
+          ...item,
+          content: [
+            <span key={`label-${item.filename}`}>{item.filename}</span>,
+            <img
+              key={`thumbnail-${item.filename}`}
+              alt="No preview yet"
+              src={`http://localhost:${config.apiPort}/public/${path}/${item.filename}`}
+              width={config.resizeDimensions.preview.width}
+              height={config.resizeDimensions.preview.height}
+            />,
+          ],
+        }))}
+        setItems={setItems}
+      />,
+    );
   }
 
   return Components;

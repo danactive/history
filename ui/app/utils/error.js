@@ -2,7 +2,7 @@
 
 import dotProp from 'dot-prop';
 
-export default (error) => {
+export default error => {
   const errorSummary = dotProp.get(error, 'error.error_summary');
 
   if (errorSummary) {
@@ -39,7 +39,10 @@ export default (error) => {
 
   if (errorResponse) {
     const message = dotProp.get(error, 'error', '');
-    const isAuth = message.includes('OAuth') || dotProp.get(errorResponse, 'req.header.Authorization') === 'Bearer undefined';
+    const isAuth =
+      message.includes('OAuth') ||
+      dotProp.get(errorResponse, 'req.header.Authorization') ===
+        'Bearer undefined';
     const action = isAuth ? 'incorrect-auth' : undefined;
     const path = dotProp.get(error, 'response.req._data.path');
 

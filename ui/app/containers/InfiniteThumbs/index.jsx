@@ -3,9 +3,8 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
-
-import injectSaga from '../../utils/injectSaga';
 
 import LoadingIndicator from '../../components/LoadingIndicator';
 import ThumbImg from '../../components/ThumbImg';
@@ -16,14 +15,17 @@ import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
 import saga from './saga';
 
-const showAlbumError = (error) => {
+const showAlbumError = error => {
   const message = dotProp.get(error, 'ui.title', error.message);
-  return <div>{`Something went wrong, please try again! Reason (${message})`}</div>;
+  return (
+    <div>{`Something went wrong, please try again! Reason (${message})`}</div>
+  );
 };
 
-const showThumbsError = (error) => <div>{error.ui.title}</div>;
+const showThumbsError = error => <div>{error.ui.title}</div>;
 
-const InfiniteThumbs = (props) => {
+const InfiniteThumbs = props => {
+  useInjectSaga({ key: 'albums', saga });
   const {
     loading,
     error: albumError,
@@ -42,7 +44,7 @@ const InfiniteThumbs = (props) => {
     return <LoadingIndicator />;
   }
 
-  const hasThumbLink = (item) => item.thumbLink !== null;
+  const hasThumbLink = item => item.thumbLink !== null;
 
   const thumbImages = (item, index) => (
     <ThumbImg
@@ -69,7 +71,9 @@ const InfiniteThumbs = (props) => {
       pageStart={0}
       loadMore={nextPage}
       hasMore={hasMore}
-      loader={<LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />}
+      loader={
+        <LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />
+      }
       threshold={500}
     >
       {html}
@@ -84,15 +88,11 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch) {
   return {
-    nextPage: (nextPageNum) => dispatch(loadNextPage(nextPageNum)),
+    nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
     selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
   };
 }
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withSaga = injectSaga({ key: 'albums', saga });
 
-export default compose(
-  withConnect,
-  withSaga,
-)(InfiniteThumbs);
+export default compose(withConnect)(InfiniteThumbs);

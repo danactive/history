@@ -1,6 +1,5 @@
-/* global describe, expect, test */
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 
 import ThumbImg from '..';
 
@@ -16,7 +15,6 @@ describe('Component - <ThumbImg />', () => {
     const expected = expect.stringContaining('ThumbImg__Img');
     expect(received).toEqual(expected);
   });
-
 
   test('should match src attribute value', () => {
     const { container } = render(<ThumbImg src={expectedValues.src} />);

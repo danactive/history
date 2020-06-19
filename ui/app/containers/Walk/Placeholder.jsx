@@ -6,9 +6,7 @@ function Placeholder({ file }) {
       <div className="preview" data-filename={file.filename}>
         <img src="/walk/static/spinner.gif" alt="Generating preview" />
       </div>
-      <div className="caption">
-        {file.filename}
-      </div>
+      <div className="caption">{file.filename}</div>
     </li>
   );
 }

@@ -11,11 +11,7 @@ import actions from './actions';
 import config from '../../../../config.json';
 import request from '../../utils/request';
 
-function Menu({
-  showMenu,
-  imageFilenames,
-  path,
-}) {
+function Menu({ showMenu, imageFilenames, path }) {
   const dispatch = useDispatch();
   const [output, setOutput] = useState('');
   const [isFocused, setFocus] = useState(false);
@@ -42,8 +38,10 @@ function Menu({
     "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'
     -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
      */
-    return request(`http://localhost:${config.apiPort}/admin/rename`, options)
-      .then(setOutput);
+    return request(
+      `http://localhost:${config.apiPort}/admin/rename`,
+      options,
+    ).then(setOutput);
   }
 
   function handleResize() {
@@ -58,27 +56,25 @@ function Menu({
           displayFormat="yyyy-MM-DD"
           showDefaultInputIcon
           focused={isFocused}
-          onDateChange={(inputDate) => setDate(inputDate)}
+          onDateChange={inputDate => setDate(inputDate)}
           onFocusChange={({ focused }) => setFocus(focused)}
-          isOutsideRange={(day) => !isInclusivelyBeforeDay(day, moment())}
+          isOutsideRange={day => !isInclusivelyBeforeDay(day, moment())}
           regular
         />
-        <Button
-          key="rename"
-          handleRoute={handleRename}
-        >
+        <Button key="rename" handleRoute={handleRename}>
           Rename
         </Button>
-        <Button
-          key="resize"
-          handleRoute={handleResize}
-        >
+        <Button key="resize" handleRoute={handleResize}>
           Resize
         </Button>
         <textarea
           key="console"
           id="console"
-          style={{ padding: '1em', fontFamily: '"Montserrat", "sans-serif"', fontSize: '1em' }}
+          style={{
+            padding: '1em',
+            fontFamily: '"Montserrat", "sans-serif"',
+            fontSize: '1em',
+          }}
           value={JSON.stringify(output.xml, null, '\t')}
         />
       </section>

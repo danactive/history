@@ -1,4 +1,3 @@
-/* global describe, expect, shallow, test */
 import React from 'react';
 
 import Img from '../index';

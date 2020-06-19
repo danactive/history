@@ -7,10 +7,6 @@ export default {
   component: Menu,
 };
 
-export const Default = () => (
-  <Menu />
-);
+export const Default = () => <Menu />;
 
-export const ShowMenu = () => (
-  <Menu showMenu />
-);
+export const ShowMenu = () => <Menu showMenu />;

@@ -1,4 +1,3 @@
-/* global describe, expect, test */
 import { getPage, insertPage } from '../paging';
 
 function checkAll(list) {
@@ -96,7 +95,10 @@ describe('Insert Page', () => {
   test('should not insert page 0', () => {
     const insert = [{ id: 'apple' }, { id: 'banana' }];
     const newList = insertPage({
-      page: 0, insert, pageSize: PAGE_SIZE, list: fixtures,
+      page: 0,
+      insert,
+      pageSize: PAGE_SIZE,
+      list: fixtures,
     });
     checkAll(newList);
     checkAll(fixtures);
@@ -105,7 +107,10 @@ describe('Insert Page', () => {
   test('should insert page 1', () => {
     const insert = [{ id: 'apple' }, { id: 'banana' }];
     const newList = insertPage({
-      page: 1, insert, pageSize: PAGE_SIZE, list: fixtures,
+      page: 1,
+      insert,
+      pageSize: PAGE_SIZE,
+      list: fixtures,
     });
     expect(insert[0].id).toEqual(newList[0].id);
     expect(insert[1].id).toEqual(newList[1].id);
@@ -118,7 +123,10 @@ describe('Insert Page', () => {
   test('should insert page 2', () => {
     const insert = [{ id: 'cherry' }, { id: 'durrian' }];
     const newList = insertPage({
-      page: 2, insert, pageSize: PAGE_SIZE, list: fixtures,
+      page: 2,
+      insert,
+      pageSize: PAGE_SIZE,
+      list: fixtures,
     });
     expect(fixtures[0].id).toEqual(newList[0].id);
     expect(fixtures[1].id).toEqual(newList[1].id);
@@ -131,7 +139,10 @@ describe('Insert Page', () => {
   test('should insert page 3', () => {
     const insert = [{ id: 'eggplant' }, { id: 'fig' }];
     const newList = insertPage({
-      page: 3, insert, pageSize: PAGE_SIZE, list: fixtures,
+      page: 3,
+      insert,
+      pageSize: PAGE_SIZE,
+      list: fixtures,
     });
     expect(fixtures[0].id).toEqual(newList[0].id);
     expect(fixtures[1].id).toEqual(newList[1].id);

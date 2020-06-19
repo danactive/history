@@ -1,6 +1,7 @@
 /* eslint consistent-return:0 import/order:0 */
 
 const express = require('express');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const ngrokMod = require('ngrok');
 const { resolve } = require('path');
 
@@ -10,7 +11,8 @@ const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
 
 const isDev = process.env.NODE_ENV !== 'production';
-const ngrok = (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel ? ngrokMod : false;
+const ngrok =
+  (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel ? ngrokMod : false;
 
 const app = express();
 
@@ -36,7 +38,7 @@ app.get('*.js', (req, res, next) => {
 });
 
 // Start your app.
-app.listen(port, host, async (err) => {
+app.listen(port, host, async err => {
   if (err) {
     return logger.error(err.message);
   }

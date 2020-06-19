@@ -3,23 +3,29 @@ import React, { memo } from 'react';
 {{else}}
 import React from 'react';
 {{/if}}
-import { connect } from 'react-redux';
 {{#if wantHeaders}}
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 {{/if}}
 {{#if wantMessages}}
 import { FormattedMessage } from 'react-intl';
 {{/if}}
 {{#if wantActionsAndReducer}}
+import { useSelector, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 {{/if}}
-import { compose } from 'redux';
 
-{{#if wantSaga}}
-import { useInjectSaga } from 'utils/injectSaga';
+{{#if wantActionsAndReducer}}
+  {{#if wantSaga}}
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
+  {{else}}
+import { useInjectReducer } from 'redux-injectors';
+  {{/if}}
+{{else}}
+  {{#if wantSaga}}
+import { useInjectSaga } from 'redux-injectors';
+  {{/if}}
 {{/if}}
 {{#if wantActionsAndReducer}}
-import { useInjectReducer } from 'utils/injectReducer';
 import makeSelect{{properCase name}} from './selectors';
 import reducer from './reducer';
 {{/if}}
@@ -30,7 +36,13 @@ import saga from './saga';
 import messages from './messages';
 {{/if}}
 
-export function {{ properCase name }}() {
+{{#if wantActionsAndReducer}}
+const stateSelector = createStructuredSelector({
+  {{camelCase name}}: makeSelect{{properCase name}}(),
+});
+{{/if}}
+
+function {{ properCase name }}() {
   {{#if wantActionsAndReducer}}
   useInjectReducer({ key: '{{ camelCase name }}', reducer });
   {{/if}}
@@ -39,11 +51,12 @@ export function {{ properCase name }}() {
   {{/if}}
   {{#if wantActionsAndReducer}}
 
-  {{else}}
-    {{#if wantSaga}}
-
-    {{/if}}
+  /* eslint-disable no-unused-vars */
+  const { {{camelCase name}} } = useSelector(stateSelector);
+  const dispatch = useDispatch();
+  /* eslint-enable no-unused-vars */
   {{/if}}
+
   return (
     <div>
     {{#if wantHeaders}}
@@ -59,27 +72,9 @@ export function {{ properCase name }}() {
   );
 }
 
-{{#if wantActionsAndReducer}}
-const mapStateToProps = createStructuredSelector({
-  {{ camelCase name }}: makeSelect{{properCase name}}(),
-});
-{{/if}}
 
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch,
-  };
-}
-
-{{#if wantActionsAndReducer}}
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-{{else}}
-const withConnect = connect(null, mapDispatchToProps);
-{{/if}}
-
-export default compose(
-  withConnect,
 {{#if memo}}
-  memo,
+export default memo({{ properCase name }});
+{{else}}
+export default {{ properCase name }};
 {{/if}}
-)({{ properCase name }});

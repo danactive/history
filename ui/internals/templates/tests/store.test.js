@@ -1,33 +1,26 @@
-/* global describe, beforeAll, expect, test */
-/**
- * Test store addons
- */
-
-import { browserHistory } from 'react-router'; // eslint-disable-line
 import configureStore from '../configureStore';
 
 describe('configureStore', () => {
-  let store;
-
-  beforeAll(() => {
-    store = configureStore({}, browserHistory);
+  test('should return a redux store', () => {
+    const store = configureStore({});
+    expect(store).toEqual(
+      expect.objectContaining({
+        dispatch: expect.any(Function),
+        subscribe: expect.any(Function),
+        getState: expect.any(Function),
+        replaceReducer: expect.any(Function),
+      }),
+    );
   });
+});
 
-  describe('injectedReducers', () => {
-    test('should contain an object for reducers', () => {
-      expect(typeof store.injectedReducers).toBe('object');
-    });
-  });
-
-  describe('injectedSagas', () => {
-    test('should contain an object for sagas', () => {
-      expect(typeof store.injectedSagas).toBe('object');
-    });
-  });
-
-  describe('runSaga', () => {
-    test('should contain a hook for `sagaMiddleware.run`', () => {
-      expect(typeof store.runSaga).toEqual('function');
-    });
+describe('configureStore params', () => {
+  test('should call window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__', () => {
+    /* eslint-disable no-underscore-dangle */
+    const compose = jest.fn();
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ = () => compose;
+    configureStore(undefined);
+    expect(compose).toHaveBeenCalled();
+    /* eslint-enable */
   });
 });

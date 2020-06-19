@@ -1,4 +1,3 @@
-/* global describe, expect, test */
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
 
@@ -85,11 +84,17 @@ describe('Load album hosted on Dropbox', () => {
       gallery: 'demo',
       album: 'sample',
     };
-    expect(loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' })).toEqual(expected);
+    expect(
+      loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' }),
+    ).toEqual(expected);
   });
 
   test('reducer should store the action loadAlbum', () => {
-    const action = loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' });
+    const action = loadAlbum({
+      host: 'dropbox',
+      gallery: 'demo',
+      album: 'sample',
+    });
     const received = reducer({}, action);
     const expected = {
       host: 'dropbox',
@@ -146,13 +151,15 @@ describe('Load album hosted on Dropbox', () => {
       memories: fixtures.memories,
     };
     const received = reducer(state, albumLoadSuccess(sagaResult));
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.dropbox = {
         demo: {
           sample: {
-            memories: [{
-              filename: '2017-12-25.jpg',
-            }],
+            memories: [
+              {
+                filename: '2017-12-25.jpg',
+              },
+            ],
           },
         },
       };
@@ -227,7 +234,7 @@ describe('Load next thumb page', () => {
     };
 
     const received = reducer(state, nextPageSuccess(args));
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.dropbox = {
         demo: {
           sample: {

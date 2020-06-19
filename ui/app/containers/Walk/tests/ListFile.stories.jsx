@@ -16,13 +16,9 @@ export default {
   component: ListFile,
 };
 
-export const Default = () => (
-  <ListFile />
-);
+export const Default = () => <ListFile />;
 
-export const Item = () => (
-  <ListFile item={generateImageFilenames(1)[0]} />
-);
+export const Item = () => <ListFile item={generateImageFilenames(1)[0]} />;
 
 export const Images = () => (
   <GenericList

@@ -1,4 +1,3 @@
-/* global describe, expect, test */
 import {
   LOAD_GALLERIES,
   LOAD_GALLERIES_SUCCESS,

@@ -25,7 +25,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   ...draggableStyle,
 });
 
-const getListStyle = (isDraggingOver) => ({
+const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? 'lightblue' : 'lightgrey',
   padding: grid,
   width: 278,
@@ -38,11 +38,7 @@ function OrganizePreviews({ items, setItems }) {
       return;
     }
 
-    setItems(reorder(
-      items,
-      result.source.index,
-      result.destination.index,
-    ));
+    setItems(reorder(items, result.source.index, result.destination.index));
   }
 
   return (

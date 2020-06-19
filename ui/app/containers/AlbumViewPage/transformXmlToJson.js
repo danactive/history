@@ -1,5 +1,5 @@
 function parseFromNode(ascendant) {
-  return (descendant) => {
+  return descendant => {
     const tags = ascendant.getElementsByTagName(descendant);
     if (tags.length > 0) {
       return tags[0].innerHTML.replace(/&amp;/g, '&');

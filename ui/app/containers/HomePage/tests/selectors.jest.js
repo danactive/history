@@ -1,5 +1,3 @@
-/* global describe, expect, test */
-
 import {
   selectHome,
   makeSelectGalleryLoading,

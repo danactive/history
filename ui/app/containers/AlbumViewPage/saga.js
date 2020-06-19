@@ -1,8 +1,5 @@
-/* global fetch */
 import { Dropbox } from 'dropbox';
-import {
-  all, call, put, select, takeLatest,
-} from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import normalizeError from '../../utils/error';
 import request from '../../utils/request';
@@ -14,9 +11,7 @@ import {
   SLIDE_TO_MEMORY,
   PAGE_SIZE,
 } from './constants';
-import {
-  LOAD_PHOTO_SUCCESS,
-} from '../App/constants';
+import { LOAD_PHOTO_SUCCESS } from '../App/constants';
 import {
   albumLoadSuccess,
   albumLoadError,
@@ -33,17 +28,18 @@ import { chooseMemory } from '../App/actions';
 import { preloadPhoto } from '../InfiniteThumbs/actions';
 import { preloadAdjacentMemoryId } from '../InfiniteThumbs/saga';
 
-const dbx = new Dropbox({ accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN, fetch });
-
+const dbx = new Dropbox({
+  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  fetch,
+});
 
 export const argsAlbumXmlPath = ({ gallery, album }) => ({
   path: `/public/gallery-${gallery}/xml/album_${album}.xml`,
 });
 
-
 const getYear = (filename = '') => filename.substr(0, 4);
-const getFileExt = (filename) => filename.match(/\.[0-9a-z]+$/i)[0].substring(1);
-export const videoExtToJpg = (filename) => {
+const getFileExt = filename => filename.match(/\.[0-9a-z]+$/i)[0].substring(1);
+export const videoExtToJpg = filename => {
   if (config.supportedFileTypes.video.includes(getFileExt(filename))) {
     return filename.replace(getFileExt(filename), 'jpg');
   }
@@ -51,8 +47,8 @@ export const videoExtToJpg = (filename) => {
   return filename;
 };
 
-const replaceFileExtWithJpg = (filename = '') => `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
-
+const replaceFileExtWithJpg = (filename = '') =>
+  `${filename.substr(0, filename.lastIndexOf('.'))}.jpg`;
 
 export const argsThumbImgPath = ({ gallery, filename }) => {
   const year = getYear(filename);
@@ -63,29 +59,33 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
   };
 };
 
-
 export function thumbFilenameCallsDropbox({ gallery, thumbs }) {
-  const queueSagaCalls = (thumb) => call(
-    [dbx, 'filesGetTemporaryLink'],
-    argsThumbImgPath({ gallery, filename: thumb.filename }),
-  );
+  const queueSagaCalls = thumb =>
+    call(
+      [dbx, 'filesGetTemporaryLink'],
+      argsThumbImgPath({ gallery, filename: thumb.filename }),
+    );
   return thumbs.map(queueSagaCalls);
 }
-
 
 // saga WORKER for LOAD_ALBUM
 export function* getAlbumFileOnDropbox({ host, gallery, album }) {
   try {
-    const xmlUrl = yield call([dbx, 'filesGetTemporaryLink'], argsAlbumXmlPath({ gallery, album }));
+    const xmlUrl = yield call(
+      [dbx, 'filesGetTemporaryLink'],
+      argsAlbumXmlPath({ gallery, album }),
+    );
     const xmlFile = yield call(request, xmlUrl.link);
     const memories = getItemNodes(xmlFile).map(parseItemNode);
 
-    yield put(albumLoadSuccess({
-      memories,
-      host,
-      gallery,
-      album,
-    }));
+    yield put(
+      albumLoadSuccess({
+        memories,
+        host,
+        gallery,
+        album,
+      }),
+    );
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
@@ -93,19 +93,23 @@ export function* getAlbumFileOnDropbox({ host, gallery, album }) {
 
 export function* getAlbumFileLocally({ host, gallery, album }) {
   try {
-    const xmlFile = yield call(request, `http://localhost:${config.apiPort}/view/album/${gallery}/${album}`);
+    const xmlFile = yield call(
+      request,
+      `http://localhost:${config.apiPort}/view/album/${gallery}/${album}`,
+    );
     const memories = getItemNodes(xmlFile).map(parseItemNode);
-    yield put(albumLoadSuccess({
-      memories,
-      host,
-      gallery,
-      album,
-    }));
+    yield put(
+      albumLoadSuccess({
+        memories,
+        host,
+        gallery,
+        album,
+      }),
+    );
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
 }
-
 
 export function* getAlbumFile({ host, gallery, album }) {
   if (host === 'dropbox') {
@@ -114,7 +118,6 @@ export function* getAlbumFile({ host, gallery, album }) {
     yield call(getAlbumFileLocally, { host, gallery, album });
   }
 }
-
 
 // saga WORKER for LOAD_NEXT_THUMB_PAGE
 export function* getThumbPathsOnDropbox({
@@ -126,38 +129,54 @@ export function* getThumbPathsOnDropbox({
 }) {
   try {
     if (!memories || memories.length === 0) {
-      throw new Error(`Empty or malformed album; memories=(${JSON.stringify(memories)})`);
+      throw new Error(
+        `Empty or malformed album; memories=(${JSON.stringify(memories)})`,
+      );
     }
 
     const page = prevPage + 1;
-    const pagedMemories = getPage({ page, pageSize: PAGE_SIZE, list: memories });
+    const pagedMemories = getPage({
+      page,
+      pageSize: PAGE_SIZE,
+      list: memories,
+    });
 
-    const hasMore = (PAGE_SIZE * page) < memories.length;
+    const hasMore = PAGE_SIZE * page < memories.length;
 
-    const dropboxResults = yield all(thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }));
-    const linkedMemories = pagedMemories.map((memory, index) => ({ ...memory, thumbLink: dropboxResults[index].link }));
+    const dropboxResults = yield all(
+      thumbFilenameCallsDropbox({ gallery, thumbs: pagedMemories }),
+    );
+    const linkedMemories = pagedMemories.map((memory, index) => ({
+      ...memory,
+      thumbLink: dropboxResults[index].link,
+    }));
 
-    if (!hasMore) { // all pages processed so thumbs all have Dropbox links
-      yield put(thumbsLoaded({
-        newMemories: linkedMemories,
-        page,
-        host,
-        gallery,
-        album,
-      }));
+    if (!hasMore) {
+      // all pages processed so thumbs all have Dropbox links
+      yield put(
+        thumbsLoaded({
+          newMemories: linkedMemories,
+          page,
+          host,
+          gallery,
+          album,
+        }),
+      );
 
       yield put(enoughThumbsLoaded());
       return;
     }
 
-    yield put(nextPageSuccess({
-      newMemories: linkedMemories,
-      hasMore,
-      page,
-      host,
-      gallery,
-      album,
-    }));
+    yield put(
+      nextPageSuccess({
+        newMemories: linkedMemories,
+        hasMore,
+        page,
+        host,
+        gallery,
+        album,
+      }),
+    );
 
     if (page === 1) {
       yield put(enoughThumbsLoaded());
@@ -175,10 +194,14 @@ export function* getThumbPathsLocally({
 }) {
   try {
     if (!missingPathMemories || missingPathMemories.length === 0) {
-      throw new Error(`Empty or malformed album; missingPathMemories=(${JSON.stringify(missingPathMemories)})`);
+      throw new Error(
+        `Empty or malformed album; missingPathMemories=(${JSON.stringify(
+          missingPathMemories,
+        )})`,
+      );
     }
 
-    const newMemories = missingPathMemories.map((memory) => {
+    const newMemories = missingPathMemories.map(memory => {
       const jpgFile = videoExtToJpg(memory.filename);
       const year = getYear(memory.filename);
 
@@ -188,21 +211,22 @@ export function* getThumbPathsLocally({
       };
     });
 
-    yield put(nextPageSuccess({
-      newMemories,
-      page: 1,
-      hasMore: false,
-      host,
-      gallery,
-      album,
-    }));
+    yield put(
+      nextPageSuccess({
+        newMemories,
+        page: 1,
+        hasMore: false,
+        host,
+        gallery,
+        album,
+      }),
+    );
 
     yield put(enoughThumbsLoaded());
   } catch (error) {
     yield put(albumLoadError(normalizeError(error)));
   }
 }
-
 
 export function* getThumbPaths() {
   const args = yield select(selectNextPage);
@@ -214,25 +238,21 @@ export function* getThumbPaths() {
   }
 }
 
-
 export function* dispatchChooseMemory({ index }) {
   const { memories } = yield select(selectNextPage);
 
   yield put(chooseMemory({ id: memories[index].id, index }));
 }
 
-
 export function* preloadPhotos() {
   yield put(preloadPhoto(4));
 }
-
 
 export function* ensureNextPhotoLoaded({ setCurrentMemory }) {
   if (setCurrentMemory) {
     yield call(preloadAdjacentMemoryId);
   }
 }
-
 
 // ROOT saga manages WATCHER lifecycle
 export default function* AlbumViewPageSagaWatcher() {

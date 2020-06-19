@@ -1,10 +1,4 @@
-import {
-  all,
-  call,
-  put,
-  select,
-  takeLatest,
-} from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import actions from './actions';
 import { apiPort as port } from '../../../../config.json';
@@ -54,7 +48,11 @@ export function* requestResizeImages({ images }) {
     const path = yield select(makeSelectPath());
     const url = `http://localhost:${port}/admin/resize`;
 
-    yield all(images.map((filename) => call(request, url, resizeOptions(`${path}/${filename}`))));
+    yield all(
+      images.map(filename =>
+        call(request, url, resizeOptions(`${path}/${filename}`)),
+      ),
+    );
 
     yield put(actions.resizeSuccess());
   } catch (error) {

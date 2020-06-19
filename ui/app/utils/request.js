@@ -1,4 +1,3 @@
-/* global fetch, window */
 /**
  * Parses the JSON returned by a network request
  *
@@ -12,8 +11,10 @@ function parseJSON(response) {
   }
 
   // *********** HISTORY CUSTOM not React Boilerplate
-  if (response.headers.get('Content-Type').includes('application/xml')
-    || response.headers.get('Content-Type').includes('text/xml')) {
+  if (
+    response.headers.get('Content-Type').includes('application/xml') ||
+    response.headers.get('Content-Type').includes('text/xml')
+  ) {
     return response.text();
   }
 
@@ -24,7 +25,7 @@ function parseJSON(response) {
 // Convert text to XML document or return response
 export function parseTextXml(response) {
   if (typeof response === 'string') {
-    return (new window.DOMParser()).parseFromString(response, 'text/xml');
+    return new window.DOMParser().parseFromString(response, 'text/xml');
   }
 
   return response;
@@ -65,16 +66,15 @@ function fetchWithTimeout(url, options, wait = 1700) {
   const timeout = new Promise((_, reject) => {
     timerId = setTimeout(() => {
       clearTimeout(timerId);
-      reject(new Error(`XHR timeout (${timeout}) to ${url}`))
-    }, wait)
-  })
+      reject(new Error(`XHR timeout (${timeout}) to ${url}`));
+    }, wait);
+  });
 
   return Promise.race([
-    fetch(url, options)
-      .then((response) => {
-        clearTimeout(timerId);
-        return response;
-      }),
+    fetch(url, options).then(response => {
+      clearTimeout(timerId);
+      return response;
+    }),
     timeout,
   ]);
 }

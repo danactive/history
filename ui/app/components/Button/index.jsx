@@ -11,12 +11,7 @@ import React, { Children } from 'react';
 import A from './A';
 import StyledButton from './StyledButton';
 
-function Button({
-  children,
-  onClick,
-  handleRoute,
-  href,
-}) {
+function Button({ children, onClick, handleRoute, href }) {
   // Render an anchor tag
   let button = (
     <A href={href} onClick={onClick}>

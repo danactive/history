@@ -1,22 +1,14 @@
-/* global document */
 import React, { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import { connect } from 'react-redux';
+import { Helmet } from 'react-helmet-async';
+import { useDispatch, useSelector } from 'react-redux';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
 
 import InfiniteThumbs from '../InfiniteThumbs';
 import PhotoHeader from '../../components/PhotoHeader';
 import SplitScreen from './SplitScreen';
 
-import injectReducer from '../../utils/injectReducer';
-import injectSaga from '../../utils/injectSaga';
-
-import {
-  chooseAdjacentMemory,
-  cleanCurrentMemory,
-  loadAlbum,
-} from './actions';
+import { chooseAdjacentMemory, cleanCurrentMemory, loadAlbum } from './actions';
 import albumReducer from '../App/reducer';
 import pageReducer from './reducer';
 import {
@@ -29,23 +21,37 @@ import {
 import saga from './saga';
 import LoadingIndicator from '../../components/LoadingIndicator';
 
+const stateSelector = createStructuredSelector({
+  albumError: makeSelectAlbumError(),
+  albumLoading: makeSelectAlbumLoading(),
+  albumName: makeSelectAlbumName(),
+  currentMemory: makeSelectCurrentMemory(),
+  memories: makeSelectMemories(),
+});
+
 function AlbumViewPage({
-  onLoad,
-  onUnload,
   match: {
-    params: {
-      host,
-      gallery,
-      album,
-    },
+    params: { host, gallery, album },
   },
-  albumError,
-  albumLoading,
-  albumName,
-  adjacentMemory,
-  currentMemory,
-  memories,
 }) {
+  const dispatch = useDispatch();
+  useInjectReducer({ key: 'albumViewPage', reducer: pageReducer });
+  useInjectReducer({ key: 'global', reducer: albumReducer });
+  useInjectSaga({ key: 'albumViewPage', saga });
+
+  const onLoad = () => dispatch(loadAlbum({ host, gallery, album }));
+  const adjacentMemory = adjacentInt =>
+    dispatch(chooseAdjacentMemory(adjacentInt));
+  const onUnload = () => dispatch(cleanCurrentMemory());
+
+  const {
+    albumError,
+    albumLoading,
+    albumName,
+    currentMemory,
+    memories,
+  } = useSelector(stateSelector);
+
   function handleKey(event) {
     const { key } = event;
 
@@ -59,19 +65,18 @@ function AlbumViewPage({
   }
 
   useEffect(() => {
-    if (album) onLoad({ host, gallery, album });
+    if (album) onLoad();
     document.addEventListener('keyup', handleKey); // must reference function to be removable
 
-    return () => { // cleanup
+    return () => {
+      // cleanup
       document.removeEventListener('keyup', handleKey);
       onUnload();
     };
   }, []);
 
   if (albumLoading) {
-    return (
-      <LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />
-    );
+    return <LoadingIndicator key="loading-indicator-InfiniteScroll-loader" />;
   }
 
   return (
@@ -80,14 +85,9 @@ function AlbumViewPage({
         <title>{`${albumName}  Album`}</title>
       </Helmet>
 
-      <PhotoHeader
-        currentMemory={currentMemory}
-      />
+      <PhotoHeader currentMemory={currentMemory} />
 
-      <SplitScreen
-        currentMemory={currentMemory}
-        memories={memories}
-      />
+      <SplitScreen currentMemory={currentMemory} memories={memories} />
 
       <InfiniteThumbs
         error={albumError}
@@ -98,28 +98,4 @@ function AlbumViewPage({
   );
 }
 
-const mapStateToProps = createStructuredSelector({
-  albumError: makeSelectAlbumError(),
-  albumLoading: makeSelectAlbumLoading(),
-  albumName: makeSelectAlbumName(),
-  currentMemory: makeSelectCurrentMemory(),
-  memories: makeSelectMemories(),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onLoad: ({ host, gallery, album }) => dispatch(loadAlbum({ host, gallery, album })),
-  adjacentMemory: (adjacentInt) => dispatch(chooseAdjacentMemory(adjacentInt)),
-  onUnload: () => dispatch(cleanCurrentMemory()),
-});
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withPageReducer = injectReducer({ key: 'albumViewPage', reducer: pageReducer });
-const withAlbumReducer = injectReducer({ key: 'global', reducer: albumReducer });
-const withSaga = injectSaga({ key: 'albumViewPage', saga });
-
-export default compose(
-  withPageReducer,
-  withAlbumReducer,
-  withSaga,
-  withConnect,
-)(AlbumViewPage);
+export default AlbumViewPage;
