@@ -12,37 +12,42 @@ import walkUtils from './util';
 
 import GenericList from '../../components/GenericList';
 import ListFile from './ListFile';
+import LoadingIndicator from '../../components/LoadingIndicator';
 import Menu from './Menu';
 import OrganizePreviews from '../../components/OrganizePreviews';
 
 const {
   addParentDirectoryNav,
   isImage,
-  parseQueryString,
+  parseHash,
   organizeByMedia,
 } = walkUtils;
 
-function Walk({ location: { search: querystring } }) {
+function Walk({ location: { hash } }) {
   const dispatch = useDispatch();
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
   const files = useSelector(makeSelectFiles());
   const statePath = useSelector(makeSelectPath());
   const [stateItems, setItems] = useState([]);
-  const qsPath = parseQueryString('path', querystring);
-  const path = qsPath || statePath;
+  const qsPath = parseHash('path', hash);
 
   useEffect(() => {
-    dispatch(actions.listDirectory(path));
-  }, [path]);
+    dispatch(actions.listDirectory(qsPath));
+  }, [qsPath]);
 
-  const loading = !files || files.length === 0;
+  const loading = statePath !== qsPath;
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
+
   const itemFiles = files.map(file => ({
     id: file.path,
     content: file.filename,
     ...file,
   }));
-  addParentDirectoryNav(itemFiles, path);
+  addParentDirectoryNav(itemFiles, statePath);
 
   const itemImages = itemFiles.filter(file => isImage(file));
   const hasImages = !loading && itemImages.length > 0;
@@ -56,7 +61,7 @@ function Walk({ location: { search: querystring } }) {
       key="walk-Menu"
       showMenu={hasImages}
       imageFilenames={stateItems.map(i => i.filename)}
-      path={path}
+      path={statePath}
     />,
     <GenericList
       key="walk-GenericList"
@@ -85,7 +90,7 @@ function Walk({ location: { search: querystring } }) {
             <img
               key={`thumbnail-${item.filename}`}
               alt="No preview yet"
-              src={`http://localhost:${config.apiPort}/public/${path}/${item.filename}`}
+              src={`http://localhost:${config.apiPort}/public/${statePath}/${item.filename}`}
               width={config.resizeDimensions.preview.width}
               height={config.resizeDimensions.preview.height}
             />,

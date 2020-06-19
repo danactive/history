@@ -7,9 +7,9 @@ function isImage(file) {
   );
 }
 
-function parseQueryString(find, from) {
+function parseHash(find, from) {
   if (!find || !from) return '';
-  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
+  return RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
 }
 
 function addParentDirectoryNav(itemFiles, path) {
@@ -202,7 +202,7 @@ export default {
   isAnyImageOrVideo,
   isImage,
   mergeMedia,
-  parseQueryString,
+  parseHash,
   getJpgLike,
   organizeByMedia,
 };

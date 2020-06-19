@@ -17,6 +17,7 @@ const walkReducer = (state = initialState, action) =>
 
       case LIST_DIRECTORY_REQUEST:
         draft.listing.path = action.path;
+        draft.listing.files = [];
         break;
     }
   });
