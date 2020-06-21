@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.3.0](https://github.com/danactive/history/compare/v5.2.0...v5.3.0) (2020-06-21)
+
+
+### Features
+
+* **App:** Redux use hooks; Upgrade testing dep; Lint to allow dynamic import; Add prettier ([3370db0](https://github.com/danactive/history/commit/3370db0a157df10589e93ac252003e0d0f864cd8))
+* **DX:** Add Storybook ([852258f](https://github.com/danactive/history/commit/852258f749ff320f7a864fe78b01444d1a9f0948))
+* **Walk:** Add Up Folder navigation ([f67f5d4](https://github.com/danactive/history/commit/f67f5d43f205a39ca4046716eebc4ea95097a2eb))
+* **Walk:** Avoid QS for Hash to avoid page reload ([63ac5b4](https://github.com/danactive/history/commit/63ac5b443d398fdb4ea264566f0f62a933883293))
+* **Walk:** Display image filename in OrganizePreviews ([cb81afd](https://github.com/danactive/history/commit/cb81afdff054a40b87205790cc307279947ad2b8))
+* **Walk:** Display name in List is grouped by associated ([3d91dbc](https://github.com/danactive/history/commit/3d91dbc8b9d9c51fdd73676d3ef7192c2a1bf0e1))
+* **Walk:** Rename button calls XHR for all ([85139e7](https://github.com/danactive/history/commit/85139e7b9c500f5413b02bce3c44ba48f6080ef6))
+* **Walk:** Rename Button renames image files based on calendar ([e9f919b](https://github.com/danactive/history/commit/e9f919b288981a09f6febcbe341998f6f13e96eb))
+* **Walk:** Resize to current folder API only; Remove stale CORS ports; Display joi errors ([e6bd324](https://github.com/danactive/history/commit/e6bd324805a02cb57cac7de72f52bf5b6c2dce0b))
+* **Walk:** Show full dimension images ([956e8fc](https://github.com/danactive/history/commit/956e8fcad1c7e34db29f4339fc8ff12c9fc18912))
+* **Walk:** Standardize directory listing to GenericList ([1450df2](https://github.com/danactive/history/commit/1450df24ea7f7aae9a72126f54d396040db5984d))
+
+
+### Bug Fixes
+
+* upgrade mime-types from 2.1.26 to 2.1.27 ([4d78049](https://github.com/danactive/history/commit/4d78049ad753e5ee971ab3a15fac69084b9eb32d))
+* upgrade multiple dependencies with Snyk ([81c9772](https://github.com/danactive/history/commit/81c9772b6880397b19b13bb44246951ab7320ffe))
+* upgrade webpack from 4.42.0 to 4.43.0 ([85225a5](https://github.com/danactive/history/commit/85225a5b83e5612e0e35b92d62091ac4f6388961))
+* **Admin:** Display navigation as GenericList ([b72391f](https://github.com/danactive/history/commit/b72391fdf3f9fedfff58ac2e40898545bdf002cf))
+* **Legacy:** Remove admin page ([306c6e1](https://github.com/danactive/history/commit/306c6e14ffbcf155980687263d237c55b62a478b))
+* **Walk:** Display error message; Prevent 404 images ([6e1c74e](https://github.com/danactive/history/commit/6e1c74e3cffac731865647221b1b594fe2975b51))
+* **Walk:** Group with jpg too ([93e5dc8](https://github.com/danactive/history/commit/93e5dc8812a502c4bc852f150097709fce4de1e7))
+
 ## [5.2.0](https://github.com/danactive/history/compare/v5.1.1...v5.2.0) (2020-06-11)
 
 
