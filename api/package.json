@@ -108,8 +108,8 @@
   },
   "homepage": "https://github.com/danactive/history",
   "engines": {
-    "node": ">=10.15.1",
-    "npm": ">=6.4.1"
+    "node": ">=12.18.1",
+    "npm": ">=6.14.5"
   },
   "readmeFilename": "README.md",
   "tuxharness": "./tuxharness.js",
