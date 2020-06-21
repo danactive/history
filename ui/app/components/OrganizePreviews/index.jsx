@@ -32,6 +32,10 @@ const getListStyle = isDraggingOver => ({
 });
 
 function OrganizePreviews({ items, setItems }) {
+  if (items.length === 0) {
+    return null;
+  }
+
   function onDragEnd(result) {
     // dropped outside the list
     if (!result.destination) {

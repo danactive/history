@@ -24,7 +24,7 @@ function listingSuccess(listing) {
 function listingFailure(error) {
   return {
     type: LIST_DIRECTORY_FAILURE,
-    error,
+    errorMsg: error.message,
   };
 }
 
@@ -44,7 +44,7 @@ function resizeSuccess() {
 function resizeFailure(error) {
   return {
     type: RESIZE_IMAGES_FAILURE,
-    error,
+    errorMsg: error.message,
   };
 }
 

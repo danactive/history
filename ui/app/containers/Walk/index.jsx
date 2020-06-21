@@ -29,18 +29,14 @@ function Walk({ location: { hash } }) {
   useInjectSaga({ key: 'walk', saga });
   const files = useSelector(makeSelectFiles());
   const statePath = useSelector(makeSelectPath());
-  const [stateItems, setItems] = useState([]);
+  const [stateImages, setItems] = useState([]);
   const qsPath = parseHash('path', hash);
 
   useEffect(() => {
     dispatch(actions.listDirectory(qsPath));
   }, [qsPath]);
 
-  const loading = statePath !== qsPath;
-
-  if (loading) {
-    return <LoadingIndicator />;
-  }
+  const loading = statePath !== qsPath || files.length === 0;
 
   const itemFiles = files.map(file => ({
     id: file.path,
@@ -50,9 +46,17 @@ function Walk({ location: { hash } }) {
   addParentDirectoryNav(itemFiles, statePath);
 
   const itemImages = itemFiles.filter(file => isImage(file));
-  const hasImages = !loading && itemImages.length > 0;
+  const hasImages = !loading && stateImages.length > 0;
 
-  const Components = [
+  useEffect(() => {
+    setItems(itemImages);
+  }, [files]);
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
+
+  return [
     <Helmet key="walk-Helmet">
       <title>Walk</title>
       <meta name="description" content="Description of Walk" />
@@ -60,7 +64,7 @@ function Walk({ location: { hash } }) {
     <Menu
       key="walk-Menu"
       showMenu={hasImages}
-      imageFilenames={stateItems.map(i => i.filename)}
+      imageFilenames={stateImages.map(i => i.filename)}
       path={statePath}
     />,
     <GenericList
@@ -70,38 +74,24 @@ function Walk({ location: { hash } }) {
       loading={loading}
       error={false}
     />,
+    <OrganizePreviews
+      key="walk-OrganizePreviews"
+      setItems={setItems}
+      items={stateImages.map(item => ({
+        ...item,
+        content: [
+          <span key={`label-${item.filename}`}>{item.filename}</span>,
+          <img
+            key={`thumbnail-${item.filename}`}
+            alt="No preview yet"
+            src={`http://localhost:${config.apiPort}/public/${statePath}/${item.filename}`}
+            width={config.resizeDimensions.preview.width}
+            height={config.resizeDimensions.preview.height}
+          />,
+        ],
+      }))}
+    />,
   ];
-
-  if (hasImages) {
-    let items = itemImages;
-    if (stateItems.length > 0) {
-      items = stateItems;
-    } else {
-      setItems(itemImages);
-    }
-
-    Components.push(
-      <OrganizePreviews
-        key="walk-OrganizePreviews"
-        items={items.map(item => ({
-          ...item,
-          content: [
-            <span key={`label-${item.filename}`}>{item.filename}</span>,
-            <img
-              key={`thumbnail-${item.filename}`}
-              alt="No preview yet"
-              src={`http://localhost:${config.apiPort}/public/${statePath}/${item.filename}`}
-              width={config.resizeDimensions.preview.width}
-              height={config.resizeDimensions.preview.height}
-            />,
-          ],
-        }))}
-        setItems={setItems}
-      />,
-    );
-  }
-
-  return Components;
 }
 
 export default Walk;
