@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:12-alpine
 
 RUN apk add --no-cache --virtual build-dependencies make gcc g++ python && \
   apk add --no-cache krb5-dev imagemagick graphicsmagick

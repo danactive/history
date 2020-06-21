@@ -22,7 +22,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1.  View frontend at http://localhost:3000
 
 ### Development
-1. Node.js v10.15.x LTS [Download](https://nodejs.org/)
+1. Node.js v12 LTS [Download](https://nodejs.org/)
 1. Folder **api** is the backend; **ui** is the frontend
 1. Install project dependencies `npm ci`
 1. Optional [configuration](#environment-configuration)
