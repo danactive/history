@@ -2,6 +2,7 @@ const tape = require('tape-catch');
 
 tape('Verify /rename route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
+  const joi = require('@hapi/joi');
   const path = require('path');
 
   const lib = require('../lib');
@@ -14,6 +15,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   describe.test('* Caught fake source folder', async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
     await server.register(plugins);
 
     const request = {
@@ -39,6 +41,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   describe.test('* Rename filename based on prefix', async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const request = {
       method: 'POST',
@@ -96,6 +99,7 @@ tape('Verify /rename route', { skip: false }, (describe) => {
 
   describe.test('* Rename filename based on prefix with associated files', async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const request = {
       method: 'POST',

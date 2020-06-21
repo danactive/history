@@ -2,8 +2,9 @@ const tape = require('tape-catch');
 
 tape('Gallery Index', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
+  const joi = require('@hapi/joi');
   const path = require('path');
-  const inert = require('inert');
+  const inert = require('@hapi/inert');
 
   const lib = require('../lib');
   const utils = require('../../utils');
@@ -14,6 +15,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
   describe.test('* Validate Gallery List route', async (assert) => {
     const relativeTo = path.join(__dirname, '../../../../../', 'public');
     const server = hapi.Server({ port });
+    server.validator(joi);
     server.path(relativeTo);
 
     const request = {
@@ -37,6 +39,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
   describe.test('* Validate Gallery XML static asset route', async (assert) => {
     const relativeTo = path.join(__dirname, '../../../../../', 'public');
     const server = hapi.Server({ port });
+    server.validator(joi);
     server.path(relativeTo);
 
     const request = {

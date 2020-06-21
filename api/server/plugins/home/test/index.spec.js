@@ -3,10 +3,11 @@ const tape = require('tape-catch');
 tape('Verify home / route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
-  const inert = require('inert');
+  const joi = require('@hapi/joi');
+  const inert = require('@hapi/inert');
   const path = require('path');
   const querystring = require('querystring');
-  const vision = require('vision');
+  const vision = require('@hapi/vision');
 
   const config = require('../../../../../config.json');
   const lib = require('../lib');
@@ -17,6 +18,7 @@ tape('Verify home / route', { skip: false }, (describe) => {
 
   describe.test('* Check home response', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const url = `/?${querystring.stringify({
       raw: true,

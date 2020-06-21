@@ -1,5 +1,6 @@
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
+const joi = require('@hapi/joi');
 const path = require('path');
 const querystring = require('querystring');
 
@@ -13,6 +14,7 @@ function execHapi({
   testCases.cases.forEach((testCase) => {
     describe.test(testCase.name, testCase.options, async (assert) => {
       const server = hapi.Server({ port });
+      server.validator(joi);
 
       const url = `${routeStem}?${querystring.stringify(testCase.request)}`;
       const request = {

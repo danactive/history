@@ -3,11 +3,12 @@ const tape = require('tape-catch');
 tape('Verify /video route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
-  const inert = require('inert');
+  const joi = require('@hapi/joi');
+  const inert = require('@hapi/inert');
   const path = require('path');
   const querystring = require('querystring');
   const { t: typy } = require('typy');
-  const vision = require('vision');
+  const vision = require('@hapi/vision');
 
   const lib = require('../lib');
   const utils = require('../../utils');
@@ -17,6 +18,7 @@ tape('Verify /video route', { skip: false }, (describe) => {
 
   describe.test('* Valid React.js view', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
     const sources = '2012-fireplace.mp4,2012-fireplace.webm';
 
     const url = `/video?${querystring.stringify({

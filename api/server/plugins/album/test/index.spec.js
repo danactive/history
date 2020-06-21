@@ -3,10 +3,11 @@ const test = require('tape-catch');
 test('Verify /view/album route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
-  const inert = require('inert');
+  const joi = require('@hapi/joi');
+  const inert = require('@hapi/inert');
   const querystring = require('querystring');
   const path = require('path');
-  const vision = require('vision');
+  const vision = require('@hapi/vision');
 
   const config = require('../../../../../config.json');
   const lib = require('../lib');
@@ -24,6 +25,7 @@ test('Verify /view/album route', { skip: false }, (describe) => {
 
   describe.test('* JavaScript library requirements', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const url = `/album?${querystring.stringify({
       album_stem: config.defaultAlbum,
