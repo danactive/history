@@ -89,7 +89,7 @@
     "react-dates": "^21.8.0",
     "react-dom": "16.11.0",
     "react-helmet-async": "1.0.4",
-    "react-hot-loader": "4.12.18",
+    "react-hot-loader": "4.12.21",
     "react-image-gallery": "^1.0.7",
     "react-infinite-scroller": "^1.1.1",
     "react-intl": "2.9.0",
