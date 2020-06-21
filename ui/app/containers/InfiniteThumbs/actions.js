@@ -1,7 +1,4 @@
-import {
-  PRELOAD_PHOTO,
-  SKIP_PRELOAD_PHOTO,
-} from './constants';
+import { PRELOAD_PHOTO, SKIP_PRELOAD_PHOTO } from './constants';
 
 export function preloadPhoto(count) {
   return {

@@ -1,30 +1,34 @@
-/* global describe, expect, test */
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 
 import Wrapper from '../Wrapper';
 
+const renderComponent = (props = {}) => {
+  const utils = render(<Wrapper {...props}>Wrapper</Wrapper>);
+  const wrapper = utils.queryByText('Wrapper');
+  return { ...utils, wrapper };
+};
+
 describe('<Wrapper />', () => {
-  test('should render an <footer> tag', () => {
-    const { container } = render(<Wrapper />);
-    expect(container.querySelector('footer')).not.toBeNull();
+  test('should render a <footer> tag', () => {
+    const { wrapper } = renderComponent();
+    expect(wrapper).toBeInTheDocument();
+    expect(wrapper.tagName).toBe('FOOTER');
   });
 
   test('should have a class attribute', () => {
-    const { container } = render(<Wrapper />);
-    expect(container.querySelector('footer').hasAttribute('class')).toBe(true);
+    const { wrapper } = renderComponent();
+    expect(wrapper).toHaveAttribute('class');
   });
 
   test('should adopt a valid attribute', () => {
     const id = 'test';
-    const { container } = render(<Wrapper id={id} />);
-    expect(container.querySelector('footer').id).toEqual(id);
+    const { wrapper } = renderComponent({ id });
+    expect(wrapper).toHaveAttribute('id', id);
   });
 
   test('should not adopt an invalid attribute', () => {
-    const { container } = render(<Wrapper attribute="test" />);
-    expect(
-      container.querySelector('footer').getAttribute('attribute'),
-    ).toBeNull();
+    const { wrapper } = renderComponent({ attribute: 'test' });
+    expect(wrapper).not.toHaveAttribute('attribute');
   });
 });

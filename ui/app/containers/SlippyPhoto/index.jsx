@@ -4,7 +4,8 @@ import ReactMapboxGl from 'react-mapbox-gl';
 import getMapOptions from './options';
 
 const Map = ReactMapboxGl({
-  accessToken: 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw',
+  accessToken:
+    'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw',
 });
 
 const SlippyPhoto = ({ currentMemory }) => {
@@ -23,14 +24,11 @@ const SlippyPhoto = ({ currentMemory }) => {
     [right, top], // top top
     [right, bottom], // bottom top
     [left, bottom], // bottom left
-
   ];
 
   const mapOptions = getMapOptions({ coordinates, url });
 
-  return (
-    <Map {...mapOptions} />
-  );
+  return <Map {...mapOptions} />;
 };
 
 export default SlippyPhoto;

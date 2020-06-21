@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
 
-import injectReducer from '../../utils/injectReducer';
-import injectSaga from '../../utils/injectSaga';
 import H2 from '../../components/H2';
 import GenericList from '../../components/GenericList';
 import GalleryListItem from '../GalleryListItem/index';
@@ -22,12 +21,9 @@ import {
 import reducer from './reducer';
 import saga from './saga';
 
-export function HomePage({
-  galleryErrors,
-  galleryLoading,
-  items,
-  onLoad,
-}) {
+export function HomePage({ galleryErrors, galleryLoading, items, onLoad }) {
+  useInjectReducer({ key: 'homePage', reducer });
+  useInjectSaga({ key: 'homePage', saga });
   useEffect(() => {
     onLoad();
   }, []);
@@ -68,16 +64,6 @@ const mapStateToProps = createStructuredSelector({
   galleryErrors: makeSelectGalleryErrors(),
 });
 
-const withConnect = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-);
+const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
-const withReducer = injectReducer({ key: 'homePage', reducer });
-const withSaga = injectSaga({ key: 'homePage', saga });
-
-export default compose(
-  withReducer,
-  withSaga,
-  withConnect,
-)(HomePage);
+export default compose(withConnect)(HomePage);

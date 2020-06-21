@@ -7,7 +7,6 @@ const utils = require('../plugins/utils');
 
 utils.env.load();
 
-const libAdmin = require('../plugins/admin/lib');
 const viewAlbum = require('../plugins/album/lib');
 const editAlbum = require('../plugins/editAlbum/lib');
 const libGallery = require('../plugins/gallery/lib');
@@ -25,11 +24,10 @@ const pkg = require('../../package');
 const plugins = [
   inert,
   vision,
-  { plugin: libAdmin, routes: { prefix: '/admin' } },
   { plugin: viewAlbum, routes: { prefix: '/view' } },
   { plugin: editAlbum, routes: { prefix: '/edit' } },
   { plugin: libGallery },
-  { plugin: generatePreview },
+  { plugin: generatePreview, routes: { prefix: '/preview' } },
   { plugin: libGeojson, routes: { prefix: '/geojson' } },
   { plugin: libHome },
   { plugin: libPublic },

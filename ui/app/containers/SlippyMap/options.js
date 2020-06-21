@@ -1,22 +1,20 @@
 const validatePoint = ([longitude = null, latitude = null]) => ({
   latitude,
   longitude,
-  isInvalidPoint: longitude === 0
-  || latitude === 0
-  || longitude === undefined
-  || latitude === undefined
-  || longitude === null
-  || latitude === null
-  || Number.isNaN(latitude)
-  || Number.isNaN(longitude),
+  isInvalidPoint:
+    longitude === 0 ||
+    latitude === 0 ||
+    longitude === undefined ||
+    latitude === undefined ||
+    longitude === null ||
+    latitude === null ||
+    Number.isNaN(latitude) ||
+    Number.isNaN(longitude),
 });
 
 export function transformSourceOptions({ items = [] } = {}) {
-  const geoJsonFeature = (item) => {
-    const {
-      latitude,
-      longitude,
-    } = validatePoint(item.coordinates);
+  const geoJsonFeature = item => {
+    const { latitude, longitude } = validatePoint(item.coordinates);
 
     return {
       type: 'Feature',
@@ -30,7 +28,7 @@ export function transformSourceOptions({ items = [] } = {}) {
     };
   };
 
-  const hasGeo = (item) => !validatePoint(item.coordinates).isInvalidPoint;
+  const hasGeo = item => !validatePoint(item.coordinates).isInvalidPoint;
   const features = items.filter(hasGeo).map(geoJsonFeature);
 
   const data = {
@@ -53,11 +51,7 @@ export function transformSourceOptions({ items = [] } = {}) {
 }
 
 export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
-  const {
-    isInvalidPoint,
-    latitude,
-    longitude,
-  } = validatePoint(coordinates);
+  const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates);
   const point = isInvalidPoint ? null : [longitude, latitude];
 
   const options = {
@@ -153,8 +147,4 @@ export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
   };
 }
 
-export {
-  clusterOptions,
-  clusterLabelOptions,
-  markerOptions,
-};
+export { clusterOptions, clusterLabelOptions, markerOptions };

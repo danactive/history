@@ -1,4 +1,3 @@
-/* global describe, expect, test */
 import getMapOptions from '../options';
 
 describe('SlippyPhoto options', () => {

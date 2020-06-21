@@ -10,14 +10,8 @@ import React, { Children } from 'react';
 
 import A from './A';
 import StyledButton from './StyledButton';
-import Wrapper from './Wrapper';
 
-function Button({
-  children,
-  onClick,
-  handleRoute,
-  href,
-}) {
+function Button({ children, onClick, handleRoute, href }) {
   // Render an anchor tag
   let button = (
     <A href={href} onClick={onClick}>
@@ -34,7 +28,7 @@ function Button({
     );
   }
 
-  return <Wrapper>{button}</Wrapper>;
+  return button;
 }
 
 export default Button;

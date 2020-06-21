@@ -11,7 +11,7 @@ export const initialState = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const reducer = (state = initialState, action) => produce(state, (draft) => {
+const reducer = produce((draft, action) => {
   switch (action.type) {
     case LOAD_GALLERY: {
       draft.galleryLoading = true;
@@ -30,6 +30,6 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       break;
     }
   }
-});
+}, initialState);
 
 export default reducer;

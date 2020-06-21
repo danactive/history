@@ -14,7 +14,7 @@ async function listFiles(destPath = '') {
     throw new URIError('Invalid system path');
   }
 
-  const files = await glob(`${globPath}/*`);
+  const files = await glob(decodeURI(`${globPath}/*`));
 
   const webPaths = files.map((file) => {
     const out = {};

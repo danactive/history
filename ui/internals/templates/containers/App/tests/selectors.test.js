@@ -1,14 +1,14 @@
-/* global describe, expect, test */
 import { makeSelectLocation } from '../selectors';
 
 describe('makeSelectLocation', () => {
   test('should select the location', () => {
+    const locationStateSelector = makeSelectLocation();
     const router = {
       location: { pathname: '/foo' },
     };
     const mockedState = {
       router,
     };
-    expect(makeSelectLocation()(mockedState)).toEqual(router.location);
+    expect(locationStateSelector(mockedState)).toEqual(router.location);
   });
 });

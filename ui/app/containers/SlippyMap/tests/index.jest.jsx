@@ -1,4 +1,4 @@
-/* global describe, expect, test, shallow */
+/* global shallow */
 import React from 'react';
 
 import SlippyMap from '../index';

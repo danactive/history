@@ -2,9 +2,6 @@ const dotProp = require('dot-prop');
 
 const resizeMod = require('./resize');
 const validation = require('../../../lib/validation');
-const utils = require('../../utils');
-
-const uiPort = utils.config.get('uiPort');
 
 async function handler(request, h) {
   const sourcePath = request.payload.source_path;
@@ -15,6 +12,7 @@ async function handler(request, h) {
       return h.response(response.meta.error).code(500);
     }
 
+    // TODO danactive add property of photo and thumb output directories
     return { resize: true };
   } catch (error) {
     return error;
@@ -27,9 +25,6 @@ const register = (server) => {
     path: '/resize',
     options: {
       handler,
-      cors: {
-        origin: [`http://localhost:${uiPort}`],
-      },
       tags: ['api'],
       validate: {
         payload: {

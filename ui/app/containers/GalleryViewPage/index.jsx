@@ -1,31 +1,46 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
 
-import GenericList from '../../components/GenericList';
 import AlbumListItem from '../AlbumListItem/index';
+import GenericList from '../../components/GenericList';
 
-import injectSaga from '../../utils/injectSaga';
-import injectReducer from '../../utils/injectReducer';
 import { loadGallery } from './actions';
-import { makeSelectGalleryLoading, makeSelectGalleryError, makeSelectItems } from './selectors';
+import {
+  makeSelectGalleryLoading,
+  makeSelectGalleryError,
+  makeSelectItems,
+} from './selectors';
 import reducer from './reducer';
 import globalReducer from '../App/reducer';
 import saga from './saga';
 import messages from './messages';
 
+const stateSelector = createStructuredSelector({
+  galleryLoading: makeSelectGalleryLoading(),
+  galleryError: makeSelectGalleryError(),
+  items: makeSelectItems(),
+});
+
 export function GalleryViewPage({
-  onLoad,
-  match: { params: { gallery, host } },
-  galleryLoading,
-  galleryError,
-  items,
+  match: {
+    params: { gallery, host },
+  },
 }) {
+  const dispatch = useDispatch();
+  useInjectReducer({ key: 'galleryViewPage', reducer });
+  useInjectReducer({ key: 'global', reducer: globalReducer });
+  useInjectSaga({ key: 'galleryViewPage', saga });
+
+  const { galleryLoading, galleryError, items } = useSelector(stateSelector);
+
+  const onLoad = () => dispatch(loadGallery({ host, gallery }));
+
   useEffect(() => {
-    if (gallery) onLoad(host, gallery);
+    if (gallery) onLoad();
   }, []);
 
   const albumListProps = {
@@ -46,27 +61,4 @@ export function GalleryViewPage({
   );
 }
 
-const mapStateToProps = createStructuredSelector({
-  galleryLoading: makeSelectGalleryLoading(),
-  galleryError: makeSelectGalleryError(),
-  items: makeSelectItems(),
-});
-
-function mapDispatchToProps(dispatch) {
-  return {
-    onLoad: (host, gallery) => dispatch(loadGallery({ host, gallery })),
-  };
-}
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-const withReducer = injectReducer({ key: 'galleryViewPage', reducer });
-const withGlobalReducer = injectReducer({ key: 'global', reducer: globalReducer });
-const withSaga = injectSaga({ key: 'galleryViewPage', saga });
-
-export default compose(
-  withReducer,
-  withGlobalReducer,
-  withSaga,
-  withConnect,
-)(GalleryViewPage);
+export default GalleryViewPage;

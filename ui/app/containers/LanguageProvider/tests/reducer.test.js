@@ -1,4 +1,3 @@
-/* global describe, expect, test */
 import languageProviderReducer from '../reducer';
 import { CHANGE_LOCALE } from '../constants';
 

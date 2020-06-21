@@ -1,14 +1,15 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import styled from 'styled-components';
 import { Switch, Route } from 'react-router-dom';
 
+import { hot } from 'react-hot-loader/root';
 import AdminLandingPage from '../AdminLandingPage/Loadable';
 import AlbumViewPage from '../AlbumViewPage/Loadable';
 import ExploreVideo from '../ExploreVideo';
 import ResizePage from '../admin/ResizePage/Loadable';
 import HomePage from '../HomePage/Loadable';
-import GalleryViewPage from '../GalleryViewPage/Loadable';
+import GalleryViewPage from '../GalleryViewPage';
 import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -24,13 +25,10 @@ const AppWrapper = styled.div`
   flex-direction: column;
 `;
 
-export default function App() {
+function App() {
   return (
     <AppWrapper>
-      <Helmet
-        titleTemplate="%s - History"
-        defaultTitle="History"
-      >
+      <Helmet titleTemplate="%s - History" defaultTitle="History">
         <meta name="description" content="History" />
       </Helmet>
       <Header />
@@ -49,3 +47,5 @@ export default function App() {
     </AppWrapper>
   );
 }
+
+export default hot(App);

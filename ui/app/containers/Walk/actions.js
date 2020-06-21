@@ -2,9 +2,12 @@ import {
   LIST_DIRECTORY_REQUEST,
   LIST_DIRECTORY_SUCCESS,
   LIST_DIRECTORY_FAILURE,
+  RESIZE_IMAGES_REQUEST,
+  RESIZE_IMAGES_SUCCESS,
+  RESIZE_IMAGES_FAILURE,
 } from './constants';
 
-function getFilesByPath(path) {
+function listDirectory(path) {
   return {
     type: LIST_DIRECTORY_REQUEST,
     path,
@@ -21,12 +24,35 @@ function listingSuccess(listing) {
 function listingFailure(error) {
   return {
     type: LIST_DIRECTORY_FAILURE,
-    error,
+    errorMsg: error.message,
+  };
+}
+
+function resizeImages(images) {
+  return {
+    type: RESIZE_IMAGES_REQUEST,
+    images,
+  };
+}
+
+function resizeSuccess() {
+  return {
+    type: RESIZE_IMAGES_SUCCESS,
+  };
+}
+
+function resizeFailure(error) {
+  return {
+    type: RESIZE_IMAGES_FAILURE,
+    errorMsg: error.message,
   };
 }
 
 export default {
-  getFilesByPath,
+  listDirectory,
   listingSuccess,
   listingFailure,
+  resizeImages,
+  resizeSuccess,
+  resizeFailure,
 };

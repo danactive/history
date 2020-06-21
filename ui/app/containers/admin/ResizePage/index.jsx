@@ -3,12 +3,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import injectSaga from '../../../utils/injectSaga';
+import { useInjectSaga } from 'redux-injectors';
 
 import saga from './saga';
 import { resizeImage } from './actions';
 
-const ResizePage = (props) => {
+const ResizePage = props => {
+  useInjectSaga({ key: 'mediaGallery', saga });
   const {
     triggerResizeImage, // dispatch
   } = props;
@@ -17,15 +18,15 @@ const ResizePage = (props) => {
     <div>
       <h1>Resize</h1>
       <p>
-        This page is partially functional. Place your JPG images into the file system in a
-        specific folder and this form will resize from the original to photo and thumbnail.
-
-        (Note: /todo/originals, /todo/photos, /todo/thumbs must be manually created)
+        This page is partially functional. Place your JPG images into the file
+        system in a specific folder and this form will resize from the original
+        to photo and thumbnail. (Note: /todo/originals, /todo/photos,
+        /todo/thumbs must be manually created)
       </p>
 
       <Formik
         initialValues={{ filename: '/todo/originals/2019-08-31-99.jpg' }}
-        onSubmit={(values) => triggerResizeImage(values.filename)}
+        onSubmit={values => triggerResizeImage(values.filename)}
       >
         {({
           values,
@@ -55,14 +56,10 @@ const ResizePage = (props) => {
 
 function mapDispatchToProps(dispatch) {
   return {
-    triggerResizeImage: (filename) => dispatch(resizeImage(filename)),
+    triggerResizeImage: filename => dispatch(resizeImage(filename)),
   };
 }
 
 const withConnect = connect(null, mapDispatchToProps);
-const withSaga = injectSaga({ key: 'mediaGallery', saga });
 
-export default compose(
-  withSaga,
-  withConnect,
-)(ResizePage);
+export default compose(withConnect)(ResizePage);

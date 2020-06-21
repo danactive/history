@@ -10,18 +10,18 @@ import { makeSelectCritical } from '../App/selectors';
 
 function AlbumListItem({ item, critical }) {
   if (!item || !critical) {
-    return (<ListItem key="albums-list-item" item={<div>Invalid album</div>} />);
+    return <ListItem key="albums-list-item" item={<div>Invalid album</div>} />;
   }
 
   const { gallery, host } = critical;
 
   const content = (
-    <Link to={`/view/${host}/${gallery}/${item.id}`}>{capitalize(item.name)}</Link>
+    <Link to={`/view/${host}/${gallery}/${item.id}`}>
+      {capitalize(item.name)}
+    </Link>
   );
 
-  return (
-    <ListItem key={`albums-list-item-${item.id}`} item={content} />
-  );
+  return <ListItem key={`albums-list-item-${item.id}`} item={content} />;
 }
 
 const mapStateToProps = createStructuredSelector({
@@ -30,6 +30,4 @@ const mapStateToProps = createStructuredSelector({
 
 const withConnect = connect(mapStateToProps);
 
-export default compose(
-  withConnect,
-)(AlbumListItem);
+export default compose(withConnect)(AlbumListItem);

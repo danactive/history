@@ -1,14 +1,11 @@
-const resizeMod = require('./resize');
+const resizer = require('./resize');
 const validation = require('../../../lib/validation');
-const utils = require('../../utils');
-
-const uiPort = utils.config.get('uiPort');
 
 const handler = async (request) => {
   try {
     const sourcePath = request.payload.image_path;
 
-    const out = await resizeMod.resize(sourcePath);
+    const out = await resizer.resize(sourcePath);
     return out;
   } catch (error) {
     return error;
@@ -18,12 +15,9 @@ const handler = async (request) => {
 const register = (server) => {
   server.route({
     method: 'POST',
-    path: '/generate-preview',
+    path: '/generate',
     options: {
       handler,
-      cors: {
-        origin: [`http://localhost:${uiPort}`],
-      },
       tags: ['api', 'jpg', 'resize', 'generator', 'thumbnail'],
       validate: {
         payload: {

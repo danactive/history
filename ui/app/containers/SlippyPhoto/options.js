@@ -22,7 +22,7 @@ const getMapStyle = ({ coordinates, url }) => ({
   ],
 });
 
-const getMapOptions = (source) => ({
+const getMapOptions = source => ({
   containerStyle: {
     height: '100%',
     width: '100%',

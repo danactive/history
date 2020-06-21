@@ -1,20 +1,13 @@
 import { createSelector } from 'reselect';
 import { initialState } from './reducer';
 
-const selectWalkDomain = (state) => state.walk || initialState;
+const selectWalkDomain = state => state.walk || initialState;
 
-const makeSelectFiles = () => createSelector(
-  selectWalkDomain,
-  (substate) => substate.listing.files,
-);
+const makeSelectFiles = () =>
+  createSelector(selectWalkDomain, pageState => pageState.listing.files);
 
-const makeSelectPath = () => createSelector(
-  selectWalkDomain,
-  (substate) => substate.listing.path,
-);
+const makeSelectPath = () =>
+  createSelector(selectWalkDomain, pageState => pageState.listing.path);
 
 export default selectWalkDomain;
-export {
-  makeSelectPath,
-  makeSelectFiles,
-};
+export { makeSelectPath, makeSelectFiles };

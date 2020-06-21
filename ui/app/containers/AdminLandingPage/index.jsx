@@ -1,41 +1,42 @@
-import { push } from 'connected-react-router';
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
 
-import A from '../../components/A';
 import messages from './messages';
 
-export function AdminLandingPage({
-  navToResize,
-  navToWalk,
-}) {
+import A from '../../components/A';
+import ListItem from '../../components/ListItem';
+import GenericList from '../../components/GenericList';
+
+export function AdminLandingPage() {
+  const applyId = n => ({ ...n, id: n.label });
+  const navItems = [
+    { label: 'Walk', href: '/admin/walk' },
+    { label: 'Resize', href: '/admin/resize' },
+  ].map(applyId);
+
+  // TODO danactive change href to onChange to be SPA and decrease page loads
+  const ListComponent = ({ item }) => (
+    <ListItem item={<A href={item.href}>{item.label}</A>} />
+  );
+
   return (
     <div>
       <Helmet>
-        <title>Admin</title>
+        <title>Walk - Admin</title>
         <meta name="description" content="Admin" />
       </Helmet>
       <h1>
         <FormattedMessage {...messages.header} />
       </h1>
-      <ul>
-        <li><A onClick={navToWalk}>Walk</A></li>
-        <li><A onClick={navToResize}>Resize</A></li>
-      </ul>
+      <GenericList
+        items={navItems}
+        error={false}
+        loading={false}
+        component={ListComponent}
+      />
     </div>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  navToWalk: () => dispatch(push('/admin/walk')),
-  navToResize: () => dispatch(push('/admin/resize')),
-});
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(
-  withConnect,
-)(AdminLandingPage);
+export default AdminLandingPage;

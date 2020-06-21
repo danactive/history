@@ -1,5 +1,4 @@
 // *********** HISTORY CUSTOM not React Boilerplate
-/* global describe, expect, test */
 import normalizeError from '../error';
 
 describe('error', () => {
@@ -66,7 +65,8 @@ describe('error', () => {
     });
 
     test('Dropbox error with response', () => {
-      const message = 'Error in call to API function "files/get_temporary_link": The given OAuth 2 access token is malformed.';
+      const message =
+        'Error in call to API function "files/get_temporary_link": The given OAuth 2 access token is malformed.';
       const path = '/public/gallery-dan/xml/album_cuba2015.xml';
       const status = 400;
 

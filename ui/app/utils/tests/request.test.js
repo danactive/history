@@ -1,4 +1,3 @@
-/* global beforeEach, describe, expect, jest, Response, test, window */
 /**
  * Test the request function
  */
@@ -25,10 +24,10 @@ describe('request', () => {
       window.fetch.mockReturnValue(Promise.resolve(res));
     });
 
-    test('should format the response correctly', (done) => {
+    test('should format the response correctly', done => {
       request('/thisurliscorrect')
         .catch(done)
-        .then((json) => {
+        .then(json => {
           expect(json.hello).toBe('world');
           done();
         });
@@ -46,10 +45,10 @@ describe('request', () => {
       window.fetch.mockReturnValue(Promise.resolve(res));
     });
 
-    test('should return null on 204 response', (done) => {
+    test('should return null on 204 response', done => {
       request('/thisurliscorrect')
         .catch(done)
-        .then((json) => {
+        .then(json => {
           expect(json).toBeNull();
           done();
         });
@@ -70,8 +69,8 @@ describe('request', () => {
       window.fetch.mockReturnValue(Promise.resolve(res));
     });
 
-    test('should catch errors', (done) => {
-      request('/thisdoesntexist').catch((err) => {
+    test('should catch errors', done => {
+      request('/thisdoesntexist').catch(err => {
         expect(err.response.status).toBe(404);
         expect(err.response.statusText).toBe('Not Found');
         done();

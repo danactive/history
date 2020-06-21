@@ -1,4 +1,3 @@
-/* global beforeEach, describe, expect, test */
 import produce from 'immer';
 
 import appReducer, { initialState } from '../reducer';
@@ -18,9 +17,12 @@ describe('appReducer', () => {
   });
 
   test('loadAlbum action from AlbumViewPage', () => {
-    const received = appReducer(state, loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' }));
+    const received = appReducer(
+      state,
+      loadAlbum({ host: 'dropbox', gallery: 'demo', album: 'sample' }),
+    );
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.album = 'sample';
       draft.gallery = 'demo';
       draft.host = 'dropbox';
@@ -42,14 +44,17 @@ describe('appReducer', () => {
       gallery: 'demo',
       album: 'sample',
     };
-    const received = appReducer(testState, albumLoadSuccess({
-      host: testState.host,
-      gallery: testState.gallery,
-      album: testState.album,
-      memories: json.memories,
-    }));
+    const received = appReducer(
+      testState,
+      albumLoadSuccess({
+        host: testState.host,
+        gallery: testState.gallery,
+        album: testState.album,
+        memories: json.memories,
+      }),
+    );
 
-    const expected = produce(testState, (draft) => {
+    const expected = produce(testState, draft => {
       draft.dropbox = {
         demo: {
           sample: {

@@ -1,4 +1,3 @@
-/* global fetch, window */
 /**
  * Parses the JSON returned by a network request
  *
@@ -12,8 +11,10 @@ function parseJSON(response) {
   }
 
   // *********** HISTORY CUSTOM not React Boilerplate
-  if (response.headers.get('Content-Type').includes('application/xml')
-    || response.headers.get('Content-Type').includes('text/xml')) {
+  if (
+    response.headers.get('Content-Type').includes('application/xml') ||
+    response.headers.get('Content-Type').includes('text/xml')
+  ) {
     return response.text();
   }
 
@@ -24,7 +25,7 @@ function parseJSON(response) {
 // Convert text to XML document or return response
 export function parseTextXml(response) {
   if (typeof response === 'string') {
-    return (new window.DOMParser()).parseFromString(response, 'text/xml');
+    return new window.DOMParser().parseFromString(response, 'text/xml');
   }
 
   return response;
@@ -60,12 +61,21 @@ export function querystring(rawUrl, params) {
 }
 
 // *********** HISTORY CUSTOM not React Boilerplate
-function fetchWithTimeout(url, options, timeout = 1700) {
+function fetchWithTimeout(url, options, wait = 1700) {
+  let timerId;
+  const timeout = new Promise((_, reject) => {
+    timerId = setTimeout(() => {
+      clearTimeout(timerId);
+      reject(new Error(`XHR timeout (${timeout}) to ${url}`));
+    }, wait);
+  });
+
   return Promise.race([
-    fetch(url, options),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(`HTTP request timeout reached at ${timeout}`)), timeout)
-    )
+    fetch(url, options).then(response => {
+      clearTimeout(timerId);
+      return response;
+    }),
+    timeout,
   ]);
 }
 

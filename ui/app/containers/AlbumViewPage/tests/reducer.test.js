@@ -1,4 +1,3 @@
-/* global beforeEach, describe, expect, test */
 import produce from 'immer';
 
 import json from '../../App/tests/fixtures/album.json';
@@ -33,9 +32,12 @@ describe('pageReducer', () => {
   });
 
   test('loadAlbum action', () => {
-    const received = pageReducer(state, loadAlbum({ host: '', gallery: '', album: '' }));
+    const received = pageReducer(
+      state,
+      loadAlbum({ host: '', gallery: '', album: '' }),
+    );
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.albumLoading = true;
     });
 
@@ -45,7 +47,7 @@ describe('pageReducer', () => {
   test('albumLoadSuccess action', () => {
     const received = pageReducer(state, albumLoadSuccess(json.memories));
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.albumLoading = false;
       draft.thumbsLoading = true;
       draft.page = fixture.page;
@@ -58,7 +60,7 @@ describe('pageReducer', () => {
   test('should handle the albumLoadError action correctly', () => {
     const received = pageReducer(state, albumLoadError(fixture.error));
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.albumError = fixture.error;
       draft.albumLoading = false;
     });
@@ -77,7 +79,7 @@ describe('pageReducer', () => {
     };
     const received = pageReducer(state, nextPageSuccess(args));
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.thumbsLoading = false;
       draft.page = fixture.page;
       draft.hasMore = fixture.hasMore;
@@ -89,7 +91,7 @@ describe('pageReducer', () => {
   test('should handle the nextPageError action correctly', () => {
     const received = pageReducer(state, nextPageError(fixture.error));
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.thumbsError = fixture.error;
       draft.thumbsLoading = false;
     });
@@ -100,7 +102,7 @@ describe('pageReducer', () => {
   test('should handle the thumbsLoaded action correctly', () => {
     const received = pageReducer(state, thumbsLoaded(fixture.error));
 
-    const expected = produce(state, (draft) => {
+    const expected = produce(state, draft => {
       draft.thumbsLoading = false;
       delete draft.page;
       delete draft.hasMore;

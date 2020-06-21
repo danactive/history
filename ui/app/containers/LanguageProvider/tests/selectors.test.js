@@ -1,12 +1,17 @@
-/* global describe, expect, test */
 import { selectLanguage } from '../selectors';
+import { initialState } from '../reducer';
 
 describe('selectLanguage', () => {
-  test('should select the global state', () => {
-    const globalState = {};
+  test('should select the language state', () => {
+    const languageState = {};
     const mockedState = {
-      language: globalState,
+      language: languageState,
     };
-    expect(selectLanguage(mockedState)).toEqual(globalState);
+    expect(selectLanguage(mockedState)).toEqual(languageState);
+  });
+
+  test('should select the initial state when state is missing', () => {
+    const mockedState = {};
+    expect(selectLanguage(mockedState)).toEqual(initialState);
   });
 });

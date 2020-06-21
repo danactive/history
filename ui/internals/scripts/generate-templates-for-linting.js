@@ -14,13 +14,13 @@ const rimraf = require('rimraf');
 const shell = require('shelljs');
 
 const addCheckmark = require('./helpers/checkmark');
-const xmark = require('./helpers/xmark');
+const addXmark = require('./helpers/xmark');
 
 /**
  * Every generated component/container is preceded by this
  * @type {string}
  */
-const { BACKUPFILE_EXTENSION } = require('../generators/index');
+const { BACKUPFILE_EXTENSION } = require('../generators');
 
 process.chdir(path.join(__dirname, '../generators'));
 
@@ -91,8 +91,8 @@ function reportSuccess(message) {
  */
 function reportErrors(reason) {
   // TODO Replace with our own helpers/log that is guaranteed to be blocking?
-  xmark(() => console.error(chalk.red(` ${reason}`)));
-  process.exit(1);
+  addXmark(() => console.error(chalk.red(` ${reason}`)));
+  process.extest(1);
 }
 
 /**
@@ -373,7 +373,7 @@ async function generateLanguage(language) {
 /**
  * Run
  */
-(async function () {
+(async function() {
   await generateComponents([
     { kind: 'component', name: 'Component', memo: false },
     { kind: 'component', name: 'MemoizedComponent', memo: true },

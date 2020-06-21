@@ -3,12 +3,12 @@ const addCheckMark = require('./helpers/checkmark.js');
 
 if (!shell.which('git')) {
   shell.echo('Sorry, this script requires git');
-  shell.exit(1);
+  shell.extest(1);
 }
 
 if (!shell.test('-e', 'internals/templates')) {
   shell.echo('The example is deleted already.');
-  shell.exit(1);
+  shell.extest(1);
 }
 
 process.stdout.write('Cleanup started...');
@@ -42,6 +42,7 @@ shell.mv('internals/templates/utils', 'app');
 shell.cp('internals/templates/app.jsx', 'app/app.jsx');
 shell.cp('internals/templates/global-styles.js', 'app/global-styles.js');
 shell.cp('internals/templates/i18n.js', 'app/i18n.js');
+shell.cp('internals/templates/locales.js', 'app/locales.js');
 shell.cp('internals/templates/index.html', 'app/index.html');
 shell.cp('internals/templates/reducers.js', 'app/reducers.js');
 shell.cp('internals/templates/configureStore.js', 'app/configureStore.js');
@@ -57,7 +58,7 @@ if (
     .code !== 0
 ) {
   shell.echo('\nError: Git commit failed');
-  shell.exit(1);
+  shell.extest(1);
 }
 
 shell.echo('\nCleanup done. Happy Coding!!!');

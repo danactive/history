@@ -1,14 +1,10 @@
-/* global describe, expect, test */
-import {
-  transformMapOptions,
-  transformSourceOptions,
-} from '../options';
+import { transformMapOptions, transformSourceOptions } from '../options';
 
 const getFeatureCollection = () => ({
   features: [],
   type: 'FeatureCollection',
 });
-const getFeature = (params) => {
+const getFeature = params => {
   const {
     latitude = 999, // invalid to catch bug in test
     longitude = 999,
@@ -38,7 +34,9 @@ describe('<SlippyMap /> options', () => {
     test('should return a GeoJSON Feature Collection with Feature', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions({ items: [{ coordinates: [1, 2] }] }).geoJsonSource.data;
+      const received = transformSourceOptions({
+        items: [{ coordinates: [1, 2] }],
+      }).geoJsonSource.data;
       const expected = getFeatureCollection();
       expected.features.push(getFeature({ latitude: 2, longitude: 1 }));
       expect(received).toEqual(expected);
@@ -47,7 +45,8 @@ describe('<SlippyMap /> options', () => {
     test('should return a GeoJSON Feature Collection with suppressed Feature due to missing lat, long', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions({ items: [{ coordinates: [] }] }).geoJsonSource.data;
+      const received = transformSourceOptions({ items: [{ coordinates: [] }] })
+        .geoJsonSource.data;
       const expected = getFeatureCollection();
       expect(received).toEqual(expected);
     });
@@ -55,7 +54,9 @@ describe('<SlippyMap /> options', () => {
     test('should return a GeoJSON Feature Collection with suppressed Feature due to NaN, NaN', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions({ items: [{ coordinates: [NaN, NaN] }] }).geoJsonSource.data;
+      const received = transformSourceOptions({
+        items: [{ coordinates: [NaN, NaN] }],
+      }).geoJsonSource.data;
       const expected = getFeatureCollection();
       expect(received).toEqual(expected);
     });
@@ -63,7 +64,9 @@ describe('<SlippyMap /> options', () => {
     test('should return a GeoJSON Feature Collection with Feature and suppressed Feature', () => {
       expect.hasAssertions();
 
-      const received = transformSourceOptions({ items: [{ coordinates: [1, 2] }, { coordinates: [] }] }).geoJsonSource.data;
+      const received = transformSourceOptions({
+        items: [{ coordinates: [1, 2] }, { coordinates: [] }],
+      }).geoJsonSource.data;
       const expected = getFeatureCollection();
       expected.features.push(getFeature({ latitude: 2, longitude: 1 }));
       expect(received).toEqual(expected);
@@ -72,7 +75,9 @@ describe('<SlippyMap /> options', () => {
 
   describe('transformMapOptions', () => {
     const runOneTest = (testDatum, property, value) => {
-      const received = transformMapOptions({ coordinates: testDatum })[property];
+      const received = transformMapOptions({ coordinates: testDatum })[
+        property
+      ];
       expect(received).toEqual(value);
     };
 
@@ -87,8 +92,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
-      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
 
     test('should have a centre and zoom', () => {
@@ -102,8 +107,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach((testDatum) => runOneTest(testDatum, 'center', testDatum));
-      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', [17]));
+      testData.forEach(testDatum => runOneTest(testDatum, 'center', testDatum));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', [17]));
     });
 
     test('should have not a centre and zoom', () => {
@@ -114,8 +119,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
-      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
 
     test('should have not a centre and zoom', () => {
@@ -126,8 +131,8 @@ describe('<SlippyMap /> options', () => {
       ];
       expect.assertions(testData.length * 2);
 
-      testData.forEach((testDatum) => runOneTest(testDatum, 'center', undefined));
-      testData.forEach((testDatum) => runOneTest(testDatum, 'zoom', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'center', undefined));
+      testData.forEach(testDatum => runOneTest(testDatum, 'zoom', undefined));
     });
   });
 });

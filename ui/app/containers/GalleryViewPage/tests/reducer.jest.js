@@ -1,10 +1,7 @@
-/* global beforeEach, describe, expect, test */
 import produce from 'immer';
 
 import galleryViewPageReducer, { initialState } from '../reducer';
-import {
-  loadGallery,
-} from '../actions';
+import { loadGallery } from '../actions';
 
 /* eslint-disable default-case, no-param-reassign */
 describe('galleryViewPageReducer', () => {
@@ -20,12 +17,17 @@ describe('galleryViewPageReducer', () => {
 
   test('should handle the loadGalleries action correctly', () => {
     const fixture = 'demo';
-    const expectedResult = produce(state, (draft) => {
+    const expectedResult = produce(state, draft => {
       draft.galleryLoading = true;
       draft.galleryError = false;
       draft.gallery = fixture;
     });
 
-    expect(galleryViewPageReducer(state, loadGallery({ host: 'dropbox', gallery: fixture }))).toEqual(expectedResult);
+    expect(
+      galleryViewPageReducer(
+        state,
+        loadGallery({ host: 'dropbox', gallery: fixture }),
+      ),
+    ).toEqual(expectedResult);
   });
 });

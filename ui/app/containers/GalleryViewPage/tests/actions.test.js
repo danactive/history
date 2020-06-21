@@ -1,11 +1,6 @@
-/* global describe, expect, test */
-import {
-  loadGallery,
-} from '../actions';
+import { loadGallery } from '../actions';
 
-import {
-  LOAD_GALLERY,
-} from '../constants';
+import { LOAD_GALLERY } from '../constants';
 
 describe('GalleryViewPage actions', () => {
   describe('loadGallery', () => {

@@ -1,6 +1,5 @@
-/* global describe, expect, test */
 import React from 'react';
-import { render } from 'react-testing-library';
+import { render } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 
 import HomePage from '../index';

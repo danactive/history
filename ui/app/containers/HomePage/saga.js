@@ -1,11 +1,5 @@
-/* global fetch */
 import { Dropbox } from 'dropbox';
-import {
-  all,
-  call,
-  put,
-  takeLatest,
-} from 'redux-saga/effects';
+import { all, call, put, takeLatest } from 'redux-saga/effects';
 
 import request from '../../utils/request';
 import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
@@ -21,7 +15,9 @@ export function* getDropboxGalleries() {
     const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
 
     if (!accessToken) {
-      const error = new ReferenceError('.env is missing HISTORY_DROPBOX_ACCESS_TOKEN');
+      const error = new ReferenceError(
+        '.env is missing HISTORY_DROPBOX_ACCESS_TOKEN',
+      );
       logError(error);
       yield put(galleriesLoadingError(error));
       return;
@@ -29,7 +25,9 @@ export function* getDropboxGalleries() {
 
     const dbx = new Dropbox({ accessToken, fetch });
 
-    const galleries = yield call([dbx, dbx.filesListFolder], { path: '/public' });
+    const galleries = yield call([dbx, dbx.filesListFolder], {
+      path: '/public',
+    });
     yield put(galleriesLoadingSuccess({ dropbox: galleries }));
   } catch (error) {
     logError('getDropboxGalleries', error);
@@ -39,8 +37,15 @@ export function* getDropboxGalleries() {
 
 function* getLocalFolders() {
   try {
-    const { galleries } = yield call(request, `http://localhost:${port}/gallery/list`);
-    yield put(galleriesLoadingSuccess({ local: galleries.map((name) => ({ name, id: `local-${name}` })) }));
+    const { galleries } = yield call(
+      request,
+      `http://localhost:${port}/gallery/list`,
+    );
+    yield put(
+      galleriesLoadingSuccess({
+        local: galleries.map(name => ({ name, id: `local-${name}` })),
+      }),
+    );
   } catch (error) {
     logError('getLocalFolders', error);
     yield put(galleriesLoadingError(error));
@@ -48,10 +53,7 @@ function* getLocalFolders() {
 }
 
 function* getGalleries() {
-  yield all([
-    call(getLocalFolders),
-    call(getDropboxGalleries),
-  ]);
+  yield all([call(getLocalFolders), call(getDropboxGalleries)]);
 }
 
 // ROOT saga manages WATCHER lifecycle

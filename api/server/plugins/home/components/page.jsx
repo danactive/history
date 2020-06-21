@@ -19,8 +19,8 @@ function Page({ galleries }) {
         <ul>
           {galleryList}
         </ul>
-        <a href="/admin">
-          Admin
+        <a href="/edit/album">
+          Admin &gt; Edit Album
         </a>
       </body>
     </html>

@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test */
 import { formatTranslationMessages } from '../i18n';
 
 jest.mock('../translations/en.json', () => ({

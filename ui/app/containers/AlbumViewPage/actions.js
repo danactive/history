@@ -28,12 +28,7 @@ export function loadAlbum({ host, gallery, album }) {
   };
 }
 
-export function albumLoadSuccess({
-  memories,
-  host,
-  gallery,
-  album,
-}) {
+export function albumLoadSuccess({ memories, host, gallery, album }) {
   return {
     type: LOAD_ALBUM_SUCCESS,
     memories,
@@ -83,13 +78,7 @@ export function nextPageError(error) {
   };
 }
 
-export function thumbsLoaded({
-  newMemories,
-  page,
-  host,
-  gallery,
-  album,
-}) {
+export function thumbsLoaded({ newMemories, page, host, gallery, album }) {
   return {
     type: LOAD_THUMBS_SUCCESS,
     newMemories,
@@ -121,7 +110,6 @@ export function slideToAdjacentMemory(index) {
     index,
   };
 }
-
 
 export function enoughThumbsLoaded() {
   return {

@@ -1,12 +1,8 @@
-/**
- *
- * Asynchronously loads the component for PhotoHeader
- *
- */
+import React from 'react';
 
-import Loadable from "react-loadable";
+import loadable from '../../utils/loadable';
+import LoadingIndicator from '../LoadingIndicator';
 
-export default Loadable({
-  loader: () => import("."),
-  loading: () => null
+export default loadable(() => import('./index'), {
+  fallback: <LoadingIndicator />,
 });

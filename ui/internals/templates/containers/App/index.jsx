@@ -1,14 +1,13 @@
-/* eslint-disable import/no-named-as-default, import/no-named-as-default-member */
-
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
+import { hot } from 'react-hot-loader/root';
 import HomePage from '../../../../app/containers/HomePage/Loadable';
 import NotFoundPage from '../../../../app/containers/NotFoundPage/Loadable';
 
 import GlobalStyle from '../../global-styles';
 
-export default function App() {
+function App() {
   return (
     <div>
       <Switch>
@@ -19,3 +18,5 @@ export default function App() {
     </div>
   );
 }
+
+export default hot(App);

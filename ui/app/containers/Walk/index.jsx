@@ -1,70 +1,97 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Helmet } from 'react-helmet';
-import { createStructuredSelector } from 'reselect';
-import { compose } from 'redux';
+import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { useDispatch, useSelector } from 'react-redux';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
-import { useInjectSaga } from '../../utils/injectSaga';
-import { useInjectReducer } from '../../utils/injectReducer';
 import actions from './actions';
-import {
-  makeSelectFiles,
-  makeSelectPath,
-} from './selectors';
+import config from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
-
-import Contents from './contents';
-
+import { makeSelectFiles, makeSelectPath } from './selectors';
 import walkUtils from './util';
 
-const { areImages } = walkUtils;
+import GenericList from '../../components/GenericList';
+import ListFile from './ListFile';
+import LoadingIndicator from '../../components/LoadingIndicator';
+import Menu from './Menu';
+import OrganizePreviews from '../../components/OrganizePreviews';
 
-function parseQueryString(find, from) {
-  if (!find || !from) return '';
-  return RegExp(`[?&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2];
-}
+const {
+  addParentDirectoryNav,
+  isImage,
+  parseHash,
+  organizeByMedia,
+} = walkUtils;
 
-function Walk({
-  getFilesByPath,
-  files,
-  location: { search: querystring },
-  path: pathProp,
-}) {
+function Walk({ location: { hash } }) {
+  const dispatch = useDispatch();
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
-
-  const qsPath = parseQueryString('path', querystring);
-  const path = qsPath || pathProp;
+  const files = useSelector(makeSelectFiles());
+  const statePath = useSelector(makeSelectPath());
+  const [stateImages, setItems] = useState([]);
+  const qsPath = parseHash('path', hash);
 
   useEffect(() => {
-    getFilesByPath(path);
-  }, []);
+    dispatch(actions.listDirectory(qsPath));
+  }, [qsPath]);
 
-  const hasImage = files.some(areImages);
+  const loading = statePath !== qsPath || files.length === 0;
 
-  return (
-    <div>
-      <Helmet>
-        <title>Walk</title>
-        <meta name="description" content="Description of Walk" />
-      </Helmet>
-      <Contents files={files} showControls={hasImage} />
-    </div>
-  );
+  const itemFiles = files.map(file => ({
+    id: file.path,
+    content: file.filename,
+    ...file,
+  }));
+  addParentDirectoryNav(itemFiles, statePath);
+
+  const itemImages = itemFiles.filter(file => isImage(file));
+  const hasImages = !loading && stateImages.length > 0;
+
+  useEffect(() => {
+    setItems(itemImages);
+  }, [files]);
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
+
+  return [
+    <Helmet key="walk-Helmet">
+      <title>Walk</title>
+      <meta name="description" content="Description of Walk" />
+    </Helmet>,
+    <Menu
+      key="walk-Menu"
+      showMenu={hasImages}
+      imageFilenames={stateImages.map(i => i.filename)}
+      path={statePath}
+    />,
+    <GenericList
+      key="walk-GenericList"
+      component={ListFile}
+      items={organizeByMedia(itemFiles)}
+      loading={loading}
+      error={false}
+    />,
+    <OrganizePreviews
+      key="walk-OrganizePreviews"
+      setItems={setItems}
+      items={stateImages.map(item => ({
+        ...item,
+        content: [
+          <span key={`label-${item.filename}`}>{item.filename}</span>,
+          <img
+            key={`thumbnail-${item.filename}`}
+            alt="No preview yet"
+            src={`http://localhost:${config.apiPort}/public/${statePath}/${item.filename}`}
+            width={config.resizeDimensions.preview.width}
+            height={config.resizeDimensions.preview.height}
+          />,
+        ],
+      }))}
+    />,
+  ];
 }
 
-const mapStateToProps = createStructuredSelector({
-  files: makeSelectFiles(),
-  path: makeSelectPath(),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  getFilesByPath: (path) => dispatch(actions.getFilesByPath(path)),
-});
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(
-  withConnect,
-)(Walk);
+export default Walk;
