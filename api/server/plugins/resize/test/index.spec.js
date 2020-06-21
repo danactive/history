@@ -5,6 +5,7 @@ const existsChecker = require('../../exists/lib/exists');
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
   const hapi = require('@hapi/hapi');
+  const joi = require('@hapi/joi');
 
   const lib = require('../lib');
   const utils = require('../../utils');
@@ -20,6 +21,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
 
   describe.test('* Caught fake source', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const request = {
       method: 'POST',
@@ -43,6 +45,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
 
   describe.test('* Catch non-JPEG file', { skip: false }, async (assert) => {
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const request = {
       method: 'POST',
@@ -68,6 +71,7 @@ tape('Verify /resize route', { skip: false }, (describe) => {
   describe.test('* Resize JPEG file to photo and thumb to parent folder', { skip: false }, async (assert) => {
     const originalRelativeFile = '/test/fixtures/resizable/originals/2016-07-12.jpg';
     const server = hapi.Server({ port });
+    server.validator(joi);
 
     const request = {
       method: 'POST',

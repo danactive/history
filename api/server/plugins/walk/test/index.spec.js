@@ -1,8 +1,8 @@
 const tape = require('tape-catch');
 
 tape('Verify /walk route', { skip: false }, (describe) => {
-  const inert = require('inert');
-  const vision = require('vision');
+  const inert = require('@hapi/inert');
+  const vision = require('@hapi/vision');
 
   const lib = require('../lib');
   const testCases = require('./cases');

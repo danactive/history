@@ -1,7 +1,6 @@
 const hapiSwagger = require('hapi-swagger');
-const inert = require('inert');
-const lout = require('lout');
-const vision = require('vision');
+const inert = require('@hapi/inert');
+const vision = require('@hapi/vision');
 
 const utils = require('../plugins/utils');
 
@@ -39,7 +38,6 @@ const plugins = [
     plugin: hapiSwagger,
     options: { info: { title: 'history API', version: pkg.version } },
   },
-  { plugin: lout },
 ];
 
 module.exports = plugins;

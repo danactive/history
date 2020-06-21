@@ -1,6 +1,7 @@
 const boom = require('boom');
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
+const joi = require('@hapi/joi');
 const notifier = require('node-notifier');
 
 require('tuxharness');
@@ -33,6 +34,7 @@ const server = hapi.Server({
     },
   },
 });
+server.validator(joi);
 
 function announceStart() {
   logger.operational(`Server running at ${server.info.uri}`);
