@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.4.1](https://github.com/danactive/history/compare/v5.4.0...v5.4.1) (2020-06-21)
+
+
+### Bug Fixes
+
+* **package:** Upgrade Node.js to LTS Erbium v12 ([a16e213](https://github.com/danactive/history/commit/a16e21345861455f344b6d03b5ec943b0332cbd1))
+
 ## [5.4.0](https://github.com/danactive/history/compare/v5.3.0...v5.4.0) (2020-06-21)
 
 
