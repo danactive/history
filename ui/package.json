@@ -93,7 +93,7 @@
     "react-image-gallery": "^1.0.7",
     "react-infinite-scroller": "^1.1.1",
     "react-intl": "2.9.0",
-    "react-mapbox-gl": "~4.6.2",
+    "react-mapbox-gl": "~4.8.6",
     "react-redux": "^7.2.0",
     "react-router-dom": "5.1.2",
     "redux": "4.0.4",
