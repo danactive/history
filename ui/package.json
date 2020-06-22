@@ -80,7 +80,7 @@
     "ip": "1.1.5",
     "lodash": "4.17.15",
     "mapbox-gl": "~1.5.1",
-    "minimist": "1.2.3",
+    "minimist": "1.2.5",
     "moment": "^2.26.0",
     "offline-plugin": "5.0.7",
     "react": "16.11.0",
