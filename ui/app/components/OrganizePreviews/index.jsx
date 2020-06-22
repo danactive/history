@@ -28,7 +28,7 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? 'lightblue' : 'lightgrey',
   padding: grid,
-  width: 278,
+  width: 314,
 });
 
 function OrganizePreviews({ items, setItems }) {

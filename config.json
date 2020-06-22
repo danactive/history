@@ -4,9 +4,9 @@
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
   "resizeDimensions": {
-    "photo": { "width": 800, "height": 600 },
+    "photo": { "width": 1024, "height": 768 },
     "thumb": { "width": 185, "height": 45 },
-    "preview": { "width": 230, "height": 200 }
+    "preview": { "width": 266, "height": 200 }
   },
   "previewFolderName":  "_preview",
   "supportedFileTypes": {
