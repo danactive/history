@@ -29,6 +29,7 @@ function SplitScreen({ currentMemory, slideTo, memories }) {
   const toCarousel = item => ({
     original: item.photoLink || item.thumbLink,
     thumbnail: item.thumbLink,
+    description: item.description,
   });
 
   if (currentMemory) {
