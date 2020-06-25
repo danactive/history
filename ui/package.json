@@ -88,7 +88,7 @@
     "react-beautiful-dnd": "^13.0.0",
     "react-dates": "^21.8.0",
     "react-dom": "16.13.1",
-    "react-helmet-async": "1.0.4",
+    "react-helmet-async": "1.0.6",
     "react-hot-loader": "4.12.21",
     "react-image-gallery": "^1.0.7",
     "react-infinite-scroller": "^1.1.1",
