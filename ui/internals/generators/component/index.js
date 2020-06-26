@@ -42,17 +42,17 @@ module.exports = {
     },
   ],
   actions: data => {
-    // Generate index.js and index.test.js
+    // Generate index.jsx and index.test.jsx
     const actions = [
       {
         type: 'add',
-        path: '../../app/components/{{properCase name}}/index.js',
+        path: '../../app/components/{{properCase name}}/index.jsx',
         templateFile: './component/index.js.hbs',
         abortOnFail: true,
       },
       {
         type: 'add',
-        path: '../../app/components/{{properCase name}}/tests/index.test.js',
+        path: '../../app/components/{{properCase name}}/tests/index.test.jsx',
         templateFile: './component/test.js.hbs',
         abortOnFail: true,
       },
