@@ -1,8 +1,7 @@
 import dotProp from 'dot-prop';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
 
@@ -24,17 +23,19 @@ const showAlbumError = error => {
 
 const showThumbsError = error => <div>{error.ui.title}</div>;
 
-const InfiniteThumbs = props => {
+const stateSelector = createStructuredSelector({
+  hasMore: makeSelectMoreThumbs(),
+  thumbsError: makeSelectThumbsError(),
+});
+
+const InfiniteThumbs = ({ items, error: albumError, loading }) => {
+  const { hasMore, thumbsError } = useSelector(stateSelector);
+
+  const dispatch = useDispatch();
+  const nextPage = nextPageNum => dispatch(loadNextPage(nextPageNum));
+  const selectThumb = (id, index) => dispatch(chooseMemory({ id, index }));
+
   useInjectSaga({ key: 'albums', saga });
-  const {
-    loading,
-    error: albumError,
-    items,
-    nextPage,
-    hasMore,
-    selectThumb,
-    thumbsError,
-  } = props;
 
   if (albumError !== false) {
     return showAlbumError(albumError);
@@ -81,18 +82,4 @@ const InfiniteThumbs = props => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  hasMore: makeSelectMoreThumbs(),
-  thumbsError: makeSelectThumbsError(),
-});
-
-function mapDispatchToProps(dispatch) {
-  return {
-    nextPage: nextPageNum => dispatch(loadNextPage(nextPageNum)),
-    selectThumb: (id, index) => dispatch(chooseMemory({ id, index })),
-  };
-}
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withConnect)(InfiniteThumbs);
+export default InfiniteThumbs;
