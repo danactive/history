@@ -75,7 +75,7 @@ function Menu({ showMenu, imageFilenames, path }) {
             fontFamily: '"Montserrat", "sans-serif"',
             fontSize: '1em',
           }}
-          value={JSON.stringify(output.xml, null, '\t')}
+          value={output.xml}
         />
       </section>
     );
