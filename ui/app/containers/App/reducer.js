@@ -15,6 +15,7 @@ import {
   LOAD_GALLERY,
   LOAD_GALLERY_SUCCESS,
 } from '../GalleryViewPage/constants';
+import { LOAD_VIDEO_SUCCESS } from '../InfiniteThumbs/constants';
 
 // The initial state of the App
 export const initialState = {};
@@ -122,6 +123,20 @@ const appReducer = (state = initialState, action) =>
 
         if (draft.currentMemory && action.setCurrentMemory) {
           draft.currentMemory.photoLink = action.photoLink;
+        }
+        break;
+      }
+
+      case LOAD_VIDEO_SUCCESS: {
+        const memoryIndex = draft[action.host][action.gallery][
+          action.album
+        ].memories.findIndex(memory => memory.id === action.id);
+        draft[action.host][action.gallery][action.album].memories[
+          memoryIndex
+        ].videoLink = action.videoLink;
+
+        if (draft.currentMemory && action.setCurrentMemory) {
+          draft.currentMemory.videoLink = action.videoLink;
         }
         break;
       }

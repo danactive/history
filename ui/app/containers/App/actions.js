@@ -31,9 +31,10 @@ export function photoLoadSuccess({
   };
 }
 
-export function photoLoadError(error) {
+export function photoLoadError(error, filename) {
   return {
     type: LOAD_PHOTO_ERROR,
+    filename,
     error,
   };
 }

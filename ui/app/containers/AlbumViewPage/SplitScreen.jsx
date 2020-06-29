@@ -5,7 +5,11 @@ import { compose } from 'redux';
 import styled from 'styled-components';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
+import config from '../../../../config.json';
+import { getExt } from '../../utils/path';
+
 import SlippyMap from '../SlippyMap';
+import Video from '../../components/VideoPlayerHtml5';
 
 import { slideToAdjacentMemory } from './actions';
 
@@ -25,13 +29,30 @@ const Right = styled.section`
   height: 80vh;
 `;
 
-function SplitScreen({ currentMemory, slideTo, memories }) {
-  const toCarousel = item => ({
+const toCarousel = item => {
+  const imageGallery = {
     original: item.photoLink || item.thumbLink,
     thumbnail: item.thumbLink,
     description: item.description,
-  });
+    filename: item.filename,
+    videoLink: item.videoLink,
+  };
 
+  const extension = getExt(item.filename);
+  if (config.supportedFileTypes.video.includes(extension)) {
+    imageGallery.renderItem = itemToRender => (
+      <Video
+        extension={extension}
+        src={itemToRender.videoLink}
+        poster={itemToRender.original}
+      />
+    );
+  }
+
+  return imageGallery;
+};
+
+function SplitScreen({ currentMemory, slideTo, memories }) {
   if (currentMemory) {
     return (
       <Split>

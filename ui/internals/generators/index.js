@@ -29,7 +29,7 @@ module.exports = plop => {
       config.path,
       plop.getHelper('properCase')(answers.name),
       '**',
-      '**.js',
+      '**.{js,jsx}',
     )}`;
 
     execSync(`npm run prettify -- "${folderPath}"`);

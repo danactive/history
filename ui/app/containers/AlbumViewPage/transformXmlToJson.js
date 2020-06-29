@@ -25,6 +25,7 @@ export function parseItemNode(item) {
     caption: parseNode('thumb_caption'),
     photoLink: null, // Dropbox hosted url,
     thumbLink: null, // Dropbox hosted url
+    videoLink: null, // Dropbox hosted url
   };
 
   if (coordinateAccuracy !== 0 && !Number.isNaN(coordinateAccuracy)) {
