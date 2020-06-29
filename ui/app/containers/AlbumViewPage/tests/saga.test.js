@@ -73,6 +73,7 @@ describe('AlbumViewPage Saga', () => {
           id: '1',
           photoLink: null,
           thumbLink: null,
+          videoLink: null,
           location: 'Granville Island',
         };
         const received = generator.next(parseTextXml(xmlAlbum)).value;

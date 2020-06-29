@@ -1,15 +1,22 @@
 import { Dropbox } from 'dropbox';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 
-import normalizeError from '../../utils/error';
-
 import { CHOOSE_MEMORY } from '../App/constants';
 import { makeSelectCurrentMemory } from '../App/selectors';
-import { makeSelectMemories } from '../AlbumViewPage/selectors';
 import { chooseMemory, photoLoadError, photoLoadSuccess } from '../App/actions';
+import { makeSelectMemories } from '../AlbumViewPage/selectors';
 import { NEXT_MEMORY, PREV_MEMORY } from '../AlbumViewPage/constants';
 import { PRELOAD_PHOTO } from './constants';
-import { preloadPhoto, skipPreloadPhoto } from './actions';
+import {
+  videoLoadError,
+  loadVideoSuccess,
+  preloadPhoto,
+  skipPreloadPhoto,
+} from './actions';
+import config from '../../../../config.json';
+import normalizeError from '../../utils/error';
+import { getExt } from '../../utils/path';
+
 const dbxOptions = {
   accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
   fetch,
@@ -32,6 +39,10 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
   };
 };
 
+export const argsVideoXmlPath = ({ gallery, filename }) => ({
+  path: `/public/gallery-${gallery}/media/videos/${filename}`,
+});
+
 // saga WORKER for CHOOSE_MEMORY for Dropbox gallery
 export function* getPhotoPathsOnDropbox({
   memory,
@@ -40,9 +51,11 @@ export function* getPhotoPathsOnDropbox({
   gallery,
   album,
 }) {
+  const { filename, id } = memory;
+  const extension = getExt(filename);
+  const isVideo = config.supportedFileTypes.video.includes(extension);
   try {
-    const { filename, id } = memory;
-    const xmlUrl = yield call(
+    const photoXmlUrl = yield call(
       [dbx, 'filesGetTemporaryLink'],
       argsPhotoXmlPath({ gallery, filename }),
     );
@@ -50,15 +63,37 @@ export function* getPhotoPathsOnDropbox({
     yield put(
       photoLoadSuccess({
         id,
-        photoLink: xmlUrl.link,
+        photoLink: photoXmlUrl.link,
         setCurrentMemory,
         host,
         gallery,
         album,
       }),
     );
+
+    if (isVideo) {
+      const videoXmlUrl = yield call(
+        [dbx, 'filesGetTemporaryLink'],
+        argsVideoXmlPath({ gallery, filename }),
+      );
+
+      yield put(
+        loadVideoSuccess({
+          id,
+          videoLink: videoXmlUrl.link,
+          setCurrentMemory,
+          host,
+          gallery,
+          album,
+        }),
+      );
+    }
   } catch (error) {
-    yield put(photoLoadError(normalizeError(error)));
+    if (isVideo) {
+      yield put(videoLoadError(normalizeError(error), filename));
+    } else {
+      yield put(photoLoadError(normalizeError(error), filename));
+    }
   }
 }
 
@@ -75,6 +110,20 @@ export function* getPhotoPathsLocally({
     photoLoadSuccess({
       id,
       photoLink: memory.thumbLink.replace('thumbs', 'photos'),
+      setCurrentMemory,
+      host,
+      gallery,
+      album,
+    }),
+  );
+
+  const paths = memory.thumbLink.replace('thumbs', 'videos').split('/');
+  paths.splice(7, 2); // delete year folder and JPG
+  const videoLink = `${paths.join('/')}/${memory.filename}`;
+  yield put(
+    loadVideoSuccess({
+      id,
+      videoLink,
       setCurrentMemory,
       host,
       gallery,

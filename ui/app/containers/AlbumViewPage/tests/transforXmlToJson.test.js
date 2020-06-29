@@ -25,6 +25,7 @@ describe('View Album - Transform XML 2.0 to JSON', () => {
       coordinates: [-123.183889, 49.194722],
       photoLink: null,
       thumbLink: null,
+      videoLink: null,
       location: 'YVR Airport',
     };
     expect(received).toEqual(expected);
@@ -53,6 +54,7 @@ describe('View Album - Transform XML 2.1 to JSON', () => {
       coordinateAccuracy: 18,
       photoLink: null,
       thumbLink: null,
+      videoLink: null,
       location: 'YVR Airport',
     };
     expect(received).toEqual(expected);

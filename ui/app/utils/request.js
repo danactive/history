@@ -66,7 +66,7 @@ function fetchWithTimeout(url, options, wait = 1700) {
   const timeout = new Promise((_, reject) => {
     timerId = setTimeout(() => {
       clearTimeout(timerId);
-      reject(new Error(`XHR timeout (${timeout}) to ${url}`));
+      reject(new Error(`XHR timeout to ${url}`));
     }, wait);
   });
 

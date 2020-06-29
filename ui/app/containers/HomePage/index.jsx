@@ -40,14 +40,12 @@ export function HomePage({ galleryErrors, galleryLoading, items, onLoad }) {
       <Helmet>
         <title>View Galleries</title>
       </Helmet>
-      <div>
-        <CenteredSection>
-          <H2>
-            <FormattedMessage {...messages.galleriesHeader} />
-          </H2>
-          <GenericList {...galleryListProps} />
-        </CenteredSection>
-      </div>
+      <CenteredSection>
+        <H2>
+          <FormattedMessage {...messages.galleriesHeader} />
+        </H2>
+        <GenericList {...galleryListProps} />
+      </CenteredSection>
     </article>
   );
 }

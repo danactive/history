@@ -2,7 +2,7 @@ import dotProp from 'dot-prop';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
-import { useInjectSaga } from 'redux-injectors';
+import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 import { createStructuredSelector } from 'reselect';
 
 import LoadingIndicator from '../../components/LoadingIndicator';
@@ -12,6 +12,7 @@ import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
 import { makeSelectThumbsError } from '../App/selectors';
+import reducer from '../App/reducer';
 import saga from './saga';
 
 const showAlbumError = error => {
@@ -36,6 +37,7 @@ const InfiniteThumbs = ({ items, error: albumError, loading }) => {
   const selectThumb = (id, index) => dispatch(chooseMemory({ id, index }));
 
   useInjectSaga({ key: 'albums', saga });
+  useInjectReducer({ key: 'global', reducer });
 
   if (albumError !== false) {
     return showAlbumError(albumError);
