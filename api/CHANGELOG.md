@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.5.0](https://github.com/danactive/history/compare/v5.4.1...v5.5.0) (2020-06-29)
+
+
+### Features
+
+* **Album View:** Display description over photos ([61fa81d](https://github.com/danactive/history/commit/61fa81d666dc9d7b1f22f71b6a97030d2b33632e))
+* **Album View:** Play HTML5 video hosted on Dropbox or Localhost ([d7d50cd](https://github.com/danactive/history/commit/d7d50cd8980303b4078a9bf3c9e546596544451e))
+* **Walk:** Expand resize dimensions so photos look better in full screen ([f2e6047](https://github.com/danactive/history/commit/f2e60474b9c5aef0a36d80fed015e163f2b2758f))
+
+
+### Bug Fixes
+
+* upgrade hoist-non-react-statics from 3.3.1 to 3.3.2 ([4b2da70](https://github.com/danactive/history/commit/4b2da7003888484fbf54285f08f03570da1352b2))
+* **Walk:** Display XML without escaping ([a4360c3](https://github.com/danactive/history/commit/a4360c34df08efeeff7a041589ad3e6a1be3fcb7))
+* upgrade @hot-loader/react-dom from 16.11.0 to 16.13.0 ([2bde356](https://github.com/danactive/history/commit/2bde356dd8b913c30a93c3ccefad0d0b3f2cf359))
+* upgrade connected-react-router from 6.6.0 to 6.8.0 ([1795903](https://github.com/danactive/history/commit/17959036f5172593691e50aded45296c71555f1a))
+* upgrade immer from 5.0.0 to 5.3.6 ([b713be0](https://github.com/danactive/history/commit/b713be010b4f40969b740075ea921049ae5c1203))
+* upgrade minimist from 1.2.3 to 1.2.5 ([f21e7dc](https://github.com/danactive/history/commit/f21e7dca13899d3ae774c706aa039b295b84a516))
+* upgrade multiple dependencies with Snyk ([103b035](https://github.com/danactive/history/commit/103b0355c933a399ad57870818457dcb94f0f456))
+* upgrade react-app-polyfill from 1.0.4 to 1.0.6 ([a8f78f8](https://github.com/danactive/history/commit/a8f78f8a62f996b97f8684391d8c34041def386a))
+* upgrade react-helmet-async from 1.0.4 to 1.0.6 ([345d5e8](https://github.com/danactive/history/commit/345d5e8e8aa2d4832ec299509b0ba49b67070bcf))
+* upgrade react-hot-loader from 4.12.18 to 4.12.21 ([9d3aeed](https://github.com/danactive/history/commit/9d3aeed99e3dbc293a4f4dd438336c2a89ef6c8d))
+* upgrade snyk from 1.346.0 to 1.348.1 ([0c0e33e](https://github.com/danactive/history/commit/0c0e33eac63b6747420a82896744cace466e61ab))
+* **CLI:** Component generator supports JSX ([9843a08](https://github.com/danactive/history/commit/9843a085342cfd11953a592a164e264109c83a06))
+
 ### [5.4.1](https://github.com/danactive/history/compare/v5.4.0...v5.4.1) (2020-06-21)
 
 
