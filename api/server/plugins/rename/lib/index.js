@@ -29,7 +29,6 @@ const handler = (request) => new Promise((reply) => {
       .catch(handleError);
   };
 
-
   if (preview === true) {
     existsChecker.pathExists(sourceFolder)
       .then(lookupFilenames)

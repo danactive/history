@@ -35,7 +35,6 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
 
     assert.plan(2 * errors.length);
 
-
     async function testPerError(error) {
       const fakeDropbox = {
         filesGetTemporaryLink: () => Promise.reject(error),
@@ -46,17 +45,14 @@ test('Album plugin - Dropbox', { skip: false }, (describe) => {
       let actual;
       let expected;
 
-
       actual = cloud.album.items[0].thumbPath;
       expected = xml.album.items[0].thumbPath;
       assert.notEqual(actual, expected, 'Thumbnail path correctly changed');
-
 
       actual = cloud.album.items[0].thumbPath;
       expected = null;
       assert.equal(actual, expected, 'Thumbnail path is missing due to Dropbox error');
     }
-
 
     errors.forEach((error) => testPerError(error));
   });

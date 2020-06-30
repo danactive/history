@@ -17,21 +17,17 @@ tape('Utilities', { skip: false }, (describe) => {
     let actual;
     let expected;
 
-
     actual = lib.env.get('HISTORY_ENV_LOADED');
     expected = true;
     assert.equal(actual, expected, 'Get env as bool');
-
 
     actual = lib.env.get('HISTORY_ENV_TESTED');
     expected = 1;
     assert.equal(actual, expected, 'Get env as number');
 
-
     actual = lib.env.get('HISTORY_ENV_FAKE');
     expected = null;
     assert.equal(actual, expected, 'Cannot find missing variable');
-
 
     assert.end();
   });
@@ -163,7 +159,6 @@ tape('Utilities', { skip: false }, (describe) => {
     assert.end();
   });
 
-
   describe.test('* File - Glob', async (assert) => {
     try {
       const expectedHtm = path.join(__dirname, './fixtures/aitch.htm');
@@ -193,7 +188,6 @@ tape('Utilities', { skip: false }, (describe) => {
     }
     assert.end();
   });
-
 
   function getFailurePath({
     assert, testPath, message,

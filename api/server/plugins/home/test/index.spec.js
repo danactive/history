@@ -41,15 +41,12 @@ tape('Verify home / route', { skip: false }, (describe) => {
       server.views(viewsConfig);
       const response = await server.inject(request);
 
-
       let actual;
       let expected;
-
 
       actual = response.statusCode;
       expected = 200;
       assert.equal(actual, expected, 'HTTP status is okay');
-
 
       actual = response.result.galleries.includes(config.defaultGallery);
       expected = true;

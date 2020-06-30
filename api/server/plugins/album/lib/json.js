@@ -37,7 +37,6 @@ function title(item) {
   return item.photoDesc;
 }
 
-
 function caption(item) {
   if (item.type === 'video') {
     return `Video: ${item.thumbCaption}`;
@@ -45,7 +44,6 @@ function caption(item) {
 
   return item.thumbCaption;
 }
-
 
 function jpgFilenameInsensitive(filename) {
   const currentExt = utils.file.type(filename);
@@ -66,7 +64,6 @@ function getThumbPath(item, gallery) {
   return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
 
-
 function getVideoPath(item, gallery) {
   if (!item || !item.filename) {
     return undefined;
@@ -76,7 +73,6 @@ function getVideoPath(item, gallery) {
   const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' };
   return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`;
 }
-
 
 function templatePrepare(result = {}) {
   if (!result.album || !result.album.item || !result.album.meta) {
@@ -116,7 +112,6 @@ function templatePrepare(result = {}) {
   return output;
 }
 
-
 function safePath(name, value) {
   const restriction = () => `Valid ${name} contains Alpha-Numeric characters, is at least 1 character long but less than 25,
     and may contain any special characters including dash (-) or underscore (_)`;
@@ -132,7 +127,6 @@ function safePath(name, value) {
   return `gallery-${value}`;
 }
 
-
 function ensureSafePath(name, value, reject) {
   const partialPath = safePath(name, value);
 
@@ -142,7 +136,6 @@ function ensureSafePath(name, value, reject) {
 
   return partialPath;
 }
-
 
 const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
   const options = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] };

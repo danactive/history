@@ -61,23 +61,19 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       let actual;
       let expected;
 
-
       actual = response.statusCode;
       expected = 200;
       assert.equal(actual, expected, 'HTTP status okay');
 
-
       actual = response.result.message;
       expected = undefined;
       assert.equal(actual, expected, 'No response error');
-
 
       actual = response.result.xml;
       expected = `<item id="100"><filename>${prefix}-37.jpg</filename></item>`
         + `<item id="101"><filename>${prefix}-64.jpg</filename></item>`
         + `<item id="102"><filename>${prefix}-90.jpg</filename></item>`;
       assert.equal(actual, expected, 'XML response is expected');
-
 
       const filenames = [`${prefix}-37.jpg`, `${prefix}-64.jpg`, `${prefix}-90.jpg`];
       const futureFilenames = ['aitch.html', 'gee.gif', 'em.md'];
@@ -120,26 +116,21 @@ tape('Verify /rename route', { skip: false }, (describe) => {
       let actual;
       let expected;
 
-
       actual = response.statusCode;
       expected = 200;
       assert.equal(actual, expected, 'HTTP status');
-
 
       actual = response.statusMessage;
       expected = 'OK';
       assert.equal(actual, expected, 'HTTP status message');
 
-
       actual = response.result.message;
       expected = undefined;
       assert.equal(actual, expected, 'No response error');
 
-
       actual = response.result.xml;
       expected = `<item id="100"><filename>${prefix}-50.jpg</filename></item><item id="101"><filename>${prefix}-90.jpg</filename></item>`;
       assert.equal(actual, expected, 'XML response is expected');
-
 
       const filenames = [`${prefix}-50.dat`, `${prefix}-50.doc`, `${prefix}-50.docx`, `${prefix}-90.pdf`, `${prefix}-90.png`, `${prefix}-90.psd`];
       const futureFilenames = ['dee.dat', 'dee.doc', 'dee.docx', 'pee.pdf', 'pee.png', 'pee.psd'];

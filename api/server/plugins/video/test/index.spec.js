@@ -53,13 +53,11 @@ tape('Verify /video route', { skip: false }, (describe) => {
       expected = 200;
       assert.equal(actual, expected, 'HTTP status is okay');
 
-
       if (!typy(response.result.video.sources).isString) {
         assert.fail('No response result');
         assert.end();
         return;
       }
-
 
       actual = response.result.video.sources.split(',').length;
       expected = 2;

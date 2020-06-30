@@ -3,7 +3,6 @@ const utils = require('../../utils');
 
 const logger = log.createLogger('Album Dropbox');
 
-
 function determineError(e) {
   const wrap = (msg) => `error (${msg})`;
 
@@ -22,7 +21,6 @@ function determineError(e) {
   return e;
 }
 
-
 async function getImagePath(dbx, path) {
   try {
     const tempPath = await dbx.filesGetTemporaryLink({ path });
@@ -34,7 +32,6 @@ async function getImagePath(dbx, path) {
     return null;
   }
 }
-
 
 function createTransform(dbx) {
   return async (response, field) => {
@@ -55,6 +52,5 @@ function createTransform(dbx) {
     }
   };
 }
-
 
 module.exports = { createTransform };
