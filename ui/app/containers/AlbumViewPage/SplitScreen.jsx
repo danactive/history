@@ -39,7 +39,7 @@ const toCarousel = item => {
   };
 
   const extension = getExt(item.filename);
-  if (config.supportedFileTypes.video.includes(extension)) {
+  if (config.supportedFileTypes.video.includes(extension) && item.videoLink) {
     imageGallery.renderItem = itemToRender => (
       <Video
         extension={extension}
