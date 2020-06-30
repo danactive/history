@@ -1,11 +1,13 @@
 import React from 'react';
 
 function titleCase(str) {
-  return str
-    .toLowerCase()
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  return decodeURI(
+    str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+  );
 }
 
 function LinkToReference({ reference } = {}) {
@@ -37,14 +39,12 @@ function LinkToReference({ reference } = {}) {
 function PhotoHeader({ currentMemory }) {
   if (!currentMemory || currentMemory === null) return null;
 
-  const { city, description, location, reference } = currentMemory;
+  const { city, location, reference } = currentMemory;
 
   return [
-    <h1 key="headerCity">{city}</h1>,
-    <h2 key="headerLocation">{location}</h2>,
-    <p key="headerDescription">{description}</p>,
-    <p key="reference">
-      <LinkToReference reference={reference} />
+    <h4 key="headerCity">{city}</h4>,
+    <p key="headerLocation">
+      {location} <LinkToReference reference={reference} />
     </p>,
   ];
 }
