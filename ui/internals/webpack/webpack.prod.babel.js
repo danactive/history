@@ -8,6 +8,8 @@ const { HashedModuleIdsPlugin } = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
+const pkg = require('../../../api/package.json');
+
 module.exports = require('./webpack.base.babel')({
   mode: 'production',
 
@@ -112,9 +114,9 @@ module.exports = require('./webpack.base.babel')({
     }),
 
     new WebpackPwaManifest({
-      name: 'React Boilerplate',
-      short_name: 'React BP',
-      description: 'My React Boilerplate-based project!',
+      name: pkg.name,
+      short_name: pkg.name,
+      description: pkg.description,
       background_color: '#fafafa',
       theme_color: '#b1624d',
       inject: true,
