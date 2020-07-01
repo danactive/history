@@ -1,7 +1,7 @@
 import {
   selectPage,
-  makeSelectGalleryLoading,
-  makeSelectGalleryError,
+  selectGalleryLoading,
+  selectGalleryError,
 } from '../selectors';
 
 describe('selectPage', () => {
@@ -14,8 +14,7 @@ describe('selectPage', () => {
   });
 });
 
-describe('makeSelectGalleryLoading', () => {
-  const galleryLoadingSelector = makeSelectGalleryLoading();
+describe('selectGalleryLoading', () => {
   test('should select the loading status', () => {
     const galleryLoading = true;
     const mockedState = {
@@ -23,12 +22,11 @@ describe('makeSelectGalleryLoading', () => {
         galleryLoading,
       },
     };
-    expect(galleryLoadingSelector(mockedState)).toEqual(galleryLoading);
+    expect(selectGalleryLoading(mockedState)).toEqual(galleryLoading);
   });
 });
 
-describe('makeSelectGalleryError', () => {
-  const galleryErrorSelector = makeSelectGalleryError();
+describe('selectGalleryError', () => {
   test('should select the error status', () => {
     const galleryError = true;
     const mockedState = {
@@ -36,6 +34,6 @@ describe('makeSelectGalleryError', () => {
         galleryError,
       },
     };
-    expect(galleryErrorSelector(mockedState)).toEqual(galleryError);
+    expect(selectGalleryError(mockedState)).toEqual(galleryError);
   });
 });

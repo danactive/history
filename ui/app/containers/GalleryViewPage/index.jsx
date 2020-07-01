@@ -3,27 +3,20 @@ import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
-import { createStructuredSelector } from 'reselect';
 
 import AlbumListItem from '../AlbumListItem/index';
 import GenericList from '../../components/GenericList';
 
 import { loadGallery } from './actions';
 import {
-  makeSelectGalleryLoading,
-  makeSelectGalleryError,
-  makeSelectItems,
+  selectGalleryLoading,
+  selectGalleryError,
+  selectItems,
 } from './selectors';
 import reducer from './reducer';
 import globalReducer from '../App/reducer';
 import saga from './saga';
 import messages from './messages';
-
-const stateSelector = createStructuredSelector({
-  galleryLoading: makeSelectGalleryLoading(),
-  galleryError: makeSelectGalleryError(),
-  items: makeSelectItems(),
-});
 
 export function GalleryViewPage({
   match: {
@@ -35,7 +28,9 @@ export function GalleryViewPage({
   useInjectReducer({ key: 'global', reducer: globalReducer });
   useInjectSaga({ key: 'galleryViewPage', saga });
 
-  const { galleryLoading, galleryError, items } = useSelector(stateSelector);
+  const galleryLoading = useSelector(selectGalleryLoading);
+  const galleryError = useSelector(selectGalleryError);
+  const items = useSelector(selectItems);
 
   const onLoad = () => dispatch(loadGallery({ host, gallery }));
 

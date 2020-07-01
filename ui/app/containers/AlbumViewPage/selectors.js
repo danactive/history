@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 
 // Memorized selectors
 export const selectGlobal = state => state.global;
@@ -20,32 +20,41 @@ export const selectNextPage = createSelector(
   },
 );
 
-export const makeSelectAlbumLoading = () =>
-  createSelector(selectPage, pageState => pageState.albumLoading);
+export const selectAlbumLoading = createSelector(
+  [selectPage],
+  pageState => pageState.albumLoading,
+);
 
-export const makeSelectAlbumError = () =>
-  createSelector(selectPage, pageState => pageState.albumError);
+export const selectAlbumError = createSelector(
+  [selectPage],
+  pageState => pageState.albumError,
+);
 
-export const makeSelectAlbumName = () =>
-  createSelector(selectGlobal, albumState => albumState.album);
+export const selectAlbumName = createSelector(
+  [selectGlobal],
+  albumState => albumState.album,
+);
 
-export const makeSelectMemories = () =>
-  createSelector(selectGlobal, globalState => {
-    const { album, gallery, host } = globalState;
+export const selectMemories = createSelector([selectGlobal], globalState => {
+  const { album, gallery, host } = globalState;
 
-    if (host && gallery && album && globalState[host][gallery][album]) {
-      return globalState[host][gallery][album].memories;
-    }
+  if (host && gallery && album && globalState[host][gallery][album]) {
+    return globalState[host][gallery][album].memories;
+  }
 
-    return [];
-  });
+  return [];
+});
 
-export const makeSelectMoreThumbs = () =>
-  createSelector(selectPage, pageState => pageState.hasMore);
+export const selectMoreThumbs = createSelector(
+  [selectPage],
+  pageState => pageState.hasMore,
+);
 
-export const makeSelectCurrentMemory = () =>
-  createSelector(selectGlobal, globalState => {
+export const selectCurrentMemory = createSelector(
+  [selectGlobal],
+  globalState => {
     const { currentMemory } = globalState;
 
     return currentMemory || null;
-  });
+  },
+);

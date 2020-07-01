@@ -1,13 +1,16 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { initialState } from './reducer';
 
 const selectWalkDomain = state => state.walk || initialState;
 
-const makeSelectFiles = () =>
-  createSelector(selectWalkDomain, pageState => pageState.listing.files);
+const selectFiles = createSelector(
+  [selectWalkDomain],
+  pageState => pageState.listing.files,
+);
 
-const makeSelectPath = () =>
-  createSelector(selectWalkDomain, pageState => pageState.listing.path);
+const selectPath = createSelector(
+  [selectWalkDomain],
+  pageState => pageState.listing.path,
+);
 
-export default selectWalkDomain;
-export { makeSelectPath, makeSelectFiles };
+export { selectPath, selectFiles };

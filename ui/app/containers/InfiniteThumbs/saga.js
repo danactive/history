@@ -2,9 +2,9 @@ import { Dropbox } from 'dropbox';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 
 import { CHOOSE_MEMORY } from '../App/constants';
-import { makeSelectCurrentMemory } from '../App/selectors';
+import { selectCurrentMemory } from '../App/selectors';
 import { chooseMemory, photoLoadError, photoLoadSuccess } from '../App/actions';
-import { makeSelectMemories } from '../AlbumViewPage/selectors';
+import { selectMemories } from '../AlbumViewPage/selectors';
 import { NEXT_MEMORY, PREV_MEMORY } from '../AlbumViewPage/constants';
 import { PRELOAD_PHOTO } from './constants';
 import {
@@ -165,10 +165,10 @@ export const determineAdjacentInCarousel = ({
 // saga WORKER for CHOOSE_MEMORY
 export function* getMemoryPhotoPath({ id, index, setCurrentMemory = true }) {
   const { currentMemory, host, gallery, album } = yield select(
-    makeSelectCurrentMemory(),
+    selectCurrentMemory,
   );
 
-  const memories = yield select(makeSelectMemories());
+  const memories = yield select(selectMemories);
   const memory = index ? memories[index] : memories.find(m => m.id === id);
 
   if (memory.thumbLink === null) {
@@ -202,8 +202,8 @@ export function* getMemoryPhotoPath({ id, index, setCurrentMemory = true }) {
 
 // saga WORKER for NEXT_MEMORY, PREV_MEMORY
 export function* calculateAdjacentMemoryId({ adjacentInt }) {
-  const memories = yield select(makeSelectMemories());
-  const { currentMemory } = yield select(makeSelectCurrentMemory());
+  const memories = yield select(selectMemories);
+  const { currentMemory } = yield select(selectCurrentMemory);
 
   const adjacent = determineAdjacentInCarousel({
     adjacentInt,
@@ -216,7 +216,7 @@ export function* calculateAdjacentMemoryId({ adjacentInt }) {
 
 // saga WORKER for PRELOAD_PHOTO
 export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
-  const memories = yield select(makeSelectMemories());
+  const memories = yield select(selectMemories);
   const memoriesAwaitingPhoto = memories.filter(
     memory => memory.photoLink === null,
   );
@@ -226,7 +226,7 @@ export function* preloadAdjacentMemoryId({ count = 1 } = {}) {
     return;
   }
 
-  const { currentMemory } = yield select(makeSelectCurrentMemory());
+  const { currentMemory } = yield select(selectCurrentMemory);
 
   if (currentMemory) {
     const currentMemoryIndex = memories.findIndex(

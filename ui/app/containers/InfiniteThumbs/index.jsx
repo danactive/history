@@ -3,15 +3,14 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
-import { createStructuredSelector } from 'reselect';
 
 import LoadingIndicator from '../../components/LoadingIndicator';
 import ThumbImg from '../../components/ThumbImg';
 
-import { makeSelectMoreThumbs } from '../AlbumViewPage/selectors';
+import { selectMoreThumbs } from '../AlbumViewPage/selectors';
 import { loadNextPage } from '../AlbumViewPage/actions';
 import { chooseMemory } from '../App/actions';
-import { makeSelectThumbsError } from '../App/selectors';
+import { selectThumbsError } from '../App/selectors';
 import reducer from '../App/reducer';
 import saga from './saga';
 
@@ -24,20 +23,16 @@ const showAlbumError = error => {
 
 const showThumbsError = error => <div>{error.ui.title}</div>;
 
-const stateSelector = createStructuredSelector({
-  hasMore: makeSelectMoreThumbs(),
-  thumbsError: makeSelectThumbsError(),
-});
-
 const InfiniteThumbs = ({ items, error: albumError, loading }) => {
-  const { hasMore, thumbsError } = useSelector(stateSelector);
-
   const dispatch = useDispatch();
-  const nextPage = nextPageNum => dispatch(loadNextPage(nextPageNum));
-  const selectThumb = (id, index) => dispatch(chooseMemory({ id, index }));
-
   useInjectSaga({ key: 'albums', saga });
   useInjectReducer({ key: 'global', reducer });
+
+  const hasMore = useSelector(selectMoreThumbs);
+  const thumbsError = useSelector(selectThumbsError);
+
+  const nextPage = nextPageNum => dispatch(loadNextPage(nextPageNum));
+  const selectThumb = (id, index) => dispatch(chooseMemory({ id, index }));
 
   if (albumError !== false) {
     return showAlbumError(albumError);

@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
-import { createStructuredSelector } from 'reselect';
 
 import H2 from '../../components/H2';
 import GenericList from '../../components/GenericList';
@@ -14,26 +12,26 @@ import messages from './messages';
 
 import { loadGalleries } from './actions';
 import {
-  makeSelectItems,
-  makeSelectGalleryLoading,
-  makeSelectGalleryErrors,
+  selectItems,
+  selectGalleryLoading,
+  selectGalleryErrors,
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export function HomePage({ galleryErrors, galleryLoading, items, onLoad }) {
+export function HomePage() {
+  const dispatch = useDispatch();
   useInjectReducer({ key: 'homePage', reducer });
   useInjectSaga({ key: 'homePage', saga });
+
+  const items = useSelector(selectItems);
+  const galleryLoading = useSelector(selectGalleryLoading);
+  const galleryErrors = useSelector(selectGalleryErrors);
+  const onLoad = () => dispatch(loadGalleries());
+
   useEffect(() => {
     onLoad();
   }, []);
-
-  const galleryListProps = {
-    loading: galleryLoading,
-    error: galleryErrors,
-    items,
-    component: GalleryListItem,
-  };
 
   return (
     <article>
@@ -44,24 +42,15 @@ export function HomePage({ galleryErrors, galleryLoading, items, onLoad }) {
         <H2>
           <FormattedMessage {...messages.galleriesHeader} />
         </H2>
-        <GenericList {...galleryListProps} />
+        <GenericList
+          loading={galleryLoading}
+          error={galleryErrors}
+          items={items}
+          component={GalleryListItem}
+        />
       </CenteredSection>
     </article>
   );
 }
 
-export function mapDispatchToProps(dispatch) {
-  return {
-    onLoad: () => dispatch(loadGalleries()),
-  };
-}
-
-const mapStateToProps = createStructuredSelector({
-  items: makeSelectItems(),
-  galleryLoading: makeSelectGalleryLoading(),
-  galleryErrors: makeSelectGalleryErrors(),
-});
-
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-export default compose(withConnect)(HomePage);
+export default HomePage;
