@@ -11,7 +11,6 @@ import { FormattedMessage } from 'react-intl';
 {{/if}}
 {{#if wantActionsAndReducer}}
 import { useSelector, useDispatch } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 {{/if}}
 
 {{#if wantActionsAndReducer}}
@@ -36,12 +35,6 @@ import saga from './saga';
 import messages from './messages';
 {{/if}}
 
-{{#if wantActionsAndReducer}}
-const stateSelector = createStructuredSelector({
-  {{camelCase name}}: makeSelect{{properCase name}}(),
-});
-{{/if}}
-
 function {{ properCase name }}() {
   {{#if wantActionsAndReducer}}
   useInjectReducer({ key: '{{ camelCase name }}', reducer });
@@ -51,9 +44,8 @@ function {{ properCase name }}() {
   {{/if}}
   {{#if wantActionsAndReducer}}
 
-  /* eslint-disable no-unused-vars */
-  const { {{camelCase name}} } = useSelector(stateSelector);
   const dispatch = useDispatch();
+  const { {{camelCase name}} } = useSelector(selector);
   /* eslint-enable no-unused-vars */
   {{/if}}
 
