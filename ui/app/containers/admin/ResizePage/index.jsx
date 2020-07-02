@@ -1,18 +1,17 @@
 import { Formik } from 'formik';
 import React from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { useDispatch } from 'react-redux';
 
 import { useInjectSaga } from 'redux-injectors';
 
 import saga from './saga';
 import { resizeImage } from './actions';
 
-const ResizePage = props => {
+const ResizePage = () => {
+  const dispatch = useDispatch();
   useInjectSaga({ key: 'mediaGallery', saga });
-  const {
-    triggerResizeImage, // dispatch
-  } = props;
+
+  const triggerResizeImage = filename => dispatch(resizeImage(filename));
 
   return (
     <div>
@@ -54,12 +53,4 @@ const ResizePage = props => {
   );
 };
 
-function mapDispatchToProps(dispatch) {
-  return {
-    triggerResizeImage: filename => dispatch(resizeImage(filename)),
-  };
-}
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(withConnect)(ResizePage);
+export default ResizePage;

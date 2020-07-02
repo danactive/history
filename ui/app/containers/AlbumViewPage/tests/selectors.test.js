@@ -1,10 +1,10 @@
 import {
   selectGlobal,
   selectPage,
-  makeSelectAlbumLoading,
-  makeSelectAlbumError,
-  makeSelectAlbumName,
-  makeSelectMemories,
+  selectAlbumLoading,
+  selectAlbumError,
+  selectAlbumName,
+  selectMemories,
   selectNextPage,
 } from '../selectors';
 
@@ -34,32 +34,29 @@ describe('Memorized selectors', () => {
   });
 });
 
-describe('makeSelectAlbumLoading', () => {
-  const albumLoadingSelector = makeSelectAlbumLoading();
+describe('selectAlbumLoading', () => {
   test('should select the album loading boolean', () => {
     const mockedState = {
       albumViewPage: {
         albumLoading: false,
       },
     };
-    expect(albumLoadingSelector(mockedState)).toEqual(false);
+    expect(selectAlbumLoading(mockedState)).toEqual(false);
   });
 });
 
-describe('makeSelectAlbumError', () => {
-  const albumErrorSelector = makeSelectAlbumError();
+describe('selectAlbumError', () => {
   test('should select the album error message', () => {
     const mockedState = {
       albumViewPage: {
         albumError: false,
       },
     };
-    expect(albumErrorSelector(mockedState)).toEqual(false);
+    expect(selectAlbumError(mockedState)).toEqual(false);
   });
 });
 
-describe('makeSelectAlbumName', () => {
-  const albumNameSelector = makeSelectAlbumName();
+describe('selectAlbumName', () => {
   test('should select the album error message', () => {
     const album = 'sample';
     const mockedState = {
@@ -67,12 +64,11 @@ describe('makeSelectAlbumName', () => {
         album,
       },
     };
-    expect(albumNameSelector(mockedState)).toEqual(album);
+    expect(selectAlbumName(mockedState)).toEqual(album);
   });
 });
 
-describe('makeSelectMemories', () => {
-  const memoriesSelector = makeSelectMemories();
+describe('selectMemories', () => {
   test('should select the album memories', () => {
     const mockedState = {
       global: {
@@ -89,7 +85,7 @@ describe('makeSelectMemories', () => {
       },
     };
     const expected = [{ filename: '2017-12-25.jpg' }];
-    expect(memoriesSelector(mockedState)).toEqual(expected);
+    expect(selectMemories(mockedState)).toEqual(expected);
   });
 });
 

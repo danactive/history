@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
-import { createStructuredSelector } from 'reselect';
 
 import InfiniteThumbs from '../InfiniteThumbs';
 import PhotoHeader from '../../components/PhotoHeader';
@@ -12,22 +11,14 @@ import { chooseAdjacentMemory, cleanCurrentMemory, loadAlbum } from './actions';
 import albumReducer from '../App/reducer';
 import pageReducer from './reducer';
 import {
-  makeSelectAlbumLoading,
-  makeSelectAlbumError,
-  makeSelectAlbumName,
-  makeSelectCurrentMemory,
-  makeSelectMemories,
+  selectAlbumLoading,
+  selectAlbumError,
+  selectAlbumName,
+  selectCurrentMemory,
+  selectMemories,
 } from './selectors';
 import saga from './saga';
 import LoadingIndicator from '../../components/LoadingIndicator';
-
-const stateSelector = createStructuredSelector({
-  albumError: makeSelectAlbumError(),
-  albumLoading: makeSelectAlbumLoading(),
-  albumName: makeSelectAlbumName(),
-  currentMemory: makeSelectCurrentMemory(),
-  memories: makeSelectMemories(),
-});
 
 function AlbumViewPage({
   match: {
@@ -44,13 +35,11 @@ function AlbumViewPage({
     dispatch(chooseAdjacentMemory(adjacentInt));
   const onUnload = () => dispatch(cleanCurrentMemory());
 
-  const {
-    albumError,
-    albumLoading,
-    albumName,
-    currentMemory,
-    memories,
-  } = useSelector(stateSelector);
+  const albumLoading = useSelector(selectAlbumLoading);
+  const albumError = useSelector(selectAlbumError);
+  const albumName = useSelector(selectAlbumName);
+  const currentMemory = useSelector(selectCurrentMemory);
+  const memories = useSelector(selectMemories);
 
   function handleKey(event) {
     const { key } = event;

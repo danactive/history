@@ -7,7 +7,7 @@ import actions from './actions';
 import config from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
-import { makeSelectFiles, makeSelectPath } from './selectors';
+import { selectFiles, selectPath } from './selectors';
 import walkUtils from './util';
 
 import GenericList from '../../components/GenericList';
@@ -27,8 +27,10 @@ function Walk({ location: { hash } }) {
   const dispatch = useDispatch();
   useInjectReducer({ key: 'walk', reducer });
   useInjectSaga({ key: 'walk', saga });
-  const files = useSelector(makeSelectFiles());
-  const statePath = useSelector(makeSelectPath());
+
+  const files = useSelector(selectFiles);
+  const statePath = useSelector(selectPath);
+
   const [stateImages, setItems] = useState([]);
   const qsPath = parseHash('path', hash);
 

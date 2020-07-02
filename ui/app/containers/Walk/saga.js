@@ -4,7 +4,7 @@ import actions from './actions';
 import { apiPort as port } from '../../../../config.json';
 import { LIST_DIRECTORY_REQUEST, RESIZE_IMAGES_REQUEST } from './constants';
 import request, { querystring } from '../../utils/request';
-import { makeSelectPath } from './selectors';
+import { selectPath } from './selectors';
 
 function getWalkUrl(path) {
   const baseUrl = `http://localhost:${port}/admin/walk-path`;
@@ -45,7 +45,7 @@ function resizeOptions(sourcePath) {
 // Resize one image per request/response handler
 export function* requestResizeImages({ images }) {
   try {
-    const path = yield select(makeSelectPath());
+    const path = yield select(selectPath);
     const url = `http://localhost:${port}/admin/resize`;
 
     yield all(

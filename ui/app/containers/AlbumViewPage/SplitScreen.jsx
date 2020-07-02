@@ -1,8 +1,7 @@
 import React from 'react';
 import ImageGallery from 'react-image-gallery';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 import config from '../../../../config.json';
@@ -52,7 +51,10 @@ const toCarousel = item => {
   return imageGallery;
 };
 
-function SplitScreen({ currentMemory, slideTo, memories }) {
+function SplitScreen({ currentMemory, memories }) {
+  const dispatch = useDispatch();
+  const slideTo = index => dispatch(slideToAdjacentMemory(index));
+
   if (currentMemory) {
     return (
       <Split>
@@ -76,10 +78,4 @@ function SplitScreen({ currentMemory, slideTo, memories }) {
   return null;
 }
 
-const mapDispatchToProps = dispatch => ({
-  slideTo: index => dispatch(slideToAdjacentMemory(index)),
-});
-
-const withConnect = connect(null, mapDispatchToProps);
-
-export default compose(withConnect)(SplitScreen);
+export default SplitScreen;

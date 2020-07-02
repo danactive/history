@@ -1,8 +1,8 @@
 import {
   selectPage,
-  makeSelectCurrentMemory,
-  makeSelectThumbsError,
-  makeSelectThumbsLoading,
+  selectCurrentMemory,
+  selectThumbsError,
+  selectThumbsLoading,
 } from '../selectors';
 
 describe('selectPage', () => {
@@ -17,9 +17,8 @@ describe('selectPage', () => {
   });
 });
 
-describe('makeSelectCurrentMemory', () => {
+describe('selectCurrentMemory', () => {
   test('should select the current memory', () => {
-    const currentMemorySelector = makeSelectCurrentMemory();
     const globalState = {
       host: 'dropbox',
       gallery: 'demo',
@@ -29,12 +28,11 @@ describe('makeSelectCurrentMemory', () => {
     const mockedState = {
       global: globalState,
     };
-    expect(currentMemorySelector(mockedState)).toEqual(globalState);
+    expect(selectCurrentMemory(mockedState)).toEqual(globalState);
   });
 });
 
-describe('makeSelectThumbsLoading', () => {
-  const galleryErrorSelector = makeSelectThumbsLoading();
+describe('selectThumbsLoading', () => {
   test('should select the error status', () => {
     const thumbsLoading = true;
     const mockedState = {
@@ -42,12 +40,11 @@ describe('makeSelectThumbsLoading', () => {
         thumbsLoading,
       },
     };
-    expect(galleryErrorSelector(mockedState)).toEqual(thumbsLoading);
+    expect(selectThumbsLoading(mockedState)).toEqual(thumbsLoading);
   });
 });
 
-describe('makeSelectThumbsError', () => {
-  const galleryLoadingSelector = makeSelectThumbsError();
+describe('selectThumbsError', () => {
   test('should select the loading status', () => {
     const thumbsError = true;
     const mockedState = {
@@ -55,6 +52,6 @@ describe('makeSelectThumbsError', () => {
         thumbsError,
       },
     };
-    expect(galleryLoadingSelector(mockedState)).toEqual(thumbsError);
+    expect(selectThumbsError(mockedState)).toEqual(thumbsError);
   });
 });
