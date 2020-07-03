@@ -8,9 +8,9 @@ import H2 from '../../components/H2';
 import GenericList from '../../components/GenericList';
 import GalleryListItem from '../GalleryListItem/index';
 import CenteredSection from './CenteredSection';
-import messages from './messages';
 
 import { loadGalleries } from './actions';
+import messages from './messages';
 import {
   selectItems,
   selectGalleryLoading,
@@ -27,10 +27,9 @@ export function HomePage() {
   const items = useSelector(selectItems);
   const galleryLoading = useSelector(selectGalleryLoading);
   const galleryErrors = useSelector(selectGalleryErrors);
-  const onLoad = () => dispatch(loadGalleries());
 
   useEffect(() => {
-    onLoad();
+    dispatch(loadGalleries());
   }, []);
 
   return (

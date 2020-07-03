@@ -21,9 +21,7 @@ const selectItems = createSelector([selectGlobal], globalState => {
     globalState[globalState.host][globalState.gallery] &&
     globalState[globalState.host][globalState.gallery].albums
   ) {
-    return globalState[globalState.host][
-      globalState.gallery
-    ].albums.map(album => ({ name: album.h1, id: album.id }));
+    return globalState[globalState.host][globalState.gallery].albums;
   }
   return [];
 });

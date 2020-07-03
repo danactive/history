@@ -66,10 +66,6 @@
             <xsl:if test="year != 'none'">
               <h3>
                 <xsl:value-of select="year" />
-
-                <xsl:if test="album_version &gt;= 1.5">
-                  <xsl:text> (Map)</xsl:text>
-                </xsl:if>
               </h3>
             </xsl:if>
           </div>

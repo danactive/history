@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,18 +32,11 @@ export function GalleryViewPage({
   const galleryError = useSelector(selectGalleryError);
   const items = useSelector(selectItems);
 
-  const onLoad = () => dispatch(loadGallery({ host, gallery }));
-
   useEffect(() => {
-    if (gallery) onLoad();
+    if (gallery) {
+      dispatch(loadGallery({ host, gallery }));
+    }
   }, []);
-
-  const albumListProps = {
-    loading: galleryLoading,
-    error: galleryError,
-    items,
-    component: AlbumListItem,
-  };
 
   return (
     <div>
@@ -51,9 +44,14 @@ export function GalleryViewPage({
         <title>Galleries</title>
       </Helmet>
       <FormattedMessage {...messages.header} />
-      <GenericList {...albumListProps} />
+      <GenericList
+        loading={galleryLoading}
+        error={galleryError}
+        items={items}
+        component={AlbumListItem}
+      />
     </div>
   );
 }
 
-export default GalleryViewPage;
+export default memo(GalleryViewPage);

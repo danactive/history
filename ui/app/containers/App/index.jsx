@@ -9,7 +9,7 @@ import AlbumViewPage from '../AlbumViewPage/Loadable';
 import ExploreVideo from '../ExploreVideo';
 import ResizePage from '../admin/ResizePage/Loadable';
 import HomePage from '../HomePage/Loadable';
-import GalleryViewPage from '../GalleryViewPage';
+import GalleryViewPage from '../GalleryViewPage/Loadable';
 import NotFoundPage from '../NotFoundPage/Loadable';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';

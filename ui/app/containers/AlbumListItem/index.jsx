@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -13,13 +13,13 @@ function AlbumListItem({ item }) {
   }
 
   const { gallery, host } = critical;
-  const content = (
+  const LinkToAlbum = (
     <Link to={`/view/${host}/${gallery}/${item.id}`}>
       {capitalize(item.name)}
     </Link>
   );
 
-  return <ListItem key={`albums-list-item-${item.id}`} item={content} />;
+  return <ListItem key={`albums-list-item-${item.id}`} item={LinkToAlbum} />;
 }
 
-export default AlbumListItem;
+export default memo(AlbumListItem);
