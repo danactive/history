@@ -24,7 +24,7 @@ const selectGalleryErrors = createSelector(selectHome, homeState => {
     return false;
   }
 
-  return { message: 'All galleries failed to load' };
+  return { message: 'Beta all galleries failed to load' };
 });
 
 export { selectHome, selectItems, selectGalleryLoading, selectGalleryErrors };
