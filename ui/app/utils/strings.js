@@ -9,5 +9,7 @@ export const hostCase = host => {
       return 'Dropbox';
     case 'local':
       return 'CDN';
+    default:
   }
+  return '';
 };

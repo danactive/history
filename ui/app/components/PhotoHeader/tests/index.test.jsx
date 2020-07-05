@@ -27,7 +27,7 @@ describe('<PhotoHeader />', () => {
 
     expect(received).not.toBeNull();
 
-    const elements = container.querySelectorAll('h1');
+    const elements = container.querySelectorAll('h4');
     expect(elements).toHaveLength(1);
   });
 });

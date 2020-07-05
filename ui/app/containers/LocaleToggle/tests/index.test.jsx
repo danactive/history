@@ -29,14 +29,14 @@ describe('<LocaleToggle />', () => {
   });
 
   test('should present the default `en` english language option', () => {
-    const { queryByDisplayValue } = render(
+    const { getByDisplayValue } = render(
       <Provider store={store}>
         <LanguageProvider messages={translationMessages}>
           <LocaleToggle />
         </LanguageProvider>
       </Provider>,
     );
-    expect(queryByDisplayValue('en')).toBeInTheDocument();
+    expect(getByDisplayValue('English')).toBeInTheDocument();
   });
 
   test('should dispatch changeLocale when user selects a new option', () => {
@@ -47,7 +47,7 @@ describe('<LocaleToggle />', () => {
         </LanguageProvider>
       </Provider>,
     );
-    const newLocale = 'de';
+    const newLocale = 'ja';
     const select = container.querySelector('select');
     fireEvent.change(select, { target: { value: newLocale } });
     expect(actions.changeLocale).toHaveBeenCalledWith(newLocale);

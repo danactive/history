@@ -25,7 +25,7 @@ module.exports = {
     '<rootDir>/internals/testing/test-bundler.js',
     '@testing-library/jest-dom/extend-expect',
   ],
-  testRegex: 'tests/.*\\.test\\.js$',
+  testRegex: 'tests/.*\\.test\\.(js|jsx)$',
   snapshotSerializers: [],
   watchPlugins: [
     'jest-watch-typeahead/filename',
