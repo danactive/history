@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import ListItem from '../../components/ListItem';
-import capitalize from '../../utils/strings';
+import { capitalize } from '../../utils/strings';
 
 function GalleryListItem({ item: { name: gallery, host, id } }) {
   const content = (

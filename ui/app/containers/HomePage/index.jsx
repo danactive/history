@@ -15,6 +15,7 @@ import {
   selectItems,
   selectGalleryLoading,
   selectGalleryErrors,
+  selectMissingHosts,
 } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
@@ -27,10 +28,15 @@ export function HomePage() {
   const items = useSelector(selectItems);
   const galleryLoading = useSelector(selectGalleryLoading);
   const galleryErrors = useSelector(selectGalleryErrors);
+  const missingHosts = useSelector(selectMissingHosts);
 
   useEffect(() => {
     dispatch(loadGalleries());
   }, []);
+
+  if (galleryLoading) {
+    console.log(missingHosts);
+  }
 
   return (
     <article>

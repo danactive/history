@@ -18,7 +18,6 @@ export function* getDropboxGalleries() {
       const error = new ReferenceError(
         '.env is missing HISTORY_DROPBOX_ACCESS_TOKEN',
       );
-      logError(error);
       yield put(galleriesLoadingError(error));
       return;
     }
