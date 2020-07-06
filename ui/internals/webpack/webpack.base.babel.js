@@ -111,7 +111,6 @@ module.exports = options => ({
     // inside your code for any environment checks; Terser will automatically
     // drop any unreachable code.
     // *********** HISTORY CUSTOM not React Boilerplate
-    // TODO production mode should request this from the user via browser UI
     new webpack.EnvironmentPlugin({
       HISTORY_DROPBOX_ACCESS_TOKEN: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
       HISTORY_YOUTUBE_API_KEY: process.env.HISTORY_YOUTUBE_API_KEY,

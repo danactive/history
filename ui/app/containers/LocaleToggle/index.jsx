@@ -9,8 +9,8 @@ import { changeLocale } from '../LanguageProvider/actions';
 import { selectLocale } from '../LanguageProvider/selectors';
 
 export default function LocaleToggle() {
-  const locale = useSelector(selectLocale);
   const dispatch = useDispatch();
+  const locale = useSelector(selectLocale);
 
   const onLocaleToggle = evt => dispatch(changeLocale(evt.target.value));
 

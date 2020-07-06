@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
-import config from '../../../../config.json';
+import { supportedFileTypes } from '../../../../config.json';
 import { getExt } from '../../utils/path';
 
 import SlippyMap from '../SlippyMap';
@@ -38,7 +38,7 @@ const toCarousel = item => {
   };
 
   const extension = getExt(item.filename);
-  if (config.supportedFileTypes.video.includes(extension) && item.videoLink) {
+  if (supportedFileTypes.video.includes(extension) && item.videoLink) {
     imageGallery.renderItem = itemToRender => (
       <Video
         extension={extension}

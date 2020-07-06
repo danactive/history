@@ -1,8 +1,9 @@
 import { Dropbox } from 'dropbox';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
-import normalizeError from '../../utils/error';
 import request from '../../utils/request';
+import normalizeError from '../../utils/error';
+import { getHostPath, getHostToken } from '../../utils/host';
 
 import {
   LOAD_ALBUM,
@@ -23,13 +24,15 @@ import {
 import { selectNextPage } from './selectors';
 import { getItemNodes, parseItemNode } from './transformXmlToJson';
 import { getPage } from './paging';
-import config from '../../../../config.json';
+import { supportedFileTypes } from '../../../../config.json';
 import { chooseMemory } from '../App/actions';
 import { preloadPhoto } from '../InfiniteThumbs/actions';
 import { preloadAdjacentMemoryId } from '../InfiniteThumbs/saga';
 
+const HISTORY_API_ROOT = getHostPath('local');
+
 const dbx = new Dropbox({
-  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  accessToken: getHostToken('dropbox'),
   fetch,
 });
 
@@ -40,7 +43,7 @@ export const argsAlbumXmlPath = ({ gallery, album }) => ({
 const getYear = (filename = '') => filename.substr(0, 4);
 const getFileExt = filename => filename.match(/\.[0-9a-z]+$/i)[0].substring(1);
 export const videoExtToJpg = filename => {
-  if (config.supportedFileTypes.video.includes(getFileExt(filename))) {
+  if (supportedFileTypes.video.includes(getFileExt(filename))) {
     return filename.replace(getFileExt(filename), 'jpg');
   }
 
@@ -95,7 +98,7 @@ export function* getAlbumFileLocally({ host, gallery, album }) {
   try {
     const xmlFile = yield call(
       request,
-      `http://localhost:${config.apiPort}/view/album/${gallery}/${album}`,
+      `${HISTORY_API_ROOT}/view/album/${gallery}/${album}`,
     );
     const memories = getItemNodes(xmlFile).map(parseItemNode);
     yield put(
@@ -207,7 +210,7 @@ export function* getThumbPathsLocally({
 
       return {
         ...memory,
-        thumbLink: `http://localhost:${config.apiPort}/static/gallery-${gallery}/media/thumbs/${year}/${jpgFile}`,
+        thumbLink: `${HISTORY_API_ROOT}/static/gallery-${gallery}/media/thumbs/${year}/${jpgFile}`,
       };
     });
 

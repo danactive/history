@@ -1,4 +1,4 @@
-import { Formik } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -10,8 +10,6 @@ import { resizeImage } from './actions';
 const ResizePage = () => {
   const dispatch = useDispatch();
   useInjectSaga({ key: 'mediaGallery', saga });
-
-  const triggerResizeImage = filename => dispatch(resizeImage(filename));
 
   return (
     <div>
@@ -25,29 +23,12 @@ const ResizePage = () => {
 
       <Formik
         initialValues={{ filename: '/todo/originals/2019-08-31-99.jpg' }}
-        onSubmit={values => triggerResizeImage(values.filename)}
+        onSubmit={values => dispatch(resizeImage(values.filename))}
       >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleSubmit,
-          isSubmitting,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="filename"
-              value={values.filename}
-              onChange={handleChange}
-            />
-            {touched.filename && errors.filename}
-            <button type="submit" disabled={isSubmitting}>
-              Resize image
-            </button>
-          </form>
-        )}
+        <Form>
+          <Field type="text" name="filename" />
+          <button type="submit">Resize image</button>
+        </Form>
       </Formik>
     </div>
   );

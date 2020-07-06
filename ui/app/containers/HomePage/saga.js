@@ -1,24 +1,25 @@
 import { Dropbox } from 'dropbox';
-import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+
+import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
+import { LOAD_GALLERIES, STORE_HOST_TOKENS } from './constants';
 
 import request from '../../utils/request';
-import { galleriesLoadingSuccess, galleriesLoadingError } from './actions';
-import { LOAD_GALLERIES } from './constants';
-import { apiPort as port } from '../../../../config.json';
+import { getHostToken, getHostPath } from '../../utils/host';
 
 // eslint-disable-next-line no-console
 const logError = (...message) => console.error(...message);
 
+const HISTORY_API_ROOT = getHostPath('local');
+
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
   try {
-    const accessToken = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
-
+    const accessToken = getHostToken('dropbox');
     if (!accessToken) {
       const error = new ReferenceError(
         '.env is missing HISTORY_DROPBOX_ACCESS_TOKEN',
       );
-      logError(error);
       yield put(galleriesLoadingError(error));
       return;
     }
@@ -39,7 +40,7 @@ function* getLocalFolders() {
   try {
     const { galleries } = yield call(
       request,
-      `http://localhost:${port}/gallery/list`,
+      `${HISTORY_API_ROOT}/gallery/list`,
     );
     yield put(
       galleriesLoadingSuccess({
@@ -56,7 +57,18 @@ function* getGalleries() {
   yield all([call(getLocalFolders), call(getDropboxGalleries)]);
 }
 
+function* backFillGalleries({ name }) {
+  if (name === 'dropbox') {
+    yield call(getDropboxGalleries);
+  }
+
+  if (name === 'local') {
+    yield call(getLocalFolders);
+  }
+}
+
 // ROOT saga manages WATCHER lifecycle
 export default function* HomePageSagaWatcher() {
   yield takeLatest(LOAD_GALLERIES, getGalleries);
+  yield takeEvery(STORE_HOST_TOKENS, backFillGalleries);
 }

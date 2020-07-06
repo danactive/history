@@ -10,7 +10,7 @@ describe('<ListFile />', () => {
       <ListFile item={{ mediumType: 'folder', path }} />,
     );
     expect(container.querySelector('a').href).toEqual(
-      `http://localhost/?path=${path}`,
+      `http://localhost/#path=${path}`,
     );
   });
 });

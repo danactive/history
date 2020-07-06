@@ -27,4 +27,23 @@ const selectGalleryErrors = createSelector(selectHome, homeState => {
   return { message: 'All galleries failed to load' };
 });
 
-export { selectHome, selectItems, selectGalleryLoading, selectGalleryErrors };
+const selectMissingHosts = createSelector(selectHome, homeState => {
+  const missing = [];
+  if (homeState.galleries.local.length === 0) {
+    missing.push('local');
+  }
+
+  if (homeState.galleries.dropbox.length === 0) {
+    missing.push('dropbox');
+  }
+
+  return missing;
+});
+
+export {
+  selectHome,
+  selectItems,
+  selectGalleryLoading,
+  selectGalleryErrors,
+  selectMissingHosts,
+};

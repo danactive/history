@@ -7,9 +7,12 @@ import { useDispatch } from 'react-redux';
 
 import Button from '../../components/Button';
 
-import actions from './actions';
-import config from '../../../../config.json';
 import request from '../../utils/request';
+import { getHostPath } from '../../utils/host';
+
+import actions from './actions';
+
+const HISTORY_API_ROOT = getHostPath('local');
 
 function Menu({ showMenu, imageFilenames, path }) {
   const dispatch = useDispatch();
@@ -38,10 +41,7 @@ function Menu({ showMenu, imageFilenames, path }) {
     "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'
     -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
      */
-    return request(
-      `http://localhost:${config.apiPort}/admin/rename`,
-      options,
-    ).then(setOutput);
+    return request(`${HISTORY_API_ROOT}/admin/rename`, options).then(setOutput);
   }
 
   function handleResize() {

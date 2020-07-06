@@ -2,7 +2,7 @@
 
 exports[`<App /> should render and match the snapshot 1`] = `
 <ForwardRef(App__AppWrapper)>
-  <HelmetWrapper
+  <Helmet
     defaultTitle="History"
     defer={true}
     encodeSpecialCharacters={true}
@@ -12,7 +12,7 @@ exports[`<App /> should render and match the snapshot 1`] = `
       content="History"
       name="description"
     />
-  </HelmetWrapper>
+  </Helmet>
   <Header />
   <Switch>
     <Route
@@ -53,6 +53,6 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
   </Switch>
   <Footer />
-  <GlobalStyleComponent />
+  <UNDEFINED />
 </ForwardRef(App__AppWrapper)>
 `;

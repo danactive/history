@@ -1,13 +1,16 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
-import actions from './actions';
-import { apiPort as port } from '../../../../config.json';
-import { LIST_DIRECTORY_REQUEST, RESIZE_IMAGES_REQUEST } from './constants';
 import request, { querystring } from '../../utils/request';
+import { getHostPath } from '../../utils/host';
+
+import actions from './actions';
+import { LIST_DIRECTORY_REQUEST, RESIZE_IMAGES_REQUEST } from './constants';
 import { selectPath } from './selectors';
 
+const HISTORY_API_ROOT = getHostPath('local');
+
 function getWalkUrl(path) {
-  const baseUrl = `http://localhost:${port}/admin/walk-path`;
+  const baseUrl = `${HISTORY_API_ROOT}/admin/walk-path`;
 
   if (path) {
     return querystring(baseUrl, { path });
@@ -46,7 +49,7 @@ function resizeOptions(sourcePath) {
 export function* requestResizeImages({ images }) {
   try {
     const path = yield select(selectPath);
-    const url = `http://localhost:${port}/admin/resize`;
+    const url = `${HISTORY_API_ROOT}/admin/resize`;
 
     yield all(
       images.map(filename =>
