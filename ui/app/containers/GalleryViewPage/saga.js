@@ -1,16 +1,18 @@
 import { Dropbox } from 'dropbox';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
+import { getHostPath, getHostToken } from '../../utils/host';
 import request from '../../utils/request';
 
 import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
-import { apiPort as port } from '../../../../config.json';
+
+const HISTORY_API_ROOT = getHostPath('local');
 
 // Dropbox API v2 request/response handler
 export function* getGalleryFileOnDropbox({ host, gallery }) {
   const dbx = new Dropbox({
-    accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+    accessToken: getHostToken('dropbox'),
     fetch,
   });
 
@@ -30,7 +32,7 @@ export function* getGalleryFileLocally({ host, gallery }) {
   try {
     const galleryXml = yield call(
       request,
-      `http://localhost:${port}/static/gallery-${gallery}/xml/gallery.xml`,
+      `${HISTORY_API_ROOT}/static/gallery-${gallery}/xml/gallery.xml`,
     );
 
     yield put(galleryLoaded({ host, gallery, galleryXml }));

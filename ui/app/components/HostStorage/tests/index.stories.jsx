@@ -7,4 +7,5 @@ export default {
   component: HostStorage,
 };
 
-export const Default = () => <HostStorage host="local" />;
+export const Dropbox = () => <HostStorage host="dropbox" />;
+export const Local = () => <HostStorage host="local" />;

@@ -12,7 +12,7 @@ const ErrorMessage = styled.span`
 `;
 
 function isUrl(value) {
-  const pattern = /(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/g;
+  const pattern = /((http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?)|((http|https):\/\/(localhost)+([:0-9]{2,5})?)/g;
   return new RegExp(pattern).test(value);
 }
 
@@ -21,7 +21,7 @@ function isToken(value) {
   return new RegExp(pattern).test(value);
 }
 
-function HostStorage({ host }) {
+function HostStorage({ host, dispatchEventOnStore }) {
   const [stored, setStored] = useState(false);
   const hostName = hostCase(host);
 
@@ -39,25 +39,36 @@ function HostStorage({ host }) {
   function handleSubmit({ token }) {
     localStorage.setItem(`host-${host}`, token);
     setStored(true);
+    if (dispatchEventOnStore) {
+      dispatchEventOnStore(host, token);
+    }
   }
 
   return (
     <Formik initialValues={{ token: '' }} onSubmit={handleSubmit}>
       {({ errors, touched, isValidating }) => (
-        <Form>
+        <Form data-testid="form">
           <FormattedMessage
             {...messages.instruction}
             values={{
               host: hostName,
             }}
           />
-          <Field type="text" name="token" validate={handleTokenValidation} />
+          <Field
+            type="text"
+            name="token"
+            aria-label="Token input"
+            validate={handleTokenValidation}
+          />
           {errors.token && touched.token && (
-            <ErrorMessage>{errors.token}</ErrorMessage>
+            <ErrorMessage aria-label="Token error">{errors.token}</ErrorMessage>
           )}
-          <button type="submit" disabled={isValidating}>
-            Store in browser
-          </button>
+          <input
+            type="submit"
+            aria-label="Submit button"
+            disabled={isValidating}
+            value="Store in browser"
+          />
           {stored && (
             <span role="img" aria-label="success">
               ✅

@@ -3,8 +3,10 @@ import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
+import { getHostPath } from '../../utils/host';
+
 import actions from './actions';
-import config from '../../../../config.json';
+import { resizeDimensions } from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
 import { selectFiles, selectPath } from './selectors';
@@ -22,6 +24,8 @@ const {
   parseHash,
   organizeByMedia,
 } = walkUtils;
+
+const HISTORY_API_ROOT = getHostPath('local');
 
 function Walk({ location: { hash } }) {
   const dispatch = useDispatch();
@@ -86,9 +90,9 @@ function Walk({ location: { hash } }) {
           <img
             key={`thumbnail-${item.filename}`}
             alt="No preview yet"
-            src={`http://localhost:${config.apiPort}/public/${statePath}/${item.filename}`}
-            width={config.resizeDimensions.preview.width}
-            height={config.resizeDimensions.preview.height}
+            src={`${HISTORY_API_ROOT}/public/${statePath}/${item.filename}`}
+            width={resizeDimensions.preview.width}
+            height={resizeDimensions.preview.height}
           />,
         ],
       }))}

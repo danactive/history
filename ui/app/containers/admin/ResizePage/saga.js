@@ -2,12 +2,12 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import 'whatwg-fetch';
 
 import request from '../../../utils/request';
-import { apiPort as port } from '../../../../../config.json';
+import { getHostPath } from '../../../utils/host';
 
 import { RESIZE_IMAGE } from './constants';
 import { resizeImageFailed, resizeImageSuccess } from './actions';
 
-const HISTORY_API_ROOT = `http://localhost:${port}`;
+const HISTORY_API_ROOT = getHostPath('local');
 
 export function* callResizeApi({ filename }) {
   try {

@@ -4,12 +4,13 @@ import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
-import H2 from '../../components/H2';
-import GenericList from '../../components/GenericList';
-import GalleryListItem from '../GalleryListItem/index';
 import CenteredSection from './CenteredSection';
+import GalleryListItem from '../GalleryListItem/index';
+import GenericList from '../../components/GenericList';
+import H2 from '../../components/H2';
+import HostStorage from '../../components/HostStorage';
 
-import { loadGalleries } from './actions';
+import { loadGalleries, storeToken } from './actions';
 import messages from './messages';
 import {
   selectItems,
@@ -34,9 +35,18 @@ export function HomePage() {
     dispatch(loadGalleries());
   }, []);
 
-  if (galleryLoading) {
-    console.log(missingHosts);
-  }
+  const dispatchEventOnStore = (name, value) =>
+    dispatch(storeToken(name, value));
+
+  const storageOptions =
+    !galleryLoading &&
+    missingHosts.map(host => (
+      <HostStorage
+        key={`host-storage-${host}`}
+        host={host}
+        dispatchEventOnStore={dispatchEventOnStore}
+      />
+    ));
 
   return (
     <article>
@@ -53,6 +63,7 @@ export function HomePage() {
           items={items}
           component={GalleryListItem}
         />
+        {storageOptions}
       </CenteredSection>
     </article>
   );

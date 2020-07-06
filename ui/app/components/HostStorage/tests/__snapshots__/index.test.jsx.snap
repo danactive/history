@@ -3,19 +3,21 @@
 exports[`<HostStorage /> Should render and match the snapshot 1`] = `
 <form
   action="#"
+  data-testid="form"
 >
   <span>
      token/path for loading gallery/media
   </span>
   <input
+    aria-label="Token input"
     name="token"
     type="text"
     value=""
   />
-  <button
+  <input
+    aria-label="Submit button"
     type="submit"
-  >
-    Store in browser
-  </button>
+    value="Store in browser"
+  />
 </form>
 `;

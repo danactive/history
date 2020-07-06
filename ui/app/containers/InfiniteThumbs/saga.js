@@ -13,17 +13,17 @@ import {
   preloadPhoto,
   skipPreloadPhoto,
 } from './actions';
-import config from '../../../../config.json';
+import { supportedFileTypes } from '../../../../config.json';
+
 import normalizeError from '../../utils/error';
+import { getHostToken } from '../../utils/host';
 import { getExt } from '../../utils/path';
 
 const dbxOptions = {
-  accessToken: process.env.HISTORY_DROPBOX_ACCESS_TOKEN,
+  accessToken: getHostToken('dropbox'),
   fetch,
 };
-const dbx = process.env.HISTORY_DROPBOX_ACCESS_TOKEN
-  ? new Dropbox(dbxOptions)
-  : null;
+const dbx = getHostToken('dropbox') ? new Dropbox(dbxOptions) : null;
 
 const getYear = (filename = '') => filename.substr(0, 4);
 
@@ -53,7 +53,7 @@ export function* getPhotoPathsOnDropbox({
 }) {
   const { filename, id } = memory;
   const extension = getExt(filename);
-  const isVideo = config.supportedFileTypes.video.includes(extension);
+  const isVideo = supportedFileTypes.video.includes(extension);
   try {
     const photoXmlUrl = yield call(
       [dbx, 'filesGetTemporaryLink'],
