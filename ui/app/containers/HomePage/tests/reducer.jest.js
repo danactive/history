@@ -45,9 +45,10 @@ describe('homeReducer', () => {
     const fixture = { type: 'ReferenceError' };
     const expectedResult = produce(state, draft => {
       draft.galleryErrors = fixture;
+      draft.host = 'local';
     });
 
-    expect(homeReducer(state, galleriesLoadingError(fixture))).toEqual(
+    expect(homeReducer(state, galleriesLoadingError(fixture, 'local'))).toEqual(
       expectedResult,
     );
   });

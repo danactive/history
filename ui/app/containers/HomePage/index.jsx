@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,8 +9,9 @@ import GalleryListItem from '../GalleryListItem/index';
 import GenericList from '../../components/GenericList';
 import H2 from '../../components/H2';
 import HostStorage from '../../components/HostStorage';
+import RemoveHostStorage from '../../components/HostStorage/Remove';
 
-import { loadGalleries, storeToken } from './actions';
+import { loadGalleries, tokenStorage } from './actions';
 import messages from './messages';
 import {
   selectItems,
@@ -31,12 +32,16 @@ export function HomePage() {
   const galleryErrors = useSelector(selectGalleryErrors);
   const missingHosts = useSelector(selectMissingHosts);
 
+  const [isTokenInStorage, setTokenInStorage] = useState(false);
+
   useEffect(() => {
     dispatch(loadGalleries());
-  }, []);
+  }, [isTokenInStorage]);
 
-  const dispatchEventOnStore = (name, value) =>
-    dispatch(storeToken(name, value));
+  const storageUpdated = (name, value, isAdded = true) => {
+    setTokenInStorage(isAdded);
+    dispatch(tokenStorage(name, value, isAdded));
+  };
 
   const storageOptions =
     !galleryLoading &&
@@ -44,7 +49,7 @@ export function HomePage() {
       <HostStorage
         key={`host-storage-${host}`}
         host={host}
-        dispatchEventOnStore={dispatchEventOnStore}
+        storageUpdated={storageUpdated}
       />
     ));
 
@@ -64,6 +69,11 @@ export function HomePage() {
           component={GalleryListItem}
         />
         {storageOptions}
+        <RemoveHostStorage
+          showHeader={isTokenInStorage}
+          setTokenInStorage={setTokenInStorage}
+          storageUpdated={storageUpdated}
+        />
       </CenteredSection>
     </article>
   );

@@ -1,13 +1,13 @@
 import { Dropbox } from 'dropbox';
 import { call, put, takeLatest } from 'redux-saga/effects';
 
-import { getHostPath, getHostToken } from '../../utils/host';
+import { getHostToken } from '../../utils/host';
 import request from '../../utils/request';
 
 import { LOAD_GALLERY } from './constants';
 import { galleryLoaded, galleryLoadingError } from './actions';
 
-const HISTORY_API_ROOT = getHostPath('local');
+const HISTORY_API_ROOT = getHostToken('local');
 
 // Dropbox API v2 request/response handler
 export function* getGalleryFileOnDropbox({ host, gallery }) {

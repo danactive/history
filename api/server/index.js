@@ -17,7 +17,7 @@ const server = hapi.Server({
   port,
   routes: {
     cors: {
-      origin: [`http://localhost:${uiPort}`],
+      origin: [`http://localhost:${uiPort}`, 'https://history.domaindesign.ca/'],
     },
     validate: {
       failAction: async (request, h, err) => {

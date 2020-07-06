@@ -1,13 +1,13 @@
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import request, { querystring } from '../../utils/request';
-import { getHostPath } from '../../utils/host';
+import { getHostToken } from '../../utils/host';
 
 import actions from './actions';
 import { LIST_DIRECTORY_REQUEST, RESIZE_IMAGES_REQUEST } from './constants';
 import { selectPath } from './selectors';
 
-const HISTORY_API_ROOT = getHostPath('local');
+const HISTORY_API_ROOT = getHostToken('local');
 
 function getWalkUrl(path) {
   const baseUrl = `${HISTORY_API_ROOT}/admin/walk-path`;

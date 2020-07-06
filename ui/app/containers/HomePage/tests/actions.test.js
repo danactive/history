@@ -32,10 +32,11 @@ describe('Home Actions', () => {
   test('galleriesLoadingError', () => {
     const error = { type: 'Bad' };
     const expectedResult = {
-      error,
       type: LOAD_GALLERIES_ERROR,
+      error,
+      host: 'local',
     };
 
-    expect(galleriesLoadingError(error)).toEqual(expectedResult);
+    expect(galleriesLoadingError(error, 'local')).toEqual(expectedResult);
   });
 });

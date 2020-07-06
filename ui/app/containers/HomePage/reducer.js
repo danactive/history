@@ -1,5 +1,6 @@
 import produce from 'immer';
 
+import { hostIndex } from '../../utils/host';
 import {
   LOAD_GALLERIES,
   LOAD_GALLERIES_SUCCESS,
@@ -45,9 +46,9 @@ const homeReducer = (state = initialState, action) =>
         break;
 
       case LOAD_GALLERIES_ERROR:
-        draft.galleryErrors[draft.galleryErrors.indexOf(false)] =
-          action.error.message;
+        draft.galleryErrors[hostIndex(action.host)] = action.error.message;
         draft.galleryLoadings[draft.galleryLoadings.indexOf(true)] = false;
+        draft.galleries[action.host] = []; // clear cache as token removed
         break;
     }
   });

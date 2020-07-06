@@ -2,7 +2,7 @@ import {
   LOAD_GALLERIES,
   LOAD_GALLERIES_SUCCESS,
   LOAD_GALLERIES_ERROR,
-  STORE_HOST_TOKENS,
+  TOKEN_STORAGE,
 } from './constants';
 
 export function loadGalleries() {
@@ -18,17 +18,19 @@ export function galleriesLoadingSuccess(galleries) {
   };
 }
 
-export function galleriesLoadingError(error) {
+export function galleriesLoadingError(error, host) {
   return {
-    error,
     type: LOAD_GALLERIES_ERROR,
+    error,
+    host,
   };
 }
 
-export function storeToken(name, value) {
+export function tokenStorage(name, value, isAdded) {
   return {
-    type: STORE_HOST_TOKENS,
+    type: TOKEN_STORAGE,
     name,
     value,
+    isAdded,
   };
 }
