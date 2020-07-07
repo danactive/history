@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 import { FormattedMessage } from 'react-intl';
 
-import { hostCase } from '../../utils/strings';
+import { hostCase } from '../../utils/host';
+import { update as updateStorage } from '../../utils/localStorage';
 import messages from './messages';
 
 const ErrorMessage = styled.span`
@@ -21,7 +22,7 @@ function isToken(value) {
   return new RegExp(pattern).test(value);
 }
 
-function HostStorage({ host, dispatchEventOnStore }) {
+function HostStorage({ host, storageUpdated }) {
   const [stored, setStored] = useState(false);
   const hostName = hostCase(host);
 
@@ -37,10 +38,10 @@ function HostStorage({ host, dispatchEventOnStore }) {
   }
 
   function handleSubmit({ token }) {
-    localStorage.setItem(`host-${host}`, token);
+    updateStorage(host, token);
     setStored(true);
-    if (dispatchEventOnStore) {
-      dispatchEventOnStore(host, token);
+    if (storageUpdated) {
+      storageUpdated(host, token, true);
     }
   }
 

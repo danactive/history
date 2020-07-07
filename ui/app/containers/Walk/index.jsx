@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
-import { getHostPath } from '../../utils/host';
+import { getHostToken } from '../../utils/host';
 
 import actions from './actions';
 import { resizeDimensions } from '../../../../config.json';
@@ -25,7 +25,7 @@ const {
   organizeByMedia,
 } = walkUtils;
 
-const HISTORY_API_ROOT = getHostPath('local');
+const HISTORY_API_ROOT = getHostToken('local');
 
 function Walk({ location: { hash } }) {
   const dispatch = useDispatch();

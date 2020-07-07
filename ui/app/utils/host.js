@@ -1,13 +1,20 @@
+// *********** HISTORY CUSTOM not React Boilerplate
 import { apiPort as port } from '../../../config.json';
+import { get as getFromStorage } from './localStorage';
 
-export function getHostToken(host) {
+/**
+ * Get host token/path value
+ * @param {('local'|'dropbox')} host
+ * @param {('browser')} [storageType=null]
+ */
+export function getHostToken(host, storageType = null) {
   if (host === 'dropbox') {
     const envValue = process.env.HISTORY_DROPBOX_ACCESS_TOKEN;
-    if (envValue) {
+    if (envValue && storageType !== 'browser') {
       return envValue;
     }
 
-    const localValue = localStorage.getItem('host-dropbox');
+    const localValue = getFromStorage('dropbox');
     if (localValue) {
       return localValue;
     }
@@ -15,13 +22,9 @@ export function getHostToken(host) {
     return undefined;
   }
 
-  return null;
-}
-
-export function getHostPath(host) {
   if (host === 'local') {
-    const localValue = localStorage.getItem('host-local');
-    if (localValue) {
+    const localValue = getFromStorage('local');
+    if (storageType === 'browser') {
       return localValue;
     }
 
@@ -30,3 +33,25 @@ export function getHostPath(host) {
 
   return null;
 }
+
+export const hostCase = host => {
+  switch (host) {
+    case 'dropbox':
+      return 'Dropbox';
+    case 'local':
+      return 'CDN';
+    default:
+  }
+  return '';
+};
+
+export const hostIndex = host => {
+  switch (host) {
+    case 'dropbox':
+      return 1;
+    case 'local':
+      return 0;
+    default:
+  }
+  return -1;
+};

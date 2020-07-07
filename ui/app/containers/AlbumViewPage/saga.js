@@ -3,7 +3,7 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import request from '../../utils/request';
 import normalizeError from '../../utils/error';
-import { getHostPath, getHostToken } from '../../utils/host';
+import { getHostToken } from '../../utils/host';
 
 import {
   LOAD_ALBUM,
@@ -29,7 +29,7 @@ import { chooseMemory } from '../App/actions';
 import { preloadPhoto } from '../InfiniteThumbs/actions';
 import { preloadAdjacentMemoryId } from '../InfiniteThumbs/saga';
 
-const HISTORY_API_ROOT = getHostPath('local');
+const HISTORY_API_ROOT = getHostToken('local');
 
 const dbx = new Dropbox({
   accessToken: getHostToken('dropbox'),

@@ -8,11 +8,11 @@ import { useDispatch } from 'react-redux';
 import Button from '../../components/Button';
 
 import request from '../../utils/request';
-import { getHostPath } from '../../utils/host';
+import { getHostToken } from '../../utils/host';
 
 import actions from './actions';
 
-const HISTORY_API_ROOT = getHostPath('local');
+const HISTORY_API_ROOT = getHostToken('local');
 
 function Menu({ showMenu, imageFilenames, path }) {
   const dispatch = useDispatch();
