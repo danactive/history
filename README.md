@@ -5,7 +5,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 * Plot thumbnails on a map
 * Includes administration tools for XML generation
 
-[Demonstration site http://history.domaindesign.ca/](http://history.domaindesign.ca/)
+[Demonstration site https://history.domaindesign.ca/](https://history.domaindesign.ca/)
 ## Project Status:
 | Service | Status |
 |---|---|

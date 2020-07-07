@@ -33,7 +33,7 @@ describe('Component - <ThumbImg />', () => {
   test('should not adopt a srcset attribute', () => {
     const { container } = render(<ThumbImg srcset="test-HD.png 2x" />);
     const received = container.querySelector('img').srcset;
-    const expected = 'null';
+    const expected = '';
     expect(received).toEqual(expected);
   });
 });
