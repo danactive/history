@@ -12,8 +12,8 @@
 	<item id="1">
 		<filename>2001-03-21-01.jpg</filename>
 		<geo>
-			<lat>49.25</lat>
-			<lon>-123.1</lon>
+			<lat>49.270833</lat>
+			<lon>-123.134167</lon>
 		</geo>
 		<photo_city>Vancouver, BC</photo_city>
 		<photo_loc>Granville Island</photo_loc>
@@ -21,9 +21,14 @@
 	</item>
 	<item id="30">
 		<filename>2004-01-04-01.jpg</filename>
-		<photo_city>North Vancouver, BC</photo_city>
+		<geo>
+			<lat>49.25</lat>
+			<lon>-123.1</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
 		<photo_loc>Dining Room</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
+		<photo_desc>Gingerbread persons</photo_desc>
 	</item>
 	<item id="2">
 		<filename>2005-07-30-01.jpg</filename>
@@ -34,13 +39,14 @@
 		<photo_city>Gabriola Island, BC</photo_city>
 		<photo_loc>Camping</photo_loc>
 		<thumb_caption>Starfish</thumb_caption>
+		<photo_desc>Starfish</photo_desc>
 	</item>
 	<item id="4">
 		<type>video</type>
 		<filename>2012-fireplace.mp4</filename>
 		<filename>2012-fireplace.webm</filename>
 		<photo_city>Vancouver, BC</photo_city>
-		<photo_loc>Home</photo_loc>
+		<photo_loc>Friend</photo_loc>
 		<thumb_caption>Fireplace</thumb_caption>
 		<photo_desc>A sample HTML5 video in both MP4 and WebM formats</photo_desc>
 		<size>

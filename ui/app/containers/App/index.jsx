@@ -1,23 +1,24 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import styled from 'styled-components';
-import { Switch, Route } from 'react-router-dom';
-
 import { hot } from 'react-hot-loader/root';
+import { Switch, Route } from 'react-router-dom';
+import styled from 'styled-components';
+
 import AdminLandingPage from '../AdminLandingPage/Loadable';
 import AlbumViewPage from '../AlbumViewPage/Loadable';
 import ExploreVideo from '../ExploreVideo';
-import ResizePage from '../admin/ResizePage/Loadable';
-import HomePage from '../HomePage/Loadable';
-import GalleryViewPage from '../GalleryViewPage/Loadable';
-import NotFoundPage from '../NotFoundPage/Loadable';
-import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import GalleryViewPage from '../GalleryViewPage/Loadable';
+import Header from '../../components/Header';
+import HomePage from '../HomePage/Loadable';
+import NearbyPage from '../NearbyPage/Loadable';
+import NotFoundPage from '../NotFoundPage/Loadable';
+import ResizePage from '../admin/ResizePage/Loadable';
 import Walk from '../Walk/Loadable';
 
 import GlobalStyle from '../../global-styles';
 
-const AppWrapper = styled.div`
+const AppWrapper = styled.main`
   margin: 0 auto;
   display: flex;
   min-height: 100%;
@@ -38,6 +39,7 @@ function App() {
         <Route exact path="/admin/walk" component={Walk} />
         <Route exact path="/admin/resize" component={ResizePage} />
         <Route path="/explore" component={ExploreVideo} />
+        <Route path="/nearby" component={NearbyPage} />
         <Route path="/view/:host/:gallery/:album" component={AlbumViewPage} />
         <Route path="/view/:host/:gallery" component={GalleryViewPage} />
         <Route path="" component={NotFoundPage} />

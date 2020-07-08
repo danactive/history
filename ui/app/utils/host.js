@@ -28,7 +28,9 @@ export function getHostToken(host, storageType = null) {
       return localValue;
     }
 
-    return `http://localhost:${port}`;
+    if (storageType !== 'browser') {
+      return `http://localhost:${port}`;
+    }
   }
 
   return null;

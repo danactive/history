@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.6.2](https://github.com/danactive/history/compare/v5.6.1...v5.6.2) (2020-07-08)
+
+
+### Bug Fixes
+
+* **Home Page:** Remove Storage doesn't see local ([3a0777b](https://github.com/danactive/history/commit/3a0777b454bcb14db6c5f778429fd989fc5ffd34))
+
 ### [5.6.1](https://github.com/danactive/history/compare/v5.6.0...v5.6.1) (2020-07-08)
 
 

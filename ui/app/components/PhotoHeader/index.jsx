@@ -1,5 +1,7 @@
 import React from 'react';
 
+import A from '../A';
+
 function titleCase(str) {
   return decodeURI(
     str
@@ -12,7 +14,7 @@ function titleCase(str) {
 
 function LinkToReference({ reference } = {}) {
   const Hyperlink = ({ url }) => (
-    <a href={`${url}${reference[1]}`}>{titleCase(reference[1])}</a>
+    <A href={`${url}${reference[1]}`}>{titleCase(reference[1])}</A>
   );
 
   if (!reference) return null;
@@ -39,10 +41,17 @@ function LinkToReference({ reference } = {}) {
 function PhotoHeader({ currentMemory }) {
   if (!currentMemory || currentMemory === null) return null;
 
-  const { city, location, reference } = currentMemory;
+  const {
+    city,
+    location,
+    reference,
+    coordinates: [long, lat],
+  } = currentMemory;
 
   return [
-    <h4 key="headerCity">{city}</h4>,
+    <h4 key="headerCity">
+      {city} (<i>{`${long}, ${lat}`}</i>)
+    </h4>,
     <p key="headerLocation">
       {location} <LinkToReference reference={reference} />
     </p>,
