@@ -24,7 +24,7 @@ export function getHostToken(host, storageType = null) {
 
   if (host === 'local') {
     const localValue = getFromStorage('local');
-    if (storageType === 'browser') {
+    if (localValue) {
       return localValue;
     }
 

@@ -23,12 +23,9 @@ export function get(host) {
 export function update(host, value) {
   try {
     if (localStorage) {
-      const json = JSON.parse(localStorage.getItem(hostKey));
-      if (json) {
-        json[host] = value;
-        localStorage.setItem(hostKey, JSON.stringify(json));
-        return;
-      }
+      const json = JSON.parse(localStorage.getItem(hostKey)) || {};
+      json[host] = value;
+      localStorage.setItem(hostKey, JSON.stringify(json));
     }
   } catch (e) {
     const json = { [host]: value };
