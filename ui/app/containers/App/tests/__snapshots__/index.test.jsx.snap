@@ -41,6 +41,10 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
     <Route
       component={[Function]}
+      path="/nearby"
+    />
+    <Route
+      component={[Function]}
       path="/view/:host/:gallery/:album"
     />
     <Route
