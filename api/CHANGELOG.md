@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.6.1](https://github.com/danactive/history/compare/v5.6.0...v5.6.1) (2020-07-08)
+
+
+### Bug Fixes
+
+* **API:** Allow https://history.domaindesign.ca to read localhost for photo gallery ([6a8158e](https://github.com/danactive/history/commit/6a8158ed883a5bc54a88a8ec28460c94ea8560b1))
+* **Home Page:** Restore localStorage update method ([723bf89](https://github.com/danactive/history/commit/723bf896531c23df622fce8a51f5450a7cab126a))
+
 ## [5.6.0](https://github.com/danactive/history/compare/v5.5.0...v5.6.0) (2020-07-08)
 
 
