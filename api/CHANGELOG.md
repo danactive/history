@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.6.0](https://github.com/danactive/history/compare/v5.5.0...v5.6.0) (2020-07-08)
+
+
+### Features
+
+* **favicon:** Update favicon to Sony Alpha 5100 camera ([600692d](https://github.com/danactive/history/commit/600692d8db95dcb69bc298fba732067fa697922c))
+* **Home Page:** UI to remove tokens from browser storage ([74e643d](https://github.com/danactive/history/commit/74e643d1fdeef5d56435dc551b5a7c175e5be5d0))
+* **Host Storage:** Add new component for updating token to browser storage ([f35cba7](https://github.com/danactive/history/commit/f35cba7934e364cfe54821cf8a10ddc0221c3e12))
+* **Host Storage:** Both Dropbox and Localhost will read token/URL from local storage ([c5d242d](https://github.com/danactive/history/commit/c5d242d7fc03a21739bd46b31443fbd453004288))
+* **Hosting:** Configure netlify for static hosting ([e6a1dc7](https://github.com/danactive/history/commit/e6a1dc723be25b2111885f717598156e79a23e45))
+* **Redux:** Drop reselect in favour for Redux toolkit ([a83791c](https://github.com/danactive/history/commit/a83791c3c5ff12d35c8cf8829f09c724ef7423e9))
+
+
+### Bug Fixes
+
+* **Home Page:** Translate Host Storage text to Japanese and auto translate to German ([e267f87](https://github.com/danactive/history/commit/e267f87f140fda4e872841222902d70d19eb41b2))
+* **package:** Update jest to v26 ([4311742](https://github.com/danactive/history/commit/43117423462dd13a4ca1c3df3381f15ed33adda1))
+* upgrade snyk from 1.359.0 to 1.359.1 ([25f6745](https://github.com/danactive/history/commit/25f6745001be97513f7f55e7adf7414f2118697e))
+* upgrade snyk from 1.359.1 to 1.360.0 ([2335dc8](https://github.com/danactive/history/commit/2335dc826404410f4bc60f728cc0f8e444d0fcb6))
+* **Album View:** Move header below and condense ([aaf35f0](https://github.com/danactive/history/commit/aaf35f0ec164854b7cdcc6fc0abdd033b746c0ac))
+* **Album View:** Prevent video from loading when cannot find file ([1f24e07](https://github.com/danactive/history/commit/1f24e071c301c787a6ee1016ec7a29f75e804af2))
+* **Gallery View:** Allow all gallery properties to view ([388a4f8](https://github.com/danactive/history/commit/388a4f8332a952e4259d4f2f0bafb1b66a079bb0))
+* **package:** Update [@testing-library](https://github.com/testing-library) dep and enable JSX tests ([cb04fa5](https://github.com/danactive/history/commit/cb04fa5c48baeffc3ea1d59c5116d16fe0259eeb))
+
 ## [5.5.0](https://github.com/danactive/history/compare/v5.4.1...v5.5.0) (2020-06-29)
 
 
