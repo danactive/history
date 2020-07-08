@@ -1,5 +1,5 @@
 import { Dropbox } from 'dropbox';
-import 'whatwg-fetch';
+import { fetch } from 'whatwg-fetch';
 
 import { call, put, select } from 'redux-saga/effects';
 
@@ -27,7 +27,7 @@ describe('AlbumViewPage Saga', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = call(
-          [new Dropbox(), 'filesGetTemporaryLink'],
+          [new Dropbox({ fetch }), 'filesGetTemporaryLink'],
           argsAlbumXmlPath(fixtures),
         );
         // Unit test cannot reproduce global fetch so delete
@@ -103,7 +103,7 @@ describe('AlbumViewPage Saga', () => {
         expect.hasAssertions();
         const received = generator.next().value;
         const expected = call(
-          [new Dropbox(), 'filesGetTemporaryLink'],
+          [new Dropbox({ fetch }), 'filesGetTemporaryLink'],
           argsAlbumXmlPath(fixtures),
         );
         expect(received).toEqual(expected);

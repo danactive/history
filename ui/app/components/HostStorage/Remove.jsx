@@ -1,4 +1,5 @@
 import React, { memo, useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 
 import { getHostToken, hostCase } from '../../utils/host';
 import { remove as removeFromStorage } from '../../utils/localStorage';
@@ -7,6 +8,7 @@ import Button from '../Button';
 import GenericList from '../GenericList/Loadable';
 import H3 from '../H3';
 import ListItem from '../ListItem';
+import messages from './messages';
 
 function Remove({
   showHeader = true,
@@ -43,7 +45,11 @@ function Remove({
 
   return (
     <section>
-      {showHeader && <H3>Clear tokens from browser storage</H3>}
+      {showHeader && (
+        <H3>
+          <FormattedMessage {...messages.clearHeader} />
+        </H3>
+      )}
       <GenericList
         loading={false}
         error={false}

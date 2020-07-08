@@ -6,7 +6,7 @@ exports[`<HostStorage /> Should render and match the snapshot 1`] = `
   data-testid="form"
 >
   <span>
-     token/path for loading gallery/media
+     token for loading photo gallery
   </span>
   <input
     aria-label="Token input"
@@ -17,7 +17,7 @@ exports[`<HostStorage /> Should render and match the snapshot 1`] = `
   <input
     aria-label="Submit button"
     type="submit"
-    value="Store in browser"
+    value="Save in browser"
   />
 </form>
 `;

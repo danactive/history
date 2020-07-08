@@ -1,8 +1,7 @@
 import { Formik, Field, Form } from 'formik';
 import React, { memo, useState } from 'react';
-import styled from 'styled-components';
-
 import { FormattedMessage } from 'react-intl';
+import styled from 'styled-components';
 
 import { hostCase } from '../../utils/host';
 import { update as updateStorage } from '../../utils/localStorage';
@@ -64,12 +63,16 @@ function HostStorage({ host, storageUpdated }) {
           {errors.token && touched.token && (
             <ErrorMessage aria-label="Token error">{errors.token}</ErrorMessage>
           )}
-          <input
-            type="submit"
-            aria-label="Submit button"
-            disabled={isValidating}
-            value="Store in browser"
-          />
+          <FormattedMessage {...messages.saveButton}>
+            {msg => (
+              <input
+                type="submit"
+                aria-label="Submit button"
+                disabled={isValidating}
+                value={msg}
+              />
+            )}
+          </FormattedMessage>
           {stored && (
             <span role="img" aria-label="success">
               ✅
