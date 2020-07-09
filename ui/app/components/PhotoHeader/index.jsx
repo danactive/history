@@ -45,12 +45,12 @@ function PhotoHeader({ currentMemory }) {
     city,
     location,
     reference,
-    coordinates: [long, lat],
+    coordinates: [long, lat] = ['', ''],
   } = currentMemory;
 
   return [
     <h4 key="headerCity">
-      {city} (<i>{`${long}, ${lat}`}</i>)
+      <b>{city}</b> (<i>{`${long}, ${lat}`}</i>)
     </h4>,
     <p key="headerLocation">
       {location} <LinkToReference reference={reference} />

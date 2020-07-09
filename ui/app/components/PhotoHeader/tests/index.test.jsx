@@ -16,8 +16,7 @@ describe('<PhotoHeader />', () => {
     expect(received).toBeNull();
   });
 
-  // TODO danactive enable this test to ignore geo coordinate
-  test.skip('should have a city', () => {
+  test('should have a city', () => {
     expect.assertions(2);
 
     const city = 'Vancouver';
