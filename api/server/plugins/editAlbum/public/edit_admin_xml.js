@@ -158,7 +158,7 @@ const album = {
     Preview: (_filename) => {
       const filename = `${_filename.substr(0, _filename.lastIndexOf('.'))}.jpg`;
       const photoPath = [
-        '../static/gallery-',
+        '../galleries/',
         $('#editGalleries').val(),
         '/media/photos/',
         filename.substr(0, filename.indexOf('-')),
@@ -218,7 +218,7 @@ const album = {
       $('<div>')
         .click(album.photo.Invoke)
         .data('photo', item)
-        .html(['<img src="../static/gallery-', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join(''))
+        .html(['<img src="../galleries/', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join(''))
         .appendTo('#listPhotos');
     });
   },
@@ -235,7 +235,7 @@ const GetAlbumXml = () => { // both <select> and btn call this function
     isAlbumChangable = window.confirm('Change photo album?'); // eslint-disable-line no-alert
   }
   if (isAlbumChangable) {
-    $.get(`../static/gallery-${$('#editGalleries').val()}/xml/album_${$('#editAlbums').val()}.xml`)
+    $.get(`../galleries/${$('#editGalleries').val()}/${$('#editAlbums').val()}.xml`)
       .success(ConvertXmlToJson);
 
     $('#sortGallery')[0].selectedIndex = 0; // reset sort dropdown
@@ -256,7 +256,7 @@ const GetGalleryNames = () => { // both <select> and btn call this function
     isGalleryChangable = window.confirm('Change photo gallery?'); // eslint-disable-line no-alert
   }
   if (isGalleryChangable) {
-    $.get(`../static/gallery-${$('#editGalleries').val()}/xml/gallery.xml`)
+    $.get(`../galleries/${$('#editGalleries').val()}/gallery.xml`)
       .success(PopulateAlbums);
 
     $('#editAlbums').get(0).length = 0; // clear albums dropdown

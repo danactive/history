@@ -1,7 +1,7 @@
 const React = require('react');
 
 function Gallery({ gallery }) {
-  const xmlPath = `static/gallery-${gallery}/xml/gallery.xml`;
+  const xmlPath = `galleries/${gallery}/gallery.xml`;
 
   return (
     <li>

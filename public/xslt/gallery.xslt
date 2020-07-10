@@ -41,7 +41,7 @@
                 </xsl:attribute>
                 <img>
                   <xsl:attribute name="src">
-                    <xsl:text>../media/thumbs/</xsl:text>
+                    <xsl:text>media/thumbs/</xsl:text>
                     <xsl:value-of select="substring-before(filename,'-')"/>
                     <xsl:text>/</xsl:text>
                     <xsl:value-of select="filename"/>

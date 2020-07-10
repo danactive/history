@@ -9,7 +9,7 @@ describe('Gallery - Page (React Component)', () => {
     const aProps = wrapper.find('a').props();
 
     const actual = aProps.href;
-    const expected = 'static/gallery-demo/xml/gallery.xml';
+    const expected = 'galleries/demo/gallery.xml';
     expect(actual).toEqual(expected);
   });
 });

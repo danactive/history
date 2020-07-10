@@ -1,6 +1,6 @@
 import produce from 'immer';
 
-import normalizeError from '../../utils/error';
+import normalizeDropboxError from '../../utils/error';
 
 import {
   LOAD_ALBUM,
@@ -37,7 +37,12 @@ const reducer = (state = initialState, action) =>
       }
 
       case LOAD_ALBUM_ERROR: {
-        draft.albumError = normalizeError(action.error);
+        if (action.host === 'cdn') {
+          draft.albumError = action.error;
+        } else {
+          draft.albumError = normalizeDropboxError(action.error);
+        }
+        draft.albumErrorMsg = action.errorMsg;
         draft.albumLoading = false;
         break;
       }

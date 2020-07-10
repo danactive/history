@@ -9,7 +9,7 @@ export default {
 };
 
 export const Dropbox = () => <HostStorage host="dropbox" />;
-export const Local = () => <HostStorage host="local" />;
+export const Cdn = () => <HostStorage host="cdn" />;
 export const RemoveHosts = () => {
   const [isTokenInStorage, setTokenInStorage] = useState(false);
 

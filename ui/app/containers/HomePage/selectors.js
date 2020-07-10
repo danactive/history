@@ -29,8 +29,8 @@ const selectGalleryErrors = createSelector(selectHome, homeState => {
 
 const selectMissingHosts = createSelector(selectHome, homeState => {
   const missing = [];
-  if (homeState.galleries.local.length === 0) {
-    missing.push('local');
+  if (homeState.galleries.cdn.length === 0) {
+    missing.push('cdn');
   }
 
   if (homeState.galleries.dropbox.length === 0) {

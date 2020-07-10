@@ -4,7 +4,7 @@ import { get as getFromStorage } from './localStorage';
 
 /**
  * Get host token/path value
- * @param {('local'|'dropbox')} host
+ * @param {('cdn'|'dropbox')} host
  * @param {('browser')} [storageType=null]
  */
 export function getHostToken(host, storageType = null) {
@@ -14,18 +14,18 @@ export function getHostToken(host, storageType = null) {
       return envValue;
     }
 
-    const localValue = getFromStorage('dropbox');
-    if (localValue) {
-      return localValue;
+    const hostValue = getFromStorage('dropbox');
+    if (hostValue) {
+      return hostValue;
     }
 
     return undefined;
   }
 
-  if (host === 'local') {
-    const localValue = getFromStorage('local');
-    if (localValue) {
-      return localValue;
+  if (host === 'cdn') {
+    const hostValue = getFromStorage('cdn');
+    if (hostValue) {
+      return hostValue;
     }
 
     if (storageType !== 'browser') {
@@ -40,7 +40,7 @@ export const hostCase = host => {
   switch (host) {
     case 'dropbox':
       return 'Dropbox';
-    case 'local':
+    case 'cdn':
       return 'CDN';
     default:
   }
@@ -51,7 +51,7 @@ export const hostIndex = host => {
   switch (host) {
     case 'dropbox':
       return 1;
-    case 'local':
+    case 'cdn':
       return 0;
     default:
   }

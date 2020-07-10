@@ -36,7 +36,7 @@ describe('AlbumViewPage actions', () => {
         type: LOAD_ALBUM_ERROR,
         error: fixture.error,
       };
-      expect(albumLoadError(fixture.error)).toEqual(expected);
+      expect(albumLoadError({ error: fixture.error })).toEqual(expected);
     });
   });
 

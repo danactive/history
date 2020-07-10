@@ -29,9 +29,7 @@ describe('<HostStorage />', () => {
   });
 
   test('Form validation should prevent blank', async () => {
-    const { getByLabelText, getByTestId } = render(
-      <HostStorage host="local" />,
-    );
+    const { getByLabelText, getByTestId } = render(<HostStorage host="cdn" />);
 
     await act(async () => {
       fireEvent.change(getByLabelText('Token input'), {
@@ -49,9 +47,7 @@ describe('<HostStorage />', () => {
   });
 
   test('Should allow a localhost URL', async () => {
-    const { getByLabelText, getByTestId } = render(
-      <HostStorage host="local" />,
-    );
+    const { getByLabelText, getByTestId } = render(<HostStorage host="cdn" />);
 
     await act(async () => {
       fireEvent.change(getByLabelText('Token input'), {

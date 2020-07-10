@@ -17,7 +17,11 @@ import saga from './saga';
 const showAlbumError = error => {
   const message = dotProp.get(error, 'ui.title', error.message);
   return (
-    <div>{`Something went wrong, please try again! Reason (${message})`}</div>
+    <div>
+      Something went wrong, please try again!
+      <br />
+      {`Reason (${message})`}
+    </div>
   );
 };
 

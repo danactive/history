@@ -52,7 +52,7 @@ test('Read album XML', { skip: false }, (describe) => {
 
   describe.test('* Path', { skip: false }, (assert) => {
     const item = { filename: '2016-12-31-01.jpg' };
-    const expectedPath = `/static/gallery-demo/media/thumbs/2016/${item.filename}`;
+    const expectedPath = `/galleries/demo/media/thumbs/2016/${item.filename}`;
     assert.equal(lib.getThumbPath(item, 'demo'), expectedPath, 'Path');
     assert.end();
   });
@@ -130,11 +130,11 @@ test('Read album XML', { skip: false }, (describe) => {
     assert.equal(result.album.items[0].title, 'City: Desc', 'Title');
     assert.equal(
       result.album.items[0].thumbPath,
-      '/static/gallery-demo/media/thumbs/2016/2016-Image-Filename.jpg', 'Thumb Path',
+      '/galleries/demo/media/thumbs/2016/2016-Image-Filename.jpg', 'Thumb Path',
     );
     assert.equal(
       result.album.items[0].mediaPath,
-      '/static/gallery-demo/media/photos/2016/2016-Image-Filename.jpg', 'Photo Path',
+      '/galleries/demo/media/photos/2016/2016-Image-Filename.jpg', 'Photo Path',
     );
     assert.equal(result.album.items[1].caption, 'Caption', 'Video Caption');
     assert.equal(result.album.items[1].thumbCaption, 'Video: Caption', 'Video Thumb Caption');

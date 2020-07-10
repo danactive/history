@@ -1,9 +1,8 @@
 const tape = require('tape-catch');
 
-tape('Gallery Index', { skip: false }, (describe) => {
+tape('Public Index', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const joi = require('@hapi/joi');
-  const path = require('path');
   const inert = require('@hapi/inert');
 
   const lib = require('../lib');
@@ -12,23 +11,22 @@ tape('Gallery Index', { skip: false }, (describe) => {
   const plugins = [inert, lib];
   const port = utils.config.get('apiPort');
 
-  describe.test('* Validate Gallery List route', async (assert) => {
-    const relativeTo = path.join(__dirname, '../../../../../', 'public');
+  describe.test('* Validate Gallery XML static asset route', async (assert) => {
     const server = hapi.Server({ port });
     server.validator(joi);
-    server.path(relativeTo);
+    server.path('../../public');
 
     const request = {
       method: 'GET',
-      url: '/galleries',
+      url: '/galleries/demo/gallery.xml',
     };
 
     try {
       await server.register(plugins);
       const response = await server.inject(request);
-
+      console.log('#####', response.headers['content-type']);
       assert.equal(response.statusCode, 200);
-      assert.ok(response.result.galleries.includes('demo'), 'Demo gallery hosted on local');
+      assert.ok(response.headers['content-type'].includes('text/xml'), 'Content-type is XML');
     } catch (error) {
       assert.fail(error);
     }

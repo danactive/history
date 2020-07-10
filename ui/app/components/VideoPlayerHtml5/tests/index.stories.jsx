@@ -4,7 +4,7 @@ import VideoPlayerHTML5 from '../Loadable';
 
 import { getHostToken } from '../../../utils/host';
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 export default {
   title: 'VideoPlayerHTML5',
@@ -14,7 +14,7 @@ export default {
 export const Video = () => (
   <VideoPlayerHTML5
     extension="mp4"
-    poster={`${HISTORY_API_ROOT}/static/gallery-demo/media/photos/2012/2012-fireplace.jpg`}
-    src={`${HISTORY_API_ROOT}/static/gallery-demo/media/videos/2012-fireplace.mp4`}
+    poster={`${CDN_HOST}/demo/media/photos/2012/2012-fireplace.jpg`}
+    src={`${CDN_HOST}/demo/media/videos/2012-fireplace.mp4`}
   />
 );

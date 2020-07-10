@@ -36,7 +36,7 @@ function AlbumViewPage({
   const onUnload = () => dispatch(cleanCurrentMemory());
 
   const albumLoading = useSelector(selectAlbumLoading);
-  const albumError = useSelector(selectAlbumError);
+  const { albumError, albumErrorMsg } = useSelector(selectAlbumError);
   const albumName = useSelector(selectAlbumName);
   const currentMemory = useSelector(selectCurrentMemory);
   const memories = useSelector(selectMemories);
@@ -76,7 +76,7 @@ function AlbumViewPage({
       <SplitScreen currentMemory={currentMemory} memories={memories} />
       <PhotoHeader currentMemory={currentMemory} />
       <InfiniteThumbs
-        error={albumError}
+        error={albumErrorMsg || albumError}
         items={memories}
         loading={albumLoading}
       />

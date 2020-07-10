@@ -52,7 +52,10 @@ describe('selectAlbumError', () => {
         albumError: false,
       },
     };
-    expect(selectAlbumError(mockedState)).toEqual(false);
+    expect(selectAlbumError(mockedState)).toEqual({
+      albumError: false,
+      albumErrorMsg: undefined,
+    });
   });
 });
 
@@ -72,10 +75,10 @@ describe('selectMemories', () => {
   test('should select the album memories', () => {
     const mockedState = {
       global: {
-        host: 'local',
+        host: 'cdn',
         gallery: 'demo',
         album: 'sample',
-        local: {
+        cdn: {
           demo: {
             sample: {
               memories: [{ filename: '2017-12-25.jpg' }],
@@ -96,10 +99,10 @@ describe('selectNextPage', () => {
         page: 1,
       },
       global: {
-        host: 'local',
+        host: 'cdn',
         gallery: 'demo',
         album: 'sample',
-        local: {
+        cdn: {
           demo: {
             sample: {
               memories: [],
@@ -109,7 +112,7 @@ describe('selectNextPage', () => {
       },
     };
     const expected = {
-      host: 'local',
+      host: 'cdn',
       gallery: 'demo',
       album: 'sample',
       memories: [],

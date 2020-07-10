@@ -65,21 +65,6 @@ const register = (server) => {
   server.route(routes.staticRouteUtils({ urlSegment: 'album' }));
 
   server.route(routes.staticRouteJquery({ urlSegment: 'album' }));
-
-  server.route({
-    method: 'GET',
-    path: '/album/{gallery}/{album}/{param*}',
-    options: {
-      description: 'Expose any album in any gallery as a static asset',
-      tags: ['static'],
-      handler: {
-        directory: {
-          path: (request) => utils.file.safePublicPath(`/galleries/gallery-${request.params.gallery}/xml/album_${request.params.album}.xml`),
-          listing: false,
-        },
-      },
-    },
-  });
 };
 
 const plugin = {

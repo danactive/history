@@ -1,24 +1,24 @@
 const fs = require('fs');
-const { promisify } = require('util');
 
 const utils = require('../../utils');
 
-const readDir = promisify(fs.readdir);
+const fsPromises = fs.promises;
 
-async function galleriesContents() {
-  const galleriesPath = utils.file.safePublicPath('/galleries');
-  const fsContents = await readDir(galleriesPath);
-  return fsContents;
+async function getGalleries() {
+  try {
+    const hasPrefix = (content) => content.isDirectory();
+    const namesOnly = (content) => content.name;
+
+    const galleriesPath = utils.file.safePublicPath('/galleries');
+    const contents = await fsPromises.readdir(galleriesPath, { withFileTypes: true });
+
+    const galleries = contents.filter(hasPrefix).map(namesOnly);
+
+    return galleries;
+  } catch (error) {
+    return error;
+  }
 }
-
-const getGalleries = () => new Promise((resolve, reject) => {
-  const hasPrefix = (filename) => filename.startsWith('gallery-');
-  const parseName = (filename) => filename.substr(8);
-
-  galleriesContents()
-    .then((filenames) => resolve(filenames.filter(hasPrefix).map(parseName)))
-    .catch((error) => reject(error));
-});
 
 module.exports = {
   getGalleries,

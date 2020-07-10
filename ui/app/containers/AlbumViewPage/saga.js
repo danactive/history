@@ -2,7 +2,7 @@ import { Dropbox } from 'dropbox';
 import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 
 import request from '../../utils/request';
-import normalizeError from '../../utils/error';
+import normalizeDropboxError from '../../utils/error';
 import { getHostToken } from '../../utils/host';
 
 import {
@@ -29,7 +29,7 @@ import { chooseMemory } from '../App/actions';
 import { preloadPhoto } from '../InfiniteThumbs/actions';
 import { preloadAdjacentMemoryId } from '../InfiniteThumbs/saga';
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 const dbx = new Dropbox({
   accessToken: getHostToken('dropbox'),
@@ -37,7 +37,7 @@ const dbx = new Dropbox({
 });
 
 export const argsAlbumXmlPath = ({ gallery, album }) => ({
-  path: `/public/gallery-${gallery}/xml/album_${album}.xml`,
+  path: `/galleries/${gallery}/${album}.xml`,
 });
 
 const getYear = (filename = '') => filename.substr(0, 4);
@@ -58,7 +58,7 @@ export const argsThumbImgPath = ({ gallery, filename }) => {
   const jpgFilename = replaceFileExtWithJpg(filename);
 
   return {
-    path: `/public/gallery-${gallery}/media/thumbs/${year}/${jpgFilename}`,
+    path: `/galleries/${gallery}/media/thumbs/${year}/${jpgFilename}`,
   };
 };
 
@@ -90,15 +90,15 @@ export function* getAlbumFileOnDropbox({ host, gallery, album }) {
       }),
     );
   } catch (error) {
-    yield put(albumLoadError(normalizeError(error)));
+    yield put(albumLoadError({ error: normalizeDropboxError(error), host }));
   }
 }
 
-export function* getAlbumFileLocally({ host, gallery, album }) {
+export function* getAlbumFileOnCdn({ host, gallery, album }) {
   try {
     const xmlFile = yield call(
       request,
-      `${HISTORY_API_ROOT}/view/album/${gallery}/${album}`,
+      `${CDN_HOST}/galleries/${gallery}/${album}.xml`,
     );
     const memories = getItemNodes(xmlFile).map(parseItemNode);
     yield put(
@@ -110,15 +110,21 @@ export function* getAlbumFileLocally({ host, gallery, album }) {
       }),
     );
   } catch (error) {
-    yield put(albumLoadError(normalizeError(error)));
+    yield put(
+      albumLoadError({
+        error,
+        host,
+        errorMsg: `${error.message} ${CDN_HOST}/galleries/${gallery}/${album}.xml`,
+      }),
+    );
   }
 }
 
 export function* getAlbumFile({ host, gallery, album }) {
   if (host === 'dropbox') {
     yield call(getAlbumFileOnDropbox, { host, gallery, album });
-  } else if (host === 'local') {
-    yield call(getAlbumFileLocally, { host, gallery, album });
+  } else if (host === 'cdn') {
+    yield call(getAlbumFileOnCdn, { host, gallery, album });
   }
 }
 
@@ -185,11 +191,11 @@ export function* getThumbPathsOnDropbox({
       yield put(enoughThumbsLoaded());
     }
   } catch (error) {
-    yield put(nextPageError(normalizeError(error)));
+    yield put(nextPageError(normalizeDropboxError(error)));
   }
 }
 
-export function* getThumbPathsLocally({
+export function* getThumbPathsOnCdn({
   memories: missingPathMemories,
   host,
   gallery,
@@ -210,7 +216,7 @@ export function* getThumbPathsLocally({
 
       return {
         ...memory,
-        thumbLink: `${HISTORY_API_ROOT}/static/gallery-${gallery}/media/thumbs/${year}/${jpgFile}`,
+        thumbLink: `${CDN_HOST}/galleries/${gallery}/media/thumbs/${year}/${jpgFile}`,
       };
     });
 
@@ -227,7 +233,7 @@ export function* getThumbPathsLocally({
 
     yield put(enoughThumbsLoaded());
   } catch (error) {
-    yield put(albumLoadError(normalizeError(error)));
+    yield put(albumLoadError({ error: normalizeDropboxError(error), host }));
   }
 }
 
@@ -236,8 +242,8 @@ export function* getThumbPaths() {
 
   if (args.host === 'dropbox') {
     yield call(getThumbPathsOnDropbox, args);
-  } else if (args.host === 'local') {
-    yield call(getThumbPathsLocally, args);
+  } else if (args.host === 'cdn') {
+    yield call(getThumbPathsOnCdn, args);
   }
 }
 
