@@ -4,7 +4,7 @@
   "scripts": {
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "npm run lint:js && npm run lint:docs",
-    "lint:js": "eslint app server *.js --ext .js,.jsx",
+    "lint:js": "eslint server *.js --ext .js,.jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown.js .",
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
