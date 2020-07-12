@@ -5,16 +5,9 @@ import ThumbImg from '..';
 
 describe('Component - <ThumbImg />', () => {
   const expectedValues = {
-    alt: 'Preview thumbnail image (scaled down dimensions)',
+    alt: 'Preview thumbnail (scaled down dimensions)',
     src: 'test.png',
   };
-
-  test('should render a component', () => {
-    const { container } = render(<ThumbImg />);
-    const received = container.querySelector('img').className;
-    const expected = expect.stringContaining('ThumbImg__Img');
-    expect(received).toEqual(expected);
-  });
 
   test('should match src attribute value', () => {
     const { container } = render(<ThumbImg src={expectedValues.src} />);

@@ -3,6 +3,7 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
+import styled from 'styled-components';
 
 import LoadingIndicator from '../../components/LoadingIndicator';
 import ThumbImg from '../../components/ThumbImg';
@@ -14,18 +15,28 @@ import { selectThumbsError } from '../App/selectors';
 import reducer from '../App/reducer';
 import saga from './saga';
 
+const ErrorMessage = styled.div`
+  color: white;
+  padding: 1rem;
+`;
+
 const showAlbumError = error => {
   const message = dotProp.get(error, 'ui.title', error.message);
   return (
-    <div>
+    <ErrorMessage>
       Something went wrong, please try again!
       <br />
       {`Reason (${message})`}
-    </div>
+    </ErrorMessage>
   );
 };
 
 const showThumbsError = error => <div>{error.ui.title}</div>;
+
+const Wrapper = styled.ul`
+  list-style: none;
+  padding-left: 2px;
+`;
 
 const InfiniteThumbs = ({ items, error: albumError, loading }) => {
   const dispatch = useDispatch();
@@ -50,9 +61,10 @@ const InfiniteThumbs = ({ items, error: albumError, loading }) => {
 
   const thumbImages = (item, index) => (
     <ThumbImg
-      alt={item.filename}
       key={`thumb-${item.filename}`}
       onClick={() => selectThumb(item.id, index)}
+      caption={item.caption}
+      href={item.photoLink}
       src={item.thumbLink}
     />
   );
@@ -70,6 +82,7 @@ const InfiniteThumbs = ({ items, error: albumError, loading }) => {
 
   return (
     <InfiniteScroll
+      element={Wrapper}
       pageStart={0}
       loadMore={nextPage}
       hasMore={hasMore}

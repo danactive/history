@@ -20,7 +20,7 @@ tape('Gallery Index', { skip: false }, (describe) => {
 
     const request = {
       method: 'GET',
-      url: '/galleries',
+      url: '/galleryList',
     };
 
     try {

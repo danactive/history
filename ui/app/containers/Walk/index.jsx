@@ -90,7 +90,7 @@ function Walk({ location: { hash } }) {
           <img
             key={`thumbnail-${item.filename}`}
             alt="No preview yet"
-            src={`${CDN_HOST}/public/${statePath}/${item.filename}`}
+            src={`${CDN_HOST}/${statePath}/${item.filename}`}
             width={resizeDimensions.preview.width}
             height={resizeDimensions.preview.height}
           />,

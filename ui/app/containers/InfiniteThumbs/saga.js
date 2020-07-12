@@ -118,7 +118,7 @@ export function* getPhotoPathsOnCdn({
   );
 
   const paths = memory.thumbLink.replace('thumbs', 'videos').split('/');
-  paths.splice(8, 2); // delete year folder and JPG
+  paths.splice(7, 2); // delete year folder and JPG
   const videoLink = `${paths.join('/')}/${memory.filename}`;
   yield put(
     loadVideoSuccess({

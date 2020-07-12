@@ -3,7 +3,7 @@ const gallery = require('./gallery');
 async function register(server) {
   server.route({
     method: 'GET',
-    path: '/galleries',
+    path: '/galleryList',
     options: {
       tags: ['api'],
       handler: async () => ({ galleries: await gallery.getGalleries() }),

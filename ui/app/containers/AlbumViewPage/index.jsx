@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
 import InfiniteThumbs from '../InfiniteThumbs';
+import LoadingIndicator from '../../components/LoadingIndicator';
 import PhotoHeader from '../../components/PhotoHeader';
 import SplitScreen from './SplitScreen';
 
 import { chooseAdjacentMemory, cleanCurrentMemory, loadAlbum } from './actions';
-import albumReducer from '../App/reducer';
 import pageReducer from './reducer';
 import {
   selectAlbumLoading,
@@ -18,7 +18,7 @@ import {
   selectMemories,
 } from './selectors';
 import saga from './saga';
-import LoadingIndicator from '../../components/LoadingIndicator';
+import albumReducer from '../App/reducer';
 
 function AlbumViewPage({
   match: {
@@ -69,7 +69,7 @@ function AlbumViewPage({
   }
 
   return (
-    <main>
+    <section>
       <Helmet>
         <title>{`${albumName}  Album`}</title>
       </Helmet>
@@ -80,7 +80,7 @@ function AlbumViewPage({
         items={memories}
         loading={albumLoading}
       />
-    </main>
+    </section>
   );
 }
 

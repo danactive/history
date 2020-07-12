@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: whitesmoke;
   }
 
   body.fontLoaded {
@@ -17,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #app {
-    background-color: #fafafa;
+    background-color: #323232;
     min-height: 100%;
     min-width: 100%;
   }
@@ -32,6 +33,8 @@ const GlobalStyle = createGlobalStyle`
     font-family: inherit;
     font-size: inherit;
   }
+
+  select { color: whitesmoke; }
 `;
 
 export default GlobalStyle;
