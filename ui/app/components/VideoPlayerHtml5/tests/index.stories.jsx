@@ -14,7 +14,7 @@ export default {
 export const Video = () => (
   <VideoPlayerHTML5
     extension="mp4"
-    poster={`${CDN_HOST}/demo/media/photos/2012/2012-fireplace.jpg`}
-    src={`${CDN_HOST}/demo/media/videos/2012-fireplace.mp4`}
+    poster={`${CDN_HOST}/galleries/demo/media/photos/2012/2012-fireplace.jpg`}
+    src={`${CDN_HOST}/galleries/demo/media/videos/2012-fireplace.mp4`}
   />
 );

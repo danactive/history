@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
 import ListFile from '../ListFile';
 import GenericList from '../../../components/GenericList';
@@ -34,12 +35,14 @@ export const ImagesWithNav = () => {
   const itemFiles = generateImageFilenames(8, 'jpgraw');
   addParentDirectoryNav(itemFiles, 'fake');
   return (
-    <GenericList
-      key="walk-GenericList"
-      component={ListFile}
-      items={organizeByMedia(itemFiles)}
-      loading={false}
-      error={false}
-    />
+    <BrowserRouter>
+      <GenericList
+        key="walk-GenericList"
+        component={ListFile}
+        items={organizeByMedia(itemFiles)}
+        loading={false}
+        error={false}
+      />
+    </BrowserRouter>
   );
 };
