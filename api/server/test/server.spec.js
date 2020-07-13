@@ -30,7 +30,7 @@ tape('Server', { skip: false }, (describe) => {
   });
 
   describe.test('* View Album route', async (assert) => {
-    const html = 'class="liAlbumPhoto"><div class="albumBoxPhotoImg"><a href="/static/gallery-demo/media/photos/2004/2004-01-04-01.jpg" rel="set"';
+    const html = 'class="liAlbumPhoto"><div class="albumBoxPhotoImg"><a href="/galleries/demo/media/photos/2004/2004-01-04-01.jpg" rel="set"';
     const urlStem = `/view/album?${querystring.stringify({
       gallery: config.defaultGallery,
       album_stem: config.defaultAlbum,
@@ -48,16 +48,8 @@ tape('Server', { skip: false }, (describe) => {
     assert.end();
   });
 
-  describe.test('* Explore Video route', async (assert) => {
-    const html = 'src="./explore/video/static/lib/lodash.full.m';
-    const urlStem = '/explore';
-    await checkHtml({ assert, html, urlStem });
-
-    assert.end();
-  });
-
   describe.test('* Home route', async (assert) => {
-    const html = '<a href="static/gallery-demo/xml/gallery.xml">demo</a>';
+    const html = '<a href="galleries/demo/gallery.xml">demo</a>';
     const urlStem = '/';
     await checkHtml({ assert, html, urlStem });
 

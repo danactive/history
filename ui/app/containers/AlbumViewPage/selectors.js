@@ -25,10 +25,10 @@ export const selectAlbumLoading = createSelector(
   pageState => pageState.albumLoading,
 );
 
-export const selectAlbumError = createSelector(
-  [selectPage],
-  pageState => pageState.albumError,
-);
+export const selectAlbumError = createSelector([selectPage], pageState => ({
+  albumError: pageState.albumError,
+  albumErrorMsg: pageState.albumErrorMsg,
+}));
 
 export const selectAlbumName = createSelector(
   [selectGlobal],

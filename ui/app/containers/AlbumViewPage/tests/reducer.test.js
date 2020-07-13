@@ -58,7 +58,10 @@ describe('pageReducer', () => {
   });
 
   test('should handle the albumLoadError action correctly', () => {
-    const received = pageReducer(state, albumLoadError(fixture.error));
+    const received = pageReducer(
+      state,
+      albumLoadError({ error: fixture.error }),
+    );
 
     const expected = produce(state, draft => {
       draft.albumError = fixture.error;

@@ -1,10 +1,10 @@
 {
   "name": "history",
-  "version": "5.6.2",
+  "version": "6.0.0",
   "scripts": {
     "harness": "node ./node_modules/tuxharness/index.js",
     "lint": "npm run lint:js && npm run lint:docs",
-    "lint:js": "eslint app server *.js --ext .js,.jsx",
+    "lint:js": "eslint server *.js --ext .js,.jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown.js .",
     "lint:filter": "eslint --ext .js,.jsx",
     "release": "standard-version",
@@ -39,7 +39,7 @@
     "geojson": "^0.5.0",
     "glob": "^7.1.6",
     "gm": "^1.23.0",
-    "hapi-react-views": "^10.1.1",
+    "hapi-react-views": "^10.1.2",
     "hapi-swagger": "^13.0.2",
     "isomorphic-fetch": "^2.2.1",
     "jquery-colorbox": "^1.6.4",

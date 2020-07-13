@@ -7,7 +7,7 @@ import { getHostToken } from '../../../utils/host';
 import { RESIZE_IMAGE } from './constants';
 import { resizeImageFailed, resizeImageSuccess } from './actions';
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 export function* callResizeApi({ filename }) {
   try {
@@ -22,7 +22,7 @@ export function* callResizeApi({ filename }) {
     };
     const response = yield call(
       request,
-      `${HISTORY_API_ROOT}/admin/resize`,
+      `${CDN_HOST}/admin/resize`,
       requestArgs,
     );
 

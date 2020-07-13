@@ -25,7 +25,7 @@ const {
   organizeByMedia,
 } = walkUtils;
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 function Walk({ location: { hash } }) {
   const dispatch = useDispatch();
@@ -90,7 +90,7 @@ function Walk({ location: { hash } }) {
           <img
             key={`thumbnail-${item.filename}`}
             alt="No preview yet"
-            src={`${HISTORY_API_ROOT}/public/${statePath}/${item.filename}`}
+            src={`${CDN_HOST}/${statePath}/${item.filename}`}
             width={resizeDimensions.preview.width}
             height={resizeDimensions.preview.height}
           />,

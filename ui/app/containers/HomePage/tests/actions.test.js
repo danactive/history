@@ -34,9 +34,9 @@ describe('Home Actions', () => {
     const expectedResult = {
       type: LOAD_GALLERIES_ERROR,
       error,
-      host: 'local',
+      host: 'cdn',
     };
 
-    expect(galleriesLoadingError(error, 'local')).toEqual(expectedResult);
+    expect(galleriesLoadingError(error, 'cdn')).toEqual(expectedResult);
   });
 });

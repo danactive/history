@@ -7,10 +7,10 @@ import actions from './actions';
 import { LIST_DIRECTORY_REQUEST, RESIZE_IMAGES_REQUEST } from './constants';
 import { selectPath } from './selectors';
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 function getWalkUrl(path) {
-  const baseUrl = `${HISTORY_API_ROOT}/admin/walk-path`;
+  const baseUrl = `${CDN_HOST}/admin/walk-path`;
 
   if (path) {
     return querystring(baseUrl, { path });
@@ -49,7 +49,7 @@ function resizeOptions(sourcePath) {
 export function* requestResizeImages({ images }) {
   try {
     const path = yield select(selectPath);
-    const url = `${HISTORY_API_ROOT}/admin/resize`;
+    const url = `${CDN_HOST}/admin/resize`;
 
     yield all(
       images.map(filename =>

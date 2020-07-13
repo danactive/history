@@ -15,7 +15,7 @@ function Remove({
   setTokenInStorage = () => {},
   storageUpdated = () => {},
 }) {
-  const storedHostnames = ['dropbox', 'local'].filter(host =>
+  const storedHostnames = ['dropbox', 'cdn'].filter(host =>
     getHostToken(host, 'browser'),
   );
 

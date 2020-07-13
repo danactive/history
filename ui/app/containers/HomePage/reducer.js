@@ -13,7 +13,7 @@ export const initialState = {
   galleryLoadings: [false, false],
   galleries: {
     dropbox: [],
-    local: [],
+    cdn: [],
   },
 };
 
@@ -36,12 +36,12 @@ const homeReducer = (state = initialState, action) =>
           draft.galleries.dropbox = action.galleries.dropbox.entries.map(
             item => ({
               id: item.id,
-              name: item.name.replace(/gallery-/gi, ''),
+              name: item.name,
             }),
           );
         }
-        if (action.galleries && action.galleries.local) {
-          draft.galleries.local = action.galleries.local;
+        if (action.galleries && action.galleries.cdn) {
+          draft.galleries.cdn = action.galleries.cdn;
         }
         break;
 

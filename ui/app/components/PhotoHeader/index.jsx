@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import A from '../A';
 
@@ -13,11 +14,11 @@ function titleCase(str) {
 }
 
 function LinkToReference({ reference } = {}) {
+  if (!reference) return null;
+
   const Hyperlink = ({ url }) => (
     <A href={`${url}${reference[1]}`}>{titleCase(reference[1])}</A>
   );
-
-  if (!reference) return null;
 
   switch (reference[0]) {
     case 'facebook': {
@@ -38,6 +39,14 @@ function LinkToReference({ reference } = {}) {
   }
 }
 
+const H4 = styled.h4`
+  color: whitesmoke;
+`;
+
+const P = styled.p`
+  color: silver;
+`;
+
 function PhotoHeader({ currentMemory }) {
   if (!currentMemory || currentMemory === null) return null;
 
@@ -49,12 +58,12 @@ function PhotoHeader({ currentMemory }) {
   } = currentMemory;
 
   return [
-    <h4 key="headerCity">
+    <H4 key="headerCity">
       <b>{city}</b> (<i>{`${long}, ${lat}`}</i>)
-    </h4>,
-    <p key="headerLocation">
+    </H4>,
+    <P key="headerLocation">
       {location} <LinkToReference reference={reference} />
-    </p>,
+    </P>,
   ];
 }
 

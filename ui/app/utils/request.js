@@ -10,12 +10,23 @@ function parseJSON(response) {
     return null;
   }
 
+  const contentType = response.headers.get('Content-Type');
   // *********** HISTORY CUSTOM not React Boilerplate
   if (
-    response.headers.get('Content-Type').includes('application/xml') ||
-    response.headers.get('Content-Type').includes('text/xml')
+    contentType.includes('application/xml') ||
+    contentType.includes('text/xml')
   ) {
     return response.text();
+  }
+
+  try {
+    if (contentType.includes('application/octet-stream')) {
+      return response.json();
+    }
+  } catch {
+    if (contentType.includes('application/octet-stream')) {
+      return response.text();
+    }
   }
 
   return response.json();

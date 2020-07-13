@@ -19,6 +19,7 @@ import Walk from '../Walk/Loadable';
 import GlobalStyle from '../../global-styles';
 
 const AppWrapper = styled.main`
+  background-color: #323232;
   margin: 0 auto;
   display: flex;
   min-height: 100%;

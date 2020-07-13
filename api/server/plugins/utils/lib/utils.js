@@ -108,7 +108,7 @@ fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
   const firstVideoSource = filepath.split(',')[0];
   const type = fileMethods.type(firstVideoSource);
   const file = firstVideoSource.substr(0, firstVideoSource.indexOf(type) - 1);
-  return `/static/gallery-${gallery}/media/thumbs/${year}/${file}.jpg`;
+  return `/galleries/${gallery}/media/thumbs/${year}/${file}.jpg`;
 };
 
 /*

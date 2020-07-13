@@ -12,7 +12,7 @@ import { getHostToken } from '../../utils/host';
 
 import actions from './actions';
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 function Menu({ showMenu, imageFilenames, path }) {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ function Menu({ showMenu, imageFilenames, path }) {
     "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'
     -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
      */
-    return request(`${HISTORY_API_ROOT}/admin/rename`, options).then(setOutput);
+    return request(`${CDN_HOST}/admin/rename`, options).then(setOutput);
   }
 
   function handleResize() {

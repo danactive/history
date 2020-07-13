@@ -61,7 +61,7 @@ function getThumbPath(item, gallery) {
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
   const imageFilename = jpgFilenameInsensitive(filename);
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
-  return `/static/gallery-${gallery}/media/thumbs/${year}/${imageFilename}`;
+  return `/galleries/${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
 
 function getVideoPath(item, gallery) {
@@ -121,10 +121,10 @@ function safePath(name, value) {
   }
 
   if (name === 'albumStem') {
-    return `album_${value}.xml`;
+    return `${value}.xml`;
   }
 
-  return `gallery-${value}`;
+  return value;
 }
 
 function ensureSafePath(name, value, reject) {
@@ -146,7 +146,6 @@ const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
     '../../../../../',
     'public/galleries',
     ensureSafePath('gallery', gallery, reject),
-    'xml',
     ensureSafePath('albumStem', albumStem, reject),
   );
 

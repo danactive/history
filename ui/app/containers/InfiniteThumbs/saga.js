@@ -15,7 +15,7 @@ import {
 } from './actions';
 import { supportedFileTypes } from '../../../../config.json';
 
-import normalizeError from '../../utils/error';
+import normalizeDropboxError from '../../utils/error';
 import { getHostToken } from '../../utils/host';
 import { getExt } from '../../utils/path';
 
@@ -35,12 +35,12 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
   const jpgFilename = replaceFileExtWithJpg(filename);
 
   return {
-    path: `/public/gallery-${gallery}/media/photos/${year}/${jpgFilename}`,
+    path: `/galleries/${gallery}/media/photos/${year}/${jpgFilename}`,
   };
 };
 
 export const argsVideoXmlPath = ({ gallery, filename }) => ({
-  path: `/public/gallery-${gallery}/media/videos/${filename}`,
+  path: `/galleries/${gallery}/media/videos/${filename}`,
 });
 
 // saga WORKER for CHOOSE_MEMORY for Dropbox gallery
@@ -90,15 +90,15 @@ export function* getPhotoPathsOnDropbox({
     }
   } catch (error) {
     if (isVideo) {
-      yield put(videoLoadError(normalizeError(error), filename));
+      yield put(videoLoadError(normalizeDropboxError(error), filename));
     } else {
-      yield put(photoLoadError(normalizeError(error), filename));
+      yield put(photoLoadError(normalizeDropboxError(error), filename));
     }
   }
 }
 
-// saga WORKER for CHOOSE_MEMORY for local gallery
-export function* getPhotoPathsLocally({
+// saga WORKER for CHOOSE_MEMORY for CDN gallery
+export function* getPhotoPathsOnCdn({
   id,
   memory,
   setCurrentMemory,
@@ -185,8 +185,8 @@ export function* getMemoryPhotoPath({ id, index, setCurrentMemory = true }) {
         gallery,
         album,
       });
-    } else if (host === 'local') {
-      yield call(getPhotoPathsLocally, {
+    } else if (host === 'cdn') {
+      yield call(getPhotoPathsOnCdn, {
         id,
         memory,
         setCurrentMemory,

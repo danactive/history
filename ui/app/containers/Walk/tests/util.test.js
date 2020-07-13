@@ -55,15 +55,16 @@ describe('Walk - util', () => {
 
     test('two levels deep', () => {
       const expectedFile = { ...file, path: 'galleries' };
-      expect(
-        addParentDirectoryNav([dummyFile], 'galleries/gallery-demo'),
-      ).toEqual([expectedFile, dummyFile]);
+      expect(addParentDirectoryNav([dummyFile], 'galleries/demo')).toEqual([
+        expectedFile,
+        dummyFile,
+      ]);
     });
 
     test('three levels deep', () => {
-      const expectedFile = { ...file, path: 'galleries/gallery-demo' };
+      const expectedFile = { ...file, path: 'galleries/demo' };
       expect(
-        addParentDirectoryNav([dummyFile], 'galleries/gallery-demo/thumbs'),
+        addParentDirectoryNav([dummyFile], 'galleries/demo/thumbs'),
       ).toEqual([expectedFile, dummyFile]);
     });
   });

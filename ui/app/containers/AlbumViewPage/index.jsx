@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
 import InfiniteThumbs from '../InfiniteThumbs';
+import LoadingIndicator from '../../components/LoadingIndicator';
 import PhotoHeader from '../../components/PhotoHeader';
 import SplitScreen from './SplitScreen';
 
 import { chooseAdjacentMemory, cleanCurrentMemory, loadAlbum } from './actions';
-import albumReducer from '../App/reducer';
 import pageReducer from './reducer';
 import {
   selectAlbumLoading,
@@ -18,7 +18,7 @@ import {
   selectMemories,
 } from './selectors';
 import saga from './saga';
-import LoadingIndicator from '../../components/LoadingIndicator';
+import albumReducer from '../App/reducer';
 
 function AlbumViewPage({
   match: {
@@ -36,7 +36,7 @@ function AlbumViewPage({
   const onUnload = () => dispatch(cleanCurrentMemory());
 
   const albumLoading = useSelector(selectAlbumLoading);
-  const albumError = useSelector(selectAlbumError);
+  const { albumError, albumErrorMsg } = useSelector(selectAlbumError);
   const albumName = useSelector(selectAlbumName);
   const currentMemory = useSelector(selectCurrentMemory);
   const memories = useSelector(selectMemories);
@@ -69,18 +69,18 @@ function AlbumViewPage({
   }
 
   return (
-    <main>
+    <section>
       <Helmet>
         <title>{`${albumName}  Album`}</title>
       </Helmet>
       <SplitScreen currentMemory={currentMemory} memories={memories} />
       <PhotoHeader currentMemory={currentMemory} />
       <InfiniteThumbs
-        error={albumError}
+        error={albumErrorMsg || albumError}
         items={memories}
         loading={albumLoading}
       />
-    </main>
+    </section>
   );
 }
 

@@ -10,7 +10,7 @@ import { getHostToken } from '../../utils/host';
 // eslint-disable-next-line no-console
 const logError = (...message) => console.error(...message);
 
-const HISTORY_API_ROOT = getHostToken('local');
+const CDN_HOST = getHostToken('cdn');
 
 // Dropbox API v2 request/response handler
 export function* getDropboxGalleries() {
@@ -27,7 +27,7 @@ export function* getDropboxGalleries() {
     const dbx = new Dropbox({ accessToken, fetch });
 
     const galleries = yield call([dbx, dbx.filesListFolder], {
-      path: '/public',
+      path: '/galleries',
     });
     yield put(galleriesLoadingSuccess({ dropbox: galleries }));
   } catch (error) {
@@ -36,25 +36,22 @@ export function* getDropboxGalleries() {
   }
 }
 
-function* getLocalFolders() {
+function* getCdnFolders() {
   try {
-    const { galleries } = yield call(
-      request,
-      `${HISTORY_API_ROOT}/gallery/list`,
-    );
+    const { galleries } = yield call(request, `${CDN_HOST}/galleryList`);
     yield put(
       galleriesLoadingSuccess({
-        local: galleries.map(name => ({ name, id: `local-${name}` })),
+        cdn: galleries.map(name => ({ name, id: `cdn-${name}` })),
       }),
     );
   } catch (error) {
-    logError('getLocalFolders', error);
-    yield put(galleriesLoadingError(error, 'local'));
+    logError('getCdnFolders', error);
+    yield put(galleriesLoadingError(error, 'cdn'));
   }
 }
 
 function* getGalleries() {
-  yield all([call(getLocalFolders), call(getDropboxGalleries)]);
+  yield all([call(getCdnFolders), call(getDropboxGalleries)]);
 }
 
 // ROOT saga manages WATCHER lifecycle

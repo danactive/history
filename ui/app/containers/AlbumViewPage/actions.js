@@ -38,10 +38,12 @@ export function albumLoadSuccess({ memories, host, gallery, album }) {
   };
 }
 
-export function albumLoadError(error) {
+export function albumLoadError({ error, errorMsg, host }) {
   return {
     type: LOAD_ALBUM_ERROR,
     error,
+    errorMsg,
+    host,
   };
 }
 

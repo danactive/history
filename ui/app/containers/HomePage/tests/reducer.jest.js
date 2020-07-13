@@ -29,7 +29,7 @@ describe('homeReducer', () => {
 
   test('should handle the galleriesLoadingSuccess action correctly', () => {
     const fixture = {
-      entries: [{ name: 'gallery-demo', path_lower: '/public/gallery-demo' }],
+      entries: [{ name: 'demo', path_lower: '/public/galleries/demo' }],
     };
     const expectedResult = produce(state, draft => {
       draft.galleryLoadings = false;
@@ -45,10 +45,10 @@ describe('homeReducer', () => {
     const fixture = { type: 'ReferenceError' };
     const expectedResult = produce(state, draft => {
       draft.galleryErrors = fixture;
-      draft.host = 'local';
+      draft.host = 'cdn';
     });
 
-    expect(homeReducer(state, galleriesLoadingError(fixture, 'local'))).toEqual(
+    expect(homeReducer(state, galleriesLoadingError(fixture, 'cdn'))).toEqual(
       expectedResult,
     );
   });

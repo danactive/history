@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 
+import Link from '../../components/Link';
 import ListItem from '../../components/ListItem';
+
 import { capitalize } from '../../utils/strings';
 import { selectCritical } from '../App/selectors';
 

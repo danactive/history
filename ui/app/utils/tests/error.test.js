@@ -1,11 +1,11 @@
 // *********** HISTORY CUSTOM not React Boilerplate
-import normalizeError from '../error';
+import normalizeDropboxError from '../error';
 
 describe('error', () => {
-  describe('normalizeError', () => {
+  describe('normalizeDropboxError', () => {
     test('Dropbox error with summary child', () => {
       const message = 'path/not_found/..';
-      const path = '/public/gallery-dan/media/thumbs/2015/2015-12-02-62.jpg';
+      const path = '/galleries/dan/media/thumbs/2015/2015-12-02-62.jpg';
       const status = 409;
 
       const error = {
@@ -21,7 +21,7 @@ describe('error', () => {
           },
         },
       };
-      const actual = normalizeError(error);
+      const actual = normalizeDropboxError(error);
       const expected = {
         message,
         status,
@@ -50,7 +50,7 @@ describe('error', () => {
         },
         status: 429,
       };
-      const actual = normalizeError(error);
+      const actual = normalizeDropboxError(error);
       const expected = {
         message,
         status: 429,
@@ -67,7 +67,7 @@ describe('error', () => {
     test('Dropbox error with response', () => {
       const message =
         'Error in call to API function "files/get_temporary_link": The given OAuth 2 access token is malformed.';
-      const path = '/public/gallery-dan/xml/album_cuba2015.xml';
+      const path = '/galleries/dan/cuba2015.xml';
       const status = 400;
 
       const error = {
@@ -87,7 +87,7 @@ describe('error', () => {
           },
         },
       };
-      const actual = normalizeError(error);
+      const actual = normalizeDropboxError(error);
       const expected = {
         message,
         status,
@@ -103,7 +103,7 @@ describe('error', () => {
 
     test('Normal JavaScript error', () => {
       const error = new Error('Message');
-      const actual = normalizeError(error);
+      const actual = normalizeDropboxError(error);
 
       // Error stack tricky to test
       const actualDebug = actual.stack;

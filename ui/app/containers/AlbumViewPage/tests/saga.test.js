@@ -3,7 +3,7 @@ import { fetch } from 'whatwg-fetch';
 
 import { call, put, select } from 'redux-saga/effects';
 
-import normalizeError from '../../../utils/error';
+import normalizeDropboxError from '../../../utils/error';
 import request, { parseTextXml } from '../../../utils/request';
 
 import {
@@ -116,7 +116,9 @@ describe('AlbumViewPage Saga', () => {
         const received = generator.throw(error).value;
         const expected = put({
           type: LOAD_ALBUM_ERROR,
-          error: normalizeError(error),
+          error: normalizeDropboxError(error),
+          errorMsg: undefined,
+          host: 'dropbox',
         });
         expect(received).toEqual(expected);
       });
