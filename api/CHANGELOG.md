@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/danactive/history/compare/v5.6.2...v6.0.0) (2020-07-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **API:** REST API changes to file based in public folder
+
+### Features
+
+* **Album View:** Dark mode applied with thumbnail captions ([7337841](https://github.com/danactive/history/commit/7337841a7aa262a115c108bdac382757c27a1fd8))
+* **API:** Rename Local to CDN ([fad4b98](https://github.com/danactive/history/commit/fad4b9894e687065d9aa9a9a4ca62bcac2c942b7))
+* **Link:** Add colour swatch for internal hyperlinks ([f7c745b](https://github.com/danactive/history/commit/f7c745b118887a705c07c121fc563564eae61692))
+* **Nearby:** Add empty component to lookup nearby photos based on geo coordinate ([f1a79a9](https://github.com/danactive/history/commit/f1a79a9bc0f4e57dd14bfc97530dd037d0c9e82b))
+
+
+### Bug Fixes
+
+* **package:** Remove React Boilterplate setup ([79a08dd](https://github.com/danactive/history/commit/79a08dd607fe09888725d8235f6906c7952ce6df))
+* **package:** Remove React Boilterplate templates ([d035ced](https://github.com/danactive/history/commit/d035ced230058dc985017175ffd18662ab174a02))
+* **Storybook:** Ensure existing stories are rendering ([77d800c](https://github.com/danactive/history/commit/77d800cd7665c87068cbd2e78640f13e7bc86eef))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([f96a2fb](https://github.com/danactive/history/commit/f96a2fb73742f29b345cf30d5c9aa90726f4cafa))
+* upgrade hapi-react-views from 10.1.1 to 10.1.2 ([fd0b5f5](https://github.com/danactive/history/commit/fd0b5f575d7bd90bba33cd9f8db4bc4951f93bc6))
+* upgrade snyk from 1.360.0 to 1.361.3 ([f0248e5](https://github.com/danactive/history/commit/f0248e5b6fa2b80e17a73b6c94cd3e89dcc4a30d))
+* upgrade whatwg-fetch from 3.1.0 to 3.1.1 ([cf2bd8d](https://github.com/danactive/history/commit/cf2bd8ddcd59f625d5e8006c33d412f729d881e5))
+
 ### [5.6.2](https://github.com/danactive/history/compare/v5.6.1...v5.6.2) (2020-07-08)
 
 
