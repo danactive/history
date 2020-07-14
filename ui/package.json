@@ -101,7 +101,7 @@
     "snyk": "^1.361.3",
     "styled-components": "^5.1.1",
     "webpack": "^4.43.0",
-    "whatwg-fetch": "^3.1.1"
+    "whatwg-fetch": "^3.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.4",
