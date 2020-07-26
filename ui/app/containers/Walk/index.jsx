@@ -12,6 +12,7 @@ import saga from './saga';
 import { selectFiles, selectPath } from './selectors';
 import walkUtils from './util';
 
+import A from '../../components/A';
 import GenericList from '../../components/GenericList';
 import ListFile from './ListFile';
 import LoadingIndicator from '../../components/LoadingIndicator';
@@ -86,7 +87,15 @@ function Walk({ location: { hash } }) {
       items={stateImages.map(item => ({
         ...item,
         content: [
-          <span key={`label-${item.filename}`}>{item.filename}</span>,
+          <span key={`label-${item.filename}`}>
+            <A
+              href={`${CDN_HOST}/${statePath}/${item.filename}`}
+              target="_blank"
+              title="View original in new tab"
+            >
+              {item.filename}
+            </A>
+          </span>,
           <img
             key={`thumbnail-${item.filename}`}
             alt="No preview yet"

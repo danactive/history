@@ -1,80 +1,72 @@
-import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { useState } from 'react';
+import { DragDropContext } from 'react-beautiful-dnd';
+import styled from 'styled-components';
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
+import PreviewColumn from './PreviewColumn';
+import reorderOnRelease from './reorder';
 
-  return result;
-};
+const grid = 4;
 
-const grid = 8;
+const Column = styled.div`
+  margin: 0 ${grid * 2}px;
+`;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+const HorizontalScrollContainer = styled.div`
+  background-color: teal;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: ${grid}px;
+  overflow: auto;
+`;
 
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
+function groupIntoColumns(items) {
+  const fourth = Math.ceil(items.length / 4);
+  const columns = {
+    column1: items.slice(0, fourth),
+    column2: items.slice(fourth, fourth * 2),
+    column3: items.slice(fourth * 2, fourth * 3),
+    column4: items.slice(fourth * 3, items.length),
+  };
 
-  // styles we need to apply on draggables
-  ...draggableStyle,
-});
+  return columns;
+}
 
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  width: 314,
-});
+function OrganizePreviews({ items: initialItems }) {
+  const [columnItems, setColumnItems] = useState(
+    groupIntoColumns(initialItems),
+  );
 
-function OrganizePreviews({ items, setItems }) {
-  if (items.length === 0) {
-    return null;
-  }
-
-  function onDragEnd(result) {
-    // dropped outside the list
-    if (!result.destination) {
+  function onDragEnd({ source, destination }) {
+    // dropped nowhere
+    if (!destination) {
       return;
     }
 
-    setItems(reorder(items, result.source.index, result.destination.index));
+    setColumnItems(
+      reorderOnRelease({
+        columnItems,
+        source,
+        destination,
+      }),
+    );
   }
+
+  const makeColumn = columnItemName => (
+    <Column>
+      <PreviewColumn
+        key={columnItemName}
+        columnId={columnItemName}
+        items={columnItems[columnItemName]}
+      />
+    </Column>
+  );
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(providedDrop, snapshotDrop) => (
-          <div
-            {...providedDrop.droppableProps}
-            ref={providedDrop.innerRef}
-            style={getListStyle(snapshotDrop.isDraggingOver)}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(providedDrag, snapshotDrag) => (
-                  <div
-                    ref={providedDrag.innerRef}
-                    {...providedDrag.draggableProps}
-                    {...providedDrag.dragHandleProps}
-                    style={getItemStyle(
-                      snapshotDrag.isDragging,
-                      providedDrag.draggableProps.style,
-                    )}
-                  >
-                    {item.content}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {providedDrop.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <HorizontalScrollContainer>
+        {Object.keys(columnItems).map(makeColumn)}
+      </HorizontalScrollContainer>
     </DragDropContext>
   );
 }
