@@ -3,10 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
-import { getHostToken } from '../../utils/host';
-
 import actions from './actions';
-import { resizeDimensions } from '../../../../config.json';
 import reducer from './reducer';
 import saga from './saga';
 import { selectFiles, selectPath } from './selectors';
@@ -16,7 +13,9 @@ import GenericList from '../../components/GenericList';
 import ListFile from './ListFile';
 import LoadingIndicator from '../../components/LoadingIndicator';
 import Menu from './Menu';
-import OrganizePreviews from '../../components/OrganizePreviews';
+import OrganizePreviews, {
+  DraggableThumb,
+} from '../../components/OrganizePreviews';
 
 const {
   addParentDirectoryNav,
@@ -24,8 +23,6 @@ const {
   parseHash,
   organizeByMedia,
 } = walkUtils;
-
-const CDN_HOST = getHostToken('cdn');
 
 function Walk({ location: { hash } }) {
   const dispatch = useDispatch();
@@ -85,16 +82,7 @@ function Walk({ location: { hash } }) {
       setItems={setItems}
       items={stateImages.map(item => ({
         ...item,
-        content: [
-          <span key={`label-${item.filename}`}>{item.filename}</span>,
-          <img
-            key={`thumbnail-${item.filename}`}
-            alt="No preview yet"
-            src={`${CDN_HOST}/${statePath}/${item.filename}`}
-            width={resizeDimensions.preview.width}
-            height={resizeDimensions.preview.height}
-          />,
-        ],
+        content: <DraggableThumb parentCdnFolder={statePath} item={item} />,
       }))}
     />,
   ];

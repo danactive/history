@@ -1,6 +1,27 @@
 import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
+import { getHostToken } from '../../utils/host';
+import { resizeDimensions } from '../../../../config.json';
+
+const CDN_HOST = getHostToken('cdn');
+
+export function DraggableThumb({ item, parentCdnFolder, rootFolder }) {
+  const imagePath = rootFolder
+    ? `${rootFolder}/${item.filename}`
+    : `${CDN_HOST}/${parentCdnFolder}/${item.filename}`;
+  return [
+    <span key={`label-${item.filename}`}>{item.filename}</span>,
+    <img
+      key={`thumbnail-${item.filename}`}
+      alt="No preview yet"
+      src={imagePath}
+      width={resizeDimensions.preview.width}
+      height={resizeDimensions.preview.height}
+    />,
+  ];
+}
+
 // a little function to help us with reordering the result
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
