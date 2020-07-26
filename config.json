@@ -1,6 +1,7 @@
 {
   "apiPort": 8000,
   "uiPort": 3000,
+  "storybookPort": 6006,
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
   "resizeDimensions": {
