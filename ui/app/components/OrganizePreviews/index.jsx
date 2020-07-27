@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 
@@ -38,7 +38,6 @@ const Column = styled.div`
 `;
 
 const HorizontalScrollContainer = styled.div`
-  background-color: teal;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -58,10 +57,10 @@ function groupIntoColumns(items) {
   return columns;
 }
 
-function OrganizePreviews({ items: initialItems }) {
-  const [columnItems, setColumnItems] = useState(
-    groupIntoColumns(initialItems),
-  );
+function OrganizePreviews({ items, setItems }) {
+  if (!items.length || items.length === 0) return null;
+
+  const columnItems = groupIntoColumns(items);
 
   function onDragEnd({ source, destination }) {
     // dropped nowhere
@@ -69,7 +68,7 @@ function OrganizePreviews({ items: initialItems }) {
       return;
     }
 
-    setColumnItems(
+    setItems(
       reorderOnRelease({
         columnItems,
         source,
@@ -79,7 +78,7 @@ function OrganizePreviews({ items: initialItems }) {
   }
 
   const makeColumn = columnItemName => (
-    <Column>
+    <Column key={`column-${columnItemName}`}>
       <PreviewColumn
         key={columnItemName}
         columnId={columnItemName}

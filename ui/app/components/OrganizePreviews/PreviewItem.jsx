@@ -1,54 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const grid = 4;
+const getBorderColor = isDragging => (isDragging ? '#e6df55' : 'transparent');
+const getBackgroundColor = isDragging =>
+  isDragging ? '#877e7a' : 'transparent';
 
-const getBorderColor = isDragging => (isDragging ? 'red' : 'transparent');
-
-const imageSize = 40;
-
-const borderRadius = 5;
-
-const Container = styled.a`
-  border-radius: ${borderRadius}px;
-  border: 2px solid transparent;
-  border-color: ${props => getBorderColor(props.isDragging)};
+const Container = styled.div`
+  border: ${props => getBorderColor(props.isDragging)} 5px solid;
+  background-color: ${props => getBackgroundColor(props.isDragging)};
   box-sizing: border-box;
-  padding: ${grid}px;
-  min-height: ${imageSize}px;
-  margin-bottom: ${grid}px;
-  user-select: none;
-
-  /* anchor overrides */
-  color: teal;
-
-  &:hover,
-  &:active {
-    color: orange;
-    text-decoration: none;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: green;
-    box-shadow: none;
-  }
-
-  /* flexbox */
-  display: flex;
-`;
-
-const Content = styled.div`
-  /* flex child */
-  flex-grow: 1;
-  /*
-    Needed to wrap text in ie11
-    https://stackoverflow.com/questions/35111090/why-ie11-doesnt-wrap-the-text-in-flexbox
-  */
-  flex-basis: 100%;
-  /* flex parent */
-  display: flex;
-  flex-direction: column;
+  padding: 4px;
 `;
 
 function getStyle(provided, style) {
@@ -73,7 +34,7 @@ function PreviewItem({ item, isDragging, provided, style, index }) {
       data-is-dragging={isDragging}
       data-index={index}
     >
-      <Content>{item.content}</Content>
+      {item.content}
     </Container>
   );
 }

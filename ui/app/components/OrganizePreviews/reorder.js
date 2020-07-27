@@ -6,6 +6,14 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
+const ungroupToItems = columnItems => {
+  const items = columnItems.column1
+    .concat(columnItems.column2)
+    .concat(columnItems.column3)
+    .concat(columnItems.column4);
+  return items;
+};
+
 export default function reorderOnRelease({ columnItems, source, destination }) {
   const current = [...columnItems[source.droppableId]];
   const next = [...columnItems[destination.droppableId]];
@@ -18,7 +26,8 @@ export default function reorderOnRelease({ columnItems, source, destination }) {
       ...columnItems,
       [source.droppableId]: reordered,
     };
-    return result;
+
+    return ungroupToItems(result);
   }
 
   // moving to different list
@@ -34,5 +43,5 @@ export default function reorderOnRelease({ columnItems, source, destination }) {
     [destination.droppableId]: next,
   };
 
-  return result;
+  return ungroupToItems(result);
 }

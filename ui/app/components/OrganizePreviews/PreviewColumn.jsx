@@ -7,13 +7,14 @@ import PreviewItem from './PreviewItem';
 const grid = 4;
 
 export const getBackgroundColor = (isDraggingOver, isDraggingFrom) => {
+  // Colour swatch #545454 compound https://color.adobe.com/create/color-wheel
   if (isDraggingOver) {
-    return 'blue';
+    return '#BA8570';
   }
   if (isDraggingFrom) {
-    return 'green';
+    return '#496149';
   }
-  return 'yellow';
+  return '#545454'; // base colour
 };
 
 const Wrapper = styled.div`
@@ -26,7 +27,7 @@ const Wrapper = styled.div`
   padding-bottom: 0;
   transition: background-color 0.2s ease, opacity 0.1s ease;
   user-select: none;
-  width: 250px;
+  width: 285px;
 `;
 
 const scrollContainerHeight = 250;
@@ -40,16 +41,6 @@ const DropZone = styled.div`
   */
   padding-bottom: ${grid}px;
 `;
-
-const ScrollContainer = styled.div`
-  overflow-x: hidden;
-  overflow-y: auto;
-  max-height: ${scrollContainerHeight}px;
-`;
-
-/* stylelint-disable block-no-empty */
-const Container = styled.div``;
-/* stylelint-enable */
 
 const InnerPreviewColumn = React.memo(function InnerPreviewColumn({ items }) {
   return items.map((item, index) => (
@@ -69,41 +60,26 @@ const InnerPreviewColumn = React.memo(function InnerPreviewColumn({ items }) {
 
 function InnerList({ items, dropProvided }) {
   return (
-    <Container>
-      <DropZone ref={dropProvided.innerRef}>
-        <InnerPreviewColumn items={items} />
-        {dropProvided.placeholder}
-      </DropZone>
-    </Container>
+    <DropZone ref={dropProvided.innerRef}>
+      <InnerPreviewColumn items={items} />
+      {dropProvided.placeholder}
+    </DropZone>
   );
 }
 
 export default function PreviewColumn({
   ignoreContainerClipping,
-  internalScroll,
-  scrollContainerStyle,
   isCombineEnabled,
   columnId = 'LIST',
   style,
   items,
-  useClone,
 }) {
-  const displayQI = (provided, snapshot, descriptor) => (
-    <PreviewItem
-      item={items[descriptor.source.index]}
-      provided={provided}
-      isDragging={snapshot.isDragging}
-      isClone
-    />
-  );
-
   return (
     <Droppable
       droppableId={columnId}
       type="card"
       ignoreContainerClipping={ignoreContainerClipping}
       isCombineEnabled={isCombineEnabled}
-      renderClone={useClone ? displayQI : null}
     >
       {(dropProvided, dropSnapshot) => (
         <Wrapper
@@ -112,13 +88,7 @@ export default function PreviewColumn({
           isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
         >
-          {internalScroll ? (
-            <ScrollContainer style={scrollContainerStyle}>
-              <InnerList items={items} dropProvided={dropProvided} />
-            </ScrollContainer>
-          ) : (
-            <InnerList items={items} dropProvided={dropProvided} />
-          )}
+          <InnerList items={items} dropProvided={dropProvided} />
         </Wrapper>
       )}
     </Droppable>
