@@ -6,13 +6,11 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const ungroupToItems = columnItems => {
-  const items = columnItems.column1
-    .concat(columnItems.column2)
-    .concat(columnItems.column3)
-    .concat(columnItems.column4);
-  return items;
-};
+const ungroupToItems = columnItems =>
+  Object.keys(columnItems).reduce(
+    (acc, val) => acc.concat(columnItems[val]),
+    [],
+  );
 
 export default function reorderOnRelease({ columnItems, source, destination }) {
   const current = [...columnItems[source.droppableId]];

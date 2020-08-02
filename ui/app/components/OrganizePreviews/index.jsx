@@ -46,15 +46,12 @@ const HorizontalScrollContainer = styled.div`
 `;
 
 function groupIntoColumns(items) {
-  const fourth = Math.ceil(items.length / 4);
-  const columns = {
-    column1: items.slice(0, fourth),
-    column2: items.slice(fourth, fourth * 2),
-    column3: items.slice(fourth * 2, fourth * 3),
-    column4: items.slice(fourth * 3, items.length),
-  };
+  const IMAGE_PER_COLUMN = 4;
+  const columnCount = Math.ceil(items.length / IMAGE_PER_COLUMN);
 
-  return columns;
+  return [...Array(columnCount).keys()].map(index =>
+    items.slice(IMAGE_PER_COLUMN * index, IMAGE_PER_COLUMN * (index + 1)),
+  );
 }
 
 function OrganizePreviews({ items, setItems }) {
@@ -77,12 +74,12 @@ function OrganizePreviews({ items, setItems }) {
     );
   }
 
-  const makeColumn = columnItemName => (
-    <Column key={`column-${columnItemName}`}>
+  const makeColumn = (columnItem, index) => (
+    <Column key={`column-${index}`}>
       <PreviewColumn
-        key={columnItemName}
-        columnId={columnItemName}
-        items={columnItems[columnItemName]}
+        key={`column-${index}`}
+        columnId={index.toString()}
+        items={columnItem}
       />
     </Column>
   );
@@ -90,7 +87,7 @@ function OrganizePreviews({ items, setItems }) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <HorizontalScrollContainer>
-        {Object.keys(columnItems).map(makeColumn)}
+        {columnItems.map(makeColumn)}
       </HorizontalScrollContainer>
     </DragDropContext>
   );
