@@ -37,6 +37,7 @@ import { translationMessages } from './i18n';
 const openSansObserver = new FontFaceObserver('Open Sans', {});
 
 // When Open Sans is loaded, add a font-family using Open Sans to the body
+// TODO danactive allow offline mode by removing timeout error
 openSansObserver.load().then(() => {
   document.body.classList.add('fontLoaded');
 });

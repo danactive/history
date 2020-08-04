@@ -1,8 +1,13 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext } from 'react-beautiful-dnd';
+import styled from 'styled-components';
 
-import { getHostToken } from '../../utils/host';
+import A from '../A';
+import PreviewColumn from './PreviewColumn';
+
 import { resizeDimensions } from '../../../../config.json';
+import reorderOnRelease from './reorder';
+import { getHostToken } from '../../utils/host';
 
 const CDN_HOST = getHostToken('cdn');
 
@@ -11,7 +16,11 @@ export function DraggableThumb({ item, parentCdnFolder, rootFolder }) {
     ? `${rootFolder}/${item.filename}`
     : `${CDN_HOST}/${parentCdnFolder}/${item.filename}`;
   return [
-    <span key={`label-${item.filename}`}>{item.filename}</span>,
+    <span key={`label-${item.filename}`}>
+      <A href={imagePath} target="_blank" title="View original in new tab">
+        {item.filename}
+      </A>
+    </span>,
     <img
       key={`thumbnail-${item.filename}`}
       alt="No preview yet"
@@ -22,80 +31,64 @@ export function DraggableThumb({ item, parentCdnFolder, rootFolder }) {
   ];
 }
 
-// a little function to help us with reordering the result
-const reorder = (list, startIndex, endIndex) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
+const grid = 4;
 
-  return result;
-};
+const Column = styled.div`
+  margin: 0 ${grid * 2}px;
+`;
 
-const grid = 8;
+const HorizontalScrollContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: ${grid}px;
+  overflow: auto;
+`;
 
-const getItemStyle = (isDragging, draggableStyle) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+function groupIntoColumns(items) {
+  const IMAGE_PER_COLUMN = 4;
+  const columnCount = Math.ceil(items.length / IMAGE_PER_COLUMN);
 
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
-
-  // styles we need to apply on draggables
-  ...draggableStyle,
-});
-
-const getListStyle = isDraggingOver => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  width: 314,
-});
+  return [...Array(columnCount).keys()].map(index =>
+    items.slice(IMAGE_PER_COLUMN * index, IMAGE_PER_COLUMN * (index + 1)),
+  );
+}
 
 function OrganizePreviews({ items, setItems }) {
-  if (items.length === 0) {
-    return null;
-  }
+  if (!items.length || items.length === 0) return null;
 
-  function onDragEnd(result) {
-    // dropped outside the list
-    if (!result.destination) {
+  const columnItems = groupIntoColumns(items);
+
+  function onDragEnd({ source, destination }) {
+    // dropped nowhere
+    if (!destination) {
       return;
     }
 
-    setItems(reorder(items, result.source.index, result.destination.index));
+    setItems(
+      reorderOnRelease({
+        columnItems,
+        source,
+        destination,
+      }),
+    );
   }
+
+  const makeColumn = (columnItem, index) => (
+    <Column key={`column-${index}`}>
+      <PreviewColumn
+        key={`column-${index}`}
+        columnId={index.toString()}
+        items={columnItem}
+      />
+    </Column>
+  );
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(providedDrop, snapshotDrop) => (
-          <div
-            {...providedDrop.droppableProps}
-            ref={providedDrop.innerRef}
-            style={getListStyle(snapshotDrop.isDraggingOver)}
-          >
-            {items.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
-                {(providedDrag, snapshotDrag) => (
-                  <div
-                    ref={providedDrag.innerRef}
-                    {...providedDrag.draggableProps}
-                    {...providedDrag.dragHandleProps}
-                    style={getItemStyle(
-                      snapshotDrag.isDragging,
-                      providedDrag.draggableProps.style,
-                    )}
-                  >
-                    {item.content}
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {providedDrop.placeholder}
-          </div>
-        )}
-      </Droppable>
+      <HorizontalScrollContainer>
+        {columnItems.map(makeColumn)}
+      </HorizontalScrollContainer>
     </DragDropContext>
   );
 }

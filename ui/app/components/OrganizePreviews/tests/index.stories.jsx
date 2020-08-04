@@ -41,7 +41,7 @@ export const WithThumbnails = () => {
       content: (
         <DraggableThumb
           item={{ filename: photo2001 }}
-          rootFolder={`http://localhost:${storybookPort}/`}
+          rootFolder={`http://localhost:${storybookPort}`}
         />
       ),
     },
@@ -50,7 +50,7 @@ export const WithThumbnails = () => {
       content: (
         <DraggableThumb
           item={{ filename: photo2004 }}
-          rootFolder={`http://localhost:${storybookPort}/`}
+          rootFolder={`http://localhost:${storybookPort}`}
         />
       ),
     },
@@ -59,7 +59,7 @@ export const WithThumbnails = () => {
       content: (
         <DraggableThumb
           item={{ filename: photo2005 }}
-          rootFolder={`http://localhost:${storybookPort}/`}
+          rootFolder={`http://localhost:${storybookPort}`}
         />
       ),
     },

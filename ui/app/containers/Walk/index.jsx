@@ -77,14 +77,16 @@ function Walk({ location: { hash } }) {
       loading={loading}
       error={false}
     />,
-    <OrganizePreviews
-      key="walk-OrganizePreviews"
-      setItems={setItems}
-      items={stateImages.map(item => ({
-        ...item,
-        content: <DraggableThumb parentCdnFolder={statePath} item={item} />,
-      }))}
-    />,
+    hasImages && (
+      <OrganizePreviews
+        key="walk-OrganizePreviews"
+        setItems={setItems}
+        items={stateImages.map(item => ({
+          ...item,
+          content: <DraggableThumb parentCdnFolder={statePath} item={item} />,
+        }))}
+      />
+    ),
   ];
 }
 
