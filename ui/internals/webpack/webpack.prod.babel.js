@@ -27,12 +27,9 @@ module.exports = require('./webpack.base.babel')({
     minimizer: [
       new TerserPlugin({
         terserOptions: {
-          warnings: false,
           compress: {
             comparisons: false,
           },
-          parse: {},
-          mangle: true,
           output: {
             comments: false,
             ascii_only: true,
