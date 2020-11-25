@@ -98,7 +98,7 @@
     "redux-injectors": "^1.3.0",
     "redux-saga": "^1.1.3",
     "sanitize.css": "^11.0.1",
-    "snyk": "^1.369.2",
+    "snyk": "^1.425.4",
     "styled-components": "^5.1.1",
     "webpack": "^4.44.1",
     "whatwg-fetch": "^3.2.0"
