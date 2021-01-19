@@ -44,7 +44,7 @@
     "isomorphic-fetch": "^2.2.1",
     "jquery-colorbox": "^1.6.4",
     "mime-types": "^2.1.28",
-    "node-notifier": "^7.0.2",
+    "node-notifier": "^8.0.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "sharp": "^0.25.4",
