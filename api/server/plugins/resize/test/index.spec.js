@@ -35,6 +35,30 @@ tape('Verify /resize route', { skip: false }, (describe) => {
       await server.register(plugins);
       const response = await server.inject(request);
 
+      assert.equal(response.statusCode, 400, 'Expected status code');
+    } catch (error) {
+      assert.fail(error);
+    }
+
+    assert.end();
+  });
+
+  describe.test('* Caught fake source in originals folder', { skip: false }, async (assert) => {
+    const server = hapi.Server({ port });
+    server.validator(joi);
+
+    const request = {
+      method: 'POST',
+      url: '/resize',
+      payload: {
+        source_path: 'originals/FAKE',
+      },
+    };
+
+    try {
+      await server.register(plugins);
+      const response = await server.inject(request);
+
       assert.equal(response.statusCode, 404, 'Expected status code');
     } catch (error) {
       assert.fail(error);

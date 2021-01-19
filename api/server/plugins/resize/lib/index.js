@@ -7,12 +7,12 @@ async function handler(request, h) {
   const sourcePath = request.payload.source_path;
 
   try {
-    const response = await resizeMod.resize(sourcePath);
-    if (dotProp.get(response, 'meta.error.count', 0) > 0) {
-      return h.response(response.meta.error).code(500);
+    const result = await resizeMod.resize(sourcePath);
+    if (dotProp.get(result, 'meta.error.count', 0) > 0) {
+      return h.response(result.meta.error).code(500);
     }
 
-    // TODO danactive add property of photo and thumb output directories
+    console.log('Resize photo images to ', result.payload.paths.photos);
     return { resize: true };
   } catch (error) {
     return error;
