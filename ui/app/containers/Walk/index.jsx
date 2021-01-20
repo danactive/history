@@ -43,7 +43,7 @@ function Walk({ location: { hash } }) {
     dispatch(actions.listDirectory(qsPath));
   }, [qsPath]);
 
-  const loading = statePath !== qsPath || files.length === 0;
+  const loading = statePath !== qsPath;
 
   const itemFiles = files.map(file => ({
     id: file.path,
