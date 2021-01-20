@@ -57,6 +57,6 @@ exports[`<App /> should render and match the snapshot 1`] = `
     />
   </Switch>
   <Footer />
-  <Memo(GlobalStyleComponent) />
+  <Memo(l) />
 </App__AppWrapper>
 `;

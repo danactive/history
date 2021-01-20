@@ -9,7 +9,6 @@ import saga from './saga';
 import { selectFiles, selectPath } from './selectors';
 import walkUtils from './util';
 
-import A from '../../components/A';
 import GenericList from '../../components/GenericList';
 import ListFile from './ListFile';
 import LoadingIndicator from '../../components/LoadingIndicator';
@@ -79,13 +78,13 @@ function Walk({ location: { hash } }) {
       error={false}
     />,
     hasImages && (
-    <OrganizePreviews
-      key="walk-OrganizePreviews"
-      setItems={setItems}
-      items={stateImages.map(item => ({
-        ...item,
+      <OrganizePreviews
+        key="walk-OrganizePreviews"
+        setItems={setItems}
+        items={stateImages.map(item => ({
+          ...item,
           content: <DraggableThumb parentCdnFolder={statePath} item={item} />,
-      }))}
+        }))}
       />
     ),
   ];

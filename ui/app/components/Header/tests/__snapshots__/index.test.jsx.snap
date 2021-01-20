@@ -3,10 +3,10 @@
 exports[`<Header /> should render a div 1`] = `
 <div>
   <div
-    class="NavBar___default-sc-12wxsw5-0 dklQqU"
+    class="NavBar___default-sc-12wxsw5-0 fVnImi"
   >
     <a
-      class="HeaderLink___default-tt8z9q-0 cgWetd"
+      class="HeaderLink___default-tt8z9q-0 bMKdej"
       href="/"
     >
       <span>
@@ -14,7 +14,7 @@ exports[`<Header /> should render a div 1`] = `
       </span>
     </a>
     <a
-      class="HeaderLink___default-tt8z9q-0 cgWetd"
+      class="HeaderLink___default-tt8z9q-0 bMKdej"
       href="/admin"
     >
       <span>

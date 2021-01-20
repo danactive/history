@@ -17,11 +17,7 @@ export function DraggableThumb({ item, parentCdnFolder, rootFolder }) {
     : `${CDN_HOST}/${parentCdnFolder}/${item.filename}`;
   return [
     <span key={`label-${item.filename}`}>
-      <A
-        href={`${CDN_HOST}/${parentCdnFolder}/${item.filename}`}
-        target="_blank"
-        title="View original in new tab"
-      >
+      <A href={imagePath} target="_blank" title="View original in new tab">
         {item.filename}
       </A>
     </span>,
