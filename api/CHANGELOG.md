@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/danactive/history/compare/v6.0.0...v6.1.0) (2021-01-19)
+
+
+### Features
+
+* **Organize Previews:** DRY JSX of thumbnail ([9dc2777](https://github.com/danactive/history/commit/9dc2777a78eadc8d3a60b45b92d9e8ffa402656e))
+* **Organize Previews:** Integrate with Walk Page ([be1ca4a](https://github.com/danactive/history/commit/be1ca4a1a8b640b05ef16d173ee3dbe58b3cf782))
+* **Organize Previews:** Multiple columns with DRY thumbnail ([d900a28](https://github.com/danactive/history/commit/d900a28cf23586ac5516951414aa49fbafccdf17))
+
+
+### Bug Fixes
+
+* **Organize Previews:** Fix Safari; Generate columns based on photo count ([cd6bc7c](https://github.com/danactive/history/commit/cd6bc7c116e2904b4edce9df3e7de47b6c3839bd))
+* **Resize API:** Error when source images not in originals folder ([dcf104d](https://github.com/danactive/history/commit/dcf104df016d4278d6c398b22446383f4a45c700))
+
 ## [6.0.0](https://github.com/danactive/history/compare/v5.6.2...v6.0.0) (2020-07-13)
 
 

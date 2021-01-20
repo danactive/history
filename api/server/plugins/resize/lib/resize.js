@@ -81,7 +81,15 @@ function resize(sourcePath) {
       safePath = utils.file.safePublicPath(sourcePath);
     } catch (error) {
       reject(boom.boomify(error));
+      return;
     }
+
+    if (!safePath.includes('originals')) {
+      const error = boom.badRequest('Source folder must be in the "originals" folder with "photos" and "thumbs" as sibling folders');
+      reject(error);
+      return;
+    }
+
     existsMod.pathExists(safePath)
       .then(transformImages)
       .catch((error) => reject(boom.boomify(error)));

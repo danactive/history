@@ -21,7 +21,17 @@ tape('Verify resize library', { skip: false }, (describe) => {
     plugin.resize('FAKE')
       .then((response) => assert.fail(JSON.stringify(response)))
       .catch((error) => {
-        assert.ok(error, 'Caught expected error');
+        const expected = 'Source folder must be in the "originals" folder with "photos" and "thumbs" as sibling folders';
+        assert.equal(error.message, expected, 'Caught expected error');
+        assert.end();
+      });
+  });
+
+  describe.test('* Catch fake source in originals folder', { skip: false }, (assert) => {
+    plugin.resize('originals/FAKE')
+      .then((response) => assert.fail(JSON.stringify(response)))
+      .catch((error) => {
+        assert.ok(error.message.includes('File system path is absolute and not found due to error'), 'Caught expected error');
         assert.end();
       });
   });
