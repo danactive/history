@@ -21,7 +21,7 @@ describe('<Link />', () => {
       container: { firstChild },
     } = render(
       <BrowserRouter>
-        <Link />
+        <Link to="some-internal-link" />
       </BrowserRouter>,
     );
     expect(firstChild).toMatchSnapshot();
