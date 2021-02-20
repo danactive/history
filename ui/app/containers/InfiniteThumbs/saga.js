@@ -40,8 +40,15 @@ export const argsPhotoXmlPath = ({ gallery, filename }) => {
 };
 
 export const argsVideoXmlPath = ({ gallery, filename }) => ({
-  path: `/galleries/${gallery}/media/videos/${filename}`,
+  path: `/galleries/${gallery}/media/videos/${getYear(filename)}/${filename}`,
 });
+
+export const replaceThumbToVideo = (thumbLink, videoFilename) => {
+  const paths = thumbLink.replace('thumbs', 'videos').split('/');
+  const pathsWithoutThumb = paths.slice(0, 8); // delete thumb JPG path
+  const videoLink = `${pathsWithoutThumb.join('/')}/${videoFilename}`;
+  return videoLink;
+};
 
 // saga WORKER for CHOOSE_MEMORY for Dropbox gallery
 export function* getPhotoPathsOnDropbox({
@@ -117,9 +124,7 @@ export function* getPhotoPathsOnCdn({
     }),
   );
 
-  const paths = memory.thumbLink.replace('thumbs', 'videos').split('/');
-  paths.splice(7, 2); // delete year folder and JPG
-  const videoLink = `${paths.join('/')}/${memory.filename}`;
+  const videoLink = replaceThumbToVideo(memory.thumbLink, memory.filename);
   yield put(
     loadVideoSuccess({
       id,
