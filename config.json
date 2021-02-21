@@ -1,6 +1,7 @@
 {
   "apiPort": 8000,
   "uiPort": 3000,
+  "nextPort": 3030,
   "storybookPort": 6006,
   "defaultAlbum": "sample",
   "defaultGallery": "demo",

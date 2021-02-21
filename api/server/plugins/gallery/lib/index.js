@@ -1,4 +1,4 @@
-const gallery = require('./gallery');
+const gallery = require('../../../../../app/pages/api/galleryList/gallery');
 
 async function register(server) {
   server.route({
