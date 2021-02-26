@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { FormattedMessage } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { useInjectReducer, useInjectSaga } from 'redux-injectors';
 
@@ -12,7 +11,6 @@ import HostStorage from '../../components/HostStorage';
 import RemoveHostStorage from '../../components/HostStorage/Remove';
 
 import { loadGalleries, tokenStorage } from './actions';
-import messages from './messages';
 import {
   selectItems,
   selectGalleryLoading,
@@ -56,12 +54,10 @@ export function HomePage() {
   return (
     <article>
       <Helmet>
-        <title>View Galleries</title>
+        <title>VanArts cohort 17 is watching</title>
       </Helmet>
       <CenteredSection>
-        <H2>
-          <FormattedMessage {...messages.galleriesHeader} />
-        </H2>
+        <H2>This is a deploy preview</H2>
         <GenericList
           loading={galleryLoading}
           error={galleryErrors}
