@@ -1,17 +1,23 @@
-const fetch = require('node-fetch');
+import { createMocks } from 'node-mocks-http';
+
+import handleGalleryEndpoint from '../../../pages/api/galleryList';
 
 describe('Gallery API', () => {
   const utils = require('../../../../api/server/plugins/utils');
   const port = utils.config.get('nextPort');
 
   test('* Validate Gallery List route', async () => {
-    const endpoint = '/galleryList';
-    const url = `http://localhost:${port}/api${endpoint}`;
+    const { req, res } = createMocks({
+      method: 'GET',
+      query: {
+        animal: 'dog',
+      },
+    });
 
-    const response = await fetch(url);
-    expect(response.status).toBe(200);
+    await handleGalleryEndpoint(req, res);
+    expect(res._getStatusCode()).toBe(200);
 
-    const result = await response.json();
+    const result = JSON.parse(res._getData());
     expect(result.galleries.includes('demo')).toBeTruthy();
   });
 });
