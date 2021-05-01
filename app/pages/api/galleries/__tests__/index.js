@@ -1,36 +1,35 @@
-/* eslint-disable no-underscore-dangle */
-import { createMocks } from 'node-mocks-http'
+import { testApiHandler } from 'next-test-api-route-handler'
 
-import handleEndpoints from '..'
+import handler from '..'
 
 describe('Galleries API', () => {
   describe('Expect result', () => {
     test('* GET has galleries', async () => {
-      const { req, res } = createMocks({
-        method: 'GET',
-      })
+      const test = async ({ fetch }) => {
+        const response = await fetch({ method: 'GET' })
+        const result = await response.json()
 
-      await handleEndpoints(req, res)
-      expect(res._getStatusCode()).toBe(200)
+        expect(response.status).toBe(200)
 
-      const result = JSON.parse(res._getData())
-      expect(result.galleries.length).toBeGreaterThan(0)
-      expect(result.galleries.includes('demo')).toBeTruthy()
+        expect(result.galleries.length).toBeGreaterThan(0)
+        expect(result.galleries.includes('demo')).toBeTruthy()
+      }
+      await testApiHandler({ handler, test })
     })
   })
 
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
-      const { req, res } = createMocks({
-        method: 'POST',
-      })
+      const test = async ({ fetch }) => {
+        const response = await fetch({ method: 'POST' })
+        const result = await response.json()
 
-      await handleEndpoints(req, res)
-      expect(res._getStatusCode()).toBe(405)
+        expect(response.status).toBe(405)
 
-      const result = JSON.parse(res._getData())
-      expect(result.galleries.length).toBe(0)
-      expect(result.galleries.includes('demo')).toBeFalsy()
+        expect(result.galleries.length).toBe(0)
+        expect(result.galleries.includes('demo')).toBeFalsy()
+      }
+      await testApiHandler({ handler, test })
     })
   })
 })
