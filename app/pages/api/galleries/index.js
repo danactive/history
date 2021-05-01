@@ -1,5 +1,13 @@
-import gallery from './local';
+import local from './local'
+
+const errorSchema = (message) => ({ galleries: [], error: { message } })
 
 export default async function handler(req, res) {
-  res.status(200).json({ galleries: await gallery.getGalleries() })
+  switch (req.method) {
+    case 'GET':
+      const out = await local.get(errorSchema)
+      return res.status(out.status).json(out.body)
+    default:
+      return res.status(405).json(errorSchema(`Method ${req.method} Not Allowed`))
+  }
 }

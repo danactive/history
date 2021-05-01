@@ -2,21 +2,19 @@ const fs = require('fs');
 
 const fsPromises = fs.promises;
 
-async function getGalleries() {
+async function get(errorSchema) {
   try {
     const hasPrefix = (content) => content.isDirectory();
     const namesOnly = (content) => content.name;
 
     const contents = await fsPromises.readdir('../public/galleries', { withFileTypes: true });
 
-    const galleries = contents.filter(hasPrefix).map(namesOnly);
-
-    return galleries;
-  } catch (error) {
-    return error;
+    return { body: { galleries: contents.filter(hasPrefix).map(namesOnly) }, status: 200 };
+  } catch {
+    return { body: errorSchema('No galleries are found'), status: 404 };
   }
 }
 
 module.exports = {
-  getGalleries,
+  get,
 };
