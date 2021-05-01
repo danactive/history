@@ -1,6 +1,6 @@
 import { createMocks } from 'node-mocks-http';
 
-import handleGalleryEndpoint from '../../../pages/api/galleryList';
+import handleGalleryEndpoint from '../../../pages/api/galleries';
 
 describe('Gallery API', () => {
   const utils = require('../../../../api/server/plugins/utils');

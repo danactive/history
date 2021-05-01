@@ -1,9 +1,9 @@
-const gallery = require('../../../../../app/pages/api/galleryList/gallery');
+const gallery = require('../../../../../app/pages/api/galleries/local');
 
 async function register(server) {
   server.route({
     method: 'GET',
-    path: '/galleryList',
+    path: '/galleries',
     options: {
       tags: ['api'],
       handler: async () => ({ galleries: await gallery.getGalleries() }),

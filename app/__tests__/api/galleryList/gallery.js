@@ -1,4 +1,4 @@
-const lib = require('../../../pages/api/galleryList/gallery');
+const lib = require('../../../pages/api/galleries/local');
 
 describe('Gallery Library', () => {
   test('* Get Galleries', async () => {
