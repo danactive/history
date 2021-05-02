@@ -6,7 +6,10 @@ async function register(server) {
     path: '/galleries',
     options: {
       tags: ['api'],
-      handler: async () => ({ galleries: await gallery.getGalleries() }),
+      handler: async () => {
+        const { body } = await gallery.get();
+        return body;
+      },
     },
   });
 }
@@ -14,7 +17,7 @@ async function register(server) {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.4.0',
+  version: '0.5.0',
 };
 
 module.exports = { plugin };
