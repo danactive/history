@@ -12,6 +12,10 @@
     "test:ci": "jest --ci"
   },
   "dependencies": {
+    "app-root-path": "^3.0.0",
+    "boom": "^7.0.0",
+    "glob": "^7.1.6",
+    "mime-types": "^2.1.28",
     "next": "^10.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1"
