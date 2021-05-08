@@ -5,6 +5,7 @@ const glob = require('glob');
 const path = require('path');
 
 const configFile = require('../../../../../config.json');
+const utilsFactory = require('../../../../../app/pages/api/admin/filesystem/utils');
 
 const config = {
   get: (dotpath) => dotProp.get(configFile, dotpath),
@@ -33,8 +34,7 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-
-
+const fileMethods = utilsFactory();
 
 fileMethods.videoToThumbsPath = (filepath = null, gallery = null) => {
   if (filepath === null || gallery === null) {
@@ -76,5 +76,5 @@ fileMethods.glob = (sourceFolder, pattern, options = {}) => new Promise((resolve
 });
 
 module.exports = {
-  env, config, clone
+  env, config, clone, file: fileMethods,
 };

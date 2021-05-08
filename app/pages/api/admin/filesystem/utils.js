@@ -1,9 +1,8 @@
-import appRoot from 'app-root-path'
-import boom from 'boom'
-import mime from 'mime-types'
-import path from 'path'
+const appRoot = require('app-root-path')
+const mime = require('mime-types')
+const path = require('path')
 
-import configFile from '../../../../../config.json'
+const configFile = require('../../../../../config.json')
 
 function customMime(rawExtension) {
   const extension = (rawExtension) ? rawExtension.toLowerCase() : null
@@ -69,32 +68,36 @@ const file = {
   photoPath: (filepath) => filepath && filepath.replace('thumbs', 'photos'),
 }
 
-/*
- Construct a file system path from the history public folder
+function utils(errorSchema) {
+  /*
+   Construct a file system path from the history public folder
 
- @method safePublicPath
- @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
- @return {Promise} string
-*/
-file.safePublicPath = (rawDestinationPath) => {
-  try {
-    const normalizedDestinationPath = path.normalize(rawDestinationPath)
-    const publicPath = path.normalize(path.join(process.cwd(), '../public'))
-    const isRawInPublic = normalizedDestinationPath.startsWith(publicPath)
-    const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath)
+   @method safePublicPath
+   @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
+   @return {Promise} string
+  */
+  file.safePublicPath = (rawDestinationPath) => {
+    try {
+      const normalizedDestinationPath = path.normalize(rawDestinationPath)
+      const publicPath = path.normalize(path.join(process.cwd(), '../public'))
+      const isRawInPublic = normalizedDestinationPath.startsWith(publicPath)
+      const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath)
 
-    if (!safeDestinationPath.startsWith(publicPath)) {
-      throw boom.forbidden(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`)
+      if (!safeDestinationPath.startsWith(publicPath)) {
+        return { body: errorSchema(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`), status: 404 }
+      }
+
+      return safeDestinationPath
+    } catch (error) {
+      if (error.name === 'TypeError') { // path core module error
+        return { body: errorSchema('Invalid file system path'), status: 406 }
+      }
+
+      return { body: errorSchema(error.message), status: 400 }
     }
-
-    return safeDestinationPath
-  } catch (error) {
-    if (error.name === 'TypeError') { // path core module error
-      throw boom.notAcceptable('Invalid file system path')
-    }
-
-    throw boom.boomify(error)
   }
+
+  return file
 }
 
-export default file
+module.exports = utils

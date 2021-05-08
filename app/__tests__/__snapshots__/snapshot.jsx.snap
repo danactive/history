@@ -9,6 +9,7 @@ exports[`renders homepage unchanged 1`] = `
       className="title"
     >
       Welcome to
+       
       <a
         href="https://nextjs.org"
       >
@@ -19,6 +20,7 @@ exports[`renders homepage unchanged 1`] = `
       className="description"
     >
       Get started by editing
+       
       <code>
         pages/index.js
       </code>

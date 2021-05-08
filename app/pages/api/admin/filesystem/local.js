@@ -1,17 +1,18 @@
-import globCallback from 'glob'
-import path from 'path'
-import { promisify } from 'util'
+const globCallback = require('glob')
+const path = require('path')
+const { promisify } = require('util')
 
-import utils from './utils'
+const utilsFactory = require('./utils')
 
 const glob = promisify(globCallback)
 
-async function get(destPath = '') {
+async function get(destPath = '', errorSchema) {
+  const utils = utilsFactory(errorSchema)
   const publicPath = utils.safePublicPath('/')
   const globPath = path.join(publicPath, destPath)
 
   if (!globPath.startsWith(publicPath)) {
-    throw new URIError('Invalid system path')
+    return { body: errorSchema('Invalid system path'), status: 404 }
   }
 
   const files = await glob(decodeURI(`${globPath}/*`))
@@ -32,6 +33,6 @@ async function get(destPath = '') {
   return { body: { files: webPaths, destPath }, status: 200 }
 }
 
-export default {
+module.exports = {
   get,
 }
