@@ -1,5 +1,5 @@
 const tape = require('tape-catch');
-const existsChecker = require('../../exists/lib/exists');
+const existsChecker = require('../../../../../app/pages/api/src/exists');
 
 tape('Verify resize library', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
