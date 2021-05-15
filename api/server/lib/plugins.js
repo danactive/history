@@ -18,7 +18,7 @@ const libResize = require('../plugins/resize/lib');
 const libWalk = require('../plugins/walk/lib');
 const libVideo = require('../plugins/video/lib');
 
-const pkg = require('../../package');
+const pkg = require('../../package.json');
 
 const plugins = [
   inert,

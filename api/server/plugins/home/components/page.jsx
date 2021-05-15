@@ -1,6 +1,6 @@
 const React = require('react');
 
-const Gallery = require('./gallery.jsx');
+const Gallery = require('./gallery');
 
 function Page({ galleries }) {
   const Galleries = galleries.map((gallery) => <Gallery key={gallery} gallery={gallery} />);

@@ -2,8 +2,8 @@ const React = require('react');
 
 const utils = require('../../utils');
 
-const Source = require('./source.jsx');
-const Track = require('./track.jsx');
+const Source = require('./source');
+const Track = require('./track');
 
 const components = { Source, Track };
 

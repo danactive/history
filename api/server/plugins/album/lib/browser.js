@@ -1,2 +1,2 @@
 require('../public/colorbox.css');
-require('jquery-colorbox/jquery.colorbox-min.js');
+require('jquery-colorbox/jquery.colorbox-min');
