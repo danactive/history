@@ -4,7 +4,7 @@ const path = require('path')
 const { promisify } = require('util')
 
 const getStat = promisify(fs.stat)
-const utilsFactory = require('../admin/filesystem/utils')
+const utilsFactory = require('./utils')
 
 const MODULE_NAME = 'pathExists'
 

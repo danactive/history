@@ -1,4 +1,4 @@
-import local from './local'
+import local from '../../../../src/filesystem'
 
 const errorSchema = (message) => ({ files: [], error: { message } })
 

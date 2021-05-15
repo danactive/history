@@ -1,4 +1,4 @@
-const gallery = require('../../../../../app/pages/api/galleries/local');
+const gallery = require('../../../../../app/src/galleries');
 
 async function handler(request, reply) {
   const isRaw = request.query.raw;

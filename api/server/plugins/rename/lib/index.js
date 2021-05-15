@@ -1,4 +1,4 @@
-const existsChecker = require('../../../../../app/pages/api/src/exists');
+const existsChecker = require('../../../../../app/src/exists');
 const filenamer = require('./filenames');
 const renamer = require('./rename');
 const routes = require('../../../lib/routes');

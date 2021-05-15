@@ -2,7 +2,7 @@ const appRoot = require('app-root-path')
 const mime = require('mime-types')
 const path = require('path')
 
-const configFile = require('../../../../../config.json')
+const configFile = require('../../config.json')
 
 function customMime(rawExtension) {
   const extension = (rawExtension) ? rawExtension.toLowerCase() : null
