@@ -1,6 +1,6 @@
 const React = require('react');
 
-const Video = require('./video.jsx');
+const Video = require('./video');
 
 const body = { margin: 0, padding: 0 };
 
