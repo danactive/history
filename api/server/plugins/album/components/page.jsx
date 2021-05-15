@@ -1,6 +1,6 @@
 const React = require('react');
 
-const Album = require('./album.jsx');
+const Album = require('./album');
 
 const clearLeft = { clear: 'left' };
 
