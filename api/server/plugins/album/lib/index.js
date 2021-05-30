@@ -30,7 +30,7 @@ const handler = (request, reply) => new Promise((resolve) => {
     gallery,
     raw: isRaw = false,
   } = request.query;
-  const viewPath = 'plugins/album/components/page.jsx';
+  const viewPath = 'api/server/plugins/album/components/page.jsx';
 
   const applyCloud = (response) => ((cloud === 'dropbox') ? applyDropbox(response) : response);
   const handleResponse = (json) => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));

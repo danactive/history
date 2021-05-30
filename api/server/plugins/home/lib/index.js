@@ -2,7 +2,7 @@ const gallery = require('../../../../../app/src/galleries');
 
 async function handler(request, reply) {
   const isRaw = request.query.raw;
-  const viewPath = 'plugins/home/components/page.jsx';
+  const viewPath = 'api/server/plugins/home/components/page.jsx';
   const { body: { galleries } } = await gallery.get();
   const out = { galleries };
 

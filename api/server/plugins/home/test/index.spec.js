@@ -28,7 +28,7 @@ tape('Verify home / route', { skip: false }, (describe) => {
       engines: {
         jsx: hapiReactViews,
       },
-      relativeTo: path.join(__dirname, '../../../'),
+      relativeTo: path.join(__dirname, '../../../../../'),
     };
 
     const request = {

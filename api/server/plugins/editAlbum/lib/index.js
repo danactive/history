@@ -9,7 +9,7 @@ const handler = ({ query: { raw: isRaw } }, reply) => new Promise((resolve) => {
 
     return context;
   };
-  const viewPath = 'plugins/editAlbum/components/page.jsx';
+  const viewPath = 'api/server/plugins/editAlbum/components/page.jsx';
 
   const handleResponse = ({ body: { galleries: json } }) => ((isRaw)
     ? resolve(reply(formatJson(json)))
