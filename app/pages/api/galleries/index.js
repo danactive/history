@@ -1,4 +1,4 @@
-import local from '../../../src/galleries'
+import local from '../../../src/lib/galleries'
 
 const errorSchema = (message) => ({ galleries: [], error: { message } })
 

@@ -3,7 +3,7 @@ const fs = require('fs');
 const sharp = require('sharp');
 
 const { previewFolderName } = require('../../../../../config.json');
-const existsMod = require('../../../../../app/src/exists');
+const existsMod = require('../../../../../app/src/lib/exists');
 const utils = require('../../utils');
 
 async function transformImages(originalPath) {

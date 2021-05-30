@@ -4,7 +4,7 @@ import path from 'path'
 import { promisify } from 'util'
 
 import handler from '..'
-import utilsFactory from '../../../../../src/utils'
+import utilsFactory from '../../../../../src/lib/utils'
 
 describe('Filesystem API', () => {
   describe('Expect result', () => {

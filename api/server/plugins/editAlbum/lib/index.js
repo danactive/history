@@ -1,4 +1,4 @@
-const gallery = require('../../../../../app/src/galleries');
+const gallery = require('../../../../../app/src/lib/galleries');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 

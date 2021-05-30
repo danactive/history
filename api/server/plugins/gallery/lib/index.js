@@ -1,4 +1,4 @@
-const gallery = require('../../../../../app/src/galleries');
+const gallery = require('../../../../../app/src/lib/galleries');
 
 async function register(server) {
   server.route({
