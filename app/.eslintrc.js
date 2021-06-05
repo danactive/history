@@ -1,4 +1,5 @@
 module.exports = {
+  parser: '@babel/eslint-parser',
   extends: ['airbnb', 'airbnb/hooks'],
   rules: {
     'max-len': [2, 150, 4], // increase page width

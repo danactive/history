@@ -39,12 +39,12 @@ describe('Exists library', () => {
     })
 
     test('* Real root absolute file exists', async () => {
-      const testPath = path.join(__dirname, '../../../public/test/fixtures/exists.txt')
+      const testPath = path.join(process.cwd(), '../public/test/fixtures/exists.txt')
       await successTest(expect, testPath)
     })
 
     test('* Real root absolute folder exists', async () => {
-      const testPath = path.join(__dirname, '../../../public/test/fixtures')
+      const testPath = path.join(process.cwd(), '../public/test/fixtures')
       await successTest(expect, testPath)
     })
   })
