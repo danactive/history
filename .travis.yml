@@ -31,5 +31,14 @@ matrix:
       before_script:
         - cd ui
         - npm ci
+        - npm run lint
       script:
         - npm test
+
+    - name: "app"
+        before_script:
+          - cd app
+          - npm ci
+          - npm run lint
+        script:
+          - npm test
