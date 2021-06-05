@@ -7,7 +7,6 @@
     "lint:js": "eslint server *.js --ext .js,.jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown.js .",
     "lint:filter": "eslint --ext .js,.jsx",
-    "release": "standard-version",
     "start": "npm run webpack && node .",
     "test": "npm run test:jest && npm run webpack && nyc --extension .jsx tape server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
@@ -78,7 +77,6 @@
     "jsdom": "^15.2.1",
     "lodash": "^4.17.21",
     "nyc": "^14.1.1",
-    "standard-version": "^9.3.0",
     "tape": "^4.13.3",
     "tape-catch": "^1.0.6",
     "typy": "^3.3.0"
