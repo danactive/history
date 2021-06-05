@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.1.0](https://github.com/danactive/history/compare/v7.0.0...v7.1.0) (2021-06-05)
+
+
+### Features
+
+* **CI:** Remove component tests that pass locally but babel config across folder fails ([9d07c4d](https://github.com/danactive/history/commit/9d07c4d478e484b2e4d09d255104938870d42d18))
+* **Exists:** API and Next app work well together ([96bfb76](https://github.com/danactive/history/commit/96bfb760eb187fa811ece0dab9357c1ba3b00e03))
+* **Filesystem:** Replace walk with filesystem, Next doesn't use __dirname ([a355a72](https://github.com/danactive/history/commit/a355a7275f29603c9b7523ca4a90b8adeae338b0))
+* **Next:** Add Airbnb lint for React Hooks ([a304aa2](https://github.com/danactive/history/commit/a304aa2d4b14a0b42f1fc656c2c4df2dc71e5996))
+* **Next:** Add jest test without server running ([905e454](https://github.com/danactive/history/commit/905e4540b98214040233e2df31f4bef579ceb50e))
+* **Next:** Add jest with starter test ([c750697](https://github.com/danactive/history/commit/c7506979f346670438305fda050a132736dac3f5))
+* **Next:** Add starter files ([f6d487f](https://github.com/danactive/history/commit/f6d487f1c51d1c6fdc30b7969b69a620779fe8f2))
+* **Next:** Change port ([aeacdb5](https://github.com/danactive/history/commit/aeacdb5e63dcf489d8b46b58211296095f7f08f4))
+* **Next:** Change unit test approach to HTTP fetch ([3400e08](https://github.com/danactive/history/commit/3400e081f81b707b459b63abd7527c5da3aade12))
+* **Next:** Duplicate loadable from UI ([a8f1570](https://github.com/danactive/history/commit/a8f15707dfcc226a34e6366c44b7c61b37e3fad9))
+* **Next:** Move Gallery List to next; Unit test needs next server running (manually) ([4a52429](https://github.com/danactive/history/commit/4a52429fa4cf7111d7747a25188b5d5f7ccfb1a6))
+
+
+### Bug Fixes
+
+* **API:** Prepare for React view SSR move ([f152539](https://github.com/danactive/history/commit/f152539104cd13d687fe5b310055a45c609f6c30))
+* **CI:** Remove codeclimate and bettercodehub as too many distractions ([6d5057d](https://github.com/danactive/history/commit/6d5057dd98ae4ce5256d489b109750f3acd41b64))
+* **Filesystem:** API and Next app work well together ([0fb2613](https://github.com/danactive/history/commit/0fb26134f04c6973e8e7e5b88b9daf2c7d20994f))
+* **Gallery:** Follow REST CRUD with plural resource name ([ebf6873](https://github.com/danactive/history/commit/ebf6873d4cb12c6aebce315dc40292d05571cd05))
+* **Gallery:** Unit test for route only, no more library test ([31d1e17](https://github.com/danactive/history/commit/31d1e174f71236683d1b3912130bbd10a35c5461))
+* **Gallery:** Update with fragile code to use `app` business logic ([7ede8f9](https://github.com/danactive/history/commit/7ede8f95b98563c12e67ddfbfd3d696763bc4b7d))
+* **Next:** Move files to library to prepare for Components ([fc75969](https://github.com/danactive/history/commit/fc759692f93ce31ebd000b2a2d807f3bfb650d7f))
+* **Next:** Separate api from library source ([50968b8](https://github.com/danactive/history/commit/50968b82fb298a3f56c706228d691b1a64663d11))
+
 ## [7.0.0](https://github.com/danactive/history/compare/v6.1.0...v7.0.0) (2021-06-05)
 
 
