@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.0.0](https://github.com/danactive/history/compare/v6.1.0...v7.0.0) (2021-06-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Video:** Previously all videos were in the videos folder, now per year
+
+### Features
+
+* **Video:** Group videos into year folder ([46a158a](https://github.com/danactive/history/commit/46a158a2b4125e3c0efc7814371580ee6eed296c))
+* **Walk:** Link to display original image ([7f6af8e](https://github.com/danactive/history/commit/7f6af8e72a7e6061e3b3d703bd1fc9b787340e21))
+
+
+### Bug Fixes
+
+* **API > Video:** Video path with year ([d567baa](https://github.com/danactive/history/commit/d567baaf5227cef54cde56e023e58dfd33dc3264))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([be5f6f1](https://github.com/danactive/history/commit/be5f6f130f660f265ebfae906b273519527bacb2))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([ad9ad8b](https://github.com/danactive/history/commit/ad9ad8b88939cd20513632e2be83496ea6e26c39))
+* **Walk:** Display empty directories and not loading ([8a241a6](https://github.com/danactive/history/commit/8a241a64bdabcdc0f895e88b3b1357b0475190cd))
+
 ## [6.1.0](https://github.com/danactive/history/compare/v6.0.0...v6.1.0) (2021-01-19)
 
 
