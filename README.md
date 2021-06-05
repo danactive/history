@@ -34,7 +34,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. To enable Dropbox for hosting photos place Dropbox API v2 access token `HISTORY_DROPBOX_ACCESS_TOKEN=`
 
 ## Changelog of releases
-See [CHANGELOG](api/CHANGELOG.md)
+See [CHANGELOG](app/CHANGELOG.md)
 
 ## Contributing to this open-source project
 See [CONTRIBUTING](api/CONTRIBUTING.md)
