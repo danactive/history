@@ -1,12 +1,15 @@
-const gallery = require('./gallery');
+const gallery = require('../../../../../app/src/lib/galleries');
 
 async function register(server) {
   server.route({
     method: 'GET',
-    path: '/galleryList',
+    path: '/galleries',
     options: {
       tags: ['api'],
-      handler: async () => ({ galleries: await gallery.getGalleries() }),
+      handler: async () => {
+        const { body: { galleries } } = await gallery.get();
+        return { galleries };
+      },
     },
   });
 }
@@ -14,7 +17,7 @@ async function register(server) {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.4.0',
+  version: '0.5.0',
 };
 
 module.exports = { plugin };

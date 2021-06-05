@@ -9,3 +9,5 @@ coverage
 tmp
 .env
 dist
+
+public/resized

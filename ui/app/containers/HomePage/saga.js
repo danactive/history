@@ -38,7 +38,7 @@ export function* getDropboxGalleries() {
 
 function* getCdnFolders() {
   try {
-    const { galleries } = yield call(request, `${CDN_HOST}/galleryList`);
+    const { galleries } = yield call(request, `${CDN_HOST}/galleries`);
     yield put(
       galleriesLoadingSuccess({
         cdn: galleries.map(name => ({ name, id: `cdn-${name}` })),

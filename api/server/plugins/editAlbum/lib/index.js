@@ -1,4 +1,4 @@
-const gallery = require('../../gallery/lib/gallery');
+const gallery = require('../../../../../app/src/lib/galleries');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
 
@@ -9,12 +9,14 @@ const handler = ({ query: { raw: isRaw } }, reply) => new Promise((resolve) => {
 
     return context;
   };
-  const viewPath = 'plugins/editAlbum/components/page.jsx';
+  const viewPath = 'api/server/plugins/editAlbum/components/page.jsx';
 
-  const handleResponse = (json) => ((isRaw) ? resolve(reply(formatJson(json))) : resolve(reply.view(viewPath, formatJson(json))));
+  const handleResponse = ({ body: { galleries: json } }) => ((isRaw)
+    ? resolve(reply(formatJson(json)))
+    : resolve(reply.view(viewPath, formatJson(json))));
   const handleError = routes.createErrorReply(reply);
 
-  gallery.getGalleries()
+  gallery.get()
     .then(handleResponse)
     .catch(handleError);
 });

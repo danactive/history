@@ -4,7 +4,7 @@ tape('Verify rename library', { skip: false }, (describe) => {
   const appRoot = require('app-root-path');
   const path = require('path');
 
-  const exist = require('../../exists/lib/exists');
+  const exist = require('../../../../../app/src/lib/exists');
   const plugin = require('../lib/rename');
   const utils = require('../../utils');
 
