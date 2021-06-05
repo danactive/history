@@ -42,11 +42,7 @@ const file = {
   },
   mimeType: (extension) => customMime(extension) || mime.lookup(extension),
   mediumType: (extension) => {
-    if (!extension) {
-      return false
-    }
-
-    if (typeof extension !== 'string') {
+    if (!extension || typeof extension !== 'string') {
       return false
     }
 
