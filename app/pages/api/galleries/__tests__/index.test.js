@@ -25,6 +25,7 @@ describe('Galleries API', () => {
         const result = await response.json()
 
         expect(response.status).toBe(405)
+        expect(result.error.message.toLowerCase()).toContain('not allowed')
 
         expect(result.galleries.length).toBe(0)
         expect(result.galleries.includes('demo')).toBeFalsy()

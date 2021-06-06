@@ -1,5 +1,5 @@
 const routes = require('../../../lib/routes');
-const files = require('../../../../../app/src/lib/filesystem');
+const filesServer = require('../../../../../app/src/lib/filesystems');
 const validation = require('../../../lib/validation');
 
 const routeWalkPath = {
@@ -8,8 +8,8 @@ const routeWalkPath = {
   options: {
     handler: async function handler({ query: { path } }) {
       try {
-        const { body } = await files.get(path);
-        return { files: body.files };
+        const { files } = await filesServer.get(path);
+        return { files };
       } catch (e) {
         return routes.wrapError(e);
       }

@@ -6,6 +6,7 @@ module.exports = {
     semi: [2, 'never'], // remove semicolons
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off', // Next.js magically includes
+    'react/jsx-one-expression-per-line': 'off', // too vertical
   },
   env: {
     jest: true,

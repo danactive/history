@@ -1,7 +1,15 @@
 import Head from 'next/head'
-import styles from './index.module.css'
 
-const Home = () => (
+import styles from './index.module.css'
+import { get as getGalleries } from '../src/lib/galleries'
+
+export async function getStaticProps() {
+  return {
+    props: await getGalleries(),
+  }
+}
+
+const Home = ({ galleries }) => (
   <div className={styles.container}>
     <Head>
       <title>Create Next App</title>
@@ -9,6 +17,7 @@ const Home = () => (
     </Head>
 
     <main>
+      <h1>Galleries {JSON.stringify(galleries)}</h1>
       <h1 className={styles.title}>
         Welcome to
         {' '}
