@@ -19,13 +19,13 @@ async function get(returnEnvelope = false) {
     const namesOnly = (content) => content.name
 
     const contents = await fs.readdir('../public/galleries', { withFileTypes: true })
-    const galleries = contents.filter(hasPrefix).map(namesOnly)
+    const body = { galleries: contents.filter(hasPrefix).map(namesOnly) }
 
     if (returnEnvelope) {
-      return { body: { galleries }, status: 200 }
+      return { body, status: 200 }
     }
 
-    return { galleries }
+    return body
   } catch (e) {
     if (returnEnvelope) {
       return { body: errorSchema('No galleries are found'), status: 404 }
