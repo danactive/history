@@ -7,7 +7,7 @@ async function register(server) {
     options: {
       tags: ['api'],
       handler: async () => {
-        const { body: { galleries } } = await gallery.get();
+        const { galleries } = await gallery.get();
         return { galleries };
       },
     },

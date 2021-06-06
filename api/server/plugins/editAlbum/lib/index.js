@@ -11,7 +11,7 @@ const handler = ({ query: { raw: isRaw } }, reply) => new Promise((resolve) => {
   };
   const viewPath = 'api/server/plugins/editAlbum/components/page.jsx';
 
-  const handleResponse = ({ body: { galleries: json } }) => ((isRaw)
+  const handleResponse = ({ galleries: json }) => ((isRaw)
     ? resolve(reply(formatJson(json)))
     : resolve(reply.view(viewPath, formatJson(json))));
   const handleError = routes.createErrorReply(reply);
