@@ -2,19 +2,40 @@ const fsCallback = require('fs')
 
 const fs = fsCallback.promises
 
-async function get(errorSchema = (msg) => msg) {
+const errorSchema = (message) => {
+  const out = { galleries: [] }
+  if (!message) return out
+  return { ...out, error: { message } }
+}
+
+/**
+ * Get Galleries from local filesystem
+ * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
+ * @returns {Promise} galleries
+ */
+async function get(returnEnvelope = false) {
   try {
     const hasPrefix = (content) => content.isDirectory()
     const namesOnly = (content) => content.name
 
     const contents = await fs.readdir('../public/galleries', { withFileTypes: true })
+    const galleries = contents.filter(hasPrefix).map(namesOnly)
 
-    return { body: { galleries: contents.filter(hasPrefix).map(namesOnly) }, status: 200 }
+    if (returnEnvelope) {
+      return { body: { galleries }, status: 200 }
+    }
+
+    return { galleries }
   } catch (e) {
-    return { body: errorSchema('No galleries are found'), status: 404 }
+    if (returnEnvelope) {
+      return { body: errorSchema('No galleries are found'), status: 404 }
+    }
+
+    return errorSchema()
   }
 }
 
 module.exports = {
   get,
+  errorSchema,
 }
