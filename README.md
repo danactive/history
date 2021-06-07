@@ -22,6 +22,13 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1.  View frontend at http://localhost:3000
 
 ### Development
+1. Node.js v14 LTS [Download](https://nodejs.org/)
+1. Folder **app** both the backend and frontend using Next.js
+1. Install project dependencies `npm ci`
+1. Start web server `npm run dev`
+1. View address in browser (printed in terminal on successful load)
+
+### Legacy Development
 1. Node.js v12 LTS [Download](https://nodejs.org/)
 1. Folder **api** is the backend; **ui** is the frontend
 1. Install project dependencies `npm ci`
@@ -29,14 +36,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. Start web server `npm start`
 1. View address in browser (printed in terminal on successful load)
 
-### Next Development
-1. Node.js v14 LTS [Download](https://nodejs.org/)
-1. Folder **app** both the backend and frontend
-1. Install project dependencies `npm ci`
-1. Start web server `npm run dev`
-1. View address in browser (printed in terminal on successful load)
-
-## Environment configuration
+#### Environment configuration
 1. Create a `.env` file in the project root
 1. To enable Dropbox for hosting photos place Dropbox API v2 access token `HISTORY_DROPBOX_ACCESS_TOKEN=`
 
