@@ -6,8 +6,9 @@ exports[`renders homepage unchanged 1`] = `
 >
   <main>
     <h1>
-      Galleries 
+      List of Galleries
     </h1>
+    <p />
     <h1
       className="title"
     >
