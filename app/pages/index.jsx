@@ -17,7 +17,8 @@ const Home = ({ galleries }) => (
     </Head>
 
     <main>
-      <h1>Galleries {JSON.stringify(galleries)}</h1>
+      <h1>List of Galleries</h1>
+      <p>{JSON.stringify(galleries)}</p>
       <h1 className={styles.title}>
         Welcome to
         {' '}
