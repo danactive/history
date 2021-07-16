@@ -1,4 +1,3 @@
-const clone = require('clone')
 const camelCase = require('camelcase')
 const fsCallback = require('fs')
 const xml2js = require('xml2js')
@@ -21,8 +20,8 @@ const utils = utilsFactory(errorSchema)
 * Get album XML from local filesystem
 * @returns {string} album XML
 */
-async function getAlbumFromFilesystem() {
-  const fileBuffer = await fs.readFile('../public/galleries/demo/sample.xml')
+async function getAlbumFromFilesystem(gallery, album) {
+  const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/${album}.xml`)
   const xml = await parseXml(fileBuffer)
   return xml
 }
@@ -56,45 +55,45 @@ const getVideoPath = (item, gallery) => {
 }
 
 function title(item) {
-  const presentable = (...values) => values.every((value) => value !== undefined && value !== '');
+  const presentable = (...values) => values.every((value) => value !== undefined && value !== '')
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
-    return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`;
+    return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`
   }
 
   if (presentable(item.photoLoc, item.photoCity)) {
-    return `${item.photoLoc} (${item.photoCity})`;
+    return `${item.photoLoc} (${item.photoCity})`
   }
 
   if (presentable(item.photoLoc, item.photoDesc)) {
-    return `${item.photoLoc}: ${item.photoDesc}`;
+    return `${item.photoLoc}: ${item.photoDesc}`
   }
 
   if (presentable(item.photoCity, item.photoDesc)) {
-    return `${item.photoCity}: ${item.photoDesc}`;
+    return `${item.photoCity}: ${item.photoDesc}`
   }
 
   if (presentable(item.photoLoc)) {
-    return item.photoLoc;
+    return item.photoLoc
   }
 
   if (presentable(item.photoCity)) {
-    return item.photoCity;
+    return item.photoCity
   }
 
-  return item.photoDesc;
+  return item.photoDesc
 }
 
 function caption(item) {
   if (item.type === 'video') {
-    return `Video: ${item.thumbCaption}`;
+    return `Video: ${item.thumbCaption}`
   }
 
-  return item.thumbCaption;
+  return item.thumbCaption
 }
 
 /**
  * Transform dirty JSON from XML into clean JSON schema
- * @param dirty
+ * @param {object} dirty
  * @returns {object} clean JSON
  */
 const transformJsonSchema = (dirty = {}) => {
@@ -103,46 +102,49 @@ const transformJsonSchema = (dirty = {}) => {
   }
 
   const { gallery } = dirty.album.meta
-  const output = clone(dirty)
-  delete output.album.item
 
-  output.album.items = dirty.album.item.map((_item) => {
-    const item = _item
-    item.caption = item.thumbCaption
+  const items = dirty.album.item.map((item) => {
+    const geo = {
+      lat: null,
+      lon: null,
+    }
     if (item.geo) {
-      item.geo.lat = parseFloat(item.geo.lat)
-      item.geo.lon = parseFloat(item.geo.lon)
-    } else {
-      item.geo = {
-        lat: null,
-        lon: null,
-      }
+      geo.lat = parseFloat(item.geo.lat)
+      geo.lon = parseFloat(item.geo.lon)
     }
 
     const thumbPath = getThumbPath(item, gallery)
     const photoPath = utils.photoPath(thumbPath)
     const videoPath = getVideoPath(item, gallery)
-    const enhancements = {
+    return ({
+      ...item,
+      caption: item.thumbCaption,
+      geo,
       thumbCaption: caption(item),
       title: title(item),
       thumbPath,
       mediaPath: (item.type === 'video') ? videoPath : photoPath,
-    }
-
-    return Object.assign(item, enhancements)
+    })
   })
 
-  return output
+  return {
+    album: {
+      meta: dirty.album.meta,
+      items,
+    },
+  }
 }
 
 /**
  * Get Albums from local filesystem
+ * @param {string} gallery name of gallery
+ * @param {string} album name of album
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {Promise} galleries
+ * @returns {object} album
  */
-async function get(returnEnvelope = false) {
+async function get(gallery, album, returnEnvelope = false) {
   try {
-    const xml = await getAlbumFromFilesystem()
+    const xml = await getAlbumFromFilesystem(gallery, album)
     const body = { album: transformJsonSchema(xml) }
 
     if (returnEnvelope) {
@@ -151,7 +153,6 @@ async function get(returnEnvelope = false) {
 
     return body
   } catch (e) {
-    console.log('catch error', e)
     if (returnEnvelope) {
       return { body: errorSchema('No albums were found'), status: 404 }
     }

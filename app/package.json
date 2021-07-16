@@ -17,7 +17,6 @@
     "app-root-path": "^3.0.0",
     "boom": "^7.0.0",
     "camelcase": "^6.2.0",
-    "clone": "^2.1.2",
     "glob": "^7.1.7",
     "mime-types": "^2.1.31",
     "next": "^10.2.3",
