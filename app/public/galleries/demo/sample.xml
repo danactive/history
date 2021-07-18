@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xslt/album.xslt"?>
+<album>
+	<meta>
+		<gallery>demo</gallery>
+		<album_name>sample</album_name>
+		<album_version>2.0</album_version>
+		<geo>
+			<google_zoom>11</google_zoom>
+		</geo>
+	</meta>
+	<item id="1">
+		<filename>2001-03-21-01.jpg</filename>
+		<geo>
+			<lat>49.270833</lat>
+			<lon>-123.134167</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Granville Island</photo_loc>
+		<thumb_caption>Lunch</thumb_caption>
+	</item>
+	<item id="30">
+		<filename>2004-01-04-01.jpg</filename>
+		<geo>
+			<lat>49.25</lat>
+			<lon>-123.1</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Dining Room</photo_loc>
+		<thumb_caption>Gingerbread</thumb_caption>
+		<photo_desc>Gingerbread persons</photo_desc>
+	</item>
+	<item id="2">
+		<filename>2005-07-30-01.jpg</filename>
+		<geo>
+			<lat>49.15</lat>
+			<lon>-123.733</lon>
+		</geo>
+		<photo_city>Gabriola Island, BC</photo_city>
+		<photo_loc>Camping</photo_loc>
+		<thumb_caption>Starfish</thumb_caption>
+		<photo_desc>Starfish</photo_desc>
+	</item>
+	<item id="4">
+		<type>video</type>
+		<filename>2012-fireplace.mp4</filename>
+		<filename>2012-fireplace.webm</filename>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Friend</photo_loc>
+		<thumb_caption>Fireplace</thumb_caption>
+		<photo_desc>A sample HTML5 video in both MP4 and WebM formats</photo_desc>
+		<size>
+			<w>1280</w>
+			<h>720</h>
+		</size>
+		<geo>
+			<lat>49.25</lat>
+			<lon>-123.1</lon>
+		</geo>
+	</item>
+	<item id="5">
+		<filename>2014-02-08-14.jpg</filename>
+		<geo>
+			<lat>49.194722</lat>
+			<lon>-123.183889</lon>
+		</geo>
+		<photo_city>Vancouver International Airport, BC</photo_city>
+		<photo_loc>YVR</photo_loc>
+		<thumb_caption>Airport</thumb_caption>
+		<photo_desc/>
+		<ref>
+			<name>Vancouver_International_Airport</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+	<item id="6">
+		<filename>2020-02-28-40.jpg</filename>
+		<geo>
+			<lat>49.287434</lat>
+			<lon>-123.117035</lon>
+		</geo>
+		<photo_city>Vancouver, BC</photo_city>
+		<photo_loc>Brass Fish Tavern</photo_loc>
+		<thumb_caption>Tavern</thumb_caption>
+		<photo_desc>Located in the iconic art deco  Marine building</photo_desc>
+		<ref>
+			<name>Marine_Building</name>
+			<source>wikipedia</source>
+		</ref>
+	</item>
+</album>

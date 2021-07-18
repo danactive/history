@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="../../xslt/gallery.xslt"?>
+<gallery name="demo">
+	<album>
+		<gallery_id>1</gallery_id>
+		<album_name>sample</album_name> <!-- unique album name -->
+		<album_version>1.8</album_version> <!-- note for XML schema reference -->
+		<sort>1</sort>
+		<album_h1>Sample</album_h1> <!-- heading 1: album name -->
+		<album_h2>British Columbia</album_h2> <!-- heading 2: State/Province -->
+		<year>2001-2005</year> <!-- Year outputted as text in gallery view -->
+		<filename>2004-01-04-01.jpg</filename> <!-- must start with a four letter year; file must be hosted in the media folder > year folder (i.e. media/2004/2004-01-04-01.jpg) -->
+	</album>
+</gallery>
