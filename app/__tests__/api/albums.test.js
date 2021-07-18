@@ -1,7 +1,7 @@
 import { testApiHandler } from 'next-test-api-route-handler'
 
 import config from '../../../config.json'
-import handler from '../api/galleries/[gallery]/albums'
+import handler from '../../pages/api/galleries/[gallery]/albums'
 
 describe('Albums endpoint', () => {
   describe('Expect result', () => {

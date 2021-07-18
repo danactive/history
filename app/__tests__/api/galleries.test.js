@@ -1,22 +1,20 @@
 import { testApiHandler } from 'next-test-api-route-handler'
 
-import config from '../../../config.json'
-import handler from '../api/galleries/[gallery]/albums/[album]'
+import handler from '../../pages/api/galleries'
 
-describe('Album endpoint', () => {
+describe('Galleries endpoint', () => {
   describe('Expect result', () => {
-    test('* GET has album', async () => {
+    test('* GET has galleries', async () => {
       const test = async ({ fetch }) => {
         const response = await fetch({ method: 'GET' })
         const result = await response.json()
 
         expect(response.status).toBe(200)
 
-        expect(result.album.items.length).toBeGreaterThan(0)
-        expect(result.album.items[0].filename).toBe('2001-03-21-01.jpg')
+        expect(result.galleries.length).toBeGreaterThan(0)
+        expect(result.galleries.includes('demo')).toBeTruthy()
       }
-      const params = { gallery: config.defaultGallery, album: config.defaultAlbum }
-      await testApiHandler({ handler, test, params })
+      await testApiHandler({ handler, test })
     })
   })
 
@@ -29,7 +27,8 @@ describe('Album endpoint', () => {
         expect(response.status).toBe(405)
         expect(result.error.message.toLowerCase()).toContain('not allowed')
 
-        expect(result.album.length).toBe(0)
+        expect(result.galleries.length).toBe(0)
+        expect(result.galleries.includes('demo')).toBeFalsy()
       }
       await testApiHandler({ handler, test })
     })
