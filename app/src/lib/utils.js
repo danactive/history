@@ -4,6 +4,43 @@ const path = require('path')
 
 const configFile = require('../../../config.json')
 
+const type = (filepath) => {
+  if (!filepath) {
+    return false
+  }
+
+  if (filepath.lastIndexOf('.') === 0) {
+    return path.parse(filepath).name.substr(1)
+  }
+
+  return path.extname(filepath).substr(1)
+}
+
+const jpgFilenameInsensitive = (filename) => {
+  const currentExt = type(filename)
+  const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg'
+  const imageFilename = filename.replace(currentExt, futureExt)
+  return imageFilename
+}
+
+/**
+ * Photo or thumbnail path to public folder on local filesystem
+ * @param {object} item
+ * @param {string} gallery
+ * @param {string} rasterType photo|thumb
+ * @returns {string} path
+ */
+const rasterPath = (item, gallery, rasterType) => {
+  if (!item || !item.filename) {
+    return ''
+  }
+
+  const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0]
+  const imageFilename = jpgFilenameInsensitive(filename)
+  const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
+  return `/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
+}
+
 function customMime(rawExtension) {
   const extension = (rawExtension) ? rawExtension.toLowerCase() : null
 
@@ -29,17 +66,7 @@ function customMime(rawExtension) {
 }
 
 const file = {
-  type: (filepath) => {
-    if (!filepath) {
-      return false
-    }
-
-    if (filepath.lastIndexOf('.') === 0) {
-      return path.parse(filepath).name.substr(1)
-    }
-
-    return path.extname(filepath).substr(1)
-  },
+  type,
   mimeType: (extension) => customMime(extension) || mime.lookup(extension),
   mediumType: (extension) => {
     if (!extension || typeof extension !== 'string') {
@@ -61,7 +88,9 @@ const file = {
     return extension.split('/')[0]
   },
   absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
-  photoPath: (filepath) => filepath && filepath.replace('thumbs', 'photos'),
+  thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
+  photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
+  jpgFilenameInsensitive,
 }
 
 function utils(errorSchema) {

@@ -18,30 +18,13 @@ const utils = utilsFactory(errorSchema)
 
 /**
 * Get album XML from local filesystem
+* @param {string} gallery name of gallery
+* @param {string} album name of album
 * @returns {string} album XML
 */
-async function getAlbumFromFilesystem(gallery, album) {
+async function getXmlFromFilesystem(gallery, album) {
   const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/${album}.xml`)
-  const xml = await parseXml(fileBuffer)
-  return xml
-}
-
-const jpgFilenameInsensitive = (filename) => {
-  const currentExt = utils.type(filename)
-  const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg'
-  const imageFilename = filename.replace(currentExt, futureExt)
-  return imageFilename
-}
-
-const getThumbPath = (item, gallery) => {
-  if (!item || !item.filename) {
-    return undefined
-  }
-
-  const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0]
-  const imageFilename = jpgFilenameInsensitive(filename)
-  const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
-  return `/galleries/${gallery}/media/thumbs/${year}/${imageFilename}`
+  return parseXml(fileBuffer)
 }
 
 const getVideoPath = (item, gallery) => {
@@ -113,8 +96,8 @@ const transformJsonSchema = (dirty = {}) => {
       geo.lon = parseFloat(item.geo.lon)
     }
 
-    const thumbPath = getThumbPath(item, gallery)
-    const photoPath = utils.photoPath(thumbPath)
+    const thumbPath = utils.thumbPath(item, gallery)
+    const photoPath = utils.photoPath(item, gallery)
     const videoPath = getVideoPath(item, gallery)
     return ({
       ...item,
@@ -136,7 +119,7 @@ const transformJsonSchema = (dirty = {}) => {
 }
 
 /**
- * Get Albums from local filesystem
+ * Get Album XML from local filesystem
  * @param {string} gallery name of gallery
  * @param {string} album name of album
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
@@ -144,8 +127,8 @@ const transformJsonSchema = (dirty = {}) => {
  */
 async function get(gallery, album, returnEnvelope = false) {
   try {
-    const xml = await getAlbumFromFilesystem(gallery, album)
-    const body = { album: transformJsonSchema(xml) }
+    const xml = await getXmlFromFilesystem(gallery, album)
+    const body = transformJsonSchema(xml)
 
     if (returnEnvelope) {
       return { body, status: 200 }
@@ -154,7 +137,7 @@ async function get(gallery, album, returnEnvelope = false) {
     return body
   } catch (e) {
     if (returnEnvelope) {
-      return { body: errorSchema('No albums were found'), status: 404 }
+      return { body: errorSchema('No album was found'), status: 404 }
     }
 
     return errorSchema()
@@ -164,8 +147,6 @@ async function get(gallery, album, returnEnvelope = false) {
 module.exports = {
   get,
   errorSchema,
-  jpgFilenameInsensitive,
-  getThumbPath,
   getVideoPath,
   transformJsonSchema,
 }
