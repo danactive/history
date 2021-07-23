@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Ul = styled.ul`
   list-style: none;
@@ -7,6 +7,6 @@ const Ul = styled.ul`
   max-height: 30em;
   overflow-y: auto;
   padding: 0 1em;
-`;
+`
 
-export default Ul;
+export default Ul

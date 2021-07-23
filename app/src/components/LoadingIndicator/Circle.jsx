@@ -1,5 +1,4 @@
-import React from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components'
 
 const circleFadeDelay = keyframes`
   0%,
@@ -11,7 +10,7 @@ const circleFadeDelay = keyframes`
   40% {
     opacity: 1;
   }
-`;
+`
 
 const CirclePrimitive = styled.div`
   width: 100%;
@@ -20,9 +19,8 @@ const CirclePrimitive = styled.div`
   left: 0;
   top: 0;
 
-  ${({ rotate }) =>
-    rotate &&
-    css`
+  ${({ rotate }) => rotate
+    && css`
       -webkit-transform: rotate(${rotate}deg);
       -ms-transform: rotate(${rotate}deg);
       transform: rotate(${rotate}deg);
@@ -38,17 +36,16 @@ const CirclePrimitive = styled.div`
     border-radius: 100%;
     animation: ${circleFadeDelay} 1.2s infinite ease-in-out both;
 
-    ${({ delay }) =>
-      delay && // eslint-disable-line indent
-      css`
+    ${({ delay }) => delay // eslint-disable-line indent
+      && css`
         -webkit-animation-delay: ${delay}s;
         animation-delay: ${delay}s;
       `}
   }
-`;
+`
 
 const Circle = ({ delay, rotate }) => (
   <CirclePrimitive delay={delay} rotate={rotate} />
-);
+)
 
-export default Circle;
+export default Circle

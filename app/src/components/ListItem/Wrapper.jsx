@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Wrapper = styled.li`
   width: 100%;
@@ -11,6 +11,6 @@ const Wrapper = styled.li`
   &:first-child {
     border-top: none;
   }
-`;
+`
 
-export default Wrapper;
+export default Wrapper
