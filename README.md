@@ -1,5 +1,5 @@
 # history
-
+Jenna's comment
 Your personal **history** storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption... in XML albums.
 * Enhanced privacy as photos are stored locally not in the cloud
 * Plot thumbnails on a map
