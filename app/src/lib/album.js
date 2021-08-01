@@ -74,6 +74,24 @@ function caption(item) {
   return item.thumbCaption
 }
 
+const reference = (item) => {
+  const baseUrl = (source) => {
+    switch (source) {
+      case 'facebook':
+        return 'https://www.facebook.com/'
+      case 'google':
+        return 'https://www.google.com/search?q='
+      case 'wikipedia':
+        return 'https://en.wikipedia.org/wiki/'
+      case 'youtube':
+        return 'https://www.youtube.com/watch?v='
+      default:
+        return ''
+    }
+  }
+  return (item?.ref?.name) ? baseUrl(item?.ref?.source) + item.ref.name : undefined
+}
+
 /**
  * Transform dirty JSON from XML into clean JSON schema
  * @param {object} dirty
@@ -100,13 +118,18 @@ const transformJsonSchema = (dirty = {}) => {
     const photoPath = utils.photoPath(item, gallery)
     const videoPath = getVideoPath(item, gallery)
     return ({
-      ...item,
-      caption: item.thumbCaption,
-      geo,
-      thumbCaption: caption(item),
+      id: item.$.id,
+      filename: item.filename,
+      city: item.photoCity,
+      location: item.photoLoc,
+      caption: caption(item),
+      description: item.photoDesc,
       title: title(item),
+      geo,
       thumbPath,
+      photoPath,
       mediaPath: (item.type === 'video') ? videoPath : photoPath,
+      reference: reference(item),
     })
   })
 
@@ -123,7 +146,7 @@ const transformJsonSchema = (dirty = {}) => {
  * @param {string} gallery name of gallery
  * @param {string} album name of album
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {object} album
+ * @returns {object} album containing filename, photoCity, photoLoc, thumbCaption, photoDesc
  */
 async function get(gallery, album, returnEnvelope = false) {
   try {
@@ -148,5 +171,6 @@ module.exports = {
   get,
   errorSchema,
   getVideoPath,
+  reference,
   transformJsonSchema,
 }
