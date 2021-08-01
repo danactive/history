@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { memo } from 'react'
-import DomLink from 'next/link'
+import NextLink from 'next/link'
 import styled from 'styled-components'
 
-const ColouredLink = styled(DomLink)`
+const ColouredLink = styled(NextLink)`
   color: #6cc0e5;
 
   &:hover {

@@ -35,13 +35,11 @@ async function getGalleryFromFilesystem(gallery) {
  */
 const transformJsonSchema = (dirty = {}, gallery) => {
   const transform = (album) => ({
-    id: album.galleryId,
     name: album.albumName,
     h1: album.albumH1,
     h2: album.albumH2,
     version: album.albumVersion,
     thumbPath: utils.thumbPath({ filename: album.filename }, gallery),
-    sort: album.sort,
     year: album.year,
   })
 

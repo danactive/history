@@ -2,10 +2,8 @@
 <?xml-stylesheet type="text/xsl" href="../../xslt/gallery.xslt"?>
 <gallery name="demo">
 	<album>
-		<gallery_id>1</gallery_id>
 		<album_name>sample</album_name> <!-- unique album name -->
 		<album_version>1.8</album_version> <!-- note for XML schema reference -->
-		<sort>1</sort>
 		<album_h1>Sample</album_h1> <!-- heading 1: album name -->
 		<album_h2>British Columbia</album_h2> <!-- heading 2: State/Province -->
 		<year>2001-2005</year> <!-- Year outputted as text in gallery view -->
