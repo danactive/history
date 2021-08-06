@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 const Search = () => {
   const [keyword, setKeyword] = useState('')
-  const [twitterErrorMsg, setTwitter] = useState('')
+  const [isTwitterError, setTwitterError] = useState(false)
   const [twitterList, setTwitterList] = useState('Spinner')
 
   const handleSubmit = async (event) => {
@@ -14,10 +14,18 @@ const Search = () => {
       const result = await response.json()
       setTwitterList(result.tweets.map((tweet) => (<li>{tweet.message}</li>)))
     } catch (error) {
-      setTwitter('Could not connect to Twitter')
+      setTwitterError('Could not connect to Twitter')
     }
   }
   console.log('Reusable component re-render')
+
+  let vancouver = <div>Oops</div>
+
+  if (keyword === 'vancouver') {
+    vancouver = (<h1>VANCOUVER</h1>)
+  } else {
+    vancouver = <h5>not van</h5>
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -26,7 +34,11 @@ const Search = () => {
         <input type="text" onChange={(event) => setKeyword(event.target.value)} />
         <input type="submit" value="Search Twitter" />
       </div>
-      {twitterErrorMsg || (<ul>{twitterList}</ul>)}
+      {vancouver}
+      {isTwitterError && (
+        <div>Oops No Twitter!</div>
+      )}
+      {twitterList && (<ul>{twitterList}</ul>)}
     </form>
   )
 }
