@@ -3,16 +3,18 @@ import { useState } from 'react'
 
 const Search = () => {
   const [keyword, setKeyword] = useState('')
+  const [twitterErrorMsg, setTwitter] = useState('')
+  const [twitterList, setTwitterList] = useState('Spinner')
+
   const handleSubmit = async (event) => {
     event.preventDefault()
 
     try {
       const response = await fetch(`/api/twitter?keyword=${keyword}`)
       const result = await response.json()
-      console.log(result)
-    } catch (e) {
-      // TODO display this error to the user
-      console.log('Could not connect to Twitter')
+      setTwitterList(result.tweets.map((tweet) => (<li>{tweet.message}</li>)))
+    } catch (error) {
+      setTwitter('Could not connect to Twitter')
     }
   }
   console.log('Reusable component re-render')
@@ -24,7 +26,7 @@ const Search = () => {
         <input type="text" onChange={(event) => setKeyword(event.target.value)} />
         <input type="submit" value="Search Twitter" />
       </div>
-      <ul><li>Search results todo</li></ul>
+      {twitterErrorMsg || (<ul>{twitterList}</ul>)}
     </form>
   )
 }
