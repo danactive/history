@@ -1,12 +1,21 @@
+/* global fetch */
 import { useState } from 'react'
 
 const Search = () => {
   const [keyword, setKeyword] = useState('')
-  const handleSubmit = (event) => {
-    // TODO get the keyword from the input
-    console.log('User is searching for ', keyword)
+  const handleSubmit = async (event) => {
     event.preventDefault()
+
+    try {
+      const response = await fetch(`/api/twitter?keyword=${keyword}`)
+      const result = await response.json()
+      console.log(result)
+    } catch (e) {
+      // TODO display this error to the user
+      console.log('Could not connect to Twitter')
+    }
   }
+  console.log('Reusable component re-render')
 
   return (
     <form onSubmit={handleSubmit}>
