@@ -9,4 +9,7 @@ https://hub.docker.com/r/jrottenberg/ffmpeg/
 * [Rotate MP4 video without re-encoding](https://stackoverflow.com/questions/25031557/rotate-mp4-videos-without-re-encoding)
   * `docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.MP4  -c copy -metadata:s:v:0 rotate=90 /temp/output.MP4`
 
-* [More ffmpeg command details](../public/galleries/gallery-demo/media/videos/README.md)
+* Delay begining (_-ss_) and/or trim end (_-t_). [Time syntax reference](http://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax)
+  * `docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.MTS -ss 8 -t 7 /temp/output.MP4`
+
+* [More ffmpeg command details](../public/galleries/demo/media/videos/README.md)
