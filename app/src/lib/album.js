@@ -89,7 +89,7 @@ const reference = (item) => {
         return ''
     }
   }
-  return (item?.ref?.name) ? baseUrl(item?.ref?.source) + item.ref.name : undefined
+  return (item?.ref?.name) ? baseUrl(item?.ref?.source) + item.ref.name : null
 }
 
 /**
@@ -123,7 +123,7 @@ const transformJsonSchema = (dirty = {}) => {
       city: item.photoCity,
       location: item.photoLoc,
       caption: caption(item),
-      description: item.photoDesc,
+      description: item.photoDesc || null,
       title: title(item),
       geo,
       thumbPath,

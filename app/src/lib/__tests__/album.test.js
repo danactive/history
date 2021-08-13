@@ -75,7 +75,7 @@ describe('Album library', () => {
       expect(result.album.items[0].thumbPath).toEqual('/galleries/demo/media/thumbs/2016/2016-Image-Filename.jpg') // Thumb Path
       expect(result.album.items[0].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].mediaPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
-      expect(result.album.items[0].reference).toBeUndefined()
+      expect(result.album.items[0].reference).toBeNull()
       expect(result.album.items[1].caption).toEqual('Video: Caption') // Video Thumb Caption
       expect(result.album.items[1].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Video-Filename.jpg') // Photo Path
       expect(result.album.items[1].mediaPath)

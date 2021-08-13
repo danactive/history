@@ -4,10 +4,12 @@ import styled, { css } from 'styled-components'
 import { get as getAlbums } from '../../../src/lib/albums'
 import { get as getGalleries } from '../../../src/lib/galleries'
 
+import Link from '../../../src/components/Link'
+
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
   return {
-    props: { albums },
+    props: { gallery, albums },
   }
 }
 
@@ -47,13 +49,14 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-const AlbumsPage = ({ albums }) => {
+const AlbumsPage = ({ gallery, albums }) => {
   const albumGroup = albums.map((album, i) => (
     <Albums
       key={album.name}
       odd={i % 2 === 0}
     >
-      <img src={album.thumbPath} alt={album.name} />
+      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+      <Link href={`/view/${gallery}/${album.name}`}><a><img src={album.thumbPath} alt={album.name} /></a></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
       <AlbumYear>{album.year}</AlbumYear>
@@ -63,7 +66,7 @@ const AlbumsPage = ({ albums }) => {
   return (
     <div>
       <Head>
-        <title>History App</title>
+        <title>History App - List Albums</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>{albumGroup}</div>

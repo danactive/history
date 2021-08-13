@@ -1,9 +1,9 @@
 import Head from 'next/head'
 
-import { get as getGalleries } from '../src/lib/galleries'
-import GenericList from '../src/components/GenericList'
-import ListItem from '../src/components/ListItem'
-import Link from '../src/components/Link'
+import { get as getGalleries } from '../../src/lib/galleries'
+import GenericList from '../../src/components/GenericList'
+import ListItem from '../../src/components/ListItem'
+import Link from '../../src/components/Link'
 
 export async function getStaticProps() {
   const { galleries } = await getGalleries()
@@ -22,7 +22,7 @@ const ListComponent = ({ item }) => (
 const Home = ({ galleries }) => (
   <div>
     <Head>
-      <title>History App</title>
+      <title>History App - List Galleries</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
 
