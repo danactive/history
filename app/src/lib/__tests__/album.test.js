@@ -25,15 +25,16 @@ describe('Album library', () => {
     test('Meta', () => {
       const mock = { album: { meta: 'Self talk' } }
       const result = lib.transformJsonSchema(mock)
-      expect(result).toEqual(mock)
+      expect(result.album.meta).toEqual(mock.album.meta)
+      expect(result.album.items.length).toEqual(0)
     })
 
-    test('Meta with id', () => {
+    test('Only one photo', () => {
       const mock = { album: { meta: 'Self talk' } }
-      mock.album.item = [{ $: { id: 1 } }]
+      mock.album.item = { $: { id: 1 } }
       const result = lib.transformJsonSchema(mock)
       expect(result.album.meta).toEqual(mock.album.meta)
-      expect(result.album.items[0].id).toEqual(mock.album.item[0].$.id)
+      expect(result.album.items[0].id).toEqual(mock.album.item.$.id)
     })
 
     test('Raw items', () => {
