@@ -18,7 +18,7 @@ function GenericList({
     return <List component={ErrorComponent} />
   }
 
-  if (items.length > 0) {
+  if (items?.length > 0) {
     return <List items={items} component={component} />
   }
 

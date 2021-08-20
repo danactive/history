@@ -10,13 +10,11 @@ describe('Albums library', () => {
       const expected = {
         albums: [
           {
-            id: '1',
             name: 'sample',
             h1: 'Sample',
             h2: 'British Columbia',
             version: '1.8',
             thumbPath: '/galleries/demo/media/thumbs/2004/2004-01-04-01.jpg',
-            sort: '1',
             year: '2001-2005',
           },
         ],

@@ -1,6 +1,27 @@
-import '../styles/global.css'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 
-// This default export is required in a new `pages/_app.js` file.
-export default function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} /> /* eslint-disable-line react/jsx-props-no-spreading */
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+`
+
+const theme = {
+  colors: {
+    primary: '#0070f3',
+  },
+}
+
+export default function App({ Component, pageProps }) {
+  /* eslint-disable react/jsx-props-no-spreading */
+  return (
+    <>
+      <GlobalStyle />
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </>
+  )
 }

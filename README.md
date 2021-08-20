@@ -48,3 +48,6 @@ See [CONTRIBUTING](api/CONTRIBUTING.md)
 
 ## Copyright
 See [LICENSE](LICENSE)
+
+## Visualization
+![Visualization of the codebase](./diagram.svg)
