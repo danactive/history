@@ -97,7 +97,7 @@ function templatePrepare(result = {}) {
     }
 
     const thumbPath = getThumbPath(item, gallery);
-    const photoPath = utils.file.photoPath(thumbPath);
+    const photoPath = utils.file.photoPath(item, gallery);
     const videoPath = getVideoPath(item, gallery);
     const enhancements = {
       thumbCaption: caption(item),
