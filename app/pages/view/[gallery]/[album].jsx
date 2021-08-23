@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
 import { get as getAlbum } from '../../../src/lib/album'
+import Link from '../../../src/components/Link'
 // import { get as getAlbums } from '../../../src/lib/albums'
 // import { get as getGalleries } from '../../../src/lib/galleries'
 
@@ -40,7 +41,11 @@ const AlbumPage = ({ album }) => (
 
     <ul>
       {album.items.map((item) => (
-        <li key={item.filename}>{item.city} <img src={item.thumbPath} alt={item.caption} /> {item?.geo?.lat}, {item?.geo?.lon}</li>
+        <li key={item.filename}>{item.city}
+          <img src={item.thumbPath} alt={item.caption} />
+          {item?.geo?.lat}, {item?.geo?.lon}
+          <Link href={`/view/nearby?lat=${item?.geo?.lat}&lon=${item?.geo?.lon}`}><a>See Nearby</a></Link>
+        </li>
       ))}
     </ul>
   </div>
