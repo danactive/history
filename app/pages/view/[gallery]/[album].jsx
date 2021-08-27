@@ -1,21 +1,19 @@
 import Head from 'next/head'
-
+import styled, { css } from 'styled-components'
 import { get as getAlbum } from '../../../src/lib/album'
 import Link from '../../../src/components/Link'
-// import { get as getAlbums } from '../../../src/lib/albums'
-// import { get as getGalleries } from '../../../src/lib/galleries'
 
-// async function buildStaticPaths() {
-//   const { galleries } = await getGalleries()
-//   // Define these albums as allowed, otherwise 404
-//   const promises = galleries.reduce(async (accumulator, gallery) => {
-//     const { albums } = await getAlbums(gallery)
-//     return albums.map((album) => ({ params: { gallery, album } }))
-//   }, [])
-//
-//   const paths = await Promise.all(promises)
-//   return paths
-// }
+const GoTo = styled.a`
+  color: black;
+  text-decoration: none;
+  display: inline-block;
+  padding: 10px;
+  margin-left: 20px;
+  font-size: 14px;
+  background-color: lightgrey;
+  border: 1px solid black;
+  border-radius: 4px;
+`;
 
 export async function getStaticProps({ params: { gallery, album } }) {
   const json = await getAlbum(gallery, album)
@@ -44,7 +42,7 @@ const AlbumPage = ({ album }) => (
         <li key={item.filename}>{item.city}
           <img src={item.thumbPath} alt={item.caption} />
           {item?.geo?.lat}, {item?.geo?.lon}
-          <Link href={`/view/nearby?lat=${item?.geo?.lat}&lon=${item?.geo?.lon}`}><a>See Nearby</a></Link>
+          <Link href={`/view/nearby?lat=${item?.geo?.lat}&lon=${item?.geo?.lon}`}><GoTo>See Nearby</GoTo></Link>
         </li>
       ))}
     </ul>

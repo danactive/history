@@ -19,6 +19,15 @@ const ImageItem = styled.li`
   width: 17%;
 `;
 
+const ErrorMessage = styled.p`
+  font-size: 22px;
+  padding-left: 20px 0px;
+`;
+
+const Container = styled.div`
+  padding: 40px;
+`;
+
 const Nearby = () => {
   const router = useRouter();
   const { lon } = router.query;
@@ -42,7 +51,7 @@ const Nearby = () => {
       </ImageItem>
       )));
     } catch {
-      setErrorMsg('could not connect')
+      setErrorMsg('Could not connect. Please try again later.')
     }
   }
 
@@ -55,19 +64,20 @@ const Nearby = () => {
   }, []);
 
   return (
-    <div>
+    <Container>
       <button onClick={() => router.back()}>Click here to go back</button>
       <h1>Nearby</h1>
       <h2>{latitude}, {longitude}</h2>
-      {/* <ImageList>{nearbyPhotos}</ImageList> */}
-      <img src={largePhoto} alt="image" />
       {errorMsg && (
-        <div>{errorMsg}</div>
+        <ErrorMessage>{errorMsg}</ErrorMessage>
       )}
       {nearbyPhotos && (
-        <ImageList>{nearbyPhotos}</ImageList>
+        <div>
+          <img src={largePhoto} alt="image" />
+          <ImageList>{nearbyPhotos}</ImageList>
+        </div>
       )}
-    </div>
+    </Container>
   )
 }
 
