@@ -7,9 +7,14 @@ import { get as getGalleries } from '../../../src/lib/galleries'
 import Link from '../../../src/components/Link'
 
 export async function getStaticProps({ params: { gallery } }) {
+  const { IMAGE_BASE_URL = '/' } = process.env
   const { albums } = await getAlbums(gallery)
+  const prepareAlbums = albums.map((album) => ({
+    ...album,
+    thumbPath: `${IMAGE_BASE_URL}${album.thumbPath}`,
+  }))
   return {
-    props: { gallery, albums },
+    props: { gallery, albums: prepareAlbums },
   }
 }
 

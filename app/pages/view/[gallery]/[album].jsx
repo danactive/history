@@ -14,8 +14,14 @@ async function buildStaticPaths() {
 }
 
 export async function getStaticProps({ params: { gallery, album } }) {
+  const { IMAGE_BASE_URL = '/' } = process.env
+  const { album: albumDoc } = await getAlbum(gallery, album)
+  const prepareItems = albumDoc.items.map((item) => ({
+    ...item,
+    thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
+  }))
   return {
-    props: await getAlbum(gallery, album),
+    props: { album: { ...albumDoc, items: prepareItems } },
   }
 }
 
@@ -36,7 +42,11 @@ const AlbumPage = ({ album }) => (
 
     <ul>
       {album?.items?.map((item) => (
-        <li key={item.filename}>{item.city} <img src={item.thumbPath} alt={item.caption} /> {item?.geo?.lat}, {item?.geo?.lon}</li>
+        <li key={item.filename}>
+          {item.city}
+          <img src={item.thumbPath} alt={item.caption} />
+          {item?.geo?.lat}, {item?.geo?.lon}
+        </li>
       ))}
     </ul>
   </div>
