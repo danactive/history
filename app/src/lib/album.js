@@ -152,7 +152,7 @@ const transformJsonSchema = (dirty = {}) => {
  * @param {string} gallery name of gallery
  * @param {string} album name of album
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {object} album containing filename, photoCity, photoLoc, thumbCaption, photoDesc
+ * @returns {object} album containing meta and items with keys filename, photoCity, photoLoc, thumbCaption, photoDesc
  */
 async function get(gallery, album, returnEnvelope = false) {
   try {
