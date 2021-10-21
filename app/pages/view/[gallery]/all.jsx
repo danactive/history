@@ -6,6 +6,8 @@ import { get as getAlbum } from '../../../src/lib/album'
 import { get as getAlbums } from '../../../src/lib/albums'
 import { get as getGalleries } from '../../../src/lib/galleries'
 
+import Link from '../../../src/components/Link'
+
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
   const groups = await Promise.all(galleries.map(async (gallery) => {
@@ -21,6 +23,7 @@ export async function getStaticProps({ params: { gallery } }) {
 
   const prepareItems = ({ albumName, items }) => items.map((item) => ({
     ...item,
+    gallery,
     album: albumName,
     thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
     content: [item.description, item.caption, item.location, item.city].join(' '),
@@ -84,6 +87,7 @@ const AllPage = ({ items }) => {
             <b>{item.album}</b>
             {item.content}
             {checkKeyword(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
+            <Link href={`/view/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
           </li>
         ))}
       </ul>

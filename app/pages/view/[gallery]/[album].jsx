@@ -42,7 +42,7 @@ const AlbumPage = ({ album }) => (
 
     <ul>
       {album?.items?.map((item) => (
-        <li key={item.filename}>
+        <li key={item.filename} id={`select${item.id}`}>
           {item.city}
           <img src={item.thumbPath} alt={item.caption} />
           {item?.geo?.lat}, {item?.geo?.lon}

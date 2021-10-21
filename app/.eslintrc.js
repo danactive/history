@@ -7,6 +7,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off', // Next.js magically includes
     'react/jsx-one-expression-per-line': 'off', // too vertical
+    'jsx-a11y/anchor-is-valid': 'off', // next/link breaks this rule
   },
   env: {
     jest: true,

@@ -60,7 +60,6 @@ const AlbumsPage = ({ gallery, albums }) => {
       key={album.name}
       odd={i % 2 === 0}
     >
-      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
       <Link href={`/view/${gallery}/${album.name}`}><a><img src={album.thumbPath} alt={album.name} /></a></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
