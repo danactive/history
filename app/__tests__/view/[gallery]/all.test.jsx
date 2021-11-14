@@ -1,36 +1,22 @@
-import React from 'react'
-import { render } from '@testing-library/react'
-import { useRouter } from 'next/router'
-import All from '../../../pages/view/[gallery]/all'
+import { getPage } from 'next-page-tester'
+import { screen } from '@testing-library/react'
 
-jest.mock('next/router')
+const { getByText } = screen
 
-test('No results', () => {
-  useRouter.mockImplementation(() => ({
-    isReady: true,
-    query: {
-      keyword: 'beach',
-    },
-    push: jest.fn(),
-  }))
-  const { getByText } = render(<All />)
-  const h3 = getByText(
-    /beach results 0 of 0 found/,
-  )
+test('0 results', async () => {
+  const { render } = await getPage({
+    route: '/view/demo/all?keyword=fake',
+  })
+  render()
+  const h3 = getByText(/fake results 0 of 6 found/)
   expect(h3).toBeInTheDocument()
 })
 
-test('Beach in description', () => {
-  useRouter.mockImplementation(() => ({
-    isReady: true,
-    query: {
-      keyword: 'beach',
-    },
-    push: jest.fn(),
-  }))
-  const { getByText } = render(<All items={[{ filename: 'id0', content: 'Lovely day for the beach!' }]} />)
-  const h3 = getByText(
-    /beach results 1 of 1 found/,
-  )
+test('1 result', async () => {
+  const { render } = await getPage({
+    route: '/view/demo/all?keyword=gingerbread',
+  })
+  render()
+  const h3 = getByText(/gingerbread results 1 of 6 found/)
   expect(h3).toBeInTheDocument()
 })
