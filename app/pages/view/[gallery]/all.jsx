@@ -47,7 +47,7 @@ export async function getStaticPaths() {
   }
 }
 
-const AllPage = ({ items }) => {
+const AllPage = ({ items = [] }) => {
   const router = useRouter()
   const [keyword, setKeywordState] = useState(null)
   const checkKeyword = (k = '') => k.length > 2
