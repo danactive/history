@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
-import { get as getAlbums } from '../../../src/lib/albums'
-import { get as getGalleries } from '../../../src/lib/galleries'
+import { get as getAlbums } from '../src/lib/albums'
+import { get as getGalleries } from '../src/lib/galleries'
 
-import Link from '../../../src/components/Link'
+import Link from '../src/components/Link'
 
 export async function getStaticProps({ params: { gallery } }) {
   const { IMAGE_BASE_URL = '/' } = process.env
@@ -60,7 +60,7 @@ const AlbumsPage = ({ gallery, albums }) => {
       key={album.name}
       odd={i % 2 === 0}
     >
-      <Link href={`/view/${gallery}/${album.name}`}><a><img src={album.thumbPath} alt={album.name} /></a></Link>
+      <Link href={`/${gallery}/${album.name}`}><a><img src={album.thumbPath} alt={album.name} /></a></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
       <AlbumYear>{album.year}</AlbumYear>

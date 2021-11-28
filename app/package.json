@@ -42,7 +42,7 @@
     "jest": "^27.0.6",
     "jest-styled-components": "^7.0.5",
     "next-page-tester": "^0.30.0",
-    "next-test-api-route-handler": "^2.0.2",
+    "next-test-api-route-handler": "^2.3.4",
     "node-fetch": "^2.6.1",
     "react-test-renderer": "^17.0.2",
     "standard-version": "^9.3.1"

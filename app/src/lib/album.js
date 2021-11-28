@@ -34,7 +34,7 @@ const getVideoPath = (item, gallery) => {
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename.join(',')
   const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' }
-  return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`
+  return `/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`
 }
 
 function title(item) {

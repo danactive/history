@@ -5,7 +5,7 @@ const { getByText } = screen
 
 test('0 results', async () => {
   const { render } = await getPage({
-    route: '/view/demo/all?keyword=fake',
+    route: '/demo/all?keyword=fake',
   })
   render()
   const h3 = getByText(/fake results 0 of 6 found/)
@@ -14,7 +14,7 @@ test('0 results', async () => {
 
 test('1 result', async () => {
   const { render } = await getPage({
-    route: '/view/demo/all?keyword=gingerbread',
+    route: '/demo/all?keyword=gingerbread',
   })
   render()
   const h3 = getByText(/gingerbread results 1 of 6 found/)
@@ -23,7 +23,7 @@ test('1 result', async () => {
 
 test('Mixed case', async () => {
   const { render } = await getPage({
-    route: '/view/demo/all?keyword=Gingerbread',
+    route: '/demo/all?keyword=Gingerbread',
   })
   render()
   const h3 = getByText(/Gingerbread results 1 of 6 found/)

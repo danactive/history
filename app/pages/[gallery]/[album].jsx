@@ -1,8 +1,8 @@
 import Head from 'next/head'
 
-import { get as getAlbum } from '../../../src/lib/album'
-import { get as getAlbums } from '../../../src/lib/albums'
-import { get as getGalleries } from '../../../src/lib/galleries'
+import { get as getAlbum } from '../../src/lib/album'
+import { get as getAlbums } from '../../src/lib/albums'
+import { get as getGalleries } from '../../src/lib/galleries'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()

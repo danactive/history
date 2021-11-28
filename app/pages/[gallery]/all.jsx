@@ -2,11 +2,11 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-import { get as getAlbum } from '../../../src/lib/album'
-import { get as getAlbums } from '../../../src/lib/albums'
-import { get as getGalleries } from '../../../src/lib/galleries'
+import { get as getAlbum } from '../../src/lib/album'
+import { get as getAlbums } from '../../src/lib/albums'
+import { get as getGalleries } from '../../src/lib/galleries'
 
-import Link from '../../../src/components/Link'
+import Link from '../../src/components/Link'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -60,7 +60,6 @@ const AllPage = ({ items = [] }) => {
       return null
     }
     return null
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [keyword])
 
   if (!router.isReady) {
@@ -91,7 +90,7 @@ const AllPage = ({ items = [] }) => {
             <b>{item.album}</b>
             {item.content}
             {checkKeyword(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
-            <Link href={`/view/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
+            <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
           </li>
         ))}
       </ul>
