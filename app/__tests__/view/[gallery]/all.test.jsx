@@ -20,3 +20,12 @@ test('1 result', async () => {
   const h3 = getByText(/gingerbread results 1 of 6 found/)
   expect(h3).toBeInTheDocument()
 })
+
+test('Mixed case', async () => {
+  const { render } = await getPage({
+    route: '/view/demo/all?keyword=Gingerbread',
+  })
+  render()
+  const h3 = getByText(/Gingerbread results 1 of 6 found/)
+  expect(h3).toBeInTheDocument()
+})

@@ -70,7 +70,11 @@ const AllPage = ({ items = [] }) => {
     setKeyword(router.query.keyword)
     return null
   }
-  const filtered = items.filter((item) => item.content && item.content.toLowerCase().indexOf(keyword) !== -1)
+  const filtered = items.filter((item) => {
+    const contentWithoutAccentLow = item.content.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const keywordWithoutAccentLow = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    return contentWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+  })
 
   return (
     <div>
