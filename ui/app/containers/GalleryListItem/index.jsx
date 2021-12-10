@@ -8,7 +8,7 @@ import { hostCase } from '../../utils/host';
 
 function GalleriesItem({ item: { name: gallery, host, id } }) {
   const content = [
-    <Link key={`gallery-content-item-${id}`} to={`/${host}/${gallery}`}>
+    <Link key={`gallery-content-item-${id}`} to={`/view/${host}/${gallery}`}>
       {capitalize(gallery)}
     </Link>,
     `(${hostCase(host)})`,

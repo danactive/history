@@ -1,12 +1,11 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
 import Link from '../../src/components/Link'
+import useSearch from '../../src/hooks/useSearch'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -48,32 +47,14 @@ export async function getStaticPaths() {
 }
 
 const AllPage = ({ items = [] }) => {
-  const router = useRouter()
-  const [keyword, setKeywordState] = useState(null)
-  const checkKeyword = (k = '') => k.length > 2
-  const setKeyword = (k = '') => setKeywordState(k)
-
-  useEffect(() => {
-    if (router.isReady && keyword) {
-      router.query.keyword = keyword
-      router.push(router)
-      return null
-    }
-    return null
-  }, [keyword])
-
-  if (!router.isReady) {
-    return null
-  }
-  if (router.isReady && keyword === null) {
-    setKeyword(router.query.keyword)
-    return null
-  }
-  const filtered = items.filter((item) => {
-    const contentWithoutAccentLow = item.content.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    const keywordWithoutAccentLow = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    return contentWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
-  })
+  const {
+    filtered,
+    keyword,
+    setKeyword,
+    shareUrlStem,
+  } = useSearch(items)
+  const showThumbnail = (kw = '') => kw.length > 2
+  const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
 
   return (
     <div>
@@ -82,14 +63,15 @@ const AllPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h3>{keyword} results {filtered?.length} of {items?.length} found</h3>
+      <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
+      <nav>{shareUrlStem}</nav>
       <input type="text" onChange={(event) => setKeyword(event.target.value)} value={keyword} />
       <ul>
         {filtered.map((item) => (
           <li key={item.filename}>
             <b>{item.album}</b>
             {item.content}
-            {checkKeyword(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
+            {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
             <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
           </li>
         ))}

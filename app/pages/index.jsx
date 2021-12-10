@@ -18,7 +18,7 @@ export async function getStaticProps() {
 const ListComponent = ({ item }) => (
   <ListItem item={(
     <>
-      <Link href={`/${item.gallery}/albums`}><a>{item.gallery}</a></Link>
+      <Link href={`/${item.gallery}`}><a>{item.gallery}</a></Link>
       <Link href={`/${item.gallery}/all`}><a>Search album</a></Link>
     </>
   )}
