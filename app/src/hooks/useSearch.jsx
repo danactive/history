@@ -14,31 +14,6 @@ const useSearch = (items) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
 
-  useEffect(() => {
-    if (router.isReady && router.query.keyword) {
-      setKeyword(router.query.keyword)
-    }
-    return {
-      filtered: [],
-      keyword: '',
-      setKeyword,
-    }
-  }, [router.isReady])
-
-  if (!router.isReady) {
-    return {
-      filtered: [],
-      keyword: '',
-      setKeyword,
-    }
-  }
-
-  const filtered = items.filter((item) => {
-    if (!keyword) return true
-    const contentWithoutAccentLow = item.content.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    const keywordWithoutAccentLow = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    return contentWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
-  })
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
       return router.asPath
@@ -48,6 +23,34 @@ const useSearch = (items) => {
     }
     return `${router.asPath}?keyword=${keyword}`
   }
+
+  useEffect(() => {
+    if (router.isReady && router.query.keyword) {
+      setKeyword(router.query.keyword)
+    }
+    return {
+      filtered: items,
+      keyword: '',
+      setKeyword,
+      shareUrlStem: getShareUrlStem(),
+    }
+  }, [router.isReady])
+
+  if (!router.isReady) {
+    return {
+      filtered: items,
+      keyword: '',
+      setKeyword,
+      shareUrlStem: getShareUrlStem(),
+    }
+  }
+
+  const filtered = items.filter((item) => {
+    if (!keyword) return true
+    const contentWithoutAccentLow = item.content.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const keywordWithoutAccentLow = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    return contentWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+  })
 
   return {
     filtered,
