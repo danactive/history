@@ -90,7 +90,7 @@ const file = {
   absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
   thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
   photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
-  filenameAsJpg: filenameAsJpg,
+  filenameAsJpg,
 }
 
 function utils(errorSchema) {

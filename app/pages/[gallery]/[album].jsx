@@ -1,9 +1,11 @@
 import Head from 'next/head'
+import styled from 'styled-components'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
+import ThumbImg from '../../src/components/ThumbImg'
 import useSearch from '../../src/hooks/useSearch'
 
 async function buildStaticPaths() {
@@ -36,6 +38,11 @@ export async function getStaticPaths() {
   }
 }
 
+const Wrapper = styled.ul`
+  list-style: none;
+  padding-left: 2px;
+`
+
 const AlbumPage = ({ items = [] }) => {
   const {
     filtered,
@@ -49,15 +56,11 @@ const AlbumPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
-      <ul>
+      <Wrapper>
         {filtered.map((item) => (
-          <li key={item.filename} id={`select${item.id}`}>
-            {item.city}
-            <img src={item.thumbPath} alt={item.caption} />
-            {item?.geo?.lat}, {item?.geo?.lon}
-          </li>
+          <ThumbImg src={item.thumbPath} caption={item.caption} key={item.filename} id={`select${item.id}`} />
         ))}
-      </ul>
+      </Wrapper>
     </div>
   )
 }
