@@ -24,25 +24,31 @@ const useSearch = (items) => {
     return `${router.asPath}?keyword=${keyword}`
   }
 
+  const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
+  const getSearchBox = (filtered) => (
+    <>
+      <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
+      <nav>{getShareUrlStem()}</nav>
+      <input type="text" onChange={(event) => setKeyword(event.target.value)} value={keyword} />
+    </>
+  )
+
+  const defaultReturn = {
+    filtered: items,
+    keyword: '',
+    setKeyword,
+    searchBox: getSearchBox(items),
+  }
+
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword)
     }
-    return {
-      filtered: items,
-      keyword: '',
-      setKeyword,
-      shareUrlStem: getShareUrlStem(),
-    }
+    return defaultReturn
   }, [router.isReady])
 
   if (!router.isReady) {
-    return {
-      filtered: items,
-      keyword: '',
-      setKeyword,
-      shareUrlStem: getShareUrlStem(),
-    }
+    return defaultReturn
   }
 
   const filtered = items.filter((item) => {
@@ -56,7 +62,7 @@ const useSearch = (items) => {
     filtered,
     keyword,
     setKeyword,
-    shareUrlStem: getShareUrlStem(),
+    searchBox: getSearchBox(filtered),
   }
 }
 

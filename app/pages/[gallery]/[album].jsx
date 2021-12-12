@@ -39,11 +39,8 @@ export async function getStaticPaths() {
 const AlbumPage = ({ items = [] }) => {
   const {
     filtered,
-    keyword,
-    setKeyword,
-    shareUrlStem,
+    searchBox,
   } = useSearch(items)
-  const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
 
   return (
     <div>
@@ -51,10 +48,7 @@ const AlbumPage = ({ items = [] }) => {
         <title>History App - Album</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
-      <nav>{shareUrlStem}</nav>
-      <input type="text" onChange={(event) => setKeyword(event.target.value)} value={keyword} />
+      {searchBox}
       <ul>
         {filtered.map((item) => (
           <li key={item.filename} id={`select${item.id}`}>
