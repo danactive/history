@@ -135,7 +135,7 @@ const album = {
       return false;
     },
     Invoke: function invokePhoto(e) { // click on photo
-      if (e.ctrlKey) { // allow multiples
+      if (e.ctrlKey || e.metaKey) { // allow multiples
         album.photo.recentIndex = $(this).toggleClass('selected').index();
         album.form.PopulateFromPhoto($(this).data('photo'));
       } else if (e.shiftKey) { // select range
