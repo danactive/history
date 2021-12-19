@@ -40,9 +40,9 @@ const ThumbImg = ({
 }) => {
   const [viewed, setViewed] = useState(false)
   const handleClick = (event) => {
-    setViewed(true)
     event.preventDefault()
-    onClick()
+    setViewed(true)
+    onClick?.()
   }
 
   return (

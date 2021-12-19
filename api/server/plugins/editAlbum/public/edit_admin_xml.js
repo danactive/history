@@ -165,7 +165,21 @@ const album = {
         '/',
         filename,
       ].join('');
-      $('#photoPreview').css('background-image', `url(${photoPath})`);
+      const originalPath = [
+        '../galleries/',
+        $('#editGalleries').val(),
+        '/media/originals/',
+        filename.substr(0, filename.indexOf('-')),
+        '/',
+        filename,
+      ].join('');
+      $('#photoPreview')
+        .attr('data-original', originalPath)
+        .css({
+          'background-image': `url(${photoPath})`,
+          cursor: 'zoom-in',
+        })
+        .click((event) => window.open(event.target.getAttribute('data-original'), '_blank'))
     },
     Sort: function sortPhoto() {
       $('#listPhotos span').remove(); // clear previous sort labels
