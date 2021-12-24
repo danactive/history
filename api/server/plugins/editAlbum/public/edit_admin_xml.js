@@ -135,7 +135,7 @@ const album = {
       return false;
     },
     Invoke: function invokePhoto(e) { // click on photo
-      if (e.ctrlKey) { // allow multiples
+      if (e.ctrlKey || e.metaKey) { // allow multiples
         album.photo.recentIndex = $(this).toggleClass('selected').index();
         album.form.PopulateFromPhoto($(this).data('photo'));
       } else if (e.shiftKey) { // select range
@@ -165,7 +165,21 @@ const album = {
         '/',
         filename,
       ].join('');
-      $('#photoPreview').css('background-image', `url(${photoPath})`);
+      const originalPath = [
+        '../galleries/',
+        $('#editGalleries').val(),
+        '/media/originals/',
+        filename.substr(0, filename.indexOf('-')),
+        '/',
+        filename,
+      ].join('');
+      $('#photoPreview')
+        .attr('data-original', originalPath)
+        .css({
+          'background-image': `url(${photoPath})`,
+          cursor: 'zoom-in',
+        })
+        .click((event) => window.open(event.target.getAttribute('data-original'), '_blank'))
     },
     Sort: function sortPhoto() {
       $('#listPhotos span').remove(); // clear previous sort labels
@@ -214,11 +228,13 @@ const album = {
     $.each(album.json.album.item, (i, item) => {
       const filename = getFilename(item.filename);
       const year = filename.substr(0, filename.indexOf('-'));
+      const isJpg = filename.includes('jpg') || filename.includes('jpeg')
+      const filenamePhoto = isJpg ? filename : filename.replace('mp4', 'jpg')
 
       $('<div>')
         .click(album.photo.Invoke)
         .data('photo', item)
-        .html(['<img src="../galleries/', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join(''))
+        .html(['<img src="../galleries/', galleryName, '/media/thumbs/', year, '/', filenamePhoto, '"/>'].join(''))
         .appendTo('#listPhotos');
     });
   },

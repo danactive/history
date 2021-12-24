@@ -34,7 +34,7 @@ const getVideoPath = (item, gallery) => {
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename.join(',')
   const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' }
-  return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`
+  return `/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`
 }
 
 function title(item) {
@@ -63,7 +63,7 @@ function title(item) {
     return item.photoCity
   }
 
-  return item.photoDesc
+  return item.photoDesc || null
 }
 
 function caption(item) {
@@ -71,7 +71,7 @@ function caption(item) {
     return `Video: ${item.thumbCaption}`
   }
 
-  return item.thumbCaption
+  return item.thumbCaption || null
 }
 
 const reference = (item) => {
@@ -98,13 +98,17 @@ const reference = (item) => {
  * @returns {object} clean JSON
  */
 const transformJsonSchema = (dirty = {}) => {
-  if (!dirty.album || !dirty.album.item || !dirty.album.meta) {
+  if (!dirty.album || !dirty.album.meta) {
     return dirty
+  }
+
+  if (!dirty.album.item) {
+    return { album: { items: [], ...dirty.album } }
   }
 
   const { gallery } = dirty.album.meta
 
-  const items = dirty.album.item.map((item) => {
+  const updateItem = (item) => {
     const geo = {
       lat: null,
       lon: null,
@@ -120,8 +124,8 @@ const transformJsonSchema = (dirty = {}) => {
     return ({
       id: item.$.id,
       filename: item.filename,
-      city: item.photoCity,
-      location: item.photoLoc,
+      city: item.photoCity || null,
+      location: item.photoLoc || null,
       caption: caption(item),
       description: item.photoDesc || null,
       title: title(item),
@@ -131,7 +135,9 @@ const transformJsonSchema = (dirty = {}) => {
       mediaPath: (item.type === 'video') ? videoPath : photoPath,
       reference: reference(item),
     })
-  })
+  }
+
+  const items = dirty.album.item.length ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
 
   return {
     album: {
@@ -146,7 +152,7 @@ const transformJsonSchema = (dirty = {}) => {
  * @param {string} gallery name of gallery
  * @param {string} album name of album
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {object} album containing filename, photoCity, photoLoc, thumbCaption, photoDesc
+ * @returns {object} album containing meta and items with keys filename, photoCity, photoLoc, thumbCaption, photoDesc
  */
 async function get(gallery, album, returnEnvelope = false) {
   try {

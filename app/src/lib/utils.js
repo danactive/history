@@ -16,9 +16,9 @@ const type = (filepath) => {
   return path.extname(filepath).substr(1)
 }
 
-const jpgFilenameInsensitive = (filename) => {
+const filenameAsJpg = (filename) => {
   const currentExt = type(filename)
-  const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg'
+  const futureExt = (currentExt.toLowerCase() === 'jpg' || currentExt.toLowerCase() === 'jpeg') ? currentExt : 'jpg'
   const imageFilename = filename.replace(currentExt, futureExt)
   return imageFilename
 }
@@ -36,7 +36,7 @@ const rasterPath = (item, gallery, rasterType) => {
   }
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0]
-  const imageFilename = jpgFilenameInsensitive(filename)
+  const imageFilename = filenameAsJpg(filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
   return `/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
 }
@@ -90,7 +90,7 @@ const file = {
   absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
   thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
   photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
-  jpgFilenameInsensitive,
+  filenameAsJpg,
 }
 
 function utils(errorSchema) {
