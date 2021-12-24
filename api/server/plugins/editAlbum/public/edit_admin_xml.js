@@ -228,11 +228,13 @@ const album = {
     $.each(album.json.album.item, (i, item) => {
       const filename = getFilename(item.filename);
       const year = filename.substr(0, filename.indexOf('-'));
+      const isJpg = filename.includes('jpg') || filename.includes('jpeg')
+      const filenamePhoto = isJpg ? filename : filename.replace('mp4', 'jpg')
 
       $('<div>')
         .click(album.photo.Invoke)
         .data('photo', item)
-        .html(['<img src="../galleries/', galleryName, '/media/thumbs/', year, '/', filename, '"/>'].join(''))
+        .html(['<img src="../galleries/', galleryName, '/media/thumbs/', year, '/', filenamePhoto, '"/>'].join(''))
         .appendTo('#listPhotos');
     });
   },
