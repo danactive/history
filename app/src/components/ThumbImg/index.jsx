@@ -37,6 +37,7 @@ const ThumbImg = ({
   caption,
   href,
   src,
+  id,
 }) => {
   const [viewed, setViewed] = useState(false)
   const handleClick = (event) => {
@@ -47,7 +48,7 @@ const ThumbImg = ({
 
   return (
     <Bullet>
-      <ImgButton viewed={viewed} href={href} onClick={handleClick}>
+      <ImgButton viewed={viewed} href={href} onClick={handleClick} id={id}>
         <Img src={src} alt="Preview thumbnail (scaled down dimensions)" />
       </ImgButton>
       <Caption>{caption}</Caption>
