@@ -6,6 +6,7 @@ import { get as getGalleries } from '../../src/lib/galleries'
 
 import Link from '../../src/components/Link'
 import useSearch from '../../src/hooks/useSearch'
+import SplitViewer from '../../src/components/SpiltViewer'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -62,6 +63,7 @@ const AllPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
+      <SplitViewer items={filtered} />
       <ul>
         {filtered.map((item) => (
           <li key={item.filename}>
