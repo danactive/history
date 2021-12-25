@@ -1,4 +1,6 @@
 import Head from 'next/head'
+import ImageGallery from 'react-image-gallery'
+import 'react-image-gallery/styles/css/image-gallery.css'
 import styled from 'styled-components'
 
 import { get as getAlbum } from '../../src/lib/album'
@@ -22,6 +24,7 @@ export async function getStaticProps({ params: { gallery, album } }) {
   const { album: albumDoc } = await getAlbum(gallery, album)
   const prepareItems = albumDoc.items.map((item) => ({
     ...item,
+    photoPath: `${IMAGE_BASE_URL}${item.photoPath}`,
     thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
     content: [item.description, item.caption, item.location, item.city].join(' '),
   }))
@@ -43,6 +46,34 @@ const Wrapper = styled.ul`
   padding-left: 2px;
 `
 
+const toCarousel = (item) => {
+  const imageGallery = {
+    original: item.photoPath || item.thumbPath,
+    thumbnail: item.thumbPath,
+    description: item.description,
+    filename: item.filename,
+    videoPath: item.videoPath,
+  }
+
+  return imageGallery
+}
+
+const Split = styled.section`
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-areas: 'left right';
+  `
+
+const Left = styled.section`
+    grid-area: left;
+    height: 80vh;
+  `
+
+const Right = styled.section`
+    grid-area: right;
+    height: 80vh;
+  `
+
 const AlbumPage = ({ items = [] }) => {
   const {
     filtered,
@@ -56,6 +87,19 @@ const AlbumPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
+      <Split>
+        <Left key="splitLeft">
+          <ImageGallery
+            items={filtered.filter((item) => item.thumbPath).map(toCarousel)}
+            showPlayButton={false}
+            showThumbnails={false}
+            slideDuration={550}
+          />
+        </Left>
+        <Right key="splitRight">
+          Right
+        </Right>
+      </Split>
       <Wrapper>
         {filtered.map((item) => (
           <ThumbImg src={item.thumbPath} caption={item.caption} key={item.filename} id={`select${item.id}`} />

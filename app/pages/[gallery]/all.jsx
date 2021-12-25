@@ -24,6 +24,7 @@ export async function getStaticProps({ params: { gallery } }) {
     ...item,
     gallery,
     album: albumName,
+    photoPath: `${IMAGE_BASE_URL}${item.photoPath}`,
     thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
     content: [item.description, item.caption, item.location, item.city].join(' '),
   }))
