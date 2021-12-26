@@ -5,7 +5,7 @@ import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
-import SplitViewer from '../../src/components/SpiltViewer'
+import SplitViewer from '../../src/components/SplitViewer'
 import ThumbImg from '../../src/components/ThumbImg'
 import useSearch from '../../src/hooks/useSearch'
 

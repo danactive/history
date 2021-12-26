@@ -40,7 +40,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.0.6",
+    "jest": "^27.4.5",
     "jest-styled-components": "^7.0.5",
     "next-page-tester": "^0.30.0",
     "next-test-api-route-handler": "^2.3.4",

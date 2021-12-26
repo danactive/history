@@ -2,6 +2,10 @@ import ImageGallery from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
 import styled from 'styled-components'
 
+import config from '../../../../config.json'
+import { getExt } from '../../utils'
+import Video from '../Video'
+
 const Split = styled.section`
   display: grid;
   grid-template-columns: 60% 40%;
@@ -24,7 +28,19 @@ const toCarousel = (item) => {
     thumbnail: item.thumbPath,
     description: item.description,
     filename: item.filename,
-    videoPath: item.videoPath,
+    mediaPath: item.mediaPath,
+  }
+
+  const extension = getExt(item.mediaPath)
+  const isVideo = config.supportedFileTypes.video.includes(extension) && item.mediaPath
+  if (isVideo) {
+    imageGallery.renderItem = ({ original, mediaPath }) => (
+      <Video
+        extension={extension}
+        src={mediaPath}
+        poster={original}
+      />
+    )
   }
 
   return imageGallery

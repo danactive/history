@@ -6,7 +6,7 @@ import { get as getGalleries } from '../../src/lib/galleries'
 
 import Link from '../../src/components/Link'
 import useSearch from '../../src/hooks/useSearch'
-import SplitViewer from '../../src/components/SpiltViewer'
+import SplitViewer from '../../src/components/SplitViewer'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()

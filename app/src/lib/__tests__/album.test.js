@@ -1,21 +1,6 @@
 import lib from '../album'
 
 describe('Album library', () => {
-  const gallery = 'demo'
-  describe('getVideoPath', () => {
-    test('Just filename', () => {
-      const item = { filename: '2016-12-31-01.mp4' }
-      const expectedPath = `/video?sources=${item.filename}&w=&h=&gallery=${gallery}`
-      expect(lib.getVideoPath(item, gallery)).toBe(expectedPath)
-    })
-
-    test('All', () => {
-      const item = { filename: '2016-12-31-01.mp4', size: { w: 1, h: 2 } }
-      const expectedPath = `/video?sources=${item.filename}&w=${item.size.w}&h=${item.size.h}&gallery=${gallery}`
-      expect(lib.getVideoPath(item, gallery)).toBe(expectedPath)
-    })
-  })
-
   describe('transformJsonSchema', () => {
     test('Blank', () => {
       const result = lib.transformJsonSchema()
@@ -79,8 +64,7 @@ describe('Album library', () => {
       expect(result.album.items[0].reference).toBeNull()
       expect(result.album.items[1].caption).toEqual('Video: Caption') // Video Thumb Caption
       expect(result.album.items[1].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Video-Filename.jpg') // Photo Path
-      expect(result.album.items[1].mediaPath)
-        .toEqual('/video?sources=2016-Video-Filename.mov,2016-Video-Filename.avi&w=1280&h=720&gallery=demo') // Video Path
+      expect(result.album.items[1].mediaPath).toEqual('/galleries/demo/media/videos/2016/2016-Video-Filename.mov') // Video Path
       expect(result.album.items[1].reference).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference
     })
   })
