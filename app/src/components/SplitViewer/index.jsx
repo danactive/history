@@ -1,5 +1,4 @@
 import ImageGallery from 'react-image-gallery'
-import 'react-image-gallery/styles/css/image-gallery.css'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'

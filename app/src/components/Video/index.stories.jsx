@@ -1,4 +1,4 @@
-import VideoPlayerHTML5 from '..'
+import VideoPlayerHTML5 from '.'
 
 export default {
   title: 'VideoPlayerHTML5',
