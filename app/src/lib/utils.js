@@ -34,11 +34,13 @@ const rasterPath = (item, gallery, rasterType) => {
   if (!item || !item.filename) {
     return ''
   }
+  const { IMAGE_BASE_URL = '' } = process.env
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0]
   const imageFilename = filenameAsJpg(filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
-  return `/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
+
+  return `${IMAGE_BASE_URL}/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
 }
 
 function customMime(rawExtension) {

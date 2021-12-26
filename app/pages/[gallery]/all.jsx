@@ -18,15 +18,12 @@ async function buildStaticPaths() {
 }
 
 export async function getStaticProps({ params: { gallery } }) {
-  const { IMAGE_BASE_URL = '/' } = process.env
   const { albums } = await getAlbums(gallery)
 
   const prepareItems = ({ albumName, items }) => items.map((item) => ({
     ...item,
     gallery,
     album: albumName,
-    photoPath: `${IMAGE_BASE_URL}${item.photoPath}`,
-    thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
     content: [item.description, item.caption, item.location, item.city].join(' '),
   }))
   const allItems = await albums.reduce(async (previousPromise, album) => {

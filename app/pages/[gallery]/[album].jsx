@@ -19,12 +19,9 @@ async function buildStaticPaths() {
 }
 
 export async function getStaticProps({ params: { gallery, album } }) {
-  const { IMAGE_BASE_URL = '/' } = process.env
   const { album: albumDoc } = await getAlbum(gallery, album)
   const prepareItems = albumDoc.items.map((item) => ({
     ...item,
-    photoPath: `${IMAGE_BASE_URL}${item.photoPath}`,
-    thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
     content: [item.description, item.caption, item.location, item.city].join(' '),
   }))
   return {
