@@ -26,7 +26,8 @@ export async function getStaticProps({ params: { gallery } }) {
     album: albumName,
     content: [item.description, item.caption, item.location, item.city].join(' '),
   }))
-  const allItems = await albums.reduce(async (previousPromise, album) => {
+  // reverse order for albums in ascending order (oldest on top)
+  const allItems = await albums.reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
     return prev.concat(prepareItems({ albumName: album.name, items }))
