@@ -24,7 +24,7 @@ export async function getStaticProps({ params: { gallery } }) {
     ...item,
     gallery,
     album: albumName,
-    content: [item.description, item.caption, item.location, item.city].join(' '),
+    content: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   // reverse order for albums in ascending order (oldest on top)
   const allItems = await albums.reverse().reduce(async (previousPromise, album) => {

@@ -119,6 +119,7 @@ const transformJsonSchema = (dirty = {}) => {
       location: item.photoLoc || null,
       caption: caption(item),
       description: item.photoDesc || null,
+      search: item.search || null,
       title: title(item),
       geo,
       thumbPath,

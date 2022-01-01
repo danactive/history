@@ -22,7 +22,7 @@ export async function getStaticProps({ params: { gallery, album } }) {
   const { album: albumDoc } = await getAlbum(gallery, album)
   const prepareItems = albumDoc.items.map((item) => ({
     ...item,
-    content: [item.description, item.caption, item.location, item.city].join(' '),
+    content: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   return {
     props: { items: prepareItems },
