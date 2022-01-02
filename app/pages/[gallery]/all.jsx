@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -52,7 +53,12 @@ const AllPage = ({ items = [] }) => {
     keyword,
     searchBox,
   } = useSearch(items)
+  const refImageGallery = useRef(null)
   const showThumbnail = (kw = '') => kw.length > 2
+
+  function selectThumb(index) {
+    refImageGallery.current.slideToIndex(index)
+  }
 
   return (
     <div>
@@ -61,14 +67,15 @@ const AllPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
-      <SplitViewer items={filtered} />
+      <SplitViewer items={filtered} refImageGallery={refImageGallery} />
       <ul>
-        {filtered.map((item) => (
+        {filtered.map((item, index) => (
           <li key={item.filename}>
             <b>{item.album}</b>
             {item.content}
             {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
             <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
+            <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
           </li>
         ))}
       </ul>

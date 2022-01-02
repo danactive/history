@@ -45,10 +45,11 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-const SplitViewer = ({ items }) => (
+const SplitViewer = ({ items, refImageGallery }) => (
   <Split>
     <Left key="splitLeft">
       <ImageGallery
+        ref={refImageGallery}
         items={items.filter((item) => item.thumbPath).map(toCarousel)}
         showPlayButton={false}
         showThumbnails={false}
