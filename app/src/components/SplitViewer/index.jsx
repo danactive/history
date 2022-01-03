@@ -1,4 +1,5 @@
 import ImageGallery from 'react-image-gallery'
+import { useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -46,22 +47,43 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-const SplitViewer = ({ items, refImageGallery }) => (
-  <Split>
-    <Left key="splitLeft">
-      <ImageGallery
-        ref={refImageGallery}
-        items={items.filter((item) => item.thumbPath).map(toCarousel)}
-        showPlayButton={false}
-        showThumbnails={false}
-        slideDuration={550}
-        lazyLoad
-      />
-    </Left>
-    <Right key="splitRight">
-      <SlippyMap items={items} />
-    </Right>
-  </Split>
-)
+const SplitViewer = ({ items, refImageGallery }) => {
+  const refMapBox = useRef(null)
+  const fullscreenMap = () => {
+    const div = refMapBox.current
+    if (div.requestFullscreen) {
+      div.requestFullscreen()
+    } else if (div.webkitRequestFullscreen) {
+      div.webkitRequestFullscreen()
+    } else if (div.msRequestFullScreen) {
+      div.msRequestFullScreen()
+    } else if (div.mozRequestFullScreen) {
+      div.mozRequestFullScreen()
+    } else if (div.webkitRequestFullscreen) {
+      div.webkitRequestFullscreen()
+    } else {
+      console.log('Failed to fullscreen')
+    }
+  }
+  return (
+    <Split>
+      <Left key="splitLeft">
+        <ImageGallery
+          ref={refImageGallery}
+          items={items.filter((item) => item.thumbPath)
+            .map(toCarousel)}
+          showPlayButton={false}
+          showThumbnails={false}
+          slideDuration={550}
+          lazyLoad
+        />
+      </Left>
+      <Right key="splitRight" ref={refMapBox}>
+        <SlippyMap items={items} />
+        <button type="button" onClick={fullscreenMap}>Full Map</button>
+      </Right>
+    </Split>
+  );
+}
 
 export default SplitViewer

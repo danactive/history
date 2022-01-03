@@ -37,14 +37,11 @@ export function transformSourceOptions({ items = [] } = {}) {
   }
 
   return {
-    id: 'thumbs',
-    geoJsonSource: {
-      type: 'geojson',
-      data,
-      cluster: true,
-      clusterMaxZoom: 13, // Max zoom to cluster points on
-      clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
-    },
+    type: 'geojson',
+    data,
+    cluster: true,
+    clusterMaxZoom: 13, // Max zoom to cluster points on
+    clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
   }
 }
 

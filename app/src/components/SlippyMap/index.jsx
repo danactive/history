@@ -2,7 +2,6 @@
 import { useState, useRef } from 'react'
 import MapGL, { Source, Layer } from 'react-map-gl'
 
-import ControlPanel from './control-panel'
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
 import { transformSourceOptions } from './options'
 
@@ -22,7 +21,7 @@ export default function SlippyMap({ items }) {
     const feature = event.features[0]
     const clusterId = feature.properties.cluster_id
 
-    const mapboxSource = mapRef.current.getMap().getSource('earthquakes')
+    const mapboxSource = mapRef.current.getMap().getSource('slippyMap')
 
     mapboxSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
       if (err) {
@@ -39,8 +38,7 @@ export default function SlippyMap({ items }) {
     })
   }
 
-  const { geoJsonSource } = transformSourceOptions({ items })
-
+  const geoJsonSource = transformSourceOptions({ items })
   return (
     <>
       <MapGL
@@ -54,13 +52,12 @@ export default function SlippyMap({ items }) {
         onClick={onClick}
         ref={mapRef}
       >
-        <Source {...geoJsonSource}>
+        <Source id="slippyMap" {...geoJsonSource}>
           <Layer {...clusterLayer} />
           <Layer {...clusterCountLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
       </MapGL>
-      <ControlPanel />
     </>
   )
 }
