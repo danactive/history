@@ -83,7 +83,7 @@ const SplitViewer = ({ items, refImageGallery }) => {
         <button type="button" onClick={fullscreenMap}>Full Map</button>
       </Right>
     </Split>
-  );
+  )
 }
 
 export default SplitViewer
