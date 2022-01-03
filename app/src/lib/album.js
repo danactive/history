@@ -99,14 +99,8 @@ const transformJsonSchema = (dirty = {}) => {
   const { gallery } = dirty.album.meta
 
   const updateItem = (item) => {
-    const geo = {
-      lat: null,
-      lon: null,
-    }
-    if (item.geo) {
-      geo.lat = parseFloat(item.geo.lat)
-      geo.lon = parseFloat(item.geo.lon)
-    }
+    const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
+    const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
 
     const thumbPath = utils.thumbPath(item, gallery)
     const photoPath = utils.photoPath(item, gallery)
@@ -121,7 +115,7 @@ const transformJsonSchema = (dirty = {}) => {
       description: item.photoDesc || null,
       search: item.search || null,
       title: title(item),
-      geo,
+      coordinates: [longitude, latitude],
       thumbPath,
       photoPath,
       mediaPath: (item.type === 'video') ? videoPaths[0] : photoPath,
