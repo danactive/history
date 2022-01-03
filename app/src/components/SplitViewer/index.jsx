@@ -47,7 +47,7 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-const SplitViewer = ({ items, refImageGallery }) => {
+function SplitViewer({ items, refImageGallery }) {
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
@@ -59,10 +59,8 @@ const SplitViewer = ({ items, refImageGallery }) => {
       div.msRequestFullScreen()
     } else if (div.mozRequestFullScreen) {
       div.mozRequestFullScreen()
-    } else if (div.webkitRequestFullscreen) {
-      div.webkitRequestFullscreen()
     } else {
-      console.log('Failed to fullscreen')
+      console.error('Failed to fullscreen')
     }
   }
   return (

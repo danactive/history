@@ -49,7 +49,7 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-const AlbumsPage = ({ gallery, albums }) => {
+function AlbumsPage({ gallery, albums }) {
   const albumGroup = albums.map((album, i) => (
     <Albums
       key={album.name}

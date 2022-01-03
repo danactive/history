@@ -40,24 +40,22 @@ export default function SlippyMap({ items }) {
 
   const geoJsonSource = transformSourceOptions({ items })
   return (
-    <>
-      <MapGL
-        {...viewport}
-        width="100%"
-        height="100%"
-        mapStyle="mapbox://styles/mapbox/dark-v9"
-        onViewportChange={setViewport}
-        mapboxApiAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id]}
-        onClick={onClick}
-        ref={mapRef}
-      >
-        <Source id="slippyMap" {...geoJsonSource}>
-          <Layer {...clusterLayer} />
-          <Layer {...clusterCountLayer} />
-          <Layer {...unclusteredPointLayer} />
-        </Source>
-      </MapGL>
-    </>
+    <MapGL
+      {...viewport}
+      width="100%"
+      height="100%"
+      mapStyle="mapbox://styles/mapbox/dark-v9"
+      onViewportChange={setViewport}
+      mapboxApiAccessToken={MAPBOX_TOKEN}
+      interactiveLayerIds={[clusterLayer.id]}
+      onClick={onClick}
+      ref={mapRef}
+    >
+      <Source id="slippyMap" {...geoJsonSource}>
+        <Layer {...clusterLayer} />
+        <Layer {...clusterCountLayer} />
+        <Layer {...unclusteredPointLayer} />
+      </Source>
+    </MapGL>
   )
 }

@@ -47,7 +47,7 @@ export async function getStaticPaths() {
   }
 }
 
-const AllPage = ({ items = [] }) => {
+function AllPage({ items = [] }) {
   const {
     filtered,
     keyword,

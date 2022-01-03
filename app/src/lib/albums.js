@@ -33,7 +33,7 @@ async function getGalleryFromFilesystem(gallery) {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-const transformJsonSchema = (dirty = {}, gallery) => {
+const transformJsonSchema = (dirty = {}, gallery = 'demo') => {
   const transform = (album) => ({
     name: album.albumName,
     h1: album.albumH1,

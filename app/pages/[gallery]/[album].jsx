@@ -43,7 +43,7 @@ const Wrapper = styled.ul`
   padding-left: 2px;
 `
 
-const AlbumPage = ({ items = [] }) => {
+function AlbumPage({ items = [] }) {
   const refImageGallery = useRef(null)
   const {
     filtered,

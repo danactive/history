@@ -32,13 +32,13 @@ const ImgButton = styled.a`
   `}
 `
 
-const ThumbImg = ({
+function ThumbImg({
   onClick,
   caption,
   href,
   src,
   id,
-}) => {
+}) {
   const [viewed, setViewed] = useState(false)
   const handleClick = (event) => {
     event.preventDefault()
