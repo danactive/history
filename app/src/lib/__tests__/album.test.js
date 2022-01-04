@@ -45,6 +45,7 @@ describe('Album library', () => {
               geo: {
                 lat: '123',
                 lon: '-543.21',
+                accuracy: 15,
               },
               ref: {
                 name: 'Purshia_tridentata',
@@ -70,6 +71,8 @@ describe('Album library', () => {
       expect(result.album.items[0].coordinates[1]).toBeNull()
       expect(result.album.items[1].coordinates[0]).toEqual(-543.21)
       expect(result.album.items[1].coordinates[1]).toEqual(123)
+      expect(result.album.items[0].coordinateAccuracy).toBeNull()
+      expect(result.album.items[1].coordinateAccuracy).toEqual(15)
       expect(result.album.items[1].caption).toEqual('Video: Caption') // Video Thumb Caption
       expect(result.album.items[1].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Video-Filename.jpg') // Photo Path
       expect(result.album.items[1].mediaPath).toEqual('/galleries/demo/media/videos/2016/2016-Video-Filename.mov') // Video Path

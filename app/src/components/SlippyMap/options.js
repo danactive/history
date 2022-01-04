@@ -47,19 +47,15 @@ export function transformSourceOptions({ items = [] } = {}) {
 
 export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
   const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
-  const point = isInvalidPoint ? null : [longitude, latitude]
 
-  const options = {
-    containerStyle: {
-      height: '100%',
-      width: '100%',
-    },
-    style: 'mapbox://styles/mapbox/satellite-streets-v10',
-  }
+  const options = {}
 
-  if (point) {
-    options.center = point
-    options.zoom = [coordinateAccuracy || 17]
+  if (!isInvalidPoint) {
+    options.latitude = latitude
+    options.longitude = longitude
+    options.zoom = coordinateAccuracy || 17
+    options.bearing = 0
+    options.pitch = 0
   }
 
   return options

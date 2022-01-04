@@ -3,17 +3,14 @@ import { useState, useRef } from 'react'
 import MapGL, { Source, Layer } from 'react-map-gl'
 
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
-import { transformSourceOptions } from './options'
+import { transformMapOptions, transformSourceOptions } from './options'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 export default function SlippyMap({ items }) {
+  const { coordinates, coordinateAccuracy } = items[0]
   const [viewport, setViewport] = useState({
-    latitude: 40.67,
-    longitude: -103.59,
-    zoom: 3,
-    bearing: 0,
-    pitch: 0,
+    ...transformMapOptions({ coordinates, coordinateAccuracy }),
   })
   const mapRef = useRef(null)
 
@@ -44,7 +41,7 @@ export default function SlippyMap({ items }) {
       {...viewport}
       width="100%"
       height="100%"
-      mapStyle="mapbox://styles/mapbox/dark-v9"
+      mapStyle="mapbox://styles/mapbox/satellite-streets-v10"
       onViewportChange={setViewport}
       mapboxApiAccessToken={MAPBOX_TOKEN}
       interactiveLayerIds={[clusterLayer.id]}

@@ -101,6 +101,7 @@ const transformJsonSchema = (dirty = {}) => {
   const updateItem = (item) => {
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
+    const accuracy = Number(item?.geo?.accuracy)
 
     const thumbPath = utils.thumbPath(item, gallery)
     const photoPath = utils.photoPath(item, gallery)
@@ -116,6 +117,7 @@ const transformJsonSchema = (dirty = {}) => {
       search: item.search || null,
       title: title(item),
       coordinates: [longitude, latitude],
+      coordinateAccuracy: (!accuracy || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
       mediaPath: (item.type === 'video') ? videoPaths[0] : photoPath,
