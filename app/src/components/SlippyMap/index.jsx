@@ -7,8 +7,9 @@ import { transformMapOptions, transformSourceOptions } from './options'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
-export default function SlippyMap({ items }) {
-  const { coordinates, coordinateAccuracy } = items[0]
+export default function SlippyMap({ items = [{}] }) {
+  const coordinates = items[0]?.coordinates ?? []
+  const coordinateAccuracy = items[0]?.coordinateAccuracy ?? 0
   const [viewport, setViewport] = useState({
     ...transformMapOptions({ coordinates, coordinateAccuracy }),
   })
