@@ -1,5 +1,5 @@
 import ImageGallery from 'react-image-gallery'
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -48,6 +48,7 @@ const toCarousel = (item) => {
 }
 
 function SplitViewer({ items, refImageGallery }) {
+  const [memory, setMemory] = useState(items[0])
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
@@ -63,13 +64,14 @@ function SplitViewer({ items, refImageGallery }) {
       console.error('Failed to fullscreen')
     }
   }
+  const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
   return (
     <Split>
       <Left key="splitLeft">
         <ImageGallery
           ref={refImageGallery}
-          items={items.filter((item) => item.thumbPath)
-            .map(toCarousel)}
+          onBeforeSlide={setMemory}
+          items={carouselItems}
           showPlayButton={false}
           showThumbnails={false}
           slideDuration={550}
@@ -77,7 +79,7 @@ function SplitViewer({ items, refImageGallery }) {
         />
       </Left>
       <Right key="splitRight" ref={refMapBox}>
-        <SlippyMap items={items} />
+        <SlippyMap items={items} centroid={items[memory]} />
         <button type="button" onClick={fullscreenMap}>Full Map</button>
       </Right>
     </Split>

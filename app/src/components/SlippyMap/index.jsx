@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import MapGL, { Source, Layer } from 'react-map-gl'
 
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
@@ -7,13 +7,14 @@ import { transformMapOptions, transformSourceOptions } from './options'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
-export default function SlippyMap({ items = [{}] }) {
-  const coordinates = items[0]?.coordinates ?? []
-  const coordinateAccuracy = items[0]?.coordinateAccuracy ?? 0
-  const [viewport, setViewport] = useState({
-    ...transformMapOptions({ coordinates, coordinateAccuracy }),
-  })
+export default function SlippyMap({ items = [{}], centroid }) {
+  const coordinates = centroid?.coordinates ?? []
+  const coordinateAccuracy = centroid?.coordinateAccuracy ?? 0
+  const [viewport, setViewport] = useState(transformMapOptions({ coordinates, coordinateAccuracy }))
   const mapRef = useRef(null)
+  useEffect(() => {
+    setViewport(transformMapOptions({ coordinates, coordinateAccuracy }))
+  }, [centroid])
 
   const onClick = (event) => {
     const feature = event.features[0]
