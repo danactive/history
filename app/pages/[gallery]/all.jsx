@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -6,6 +7,7 @@ import { get as getGalleries } from '../../src/lib/galleries'
 
 import Link from '../../src/components/Link'
 import useSearch from '../../src/hooks/useSearch'
+import SplitViewer from '../../src/components/SplitViewer'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -17,17 +19,16 @@ async function buildStaticPaths() {
 }
 
 export async function getStaticProps({ params: { gallery } }) {
-  const { IMAGE_BASE_URL = '/' } = process.env
   const { albums } = await getAlbums(gallery)
 
   const prepareItems = ({ albumName, items }) => items.map((item) => ({
     ...item,
     gallery,
     album: albumName,
-    thumbPath: `${IMAGE_BASE_URL}${item.thumbPath}`,
-    content: [item.description, item.caption, item.location, item.city].join(' '),
+    content: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
-  const allItems = await albums.reduce(async (previousPromise, album) => {
+  // reverse order for albums in ascending order (oldest on top)
+  const allItems = await albums.reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
     return prev.concat(prepareItems({ albumName: album.name, items }))
@@ -46,13 +47,18 @@ export async function getStaticPaths() {
   }
 }
 
-const AllPage = ({ items = [] }) => {
+function AllPage({ items = [] }) {
   const {
     filtered,
     keyword,
     searchBox,
   } = useSearch(items)
+  const refImageGallery = useRef(null)
   const showThumbnail = (kw = '') => kw.length > 2
+
+  function selectThumb(index) {
+    refImageGallery.current.slideToIndex(index)
+  }
 
   return (
     <div>
@@ -61,13 +67,15 @@ const AllPage = ({ items = [] }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
+      <SplitViewer items={filtered} refImageGallery={refImageGallery} />
       <ul>
-        {filtered.map((item) => (
+        {filtered.map((item, index) => (
           <li key={item.filename}>
             <b>{item.album}</b>
             {item.content}
             {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
             <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
+            <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
           </li>
         ))}
       </ul>

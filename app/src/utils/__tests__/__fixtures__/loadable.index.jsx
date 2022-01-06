@@ -1,3 +1,5 @@
 import React from 'react'
 
-export default () => <div>My lazy-loaded component</div>
+export default function loadableJsx() {
+  return <div>My lazy-loaded component</div>
+}

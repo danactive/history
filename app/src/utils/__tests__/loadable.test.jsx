@@ -2,7 +2,9 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import loadable from '../loadable'
 
-const LoadingIndicator = () => <div>Loading</div>
+function LoadingIndicator() {
+  return <div>Loading</div>
+}
 
 const LazyComponent = loadable(() => import('./__fixtures__/loadable.index'))
 const LazyComponentWithEmptyOptions = loadable(

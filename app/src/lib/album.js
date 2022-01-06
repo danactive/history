@@ -27,16 +27,6 @@ async function getXmlFromFilesystem(gallery, album) {
   return parseXml(fileBuffer)
 }
 
-const getVideoPath = (item, gallery) => {
-  if (!item || !item.filename) {
-    return undefined
-  }
-
-  const filename = (typeof item.filename === 'string') ? item.filename : item.filename.join(',')
-  const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' }
-  return `/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`
-}
-
 function title(item) {
   const presentable = (...values) => values.every((value) => value !== undefined && value !== '')
   if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
@@ -109,18 +99,14 @@ const transformJsonSchema = (dirty = {}) => {
   const { gallery } = dirty.album.meta
 
   const updateItem = (item) => {
-    const geo = {
-      lat: null,
-      lon: null,
-    }
-    if (item.geo) {
-      geo.lat = parseFloat(item.geo.lat)
-      geo.lon = parseFloat(item.geo.lon)
-    }
+    const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
+    const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
+    const accuracy = Number(item?.geo?.accuracy)
 
     const thumbPath = utils.thumbPath(item, gallery)
     const photoPath = utils.photoPath(item, gallery)
-    const videoPath = getVideoPath(item, gallery)
+    const videoPaths = utils.getVideoPaths(item, gallery)
+
     return ({
       id: item.$.id,
       filename: item.filename,
@@ -128,11 +114,14 @@ const transformJsonSchema = (dirty = {}) => {
       location: item.photoLoc || null,
       caption: caption(item),
       description: item.photoDesc || null,
+      search: item.search || null,
       title: title(item),
-      geo,
+      coordinates: [longitude, latitude],
+      coordinateAccuracy: (!accuracy || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
-      mediaPath: (item.type === 'video') ? videoPath : photoPath,
+      mediaPath: (item.type === 'video') ? videoPaths[0] : photoPath,
+      videoPaths,
       reference: reference(item),
     })
   }
@@ -176,7 +165,6 @@ async function get(gallery, album, returnEnvelope = false) {
 module.exports = {
   get,
   errorSchema,
-  getVideoPath,
   reference,
   transformJsonSchema,
 }

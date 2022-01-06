@@ -90,7 +90,7 @@
     "react-dom": "16.14.0",
     "react-helmet-async": "1.0.7",
     "react-hot-loader": "4.13.0",
-    "react-image-gallery": "1.0.9",
+    "react-image-gallery": "1.2.7",
     "react-infinite-scroller": "^1.1.1",
     "react-intl": "^2.9.0",
     "react-mapbox-gl": "^4.6.2",

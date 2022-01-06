@@ -1,6 +1,6 @@
 /* global getQueryByName, mapboxgl, window */
 function createMap(containerId) {
-  mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNpdmo0OGo2YTAxcGIyenBkZWZlN3Ewam4ifQ.npY0cY_HdHg1OB692HtcUw';
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg';
   window.map = new mapboxgl.Map({
     container: containerId,
     style: 'mapbox://styles/mapbox/satellite-streets-v10',

@@ -66,6 +66,7 @@ function SplitScreen({ currentMemory, memories }) {
             showThumbnails={false}
             slideDuration={550}
             startIndex={memories.findIndex(m => m.id === currentMemory.id)}
+            showPlayButton={false}
           />
         </Left>
         <Right key="splitRight">
