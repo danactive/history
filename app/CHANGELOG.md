@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.0.0](https://github.com/danactive/history/compare/v7.1.0...v8.0.0) (2022-01-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Next:** https://history.domaindesign.ca/ is now Next.js
+
+### Features
+
+* **API > Album:** Add endpoints to build up to /gallery/[gallery]/album/[album] ([ace5412](https://github.com/danactive/history/commit/ace54124fbd4dba096a52ca896188a6fdb032192))
+* **API > Album:** Add new route from `/api` ([1ca5814](https://github.com/danactive/history/commit/1ca58143bb77d6f0913aefb8d91d1acae143ff8e))
+* **API > Edit Album:** Preview image links to original in new tab ([869a8d2](https://github.com/danactive/history/commit/869a8d227086dd01f8021907e2f4a6f693dda6ba))
+* **App > Album:** Allow all albums to render ([ab1103f](https://github.com/danactive/history/commit/ab1103ffb811b8e3ed58271ce88d9b07b1e0cf41))
+* **App > Albums:** Display album ([80b9384](https://github.com/danactive/history/commit/80b93842695d9688a4396f0a52e657f6ae6d0980))
+* **App > Albums:** Display albums ([45ac9c8](https://github.com/danactive/history/commit/45ac9c863d9d741f21e95e91d27e5d7281c557ca))
+* **App > Home:** Display list of galleries; Drop CSS module ([b8af63b](https://github.com/danactive/history/commit/b8af63bce83e03b5083820f6ce1553d2a1dd3ef9))
+* **Components > Generic List:** Add React component from UI to APP ([865bd86](https://github.com/danactive/history/commit/865bd8602bf3af8963def04d0654202e3c2f60b0))
+* **Filesystems:** React or API access filesystem the Next way ([b725254](https://github.com/danactive/history/commit/b725254777013f192c445bc88f656e28713ec3d8))
+* **Galleries:** React or API access galleries the Next way ([6bd2df1](https://github.com/danactive/history/commit/6bd2df1813b8b388a7b4553d96e34f903c62b9fc))
+* **Next > Album:** Add carousel photo view, no video support ([5a03794](https://github.com/danactive/history/commit/5a037943f23b0a1052b5baa34bcd7e6a9c5cf5bb))
+* **Next > Album:** Add Map camera transition ([ede10a6](https://github.com/danactive/history/commit/ede10a6574ed0c40549386987516c3c5a3d77a38))
+* **Next > Album:** Add on tap thumbnails to slide Image Viewer ([d4df865](https://github.com/danactive/history/commit/d4df865441583c97d08694b2ca17519cbf1ac625))
+* **Next > Album:** Carousel component in both All and album ([8e5ec65](https://github.com/danactive/history/commit/8e5ec656b68a6764532852ec15bd431aecab9357))
+* **Next > Album:** Centre map on first item ([69c7748](https://github.com/danactive/history/commit/69c7748df57cfd7c5df51920c434c16e2142db51))
+* **Next > Album:** Display thumbnail images ([b1969d4](https://github.com/danactive/history/commit/b1969d45c731ee9b7ad89907fc74f8ad45e3bf8a))
+* **Next > Album:** Regenerate Mapbox API key; Add basic map to Next app ([83ff466](https://github.com/danactive/history/commit/83ff46645f3dd854929f426b999c948e745eda16))
+* **Next > Album:** Slippy Map displays clusters ([9e55ba9](https://github.com/danactive/history/commit/9e55ba9dc900ab5ad85bc01bedb12b7d5cc73cde))
+* **Next > Album:** Slippy Map full screen ([a266264](https://github.com/danactive/history/commit/a266264871f2c9f301f92a453f468ead9cc1da18))
+* **Next > Album:** Update map based on selected item in carousel ([f0ce4b7](https://github.com/danactive/history/commit/f0ce4b7379dbbff3d98a415ccee3242745bdde68))
+* **Next > All:** Add a page to filter all albums in a gallery ([4ed21b7](https://github.com/danactive/history/commit/4ed21b7da1a804b66a9c9041b730479189d0d000))
+* **Next > All:** Deep link to photo from search result ([0fc63a4](https://github.com/danactive/history/commit/0fc63a46893a80dea515b61566b1f137bed159de))
+* **Next > All:** Filter on mixed case and with accents ([8578860](https://github.com/danactive/history/commit/85788606abad7ce1e957008f3c145ae4632def23))
+* **Next > All:** Move search to hook add search to album ([697b735](https://github.com/danactive/history/commit/697b735860c750f837dbd7fb12625f22d1f86ce3))
+* **Next > All:** Unit test on content for beach ([cef385f](https://github.com/danactive/history/commit/cef385feba1b6356ea7dd86bf2b432ea8379f2df))
+* **Next > All:** Unit test on content for gingerbread using package ([474510b](https://github.com/danactive/history/commit/474510b0170daf31d15687173d24b2e8da28ea39))
+* **Next > Gallery:** Apply search to allbums ([8580552](https://github.com/danactive/history/commit/858055228d1976058098c062253d0f6e862e1547))
+* **Next > Path:** Simplify the folder structure of the frontend ([7d07366](https://github.com/danactive/history/commit/7d07366c6600a30a873315d7f04d035917cd973a))
+* **Next > useSearch:** Add schema property for search keywords ([1756989](https://github.com/danactive/history/commit/17569895183a93e2c3ca1422cc90c01ae7fad62b))
+* **Next > Video:** Add Video player to all and album ([b642660](https://github.com/danactive/history/commit/b6426603f254e6ae01b2ad16352c14c9422553db))
+* **Next:** CD to deploy Next JS app ([d918c19](https://github.com/danactive/history/commit/d918c19e5a5253461df4d6e886ab8f27b36817f8))
+* **Next:** CD to deploy Next JS app ([7e13fd2](https://github.com/danactive/history/commit/7e13fd2b79b182bfa5187a4e4d8d884a2f337ff8))
+* **Next:** Temporarily copy from /public to /app/public until Next supports changing path ([9ccae6c](https://github.com/danactive/history/commit/9ccae6cb0a02d252f07f8fc06651de6aef5fe9a2))
+
+
+### Bug Fixes
+
+* **API > Album:** Conform route to REST resource /gallery/[gallery]/album/[album] ([30288da](https://github.com/danactive/history/commit/30288da5fdad16a2cf602d52f7c72476377c8011))
+* **API > Edit Album:** Fix preview image links to original in new tab ([3fcd265](https://github.com/danactive/history/commit/3fcd2657d2281ff999450eae98e3c91bdd2deca0))
+* **API > Edit Album:** Prevent word wrap ([e1ca1a5](https://github.com/danactive/history/commit/e1ca1a53a05423b9a65426385886b973e6a37ee8))
+* **API > Edit Album:** Replace broken video images with JPG file types ([69aead1](https://github.com/danactive/history/commit/69aead1984e0328b2dd7eae2c82238351e21c09d))
+* **API > Edit Album:** Windows Control and Mac Command key support ([251a8f7](https://github.com/danactive/history/commit/251a8f7e151c68d7246ad7c8047f9941336e95ce))
+* **API > View Album:** Photo & video paths are displayed in the colorbox ([0e196a5](https://github.com/danactive/history/commit/0e196a538905ebc866e78832fc2c5ef78d177959))
+* **Legacy:** Galleries and filesystem ([5a3377b](https://github.com/danactive/history/commit/5a3377b438293003ae506ddc92971eadb0da3494))
+* **Next > Album:** Fix selecting a thumb will change the carousel ([a3b871b](https://github.com/danactive/history/commit/a3b871b2d7231f4c1e72c8ef33a5e0ca9daf17a7))
+* **Next > Album:** Pass id so URL anchor from all to album ([e4f294c](https://github.com/danactive/history/commit/e4f294c8ca968ed211e1e07fb509364687ca669e))
+* **Next > Albums:** Since Next cannot read the repo root, needed an env variable ([d854a60](https://github.com/danactive/history/commit/d854a60032e99ec4c6c1dc97e72ae7c5f9b6d8f6))
+* **Next > All:** Ascending order for chronological photos ([61614f9](https://github.com/danactive/history/commit/61614f92202bfc1a21b7daf83d54ddbb68a9070c))
+* **Next > CI:** Move changelog from API to App; Drop Netlify for Vercel ([3331396](https://github.com/danactive/history/commit/3331396cc2f91cbe229b900d105f7ee41d65702e))
+* **Next > useSeach:** Match server and client to remove warnings ([e2da9be](https://github.com/danactive/history/commit/e2da9becc39ca42319485fc7776ec08619c39058))
+* **Next > useSeach:** Move searchBox to hook ([eaea8da](https://github.com/danactive/history/commit/eaea8da798fa7d6babfb0a815f74461a06067f04))
+* **Next > Utils:** Filename may be JPG or JPEG ([48ffd03](https://github.com/danactive/history/commit/48ffd030cd50542829a2f215cb345a9a63932d8a))
+* **Next > Utils:** Move Image Base to utils ([ee9d23a](https://github.com/danactive/history/commit/ee9d23a4089398085a8296ef31de81c3bbfb7d7d))
+* **Next > Video:** Unit test passes by moving CSS from import to local file ([30d0eb9](https://github.com/danactive/history/commit/30d0eb93ea2694ab074e2d2f1069d8016f24b7d2))
+* **Video:** Document converting AVI to MP4 ([fd86da7](https://github.com/danactive/history/commit/fd86da77fdc2ca916f6064dc24d6ef5f34c5bce6))
+
 ## [7.1.0](https://github.com/danactive/history/compare/v7.0.0...v7.1.0) (2021-06-05)
 
 
