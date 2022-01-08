@@ -179,7 +179,6 @@ const album = {
           'background-image': `url(${photoPath})`,
           cursor: 'zoom-in',
         })
-        .click((event) => window.open(event.target.getAttribute('data-original'), '_blank'))
     },
     Sort: function sortPhoto() {
       $('#listPhotos span').remove(); // clear previous sort labels
@@ -298,6 +297,7 @@ $(window).ready(() => {
   $('#saveToJson').click(SaveToJson);
   $('input[type=checkbox]').click(ToggleDisable);
   $('#geo_lat').change(album.form.SplitGeoOnPaste);
+  $('#photoPreview').click((event) => window.open(event.target.getAttribute('data-original'), '_blank'))
 
   album.form.schema.GetDom().add('textarea#rawAlbumJsonToXml').keydown(($e) => {
     $e.stopPropagation(); // allow text selction, not photo pagination
