@@ -48,7 +48,7 @@ const toCarousel = (item) => {
 }
 
 function SplitViewer({ items, refImageGallery }) {
-  const [memory, setMemory] = useState(items[0])
+  const [memoryIndex, setMemoryIndex] = useState(0)
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
@@ -70,7 +70,8 @@ function SplitViewer({ items, refImageGallery }) {
       <Left key="splitLeft">
         <ImageGallery
           ref={refImageGallery}
-          onBeforeSlide={setMemory}
+          onBeforeSlide={setMemoryIndex}
+          startIndex={memoryIndex}
           items={carouselItems}
           showPlayButton={false}
           showThumbnails={false}
@@ -79,7 +80,7 @@ function SplitViewer({ items, refImageGallery }) {
         />
       </Left>
       <Right key="splitRight" ref={refMapBox}>
-        <SlippyMap items={items} centroid={items[memory]} />
+        <SlippyMap items={items} centroid={items[memoryIndex]} />
         <button type="button" onClick={fullscreenMap}>Full Map</button>
       </Right>
     </Split>
