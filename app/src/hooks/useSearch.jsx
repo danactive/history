@@ -52,9 +52,9 @@ const useSearch = (items) => {
 
   const filtered = items.filter((item) => {
     if (!keyword) return true
-    const contentWithoutAccentLow = item.content.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    const corpusWithoutAccentLow = item.corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     const keywordWithoutAccentLow = keyword.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    return contentWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+    return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
   })
 
   return {

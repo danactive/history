@@ -21,17 +21,17 @@ async function buildStaticPaths() {
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
-  const prepareItems = ({ albumName, items }) => items.map((item) => ({
+  const preparedItems = ({ albumName, items }) => items.map((item) => ({
     ...item,
     gallery,
     album: albumName,
-    content: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   // reverse order for albums in ascending order (oldest on top)
   const allItems = await albums.reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
-    return prev.concat(prepareItems({ albumName: album.name, items }))
+    return prev.concat(preparedItems({ albumName: album.name, items }))
   }, Promise.resolve([]))
 
   return {
@@ -72,7 +72,7 @@ function AllPage({ items = [] }) {
         {filtered.map((item, index) => (
           <li key={item.filename}>
             <b>{item.album}</b>
-            {item.content}
+            {item.corpus}
             {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
             <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
             <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
