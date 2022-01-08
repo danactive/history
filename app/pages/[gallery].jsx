@@ -5,11 +5,16 @@ import { get as getAlbums } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
 
 import Link from '../src/components/Link'
+import useSearch from '../src/hooks/useSearch'
 
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
+  const preparedAlbums = albums.map((album) => ({
+    ...album,
+    corpus: [album.h1, album.h2, album.year].join(' '),
+  }))
   return {
-    props: { gallery, albums },
+    props: { gallery, albums: preparedAlbums },
   }
 }
 
@@ -50,7 +55,11 @@ const AlbumYear = styled.h3`
 `
 
 function AlbumsPage({ gallery, albums }) {
-  const albumGroup = albums.map((album, i) => (
+  const {
+    filtered,
+    searchBox,
+  } = useSearch(albums)
+  const AlbumSet = () => filtered.map((album, i) => (
     <Albums
       key={album.name}
       odd={i % 2 === 0}
@@ -68,7 +77,8 @@ function AlbumsPage({ gallery, albums }) {
         <title>History App - List Albums</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div>{albumGroup}</div>
+      <div>{searchBox}</div>
+      <AlbumSet />
     </div>
   )
 }

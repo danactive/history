@@ -21,12 +21,12 @@ async function buildStaticPaths() {
 
 export async function getStaticProps({ params: { gallery, album } }) {
   const { album: albumDoc } = await getAlbum(gallery, album)
-  const prepareItems = albumDoc.items.map((item) => ({
+  const preparedItems = albumDoc.items.map((item) => ({
     ...item,
-    content: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   return {
-    props: { items: prepareItems },
+    props: { items: preparedItems },
   }
 }
 

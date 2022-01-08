@@ -1,3 +1,5 @@
+import { FlyToInterpolator } from 'react-map-gl'
+
 const validatePoint = ([longitude = null, latitude = null]) => ({
   latitude,
   longitude,
@@ -56,6 +58,8 @@ export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
     options.zoom = coordinateAccuracy || 17
     options.bearing = 0
     options.pitch = 0
+    options.transitionInterpolator = new FlyToInterpolator({ speed: 1.5, curve: 2 })
+    options.transitionDuration = 'auto'
   }
 
   return options
