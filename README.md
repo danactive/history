@@ -17,19 +17,15 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 
 ## Installation
 
-### View (Read-only)
-1. `docker-compose up` Build and start history app (both frontend and backend)
-1.  View frontend at http://localhost:3000
-
 ### Development
-1. Node.js v14 LTS [Download](https://nodejs.org/)
+1. Node.js v16 LTS [Download](https://nodejs.org/)
 1. Folder **app** both the backend and frontend using Next.js
 1. Install project dependencies `npm ci`
 1. Start web server `npm run dev`
 1. View address in browser (printed in terminal on successful load)
 
 ### Legacy Development
-1. Node.js v12 LTS [Download](https://nodejs.org/)
+1. Node.js v12 [Download](https://nodejs.org/)
 1. Folder **api** is the backend; **ui** is the frontend
 1. Install project dependencies `npm ci`
 1. Optional [configuration](#environment-configuration)
