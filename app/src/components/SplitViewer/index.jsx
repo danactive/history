@@ -47,7 +47,7 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-function SplitViewer({ items, refImageGallery }) {
+function SplitViewer({ items, refImageGallery, setViewed }) {
   const [memoryIndex, setMemoryIndex] = useState(0)
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
@@ -65,12 +65,16 @@ function SplitViewer({ items, refImageGallery }) {
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
+  const handleBeforeSlide = (index) => {
+    setMemoryIndex(index)
+    setViewed(index)
+  }
   return (
     <Split>
       <Left key="splitLeft">
         <ImageGallery
           ref={refImageGallery}
-          onBeforeSlide={setMemoryIndex}
+          onBeforeSlide={handleBeforeSlide}
           startIndex={memoryIndex}
           items={carouselItems}
           showPlayButton={false}

@@ -38,12 +38,16 @@ function ThumbImg({
   href,
   src,
   id,
+  viewed: previewed = false,
 }) {
-  const [viewed, setViewed] = useState(false)
+  const [viewed, setViewed] = useState(previewed)
   const handleClick = (event) => {
     event.preventDefault()
     setViewed(true)
     onClick?.()
+  }
+  if (previewed && !viewed) {
+    setViewed(true)
   }
 
   return (

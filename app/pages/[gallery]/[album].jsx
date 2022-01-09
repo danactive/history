@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -49,6 +49,8 @@ function AlbumPage({ items = [] }) {
     filtered,
     searchBox,
   } = useSearch(items)
+  const [viewed, setViewedState] = useState([0])
+  const setViewed = (index) => setViewedState(viewed.concat(index))
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
@@ -61,7 +63,7 @@ function AlbumPage({ items = [] }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
-      <SplitViewer items={filtered} refImageGallery={refImageGallery} />
+      <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
       <Wrapper>
         {filtered.map((item, index) => (
           <ThumbImg
@@ -70,6 +72,7 @@ function AlbumPage({ items = [] }) {
             caption={item.caption}
             key={item.filename}
             id={`select${item.id}`}
+            viewed={(viewed.includes(index))}
           />
         ))}
       </Wrapper>
