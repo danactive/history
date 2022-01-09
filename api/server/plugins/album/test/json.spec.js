@@ -147,7 +147,7 @@ test('Read album XML', { skip: false }, (describe) => {
   });
 
   describe.test('* Retain camera filename extension', { skip: false }, (assert) => {
-    const unit = lib.jpgFilenameInsensitive;
+    const unit = lib.filenameAsJpg;
     let actual;
     let expected;
 

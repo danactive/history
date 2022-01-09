@@ -4,6 +4,8 @@ const path = require('path')
 
 const configFile = require('../../../config.json')
 
+const { IMAGE_BASE_URL = '' } = process.env
+
 const type = (filepath) => {
   if (!filepath) {
     return false
@@ -16,9 +18,9 @@ const type = (filepath) => {
   return path.extname(filepath).substr(1)
 }
 
-const jpgFilenameInsensitive = (filename) => {
+const filenameAsJpg = (filename) => {
   const currentExt = type(filename)
-  const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg'
+  const futureExt = (currentExt.toLowerCase() === 'jpg' || currentExt.toLowerCase() === 'jpeg') ? currentExt : 'jpg'
   const imageFilename = filename.replace(currentExt, futureExt)
   return imageFilename
 }
@@ -35,10 +37,29 @@ const rasterPath = (item, gallery, rasterType) => {
     return ''
   }
 
-  const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0]
-  const imageFilename = jpgFilenameInsensitive(filename)
+  const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+  const imageFilename = filenameAsJpg(filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
-  return `/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
+
+  return `${IMAGE_BASE_URL}/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
+}
+
+/**
+ * Video paths to public folder on local filesystem
+ * @param {object} item
+ * @param {string} gallery
+ * @returns {string[]} path
+ */
+const getVideoPaths = (item, gallery) => {
+  if (!item || !item.filename) {
+    return [null]
+  }
+
+  const filenames = Array.isArray(item.filename) ? item.filename : [item.filename]
+  return filenames.map((filename) => {
+    const year = filename.indexOf('-') >= 0 && filename.split('-')[0]
+    return `${IMAGE_BASE_URL}/galleries/${gallery}/media/videos/${year}/${filename}`
+  })
 }
 
 function customMime(rawExtension) {
@@ -90,7 +111,8 @@ const file = {
   absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
   thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
   photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
-  jpgFilenameInsensitive,
+  getVideoPaths,
+  filenameAsJpg,
 }
 
 function utils(errorSchema) {

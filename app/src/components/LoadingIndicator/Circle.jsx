@@ -44,8 +44,8 @@ const CirclePrimitive = styled.div`
   }
 `
 
-const Circle = ({ delay, rotate }) => (
-  <CirclePrimitive delay={delay} rotate={rotate} />
-)
+function Circle({ delay, rotate = 0 }) {
+  return <CirclePrimitive data-testid="loader" delay={delay} rotate={rotate} />
+}
 
 export default Circle

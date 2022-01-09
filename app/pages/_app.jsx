@@ -1,10 +1,16 @@
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import '../image-gallery.css' /* cannot use import on SplitViewer as unit test fails */
 
 const GlobalStyle = createGlobalStyle`
   body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    font-family: Verdana;
+    color: silver;
+    background-color: #323232;
+    margin: 0 auto;
+    display: flex;
+    min-height: 100%;
+    padding: 0 16px;
+    flex-direction: column;
   }
 `
 

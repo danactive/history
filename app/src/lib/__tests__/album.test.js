@@ -1,21 +1,6 @@
 import lib from '../album'
 
 describe('Album library', () => {
-  const gallery = 'demo'
-  describe('getVideoPath', () => {
-    test('Just filename', () => {
-      const item = { filename: '2016-12-31-01.mp4' }
-      const expectedPath = `/view/video?sources=${item.filename}&w=&h=&gallery=${gallery}`
-      expect(lib.getVideoPath(item, gallery)).toBe(expectedPath)
-    })
-
-    test('All', () => {
-      const item = { filename: '2016-12-31-01.mp4', size: { w: 1, h: 2 } }
-      const expectedPath = `/view/video?sources=${item.filename}&w=${item.size.w}&h=${item.size.h}&gallery=${gallery}`
-      expect(lib.getVideoPath(item, gallery)).toBe(expectedPath)
-    })
-  })
-
   describe('transformJsonSchema', () => {
     test('Blank', () => {
       const result = lib.transformJsonSchema()
@@ -25,15 +10,16 @@ describe('Album library', () => {
     test('Meta', () => {
       const mock = { album: { meta: 'Self talk' } }
       const result = lib.transformJsonSchema(mock)
-      expect(result).toEqual(mock)
+      expect(result.album.meta).toEqual(mock.album.meta)
+      expect(result.album.items.length).toEqual(0)
     })
 
-    test('Meta with id', () => {
+    test('Only one photo', () => {
       const mock = { album: { meta: 'Self talk' } }
-      mock.album.item = [{ $: { id: 1 } }]
+      mock.album.item = { $: { id: 1 } }
       const result = lib.transformJsonSchema(mock)
       expect(result.album.meta).toEqual(mock.album.meta)
-      expect(result.album.items[0].id).toEqual(mock.album.item[0].$.id)
+      expect(result.album.items[0].id).toEqual(mock.album.item.$.id)
     })
 
     test('Raw items', () => {
@@ -56,6 +42,11 @@ describe('Album library', () => {
               photoDesc: 'Desc',
               photoCity: 'City',
               thumbCaption: 'Caption',
+              geo: {
+                lat: '123',
+                lon: '-543.21',
+                accuracy: 15,
+              },
               ref: {
                 name: 'Purshia_tridentata',
                 source: 'wikipedia',
@@ -76,10 +67,15 @@ describe('Album library', () => {
       expect(result.album.items[0].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].mediaPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].reference).toBeNull()
+      expect(result.album.items[0].coordinates[0]).toBeNull()
+      expect(result.album.items[0].coordinates[1]).toBeNull()
+      expect(result.album.items[1].coordinates[0]).toEqual(-543.21)
+      expect(result.album.items[1].coordinates[1]).toEqual(123)
+      expect(result.album.items[0].coordinateAccuracy).toBeNull()
+      expect(result.album.items[1].coordinateAccuracy).toEqual(15)
       expect(result.album.items[1].caption).toEqual('Video: Caption') // Video Thumb Caption
       expect(result.album.items[1].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Video-Filename.jpg') // Photo Path
-      expect(result.album.items[1].mediaPath)
-        .toEqual('/view/video?sources=2016-Video-Filename.mov,2016-Video-Filename.avi&w=1280&h=720&gallery=demo') // Video Path
+      expect(result.album.items[1].mediaPath).toEqual('/galleries/demo/media/videos/2016/2016-Video-Filename.mov') // Video Path
       expect(result.album.items[1].reference).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference
     })
   })

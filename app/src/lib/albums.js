@@ -33,7 +33,7 @@ async function getGalleryFromFilesystem(gallery) {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-const transformJsonSchema = (dirty = {}, gallery) => {
+const transformJsonSchema = (dirty = {}, gallery = 'demo') => {
   const transform = (album) => ({
     name: album.albumName,
     h1: album.albumH1,
@@ -53,7 +53,7 @@ const transformJsonSchema = (dirty = {}, gallery) => {
  * Get Albums from local filesystem
  * @param {string} gallery name of gallery
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {Object} albums containing name, h1, h2, version, thumbPath, year
+ * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
 async function get(gallery, returnEnvelope = false) {
   try {

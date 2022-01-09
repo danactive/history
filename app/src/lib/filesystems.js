@@ -18,7 +18,7 @@ const errorSchema = (message, destinationPath = '') => {
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} files
  */
-async function get(destinationPath = '', returnEnvelope) {
+async function get(destinationPath = '', returnEnvelope = false) {
   try {
     const utils = utilsFactory(errorSchema)
     const publicPath = utils.safePublicPath('/')
