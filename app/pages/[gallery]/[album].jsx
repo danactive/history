@@ -68,7 +68,6 @@ function AlbumPage({ items = [] }) {
       </Head>
       {searchBox}
       <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
-      {details && details.description}
       <h3>{details && details.city}</h3>
       <h4>{details && details.location}</h4>
       <Wrapper>

@@ -15,17 +15,22 @@ function Source({ extension, src }) {
   return <source src={src} type={type} />
 }
 
-function VideoPlayerHtml5({ extension, poster, src }) {
+function VideoPlayerHtml5({
+  extension, poster, src, description,
+}) {
   return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption
-    <video
-      poster={poster}
-      controls
-      autoPlay={false}
-      className="image-gallery-image"
-    >
-      <Source extension={extension} src={src} />
-    </video>
+    <>
+      {description && <span className="image-gallery-description">{description}</span>}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <video
+        poster={poster}
+        controls
+        autoPlay={false}
+        className="image-gallery-image"
+      >
+        <Source extension={extension} src={src} />
+      </video>
+    </>
   )
 }
 
