@@ -49,8 +49,12 @@ function AlbumPage({ items = [] }) {
     filtered,
     searchBox,
   } = useSearch(items)
-  const [viewed, setViewedState] = useState([0])
-  const setViewed = (index) => setViewedState(viewed.concat(index))
+  const [viewed, setViewedList] = useState([0])
+  const [details, setDetails] = useState(filtered[0])
+  const setViewed = (index) => {
+    setDetails(filtered[index])
+    setViewedList(viewed.concat(index))
+  }
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
@@ -64,6 +68,9 @@ function AlbumPage({ items = [] }) {
       </Head>
       {searchBox}
       <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+      {details && details.description}
+      <h3>{details && details.city}</h3>
+      <h4>{details && details.location}</h4>
       <Wrapper>
         {filtered.map((item, index) => (
           <ThumbImg
