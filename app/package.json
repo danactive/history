@@ -13,7 +13,6 @@
     "release": "standard-version"
   },
   "dependencies": {
-    "@netlify/plugin-nextjs": "^4.1.1",
     "app-root-path": "^3.0.0",
     "boom": "^7.0.0",
     "camelcase": "^6.3.0",
