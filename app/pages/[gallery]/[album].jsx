@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -9,6 +9,7 @@ import { get as getGalleries } from '../../src/lib/galleries'
 import SplitViewer from '../../src/components/SplitViewer'
 import ThumbImg from '../../src/components/ThumbImg'
 import useSearch from '../../src/hooks/useSearch'
+import useMemory from '../../src/hooks/useMemory'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -49,12 +50,7 @@ function AlbumPage({ items = [] }) {
     filtered,
     searchBox,
   } = useSearch(items)
-  const [viewed, setViewedList] = useState([0])
-  const [details, setDetails] = useState(filtered[0])
-  const setViewed = (index) => {
-    setDetails(filtered[index])
-    setViewedList(viewed.concat(index))
-  }
+  const { setViewed, memoryHtml, viewedList } = useMemory(filtered)
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
@@ -68,8 +64,7 @@ function AlbumPage({ items = [] }) {
       </Head>
       {searchBox}
       <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
-      <h3>{details && details.city}</h3>
-      <h4>{details && details.location}</h4>
+      {memoryHtml}
       <Wrapper>
         {filtered.map((item, index) => (
           <ThumbImg
@@ -78,7 +73,7 @@ function AlbumPage({ items = [] }) {
             caption={item.caption}
             key={item.filename}
             id={`select${item.id}`}
-            viewed={(viewed.includes(index))}
+            viewed={(viewedList.includes(index))}
           />
         ))}
       </Wrapper>

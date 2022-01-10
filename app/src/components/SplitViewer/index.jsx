@@ -48,7 +48,7 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-function SplitViewer({ items, refImageGallery, setViewed }) {
+function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
   const [memoryIndex, setMemoryIndex] = useState(0)
   const refMapBox = useRef(null)
   const fullscreenMap = () => {

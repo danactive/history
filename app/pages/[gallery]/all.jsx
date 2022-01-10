@@ -6,6 +6,7 @@ import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
 import Link from '../../src/components/Link'
+import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
 
@@ -53,6 +54,7 @@ function AllPage({ items = [] }) {
     keyword,
     searchBox,
   } = useSearch(items)
+  const { setViewed, memoryHtml, viewedList } = useMemory(filtered)
   const refImageGallery = useRef(null)
   const showThumbnail = (kw = '') => kw.length > 2
 
@@ -67,7 +69,8 @@ function AllPage({ items = [] }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
-      <SplitViewer items={filtered} refImageGallery={refImageGallery} />
+      <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+      {memoryHtml}
       <ul>
         {filtered.map((item, index) => (
           <li key={item.filename}>
@@ -76,6 +79,7 @@ function AllPage({ items = [] }) {
             {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
             <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
             <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
+            Viewed = {viewedList.includes(index).toString()}
           </li>
         ))}
       </ul>
