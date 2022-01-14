@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.1.0](https://github.com/danactive/history/compare/v8.0.0...v8.1.0) (2022-01-14)
+
+
+### Features
+
+* **Next > Album:** Display video description ([52b06be](https://github.com/danactive/history/commit/52b06be88d63bcd5de25a07903483e83d44c79e2))
+* **Next > Album:** Mark viewed thumbs with highlight ([11167f3](https://github.com/danactive/history/commit/11167f340eeb4ae19a516053bfb288e0301b74fb))
+* **Next > Album:** Show city and location details ([b45edd0](https://github.com/danactive/history/commit/b45edd054b3685ae94b9564857d73b25aed5d1d4))
+* **Next > All:** Show city and location details using hook ([df29fb6](https://github.com/danactive/history/commit/df29fb6db6b483be572cadc4cd4572be56e08cb8))
+
+
+### Bug Fixes
+
+* **Next > CI:** Remove PR netlify check ([b95b3dd](https://github.com/danactive/history/commit/b95b3dd9d4d22be7543012d3ee881e149b17faed))
+* **Next > CI:** Upgrade Node from 14 to 16.13.1 ([6ba6d25](https://github.com/danactive/history/commit/6ba6d25de398cf11a942bf7e51d4d1112dde0787))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([78a5990](https://github.com/danactive/history/commit/78a5990a4bc1aca15fce0fcba4072ded0342eabf))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([9838993](https://github.com/danactive/history/commit/98389935feda39e097166253909e31cd9b978471))
+* ui/package.json & ui/package-lock.json to reduce vulnerabilities ([4ee0808](https://github.com/danactive/history/commit/4ee08085a3fc2bc10172614c90223cb8212f7ac6))
+
 ## [8.0.0](https://github.com/danactive/history/compare/v7.1.0...v8.0.0) (2022-01-08)
 
 
