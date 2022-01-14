@@ -9,6 +9,7 @@ import { get as getGalleries } from '../../src/lib/galleries'
 import SplitViewer from '../../src/components/SplitViewer'
 import ThumbImg from '../../src/components/ThumbImg'
 import useSearch from '../../src/hooks/useSearch'
+import useMemory from '../../src/hooks/useMemory'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -49,6 +50,7 @@ function AlbumPage({ items = [] }) {
     filtered,
     searchBox,
   } = useSearch(items)
+  const { setViewed, memoryHtml, viewedList } = useMemory(filtered)
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
@@ -61,7 +63,8 @@ function AlbumPage({ items = [] }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {searchBox}
-      <SplitViewer items={filtered} refImageGallery={refImageGallery} />
+      <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+      {memoryHtml}
       <Wrapper>
         {filtered.map((item, index) => (
           <ThumbImg
@@ -70,6 +73,7 @@ function AlbumPage({ items = [] }) {
             caption={item.caption}
             key={item.filename}
             id={`select${item.id}`}
+            viewed={(viewedList.includes(index))}
           />
         ))}
       </Wrapper>

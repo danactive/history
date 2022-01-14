@@ -35,11 +35,12 @@ const toCarousel = (item) => {
   const extension = getExt(item.mediaPath)
   const isVideo = config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
-    imageGallery.renderItem = ({ original, mediaPath }) => (
+    imageGallery.renderItem = ({ original, mediaPath, description }) => (
       <Video
         extension={extension}
         src={mediaPath}
         poster={original}
+        description={description}
       />
     )
   }
@@ -47,7 +48,7 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-function SplitViewer({ items, refImageGallery }) {
+function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
   const [memoryIndex, setMemoryIndex] = useState(0)
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
@@ -65,12 +66,16 @@ function SplitViewer({ items, refImageGallery }) {
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
+  const handleBeforeSlide = (index) => {
+    setMemoryIndex(index)
+    setViewed(index)
+  }
   return (
     <Split>
       <Left key="splitLeft">
         <ImageGallery
           ref={refImageGallery}
-          onBeforeSlide={setMemoryIndex}
+          onBeforeSlide={handleBeforeSlide}
           startIndex={memoryIndex}
           items={carouselItems}
           showPlayButton={false}
