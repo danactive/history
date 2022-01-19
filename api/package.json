@@ -18,7 +18,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@hapi/hapi": "^19.2.0",
+    "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.3",
     "@hapi/joi": "^16.1.8",
     "@hapi/vision": "^6.0.1",
