@@ -1,5 +1,5 @@
 const routes = require('../../../lib/routes');
-const filesServer = require('../../../../../app/src/lib/filesystems');
+const filesServer = require('../../../../../next/src/lib/filesystems');
 const validation = require('../../../lib/validation');
 
 const routeWalkPath = {

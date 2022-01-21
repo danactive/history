@@ -1,7 +1,7 @@
 const boom = require('boom');
 const gm = require('gm');
 
-const existsMod = require('../../../../../app/src/lib/exists');
+const existsMod = require('../../../../../next/src/lib/exists');
 const utils = require('../../utils');
 
 /*

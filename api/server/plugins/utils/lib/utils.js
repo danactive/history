@@ -5,7 +5,7 @@ const glob = require('glob');
 const path = require('path');
 
 const configFile = require('../../../../../config.json');
-const utilsFactory = require('../../../../../app/src/lib/utils');
+const utilsFactory = require('../../../../../next/src/lib/utils');
 
 const config = {
   get: (dotpath) => dotProp.get(configFile, dotpath),
