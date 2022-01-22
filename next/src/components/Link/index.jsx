@@ -3,7 +3,7 @@ import { memo } from 'react'
 import NextLink from 'next/link'
 import styled from 'styled-components'
 
-const ColouredLink = styled(NextLink)`
+const ColouredLink = styled.a`
   color: #6cc0e5;
 
   &:hover {
@@ -23,8 +23,10 @@ const ColouredLink = styled(NextLink)`
   }
 `
 
-function Link(props) {
-  return <ColouredLink {...props} />
+function Link({ children, ...props }) {
+  return <NextLink {...props} passHref>
+    <ColouredLink>{children}</ColouredLink>
+  </NextLink>
 }
 
 export default memo(Link)

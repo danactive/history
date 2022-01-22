@@ -64,7 +64,7 @@ function AlbumsPage({ gallery, albums }) {
       key={album.name}
       odd={i % 2 === 0}
     >
-      <Link href={`/${gallery}/${album.name}`}><a><img src={album.thumbPath} alt={album.name} /></a></Link>
+      <Link href={`/${gallery}/${album.name}`}><img src={album.thumbPath} alt={album.name} /></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
       <AlbumYear>{album.year}</AlbumYear>

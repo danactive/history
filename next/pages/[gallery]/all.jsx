@@ -77,7 +77,7 @@ function AllPage({ items = [] }) {
             <b>{item.album}</b>
             {item.corpus}
             {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
-            <Link href={`/${item.gallery}/${item.album}#select${item.id}`}><a>{item.caption}</a></Link>
+            <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
             <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
             Viewed = {viewedList.includes(index).toString()}
           </li>

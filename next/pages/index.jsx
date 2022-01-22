@@ -19,8 +19,8 @@ function ListComponent({ item }) {
   return (
     <ListItem item={(
       <>
-        <Link href={`/${item.gallery}`}><a>{item.gallery}</a></Link>
-        <Link href={`/${item.gallery}/all`}><a>Search album</a></Link>
+        <Link href={`/${item.gallery}`}>{item.gallery}</Link>
+        <Link href={`/${item.gallery}/all`}>Search album</Link>
       </>
   )}
     />
