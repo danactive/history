@@ -1,3 +1,4 @@
+/* global fetch */
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -24,7 +25,11 @@ function Nearby() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hello>Hello World</Hello>
-      <ul>{albums.map((album) => <li>{album.name}</li>)}</ul>
+      <ul>
+        {albums.map((album) => (
+          <li><img src={album.thumbPath} alt={album.year} /></li>
+        ))}
+      </ul>
     </>
   )
 }
