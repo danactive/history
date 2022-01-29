@@ -24,9 +24,11 @@ const ColouredLink = styled.a`
 `
 
 function Link({ children, ...props }) {
-  return <NextLink {...props} passHref>
-    <ColouredLink>{children}</ColouredLink>
-  </NextLink>
+  return (
+    <NextLink {...props} passHref>
+      <ColouredLink>{children}</ColouredLink>
+    </NextLink>
+  )
 }
 
 export default memo(Link)
