@@ -79,7 +79,10 @@ const reference = (item) => {
         return ''
     }
   }
-  return (item?.ref?.name) ? baseUrl(item?.ref?.source) + item.ref.name : null
+  if (item?.ref?.name) {
+    return [baseUrl(item.ref?.source) + item.ref.name, item.ref.name]
+  }
+  return [baseUrl(item.ref?.source), '']
 }
 
 /**

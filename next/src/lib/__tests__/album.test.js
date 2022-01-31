@@ -66,7 +66,8 @@ describe('Album library', () => {
       expect(result.album.items[0].thumbPath).toEqual('/galleries/demo/media/thumbs/2016/2016-Image-Filename.jpg') // Thumb Path
       expect(result.album.items[0].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].mediaPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
-      expect(result.album.items[0].reference).toBeNull()
+      expect(result.album.items[0].reference[0]).toBe('')
+      expect(result.album.items[0].reference[1]).toBe('')
       expect(result.album.items[0].coordinates[0]).toBeNull()
       expect(result.album.items[0].coordinates[1]).toBeNull()
       expect(result.album.items[1].coordinates[0]).toEqual(-543.21)
@@ -76,7 +77,8 @@ describe('Album library', () => {
       expect(result.album.items[1].caption).toEqual('Video: Caption') // Video Thumb Caption
       expect(result.album.items[1].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Video-Filename.jpg') // Photo Path
       expect(result.album.items[1].mediaPath).toEqual('/galleries/demo/media/videos/2016/2016-Video-Filename.mov') // Video Path
-      expect(result.album.items[1].reference).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference
+      expect(result.album.items[1].reference[0]).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference URL
+      expect(result.album.items[1].reference[1]).toEqual('Purshia_tridentata') // Wikipedia reference name
     })
   })
 
@@ -88,7 +90,9 @@ describe('Album library', () => {
           source: 'youtube',
         },
       }
-      expect(lib.reference(mock)).toBe('https://www.youtube.com/watch?v=vancouver')
+      const actual = lib.reference(mock)
+      expect(actual[0]).toBe('https://www.youtube.com/watch?v=vancouver')
+      expect(actual[1]).toBe('vancouver')
     })
     test('Wiki', () => {
       const mock = {
@@ -97,7 +101,9 @@ describe('Album library', () => {
           source: 'wikipedia',
         },
       }
-      expect(lib.reference(mock)).toBe('https://en.wikipedia.org/wiki/Purshia_tridentata')
+      const actual = lib.reference(mock)
+      expect(actual[0]).toBe('https://en.wikipedia.org/wiki/Purshia_tridentata')
+      expect(actual[1]).toBe('Purshia_tridentata')
     })
   })
 })
