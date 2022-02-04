@@ -1,3 +1,7 @@
 export default function twitter(req, res) {
-  res.send({ todo: true })
+  console.log('process.env.TWITTER_TEST', process.env.TWITTER_TEST)
+  res.send({
+    todo: true,
+    env: process.env.TWITTER_TEST,
+  })
 }
