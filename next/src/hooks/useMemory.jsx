@@ -10,15 +10,17 @@ const useMemory = (filtered) => {
     setViewedList(viewedList.concat(index))
   }
 
+  const memoryHtml = details ? (
+    <>
+      <h3>{details.city}</h3>
+      <h4>{details.location}</h4>
+      {details.reference && <Link href={details.reference[0]}>{details.reference[1]}</Link>}
+    </>
+  ) : null
+
   return {
     setViewed,
-    memoryHtml: (
-      <>
-        <h3>{details && details.city}</h3>
-        <h4>{details && details.location}</h4>
-        {details.reference && <Link href={details.reference[0]}>{details.reference[1]}</Link>}
-      </>
-    ),
+    memoryHtml,
     viewedList,
   }
 }

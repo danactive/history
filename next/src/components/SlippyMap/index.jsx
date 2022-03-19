@@ -18,6 +18,7 @@ export default function SlippyMap({ items = [{}], centroid }) {
 
   const onClick = (event) => {
     const feature = event.features[0]
+    if (!feature) return
     const clusterId = feature.properties.cluster_id
 
     const mapboxSource = mapRef.current.getMap().getSource('slippyMap')
