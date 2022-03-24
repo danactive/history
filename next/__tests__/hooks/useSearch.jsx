@@ -50,4 +50,22 @@ describe('Router ready', () => {
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
   })
+  test('Or operator', () => {
+    const keyword = 'ban||che'
+    useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
+    const items = [{ corpus: 'apple' }, { corpus: 'bañana' }, { corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch(items))
+
+    expect(result.current.filtered).toStrictEqual([items[1], items[2]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+  test('And operator', () => {
+    const keyword = 'ban&&che'
+    useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
+    const items = [{ corpus: 'ban' }, { corpus: 'cherrished bañana' }, { corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch(items))
+
+    expect(result.current.filtered).toStrictEqual([items[1]])
+    expect(result.current.keyword).toBe(keyword)
+  })
 })
