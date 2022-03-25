@@ -81,6 +81,7 @@ function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
           showPlayButton={false}
           showThumbnails={false}
           slideDuration={550}
+          useWindowKeyDown={false}
           lazyLoad
         />
       </Left>
