@@ -82,7 +82,10 @@ const reference = (item) => {
   if (item?.ref?.name) {
     return [baseUrl(item.ref?.source) + item.ref.name, item.ref.name]
   }
-  return [baseUrl(item.ref?.source), '']
+  if (item.ref?.source) {
+    return [baseUrl(item.ref?.source), '']
+  }
+  return null
 }
 
 /**
@@ -110,7 +113,7 @@ const transformJsonSchema = (dirty = {}) => {
     const photoPath = utils.photoPath(item, gallery)
     const videoPaths = utils.getVideoPaths(item, gallery)
 
-    return ({
+    const out = {
       id: item.$.id,
       filename: item.filename,
       city: item.photoCity || null,
@@ -119,14 +122,17 @@ const transformJsonSchema = (dirty = {}) => {
       description: item.photoDesc || null,
       search: item.search || null,
       title: title(item),
-      coordinates: [longitude, latitude],
+      coordinates: longitude && latitude ? [longitude, latitude] : null,
       coordinateAccuracy: (!accuracy || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
       mediaPath: (item.type === 'video') ? videoPaths[0] : photoPath,
       videoPaths,
       reference: reference(item),
-    })
+    }
+
+    // remove empty properties
+    return Object.fromEntries(Object.entries(out).filter(([_, v]) => v != null))
   }
 
   const items = dirty.album.item.length ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
