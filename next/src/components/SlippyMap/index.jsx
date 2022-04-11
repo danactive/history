@@ -1,19 +1,24 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect, useState, useRef } from 'react'
+import {
+  useContext, useEffect, useState, useRef,
+} from 'react'
 import MapGL, { Source, Layer } from 'react-map-gl'
 
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
+import AlbumContext from '../Context'
+
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 export default function SlippyMap({ items = [{}], centroid }) {
+  const { geo: { zoom: metaZoom } } = useContext(AlbumContext)
   const coordinates = centroid?.coordinates ?? []
-  const coordinateAccuracy = centroid?.coordinateAccuracy ?? 0
-  const [viewport, setViewport] = useState(transformMapOptions({ coordinates, coordinateAccuracy }))
+  const zoom = centroid?.coordinateAccuracy ?? metaZoom
+  const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
   const mapRef = useRef(null)
   useEffect(() => {
-    setViewport(transformMapOptions({ coordinates, coordinateAccuracy }))
+    setViewport(transformMapOptions({ coordinates, zoom }))
   }, [centroid])
 
   const onClick = (event) => {
@@ -23,7 +28,7 @@ export default function SlippyMap({ items = [{}], centroid }) {
 
     const mapboxSource = mapRef.current.getMap().getSource('slippyMap')
 
-    mapboxSource.getClusterExpansionZoom(clusterId, (err, zoom) => {
+    mapboxSource.getClusterExpansionZoom(clusterId, (err, clickZoom) => {
       if (err) {
         return
       }
@@ -32,7 +37,7 @@ export default function SlippyMap({ items = [{}], centroid }) {
         ...viewport,
         longitude: feature.geometry.coordinates[0],
         latitude: feature.geometry.coordinates[1],
-        zoom,
+        zoom: clickZoom,
         transitionDuration: 500,
       })
     })

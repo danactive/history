@@ -5,6 +5,7 @@ import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
+import AlbumContext from '../../src/components/Context'
 import Link from '../../src/components/Link'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
@@ -68,21 +69,23 @@ function AllPage({ items = [] }) {
         <title>History App - All</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {searchBox}
-      <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
-      {memoryHtml}
-      <ul>
-        {filtered.map((item, index) => (
-          <li key={item.filename}>
-            <b>{item.album}</b>
-            {item.corpus}
-            {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
-            <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
-            <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
-            Viewed = {viewedList.includes(index).toString()}
-          </li>
-        ))}
-      </ul>
+      <AlbumContext.Provider value={{ geo: { zoom: 10 } }}>
+        {searchBox}
+        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+        {memoryHtml}
+        <ul>
+          {filtered.map((item, index) => (
+            <li key={item.filename}>
+              <b>{item.album}</b>
+              {item.corpus}
+              {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
+              <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
+              <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
+              Viewed = {viewedList.includes(index).toString()}
+            </li>
+          ))}
+        </ul>
+      </AlbumContext.Provider>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
+import AlbumContext from '../../src/components/Context'
 import SplitViewer from '../../src/components/SplitViewer'
 import ThumbImg from '../../src/components/ThumbImg'
 import useSearch from '../../src/hooks/useSearch'
@@ -21,13 +22,13 @@ async function buildStaticPaths() {
 }
 
 export async function getStaticProps({ params: { gallery, album } }) {
-  const { album: albumDoc } = await getAlbum(gallery, album)
-  const preparedItems = albumDoc.items.map((item) => ({
+  const { album: { items, meta } } = await getAlbum(gallery, album)
+  const preparedItems = items.map((item) => ({
     ...item,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   return {
-    props: { items: preparedItems },
+    props: { items: preparedItems, meta },
   }
 }
 
@@ -44,7 +45,7 @@ const Wrapper = styled.ul`
   padding-left: 2px;
 `
 
-function AlbumPage({ items = [] }) {
+function AlbumPage({ items = [], meta }) {
   const refImageGallery = useRef(null)
   const {
     filtered,
@@ -62,21 +63,23 @@ function AlbumPage({ items = [] }) {
         <title>History App - Album</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {searchBox}
-      <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
-      {memoryHtml}
-      <Wrapper>
-        {filtered.map((item, index) => (
-          <ThumbImg
-            onClick={() => selectThumb(index)}
-            src={item.thumbPath}
-            caption={item.caption}
-            key={item.filename}
-            id={`select${item.id}`}
-            viewed={(viewedList.includes(index))}
-          />
-        ))}
-      </Wrapper>
+      <AlbumContext.Provider value={meta}>
+        {searchBox}
+        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+        {memoryHtml}
+        <Wrapper>
+          {filtered.map((item, index) => (
+            <ThumbImg
+              onClick={() => selectThumb(index)}
+              src={item.thumbPath}
+              caption={item.caption}
+              key={item.filename}
+              id={`select${item.id}`}
+              viewed={(viewedList.includes(index))}
+            />
+          ))}
+        </Wrapper>
+      </AlbumContext.Provider>
     </div>
   )
 }

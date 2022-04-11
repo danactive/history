@@ -136,10 +136,17 @@ const transformJsonSchema = (dirty = {}) => {
   }
 
   const items = dirty.album.item.length ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
+  const meta = {
+    ...dirty.album.meta,
+    geo: {
+      ...dirty.album.meta.geo,
+      zoom: Number(dirty.album.meta.geo.googleZoom) || 17,
+    },
+  }
 
   return {
     album: {
-      meta: dirty.album.meta,
+      meta,
       items,
     },
   }

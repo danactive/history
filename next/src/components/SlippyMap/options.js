@@ -47,15 +47,14 @@ export function transformSourceOptions({ items = [] } = {}) {
   }
 }
 
-export function transformMapOptions({ coordinates = [], coordinateAccuracy }) {
+export function transformMapOptions({ coordinates = [], zoom }) {
   const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
 
   const options = {}
-
   if (!isInvalidPoint) {
     options.latitude = latitude
     options.longitude = longitude
-    options.zoom = coordinateAccuracy || 17
+    options.zoom = zoom
     options.bearing = 0
     options.pitch = 0
     options.transitionInterpolator = new FlyToInterpolator({ speed: 1.5, curve: 2 })
