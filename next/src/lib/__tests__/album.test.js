@@ -8,24 +8,26 @@ describe('Album library', () => {
     })
 
     test('Meta', () => {
-      const mock = { album: { meta: 'Self talk' } }
+      const mock = { album: { meta: { gallery: 'demo' } } }
       const result = lib.transformJsonSchema(mock)
       expect(result.album.meta).toEqual(mock.album.meta)
       expect(result.album.items.length).toEqual(0)
     })
 
     test('Only one photo', () => {
-      const mock = { album: { meta: 'Self talk' } }
+      const mock = { album: { meta: { gallery: 'demo' } } }
       mock.album.item = { $: { id: 1 } }
+      const expected = { gallery: 'demo', geo: { zoom: 17 } }
       const result = lib.transformJsonSchema(mock)
-      expect(result.album.meta).toEqual(mock.album.meta)
+      expect(result.album.meta).toEqual(expected)
       expect(result.album.items[0].id).toEqual(mock.album.item.$.id)
     })
 
     test('Raw items', () => {
+      const expectedMeta = { gallery: 'demo', geo: { zoom: 15 } }
       const mock = {
         album: {
-          meta: { gallery: 'demo' },
+          meta: { gallery: 'demo', markerZoom: 15 },
           item: [
             {
               $: { id: 1 },
@@ -57,7 +59,7 @@ describe('Album library', () => {
       }
       const result = lib.transformJsonSchema(mock)
 
-      expect(result.album.meta).toEqual(mock.album.meta) // Meta (w/ Items)
+      expect(result.album.meta).toEqual(expectedMeta) // Meta (w/ Items)
       expect(result.album.items[0].id).toEqual(mock.album.item[0].$.id) // Items (w/ Meta)
       expect(result.album.items[0].caption).toEqual('Caption') // Image Caption
       expect(result.album.items[0].city).toEqual('City') // City
@@ -67,7 +69,8 @@ describe('Album library', () => {
       expect(result.album.items[0].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].mediaPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].reference).toBeUndefined()
-      expect(result.album.items[0].coordinates).toBeUndefined()
+      expect(result.album.items[0].coordinates[0]).toBeNull()
+      expect(result.album.items[0].coordinates[1]).toBeNull()
       expect(result.album.items[1].coordinates[0]).toEqual(-543.21)
       expect(result.album.items[1].coordinates[1]).toEqual(123)
       expect(result.album.items[0].coordinateAccuracy).toBeUndefined()

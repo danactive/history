@@ -122,7 +122,7 @@ const transformJsonSchema = (dirty = {}) => {
       description: item.photoDesc || null,
       search: item.search || null,
       title: title(item),
-      coordinates: longitude && latitude ? [longitude, latitude] : null,
+      coordinates: [longitude, latitude],
       coordinateAccuracy: (!accuracy || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
@@ -139,10 +139,10 @@ const transformJsonSchema = (dirty = {}) => {
   const meta = {
     ...dirty.album.meta,
     geo: {
-      ...dirty.album.meta.geo,
-      zoom: Number(dirty.album.meta.geo.googleZoom) || 17,
+      zoom: Number(dirty.album.meta?.markerZoom) || 17,
     },
   }
+  delete meta.markerZoom
 
   return {
     album: {

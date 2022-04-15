@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -62,6 +62,7 @@ function AllPage({ items = [] }) {
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
   }
+  const zooms = useMemo(() => ({ geo: { zoom: 10 } }))
 
   return (
     <div>
@@ -69,7 +70,7 @@ function AllPage({ items = [] }) {
         <title>History App - All</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AlbumContext.Provider value={{ geo: { zoom: 10 } }}>
+      <AlbumContext.Provider value={zooms}>
         {searchBox}
         <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
         {memoryHtml}
