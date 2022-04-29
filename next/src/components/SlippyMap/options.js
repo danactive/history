@@ -1,18 +1,22 @@
 import { FlyToInterpolator } from 'react-map-gl'
 
-const validatePoint = ([longitude = null, latitude = null]) => ({
-  latitude,
-  longitude,
-  isInvalidPoint:
-    longitude === 0
-    || latitude === 0
-    || longitude === undefined
-    || latitude === undefined
-    || longitude === null
-    || latitude === null
-    || Number.isNaN(latitude)
-    || Number.isNaN(longitude),
-})
+const validatePoint = (rawCoordinate) => {
+  const coordinate = rawCoordinate ?? []
+  const [longitude = null, latitude = null] = coordinate
+  return {
+    latitude,
+    longitude,
+    isInvalidPoint:
+      longitude === 0
+      || latitude === 0
+      || longitude === undefined
+      || latitude === undefined
+      || longitude === null
+      || latitude === null
+      || Number.isNaN(latitude)
+      || Number.isNaN(longitude),
+  }
+}
 
 export function transformSourceOptions({ items = [] } = {}) {
   const geoJsonFeature = (item) => {
@@ -30,7 +34,7 @@ export function transformSourceOptions({ items = [] } = {}) {
     }
   }
 
-  const hasGeo = (item) => !validatePoint(item.coordinates).isInvalidPoint
+  const hasGeo = (item) => !validatePoint(item?.coordinates).isInvalidPoint
   const features = items.filter(hasGeo).map(geoJsonFeature)
 
   const data = {
@@ -47,7 +51,8 @@ export function transformSourceOptions({ items = [] } = {}) {
   }
 }
 
-export function transformMapOptions({ coordinates = [], zoom }) {
+export function transformMapOptions({ coordinates = [], zoom } = {}) {
+  if (coordinates === null) return {}
   const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
 
   const options = {}

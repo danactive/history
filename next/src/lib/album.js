@@ -122,7 +122,7 @@ const transformJsonSchema = (dirty = {}) => {
       description: item.photoDesc || null,
       search: item.search || null,
       title: title(item),
-      coordinates: [longitude, latitude],
+      coordinates: longitude && latitude ? [longitude, latitude] : null,
       coordinateAccuracy: (!accuracy || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
