@@ -23,7 +23,7 @@
     "@hapi/joi": "^16.1.8",
     "@hapi/vision": "^6.0.1",
     "app-root-path": "^3.0.0",
-    "async": "^2.6.3",
+    "async": "^2.6.4",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.16.0",
