@@ -14,7 +14,7 @@ const useMemory = (filtered) => {
     <>
       <h3>{details.city}</h3>
       <h4>{details.location}</h4>
-      {details.reference && <Link href={details.reference[0]}>{details.reference[1]}</Link>}
+      {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null
 
