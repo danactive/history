@@ -51,7 +51,7 @@ function AlbumPage({ items = [], meta }) {
     filtered,
     searchBox,
   } = useSearch(items)
-  const { setViewed, memoryHtml, viewedList } = useMemory(filtered)
+  const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)

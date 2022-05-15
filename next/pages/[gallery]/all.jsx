@@ -50,13 +50,13 @@ export async function getStaticPaths() {
 }
 
 function AllPage({ items = [] }) {
+  const refImageGallery = useRef(null)
   const {
     filtered,
     keyword,
     searchBox,
   } = useSearch(items)
-  const { setViewed, memoryHtml, viewedList } = useMemory(filtered)
-  const refImageGallery = useRef(null)
+  const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
 
   function selectThumb(index) {
