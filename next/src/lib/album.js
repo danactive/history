@@ -132,6 +132,7 @@ const transformJsonSchema = (dirty = {}) => {
     }
 
     // remove empty properties
+    // eslint-disable-next-line no-unused-vars
     return Object.fromEntries(Object.entries(out).filter(([_, v]) => v != null))
   }
 

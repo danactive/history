@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
 import Link from '../components/Link'
 
@@ -11,7 +11,7 @@ const useMemory = (filtered, refImageGallery) => {
   }
   useEffect(() => {
     setViewed(refImageGallery.current.getCurrentIndex())
-  }, [filtered[0].id])
+  }, [filtered[0]])
 
   const memoryHtml = details ? (
     <>

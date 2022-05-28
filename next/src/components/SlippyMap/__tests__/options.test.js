@@ -1,4 +1,4 @@
-import { transformMapOptions, transformSourceOptions } from '../options';
+import { transformMapOptions, transformSourceOptions } from '../options'
 
 describe('Options - <SlippyMap />', () => {
   describe('Mapbox Source - transformSourceOptions', () => {
