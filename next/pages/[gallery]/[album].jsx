@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -47,10 +47,11 @@ const Wrapper = styled.ul`
 
 function AlbumPage({ items = [], meta }) {
   const refImageGallery = useRef(null)
+  const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,
     searchBox,
-  } = useSearch(items)
+  } = useSearch(items, setMemoryIndex)
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
 
   function selectThumb(index) {
@@ -65,7 +66,13 @@ function AlbumPage({ items = [], meta }) {
       </Head>
       <AlbumContext.Provider value={meta}>
         {searchBox}
-        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+        <SplitViewer
+          setViewed={setViewed}
+          items={filtered}
+          refImageGallery={refImageGallery}
+          memoryIndex={memoryIndex}
+          setMemoryIndex={setMemoryIndex}
+        />
         {memoryHtml}
         <Wrapper>
           {filtered.map((item, index) => (
@@ -75,7 +82,7 @@ function AlbumPage({ items = [], meta }) {
               caption={item.caption}
               key={item.filename}
               id={`select${item.id}`}
-              viewed={(viewedList.includes(index))}
+              viewed={viewedList.has(item.id ?? item.filename)}
             />
           ))}
         </Wrapper>

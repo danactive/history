@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useMemo, useRef } from 'react'
+import { useMemo, useState, useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
@@ -51,11 +51,12 @@ export async function getStaticPaths() {
 
 function AllPage({ items = [] }) {
   const refImageGallery = useRef(null)
+  const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,
     keyword,
     searchBox,
-  } = useSearch(items)
+  } = useSearch(items, setMemoryIndex)
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
 
@@ -72,7 +73,13 @@ function AllPage({ items = [] }) {
       </Head>
       <AlbumContext.Provider value={zooms}>
         {searchBox}
-        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+        <SplitViewer
+          setViewed={setViewed}
+          items={filtered}
+          refImageGallery={refImageGallery}
+          memoryIndex={memoryIndex}
+          setMemoryIndex={setMemoryIndex}
+        />
         {memoryHtml}
         <ul>
           {filtered.map((item, index) => (
@@ -82,7 +89,7 @@ function AllPage({ items = [] }) {
               {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
               <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
               <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
-              Viewed = {viewedList.includes(index).toString()}
+              Viewed = {viewedList.has(item.id ?? item.filename).toString()}
             </li>
           ))}
         </ul>

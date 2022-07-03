@@ -1,5 +1,5 @@
 import ImageGallery from 'react-image-gallery'
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -48,8 +48,13 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
-  const [memoryIndex, setMemoryIndex] = useState(0)
+function SplitViewer({
+  items,
+  refImageGallery,
+  setViewed = () => {},
+  memoryIndex,
+  setMemoryIndex,
+}) {
   const refMapBox = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
@@ -66,9 +71,9 @@ function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
-  const handleBeforeSlide = (index) => {
-    setMemoryIndex(index)
-    setViewed(index)
+  const handleBeforeSlide = (carouselIndex) => {
+    setMemoryIndex(carouselIndex)
+    setViewed(carouselIndex)
   }
   return (
     <Split>

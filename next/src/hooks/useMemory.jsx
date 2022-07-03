@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import Link from '../components/Link'
 
 const useMemory = (filtered, refImageGallery) => {
-  const [viewedList, setViewedList] = useState([0])
+  const [viewedList, setViewedList] = useState(new Set())
   const [details, setDetails] = useState(filtered[0])
   const setViewed = (index) => {
     setDetails(filtered[index])
-    setViewedList(viewedList.concat(index))
+    setViewedList(new Set([...viewedList, filtered[index].id ?? filtered[index].filename]))
   }
   useEffect(() => {
     setViewed(refImageGallery.current.getCurrentIndex())
