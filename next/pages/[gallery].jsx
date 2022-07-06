@@ -78,6 +78,9 @@ function AlbumsPage({ gallery, albums }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>{searchBox}</div>
+      <h1>Links</h1>
+      <ul><li><Link href={`/${gallery}/all`}>All</Link></li></ul>
+      <ul><li><Link href={`/${gallery}/today`}>Today</Link></li></ul>
       <AlbumSet />
     </div>
   )

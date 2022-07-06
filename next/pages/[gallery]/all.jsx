@@ -11,15 +11,6 @@ import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
 
-async function buildStaticPaths() {
-  const { galleries } = await getGalleries()
-  const groups = await Promise.all(galleries.map(async (gallery) => {
-    const { albums } = await getAlbums(gallery)
-    return albums.map(({ name: album }) => ({ params: { gallery, album } }))
-  }))
-  return groups.flat()
-}
-
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
@@ -30,7 +21,7 @@ export async function getStaticProps({ params: { gallery } }) {
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   // reverse order for albums in ascending order (oldest on top)
-  const allItems = await albums.reverse().reduce(async (previousPromise, album) => {
+  const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
     return prev.concat(preparedItems({ albumName: album.name, items }))
@@ -42,9 +33,11 @@ export async function getStaticProps({ params: { gallery } }) {
 }
 
 export async function getStaticPaths() {
-  // Define these albums as allowed, otherwise 404
+  const { galleries } = await getGalleries()
+  // Define these galleries as allowed, otherwise 404
+  const paths = galleries.map((gallery) => ({ params: { gallery } }))
   return {
-    paths: await buildStaticPaths(),
+    paths,
     fallback: false,
   }
 }
