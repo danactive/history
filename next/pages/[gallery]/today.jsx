@@ -1,8 +1,7 @@
-import styled from 'styled-components'
 import { get as getGalleries } from '../../src/lib/galleries'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getAlbum } from '../../src/lib/album'
-import ThumbImg from '../../src/components/ThumbImg'
+import AlbumPageComponent from '../../src/components/AlbumPage'
 
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
@@ -30,24 +29,8 @@ export async function getStaticPaths() {
   }
 }
 
-const Wrapper = styled.ul`
-  list-style: none;
-  padding-left: 2px;
-`
-
 function Today({ items }) {
-  return (
-    <Wrapper>
-      {items.map((item) => (
-        <ThumbImg
-          caption={item.caption}
-          key={item.filename}
-          id={`select${item.id}`}
-          src={item.thumbPath}
-        />
-      ))}
-    </Wrapper>
-  )
+  return <AlbumPageComponent items={items} />
 }
 
 export default Today

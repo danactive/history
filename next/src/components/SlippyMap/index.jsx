@@ -12,7 +12,8 @@ import AlbumContext from '../Context'
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 export default function SlippyMap({ items = [{}], centroid }) {
-  const { geo: { zoom: metaZoom } } = useContext(AlbumContext)
+  const meta = useContext(AlbumContext)
+  const metaZoom = meta?.geo?.zoom ?? 10
   const coordinates = centroid?.coordinates ?? []
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
