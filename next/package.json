@@ -10,6 +10,7 @@
     "lint:ci": "eslint . --ext .js,.jsx",
     "test": "jest --watch",
     "test:ci": "jest --ci",
+    "test:e2e": "npx playwright test",
     "release": "standard-version"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
+    "@playwright/test": "^1.18.0",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",

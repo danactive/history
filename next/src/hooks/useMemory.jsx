@@ -7,7 +7,7 @@ const useMemory = (filtered, refImageGallery) => {
   const [details, setDetails] = useState(filtered[0])
   const setViewed = (index) => {
     setDetails(filtered[index])
-    setViewedList(new Set([...viewedList, filtered[index].id ?? filtered[index].filename]))
+    setViewedList(new Set([...viewedList, filtered[index]?.id ?? filtered[index]?.filename]))
   }
   useEffect(() => {
     setViewed(refImageGallery.current.getCurrentIndex())
