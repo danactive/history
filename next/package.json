@@ -24,7 +24,6 @@
     "react-image-gallery": "^1.2.7",
     "react-map-gl": "^6.1.18",
     "styled-components": "^5.3.3",
-    "twit": "^2.2.11",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
