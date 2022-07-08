@@ -6,13 +6,13 @@ function LoadingIndicator() {
   return <div>Loading</div>
 }
 
-const LazyComponent = loadable(() => import('./__fixtures__/loadable.index'))
+const LazyComponent = loadable(() => import('../__mocks__/loadable.index'))
 const LazyComponentWithEmptyOptions = loadable(
-  () => import('./__fixtures__/loadable.index'),
+  () => import('../__mocks__/loadable.index'),
   {},
 )
 
-const LazyComponentWithFallback = loadable(() => import('./__fixtures__/loadable.index'), {
+const LazyComponentWithFallback = loadable(() => import('../__mocks__/loadable.index'), {
   fallback: <LoadingIndicator />,
 })
 
