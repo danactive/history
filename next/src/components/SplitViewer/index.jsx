@@ -1,9 +1,10 @@
 import ImageGallery from 'react-image-gallery'
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
 import { getExt } from '../../utils'
+import AlbumContext from '../Context'
 import SlippyMap from '../SlippyMap'
 import Video from '../Video'
 
@@ -55,7 +56,10 @@ function SplitViewer({
   memoryIndex,
   setMemoryIndex,
 }) {
+  const meta = useContext(AlbumContext)
+  const metaZoom = meta?.geo?.zoom ?? 10
   const refMapBox = useRef(null)
+  const mapRef = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
     if (div.requestFullscreen) {
@@ -74,6 +78,11 @@ function SplitViewer({
   const handleBeforeSlide = (carouselIndex) => {
     setMemoryIndex(carouselIndex)
     setViewed(carouselIndex)
+    mapRef.current.flyTo({
+      center: items[carouselIndex].coordinates,
+      zoom: metaZoom,
+      transitionDuration: 500,
+    })
   }
   return (
     <Split>
@@ -91,7 +100,7 @@ function SplitViewer({
         />
       </Left>
       <Right key="splitRight" ref={refMapBox}>
-        <SlippyMap items={items} centroid={items[memoryIndex]} />
+        <SlippyMap mapRef={mapRef} items={items} centroid={items[memoryIndex]} />
         <button type="button" onClick={fullscreenMap}>Full Map</button>
       </Right>
     </Split>

@@ -43,7 +43,6 @@ const useSearch = (items, setMemoryIndex) => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword)
     }
-    return defaultReturn
   }, [router.isReady])
 
   if (!router.isReady) {
