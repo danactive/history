@@ -74,7 +74,7 @@
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^2.5.1",
     "jest": "^23.6.0",
-    "jsdom": "^15.2.1",
+    "jsdom": "^16.5.0",
     "lodash": "^4.17.21",
     "nyc": "^14.1.1",
     "tape": "^4.13.3",
