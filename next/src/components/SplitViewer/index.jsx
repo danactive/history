@@ -78,9 +78,10 @@ function SplitViewer({
   const handleBeforeSlide = (carouselIndex) => {
     setMemoryIndex(carouselIndex)
     setViewed(carouselIndex)
+    const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
     mapRef.current.flyTo({
       center: items[carouselIndex].coordinates,
-      zoom: metaZoom,
+      zoom,
       transitionDuration: 500,
     })
   }
