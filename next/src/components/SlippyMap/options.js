@@ -49,7 +49,7 @@ export function transformSourceOptions({ items = [] } = {}) {
   }
 }
 
-export function transformMapOptions({ coordinates = [], mapRef, zoom } = {}) {
+export function transformMapOptions({ coordinates = [], zoom } = {}) {
   if (coordinates === null) return {}
   const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
 

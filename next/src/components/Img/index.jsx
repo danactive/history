@@ -1,8 +1,11 @@
 import React from 'react'
 
-function Img({ alt, className, src }) {
+function Img({
+  alt, className, src, width, height,
+}) {
   if (!alt) console.error('Missing ALT attribute on IMG') // eslint-disable-line no-console
-  return <img className={className} src={src} alt={alt} />
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className={className} src={src} alt={alt} width={width} height={height} />
 }
 
 export default Img

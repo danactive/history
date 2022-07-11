@@ -1,5 +1,8 @@
 module.exports = {
-  extends: ['airbnb', 'airbnb/hooks'],
+  extends: ['airbnb', 'airbnb/hooks', 'next'],
+  parserOptions: {
+    ecmaVersion: 2020,
+  },
   rules: {
     'max-len': [2, 150, 4], // increase page width
     semi: [2, 'never'], // remove semicolons

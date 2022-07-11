@@ -1,5 +1,6 @@
 import VideoPlayerHTML5 from '.'
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
   title: 'VideoPlayerHTML5',
   component: VideoPlayerHTML5,

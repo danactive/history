@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useContext, useState } from 'react'
 import Map, { Source, Layer } from 'react-map-gl'
 
@@ -38,11 +39,13 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
   const geoJsonSource = transformSourceOptions({ items })
   return (
     <>
-      <style global jsx>{`
+      <style global jsx>
+        {`
         .mapboxgl-control-container {
           display: none;
         }
-      `}</style>
+      `}
+      </style>
       <Map
         {...viewport}
         ref={mapRef}
@@ -50,7 +53,7 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
         mapboxAccessToken={MAPBOX_TOKEN}
         interactiveLayerIds={[clusterLayer.id]}
         onClick={onClick}
-        onMove={evt => setViewport(evt.viewState)}
+        onMove={(evt) => setViewport(evt.viewState)}
       >
         <Source id="slippyMap" {...geoJsonSource}>
           <Layer {...clusterLayer} />

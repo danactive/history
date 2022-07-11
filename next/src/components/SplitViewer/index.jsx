@@ -71,7 +71,7 @@ function SplitViewer({
     } else if (div.mozRequestFullScreen) {
       div.mozRequestFullScreen()
     } else {
-      console.error('Failed to fullscreen')
+      console.error('Failed to fullscreen') // eslint-disable-line no-console
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)

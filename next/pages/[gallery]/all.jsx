@@ -6,6 +6,7 @@ import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
 import AlbumContext from '../../src/components/Context'
+import Img from '../../src/components/Img'
 import Link from '../../src/components/Link'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
@@ -79,10 +80,12 @@ function AllPage({ items = [] }) {
             <li key={item.filename}>
               <b>{item.album}</b>
               {item.corpus}
-              {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
+              {showThumbnail(keyword) ? <Img src={item.thumbPath} alt={item.caption} /> : item.caption}
               <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
               <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
-              Viewed = {viewedList.has(item.id ?? item.filename).toString()}
+              Viewed =
+              {' '}
+              {viewedList.has(item.id ?? item.filename).toString()}
             </li>
           ))}
         </ul>

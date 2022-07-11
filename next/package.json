@@ -33,7 +33,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-next": "^11.1.4",
+    "eslint-config-next": "^12.2.2",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.0",
     "eslint-plugin-react": "^7.30.1",
