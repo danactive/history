@@ -6,12 +6,16 @@ import AlbumPageComponent from '../../src/components/AlbumPage'
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
+  const preparedItems = (items) => items.map((item) => ({
+    ...item,
+    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+  }))
   // reverse order for albums in ascending order (oldest on top)
   const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
     const itemsMatchDate = items.filter((item) => item?.filename?.substring?.(5, 10) === new Date().toLocaleDateString().substring(5, 10))
-    return prev.concat(itemsMatchDate)
+    return prev.concat(preparedItems(itemsMatchDate))
   }, Promise.resolve([]))
 
   return {

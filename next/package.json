@@ -6,8 +6,8 @@
     "dev": "next dev -p 3030",
     "build": "next build",
     "start": "next start -p 3030",
-    "lint": "eslint . --ext .js,.jsx --fix",
-    "lint:ci": "eslint . --ext .js,.jsx",
+    "lint": "next lint . --fix",
+    "lint:ci": "next lint .",
     "test": "jest --watch",
     "test:ci": "jest --ci",
     "test:e2e": "npx playwright test",
@@ -29,12 +29,9 @@
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.5",
     "@playwright/test": "^1.18.0",
     "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^12.1.5",
-    "@testing-library/react-hooks": "^7.0.2",
-    "babel-plugin-styled-components": "^1.13.3",
+    "@testing-library/react": "^13.3.0",
     "eslint": "^8.6.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-next": "^11.1.3",
@@ -48,7 +45,7 @@
     "jest-styled-components": "^7.0.8",
     "next-page-tester": "^0.30.0",
     "next-test-api-route-handler": "^3.1.6",
-    "react-test-renderer": "^17.0.2",
+    "react-test-renderer": "^18.2.0",
     "snyk": "^1.819.0",
     "standard-version": "^9.3.2"
   },

@@ -18,7 +18,7 @@ const useSearch = (items, setMemoryIndex) => {
   function handleSubmit(event) {
     event.preventDefault()
     setKeyword(event.target.querySelector('#keywordField').value)
-    setMemoryIndex(0)
+    setMemoryIndex?.(0)
   }
 
   const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
