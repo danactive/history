@@ -1,16 +1,7 @@
-import Head from 'next/head'
-import styled from 'styled-components'
-import { useRef } from 'react'
-
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
-
-import AlbumContext from '../../src/components/Context'
-import SplitViewer from '../../src/components/SplitViewer'
-import ThumbImg from '../../src/components/ThumbImg'
-import useSearch from '../../src/hooks/useSearch'
-import useMemory from '../../src/hooks/useMemory'
+import AlbumPageComponent from '../../src/components/AlbumPage'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -40,48 +31,8 @@ export async function getStaticPaths() {
   }
 }
 
-const Wrapper = styled.ul`
-  list-style: none;
-  padding-left: 2px;
-`
-
 function AlbumPage({ items = [], meta }) {
-  const refImageGallery = useRef(null)
-  const {
-    filtered,
-    searchBox,
-  } = useSearch(items)
-  const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
-
-  function selectThumb(index) {
-    refImageGallery.current.slideToIndex(index)
-  }
-
-  return (
-    <div>
-      <Head>
-        <title>History App - Album</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <AlbumContext.Provider value={meta}>
-        {searchBox}
-        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
-        {memoryHtml}
-        <Wrapper>
-          {filtered.map((item, index) => (
-            <ThumbImg
-              onClick={() => selectThumb(index)}
-              src={item.thumbPath}
-              caption={item.caption}
-              key={item.filename}
-              id={`select${item.id}`}
-              viewed={(viewedList.includes(index))}
-            />
-          ))}
-        </Wrapper>
-      </AlbumContext.Provider>
-    </div>
-  )
+  return <AlbumPageComponent items={items} meta={meta} />
 }
 
 export default AlbumPage

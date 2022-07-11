@@ -1,24 +1,16 @@
 import Head from 'next/head'
-import { useMemo, useRef } from 'react'
+import { useMemo, useState, useRef } from 'react'
 
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 
 import AlbumContext from '../../src/components/Context'
+import Img from '../../src/components/Img'
 import Link from '../../src/components/Link'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
-
-async function buildStaticPaths() {
-  const { galleries } = await getGalleries()
-  const groups = await Promise.all(galleries.map(async (gallery) => {
-    const { albums } = await getAlbums(gallery)
-    return albums.map(({ name: album }) => ({ params: { gallery, album } }))
-  }))
-  return groups.flat()
-}
 
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
@@ -30,7 +22,7 @@ export async function getStaticProps({ params: { gallery } }) {
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
   // reverse order for albums in ascending order (oldest on top)
-  const allItems = await albums.reverse().reduce(async (previousPromise, album) => {
+  const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items } } = await getAlbum(gallery, album.name)
     return prev.concat(preparedItems({ albumName: album.name, items }))
@@ -42,20 +34,23 @@ export async function getStaticProps({ params: { gallery } }) {
 }
 
 export async function getStaticPaths() {
-  // Define these albums as allowed, otherwise 404
+  const { galleries } = await getGalleries()
+  // Define these galleries as allowed, otherwise 404
+  const paths = galleries.map((gallery) => ({ params: { gallery } }))
   return {
-    paths: await buildStaticPaths(),
+    paths,
     fallback: false,
   }
 }
 
 function AllPage({ items = [] }) {
   const refImageGallery = useRef(null)
+  const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,
     keyword,
     searchBox,
-  } = useSearch(items)
+  } = useSearch(items, setMemoryIndex)
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
 
@@ -72,17 +67,25 @@ function AllPage({ items = [] }) {
       </Head>
       <AlbumContext.Provider value={zooms}>
         {searchBox}
-        <SplitViewer setViewed={setViewed} items={filtered} refImageGallery={refImageGallery} />
+        <SplitViewer
+          setViewed={setViewed}
+          items={filtered}
+          refImageGallery={refImageGallery}
+          memoryIndex={memoryIndex}
+          setMemoryIndex={setMemoryIndex}
+        />
         {memoryHtml}
         <ul>
           {filtered.map((item, index) => (
             <li key={item.filename}>
               <b>{item.album}</b>
               {item.corpus}
-              {showThumbnail(keyword) ? <img src={item.thumbPath} alt={item.caption} /> : item.caption}
+              {showThumbnail(keyword) ? <Img src={item.thumbPath} alt={item.caption} /> : item.caption}
               <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
               <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
-              Viewed = {viewedList.includes(index).toString()}
+              Viewed =
+              {' '}
+              {viewedList.has(item.id ?? item.filename).toString()}
             </li>
           ))}
         </ul>

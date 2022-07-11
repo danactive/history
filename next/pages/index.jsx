@@ -17,13 +17,7 @@ export async function getStaticProps() {
 
 function ListComponent({ item }) {
   return (
-    <ListItem item={(
-      <>
-        <Link href={`/${item.gallery}`}>{item.gallery}</Link>
-        <Link href={`/${item.gallery}/all`}>Search album</Link>
-      </>
-  )}
-    />
+    <ListItem item={<Link href={`/${item.gallery}`}>{item.gallery}</Link>} />
   )
 }
 

@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { get as getAlbums } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
 
+import Image from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
 
@@ -64,7 +65,7 @@ function AlbumsPage({ gallery, albums }) {
       key={album.name}
       odd={i % 2 === 0}
     >
-      <Link href={`/${gallery}/${album.name}`}><img src={album.thumbPath} alt={album.name} /></Link>
+      <Link href={`/${gallery}/${album.name}`}><Image src={album.thumbPath} alt={album.name} /></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
       <AlbumYear>{album.year}</AlbumYear>
@@ -78,6 +79,9 @@ function AlbumsPage({ gallery, albums }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>{searchBox}</div>
+      <h1>Links</h1>
+      <ul><li><Link href={`/${gallery}/all`}>All</Link></li></ul>
+      <ul><li><Link href={`/${gallery}/today`}>Today</Link></li></ul>
       <AlbumSet />
     </div>
   )

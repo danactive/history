@@ -3,12 +3,14 @@ import { render } from '@testing-library/react'
 
 import Img from '../index'
 
-const src = 'test.png'
-const alt = 'test'
+const expectedValues = {
+  alt: 'Preview thumbnail (scaled down dimensions)',
+  src: '/public/galleries/demo/media/thumbs/2001/2001-03-21-01.jpg',
+}
 const renderComponent = (props = {}) => {
   // eslint-disable-next-line react/jsx-props-no-spreading
-  const utils = render(<Img src={src} alt={alt} {...props} />)
-  const image = utils.queryByAltText(alt)
+  const utils = render(<Img src={expectedValues.src} alt={expectedValues.alt} {...props} />)
+  const image = utils.queryByAltText(expectedValues.alt)
   return { ...utils, image }
 }
 
@@ -23,14 +25,14 @@ describe('<Img />', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {
       /* noop */
     })
-    render(<Img src={src} />)
+    render(<Img src={expectedValues.src} />)
     expect(consoleSpy).toHaveBeenCalledTimes(1)
     consoleSpy.mockRestore()
   })
 
   test('should have a src attribute', () => {
     const { image } = renderComponent()
-    expect(image).toHaveAttribute('src', src)
+    expect(image).toHaveAttribute('src')
   })
 
   test('should not have a class attribute', () => {

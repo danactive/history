@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-const useSearch = (items) => {
+const useSearch = (items, setMemoryIndex) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
 
@@ -18,6 +18,7 @@ const useSearch = (items) => {
   function handleSubmit(event) {
     event.preventDefault()
     setKeyword(event.target.querySelector('#keywordField').value)
+    setMemoryIndex?.(0)
   }
 
   const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
@@ -42,7 +43,6 @@ const useSearch = (items) => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword)
     }
-    return defaultReturn
   }, [router.isReady])
 
   if (!router.isReady) {

@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.2.0](https://github.com/danactive/history/compare/v8.1.0...v8.2.0) (2022-07-11)
+
+
+### Features
+
+* **Next > Album:** Display reference link to each photo ([0943400](https://github.com/danactive/history/commit/0943400937024266cc27f7822c4c5155a850e81f))
+* **Next > Album:** Viewed photos based on id not index ([419b594](https://github.com/danactive/history/commit/419b59468fe02eabcea2da3b89d9fc8cfdc38830))
+* **Next > All:** Replace e2e test with playwright from testing-library ([3972ce5](https://github.com/danactive/history/commit/3972ce5c492dd7da2ecc5803d7bb49c613b62b9b))
+* **Next > Map:** Show markers based on zoom level set by the album in meta data ([4cc6abb](https://github.com/danactive/history/commit/4cc6abb7c5708e1c931da9968e0820c8f36df9f5))
+* **Next > Today:** Album Page and Today display the same view ([381c0b2](https://github.com/danactive/history/commit/381c0b240cd9fe34c09b61cf9c647718281327b9))
+* **Next > Today:** Determine which photos to display based on local date ([f987436](https://github.com/danactive/history/commit/f9874360a9aa72a162eda2b86a9204da4a18d9e9))
+* **Next:** Lint ([11c42e2](https://github.com/danactive/history/commit/11c42e2fdc31f4191de04f7007014731f6f33ae2))
+* **Next:** Remove unused deps ([9bfd3c1](https://github.com/danactive/history/commit/9bfd3c1ec8a8c2a90f96e9ec5ce71a0a54e222c4))
+* **Next:** Upgrade Next.js to v12 ([37697b6](https://github.com/danactive/history/commit/37697b6f022d7800231f63af3793d6c3ca5e3972))
+* **Next:** Upgrade React to v18; mapbox to v7 ([556ab0a](https://github.com/danactive/history/commit/556ab0ae80fcb8943ce2c22cc4c7cc2d2979e888))
+* **Next:** Upgrade Testing Library: unit tests all pass with warning for snapshot ([77b6937](https://github.com/danactive/history/commit/77b69370f1a6fa7d9556e0ac94cf4bf034e8e4f1))
+* **Next:** Use next/image for performance ([8d509d5](https://github.com/danactive/history/commit/8d509d55060c864d835919e8468d76b68d757c5d))
+
+
+### Bug Fixes
+
+* **Next > Album:** Coordinate may be null ([58b3b8c](https://github.com/danactive/history/commit/58b3b8c557b2ff0d9f4d3ebe7dc8d99dbd67d373))
+* **Next > Album:** Correct Next build failure ([04db573](https://github.com/danactive/history/commit/04db573179a811479033da3de202a40cab37912a))
+* **Next > Album:** Display reference as readable without special encoding ([5362ac7](https://github.com/danactive/history/commit/5362ac7975d17e20d2f2e6849777fcc634a33f3d))
+* **Next > Album:** Keyword search results now display Memory Meta details based on Carousel ([78df664](https://github.com/danactive/history/commit/78df664113088e68bb206d8eb711d478990e7d05))
+* **Next > Album:** Optional fields should be supported without error ([b74cee3](https://github.com/danactive/history/commit/b74cee39957da6a222357593fbd66ed7769f5605))
+* **Next > Album:** Remove empty properties from album JSON ([7d9c618](https://github.com/danactive/history/commit/7d9c618ce9bdd70361f4e8201c66044917cfa494))
+* **Next > Filesystem:** Rename /app to /next ([89eea34](https://github.com/danactive/history/commit/89eea34bf12b76cb9a6cb52978376e939fc69311))
+* **Next > Link:** Update hyperlink to the next way ([7ac2aae](https://github.com/danactive/history/commit/7ac2aae78850fcc274cd7530a221425a1811729e))
+* **Next > Map:** Set zoom based on photo level ([ee9ea76](https://github.com/danactive/history/commit/ee9ea764d67f19d4d8512f227390647e7eedfb49))
+* **Next > Search:** Add component test ([9967cbd](https://github.com/danactive/history/commit/9967cbd1cae5d042b45e1aa8cf1e3931deba06f4))
+* **Next > Search:** Allow search operators && or || ([01cfe6a](https://github.com/danactive/history/commit/01cfe6a8ea1c1eff3c5160241772297d2c776e0d))
+* **Next > Search:** Move keyboard arrow from window to carousel to allow targeted Map or Input arrows ([60a1de6](https://github.com/danactive/history/commit/60a1de6b6874cee7519cb2fbf712ac0bc59c07d0))
+
 ## [8.1.0](https://github.com/danactive/history/compare/v8.0.0...v8.1.0) (2022-01-14)
 
 

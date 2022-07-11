@@ -1,10 +1,8 @@
-import { render } from '@testing-library/react'
-import { renderHook } from '@testing-library/react-hooks'
-import { useRouter } from 'next/router'
+import { render, renderHook } from '@testing-library/react'
 
 import useSearch from '../../src/hooks/useSearch'
 
-jest.mock('next/router')
+const useRouter = jest.spyOn(require('next/router'), 'useRouter')
 
 describe('Query string', () => {
   describe('Router not ready', () => {

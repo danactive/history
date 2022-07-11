@@ -1,9 +1,10 @@
 import ImageGallery from 'react-image-gallery'
-import { useState, useRef } from 'react'
+import { useContext, useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
 import { getExt } from '../../utils'
+import AlbumContext from '../Context'
 import SlippyMap from '../SlippyMap'
 import Video from '../Video'
 
@@ -48,9 +49,17 @@ const toCarousel = (item) => {
   return imageGallery
 }
 
-function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
-  const [memoryIndex, setMemoryIndex] = useState(0)
+function SplitViewer({
+  items,
+  refImageGallery,
+  setViewed = () => {},
+  memoryIndex,
+  setMemoryIndex,
+}) {
+  const meta = useContext(AlbumContext)
+  const metaZoom = meta?.geo?.zoom ?? 10
   const refMapBox = useRef(null)
+  const mapRef = useRef(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
     if (div.requestFullscreen) {
@@ -62,13 +71,19 @@ function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
     } else if (div.mozRequestFullScreen) {
       div.mozRequestFullScreen()
     } else {
-      console.error('Failed to fullscreen')
+      console.error('Failed to fullscreen') // eslint-disable-line no-console
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
-  const handleBeforeSlide = (index) => {
-    setMemoryIndex(index)
-    setViewed(index)
+  const handleBeforeSlide = (carouselIndex) => {
+    setMemoryIndex(carouselIndex)
+    setViewed(carouselIndex)
+    const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
+    mapRef.current.flyTo({
+      center: items[carouselIndex].coordinates,
+      zoom,
+      transitionDuration: 500,
+    })
   }
   return (
     <Split>
@@ -86,7 +101,7 @@ function SplitViewer({ items, refImageGallery, setViewed = () => {} }) {
         />
       </Left>
       <Right key="splitRight" ref={refMapBox}>
-        <SlippyMap items={items} centroid={items[memoryIndex]} />
+        <SlippyMap mapRef={mapRef} items={items} centroid={items[memoryIndex]} />
         <button type="button" onClick={fullscreenMap}>Full Map</button>
       </Right>
     </Split>

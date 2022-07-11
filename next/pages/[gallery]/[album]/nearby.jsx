@@ -1,6 +1,4 @@
-/* global fetch */
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const Hello = styled.div`
@@ -11,19 +9,6 @@ const Hello = styled.div`
 `
 
 function Nearby() {
-  const [albums, setAlbums] = useState([])
-  const [hasError, setError] = useState(false)
-  useEffect(async () => {
-    try {
-      const response = await fetch('http://localhost:3055/api/flickr')
-      const result = await response.json()
-      setAlbums(result.photos)
-    } catch (e) {
-      console.log('Error fetch Flickr data', e.message)
-      setError(true)
-    }
-  }, [])
-
   return (
     <>
       <Head>
@@ -31,12 +16,6 @@ function Nearby() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hello>Hello World</Hello>
-      {hasError && 'Sorry try again later'}
-      <ul>
-        {albums.map((album) => (
-          <li key={album.path}><img src={album.path} alt={album.caption} /></li>
-        ))}
-      </ul>
     </>
   )
 }
