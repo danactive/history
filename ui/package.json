@@ -157,7 +157,7 @@
     "jest-cli": "26.6.3",
     "jest-styled-components": "7.0.3",
     "jest-watch-typeahead": "^0.4.2",
-    "jsdom": "16.4.0",
+    "jsdom": "16.5.0",
     "lint-staged": "^9.5.0",
     "ngrok": "3.4.0",
     "node-plop": "^0.23.0",
