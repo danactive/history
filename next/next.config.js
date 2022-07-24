@@ -10,4 +10,7 @@ module.exports = {
   experimental: {
     newNextLinkBehavior: true,
   },
+  eslint: {
+    dirs: ['pages', 'src', '__tests__'],
+  },
 }

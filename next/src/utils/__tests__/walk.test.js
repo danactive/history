@@ -1,4 +1,4 @@
-import util, { isImage } from '../walk';
+import util, { isImage } from '../walk'
 
 const {
   addParentDirectoryNav,
@@ -7,22 +7,22 @@ const {
   isAnyImageOrVideo,
   mergeMedia,
   getJpgLike,
-} = util;
+} = util
 
 describe('Walk - util', () => {
   describe('isImage', () => {
     test('detect JPG', () => {
-      expect(isImage({ mediumType: 'image', ext: 'JPEG' })).toEqual(true);
-      expect(isImage({ mediumType: 'image', ext: 'jpeg' })).toEqual(true);
-      expect(isImage({ mediumType: 'image', ext: 'JPG' })).toEqual(true);
-      expect(isImage({ mediumType: 'image', ext: 'jpg' })).toEqual(true);
-    });
+      expect(isImage({ mediumType: 'image', ext: 'JPEG' })).toEqual(true)
+      expect(isImage({ mediumType: 'image', ext: 'jpeg' })).toEqual(true)
+      expect(isImage({ mediumType: 'image', ext: 'JPG' })).toEqual(true)
+      expect(isImage({ mediumType: 'image', ext: 'jpg' })).toEqual(true)
+    })
 
     test('ignore RAW', () => {
-      expect(isImage({ mediumType: 'image', ext: 'RAW' })).toEqual(false);
-      expect(isImage({ mediumType: 'image', ext: 'ARW' })).toEqual(false);
-    });
-  });
+      expect(isImage({ mediumType: 'image', ext: 'RAW' })).toEqual(false)
+      expect(isImage({ mediumType: 'image', ext: 'ARW' })).toEqual(false)
+    })
+  })
 
   describe('addParentDirectoryNav', () => {
     const file = {
@@ -31,86 +31,86 @@ describe('Walk - util', () => {
       mediumType: 'folder',
       id: 'item-up-directory',
       name: 'UpDirectory',
-    };
-    let dummyFile;
+    }
+    let dummyFile
 
     beforeEach(() => {
-      dummyFile = { id: 'testid.js', ext: 'js' };
-    });
+      dummyFile = { id: 'testid.js', ext: 'js' }
+    })
 
     test('hide when at root folder', () => {
-      expect(addParentDirectoryNav([dummyFile], null)).toEqual([dummyFile]);
-      expect(addParentDirectoryNav([dummyFile])).toEqual([dummyFile]);
-      expect(addParentDirectoryNav([dummyFile], '')).toEqual([dummyFile]);
-    });
+      expect(addParentDirectoryNav([dummyFile], null)).toEqual([dummyFile])
+      expect(addParentDirectoryNav([dummyFile])).toEqual([dummyFile])
+      expect(addParentDirectoryNav([dummyFile], '')).toEqual([dummyFile])
+    })
 
     test('one level deep', () => {
-      const expectedFile = { ...file, path: '' };
+      const expectedFile = { ...file, path: '' }
       expect(addParentDirectoryNav([dummyFile], 'galleries')).toEqual([
         expectedFile,
         dummyFile,
-      ]);
-    });
+      ])
+    })
 
     test('two levels deep', () => {
-      const expectedFile = { ...file, path: 'galleries' };
+      const expectedFile = { ...file, path: 'galleries' }
       expect(addParentDirectoryNav([dummyFile], 'galleries/demo')).toEqual([
         expectedFile,
         dummyFile,
-      ]);
-    });
+      ])
+    })
 
     test('three levels deep', () => {
-      const expectedFile = { ...file, path: 'galleries/demo' };
+      const expectedFile = { ...file, path: 'galleries/demo' }
       expect(
         addParentDirectoryNav([dummyFile], 'galleries/demo/thumbs'),
-      ).toEqual([expectedFile, dummyFile]);
-    });
-  });
+      ).toEqual([expectedFile, dummyFile])
+    })
+  })
 
   describe('isAnyImageOrVideo', () => {
     test('images', () => {
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'JPEG' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'jpeg' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'JPG' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'jpg' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'RAW' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'ARW' })).toEqual(
         true,
-      );
-    });
+      )
+    })
 
     test('videos', () => {
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mp4' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'webm' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'avi' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mov' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'm2ts' })).toEqual(
         true,
-      );
+      )
       expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mts' })).toEqual(
         true,
-      );
-    });
-  });
+      )
+    })
+  })
 
   describe('associateMedia', () => {
     test('JPG and RAW', () => {
@@ -188,25 +188,25 @@ describe('Walk - util', () => {
             ext: 'JPG',
           },
         ],
-      };
+      }
       /* eslint-enable object-curly-newline */
-      const generated = generateImageFilenames(8, 'jpgraw');
-      const received = associateMedia(generated);
-      expect(received.grouped).toEqual(expected);
-      expect(received.flat).toEqual(generated);
-    });
+      const generated = generateImageFilenames(8, 'jpgraw')
+      const received = associateMedia(generated)
+      expect(received.grouped).toEqual(expected)
+      expect(received.flat).toEqual(generated)
+    })
 
     test('check immutability', () => {
-      const generated = generateImageFilenames(8, 'jpgraw');
-      associateMedia(generated);
-      expect(generateImageFilenames(8, 'jpgraw')).toEqual(generated);
-    });
-  });
+      const generated = generateImageFilenames(8, 'jpgraw')
+      associateMedia(generated)
+      expect(generateImageFilenames(8, 'jpgraw')).toEqual(generated)
+    })
+  })
 
   describe('mergeMedia', () => {
     test('JPG and RAW', () => {
-      const generated = generateImageFilenames(8, 'jpgraw');
-      const received = mergeMedia(associateMedia(generated));
+      const generated = generateImageFilenames(8, 'jpgraw')
+      const received = mergeMedia(associateMedia(generated))
       /* eslint-disable object-curly-newline */
       const expected = [
         {
@@ -241,54 +241,54 @@ describe('Walk - util', () => {
           ext: 'JPG',
           name: 'DSC03724',
         },
-      ];
+      ]
       /* eslint-enable object-curly-newline */
-      expect(received).toEqual(expected);
-    });
+      expect(received).toEqual(expected)
+    })
 
     test('check immutability', () => {
-      const generated = generateImageFilenames(8, 'jpgraw');
-      mergeMedia(associateMedia(generated));
-      expect(generateImageFilenames(8, 'jpgraw')).toEqual(generated);
-    });
+      const generated = generateImageFilenames(8, 'jpgraw')
+      mergeMedia(associateMedia(generated))
+      expect(generateImageFilenames(8, 'jpgraw')).toEqual(generated)
+    })
 
     test('DOC and RAW', () => {
-      const generated = generateImageFilenames(8, 'docraw');
-      const received = mergeMedia(associateMedia(generated));
-      expect(received).toEqual(generated);
-    });
+      const generated = generateImageFilenames(8, 'docraw')
+      const received = mergeMedia(associateMedia(generated))
+      expect(received).toEqual(generated)
+    })
 
     test('with Up Directory nav', () => {
-      const generated = generateImageFilenames(8, 'docraw');
-      addParentDirectoryNav(generated, 'fake');
-      const received = mergeMedia(associateMedia(generated));
-      expect(received).toEqual(generated);
-    });
-  });
+      const generated = generateImageFilenames(8, 'docraw')
+      addParentDirectoryNav(generated, 'fake')
+      const received = mergeMedia(associateMedia(generated))
+      expect(received).toEqual(generated)
+    })
+  })
 
   describe('getJpgLike', () => {
     test('JPG', () => {
       const received = getJpgLike(
         associateMedia(generateImageFilenames(2, 'jpgraw')).grouped.DSC03721,
-      );
-      expect(received.ext).toEqual('JPG');
-      expect(received.index).toEqual(1);
-    });
+      )
+      expect(received.ext).toEqual('JPG')
+      expect(received.index).toEqual(1)
+    })
 
     test('JPEG', () => {
       const received = getJpgLike(
         associateMedia(generateImageFilenames(1, 'jpeg')).grouped.DSC03721,
-      );
-      expect(received.ext).toEqual('JPEG');
-      expect(received.index).toEqual(0);
-    });
+      )
+      expect(received.ext).toEqual('JPEG')
+      expect(received.index).toEqual(0)
+    })
 
     test('check immutability', () => {
-      const generated = generateImageFilenames(1, 'jpeg');
+      const generated = generateImageFilenames(1, 'jpeg')
       getJpgLike(
         associateMedia(generateImageFilenames(1, 'jpeg')).grouped.DSC03721,
-      );
-      expect(generateImageFilenames(1, 'jpeg')).toEqual(generated);
-    });
-  });
-});
+      )
+      expect(generateImageFilenames(1, 'jpeg')).toEqual(generated)
+    })
+  })
+})
