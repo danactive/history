@@ -23,9 +23,9 @@ const ColouredLink = styled(NextLink)`
   }
 `
 
-function Link({ children, ...props }) {
+function Link({ children, href, ...props }) {
   return (
-    <ColouredLink {...props}>{children}</ColouredLink>
+    <ColouredLink href={href} {...props}>{children}</ColouredLink>
   )
 }
 
