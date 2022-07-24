@@ -1,13 +1,13 @@
-import util, { isImage } from '../walk'
-
-const {
+import {
+  isImage,
+  parseHash,
   addParentDirectoryNav,
   associateMedia,
   generateImageFilenames,
   isAnyImageOrVideo,
   mergeMedia,
   getJpgLike,
-} = util
+} from '../walk'
 
 describe('Walk - util', () => {
   describe('isImage', () => {
@@ -21,6 +21,19 @@ describe('Walk - util', () => {
     test('ignore RAW', () => {
       expect(isImage({ mediumType: 'image', ext: 'RAW' })).toEqual(false)
       expect(isImage({ mediumType: 'image', ext: 'ARW' })).toEqual(false)
+    })
+  })
+
+  describe('parseHash', () => {
+    test('find 1', () => {
+      const path = 'dotca'
+      const received = parseHash('path', `http://localhost#path=${path}`)
+      expect(received).toBe(path)
+    })
+
+    test('find 0', () => {
+      const received = parseHash('path', 'http://localhost')
+      expect(received).toBeNull()
     })
   })
 

@@ -9,7 +9,8 @@ export function isImage(file) {
 
 export function parseHash(find, from) {
   if (!find || !from) return ''
-  return RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)[2]
+  const found = RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)
+  return found?.[2] ?? null
 }
 
 export function addParentDirectoryNav(itemFiles, path) {

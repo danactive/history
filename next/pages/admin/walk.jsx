@@ -1,23 +1,26 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 import GenericList from '../../src/components/GenericList'
 import ListFile from '../../src/components/Walk/ListFile'
 
-import { isImage, organizeByMedia } from '../../src/utils/walk'
+import { isImage, parseHash, organizeByMedia } from '../../src/utils/walk'
 
 function WalkPage() {
+  const { asPath } = useRouter()
   const [data, setData] = useState(null)
   const [isLoading, setLoading] = useState(false)
+  const pathQs = parseHash('path', asPath)
 
   useEffect(() => {
     setLoading(true)
-    fetch('/api/admin/filesystems')
-      .then((res) => res.json())
-      .then((fetchedData) => {
-        setData(fetchedData)
+    fetch(`/api/admin/filesystems?path=${pathQs ?? '/'}`)
+      .then((response) => response.json())
+      .then((result) => {
+        setData(result)
         setLoading(false)
       })
-  }, [])
+  }, [asPath])
 
   if (isLoading) return <p>Loading...</p>
   if (!data) return <p>No filesystem data</p>
