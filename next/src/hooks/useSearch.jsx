@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
+import Select from 'react-select/creatable'
+
 const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
-  console.log('indexedKeywords', indexedKeywords)
+  const [selectedOption, setSelectedOption] = useState(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -18,7 +20,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
 
   function handleSubmit(event) {
     event.preventDefault()
-    setKeyword(event.target.querySelector('#keywordField').value)
+    setKeyword(selectedOption.value)
     setMemoryIndex?.(0)
   }
 
@@ -27,7 +29,12 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
     <form onSubmit={handleSubmit}>
       <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
       <nav>{getShareUrlStem()}</nav>
-      <input type="text" id="keywordField" />
+      <Select
+        isClearable
+        options={indexedKeywords}
+        defaultValue={selectedOption}
+        onChange={setSelectedOption}
+      />
       <input type="submit" value="Filter" />
       <code>`&&` is AND; `||` is OR; for example `breakfast||lunch`</code>
     </form>

@@ -62,7 +62,7 @@ describe('Query string', () => {
     test('And operator', () => {
       const keyword = 'ban&&che'
       useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
-      const items = [{ corpus: 'ban' }, { corpus: 'cherrished bañana' }, { corpus: 'cherry' }]
+      const items = [{ corpus: 'ban' }, { corpus: 'cherished bañana' }, { corpus: 'cherry' }]
       const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toStrictEqual([items[1]])
@@ -76,11 +76,11 @@ describe('Search box component', () => {
     const keyword = 'app'
     useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
     const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-    function Dan() {
+    function Search() {
       const { searchBox } = useSearch({ items })
       return searchBox
     }
-    const { getByText } = render(<Dan />)
+    const { getByText } = render(<Search />)
     expect(getByText(/\?keyword=app/)).toBeInTheDocument()
   })
 })

@@ -10,7 +10,8 @@ function indexKeywords(items) {
     return out
   }, new Set())
 
-  return { indexedKeywords: Array.from(indexedKeywords) }
+  // prepare for react-select in useSearch custom hook
+  return { indexedKeywords: Array.from(indexedKeywords, (i) => ({ label: i, value: i })) }
 }
 
 module.exports = {
