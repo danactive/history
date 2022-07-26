@@ -10,7 +10,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
-      return router.asPath
+      return decodeURI(router.asPath)
       // const urlParts = new URL(window.location)
       // urlParts.searchParams.set('keyword', keyword)
       // return urlParts.toString()
@@ -20,7 +20,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
 
   function handleSubmit(event) {
     event.preventDefault()
-    setKeyword(selectedOption.value)
+    setKeyword(selectedOption?.value ?? '')
     setMemoryIndex?.(0)
   }
 
@@ -32,7 +32,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
       <Select
         isClearable
         options={indexedKeywords}
-        defaultValue={selectedOption}
+        value={selectedOption}
         onChange={setSelectedOption}
       />
       <input type="submit" value="Filter" />
@@ -50,6 +50,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword)
+      setSelectedOption({ label: router.query.keyword, value: router.query.keyword })
     }
   }, [router.isReady])
 
