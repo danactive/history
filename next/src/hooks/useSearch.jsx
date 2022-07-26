@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-const useSearch = (items, setMemoryIndex) => {
+const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
+  console.log('indexedKeywords', indexedKeywords)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {

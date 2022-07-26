@@ -1,6 +1,8 @@
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
+import { indexKeywords } from '../../src/lib/search'
+
 import AlbumPageComponent from '../../src/components/AlbumPage'
 
 async function buildStaticPaths() {
@@ -18,8 +20,9 @@ export async function getStaticProps({ params: { gallery, album } }) {
     ...item,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
+
   return {
-    props: { items: preparedItems, meta },
+    props: { items: preparedItems, meta, ...indexKeywords(items) },
   }
 }
 
@@ -31,8 +34,8 @@ export async function getStaticPaths() {
   }
 }
 
-function AlbumPage({ items = [], meta }) {
-  return <AlbumPageComponent items={items} meta={meta} />
+function AlbumPage({ items = [], meta, indexedKeywords }) {
+  return <AlbumPageComponent items={items} meta={meta} indexedKeywords={indexedKeywords} />
 }
 
 export default AlbumPage

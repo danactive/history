@@ -13,7 +13,7 @@ describe('Query string', () => {
         query: { keyword: '' },
       }))
       const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toBe(items)
       expect(result.current.keyword).toBe('')
@@ -25,7 +25,7 @@ describe('Query string', () => {
         query: { keyword: 'app' },
       }))
       const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toBe(items)
       expect(result.current.keyword).toBe('')
@@ -36,7 +36,7 @@ describe('Query string', () => {
       const keyword = 'app'
       useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
       const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toStrictEqual([items[0]])
       expect(result.current.keyword).toBe(keyword)
@@ -45,7 +45,7 @@ describe('Query string', () => {
       const keyword = 'ban'
       useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
       const items = [{ corpus: 'apple' }, { corpus: 'bañana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toStrictEqual([items[1]])
       expect(result.current.keyword).toBe(keyword)
@@ -54,7 +54,7 @@ describe('Query string', () => {
       const keyword = 'ban||che'
       useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
       const items = [{ corpus: 'apple' }, { corpus: 'bañana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toStrictEqual([items[1], items[2]])
       expect(result.current.keyword).toBe(keyword)
@@ -63,7 +63,7 @@ describe('Query string', () => {
       const keyword = 'ban&&che'
       useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
       const items = [{ corpus: 'ban' }, { corpus: 'cherrished bañana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch(items))
+      const { result } = renderHook(() => useSearch({ items }))
 
       expect(result.current.filtered).toStrictEqual([items[1]])
       expect(result.current.keyword).toBe(keyword)
@@ -77,7 +77,7 @@ describe('Search box component', () => {
     useRouter.mockImplementation(() => ({ isReady: true, asPath: '', query: { keyword } }))
     const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
     function Dan() {
-      const { searchBox } = useSearch(items)
+      const { searchBox } = useSearch({ items })
       return searchBox
     }
     const { getByText } = render(<Dan />)

@@ -13,13 +13,13 @@ const Wrapper = styled.ul`
   padding-left: 2px;
 `
 
-function AlbumPage({ items = [], meta }) {
+function AlbumPage({ items = [], meta, indexedKeywords }) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,
     searchBox,
-  } = useSearch(items, setMemoryIndex)
+  } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
 
   function selectThumb(index) {

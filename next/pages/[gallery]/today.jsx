@@ -1,6 +1,8 @@
 import { get as getGalleries } from '../../src/lib/galleries'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getAlbum } from '../../src/lib/album'
+import { indexKeywords } from '../../src/lib/search'
+
 import AlbumPageComponent from '../../src/components/AlbumPage'
 
 export async function getStaticProps({ params: { gallery } }) {
@@ -19,7 +21,7 @@ export async function getStaticProps({ params: { gallery } }) {
   }, Promise.resolve([]))
 
   return {
-    props: { items: allItems },
+    props: { items: allItems, ...indexKeywords(allItems) },
   }
 }
 
@@ -33,8 +35,8 @@ export async function getStaticPaths() {
   }
 }
 
-function Today({ items }) {
-  return <AlbumPageComponent items={items} />
+function Today({ items, indexedKeywords }) {
+  return <AlbumPageComponent items={items} indexedKeywords={indexedKeywords} />
 }
 
 export default Today

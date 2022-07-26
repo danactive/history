@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { get as getAlbums } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
+import { indexKeywords } from '../src/lib/search'
 
 import Image from '../src/components/Img'
 import Link from '../src/components/Link'
@@ -15,7 +16,7 @@ export async function getStaticProps({ params: { gallery } }) {
     corpus: [album.h1, album.h2, album.year].join(' '),
   }))
   return {
-    props: { gallery, albums: preparedAlbums },
+    props: { gallery, albums: preparedAlbums, ...indexKeywords(albums) },
   }
 }
 
@@ -55,11 +56,11 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-function AlbumsPage({ gallery, albums }) {
+function AlbumsPage({ gallery, albums, indexedKeywords }) {
   const {
     filtered,
     searchBox,
-  } = useSearch(albums)
+  } = useSearch({ items: albums, indexedKeywords })
   const AlbumSet = () => filtered.map((album, i) => (
     <Albums
       key={album.name}

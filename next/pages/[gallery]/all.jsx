@@ -4,6 +4,7 @@ import { useMemo, useState, useRef } from 'react'
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
+import { indexKeywords } from '../../src/lib/search'
 
 import AlbumContext from '../../src/components/Context'
 import Img from '../../src/components/Img'
@@ -29,7 +30,7 @@ export async function getStaticProps({ params: { gallery } }) {
   }, Promise.resolve([]))
 
   return {
-    props: { items: allItems },
+    props: { items: allItems, ...indexKeywords(allItems) },
   }
 }
 
@@ -43,14 +44,14 @@ export async function getStaticPaths() {
   }
 }
 
-function AllPage({ items = [] }) {
+function AllPage({ items = [], indexedKeywords }) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,
     keyword,
     searchBox,
-  } = useSearch(items, setMemoryIndex)
+  } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
 
