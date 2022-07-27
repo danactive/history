@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import Select from 'react-select/creatable'
 
@@ -7,6 +8,14 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
   const [selectedOption, setSelectedOption] = useState(null)
+
+  const Row = styled.div`
+    display: flex;
+    align-items: center;
+  `
+  const AutoComplete = styled(Select)`
+    width: 20rem;
+  `
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -29,14 +38,16 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
     <form onSubmit={handleSubmit}>
       <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
       <nav>{getShareUrlStem()}</nav>
-      <Select
-        isClearable
-        options={indexedKeywords}
-        value={selectedOption}
-        onChange={setSelectedOption}
-      />
-      <input type="submit" value="Filter" />
-      <code>`&&` is AND; `||` is OR; for example `breakfast||lunch`</code>
+      <Row>
+        <AutoComplete
+          isClearable
+          options={indexedKeywords}
+          value={selectedOption}
+          onChange={setSelectedOption}
+        />
+        <input type="submit" value="Filter" />
+        <code>`&&` is AND; `||` is OR; for example `breakfast||lunch`</code>
+      </Row>
     </form>
   )
 
