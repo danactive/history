@@ -16,17 +16,19 @@ import SplitViewer from '../../src/components/SplitViewer'
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
-  const preparedItems = ({ albumName, items }) => items.map((item) => ({
+  const preparedItems = ({ albumName, albumCoordinateAccuracy, items }) => items.map((item) => ({
     ...item,
     gallery,
     album: albumName,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
   }))
   // reverse order for albums in ascending order (oldest on top)
   const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
-    const { album: { items } } = await getAlbum(gallery, album.name)
-    return prev.concat(preparedItems({ albumName: album.name, items }))
+    const { album: { items, meta } } = await getAlbum(gallery, album.name)
+    const albumCoordinateAccuracy = meta?.geo?.zoom ?? 10
+    return prev.concat(preparedItems({ albumName: album.name, albumCoordinateAccuracy, items }))
   }, Promise.resolve([]))
 
   return {
