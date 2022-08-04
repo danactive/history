@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useMemo, useState, useRef } from 'react'
 
+import config from '../../../config.json'
 import { get as getAlbum } from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
@@ -27,7 +28,7 @@ export async function getStaticProps({ params: { gallery } }) {
   const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items, meta } } = await getAlbum(gallery, album.name)
-    const albumCoordinateAccuracy = meta?.geo?.zoom ?? 10
+    const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
     return prev.concat(preparedItems({ albumName: album.name, albumCoordinateAccuracy, items }))
   }, Promise.resolve([]))
 
@@ -60,7 +61,7 @@ function AllPage({ items = [], indexedKeywords }) {
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
   }
-  const zooms = useMemo(() => ({ geo: { zoom: 10 } }))
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }))
 
   return (
     <div>

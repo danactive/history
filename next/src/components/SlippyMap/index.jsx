@@ -2,6 +2,7 @@
 import { useContext, useState } from 'react'
 import Map, { Source, Layer } from 'react-map-gl'
 
+import config from '../../../../config.json'
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
@@ -11,7 +12,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzh
 
 export default function SlippyMap({ items = [{}], centroid, mapRef }) {
   const meta = useContext(AlbumContext)
-  const metaZoom = meta?.geo?.zoom ?? 10
+  const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const coordinates = centroid?.coordinates ?? []
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))

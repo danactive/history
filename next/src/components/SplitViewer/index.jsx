@@ -57,7 +57,7 @@ function SplitViewer({
   setMemoryIndex,
 }) {
   const meta = useContext(AlbumContext)
-  const metaZoom = meta?.geo?.zoom ?? 10
+  const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef(null)
   const mapRef = useRef(null)
   const fullscreenMap = () => {
