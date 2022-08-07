@@ -20,6 +20,11 @@ docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.MTS -ss 8 -t 
 * [Convert AVI to MP4 - generate H.264 content for Apple software/devices](https://apple.stackexchange.com/questions/166553/why-wont-video-from-ffmpeg-show-in-quicktime-imovie-or-quick-preview#166554) use `-pix_fmt yuv420p`
 ```
 docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.avi -pix_fmt yuv420p /temp/output.MP4
-``` 
+```
+
+* Remove audio track(s) with `an` flag
+```
+docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.mov -an /temp/output.MP4
+```
 
 * [More ffmpeg command details](../public/galleries/demo/media/videos/README.md)
