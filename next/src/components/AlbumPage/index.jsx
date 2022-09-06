@@ -34,6 +34,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }) {
       </Head>
       <AlbumContext.Provider value={meta}>
         {searchBox}
+        {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
           items={filtered}
@@ -41,7 +42,6 @@ function AlbumPage({ items = [], meta, indexedKeywords }) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        {memoryHtml}
         <Wrapper>
           {filtered.map((item, index) => (
             <ThumbImg

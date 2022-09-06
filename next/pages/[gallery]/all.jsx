@@ -71,6 +71,7 @@ function AllPage({ items = [], indexedKeywords }) {
       </Head>
       <AlbumContext.Provider value={zooms}>
         {searchBox}
+        {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
           items={filtered}
@@ -78,7 +79,6 @@ function AllPage({ items = [], indexedKeywords }) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        {memoryHtml}
         <ul>
           {filtered.map((item, index) => (
             <li key={item.filename}>

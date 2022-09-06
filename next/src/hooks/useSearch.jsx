@@ -4,18 +4,24 @@ import styled from 'styled-components'
 
 import Select from 'react-select/creatable'
 
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+`
+const AutoComplete = styled(Select)`
+  width: 20rem;
+`
+const SearchCount = styled.h3`
+  margin-right: 1rem;
+`
+const ShareLink = styled.nav`
+  margin-left: 1rem;
+`
+
 const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword || '')
   const [selectedOption, setSelectedOption] = useState(null)
-
-  const Row = styled.div`
-    display: flex;
-    align-items: center;
-  `
-  const AutoComplete = styled(Select)`
-    width: 20rem;
-  `
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -36,17 +42,16 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
   const getSearchBox = (filtered) => (
     <form onSubmit={handleSubmit}>
-      <h3>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
-      <nav>{getShareUrlStem()}</nav>
       <Row>
+        <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
         <AutoComplete
           isClearable
           options={indexedKeywords}
           value={selectedOption}
           onChange={setSelectedOption}
         />
-        <input type="submit" value="Filter" />
-        <code>`&&` is AND; `||` is OR; for example `breakfast||lunch`</code>
+        <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
+        <ShareLink>{getShareUrlStem()}</ShareLink>
       </Row>
     </form>
   )

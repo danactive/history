@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import Link from '../components/Link'
 
+const City = styled.h3`
+  display: inline;
+  margin-right: 1rem;
+`
+const Location = styled.h4`
+  display: inline;
+  margin-right: 1rem;
+`
 const useMemory = (filtered, refImageGallery) => {
   const [viewedList, setViewedList] = useState(new Set())
   const [details, setDetails] = useState(filtered[0])
@@ -15,8 +24,8 @@ const useMemory = (filtered, refImageGallery) => {
 
   const memoryHtml = details ? (
     <>
-      <h3>{details.city}</h3>
-      <h4>{details.location}</h4>
+      <City>{details.city}</City>
+      <Location>{details.location}</Location>
       {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null
