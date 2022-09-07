@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import { useMemo, useState, useRef } from 'react'
+import styled from 'styled-components'
 
 import config from '../../../config.json'
 import { get as getAlbum } from '../../src/lib/album'
@@ -13,6 +14,13 @@ import Link from '../../src/components/Link'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
+
+const AlbumName = styled.b`
+  margin-right: 1rem;
+`
+const SlideTo = styled.button`
+  margin-left: 1rem;
+`
 
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
@@ -55,7 +63,7 @@ function AllPage({ items = [], indexedKeywords }) {
     keyword,
     searchBox,
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
-  const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
+  const { setViewed, memoryHtml } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
 
   function selectThumb(index) {
@@ -82,14 +90,10 @@ function AllPage({ items = [], indexedKeywords }) {
         <ul>
           {filtered.map((item, index) => (
             <li key={item.filename}>
-              <b>{item.album}</b>
-              {item.corpus}
-              {showThumbnail(keyword) ? <Img src={item.thumbPath} alt={item.caption} /> : item.caption}
-              <Link href={`/${item.gallery}/${item.album}#select${item.id}`}>{item.caption}</Link>
-              <button type="button" onClick={() => selectThumb(index)}><a>Slide to</a></button>
-              Viewed =
-              {' '}
-              {viewedList.has(item.id ?? item.filename).toString()}
+              <AlbumName>{item.album}</AlbumName>
+              {!showThumbnail(keyword) && <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>{item.caption}</Link>}
+              {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} />}
+              <SlideTo type="button" onClick={() => selectThumb(index)}><a>Slide to</a></SlideTo>
             </li>
           ))}
         </ul>
