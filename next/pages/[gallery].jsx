@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
+import config from '../../config.json'
 import { get as getAlbums } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
 import { indexKeywords } from '../src/lib/search'
 
-import Image from '../src/components/Img'
+import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
 
@@ -61,12 +62,13 @@ function AlbumsPage({ gallery, albums, indexedKeywords }) {
     filtered,
     searchBox,
   } = useSearch({ items: albums, indexedKeywords })
+  const { width, height } = config.resizeDimensions.thumb
   const AlbumSet = () => filtered.map((album, i) => (
     <Albums
       key={album.name}
       odd={i % 2 === 0}
     >
-      <Link href={`/${gallery}/${album.name}`}><Image src={album.thumbPath} alt={album.name} /></Link>
+      <Link href={`/${gallery}/${album.name}`}><Img src={album.thumbPath} alt={album.name} width={width} height={height} /></Link>
       <AlbumTitle>{album.h1}</AlbumTitle>
       <AlbumSubTitle>{album.h2}</AlbumSubTitle>
       <AlbumYear>{album.year}</AlbumYear>

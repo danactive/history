@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import config from '../../../../config.json'
+
 import Img from '../Img'
 
 const Bullet = styled.li`
@@ -49,11 +51,12 @@ function ThumbImg({
   if (previewed && !viewed) {
     setViewed(true)
   }
+  const { width, height } = config.resizeDimensions.thumb
 
   return (
     <Bullet>
       <ImgButton viewed={viewed} href={href} onClick={handleClick} id={id}>
-        <Img src={src} alt="Preview thumbnail (scaled down dimensions)" />
+        <Img src={src} alt="Preview thumbnail (scaled down dimensions)" width={width} height={height} />
       </ImgButton>
       <Caption>{caption}</Caption>
     </Bullet>

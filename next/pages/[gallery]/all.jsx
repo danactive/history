@@ -65,6 +65,7 @@ function AllPage({ items = [], indexedKeywords }) {
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml } = useMemory(filtered, refImageGallery)
   const showThumbnail = (kw = '') => kw.length > 2
+  const { width, height } = config.resizeDimensions.thumb
 
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
@@ -92,7 +93,7 @@ function AllPage({ items = [], indexedKeywords }) {
             <li key={item.filename}>
               <AlbumName>{item.album}</AlbumName>
               {!showThumbnail(keyword) && <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>{item.caption}</Link>}
-              {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} />}
+              {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
               <SlideTo type="button" onClick={() => selectThumb(index)}><a>Slide to</a></SlideTo>
             </li>
           ))}
