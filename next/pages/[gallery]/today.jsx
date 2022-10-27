@@ -1,3 +1,4 @@
+import config from '../../../config.json'
 import { get as getGalleries } from '../../src/lib/galleries'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getAlbum } from '../../src/lib/album'
@@ -8,16 +9,19 @@ import AlbumPageComponent from '../../src/components/AlbumPage'
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
-  const preparedItems = (items) => items.map((item) => ({
+  const preparedItems = ({ albumName, albumCoordinateAccuracy, items }) => items.map((item) => ({
     ...item,
+    album: albumName,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
   }))
   // reverse order for albums in ascending order (oldest on top)
   const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
-    const { album: { items } } = await getAlbum(gallery, album.name)
+    const { album: { items, meta } } = await getAlbum(gallery, album.name)
     const itemsMatchDate = items.filter((item) => item?.filename?.substring?.(5, 10) === new Date().toLocaleDateString().substring(5, 10))
-    return prev.concat(preparedItems(itemsMatchDate))
+    const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
+    return prev.concat(preparedItems({ albumName: album.name, albumCoordinateAccuracy, items: itemsMatchDate }))
   }, Promise.resolve([]))
 
   return {
