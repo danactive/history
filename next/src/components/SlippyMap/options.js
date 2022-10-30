@@ -16,20 +16,25 @@ const validatePoint = (rawCoordinate) => {
   }
 }
 
-export function transformSourceOptions({ items = [] } = {}) {
+export function transformSourceOptions({ items = [], selected } = {}) {
   const geoJsonFeature = (item) => {
     const { latitude, longitude } = validatePoint(item.coordinates)
+    const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
-    return {
+    const point = {
       type: 'Feature',
       geometry: {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      properties: {
-        accuracy: item.coordinateAccuracy,
-      },
+      properties: {},
     }
+
+    if (selectedLatitude === latitude && selectedLongitude === longitude) {
+      point.properties.selected = true
+    }
+
+    return point
   }
 
   const hasGeo = (item) => !validatePoint(item?.coordinates).isInvalidPoint
@@ -66,64 +71,6 @@ export function transformMapOptions({ coordinates = [], zoom } = {}) {
   return options
 }
 
-const clusterOptions = {
-  id: 'clusters',
-  type: 'circle',
-  paint: {
-    'circle-color': {
-      property: 'point_count',
-      type: 'interval',
-      stops: [
-        // https://color.adobe.com/Vitamin-C-color-theme-492199/?showPublished=true
-        [0, '#FD7400'],
-        [8, '#FFE11A'],
-        [20, '#BEDB39'],
-        [40, '#1F8A70'],
-        [70, '#004358'],
-      ],
-    },
-    'circle-radius': {
-      property: 'point_count',
-      type: 'interval',
-      stops: [
-        [0, 20],
-        [100, 30],
-        [750, 40],
-      ],
-    },
-  },
-  filter: ['has', 'point_count'],
-  sourceId: 'thumbs',
-}
-
-const clusterLabelOptions = {
-  id: 'cluster-count',
-  type: 'symbol',
-  layout: {
-    'text-field': '{point_count_abbreviated}',
-    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-    'text-size': 12,
-  },
-  paint: {
-    'text-color': '#000',
-  },
-  filter: ['has', 'point_count'],
-  sourceId: 'thumbs',
-}
-
-const markerOptions = {
-  id: 'unclustered-marker',
-  type: 'circle',
-  paint: {
-    'circle-color': '#FD7400',
-    'circle-radius': 5,
-    'circle-stroke-width': 1,
-    'circle-stroke-color': '#fff',
-  },
-  filter: ['all', ['!has', 'point_count'], ['!has', 'accuracy']],
-  sourceId: 'thumbs',
-}
-
 export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
   const radius = coordinateAccuracy * 5
 
@@ -142,5 +89,3 @@ export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
     sourceId: 'thumbs',
   }
 }
-
-export { clusterOptions, clusterLabelOptions, markerOptions }

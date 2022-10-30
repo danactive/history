@@ -3,7 +3,9 @@ import { useContext, useState } from 'react'
 import Map, { Source, Layer } from 'react-map-gl'
 
 import config from '../../../../config.json'
-import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers'
+import {
+  clusterLayer, clusterCountLayer, unclusteredPointLayer, selectedPointLayer,
+} from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
 import AlbumContext from '../Context'
@@ -37,7 +39,7 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
     })
   }
 
-  const geoJsonSource = transformSourceOptions({ items })
+  const geoJsonSource = transformSourceOptions({ items, selected: { coordinates } })
   return (
     <>
       <style global jsx>
@@ -52,13 +54,14 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
         ref={mapRef}
         mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id]}
+        interactiveLayerIds={[clusterLayer.id, clusterCountLayer.id, selectedPointLayer.id, unclusteredPointLayer.id]}
         onClick={onClick}
         onMove={(evt) => setViewport(evt.viewState)}
       >
         <Source id="slippyMap" {...geoJsonSource}>
           <Layer {...clusterLayer} />
           <Layer {...clusterCountLayer} />
+          <Layer {...selectedPointLayer} />
           <Layer {...unclusteredPointLayer} />
         </Source>
       </Map>

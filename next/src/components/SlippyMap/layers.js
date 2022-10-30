@@ -1,35 +1,63 @@
 export const clusterLayer = {
   id: 'clusters',
   type: 'circle',
-  source: 'earthquakes',
   filter: ['has', 'point_count'],
   paint: {
-    'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 100, '#f1f075', 750, '#f28cb1'],
-    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+    'circle-color': {
+      property: 'point_count',
+      type: 'interval',
+      stops: [
+        // https://color.adobe.com/Flame-Colors-color-theme-11113856
+        [0, '#FFBF2D'],
+        [250, '#FF9428'],
+        [500, '#FF6107'],
+        [1000, '#E83400'],
+        [1500, '#9E1300'],
+      ],
+    },
+    'circle-radius': {
+      property: 'point_count',
+      type: 'interval',
+      stops: [
+        [0, 20],
+        [100, 30],
+        [750, 40],
+      ],
+    },
   },
 }
 
 export const clusterCountLayer = {
   id: 'cluster-count',
   type: 'symbol',
-  source: 'earthquakes',
   filter: ['has', 'point_count'],
   layout: {
-    'text-field': '{point_count_abbreviated}',
+    'text-field': '{point_count}',
     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
     'text-size': 12,
+  },
+}
+
+export const selectedPointLayer = {
+  id: 'selected-point',
+  type: 'circle',
+  filter: ['has', 'selected'],
+  paint: {
+    'circle-color': '#FFFFFF',
+    'circle-radius': 6,
+    'circle-stroke-width': 4,
+    'circle-stroke-color': '#000',
   },
 }
 
 export const unclusteredPointLayer = {
   id: 'unclustered-point',
   type: 'circle',
-  source: 'earthquakes',
-  filter: ['!', ['has', 'point_count']],
+  filter: ['all', ['!', ['has', 'point_count']], ['!', ['has', 'selected']]],
   paint: {
-    'circle-color': '#11b4da',
+    'circle-color': '#ffd881',
     'circle-radius': 4,
-    'circle-stroke-width': 1,
-    'circle-stroke-color': '#fff',
+    'circle-stroke-width': 2,
+    'circle-stroke-color': '#000',
   },
 }
