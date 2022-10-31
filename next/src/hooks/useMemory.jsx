@@ -15,7 +15,7 @@ const useMemory = (filtered, refImageGallery) => {
   const [viewedList, setViewedList] = useState(new Set())
   const [details, setDetails] = useState(filtered[0])
   const setViewed = (index) => {
-    setDetails(filtered[index])
+    setDetails(filtered[index] ?? filtered[0]) // applying filter may reduce the filtered items, so show default item details
     setViewedList(new Set([...viewedList, filtered[index]?.id ?? filtered[index]?.filename]))
   }
   useEffect(() => {

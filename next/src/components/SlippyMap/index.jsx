@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Map, { Source, Layer } from 'react-map-gl'
 
 import config from '../../../../config.json'
@@ -19,6 +19,9 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
 
+  useEffect(() => {
+    setViewport(transformMapOptions({ coordinates, zoom }))
+  }, [centroid])
   const onClick = (event) => {
     const feature = event.features[0]
     if (!feature) return
