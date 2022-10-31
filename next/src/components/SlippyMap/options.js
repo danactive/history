@@ -16,7 +16,7 @@ const validatePoint = (rawCoordinate) => {
   }
 }
 
-export function transformSourceOptions({ items = [], selected } = {}) {
+export function transformSourceOptions({ items = [], selected = {} } = {}) {
   const geoJsonFeature = (item) => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)

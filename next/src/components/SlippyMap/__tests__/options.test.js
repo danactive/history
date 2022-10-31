@@ -21,16 +21,16 @@ describe('Options - <SlippyMap />', () => {
 
     test('All Valid coordinates', () => {
       const items = [{ coordinates: [123, 321] }, { coordinates: [321, 123], coordinateAccuracy: 10 }]
-      const received = transformSourceOptions({ items })
+      const received = transformSourceOptions({ items, selected: items[1] })
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: { accuracy: undefined },
+          properties: {},
           type: 'Feature',
         },
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { accuracy: 10 },
+          properties: { selected: true },
           type: 'Feature',
         },
       ]
@@ -46,7 +46,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { accuracy: 10 },
+          properties: {},
           type: 'Feature',
         },
       ]

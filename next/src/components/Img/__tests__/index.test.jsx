@@ -46,9 +46,10 @@ describe('<Img />', () => {
     expect(image).toHaveClass(className)
   })
 
-  test('should not adopt a srcset attribute', () => {
-    const srcset = 'test-HD.png 2x'
-    const { image } = renderComponent({ srcset })
-    expect(image).not.toHaveAttribute('srcset')
-  })
+  // Next.js uses srcset
+  // test('should not adopt a srcset attribute', () => {
+  //   const srcset = 'test-HD.png 2x'
+  //   const { image } = renderComponent({ srcset })
+  //   expect(image).not.toHaveAttribute('srcset')
+  // })
 })
