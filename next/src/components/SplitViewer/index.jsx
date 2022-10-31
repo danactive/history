@@ -1,3 +1,4 @@
+import Color from 'color-thief-react'
 import ImageGallery from 'react-image-gallery'
 import { useContext, useRef } from 'react'
 import styled from 'styled-components'
@@ -86,25 +87,36 @@ function SplitViewer({
     })
   }
   return (
-    <Split>
-      <Left key="splitLeft">
-        <ImageGallery
-          ref={refImageGallery}
-          onBeforeSlide={handleBeforeSlide}
-          startIndex={memoryIndex}
-          items={carouselItems}
-          showPlayButton={false}
-          showThumbnails={false}
-          slideDuration={550}
-          useWindowKeyDown={false}
-          lazyLoad
-        />
-      </Left>
-      <Right key="splitRight" ref={refMapBox}>
-        <SlippyMap mapRef={mapRef} items={items} centroid={items[memoryIndex]} />
-        <button type="button" onClick={fullscreenMap}>Full Map</button>
-      </Right>
-    </Split>
+    <>
+      <Color src={`/_next/image?url=${items[memoryIndex].thumbPath}&w=384&q=75`} format="rgbString" crossOrigin>
+        {({ data: colour }) => (
+          <style global jsx>
+            {`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background {
+                background: ${colour};
+              }`}
+          </style>
+        )}
+      </Color>
+      <Split className="image-gallery-background">
+        <Left key="splitLeft">
+          <ImageGallery
+            ref={refImageGallery}
+            onBeforeSlide={handleBeforeSlide}
+            startIndex={memoryIndex}
+            items={carouselItems}
+            showPlayButton={false}
+            showThumbnails={false}
+            slideDuration={550}
+            useWindowKeyDown={false}
+            lazyLoad
+          />
+        </Left>
+        <Right key="splitRight" ref={refMapBox}>
+          <SlippyMap mapRef={mapRef} items={items} centroid={items[memoryIndex]} />
+          <button type="button" onClick={fullscreenMap}>Full Map</button>
+        </Right>
+      </Split>
+    </>
   )
 }
 

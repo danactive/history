@@ -3,7 +3,7 @@ import '../image-gallery.css' /* cannot use import on SplitViewer as unit test f
 
 const GlobalStyle = createGlobalStyle`
   body {
-    font-family: Verdana;
+    font-family: Verdana, sans-serif;
     color: silver;
     background-color: #323232;
     margin: 0 auto;

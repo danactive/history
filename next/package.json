@@ -17,6 +17,7 @@
     "app-root-path": "^3.0.0",
     "boom": "^7.3.0",
     "camelcase": "^6.3.0",
+    "color-thief-react": "^2.1.0",
     "glob": "^7.2.3",
     "mapbox-gl": "^2.10.0",
     "mime-types": "^2.1.35",
