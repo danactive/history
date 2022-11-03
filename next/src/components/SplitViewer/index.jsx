@@ -88,7 +88,7 @@ function SplitViewer({
   }
   return (
     <>
-      <Color src={`/_next/image?url=${items[memoryIndex].thumbPath}&w=384&q=75`} format="rgbString" crossOrigin>
+      <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString" crossOrigin>
         {({ data: colour }) => (
           <style global jsx>
             {`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background {
