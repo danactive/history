@@ -48,7 +48,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }) {
               onClick={() => selectThumb(index)}
               src={item.thumbPath}
               caption={item.caption}
-              key={item.filename}
+              key={item.filename.toString()}
               id={`select${item.id}`}
               viewed={viewedList.has(item.id ?? item.filename)}
             />

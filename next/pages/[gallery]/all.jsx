@@ -90,7 +90,7 @@ function AllPage({ items = [], indexedKeywords }) {
         />
         <ul>
           {filtered.map((item, index) => (
-            <li key={item.filename}>
+            <li key={item.filename.toString()}>
               <AlbumName>{item.album}</AlbumName>
               {!showThumbnail(keyword) && <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>{item.caption}</Link>}
               {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
