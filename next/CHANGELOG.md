@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [8.3.0](https://github.com/danactive/history/compare/v8.2.0...v8.3.0) (2022-11-14)
+
+
+### Features
+
+* **Next > Album:** Background colour matches photo ([80ad123](https://github.com/danactive/history/commit/80ad123fec364325f872db102ca1db366edc3e84))
+* **Next > All:** Condense search results ([54263e5](https://github.com/danactive/history/commit/54263e51a4f64d286aaa75ca1cf48d5cb8c580a6))
+* **Next > package:** Update to Next v12.3 ([b04f6ad](https://github.com/danactive/history/commit/b04f6ad1b56a7727cddaf20856e399f907f5ad97))
+* **Next > Search:** Display index keyword counts sorted most to least ([1c9876e](https://github.com/danactive/history/commit/1c9876ea36fc527fa42b9c5b531b64b566977e0d))
+* **Next > Search:** Memory and Search - Compact view ([70c2a70](https://github.com/danactive/history/commit/70c2a7038f70441d2d6c5d12ad360edc06842545))
+* **Next > Slippy Map:** Map markers show selected, Clusters with fire swatch ([39818ed](https://github.com/danactive/history/commit/39818ed6b9f4dc6468c7dbca2f83f6f92ac77569))
+* **Next > useSearch:** Display indexed keyword in autocomplete field ([07caa52](https://github.com/danactive/history/commit/07caa52c697b72d6da700b1f10afbe2656ce17bb))
+* **Next > useSearch:** Index search keywords to aid user with searching ([72ac411](https://github.com/danactive/history/commit/72ac411bc42acb39acf6d568d772e3eff75c934c))
+
+
+### Bug Fixes
+
+* **Next > Album:** Background colour skipped with no search results ([af490cc](https://github.com/danactive/history/commit/af490ccb7eef0ee0ce3c01653f30941b6da3dfc1))
+* **Next > All:** Apply coordinate accuracy ([3f3d875](https://github.com/danactive/history/commit/3f3d875865b3590525de03f73492bae32e73c04d))
+* **Next > All:** Set default zoom in config ([38506a9](https://github.com/danactive/history/commit/38506a95179187ce0f18260ae27237a6ca0b9e56))
+* **Next > Search:** Add unit test ([8eb7123](https://github.com/danactive/history/commit/8eb7123228ed158ab7bfb7784db8780e584b035f))
+* **Next > Slippy Map:** Search filter updates the centroid ([6f21ed1](https://github.com/danactive/history/commit/6f21ed100fd0ad9237a4f9f3b590c7006d8d0b52))
+* **Next > Today:** Include videos in search results ([abf3012](https://github.com/danactive/history/commit/abf301244c934957979b9af20c0047ab924fa4dc))
+* **Next > Today:** Map zoom level per item ([b31b2c0](https://github.com/danactive/history/commit/b31b2c0c477702ba221e51fda44b28d8ed547d26))
+* **Next > useSearch:** Decrease autocomplete width ([fe31ffb](https://github.com/danactive/history/commit/fe31ffba6409a3a204fe064f8f0d3d51f5967888))
+* **Next > useSearch:** Support URL QS to change keyword; Fix clearable ([8127002](https://github.com/danactive/history/commit/812700217b1481d391abca5571115a2d91ae4e0b))
+
 ## [8.2.0](https://github.com/danactive/history/compare/v8.1.0...v8.2.0) (2022-07-11)
 
 
