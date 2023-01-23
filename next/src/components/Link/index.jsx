@@ -25,7 +25,7 @@ const ColouredLink = styled.a`
 
 function Link({ children, title, ...props }) {
   return (
-    <NextLink {...props} passHref>
+    <NextLink {...props} passHref legacyBehavior>
       <ColouredLink title={title}>{children}</ColouredLink>
     </NextLink>
   )
