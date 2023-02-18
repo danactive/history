@@ -1,8 +1,11 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-
 import Select from 'react-select/creatable'
+
+interface ServerSideItem {
+  corpus: string;
+}
 
 const Row = styled.div`
   display: flex;
@@ -18,9 +21,12 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
-const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
+function useSearch<ItemType extends ServerSideItem>(
+  { items, setMemoryIndex, indexedKeywords }:
+  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: object[] },
+): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
-  const [keyword, setKeyword] = useState(router.query.keyword || '')
+  const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
   const [selectedOption, setSelectedOption] = useState(null)
 
   const getShareUrlStem = () => {
@@ -40,7 +46,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
   }
 
   const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
-  const getSearchBox = (filtered) => (
+  const getSearchBox = (filtered: ItemType[]) => (
     <form onSubmit={handleSubmit}>
       <Row>
         <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
@@ -65,7 +71,7 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
 
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
-      setKeyword(router.query.keyword)
+      setKeyword(router.query.keyword?.toString())
       setSelectedOption({ label: router.query.keyword, value: router.query.keyword })
     }
   }, [router.isReady])
@@ -76,9 +82,9 @@ const useSearch = ({ items, setMemoryIndex, indexedKeywords }) => {
 
   const AND_OPERATOR = '&&'
   const OR_OPERATOR = '||'
-  const normalizeCorpus = (corpus) => {
+  const normalizeCorpus = (corpus: string) => {
     const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    return (k) => {
+    return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
       return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
     }

@@ -29,20 +29,8 @@ async function getXmlFromFilesystem(gallery, album) {
 
 function title(item) {
   const presentable = (...values) => values.every((value) => value !== undefined && value !== '')
-  if (presentable(item.photoLoc, item.photoCity, item.photoDesc)) {
-    return `${item.photoLoc} (${item.photoCity}): ${item.photoDesc}`
-  }
-
   if (presentable(item.photoLoc, item.photoCity)) {
     return `${item.photoLoc} (${item.photoCity})`
-  }
-
-  if (presentable(item.photoLoc, item.photoDesc)) {
-    return `${item.photoLoc}: ${item.photoDesc}`
-  }
-
-  if (presentable(item.photoCity, item.photoDesc)) {
-    return `${item.photoCity}: ${item.photoDesc}`
   }
 
   if (presentable(item.photoLoc)) {
@@ -53,7 +41,7 @@ function title(item) {
     return item.photoCity
   }
 
-  return item.photoDesc || null
+  return null
 }
 
 function caption(item) {

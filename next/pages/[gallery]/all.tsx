@@ -15,6 +15,15 @@ import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
 
+import { Items } from '../../src/types/common'
+
+interface ServerSideAllItems extends Items {
+  album?: string;
+  gallery?: string;
+  corpus: string;
+  coordinateAccuracy: number;
+}
+
 const AlbumName = styled.b`
   margin-right: 1rem;
 `
@@ -55,7 +64,10 @@ export async function getStaticPaths() {
   }
 }
 
-function AllPage({ items = [], indexedKeywords }) {
+function AllPage(
+  { items = [], indexedKeywords }:
+  { items: ServerSideAllItems[]; indexedKeywords: object[] },
+) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {
@@ -70,7 +82,7 @@ function AllPage({ items = [], indexedKeywords }) {
   function selectThumb(index) {
     refImageGallery.current.slideToIndex(index)
   }
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }))
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   return (
     <div>
@@ -92,8 +104,10 @@ function AllPage({ items = [], indexedKeywords }) {
           {filtered.map((item, index) => (
             <li key={item.filename.toString()}>
               <AlbumName>{item.album}</AlbumName>
-              {!showThumbnail(keyword) && <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>{item.caption}</Link>}
-              {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
+              <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>
+                {!showThumbnail(keyword) && item.caption}
+                {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
+              </Link>
               <SlideTo type="button" onClick={() => selectThumb(index)}><a>Slide to</a></SlideTo>
             </li>
           ))}

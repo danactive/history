@@ -2,13 +2,17 @@ import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
 import config from '../../config.json'
-import { get as getAlbums } from '../src/lib/albums'
+import { get as getAlbums, Album } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
 import { indexKeywords } from '../src/lib/search'
 
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
+
+interface ServerSideAlbum extends Album {
+  corpus: string;
+}
 
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
@@ -37,11 +41,10 @@ const Albums = styled.div`
   height: 170px;
   padding: 10px;
   background: peachpuff;
-  ${({ odd }) => odd && css`
+  ${({ odd }: { odd: boolean }) => odd && css`
     background-color: linen;
   `}
 `
-
 const AlbumTitle = styled.h1`
   font-size: 1.1rem;
   font-family: "Trebuchet MS",sans-serif;
@@ -57,23 +60,15 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-function AlbumsPage({ gallery, albums, indexedKeywords }) {
+function AlbumsPage(
+  { gallery, albums, indexedKeywords }:
+  { gallery: string; albums: ServerSideAlbum[]; indexedKeywords: object[] },
+) {
   const {
     filtered,
     searchBox,
   } = useSearch({ items: albums, indexedKeywords })
   const { width, height } = config.resizeDimensions.thumb
-  const AlbumSet = () => filtered.map((album, i) => (
-    <Albums
-      key={album.name}
-      odd={i % 2 === 0}
-    >
-      <Link href={`/${gallery}/${album.name}`}><Img src={album.thumbPath} alt={album.name} width={width} height={height} /></Link>
-      <AlbumTitle>{album.h1}</AlbumTitle>
-      <AlbumSubTitle>{album.h2}</AlbumSubTitle>
-      <AlbumYear>{album.year}</AlbumYear>
-    </Albums>
-  ))
 
   return (
     <div>
@@ -85,7 +80,17 @@ function AlbumsPage({ gallery, albums, indexedKeywords }) {
       <h1>Links</h1>
       <ul><li><Link href={`/${gallery}/all`}>All</Link></li></ul>
       <ul><li><Link href={`/${gallery}/today`}>Today</Link></li></ul>
-      <AlbumSet />
+      {filtered.map((album, i) => (
+        <Albums
+          key={album.name}
+          odd={i % 2 === 0}
+        >
+          <Link href={`/${gallery}/${album.name}`}><Img src={album.thumbPath} alt={album.name} width={width} height={height} /></Link>
+          <AlbumTitle>{album.h1}</AlbumTitle>
+          <AlbumSubTitle>{album.h2}</AlbumSubTitle>
+          <AlbumYear>{album.year}</AlbumYear>
+        </Albums>
+      ))}
     </div>
   )
 }

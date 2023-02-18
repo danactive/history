@@ -1,4 +1,4 @@
-import local from '../../../../src/lib/albums'
+import { get, errorSchema } from '../../../../src/lib/albums'
 
 export default async function handler(req, res) {
   const {
@@ -8,10 +8,10 @@ export default async function handler(req, res) {
 
   switch (method) {
     case 'GET': {
-      const out = await local.get(gallery, true)
+      const out = await get(gallery, true)
       return res.status(out.status).json(out.body)
     }
     default:
-      return res.status(405).json(local.errorSchema(`Method ${method} Not Allowed`))
+      return res.status(405).json(errorSchema(`Method ${method} Not Allowed`))
   }
 }

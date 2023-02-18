@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
 import ImageGallery from 'react-image-gallery'
-import { useContext, useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -8,6 +8,9 @@ import { getExt } from '../../utils'
 import AlbumContext from '../Context'
 import SlippyMap from '../SlippyMap'
 import Video from '../Video'
+
+import { Viewed } from '../../hooks/useMemory'
+import { Items } from '../../types/common'
 
 const Split = styled.section`
   display: grid;
@@ -25,8 +28,17 @@ const Right = styled.section`
   height: 80vh;
 `
 
-const toCarousel = (item) => {
-  const imageGallery = {
+interface ImageGalleryType {
+  original: string;
+  thumbnail: string;
+  description: string;
+  filename: string;
+  mediaPath: string;
+  renderItem?: (renderItem: ImageGalleryType) => React.FC;
+}
+
+const toCarousel = (item: Items) => {
+  const imageGallery: ImageGalleryType = {
     original: item.photoPath || item.thumbPath,
     thumbnail: item.thumbPath,
     description: item.description,
@@ -53,9 +65,15 @@ const toCarousel = (item) => {
 function SplitViewer({
   items,
   refImageGallery,
-  setViewed = () => {},
+  setViewed,
   memoryIndex,
   setMemoryIndex,
+}: {
+  items: Items[];
+  refImageGallery: object;
+  setViewed: Viewed;
+  memoryIndex: number;
+  setMemoryIndex: Function;
 }) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
@@ -88,7 +106,7 @@ function SplitViewer({
   }
   return (
     <>
-      <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString" crossOrigin>
+      <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString">
         {({ data: colour }) => (
           <style global jsx>
             {`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background {

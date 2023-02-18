@@ -11,10 +11,14 @@ const Location = styled.h4`
   display: inline;
   margin-right: 1rem;
 `
+interface Viewed {
+  (index: number): void;
+}
 const useMemory = (filtered, refImageGallery) => {
-  const [viewedList, setViewedList] = useState(new Set())
+  const [viewedList, setViewedList] = useState(new Set<string>())
   const [details, setDetails] = useState(filtered[0])
-  const setViewed = (index) => {
+
+  const setViewed = (index: number) => {
     setDetails(filtered[index] ?? filtered[0]) // applying filter may reduce the filtered items, so show default item details
     setViewedList(new Set([...viewedList, filtered[index]?.id ?? filtered[index]?.filename]))
   }
@@ -24,8 +28,8 @@ const useMemory = (filtered, refImageGallery) => {
 
   const memoryHtml = details ? (
     <>
-      <City>{details.city}</City>
-      <Location>{details.location}</Location>
+      <City>{details.title}</City>
+      <Location>{details.filename}</Location>
       {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null
@@ -38,3 +42,4 @@ const useMemory = (filtered, refImageGallery) => {
 }
 
 export default useMemory
+export { type Viewed }

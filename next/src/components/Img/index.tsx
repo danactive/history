@@ -9,6 +9,13 @@ function Img({
   width = config.resizeDimensions.thumb.width,
   height = config.resizeDimensions.thumb.height,
   title,
+}: {
+  alt: string;
+  className?: string;
+  src: string;
+  width?: number;
+  height?: number;
+  title?: string;
 }) {
   // Next.js image is now handling alt attribute check
   // if (!alt) console.error('Missing ALT attribute on IMG') // eslint-disable-line no-console

@@ -29,7 +29,7 @@ const ImgButton = styled.a`
     border-color: orange;
   }
 
-  ${({ viewed }) => viewed && css`
+  ${({ viewed }: { viewed: boolean }) => viewed && css`
       border-color: white;
   `}
 `
@@ -41,6 +41,13 @@ function ThumbImg({
   src,
   id,
   viewed: previewed = false,
+}: {
+  onClick?: Function;
+  caption: string,
+  href?: string,
+  src: string,
+  id: string,
+  viewed: boolean,
 }) {
   const [viewed, setViewed] = useState(previewed)
   const handleClick = (event) => {

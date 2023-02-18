@@ -12,7 +12,7 @@ const circleFadeDelay = keyframes`
   }
 `
 
-const CirclePrimitive = styled.div`
+const CirclePrimitive = styled.div<{ delay?: number; rotate?: number }>`
   width: 100%;
   height: 100%;
   position: absolute;
@@ -44,7 +44,7 @@ const CirclePrimitive = styled.div`
   }
 `
 
-function Circle({ delay, rotate = 0 }) {
+function Circle({ delay, rotate = 0 }: { delay?: number; rotate?: number }) {
   return <CirclePrimitive data-testid="loader" delay={delay} rotate={rotate} />
 }
 

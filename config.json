@@ -5,7 +5,7 @@
   "storybookPort": 6006,
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
-  "defaultZoom": "10",
+  "defaultZoom": 10,
   "resizeDimensions": {
     "photo": { "width": 1024, "height": 768 },
     "thumb": { "width": 185, "height": 45 },

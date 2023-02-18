@@ -1,8 +1,18 @@
+import React from 'react'
+
 import List from '../List'
 import ListItem from '../ListItem'
 import LoadingIndicator from '../LoadingIndicator'
 
-function getErrorComponent({ message }) {
+type ItemWithId = {
+  id: string;
+}
+
+interface ErrorObject {
+  message: string;
+}
+
+function getErrorComponent({ message }: ErrorObject) {
   return (
     <ListItem
       item={`Something went wrong, please try again! Reason (${message})`}
@@ -10,14 +20,19 @@ function getErrorComponent({ message }) {
   )
 }
 
-function GenericList({
+function GenericList<ErrorGeneric extends boolean = false>({
   component,
   items,
   loading,
   error,
+}: {
+  component: React.FC;
+  items: ItemWithId[];
+  loading: boolean;
+  error: ErrorGeneric extends false ? false : ErrorObject;
 }) {
   if (loading) {
-    return <List component={LoadingIndicator} />
+    return <List component={<LoadingIndicator />} />
   }
 
   if (error !== false) {

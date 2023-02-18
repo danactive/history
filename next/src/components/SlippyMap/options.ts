@@ -1,4 +1,17 @@
-const validatePoint = (rawCoordinate) => {
+import type { GeoJSONSourceRaw, LayerProps, ViewState } from 'react-map-gl'
+import type { Feature } from 'geojson'
+
+import config from '../../../../config.json'
+
+import { Items } from '../../types/common'
+
+interface SelectedFeature extends Feature {
+  properties: {
+    selected: boolean;
+  }
+}
+
+const validatePoint = (rawCoordinate: [number?, number?]) => {
   const coordinate = rawCoordinate ?? []
   const [longitude = null, latitude = null] = coordinate
   return {
@@ -16,18 +29,27 @@ const validatePoint = (rawCoordinate) => {
   }
 }
 
-export function transformSourceOptions({ items = [], selected = {} } = {}) {
-  const geoJsonFeature = (item) => {
-    const { latitude, longitude } = validatePoint(item.coordinates)
-    const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
+type ItemWithCoordinate = {
+  coordinates?: Items['coordinates']
+}
 
-    const point = {
+export function transformSourceOptions(
+  { items = [], selected }:
+  { items?: Items[], selected?: ItemWithCoordinate } = {},
+): GeoJSONSourceRaw {
+  const geoJsonFeature = (item: Items): SelectedFeature => {
+    const { latitude, longitude } = validatePoint(item.coordinates)
+    const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected?.coordinates)
+
+    const point: SelectedFeature = {
       type: 'Feature',
       geometry: {
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      properties: {},
+      properties: {
+        selected: null,
+      },
     }
 
     if (selectedLatitude === latitude && selectedLongitude === longitude) {
@@ -37,7 +59,7 @@ export function transformSourceOptions({ items = [], selected = {} } = {}) {
     return point
   }
 
-  const hasGeo = (item) => !validatePoint(item?.coordinates).isInvalidPoint
+  const hasGeo = (item: Items) => !validatePoint(item?.coordinates).isInvalidPoint
   const features = items.filter(hasGeo).map(geoJsonFeature)
 
   const data = {
@@ -54,24 +76,26 @@ export function transformSourceOptions({ items = [], selected = {} } = {}) {
   }
 }
 
-export function transformMapOptions({ coordinates = [], zoom } = {}) {
+export function transformMapOptions(
+  { coordinates = [], zoom = config.defaultZoom } :
+  { coordinates?: [number?, number?], zoom?: number } = {},
+): ViewState | {} {
   if (coordinates === null) return {}
   const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
 
-  const options = {}
+  const options = {} as ViewState
   if (!isInvalidPoint) {
     options.latitude = latitude
     options.longitude = longitude
     options.zoom = zoom
     options.bearing = 0
     options.pitch = 0
-    options.transitionDuration = 'auto'
   }
 
   return options
 }
 
-export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
+export function transformInaccurateMarkerOptions({ coordinateAccuracy }): LayerProps {
   const radius = coordinateAccuracy * 5
 
   return {
@@ -86,6 +110,5 @@ export function transformInaccurateMarkerOptions({ coordinateAccuracy }) {
       'circle-opacity': 0,
     },
     filter: ['has', 'accuracy'],
-    sourceId: 'thumbs',
   }
 }

@@ -1,4 +1,6 @@
-export const clusterLayer = {
+import type { LayerProps } from 'react-map-gl'
+
+export const clusterLayer: LayerProps = {
   id: 'clusters',
   type: 'circle',
   filter: ['has', 'point_count'],
@@ -27,7 +29,7 @@ export const clusterLayer = {
   },
 }
 
-export const clusterCountLayer = {
+export const clusterCountLayer: LayerProps = {
   id: 'cluster-count',
   type: 'symbol',
   filter: ['has', 'point_count'],
@@ -38,7 +40,7 @@ export const clusterCountLayer = {
   },
 }
 
-export const selectedPointLayer = {
+export const selectedPointLayer: LayerProps = {
   id: 'selected-point',
   type: 'circle',
   filter: ['has', 'selected'],
@@ -50,7 +52,7 @@ export const selectedPointLayer = {
   },
 }
 
-export const unclusteredPointLayer = {
+export const unclusteredPointLayer: LayerProps = {
   id: 'unclustered-point',
   type: 'circle',
   filter: ['all', ['!', ['has', 'point_count']], ['!', ['has', 'selected']]],

@@ -8,12 +8,21 @@ import ThumbImg from '../ThumbImg'
 import useSearch from '../../hooks/useSearch'
 import useMemory from '../../hooks/useMemory'
 
+import { Items } from '../../types/common'
+
+interface ServerSidePhotoItems extends Items {
+  corpus: string;
+}
+
 const Wrapper = styled.ul`
   list-style: none;
   padding-left: 2px;
 `
 
-function AlbumPage({ items = [], meta, indexedKeywords }) {
+function AlbumPage(
+  { items = [], meta, indexedKeywords }:
+  { items: ServerSidePhotoItems[], meta?: object, indexedKeywords },
+) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {

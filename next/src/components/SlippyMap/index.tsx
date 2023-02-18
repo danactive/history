@@ -12,7 +12,7 @@ import AlbumContext from '../Context'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
-export default function SlippyMap({ items = [{}], centroid, mapRef }) {
+export default function SlippyMap({ items = [], centroid, mapRef }) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const coordinates = centroid?.coordinates ?? []
@@ -43,6 +43,7 @@ export default function SlippyMap({ items = [{}], centroid, mapRef }) {
   }
 
   const geoJsonSource = transformSourceOptions({ items, selected: { coordinates } })
+
   return (
     <>
       <style global jsx>

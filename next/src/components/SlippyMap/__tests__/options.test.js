@@ -25,7 +25,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: {},
+          properties: { selected: null },
           type: 'Feature',
         },
         {
@@ -46,7 +46,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: {},
+          properties: { selected: null },
           type: 'Feature',
         },
       ]
@@ -64,7 +64,7 @@ describe('Options - <SlippyMap />', () => {
       expect(received).toEqual(expected)
     })
 
-    test('EmptyNull', () => {
+    test('Empty Null', () => {
       const received = transformMapOptions({ coordinates: null })
       const expected = {}
       expect(received).toEqual(expected)

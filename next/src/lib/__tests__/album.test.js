@@ -64,7 +64,7 @@ describe('Album library', () => {
       expect(result.album.items[0].caption).toEqual('Caption') // Image Caption
       expect(result.album.items[0].city).toEqual('City') // City
       expect(result.album.items[0].description).toEqual('Desc') // Description
-      expect(result.album.items[0].title).toEqual('City: Desc') // Title
+      expect(result.album.items[0].title).toEqual('City') // Title
       expect(result.album.items[0].thumbPath).toEqual('/galleries/demo/media/thumbs/2016/2016-Image-Filename.jpg') // Thumb Path
       expect(result.album.items[0].photoPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path
       expect(result.album.items[0].mediaPath).toEqual('/galleries/demo/media/photos/2016/2016-Image-Filename.jpg') // Photo Path

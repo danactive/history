@@ -2,7 +2,7 @@
  * Index search keywords from search xml element and dedupe
  *
  * @param {Object[]} items
- * @param {string[]} items.search
+ * @param {string} items.search
  * @returns {{ indexedKeywords }}
  */
 function indexKeywords(items) {
