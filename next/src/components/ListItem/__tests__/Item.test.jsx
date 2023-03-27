@@ -11,18 +11,18 @@ describe('<Item />', () => {
 
   test('should have a class attribute', () => {
     const { container } = render(<Item />)
-    expect(container.firstChild.hasAttribute('class')).toBe(true)
+    expect(container.firstChild).toHaveAttribute('class')
   })
 
   test('should adopt a valid attribute', () => {
     const id = 'test'
     const { container } = render(<Item id={id} />)
-    expect(container.firstChild.hasAttribute('id')).toBe(true)
+    expect(container.firstChild).toHaveAttribute('id')
     expect(container.firstChild.id).toEqual(id)
   })
 
   test('should not adopt an invalid attribute', () => {
     const { container } = render(<Item attribute="test" />)
-    expect(container.firstChild.hasAttribute('attribute')).toBe(false)
+    expect(container.firstChild).not.toHaveAttribute('attribute')
   })
 })

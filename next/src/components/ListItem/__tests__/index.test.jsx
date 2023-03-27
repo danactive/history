@@ -6,7 +6,7 @@ import ListItem from '../index'
 describe('<ListItem />', () => {
   test('should have a class', () => {
     const { container } = render(<ListItem className="test" />)
-    expect(container.querySelector('li').hasAttribute('class')).toBe(true)
+    expect(container.querySelector('li')).toHaveAttribute('class')
   })
 
   test('should render the content passed to it', () => {

@@ -1,5 +1,7 @@
 module.exports = {
-  extends: ['airbnb', 'airbnb/hooks', 'next'],
+  // TODO enable plugin:testing-library/react
+  // extends: ['airbnb', 'airbnb/hooks', 'next', 'plugin:testing-library/react', 'plugin:jest-dom/recommended'],
+  extends: ['airbnb', 'airbnb/hooks', 'next', 'plugin:jest-dom/recommended'],
   parserOptions: {
     ecmaVersion: 2020,
   },
