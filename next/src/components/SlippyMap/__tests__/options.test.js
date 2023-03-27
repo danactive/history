@@ -25,7 +25,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: { selected: null },
+          properties: {},
           type: 'Feature',
         },
         {
@@ -46,7 +46,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { selected: null },
+          properties: {},
           type: 'Feature',
         },
       ]

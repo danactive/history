@@ -7,7 +7,7 @@ import { Items } from '../../types/common'
 
 interface SelectedFeature extends Feature {
   properties: {
-    selected: boolean;
+    selected?: boolean;
   }
 }
 
@@ -47,9 +47,7 @@ export function transformSourceOptions(
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      properties: {
-        selected: null,
-      },
+      properties: {},
     }
 
     if (selectedLatitude === latitude && selectedLongitude === longitude) {
