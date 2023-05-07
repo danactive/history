@@ -18,7 +18,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 ## Installation
 
 ### Development
-1. Node.js v16 LTS [Download](https://nodejs.org/)
+1. Node.js v18 LTS [Download](https://nodejs.org/)
 1. Folder **app** both the backend and frontend using Next.js
 1. Install project dependencies `npm ci`
 1. Start web server `npm run dev`
