@@ -1,5 +1,5 @@
 import type { GeoJSONSourceRaw, LayerProps, ViewState } from 'react-map-gl'
-import type { Feature } from 'geojson'
+import type { Feature, FeatureCollection } from 'geojson'
 
 import config from '../../../../config.json'
 
@@ -60,7 +60,7 @@ export function transformSourceOptions(
   const hasGeo = (item: Items) => !validatePoint(item?.coordinates).isInvalidPoint
   const features = items.filter(hasGeo).map(geoJsonFeature)
 
-  const data = {
+  const data: FeatureCollection = {
     type: 'FeatureCollection',
     features,
   }
