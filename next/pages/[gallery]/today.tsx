@@ -19,7 +19,8 @@ export async function getStaticProps({ params: { gallery } }) {
   const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
     const prev = await previousPromise
     const { album: { items, meta } } = await getAlbum(gallery, album.name)
-    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === new Date().toLocaleDateString().substring(5, 10))
+    const MMDD = new Date().toISOString().substring(5, 10)
+    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === MMDD)
     const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
     return prev.concat(preparedItems({ albumName: album.name, albumCoordinateAccuracy, items: itemsMatchDate }))
   }, Promise.resolve([]))
