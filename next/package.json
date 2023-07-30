@@ -57,5 +57,9 @@
     "ts-jest": "^29.1.1",
     "typescript": "5.1.6"
   },
+  "engines": {
+    "node": "18",
+    "npm": "9"
+  },
   "license": "MIT"
 }
