@@ -1,4 +1,3 @@
-const appRoot = require('app-root-path')
 const mime = require('mime-types')
 const path = require('path')
 
@@ -108,7 +107,6 @@ const file = {
 
     return extension.split('/')[0]
   },
-  absolutePath: (filepath) => (path.isAbsolute(filepath) ? filepath : appRoot.resolve(filepath)),
   thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
   photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
   getVideoPaths,
