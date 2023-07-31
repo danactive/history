@@ -1,4 +1,3 @@
-import '@fontsource/public-sans';
 import { List, ListDivider, ListItem } from '@mui/joy';
 import { CssVarsProvider } from '@mui/joy/styles';
 import Head from 'next/head';
@@ -47,7 +46,7 @@ function Home({ galleries }) {
                 maxHeight: '30em',
                 overflowY: 'auto',
               }}>
-                {galleries.map((item, i) => (
+                {galleries && galleries.map((item, i) => (
                   <>
                     {i > 0 && <ListDivider sx={{ background: '#ccc' }} inset="gutter"/>}
                     <ListItem><Link href={`/${item.gallery}`}>{item.gallery}</Link></ListItem>

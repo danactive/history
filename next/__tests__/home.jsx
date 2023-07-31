@@ -1,5 +1,7 @@
-import React from 'react'
+import '../__mocks__/jsdom-missing'; // Must be imported before the tested file
+
 import { render } from '@testing-library/react'
+
 import Home from '../pages'
 
 test('renders deploy link', () => {

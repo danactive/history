@@ -46,6 +46,9 @@ jobs:
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
+        with:
+          working-directory: next
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
+        working-directory: next
