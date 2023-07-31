@@ -1,12 +1,10 @@
 import '@fontsource/public-sans';
-import {List, ListDivider, ListItem} from '@mui/joy';
-import Head from 'next/head';
+import { List, ListDivider, ListItem } from '@mui/joy';
 import { CssVarsProvider } from '@mui/joy/styles';
-import styled from 'styled-components'
+import Head from 'next/head';
+import styled from 'styled-components';
 
-import GenericList from '../src/components/GenericList';
 import Link from '../src/components/Link';
-import ListItemOld from '../src/components/ListItem'
 import { get as getGalleries } from '../src/lib/galleries';
 
 export async function getStaticProps() {
@@ -17,12 +15,6 @@ export async function getStaticProps() {
       galleries: galleries.map((gallery) => ({ id: gallery, gallery })),
     },
   }
-}
-
-function ListComponent({ item }) {
-  return (
-    <ListItemOld item={<Link href={`/${item.gallery}`}>{item.gallery}</Link>} />
-  )
 }
 
 const Wrapper = styled.div`
@@ -55,14 +47,14 @@ function Home({ galleries }) {
                 maxHeight: '30em',
                 overflowY: 'auto',
               }}>
-              <ListItem>1 red onion</ListItem>
-              <ListDivider sx={{ background: '#ccc' }} inset="gutter"/>
-              <ListItem>2 red peppers</ListItem>
-              <ListDivider sx={{ background: '#ccc' }} inset="gutter"/>
-              <ListItem>120g bacon</ListItem>
+                {galleries.map((item, i) => (
+                  <>
+                    {i > 0 && <ListDivider sx={{ background: '#ccc' }} inset="gutter"/>}
+                    <ListItem><Link href={`/${item.gallery}`}>{item.gallery}</Link></ListItem>
+                  </>
+                ))}
             </List>
           </Wrapper>
-          <GenericList loading={false} error={false} items={galleries} component={ListComponent} />
         </main>
       </CssVarsProvider>
     </>
