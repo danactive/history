@@ -15,6 +15,10 @@
     "release": "standard-version"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/public-sans": "^5.0.5",
+    "@mui/joy": "^5.0.0-alpha.89",
     "boom": "~7.3.0",
     "camelcase": "~6.3.0",
     "color-thief-react": "~2.1.0",
