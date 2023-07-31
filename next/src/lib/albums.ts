@@ -73,7 +73,7 @@ function transformJsonSchema(dirty = { gallery: { album: null } }, gallery = 'de
   return { albums: [transform(dirty.gallery.album)] }
 }
 
-function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): T extends true ? Promise<AlbumBody> : Promise<Albums>;
+function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): T extends true ? Promise<AlbumBody> : Promise<Albums>;// eslint-disable-line
 // function get(gallery: string, returnEnvelope?: true): Promise<AlbumBody>;
 // function get(gallery: string, returnEnvelope: false): Promise<Albums>;
 
@@ -83,7 +83,7 @@ function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): T 
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: string, returnEnvelope = false): Promise<Albums | ErrorOptionalMessage | AlbumBody | ErrorOptionalMessageBody> {
+async function get(gallery: string, returnEnvelope = false): Promise<Albums | ErrorOptionalMessage | AlbumBody | ErrorOptionalMessageBody> {// eslint-disable-line
   try {
     const galleryRaw = await getGalleryFromFilesystem(gallery)
     const body = transformJsonSchema(galleryRaw, gallery)

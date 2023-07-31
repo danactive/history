@@ -34,7 +34,7 @@ interface ImageGalleryType {
   description: string;
   filename: string;
   mediaPath: string;
-  renderItem?: (renderItem: ImageGalleryType) => JSX.Element;
+  renderItem?: (renderItem: ImageGalleryType) => JSX.Element; // eslint-disable-line
 }
 
 const toCarousel = (item: Items) => {

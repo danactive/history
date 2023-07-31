@@ -8,6 +8,7 @@ module.exports = {
   rules: {
     'max-len': [2, 150, 4], // increase page width
     semi: [2, 'never'], // remove semicolons
+    'react/jsx-props-no-spreading': 'off', // dislike rule
     'react/prop-types': 'off', // instead use typescript
     'react/require-default-props': 'off', // instead use typescript
     'react/react-in-jsx-scope': 'off', // Next.js magically includes

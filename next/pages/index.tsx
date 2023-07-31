@@ -1,10 +1,10 @@
-import { List, ListDivider, ListItem } from '@mui/joy';
-import { CssVarsProvider } from '@mui/joy/styles';
-import Head from 'next/head';
-import styled from 'styled-components';
+import { List, ListDivider, ListItem } from '@mui/joy'
+import { CssVarsProvider } from '@mui/joy/styles'
+import Head from 'next/head'
+import styled from 'styled-components'
 
-import Link from '../src/components/Link';
-import { get as getGalleries } from '../src/lib/galleries';
+import Link from '../src/components/Link'
+import { get as getGalleries } from '../src/lib/galleries'
 
 export async function getStaticProps() {
   const { galleries } = await getGalleries()
@@ -38,20 +38,24 @@ function Home({ galleries }) {
         <main>
           <h1>List of Galleries</h1>
           <Wrapper>
-            <List aria-labelledby="galleries" variant="outlined" sx={{
+            <List
+              aria-labelledby="galleries"
+              variant="outlined"
+              sx={{
                 listStyle: 'none',
                 margin: 0,
                 padding: '0',
                 width: '100%',
                 maxHeight: '30em',
                 overflowY: 'auto',
-              }}>
-                {galleries && galleries.map((item, i) => (
-                  <>
-                    {i > 0 && <ListDivider sx={{ background: '#ccc' }} inset="gutter"/>}
-                    <ListItem><Link href={`/${item.gallery}`}>{item.gallery}</Link></ListItem>
-                  </>
-                ))}
+              }}
+            >
+              {galleries && galleries.map((item, i) => (
+                <>
+                  {i > 0 && <ListDivider sx={{ background: '#ccc' }} inset="gutter" />}
+                  <ListItem><Link href={`/${item.gallery}`}>{item.gallery}</Link></ListItem>
+                </>
+              ))}
             </List>
           </Wrapper>
         </main>

@@ -15,4 +15,4 @@ interface Items {
   videoPaths: string,
   reference: string,
 }
-export { type Items }
+export { type Items }// eslint-disable-line
