@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   lint:
-    name: ⬣ ESLint
+    name: ESLint
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -31,12 +31,12 @@ jobs:
         with:
           working-directory: next
 
-      - name: 🔬 Lint
-        run: npm run lint
+      - name: Lint
+        run: npm run lint:ci
         working-directory: next
 
   typecheck:
-    name: ʦ TypeScript
+    name: TypeScript
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -57,7 +57,7 @@ jobs:
         working-directory: next
 
   unittest:
-    name: Unit Tests
+    name: Jest
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -73,6 +73,6 @@ jobs:
         with:
           working-directory: next
 
-      - name: 🔎 Type check
-        run: npm test
+      - name: Unit Test runner
+        run: npm run test:ci
         working-directory: next
