@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
 import config from '../../config.json'
-import { get as getAlbums, Album } from '../src/lib/albums'
+import { get as getAlbums, type Album } from '../src/lib/albums'
 import { get as getGalleries } from '../src/lib/galleries'
 import { indexKeywords } from '../src/lib/search'
 

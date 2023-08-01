@@ -55,3 +55,24 @@ jobs:
       - name: 🔎 Type check
         run: npm run typecheck --if-present
         working-directory: next
+
+  unittest:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: "next/.nvmrc"
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          working-directory: next
+
+      - name: 🔎 Type check
+        run: npm test
+        working-directory: next
