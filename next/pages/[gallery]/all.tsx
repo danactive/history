@@ -3,7 +3,7 @@ import { useMemo, useState, useRef } from 'react'
 import styled from 'styled-components'
 
 import config from '../../../config.json'
-import { get as getAlbum } from '../../src/lib/album'
+import getAlbum from '../../src/lib/album'
 import { get as getAlbums } from '../../src/lib/albums'
 import { get as getGalleries } from '../../src/lib/galleries'
 import { indexKeywords } from '../../src/lib/search'
@@ -15,9 +15,9 @@ import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 import SplitViewer from '../../src/components/SplitViewer'
 
-import { Items } from '../../src/types/common'
+import { Item } from '../../src/types/common'
 
-interface ServerSideAllItems extends Items {
+interface ServerSideAllItem extends Item {
   album?: string;
   gallery?: string;
   corpus: string;
@@ -66,7 +66,7 @@ export async function getStaticPaths() {
 
 function AllPage(
   { items = [], indexedKeywords }:
-  { items: ServerSideAllItems[]; indexedKeywords: object[] },
+  { items: ServerSideAllItem[]; indexedKeywords: object[] },
 ) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)

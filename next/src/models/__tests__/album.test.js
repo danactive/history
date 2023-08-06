@@ -1,15 +1,15 @@
-import lib from '../album'
+import transformJsonSchema from '../album'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
     test('Blank', () => {
-      const result = lib.transformJsonSchema()
+      const result = transformJsonSchema()
       expect(result).toEqual({})
     })
 
     test('Meta', () => {
       const mock = { album: { meta: { gallery: 'demo' } } }
-      const result = lib.transformJsonSchema(mock)
+      const result = transformJsonSchema(mock)
       expect(result.album.meta).toEqual(mock.album.meta)
       expect(result.album.items.length).toEqual(0)
     })
@@ -18,7 +18,7 @@ describe('Album library', () => {
       const mock = { album: { meta: { gallery: 'demo' } } }
       mock.album.item = { $: { id: 1 } }
       const expected = { gallery: 'demo', geo: { zoom: 17 } }
-      const result = lib.transformJsonSchema(mock)
+      const result = transformJsonSchema(mock)
       expect(result.album.meta).toEqual(expected)
       expect(result.album.items[0].id).toEqual(mock.album.item.$.id)
     })
@@ -57,7 +57,7 @@ describe('Album library', () => {
           ],
         },
       }
-      const result = lib.transformJsonSchema(mock)
+      const result = transformJsonSchema(mock)
 
       expect(result.album.meta).toEqual(expectedMeta) // Meta (w/ Items)
       expect(result.album.items[0].id).toEqual(mock.album.item[0].$.id) // Items (w/ Meta)

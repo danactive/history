@@ -8,9 +8,9 @@ import ThumbImg from '../ThumbImg'
 import useSearch from '../../hooks/useSearch'
 import useMemory from '../../hooks/useMemory'
 
-import { Items } from '../../types/common'
+import type { Item } from '../../types/common'
 
-interface ServerSidePhotoItems extends Items {
+interface ServerSidePhotoItem extends Item {
   corpus: string;
 }
 
@@ -21,7 +21,7 @@ const Wrapper = styled.ul`
 
 function AlbumPage(
   { items = [], meta, indexedKeywords }:
-  { items: ServerSidePhotoItems[], meta?: object, indexedKeywords },
+  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords },
 ) {
   const refImageGallery = useRef(null)
   const [memoryIndex, setMemoryIndex] = useState(0)

@@ -1,9 +1,9 @@
-const camelCase = require('camelcase')
-const fsCallback = require('fs')
-const xml2js = require('xml2js')
-const { promisify } = require('util')
+import camelCase from 'camelcase'
+import fsCallback from 'node:fs'
+import { promisify } from 'node:util'
+import xml2js from 'xml2js'
 
-const utilsFactory = require('./utils')
+import utilsFactory from './utils'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
 const errorSchema = (message: string = null): ErrorOptionalMessage => {
@@ -73,9 +73,7 @@ function transformJsonSchema(dirty = { gallery: { album: null } }, gallery = 'de
   return { albums: [transform(dirty.gallery.album)] }
 }
 
-function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): T extends true ? Promise<AlbumBody> : Promise<Albums>;// eslint-disable-line
-// function get(gallery: string, returnEnvelope?: true): Promise<AlbumBody>;
-// function get(gallery: string, returnEnvelope: false): Promise<Albums>;
+async function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): Promise<T extends true ? AlbumBody : Albums>;
 
 /**
  * Get Albums from local filesystem
@@ -89,16 +87,16 @@ async function get(gallery: string, returnEnvelope = false): Promise<Albums | Er
     const body = transformJsonSchema(galleryRaw, gallery)
 
     if (returnEnvelope) {
-      return { body, status: 200 } as AlbumBody
+      return { body, status: 200 }
     }
 
-    return body as Albums
+    return body
   } catch (e) {
     if (returnEnvelope) {
-      return { body: errorSchema('No albums are found'), status: 404 } as ErrorOptionalMessageBody
+      return { body: errorSchema('No albums are found'), status: 404 }
     }
 
-    return errorSchema() as ErrorOptionalMessage
+    return errorSchema()
   }
 }
 const out = {

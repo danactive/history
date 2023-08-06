@@ -1,13 +1,13 @@
-const mime = require('mime-types')
-const path = require('path')
+import mime from 'mime-types'
+import path from 'node:path'
 
-const configFile = require('../../../config.json')
+import configFile from '../../../config.json'
 
 const { IMAGE_BASE_URL = '' } = process.env
 
-const type = (filepath) => {
+const type = (filepath: string): string | null => {
   if (!filepath) {
-    return false
+    return null
   }
 
   if (filepath.lastIndexOf('.') === 0) {
@@ -85,64 +85,61 @@ function customMime(rawExtension) {
   return false
 }
 
-const file = {
-  type,
-  mimeType: (extension) => customMime(extension) || mime.lookup(extension),
-  mediumType: (extension) => {
-    if (!extension || typeof extension !== 'string') {
-      return false
-    }
-
-    if (extension.indexOf('/') === -1) {
-      if (['image', 'photo'].includes(extension)) {
-        return 'image'
-      }
-
-      if (['video'].includes(extension)) {
-        return 'video'
-      }
-
-      return false
-    }
-
-    return extension.split('/')[0]
-  },
-  thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
-  photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
-  getVideoPaths,
-  filenameAsJpg,
-}
-
 function utils(errorSchema) {
-  /*
-   Construct a file system path from the history public folder
-
-   @method safePublicPath
-   @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
-   @return {Promise} string
-  */
-  file.safePublicPath = (rawDestinationPath) => {
-    try {
-      const normalizedDestinationPath = path.normalize(rawDestinationPath)
-      const publicPath = path.normalize(path.join(process.cwd(), '../public'))
-      const isRawInPublic = normalizedDestinationPath.startsWith(publicPath)
-      const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath)
-
-      if (!safeDestinationPath.startsWith(publicPath)) {
-        return { body: errorSchema(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`), status: 404 }
+  return {
+    type,
+    mimeType: (extension) => customMime(extension) || mime.lookup(extension),
+    mediumType: (extension) => {
+      if (!extension || typeof extension !== 'string') {
+        return false
       }
 
-      return safeDestinationPath
-    } catch (error) {
-      if (error.name === 'TypeError') { // path core module error
-        return { body: errorSchema('Invalid file system path'), status: 406 }
+      if (extension.indexOf('/') === -1) {
+        if (['image', 'photo'].includes(extension)) {
+          return 'image'
+        }
+
+        if (['video'].includes(extension)) {
+          return 'video'
+        }
+
+        return false
       }
 
-      return { body: errorSchema(error.message), status: 400 }
-    }
+      return extension.split('/')[0]
+    },
+    thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
+    photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
+    getVideoPaths,
+    filenameAsJpg,
+    /*
+    Construct a file system path from the history public folder
+
+    @method safePublicPath
+    @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
+    @return {Promise} string
+    */
+    safePublicPath: (rawDestinationPath) => {
+      try {
+        const normalizedDestinationPath = path.normalize(rawDestinationPath)
+        const publicPath = path.normalize(path.join(process.cwd(), '../public'))
+        const isRawInPublic = normalizedDestinationPath.startsWith(publicPath)
+        const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath)
+
+        if (!safeDestinationPath.startsWith(publicPath)) {
+          return { body: errorSchema(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`), status: 404 }
+        }
+
+        return safeDestinationPath
+      } catch (error) {
+        if (error.name === 'TypeError') { // path core module error
+          return { body: errorSchema('Invalid file system path'), status: 406 }
+        }
+
+        return { body: errorSchema(error.message), status: 400 }
+      }
+    },
   }
-
-  return file
 }
 
-module.exports = utils
+export default utils

@@ -1,4 +1,4 @@
-const utilsFactory = require('../utils')
+import utilsFactory from '../utils'
 
 describe('Album library', () => {
   const gallery = 'demo'

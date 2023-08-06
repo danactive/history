@@ -1,10 +1,11 @@
-const boom = require('boom')
-const fs = require('fs')
-const path = require('path')
-const { promisify } = require('util')
+import boom from 'boom'
+import fs from 'node:fs'
+import path from 'node:path'
+import { promisify } from 'node:util'
+
+import utilsFactory from './utils'
 
 const getStat = promisify(fs.stat)
-const utilsFactory = require('./utils')
 
 const MODULE_NAME = 'pathExists'
 

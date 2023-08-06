@@ -10,7 +10,7 @@ import SlippyMap from '../SlippyMap'
 import Video from '../Video'
 
 import { Viewed } from '../../hooks/useMemory'
-import { Items } from '../../types/common'
+import { Item } from '../../types/common'
 
 const Split = styled.section`
   display: grid;
@@ -37,7 +37,7 @@ interface ImageGalleryType {
   renderItem?: (renderItem: ImageGalleryType) => JSX.Element; // eslint-disable-line
 }
 
-const toCarousel = (item: Items) => {
+const toCarousel = (item: Item) => {
   const imageGallery: ImageGalleryType = {
     original: item.photoPath || item.thumbPath,
     thumbnail: item.thumbPath,
@@ -69,7 +69,7 @@ function SplitViewer({
   memoryIndex,
   setMemoryIndex,
 }: {
-  items: Items[];
+  items: Item[];
   refImageGallery: object;
   setViewed: Viewed;
   memoryIndex: number;

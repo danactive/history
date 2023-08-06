@@ -1,8 +1,8 @@
-const globCallback = require('glob')
-const path = require('path')
-const { promisify } = require('util')
+import globCallback from 'glob'
+import path from 'node:path'
+import { promisify } from 'node:util'
 
-const utilsFactory = require('./utils')
+import utilsFactory from './utils'
 
 const glob = promisify(globCallback)
 
@@ -58,7 +58,7 @@ async function get(destinationPath = '', returnEnvelope = false) {
   }
 }
 
-module.exports = {
+export default {
   get,
   errorSchema,
 }

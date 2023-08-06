@@ -1,7 +1,7 @@
 import config from '../../../config.json'
 import { get as getGalleries } from '../../src/lib/galleries'
 import { get as getAlbums } from '../../src/lib/albums'
-import { get as getAlbum } from '../../src/lib/album'
+import getAlbum from '../../src/lib/album'
 import { indexKeywords } from '../../src/lib/search'
 
 import AlbumPageComponent from '../../src/components/AlbumPage'

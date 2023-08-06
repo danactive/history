@@ -3,7 +3,7 @@ import type { Feature, FeatureCollection } from 'geojson'
 
 import config from '../../../../config.json'
 
-import { Items } from '../../types/common'
+import type { Item } from '../../types/common'
 
 interface SelectedFeature extends Feature {
   properties: {
@@ -30,14 +30,14 @@ const validatePoint = (rawCoordinate: [number?, number?]) => {
 }
 
 type ItemWithCoordinate = {
-  coordinates?: Items['coordinates']
+  coordinates?: Item['coordinates']
 }
 
 export function transformSourceOptions(
   { items = [], selected }:
-  { items?: Items[], selected?: ItemWithCoordinate } = {},
+  { items?: Item[], selected?: ItemWithCoordinate } = {},
 ): GeoJSONSourceRaw {
-  const geoJsonFeature = (item: Items): SelectedFeature => {
+  const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected?.coordinates)
 
@@ -57,7 +57,7 @@ export function transformSourceOptions(
     return point
   }
 
-  const hasGeo = (item: Items) => !validatePoint(item?.coordinates).isInvalidPoint
+  const hasGeo = (item: Item) => !validatePoint(item?.coordinates).isInvalidPoint
   const features = items.filter(hasGeo).map(geoJsonFeature)
 
   const data: FeatureCollection = {

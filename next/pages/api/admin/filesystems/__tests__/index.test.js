@@ -1,7 +1,7 @@
-import fs from 'fs'
 import { testApiHandler } from 'next-test-api-route-handler'
-import path from 'path'
-import { promisify } from 'util'
+import fs from 'node:fs'
+import path from 'node:path'
+import { promisify } from 'node:util'
 
 import handler from '..'
 import utilsFactory from '../../../../../src/lib/utils'

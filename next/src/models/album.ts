@@ -1,30 +1,66 @@
-const camelCase = require('camelcase')
-const fsCallback = require('fs')
-const xml2js = require('xml2js')
-const { promisify } = require('util')
+import utilsFactory from '../lib/utils'
+import type { Album, AlbumMeta, Item } from '../types/common'
+import { removeUndefinedFields } from '../utils'
 
-const utilsFactory = require('./utils')
-
-const errorSchema = (message) => {
+export type ErrorOptionalMessage = { album: object[]; error?: { message: string } }
+export const errorSchema = (message): ErrorOptionalMessage => {
   const out = { album: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }
-const fs = fsCallback.promises
-const parseOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
-const parser = new xml2js.Parser(parseOptions)
-const parseXml = promisify(parser.parseString)
+
 const utils = utilsFactory(errorSchema)
 
-/**
-* Get album XML from local filesystem
-* @param {string} gallery name of gallery
-* @param {string} album name of album
-* @returns {string} album XML
-*/
-async function getXmlFromFilesystem(gallery, album) {
-  const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/${album}.xml`)
-  return parseXml(fileBuffer)
+type DirtyItem = {
+  $: {
+    id: string,
+  },
+  filename: string,
+  photoCity: string,
+  thumbCaption: string,
+  photoDesc: string,
+  geo: {
+    lat: string,
+    lon: string,
+    accuracy: string,
+  },
+  ref: {
+    name: string,
+    source: string,
+  }
+}
+
+type DirtyAlbum = {
+  album?: {
+    meta?: AlbumMeta,
+    item: DirtyItem | DirtyItem[]
+  },
+}
+
+type ValidMeta = {
+  album: {
+    meta: {}
+  },
+}
+
+type ValidItem = {
+  album: {
+    items: [],
+  },
+}
+
+function isValidMeta(schema: unknown): schema is ValidMeta {
+  if ('album' in (schema as any) && 'meta' in ((schema as any).meta)) {
+    return true
+  }
+  return false
+}
+
+function isValidItem(schema: unknown): schema is ValidItem {
+  if ('item' in ((schema as any).album)) {
+    return true
+  }
+  return false
 }
 
 function title(item) {
@@ -52,7 +88,7 @@ function caption(item) {
   return item.thumbCaption || null
 }
 
-const reference = (item) => {
+const reference = (item): [string, string] | null => {
   const baseUrl = (source) => {
     switch (source) {
       case 'facebook':
@@ -81,18 +117,14 @@ const reference = (item) => {
  * @param {object} dirty
  * @returns {object} clean JSON
  */
-const transformJsonSchema = (dirty = {}) => {
-  if (!dirty.album || !dirty.album.meta) {
-    return dirty
-  }
-
-  if (!dirty.album.item) {
+const transformJsonSchema = (dirty: DirtyAlbum = {}): Album => {
+  if (!isValidMeta(dirty) || !isValidItem(dirty)) {
     return { album: { items: [], ...dirty.album } }
   }
 
   const { gallery } = dirty.album.meta
 
-  const updateItem = (item) => {
+  const updateItem = (item): Item => {
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
     const accuracy = Number(item?.geo?.accuracy)
@@ -101,7 +133,7 @@ const transformJsonSchema = (dirty = {}) => {
     const photoPath = utils.photoPath(item, gallery)
     const videoPaths = utils.getVideoPaths(item, gallery)
 
-    const out = {
+    const out: Item = {
       id: item.$.id,
       filename: item.filename,
       city: item.photoCity || null,
@@ -119,12 +151,10 @@ const transformJsonSchema = (dirty = {}) => {
       reference: reference(item),
     }
 
-    // remove empty properties
-    // eslint-disable-next-line no-unused-vars
-    return Object.fromEntries(Object.entries(out).filter(([_, v]) => v != null))
+    return removeUndefinedFields(out)
   }
 
-  const items = dirty.album.item.length ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
+  const items = Array.isArray(dirty.album.item) ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
   const meta = {
     ...dirty.album.meta,
     geo: {
@@ -141,35 +171,4 @@ const transformJsonSchema = (dirty = {}) => {
   }
 }
 
-/**
- * Get Album XML from local filesystem
- * @param {string} gallery name of gallery
- * @param {string} album name of album
- * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {object} album containing meta and items with keys filename, photoCity, photoLoc, thumbCaption, photoDesc
- */
-async function get(gallery, album, returnEnvelope = false) {
-  try {
-    const xml = await getXmlFromFilesystem(gallery, album)
-    const body = transformJsonSchema(xml)
-
-    if (returnEnvelope) {
-      return { body, status: 200 }
-    }
-
-    return body
-  } catch (e) {
-    if (returnEnvelope) {
-      return { body: errorSchema('No album was found'), status: 404 }
-    }
-
-    return errorSchema()
-  }
-}
-
-module.exports = {
-  get,
-  errorSchema,
-  reference,
-  transformJsonSchema,
-}
+export default transformJsonSchema
