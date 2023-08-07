@@ -16,12 +16,12 @@ Verify if a path exists on the file system
 @param {string} verifyPath relative/absolute path (file or folder) on the file system
 @returns {Promise} root absolute path
 */
-const pathExists = async (verifyPath, errorSchema) => {
+const pathExists = async (verifyPath: string | undefined | null) => {
   if (verifyPath === undefined || verifyPath === null) {
     throw boom.notFound(`${MODULE_NAME}: File system path is missing (${verifyPath})`)
   }
 
-  const utils = utilsFactory(errorSchema)
+  const utils = utilsFactory()
 
   try {
     const verifiedPath = utils.safePublicPath(verifyPath)
@@ -33,7 +33,7 @@ const pathExists = async (verifyPath, errorSchema) => {
 
     throw boom.notFound('File failed')
   } catch (error) {
-    if (typeof verifyPath === 'string' || verifyPath instanceof String) {
+    if (typeof verifyPath === 'string') {
       const pathType = path.isAbsolute(verifyPath) ? 'absolute' : 'relative'
 
       throw boom.notFound(`${MODULE_NAME}: File system path is ${pathType} and not found due to error (${error})`)
@@ -43,4 +43,4 @@ const pathExists = async (verifyPath, errorSchema) => {
   }
 }
 
-module.exports = { pathExists }
+export default pathExists

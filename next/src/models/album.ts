@@ -9,7 +9,7 @@ export const errorSchema = (message): ErrorOptionalMessage => {
   return { ...out, error: { message } }
 }
 
-const utils = utilsFactory(errorSchema)
+const utils = utilsFactory()
 
 type DirtyItem = {
   $: {
@@ -88,7 +88,7 @@ function caption(item) {
   return item.thumbCaption || null
 }
 
-const reference = (item): [string, string] | null => {
+export const reference = (item): [string, string] | null => {
   const baseUrl = (source) => {
     switch (source) {
       case 'facebook':

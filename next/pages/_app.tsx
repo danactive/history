@@ -21,7 +21,6 @@ const theme = {
 }
 
 export default function App({ Component, pageProps }) {
-  /* eslint-disable react/jsx-props-no-spreading */
   return (
     <>
       <GlobalStyle />

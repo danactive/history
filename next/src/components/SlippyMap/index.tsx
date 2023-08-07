@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { useContext, useEffect, useState } from 'react'
 import Map, { Source, Layer } from 'react-map-gl'
 

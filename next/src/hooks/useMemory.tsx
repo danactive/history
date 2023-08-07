@@ -12,7 +12,7 @@ const Location = styled.h4`
   margin-right: 1rem;
 `
 interface Viewed {
-  (index: number): void; // eslint-disable-line
+  (index: number): void;
 }
 const useMemory = (filtered, refImageGallery) => {
   const [viewedList, setViewedList] = useState(new Set<string>())

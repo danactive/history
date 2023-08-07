@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { memo } from 'react'
 import NextLink from 'next/link'
 import styled from 'styled-components'

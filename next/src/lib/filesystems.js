@@ -6,7 +6,7 @@ import utilsFactory from './utils'
 
 const glob = promisify(globCallback)
 
-const errorSchema = (message, destinationPath = '') => {
+export const errorSchema = (message, destinationPath = '') => {
   const out = { files: [], destinationPath }
   if (!message) return out
   return { ...out, error: { message } }
@@ -20,7 +20,7 @@ const errorSchema = (message, destinationPath = '') => {
  */
 async function get(destinationPath = '', returnEnvelope = false) {
   try {
-    const utils = utilsFactory(errorSchema)
+    const utils = utilsFactory()
     const publicPath = utils.safePublicPath('/')
     const globPath = path.join(publicPath, destinationPath)
 
@@ -58,7 +58,4 @@ async function get(destinationPath = '', returnEnvelope = false) {
   }
 }
 
-export default {
-  get,
-  errorSchema,
-}
+export default get

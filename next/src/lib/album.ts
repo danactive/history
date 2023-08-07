@@ -27,6 +27,7 @@ type Envelope = { body: Album, status: number }
 type ErrorOptionalMessageBody = {
   body: ErrorOptionalMessage; status: number;
 }
+type ReturnAlbumOrErrors = Promise<Envelope | Album | ErrorOptionalMessage | ErrorOptionalMessageBody>
 async function get<T extends boolean = false>(gallery: string, album: string, returnEnvelope?: T): Promise<T extends true ? Envelope : Album>
 /**
  * Get Album XML from local filesystem
@@ -35,7 +36,7 @@ async function get<T extends boolean = false>(gallery: string, album: string, re
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {object} album containing meta and items with keys filename, photoCity, photoLoc, thumbCaption, photoDesc
  */
-async function get(gallery: string, album: string, returnEnvelope: boolean): Promise<Envelope | Album | ErrorOptionalMessage | ErrorOptionalMessageBody> {
+async function get(gallery: string, album: string, returnEnvelope: boolean): ReturnAlbumOrErrors {
   try {
     const xml = await getXmlFromFilesystem(gallery, album)
     const body = transformJsonSchema(xml)

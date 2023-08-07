@@ -16,7 +16,7 @@ const fs = fsCallback.promises
 const parseOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
 const parseXml = promisify(parser.parseString)
-const utils = utilsFactory(errorSchema)
+const utils = utilsFactory()
 
 /**
  * Get Gallery from local filesystem
@@ -81,7 +81,7 @@ async function get<T extends boolean = false>(gallery: string, returnEnvelope?: 
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: string, returnEnvelope = false): Promise<Albums | ErrorOptionalMessage | AlbumBody | ErrorOptionalMessageBody> {// eslint-disable-line
+async function get(gallery: string, returnEnvelope = false): Promise<Albums | ErrorOptionalMessage | AlbumBody | ErrorOptionalMessageBody> {
   try {
     const galleryRaw = await getGalleryFromFilesystem(gallery)
     const body = transformJsonSchema(galleryRaw, gallery)
@@ -112,7 +112,5 @@ export {
   getGalleryFromFilesystem,
   transformJsonSchema,
 }
-
-module.exports = out
 
 export default out

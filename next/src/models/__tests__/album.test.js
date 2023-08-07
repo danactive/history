@@ -1,4 +1,4 @@
-import transformJsonSchema from '../album'
+import transformJsonSchema, { reference } from '../album'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
@@ -90,7 +90,7 @@ describe('Album library', () => {
           source: 'youtube',
         },
       }
-      const actual = lib.reference(mock)
+      const actual = reference(mock)
       expect(actual[0]).toBe('https://www.youtube.com/watch?v=vancouver')
       expect(actual[1]).toBe('vancouver')
     })
@@ -101,7 +101,7 @@ describe('Album library', () => {
           source: 'wikipedia',
         },
       }
-      const actual = lib.reference(mock)
+      const actual = reference(mock)
       expect(actual[0]).toBe('https://en.wikipedia.org/wiki/Purshia_tridentata')
       expect(actual[1]).toBe('Purshia_tridentata')
     })

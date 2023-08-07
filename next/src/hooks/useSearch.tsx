@@ -24,7 +24,7 @@ const ShareLink = styled.nav`
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: object[] },
-): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {// eslint-disable-line
+): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
   const [selectedOption, setSelectedOption] = useState(null)

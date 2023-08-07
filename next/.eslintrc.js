@@ -24,6 +24,16 @@ module.exports = {
       tsx: 'never',
     }], // support React in TypeScript
   },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-unused-vars": "off",
+        "no-undef": "off",
+        "no-redeclare": "off",
+      }
+    }
+  ],
   env: {
     jest: true,
   },

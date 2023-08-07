@@ -85,7 +85,7 @@ function customMime(rawExtension) {
   return false
 }
 
-function utils(errorSchema) {
+function utils() {
   return {
     type,
     mimeType: (extension) => customMime(extension) || mime.lookup(extension),
@@ -119,7 +119,7 @@ function utils(errorSchema) {
     @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
     @return {Promise} string
     */
-    safePublicPath: (rawDestinationPath) => {
+    safePublicPath: (rawDestinationPath: string): string => {
       try {
         const normalizedDestinationPath = path.normalize(rawDestinationPath)
         const publicPath = path.normalize(path.join(process.cwd(), '../public'))
@@ -127,16 +127,16 @@ function utils(errorSchema) {
         const safeDestinationPath = (isRawInPublic) ? normalizedDestinationPath : path.join(publicPath, normalizedDestinationPath)
 
         if (!safeDestinationPath.startsWith(publicPath)) {
-          return { body: errorSchema(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`), status: 404 }
+          throw new Error(`Restrict to public file system (${safeDestinationPath}); publicPath(${publicPath})`)
         }
 
         return safeDestinationPath
       } catch (error) {
         if (error.name === 'TypeError') { // path core module error
-          return { body: errorSchema('Invalid file system path'), status: 406 }
+          throw new Error('Invalid file system path')
         }
 
-        return { body: errorSchema(error.message), status: 400 }
+        throw new Error(error.message)
       }
     },
   }

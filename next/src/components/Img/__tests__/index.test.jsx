@@ -8,7 +8,6 @@ const expectedValues = {
   src: '/public/galleries/demo/media/thumbs/2001/2001-03-21-01.jpg',
 }
 const renderComponent = (props = {}) => {
-  // eslint-disable-next-line react/jsx-props-no-spreading
   const utils = render(<Img src={expectedValues.src} alt={expectedValues.alt} {...props} />)
   const image = utils.queryByAltText(expectedValues.alt)
   return { ...utils, image }

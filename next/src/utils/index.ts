@@ -6,10 +6,9 @@ export function getExt(filenames) {
   return extension.toLowerCase()
 }
 
-export function removeUndefinedFields <T>(obj: T): T {
-  const acc: Partial<T> = {}
-  for (const key in obj) {
-    if (obj[key] !== undefined) acc[key] = obj[key]
-  }
-  return acc as T
-}
+export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj).reduce(
+  (acc, key) => (obj[key as keyof T] === undefined
+    ? { ...acc }
+    : { ...acc, [key]: obj[key as keyof T] }),
+    {} as T,
+)
