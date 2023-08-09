@@ -1,6 +1,18 @@
-import { transformMapOptions, transformSourceOptions } from '../options'
+import { transformMapOptions, transformSourceOptions, validatePoint } from '../options'
 
 describe('Options - <SlippyMap />', () => {
+  describe('validatePoint', () => {
+    test('Empty', () => {
+      const received = validatePoint()
+      const expected = {
+        isInvalidPoint: true,
+        latitude: null,
+        longitude: null,
+      }
+      expect(received).toEqual(expected)
+    })
+  })
+
   describe('Mapbox Source - transformSourceOptions', () => {
     test('Empty', () => {
       const received = transformSourceOptions()

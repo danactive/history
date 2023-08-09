@@ -11,7 +11,10 @@ interface SelectedFeature extends Feature {
   }
 }
 
-const validatePoint = (rawCoordinate: [number?, number?]) => {
+export const validatePoint = (
+  rawCoordinate:
+  [number?, number?],
+) => {
   const coordinate = rawCoordinate ?? []
   const [longitude = null, latitude = null] = coordinate
   return {

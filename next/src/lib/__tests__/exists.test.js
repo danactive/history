@@ -1,6 +1,6 @@
 import path from 'path'
 
-import handler from '../exists'
+import pathExists from '../exists'
 
 describe('Exists library', () => {
   const errorSchema = (message) => message
@@ -9,7 +9,7 @@ describe('Exists library', () => {
     const successTest = async (expect, testPath) => {
       expect.hasAssertions()
       try {
-        const verifiedPath = await handler.pathExists(testPath, errorSchema)
+        const verifiedPath = await pathExists(testPath, errorSchema)
 
         const normalTestPath = path.normalize(testPath)
         expect(verifiedPath.endsWith(normalTestPath)).toBeTruthy()
@@ -53,7 +53,7 @@ describe('Exists library', () => {
     const failureTest = async (expect, testPath) => {
       expect.hasAssertions()
       try {
-        const verifiedPath = await handler.pathExists(testPath)
+        const verifiedPath = await pathExists(testPath)
         expect(verifiedPath).toBeUndefined()
       } catch (error) {
         expect(error.isBoom).toBeTruthy()

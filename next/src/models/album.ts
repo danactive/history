@@ -50,7 +50,7 @@ type ValidItem = {
 }
 
 function isValidMeta(schema: unknown): schema is ValidMeta {
-  if ('album' in (schema as any) && 'meta' in ((schema as any).meta)) {
+  if ('album' in (schema as any) && 'meta' in ((schema as any).album)) {
     return true
   }
   return false
