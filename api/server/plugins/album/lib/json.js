@@ -45,7 +45,7 @@ function caption(item) {
   return item.thumbCaption;
 }
 
-function filenameAsJpg(filename) {
+function jpgFilenameInsensitive(filename) {
   const currentExt = utils.file.type(filename);
   const futureExt = (currentExt.toLowerCase() === 'jpg') ? currentExt : 'jpg';
   const imageFilename = filename.replace(currentExt, futureExt);
@@ -59,7 +59,7 @@ function getThumbPath(item, gallery) {
   }
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename[0];
-  const imageFilename = filenameAsJpg(filename);
+  const imageFilename = jpgFilenameInsensitive(filename);
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0];
   return `/galleries/${gallery}/media/thumbs/${year}/${imageFilename}`;
 }
@@ -97,7 +97,7 @@ function templatePrepare(result = {}) {
     }
 
     const thumbPath = getThumbPath(item, gallery);
-    const photoPath = utils.file.photoPath(item, gallery);
+    const photoPath = utils.file.photoPath(thumbPath);
     const videoPath = getVideoPath(item, gallery);
     const enhancements = {
       thumbCaption: caption(item),
@@ -168,7 +168,7 @@ const getAlbum = (gallery, albumStem) => new Promise((resolve, reject) => {
 
 module.exports = {
   caption,
-  filenameAsJpg,
+  jpgFilenameInsensitive,
   getAlbum,
   getThumbPath,
   getVideoPath,

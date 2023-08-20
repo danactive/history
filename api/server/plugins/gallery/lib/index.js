@@ -1,15 +1,12 @@
-const gallery = require('../../../../../next/src/lib/galleries');
+const gallery = require('./gallery');
 
 async function register(server) {
   server.route({
     method: 'GET',
-    path: '/galleries',
+    path: '/galleryList',
     options: {
       tags: ['api'],
-      handler: async () => {
-        const { galleries } = await gallery.get();
-        return { galleries };
-      },
+      handler: async () => ({ galleries: await gallery.getGalleries() }),
     },
   });
 }
@@ -17,7 +14,7 @@ async function register(server) {
 const plugin = {
   register,
   name: 'gallery',
-  version: '0.5.0',
+  version: '0.4.0',
 };
 
 module.exports = { plugin };

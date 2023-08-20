@@ -3,7 +3,7 @@ const React = require('react');
 const Gallery = require('./gallery');
 
 function Page({ galleries }) {
-  const Galleries = galleries.map((gallery) => <Gallery key={gallery} gallery={gallery} />);
+  const galleryList = galleries.map((gallery) => <Gallery key={gallery} gallery={gallery} />);
   return (
     <html lang="en">
       <head>
@@ -17,7 +17,7 @@ function Page({ galleries }) {
           Photo Galleries
         </h1>
         <ul>
-          {Galleries}
+          {galleryList}
         </ul>
         <a href="/edit/album">
           Admin &gt; Edit Album

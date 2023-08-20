@@ -3,7 +3,6 @@ const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
 const joi = require('@hapi/joi');
 const notifier = require('node-notifier');
-const path = require('path');
 
 require('tuxharness');
 
@@ -55,7 +54,7 @@ function getViewsConfig() {
     isCached: true,
     path: './',
     partialsPath: './',
-    relativeTo: path.join(__dirname, '../../'),
+    relativeTo: __dirname,
   };
 }
 

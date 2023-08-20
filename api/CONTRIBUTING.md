@@ -59,31 +59,31 @@ To use the administration tools
 	* Install project dependencies `npm install [module]`
 
 ## Photo/video album XML schemas
-### Current schema (2.2)
+### Current schema (2.0)
 
 Example
 
 	<album>
 		<meta>
 			<gallery>demo</gallery> <!-- gallery directory name excluding 'gallery-'; new in schema 2.0 -->
-			<album_name>sample</album_name>
-			<album_version>2.2</album_version>
+			<id>sample</id> <!--Filename is album_sample.xml; new in schema 2.0-->
+			<version>1.8</version> <!--Reference schema version; new in schema 2.0-->
 		</meta>
-		<item id="1"><!-- photo -->
+		<item><!-- photo -->
+			<id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
 			<filename>2001-03-21-01.jpg</filename> <!-- must start with YYYY year; photos and thumbs must be places in this folder too -->
 			<geo> <!-- geocode -->
 				<lat>49.25</lat> <!-- latitude -->
 				<lon>-123.1</lon> <!-- longitude -->
-				<accuracy>14</accuracy> <!-- zoom level to item this indicates not precise -->
 			</geo>
 			<photo_city>Vancouver, BC</photo_city> <!-- Political location name often City, Province/State -->
 			<photo_loc>Granville Island</photo_loc> <!-- General location name often neighourhood or building -->
 			<photo_desc>An oversized avocado</photo_desc> <!-- The photo description only viewable in the lightbox view -->
 			<thumb_caption>Lunch</thumb_caption> <!-- Less than three words to descibe the thumbnail in gallery view -->
-			<search>Photographer name, subject names</search> <!-- keywords for searching, such as persons in the photo -->
 		</item>
-		<item id="2"><!-- video -->
+		<item><!-- video -->
 			<type>video</type>
+			<id>1</id> <!-- id attribute must be unique for this album; used by JavaScript & for character association -->
 			<filename>2012-fireplace.mp4</filename> <!-- History supports both HTML5 video formats for best browser support; must start with YYYY year; photos and thumbs must be places in this folder too -->
 			<filename>2012-fireplace.webm</filename>
 			<photo_city>Vancouver, BC</photo_city>

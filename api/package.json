@@ -7,6 +7,7 @@
     "lint:js": "eslint server *.js --ext .js,.jsx",
     "lint:docs": "eslint --ext md --config .eslintrc-markdown.js .",
     "lint:filter": "eslint --ext .js,.jsx",
+    "release": "standard-version",
     "start": "npm run webpack && node .",
     "test": "npm run test:jest && npm run webpack && nyc --extension .jsx tape server/plugins/*/test/*.spec.js",
     "test:cover": "nyc report --reporter=html",
@@ -18,7 +19,7 @@
   },
   "main": "server/index.js",
   "dependencies": {
-    "@hapi/hapi": "^20.2.1",
+    "@hapi/hapi": "^19.2.0",
     "@hapi/inert": "^6.0.3",
     "@hapi/joi": "^16.1.8",
     "@hapi/vision": "^6.0.1",
@@ -77,6 +78,7 @@
     "jsdom": "^15.2.1",
     "lodash": "^4.17.21",
     "nyc": "^14.1.1",
+    "standard-version": "^8.0.2",
     "tape": "^4.13.3",
     "tape-catch": "^1.0.6",
     "typy": "^3.3.0"
