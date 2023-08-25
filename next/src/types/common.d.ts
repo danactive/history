@@ -33,3 +33,10 @@ export type Album = {
     items: Item[]
   }
 }
+
+// https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/54659
+declare module 'react-image-gallery' {
+  interface ReactImageGalleryProps {
+    useWindowKeyDown?: boolean;
+  }
+}

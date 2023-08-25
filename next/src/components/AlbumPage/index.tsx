@@ -1,12 +1,13 @@
 import Head from 'next/head'
+import { useRef, useState } from 'react'
+import type ReactImageGallery from 'react-image-gallery'
 import styled from 'styled-components'
-import { useState, useRef } from 'react'
 
+import useMemory from '../../hooks/useMemory'
+import useSearch from '../../hooks/useSearch'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
-import useSearch from '../../hooks/useSearch'
-import useMemory from '../../hooks/useMemory'
 
 import type { Item } from '../../types/common'
 
@@ -23,7 +24,7 @@ function AlbumPage(
   { items = [], meta, indexedKeywords }:
   { items: ServerSidePhotoItem[], meta?: object, indexedKeywords },
 ) {
-  const refImageGallery = useRef(null)
+  const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,

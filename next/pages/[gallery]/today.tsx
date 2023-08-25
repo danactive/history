@@ -9,21 +9,26 @@ import AlbumPageComponent from '../../src/components/AlbumPage'
 export async function getStaticProps({ params: { gallery } }) {
   const { albums } = await getAlbums(gallery)
 
-  const preparedItems = ({ albumName, albumCoordinateAccuracy, items }) => items.map((item) => ({
+  const prepareItems = ({ albumName, albumCoordinateAccuracy, items }) => items.map((item) => ({
     ...item,
     album: albumName,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
     coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
   }))
   // reverse order for albums in ascending order (oldest on top)
-  const allItems = await [...albums].reverse().reduce(async (previousPromise, album) => {
-    const prev = await previousPromise
+  const allItems = (await albums.reduce(async (previousPromise, album) => {
+    const prevItems = await previousPromise
     const { album: { items, meta } } = await getAlbum(gallery, album.name)
-    const MMDD = new Date().toISOString().substring(5, 10)
+    const MMDD = new Date().toLocaleString('en-CA').substring(5, 10)
     const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === MMDD)
     const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
-    return prev.concat(preparedItems({ albumName: album.name, albumCoordinateAccuracy, items: itemsMatchDate }))
-  }, Promise.resolve([]))
+    const preparedItems = prepareItems({
+      albumName: album.name,
+      albumCoordinateAccuracy,
+      items: itemsMatchDate,
+    })
+    return prevItems.concat(preparedItems)
+  }, Promise.resolve([]))).reverse()
 
   return {
     props: { items: allItems, ...indexKeywords(allItems) },

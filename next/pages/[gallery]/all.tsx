@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import type ReactImageGallery from 'react-image-gallery'
 import styled from 'styled-components'
 
 import config from '../../../config.json'
@@ -11,9 +12,9 @@ import { indexKeywords } from '../../src/lib/search'
 import AlbumContext from '../../src/components/Context'
 import Img from '../../src/components/Img'
 import Link from '../../src/components/Link'
+import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
-import SplitViewer from '../../src/components/SplitViewer'
 
 import { Item } from '../../src/types/common'
 
@@ -68,7 +69,7 @@ function AllPage(
   { items = [], indexedKeywords }:
   { items: ServerSideAllItem[]; indexedKeywords: object[] },
 ) {
-  const refImageGallery = useRef(null)
+  const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {
     filtered,

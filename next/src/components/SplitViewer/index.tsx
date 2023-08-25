@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
-import ImageGallery from 'react-image-gallery'
-import React, { useContext, useRef } from 'react'
+import React, { type LegacyRef, useContext, useRef } from 'react'
+import ImageGallery, { type ReactImageGalleryItem } from 'react-image-gallery'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -28,13 +28,10 @@ const Right = styled.section`
   height: 80vh;
 `
 
-interface ImageGalleryType {
-  original: string;
-  thumbnail: string;
-  description: string;
+type ImageGalleryType = ReactImageGalleryItem & {
   filename: string;
   mediaPath: string;
-  renderItem?: (renderItem: ImageGalleryType) => JSX.Element;
+  renderItem?(item: ReactImageGalleryItem & { mediaPath: string; }): React.ReactNode;
 }
 
 const toCarousel = (item: Item) => {
@@ -70,7 +67,7 @@ function SplitViewer({
   setMemoryIndex,
 }: {
   items: Item[];
-  refImageGallery: object;
+  refImageGallery: LegacyRef<ImageGallery> | null;
   setViewed: Viewed;
   memoryIndex: number;
   setMemoryIndex: Function;
