@@ -1,6 +1,7 @@
 import Color from 'color-thief-react'
-import React, { type LegacyRef, useContext, useRef } from 'react'
+import React, { useContext, useRef, type LegacyRef } from 'react'
 import ImageGallery, { type ReactImageGalleryItem } from 'react-image-gallery'
+import 'react-image-gallery/styles/css/image-gallery.css'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'

@@ -1,5 +1,4 @@
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import '../image-gallery.css' /* cannot use import on SplitViewer as unit test fails */
 
 const GlobalStyle = createGlobalStyle`
   body {
