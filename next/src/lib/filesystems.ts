@@ -6,11 +6,34 @@ import utilsFactory from './utils'
 
 const glob = promisify(globCallback)
 
-export const errorSchema = (message, destinationPath = '') => {
+type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
+export const errorSchema = (message, destinationPath = ''): ErrorOptionalMessage => {
   const out = { files: [], destinationPath }
   if (!message) return out
   return { ...out, error: { message } }
 }
+
+type Filesystem = {
+  ext: string;
+  name: string;
+  filename: string;
+  path: string;
+  mediumType: string;
+}
+
+type Filesystems = {
+  albums: Filesystem[]
+}
+
+type FilesystemBody = {
+  body: Filesystems; status: number;
+}
+
+type ErrorOptionalMessageBody = {
+  body: ErrorOptionalMessage; status: number;
+}
+
+async function get<T extends boolean = false>(destinationPath: string, returnEnvelope?: T): Promise<T extends true ? FilesystemBody : Filesystems>;
 
 /**
  * Get file/folder listing from local filesystem
@@ -18,7 +41,9 @@ export const errorSchema = (message, destinationPath = '') => {
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} files
  */
-async function get(destinationPath = '', returnEnvelope = false) {
+async function get(destinationPath = '', returnEnvelope = false): Promise<
+  Filesystems | ErrorOptionalMessage | FilesystemBody | ErrorOptionalMessageBody
+> {
   try {
     const utils = utilsFactory()
     const publicPath = utils.safePublicPath('/')
@@ -31,11 +56,15 @@ async function get(destinationPath = '', returnEnvelope = false) {
     const files = await glob(decodeURI(`${globPath}/*`))
 
     const webPaths = files.map((file) => {
-      const fileMeta = {}
-      fileMeta.ext = utils.type(file) // case-insensitive
+      const fileMeta: Filesystem = {
+        ext: utils.type(file), // case-insensitive
+        name: null,
+        filename: null,
+        path: file.replace(globPath, destinationPath),
+        mediumType: null,
+      }
       fileMeta.name = path.basename(file, `.${fileMeta.ext}`)
       fileMeta.filename = (fileMeta.ext === '') ? fileMeta.name : `${fileMeta.name}.${fileMeta.ext}`
-      fileMeta.path = file.replace(globPath, destinationPath)
 
       const mediumType = utils.mediumType(utils.mimeType(fileMeta.ext))
       fileMeta.mediumType = mediumType || 'folder'
