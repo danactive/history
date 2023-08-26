@@ -77,21 +77,31 @@ jobs:
         run: npm run test:ci
         working-directory: next
   e2etest:
+    name: Playwright
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
+    - name: ⬇️ Checkout repo
+      uses: actions/checkout@v3
+
+    - name: ⎔ Setup node
+      uses: actions/setup-node@v3
       with:
         node-version-file: "next/.nvmrc"
+
     - name: 📥 Download deps
       uses: bahmutov/npm-install@v1
       with:
         working-directory: next
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+      working-directory: next
+
     - name: Run Playwright tests
       run: npx playwright test
+      working-directory: next
+
     - uses: actions/upload-artifact@v3
       if: always()
       with:
