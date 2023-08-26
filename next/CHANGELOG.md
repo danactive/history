@@ -479,7 +479,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **Babel:** Decrease babel config ([ccb48f6](https://github.com/danactive/history/commit/ccb48f6))
 * **package:** Remove dev dependency babel-tape-runner ([fded616](https://github.com/danactive/history/commit/fded616))
-* **package:** Update @hapi/joi to version 15.0.3 ([0da52f4](https://github.com/danactive/history/commit/0da52f4))
+* **package:** Update joi to version 15.0.3 ([0da52f4](https://github.com/danactive/history/commit/0da52f4))
 * **package:** Update @hapi/wreck to version 15.0.1 ([4096fe6](https://github.com/danactive/history/commit/4096fe6))
 * **package:** Update app-root-path to version 2.2.1 ([a4ce5be](https://github.com/danactive/history/commit/a4ce5be))
 * **package:** Update dependency @hapi/hapi ([f7be9fc](https://github.com/danactive/history/commit/f7be9fc))
@@ -1158,7 +1158,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### 1.0.0 - Replace express.js for hapi.js
 #### 2015-Feb-15
-* Replace grunt.js with gulp.js 
+* Replace grunt.js with gulp.js
 * Mostly async using callbacks and promises
 * Restructure folders to public and src
 
@@ -1217,7 +1217,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ###0.5.0 - added Node.js for admin section
 #### 2012-May-06
-* (Fix) Character association 
+* (Fix) Character association
 * (Add) Node.js modules Express & GraphicsMagick
 * (Add) Admin: Get getcode from map
 

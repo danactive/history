@@ -3,7 +3,7 @@ const tape = require('tape-catch');
 tape('GeoJSON Index', { skip: false }, (describe) => {
   const geojsonhint = require('@mapbox/geojsonhint');
   const hapi = require('@hapi/hapi');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
 
   const lib = require('../lib');
   const utils = require('../../utils');

@@ -1,7 +1,7 @@
 const boom = require('boom');
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
-const joi = require('@hapi/joi');
+const joi = require('joi');
 const notifier = require('node-notifier');
 
 require('tuxharness');

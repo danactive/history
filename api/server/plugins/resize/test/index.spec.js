@@ -5,7 +5,7 @@ const existsChecker = require('../../exists/lib/exists');
 tape('Verify /resize route', { skip: false }, (describe) => {
   const calipers = require('calipers')('jpeg');
   const hapi = require('@hapi/hapi');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
 
   const lib = require('../lib');
   const utils = require('../../utils');

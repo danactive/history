@@ -2,7 +2,7 @@ const tape = require('tape-catch');
 
 tape('Public Index', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
   const inert = require('@hapi/inert');
 
   const lib = require('../lib');

@@ -1,6 +1,6 @@
 const hapi = require('@hapi/hapi');
 const hapiReactViews = require('hapi-react-views');
-const joi = require('@hapi/joi');
+const joi = require('joi');
 const path = require('path');
 const querystring = require('querystring');
 

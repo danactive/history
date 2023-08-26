@@ -2,7 +2,7 @@ const tape = require('tape-catch');
 
 tape('Gallery Index', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
   const path = require('path');
   const inert = require('@hapi/inert');
 
