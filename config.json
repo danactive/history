@@ -6,6 +6,9 @@
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
   "defaultZoom": 10,
+  "defaultDimensions": {
+    "video": { "width": 1024, "height": 768 }
+  },
   "resizeDimensions": {
     "photo": { "width": 1024, "height": 768 },
     "thumb": { "width": 185, "height": 45 },

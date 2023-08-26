@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
 
+const config = require('../../../../../config.json');
 const utils = require('../../utils');
 const validation = require('../../../lib/validation');
 
@@ -70,7 +71,9 @@ function getVideoPath(item, gallery) {
   }
 
   const filename = (typeof item.filename === 'string') ? item.filename : item.filename.join(',');
-  const dimensions = (item.size) ? { width: item.size.w, height: item.size.h } : { width: '', height: '' };
+  const dimensions = (item.size)
+    ? { width: item.size.w, height: item.size.h }
+    : { width: config.defaultDimensions.video.width, height: config.defaultDimensions.video.height };
   return `/view/video?sources=${filename}&w=${dimensions.width}&h=${dimensions.height}&gallery=${gallery}`;
 }
 
