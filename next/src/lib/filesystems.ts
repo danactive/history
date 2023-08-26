@@ -1,10 +1,7 @@
-import globCallback from 'glob'
+import { glob } from 'glob'
 import path from 'node:path'
-import { promisify } from 'node:util'
 
 import utilsFactory from './utils'
-
-const glob = promisify(globCallback)
 
 type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
 const errorSchema = (message, destinationPath = ''): ErrorOptionalMessage => {
