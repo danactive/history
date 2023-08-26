@@ -35,13 +35,13 @@ export async function getStaticPaths() {
   }
 }
 
-const Albums = styled.div`
+const Albums = styled.div<{ $odd: boolean }>`
   float: left;
   width: 185px;
   height: 170px;
   padding: 10px;
   background: peachpuff;
-  ${({ odd }: { odd: boolean }) => odd && css`
+  ${(props) => props.$odd && css`
     background-color: linen;
   `}
 `
@@ -83,7 +83,7 @@ function AlbumsPage(
       {filtered.map((album, i) => (
         <Albums
           key={album.name}
-          odd={i % 2 === 0}
+          $odd={i % 2 === 0}
         >
           <Link href={`/${gallery}/${album.name}`}><Img src={album.thumbPath} alt={album.name} width={width} height={height} /></Link>
           <AlbumTitle>{album.h1}</AlbumTitle>

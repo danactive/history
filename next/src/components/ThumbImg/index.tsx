@@ -20,7 +20,7 @@ const Caption = styled.span`
   margin: 0 5px;
 `
 
-const ImgButton = styled.a`
+const ImgButton = styled.a<{ $viewed: boolean }>`
   display: block;
   border-style: solid;
   border-width: 5px 5px 20px;
@@ -29,7 +29,7 @@ const ImgButton = styled.a`
     border-color: orange;
   }
 
-  ${({ viewed }: { viewed: boolean }) => viewed && css`
+  ${(props) => props.$viewed && css`
       border-color: white;
   `}
 `
@@ -62,7 +62,7 @@ function ThumbImg({
 
   return (
     <Bullet>
-      <ImgButton viewed={viewed} href={href} onClick={handleClick} id={id}>
+      <ImgButton $viewed={viewed} href={href} onClick={handleClick} id={id}>
         <Img src={src} alt="Preview thumbnail (scaled down dimensions)" width={width} height={height} />
       </ImgButton>
       <Caption>{caption}</Caption>
