@@ -32,7 +32,7 @@
     "react-map-gl": "^7.1.5",
     "react-select": "^5.7.4",
     "styled-components": "^5.3.11",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.37.1",
@@ -40,7 +40,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/geojson": "^7946.0.10",
     "@types/jest": "^29.5.4",
-    "@types/node": "20.4.5",
+    "@types/node": "^20.5.6",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/styled-components": "^5.1.26",
@@ -59,7 +59,7 @@
     "snyk": "^1.1206.0",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.1.1",
-    "typescript": "5.1.6"
+    "typescript": "^5.2.2"
   },
   "engines": {
     "node": "18",
