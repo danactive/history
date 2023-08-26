@@ -2,7 +2,7 @@ import utilsFactory from '../utils'
 
 describe('Album library', () => {
   const gallery = 'demo'
-  const lib = utilsFactory(() => {})
+  const lib = utilsFactory()
 
   describe('filenameAsJpg', () => {
     const unit = lib.filenameAsJpg

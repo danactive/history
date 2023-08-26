@@ -2,9 +2,9 @@ import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
 import config from '../../config.json'
-import { get as getAlbums, type Album } from '../src/lib/albums'
-import { get as getGalleries } from '../src/lib/galleries'
-import { indexKeywords } from '../src/lib/search'
+import getAlbums, { type Album } from '../src/lib/albums'
+import getGalleries from '../src/lib/galleries'
+import indexKeywords from '../src/lib/search'
 
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'

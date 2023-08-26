@@ -1,9 +1,10 @@
+import { type Item } from '../../../types/common'
 import { transformMapOptions, transformSourceOptions, validatePoint } from '../options'
 
 describe('Options - <SlippyMap />', () => {
   describe('validatePoint', () => {
     test('Empty', () => {
-      const received = validatePoint()
+      const received = validatePoint(undefined)
       const expected = {
         isInvalidPoint: true,
         latitude: null,
@@ -14,6 +15,23 @@ describe('Options - <SlippyMap />', () => {
   })
 
   describe('Mapbox Source - transformSourceOptions', () => {
+    const mockItem: Item = {
+      id: '0',
+      filename: '2023-08-23-00.jpg',
+      city: 'North Vancouver',
+      location: 'Canada',
+      caption: 'Mock caption',
+      description: null,
+      search: null,
+      title: 'Mock title',
+      coordinates: null,
+      coordinateAccuracy: null,
+      thumbPath: './',
+      photoPath: './',
+      mediaPath: './',
+      videoPaths: './',
+      reference: null,
+    }
     test('Empty', () => {
       const received = transformSourceOptions()
       const expected = {
@@ -23,8 +41,7 @@ describe('Options - <SlippyMap />', () => {
     })
 
     test('All Invalid coordinates', () => {
-      const items = [{}, {}]
-      const received = transformSourceOptions(items)
+      const received = transformSourceOptions()
       const expected = {
         cluster: true, clusterMaxZoom: 13, clusterRadius: 50, data: { features: [], type: 'FeatureCollection' }, type: 'geojson',
       }
@@ -32,7 +49,10 @@ describe('Options - <SlippyMap />', () => {
     })
 
     test('All Valid coordinates', () => {
-      const items = [{ coordinates: [123, 321] }, { coordinates: [321, 123], coordinateAccuracy: 10 }]
+      const items: Item[] = [
+        { ...mockItem, coordinates: [123, 321] },
+        { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
+      ]
       const received = transformSourceOptions({ items, selected: items[1] })
       const features = [
         {
@@ -53,7 +73,11 @@ describe('Options - <SlippyMap />', () => {
     })
 
     test('Mix Valid or Invalid coordinates', () => {
-      const items = [{ filename: '123.jpg' }, { coordinates: null }, { coordinates: [321, 123], coordinateAccuracy: 10 }]
+      const items: Item[] = [
+        { ...mockItem, filename: '123.jpg' },
+        { ...mockItem, coordinates: null },
+        { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
+      ]
       const received = transformSourceOptions({ items })
       const features = [
         {

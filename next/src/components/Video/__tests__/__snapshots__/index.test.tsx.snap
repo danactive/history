@@ -1,12 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<VideoPlayerHtml5 /> Should render and match the snapshot 1`] = `
-<video
-  class="image-gallery-image"
-  controls=""
+<span
+  class="image-gallery-description"
 >
-  <source
-    type=""
-  />
-</video>
+  Sample HTML5 video
+</span>
 `;

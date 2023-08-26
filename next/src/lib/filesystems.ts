@@ -7,7 +7,7 @@ import utilsFactory from './utils'
 const glob = promisify(globCallback)
 
 type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
-export const errorSchema = (message, destinationPath = ''): ErrorOptionalMessage => {
+const errorSchema = (message, destinationPath = ''): ErrorOptionalMessage => {
   const out = { files: [], destinationPath }
   if (!message) return out
   return { ...out, error: { message } }
@@ -87,4 +87,5 @@ async function get(destinationPath = '', returnEnvelope = false): Promise<
   }
 }
 
+export { errorSchema }
 export default get

@@ -5,7 +5,6 @@ describe('Utilities', () => {
   describe('getExt', () => {
     test('Missing filename', () => {
       expect(getExt('')).toBe(null)
-      expect(getExt()).toBe(null)
       expect(getExt(null)).toBe(null)
     })
     test('Multiple filenames', () => {

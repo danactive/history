@@ -1,6 +1,6 @@
-export type AlbumMeta = {
+type AlbumMeta = {
   gallery?: string,
-  geo: {
+  geo?: {
     zoom: number
   },
   albumName?: string,
@@ -9,7 +9,15 @@ export type AlbumMeta = {
   clusterMaxZoom?: string,
 }
 
-export type Item = {
+type DirtyMeta = {
+  gallery?: string,
+  albumName?: string,
+  albumVersion?: string,
+  markerZoom?: string | never,
+  clusterMaxZoom?: string,
+}
+
+type Item = {
   id: string,
   filename: string,
   city: string,
@@ -27,7 +35,35 @@ export type Item = {
   reference: [string, string] | null,
 }
 
-export type Album = {
+type DirtyItem = {
+  $: {
+    id: string,
+  },
+  type?: 'video' | 'photo',
+  size?: { w: string, h: string },
+  filename: string | string[],
+  photoCity: string,
+  thumbCaption: string,
+  photoDesc: string,
+  geo?: {
+    lat: string,
+    lon: string,
+    accuracy: string,
+  },
+  ref?: {
+    name: string,
+    source: string,
+  }
+}
+
+type DirtyAlbum = {
+  album?: {
+    meta?: DirtyMeta,
+    item?: DirtyItem | DirtyItem[]
+  },
+}
+
+type Album = {
   album: {
     meta?: AlbumMeta,
     items: Item[]
@@ -39,4 +75,13 @@ declare module 'react-image-gallery' {
   interface ReactImageGalleryProps {
     useWindowKeyDown?: boolean;
   }
+}
+
+export type {
+  AlbumMeta,
+  DirtyMeta,
+  Album,
+  DirtyItem,
+  DirtyAlbum,
+  Item,
 }

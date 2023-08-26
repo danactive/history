@@ -28,7 +28,7 @@ async function getGalleryFromFilesystem(gallery) {
   return parseXml(fileBuffer)
 }
 
-export type Album = {
+type Album = {
   name: string;
   h1: string;
   h2: string;
@@ -99,18 +99,12 @@ async function get(gallery: string, returnEnvelope = false): Promise<Albums | Er
     return errorSchema()
   }
 }
-const out = {
-  get,
-  errorSchema,
-  getGalleryFromFilesystem,
-  transformJsonSchema,
-}
 
 export {
-  get,
+  type Album,
   errorSchema,
   getGalleryFromFilesystem,
   transformJsonSchema,
 }
 
-export default out
+export default get

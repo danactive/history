@@ -3,13 +3,11 @@ import path from 'path'
 import pathExists from '../exists'
 
 describe('Exists library', () => {
-  const errorSchema = (message) => message
-
   describe('Expect result', () => {
     const successTest = async (expect, testPath) => {
       expect.hasAssertions()
       try {
-        const verifiedPath = await pathExists(testPath, errorSchema)
+        const verifiedPath = await pathExists(testPath)
 
         const normalTestPath = path.normalize(testPath)
         expect(verifiedPath.endsWith(normalTestPath)).toBeTruthy()

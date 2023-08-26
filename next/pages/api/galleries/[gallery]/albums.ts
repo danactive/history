@@ -1,4 +1,4 @@
-import { get, errorSchema } from '../../../../src/lib/albums'
+import get, { errorSchema } from '../../../../src/lib/albums'
 
 export default async function handler(req, res) {
   const {

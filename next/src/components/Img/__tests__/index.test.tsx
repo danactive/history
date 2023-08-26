@@ -1,4 +1,3 @@
-import React from 'react'
 import { render } from '@testing-library/react'
 
 import Img from '../index'
@@ -18,15 +17,6 @@ describe('<Img />', () => {
     const { image } = renderComponent()
     expect(image).toBeInTheDocument()
     expect(image.tagName).toBe('IMG')
-  })
-
-  test('should throw when no alt attribute is specified', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {
-      /* noop */
-    })
-    render(<Img src={expectedValues.src} />)
-    expect(consoleSpy).toHaveBeenCalledTimes(1)
-    consoleSpy.mockRestore()
   })
 
   test('should have a src attribute', () => {

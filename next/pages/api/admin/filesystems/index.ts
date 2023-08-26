@@ -1,6 +1,7 @@
 import get, { errorSchema } from '../../../../src/lib/filesystems'
 
-export default async function handler({ method, query: { path } }, res) {
+export default async function handler(req, res) {
+  const { method, query: { path } } = req
   switch (method) {
     case 'GET': {
       const out = await get(path, true)

@@ -1,5 +1,11 @@
 import utilsFactory from '../lib/utils'
-import type { Album, AlbumMeta, Item } from '../types/common'
+import config from '../../../config.json'
+import type {
+  Album,
+  AlbumMeta,
+  DirtyAlbum,
+  Item,
+} from '../types/common'
 import { removeUndefinedFields } from '../utils'
 
 export type ErrorOptionalMessage = { album: object[]; error?: { message: string } }
@@ -11,52 +17,14 @@ export const errorSchema = (message): ErrorOptionalMessage => {
 
 const utils = utilsFactory()
 
-type DirtyItem = {
-  $: {
-    id: string,
-  },
-  filename: string,
-  photoCity: string,
-  thumbCaption: string,
-  photoDesc: string,
-  geo: {
-    lat: string,
-    lon: string,
-    accuracy: string,
-  },
-  ref: {
-    name: string,
-    source: string,
-  }
-}
-
-type DirtyAlbum = {
-  album?: {
-    meta?: AlbumMeta,
-    item: DirtyItem | DirtyItem[]
-  },
-}
-
-type ValidMeta = {
-  album: {
-    meta: {}
-  },
-}
-
-type ValidItem = {
-  album: {
-    items: [],
-  },
-}
-
-function isValidMeta(schema: unknown): schema is ValidMeta {
+function isValidMeta(schema: unknown): schema is AlbumMeta {
   if ('album' in (schema as any) && 'meta' in ((schema as any).album)) {
     return true
   }
   return false
 }
 
-function isValidItem(schema: unknown): schema is ValidItem {
+function isValidItem(schema: unknown): schema is Item {
   if ('item' in ((schema as any).album)) {
     return true
   }
@@ -112,17 +80,34 @@ export const reference = (item): [string, string] | null => {
   return null
 }
 
+function transformZoom(dirty: DirtyAlbum): AlbumMeta | undefined {
+  if (!isValidMeta(dirty)) {
+    return undefined
+  }
+
+  const { markerZoom, ...cleanMeta } = dirty.album.meta
+  const zoom = Number(markerZoom) === 0 || Number.isNaN(Number(markerZoom)) ? config.defaultZoom : Number(markerZoom)
+  return {
+    ...cleanMeta,
+    geo: {
+      zoom,
+    },
+  }
+}
+
 /**
  * Transform dirty JSON from XML into clean JSON schema
  * @param {object} dirty
  * @returns {object} clean JSON
  */
 const transformJsonSchema = (dirty: DirtyAlbum = {}): Album => {
+  const meta = transformZoom(dirty)
+
   if (!isValidMeta(dirty) || !isValidItem(dirty)) {
-    return { album: { items: [], ...dirty.album } }
+    return { album: { items: [], meta } }
   }
 
-  const { gallery } = dirty.album.meta
+  const { gallery } = meta
 
   const updateItem = (item): Item => {
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
@@ -155,13 +140,6 @@ const transformJsonSchema = (dirty: DirtyAlbum = {}): Album => {
   }
 
   const items = Array.isArray(dirty.album.item) ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
-  const meta = {
-    ...dirty.album.meta,
-    geo: {
-      zoom: Number(dirty.album.meta?.markerZoom) || 17,
-    },
-  }
-  delete meta.markerZoom
 
   return {
     album: {

@@ -1,3 +1,5 @@
+import config from '../../../../config.json'
+import type { DirtyAlbum } from '../../types/common'
 import transformJsonSchema, { reference } from '../album'
 
 describe('Album library', () => {
@@ -9,45 +11,46 @@ describe('Album library', () => {
 
     test('Meta', () => {
       const mock = { album: { meta: { gallery: 'demo' } } }
+      const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
       const result = transformJsonSchema(mock)
-      expect(result.album.meta).toEqual(mock.album.meta)
+      expect(result.album.meta).toEqual(expected)
       expect(result.album.items.length).toEqual(0)
     })
 
     test('Only one photo', () => {
-      const mock = { album: { meta: { gallery: 'demo' } } }
+      const mock = { album: { meta: { gallery: 'demo' }, item: null } }
       mock.album.item = { $: { id: 1 } }
-      const expected = { gallery: 'demo', geo: { zoom: 17 } }
+      const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
       const result = transformJsonSchema(mock)
       expect(result.album.meta).toEqual(expected)
       expect(result.album.items[0].id).toEqual(mock.album.item.$.id)
     })
 
     test('Raw items', () => {
-      const expectedMeta = { gallery: 'demo', geo: { zoom: 15 } }
-      const mock = {
+      const expectedMeta = { gallery: 'demo', geo: { zoom: 10 } }
+      const mock: DirtyAlbum = {
         album: {
-          meta: { gallery: 'demo', markerZoom: 15 },
+          meta: { gallery: 'demo', markerZoom: '10' },
           item: [
             {
-              $: { id: 1 },
+              $: { id: '1' },
               filename: '2016-Image-Filename.jpg',
               photoDesc: 'Desc',
               photoCity: 'City',
               thumbCaption: 'Caption',
             },
             {
-              $: { id: 2 },
+              $: { id: '2' },
               type: 'video',
               filename: ['2016-Video-Filename.mov', '2016-Video-Filename.avi'],
-              size: { w: 1280, h: 720 },
+              size: { w: '1280', h: '720' },
               photoDesc: 'Desc',
               photoCity: 'City',
               thumbCaption: 'Caption',
               geo: {
                 lat: '123',
                 lon: '-543.21',
-                accuracy: 15,
+                accuracy: '15',
               },
               ref: {
                 name: 'Purshia_tridentata',

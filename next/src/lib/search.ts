@@ -15,13 +15,15 @@ function indexKeywords(items) {
   }, {})
 
   const sortedKeywords = Object.fromEntries(
-    Object.entries(summedKeywords).sort(([, a], [, b]) => b - a),
+    Object.entries(summedKeywords).sort(([, a], [, b]) => {
+      if (b < a) return -1
+      if (a < b) return 1
+      return 0
+    }),
   )
 
   // prepare for react-select in useSearch custom hook
   return { indexedKeywords: Object.keys(sortedKeywords).map((i) => ({ label: `${i} (${sortedKeywords[i]})`, value: i })) }
 }
 
-module.exports = {
-  indexKeywords,
-}
+export default indexKeywords

@@ -1,10 +1,11 @@
 import { List, ListDivider, ListItem } from '@mui/joy'
 import { CssVarsProvider } from '@mui/joy/styles'
 import Head from 'next/head'
+import { Fragment } from 'react'
 import styled from 'styled-components'
 
 import Link from '../src/components/Link'
-import { get as getGalleries } from '../src/lib/galleries'
+import getGalleries from '../src/lib/galleries'
 
 export async function getStaticProps() {
   const { galleries } = await getGalleries()
@@ -51,10 +52,19 @@ function Home({ galleries }) {
               }}
             >
               {galleries && galleries.map((item, i) => (
-                <>
-                  {i > 0 && <ListDivider sx={{ background: '#ccc' }} inset="gutter" />}
-                  <ListItem><Link href={`/${item.gallery}`}>{item.gallery}</Link></ListItem>
-                </>
+                <Fragment key={`frag${item.gallery}`}>
+                  {i > 0 && (
+                    <ListDivider
+                      sx={{ background: '#ccc' }}
+                      inset="gutter"
+                    />
+                  )}
+                  <ListItem>
+                    <Link href={`/${item.gallery}`}>
+                      {item.gallery}
+                    </Link>
+                  </ListItem>
+                </Fragment>
               ))}
             </List>
           </Wrapper>

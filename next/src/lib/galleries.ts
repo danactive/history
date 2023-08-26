@@ -1,19 +1,37 @@
-const fsCallback = require('fs')
+import fsCallback from 'fs'
 
 const fs = fsCallback.promises
 
-const errorSchema = (message) => {
+type ErrorOptionalMessage = { galleries: object[]; error?: { message: string } }
+const errorSchema = (message?: string) => {
   const out = { galleries: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }
 
+type Gallery = string
+
+type Galleries = {
+  galleries: Gallery[]
+}
+
+type GalleryBody = {
+  body: Galleries; status: number;
+}
+
+type ErrorOptionalMessageBody = {
+  body: ErrorOptionalMessage; status: number;
+}
+
+async function get<T extends boolean = false>(returnEnvelope?: T): Promise<T extends true ? GalleryBody : Galleries>;
 /**
  * Get Galleries from local filesystem
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} galleries
  */
-async function get(returnEnvelope = false) {
+async function get(returnEnvelope = false): Promise<
+  Galleries | ErrorOptionalMessage | GalleryBody | ErrorOptionalMessageBody
+> {
   try {
     const hasPrefix = (content) => content.isDirectory()
     const namesOnly = (content) => content.name
@@ -35,7 +53,5 @@ async function get(returnEnvelope = false) {
   }
 }
 
-module.exports = {
-  get,
-  errorSchema,
-}
+export { errorSchema }
+export default get
