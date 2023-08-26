@@ -39,7 +39,7 @@
     "glob": "^7.2.3",
     "gm": "^1.25.0",
     "hapi-react-views": "^10.1.3",
-    "hapi-swagger": "^14.5.5",
+    "hapi-swagger": "^15.0.0",
     "isomorphic-fetch": "^2.2.1",
     "joi": "^17.9.2",
     "jquery-colorbox": "^1.6.4",
