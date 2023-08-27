@@ -23,7 +23,7 @@ type Item = {
   city: string,
   location: string,
   caption: string,
-  description: string | null,
+  description: string | undefined,
   search: string | null,
   title: string,
   coordinates: [number, number] | null,

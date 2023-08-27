@@ -1,9 +1,19 @@
-import { useContext, useEffect, useState } from 'react'
-import Map, { Source, Layer } from 'react-map-gl'
+import type { GeoJSONSource } from 'mapbox-gl'
+import {
+  useContext,
+  useEffect,
+  useState,
+  type MutableRefObject,
+} from 'react'
+import Map, { Layer, Source, type MapRef } from 'react-map-gl'
 
 import config from '../../../../config.json'
+import type { Item } from '../../types/common'
 import {
-  clusterLayer, clusterCountLayer, unclusteredPointLayer, selectedPointLayer,
+  clusterCountLayer,
+  clusterLayer,
+  selectedPointLayer,
+  unclusteredPointLayer,
 } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
@@ -11,10 +21,13 @@ import AlbumContext from '../Context'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
-export default function SlippyMap({ items = [], centroid, mapRef }) {
+export default function SlippyMap(
+  { items = [], centroid, mapRef }:
+  { items: Item[], centroid: Item, mapRef: MutableRefObject<MapRef> },
+) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
-  const coordinates = centroid?.coordinates ?? []
+  const coordinates = centroid?.coordinates ?? null
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
 
@@ -26,7 +39,7 @@ export default function SlippyMap({ items = [], centroid, mapRef }) {
     if (!feature) return
     const clusterId = feature.properties.cluster_id
 
-    const mapboxSource = mapRef.current.getMap().getSource('slippyMap')
+    const mapboxSource = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
 
     mapboxSource.getClusterExpansionZoom(clusterId, (err, clickZoom) => {
       if (err) {
@@ -36,7 +49,6 @@ export default function SlippyMap({ items = [], centroid, mapRef }) {
       mapRef.current.flyTo({
         center: feature.geometry.coordinates,
         zoom: clickZoom,
-        transitionDuration: 500,
       })
     })
   }

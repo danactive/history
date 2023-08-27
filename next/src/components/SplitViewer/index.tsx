@@ -2,6 +2,7 @@ import Color from 'color-thief-react'
 import React, { useContext, useRef, type LegacyRef } from 'react'
 import ImageGallery, { type ReactImageGalleryItem } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
+import type { MapRef } from 'react-map-gl'
 import styled from 'styled-components'
 
 import config from '../../../../config.json'
@@ -76,7 +77,7 @@ function SplitViewer({
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef(null)
-  const mapRef = useRef(null)
+  const mapRef = useRef<MapRef>(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
     if (div.requestFullscreen) {
@@ -99,7 +100,6 @@ function SplitViewer({
     mapRef.current.flyTo({
       center: items[carouselIndex].coordinates,
       zoom,
-      transitionDuration: 500,
     })
   }
   return (
