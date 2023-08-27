@@ -38,7 +38,7 @@ describe('Filesystem API', () => {
 
         expect(response.status).toBe(200)
 
-        matchFile(expect, result.files[1])
+        matchFile(expect, result.files[2])
         expect(result.files.length).toEqual(3)
       }
       await testApiHandler({ handler, test, params })

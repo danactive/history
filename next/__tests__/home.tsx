@@ -1,4 +1,4 @@
-import '../__mocks__/jsdom-missing'; // Must be imported before the tested file
+import '../__mocks__/jsdom-missing' // Must be imported before the tested file
 
 import { render } from '@testing-library/react'
 
