@@ -9,7 +9,7 @@ type AlbumMeta = {
   clusterMaxZoom?: string,
 }
 
-type DirtyMeta = {
+type XmlMeta = {
   gallery?: string,
   albumName?: string,
   albumVersion?: string,
@@ -17,13 +17,15 @@ type DirtyMeta = {
   clusterMaxZoom?: string,
 }
 
+type ItemReferenceSource = 'facebook' | 'google' | 'wikipedia' | 'youtube'
+
 type Item = {
   id: string,
-  filename: string,
+  filename: string | string[],
   city: string,
-  location: string,
+  location: string | null,
   caption: string,
-  description: string | undefined,
+  description: string | null,
   search: string | null,
   title: string,
   coordinates: [number, number] | null,
@@ -35,7 +37,7 @@ type Item = {
   reference: [string, string] | null,
 }
 
-type DirtyItem = {
+type XmlItem = {
   $: {
     id: string,
   },
@@ -43,8 +45,10 @@ type DirtyItem = {
   size?: { w: string, h: string },
   filename: string | string[],
   photoCity: string,
+  photoLoc?: string,
   thumbCaption: string,
-  photoDesc: string,
+  photoDesc?: string,
+  search?: string,
   geo?: {
     lat: string,
     lon: string,
@@ -52,22 +56,48 @@ type DirtyItem = {
   },
   ref?: {
     name: string,
-    source: string,
+    source: ItemReferenceSource,
   }
 }
 
-type DirtyAlbum = {
-  album?: {
-    meta?: DirtyMeta,
-    item?: DirtyItem | DirtyItem[]
+type XmlAlbum = {
+  album: {
+    meta?: XmlMeta,
+    item?: XmlItem | XmlItem[]
   },
 }
 
 type Album = {
   album: {
-    meta?: AlbumMeta,
+    meta: AlbumMeta,
     items: Item[]
   }
+}
+
+type XmlGalleryAlbum = {
+  albumName: string;
+  albumH1: string;
+  albumH2: string;
+  albumVersion: string;
+  filename: string;
+  year: string;
+  search?: string;
+}
+
+type XmlGallery = {
+  gallery: {
+    album: XmlGalleryAlbum | XmlGalleryAlbum[]
+  }
+}
+
+type GalleryAlbum = {
+  name: string;
+  h1: string;
+  h2: string;
+  version: string;
+  thumbPath: string;
+  year: string;
+  search: string | null;
 }
 
 // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/54659
@@ -79,9 +109,13 @@ declare module 'react-image-gallery' {
 
 export type {
   AlbumMeta,
-  DirtyMeta,
+  XmlMeta,
   Album,
-  DirtyItem,
-  DirtyAlbum,
+  XmlGallery,
+  XmlGalleryAlbum,
+  GalleryAlbum,
+  XmlItem,
+  XmlAlbum,
   Item,
+  ItemReferenceSource,
 }

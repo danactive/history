@@ -3,7 +3,7 @@ import config from '../../../../config.json'
 
 describe('Albums library', () => {
   describe('getGalleryFromFilesystem', () => {
-    const unit = async (gallery) => transformJsonSchema(await getGalleryFromFilesystem(gallery), gallery)
+    const unit = async (gallery: string) => transformJsonSchema(await getGalleryFromFilesystem(gallery), gallery)
 
     test('Default Album', async () => {
       const actual = await unit(config.defaultGallery)

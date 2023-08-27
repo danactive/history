@@ -1,16 +1,12 @@
 import camelCase from 'camelcase'
+import fs from 'node:fs/promises'
+import xml2js, { type ParserOptions } from 'xml2js'
 
-import fsCallback from 'node:fs'
-import { promisify } from 'node:util'
-import xml2js from 'xml2js'
-
-import transformJsonSchema, { type ErrorOptionalMessage, errorSchema } from '../models/album'
+import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
 import { Album } from '../types/common'
 
-const fs = fsCallback.promises
-const parseOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
+const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
-const parseXml = promisify(parser.parseString)
 
 /**
 * Get album XML from local filesystem
@@ -20,7 +16,7 @@ const parseXml = promisify(parser.parseString)
 */
 async function getXmlFromFilesystem(gallery: string, album: string) {
   const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/${album}.xml`)
-  return parseXml(fileBuffer)
+  return parser.parseStringPromise(fileBuffer)
 }
 
 type Envelope = { body: Album, status: number }
@@ -47,12 +43,14 @@ async function get(gallery: string, album: string, returnEnvelope: boolean): Ret
 
     return body
   } catch (e) {
-    const message = 'No album was found'
+    const message = `No album was found; gallery=${gallery}; album=${album};`
     if (returnEnvelope) {
       return { body: errorSchema(message), status: 404 }
     }
 
-    return errorSchema(message)
+    // eslint-disable-next-line no-console
+    console.error('ERROR', message, e)
+    throw e
   }
 }
 

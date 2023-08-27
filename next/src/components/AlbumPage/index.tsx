@@ -22,7 +22,7 @@ const Wrapper = styled.ul`
 
 function AlbumPage(
   { items = [], meta, indexedKeywords }:
-  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords },
+  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords: object[] },
 ) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
@@ -32,8 +32,8 @@ function AlbumPage(
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
 
-  function selectThumb(index) {
-    refImageGallery.current.slideToIndex(index)
+  function selectThumb(index: number) {
+    refImageGallery.current?.slideToIndex(index)
   }
 
   return (
@@ -60,7 +60,7 @@ function AlbumPage(
               caption={item.caption}
               key={item.filename.toString()}
               id={`select${item.id}`}
-              viewed={viewedList.has(item.id ?? item.filename)}
+              viewed={viewedList.has(item.id)}
             />
           ))}
         </Wrapper>

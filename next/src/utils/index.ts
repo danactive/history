@@ -12,3 +12,10 @@ export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj).reduce(
     : { ...acc, [key]: obj[key as keyof T] }),
     {} as T,
 )
+
+export function isNotEmpty(value: unknown): value is string {
+  if (typeof value !== 'undefined' || value !== null || value !== '') {
+    return true
+  }
+  return false
+}

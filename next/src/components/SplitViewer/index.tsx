@@ -41,7 +41,7 @@ const toCarousel = (item: Item) => {
     original: item.photoPath || item.thumbPath,
     thumbnail: item.thumbPath,
     description: item.description,
-    filename: item.filename,
+    filename: Array.isArray(item.filename) ? item.filename[0] : item.filename,
     mediaPath: item.mediaPath,
   }
 

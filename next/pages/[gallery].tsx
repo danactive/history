@@ -2,15 +2,16 @@ import Head from 'next/head'
 import styled, { css } from 'styled-components'
 
 import config from '../../config.json'
-import getAlbums, { type Album } from '../src/lib/albums'
+import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import indexKeywords from '../src/lib/search'
 
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
+import type { GalleryAlbum } from '../src/types/common'
 
-interface ServerSideAlbum extends Album {
+interface ServerSideAlbum extends GalleryAlbum {
   corpus: string;
 }
 

@@ -1,21 +1,19 @@
 import camelCase from 'camelcase'
-import fsCallback from 'node:fs'
-import { promisify } from 'node:util'
-import xml2js from 'xml2js'
+import fs from 'node:fs/promises'
+import xml2js, { type ParserOptions } from 'xml2js'
 
 import utilsFactory from './utils'
+import type { GalleryAlbum, XmlGallery, XmlGalleryAlbum } from '../types/common'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
-const errorSchema = (message: string = null): ErrorOptionalMessage => {
+const errorSchema = (message: string): ErrorOptionalMessage => {
   const out = { albums: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }
 
-const fs = fsCallback.promises
-const parseOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
+const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
-const parseXml = promisify(parser.parseString)
 const utils = utilsFactory()
 
 /**
@@ -23,27 +21,17 @@ const utils = utilsFactory()
  * @param {string} gallery name of gallery
  * @returns {string} album as JSON
  */
-async function getGalleryFromFilesystem(gallery) {
+async function getGalleryFromFilesystem(gallery: string): Promise<XmlGallery> {
   const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/gallery.xml`)
-  return parseXml(fileBuffer)
+  return parser.parseStringPromise(fileBuffer)
 }
 
-type Album = {
-  name: string;
-  h1: string;
-  h2: string;
-  version: string;
-  thumbPath: string;
-  year: string;
-  search: string;
+type GalleryAlbums = {
+  albums: GalleryAlbum[]
 }
 
-type Albums = {
-  albums: Album[]
-}
-
-type AlbumBody = {
-  body: Albums; status: number;
+type GalleryAlbumBody = {
+  body: GalleryAlbums; status: number;
 }
 
 type ErrorOptionalMessageBody = {
@@ -56,8 +44,8 @@ type ErrorOptionalMessageBody = {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-function transformJsonSchema(dirty = { gallery: { album: null } }, gallery = 'demo'): Albums {
-  const transform = (album) => ({
+function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery = 'demo'): GalleryAlbums {
+  const transform = (album: XmlGalleryAlbum) => ({
     name: album.albumName,
     h1: album.albumH1,
     h2: album.albumH2,
@@ -73,7 +61,7 @@ function transformJsonSchema(dirty = { gallery: { album: null } }, gallery = 'de
   return { albums: [transform(dirty.gallery.album)] }
 }
 
-async function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): Promise<T extends true ? AlbumBody : Albums>;
+async function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): Promise<T extends true ? GalleryAlbumBody : GalleryAlbums>;
 
 /**
  * Get Albums from local filesystem
@@ -81,7 +69,12 @@ async function get<T extends boolean = false>(gallery: string, returnEnvelope?: 
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: string, returnEnvelope = false): Promise<Albums | ErrorOptionalMessage | AlbumBody | ErrorOptionalMessageBody> {
+async function get(gallery: string, returnEnvelope = false): Promise<
+  GalleryAlbums
+  | ErrorOptionalMessage
+  | GalleryAlbumBody
+  | ErrorOptionalMessageBody
+> {
   try {
     const galleryRaw = await getGalleryFromFilesystem(gallery)
     const body = transformJsonSchema(galleryRaw, gallery)
@@ -92,19 +85,20 @@ async function get(gallery: string, returnEnvelope = false): Promise<Albums | Er
 
     return body
   } catch (e) {
+    const message = `No albums was found; gallery=${gallery};`
     if (returnEnvelope) {
-      return { body: errorSchema('No albums are found'), status: 404 }
+      return { body: errorSchema(message), status: 404 }
     }
 
-    return errorSchema()
+    // eslint-disable-next-line no-console
+    console.error('ERROR', message, e)
+    throw e
   }
 }
 
 export {
-  type Album,
   errorSchema,
   getGalleryFromFilesystem,
   transformJsonSchema,
 }
-
 export default get
