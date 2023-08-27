@@ -1,4 +1,4 @@
-module.exports = {
+const nextConfig = {
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
@@ -7,3 +7,4 @@ module.exports = {
     domains: ['localhost', '127.0.0.1'],
   },
 }
+export default nextConfig
