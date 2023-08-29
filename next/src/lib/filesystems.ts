@@ -84,5 +84,5 @@ async function get(destinationPath = '', returnEnvelope = false): Promise<
   }
 }
 
-export { errorSchema }
+export { errorSchema, type Filesystem }
 export default get

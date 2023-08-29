@@ -1,4 +1,10 @@
-function Source({ extension, src }) {
+import type { Filesystem } from '../../lib/filesystems'
+import type { Item } from '../../types/common'
+
+function Source(
+  { extension, src }:
+  { extension: Filesystem['ext'], src: Filesystem['path'] },
+) {
   let type = ''
   if (extension === 'mp4') {
     type = 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'
@@ -15,9 +21,17 @@ function Source({ extension, src }) {
   return <source src={src} type={type} />
 }
 
-function VideoPlayerHtml5({
-  extension, poster, src, description,
-}) {
+function VideoPlayerHtml5(
+  {
+    extension, poster, src, description,
+  }:
+  {
+    extension: Filesystem['ext'],
+    poster: Item['filename'][0],
+    src: Item['filename'][0],
+    description: Item['description'],
+  },
+) {
   return (
     <>
       {description && <span className="image-gallery-description">{description}</span>}

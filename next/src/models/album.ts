@@ -56,7 +56,7 @@ function caption(item: XmlItem) {
 }
 
 function assertCannotReach(x: never) {
-  throw new Error('Reference source missing: TypeScript should block this at compile time')
+  throw new Error(`Reference source missing: TypeScript should block this at compile time ${x}`)
 }
 
 export const reference = (item: XmlItem): [string, string] | null => {
@@ -138,9 +138,9 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
     const accuracy = item?.geo?.accuracy ? Number(item.geo.accuracy) : null
 
-    const thumbPath = utils.thumbPath(item, gallery)
-    const photoPath = utils.photoPath(item, gallery)
-    const videoPaths = utils.getVideoPaths(item, gallery)
+    const thumbPath = utils.thumbPath(item.filename, gallery)
+    const photoPath = utils.photoPath(item.filename, gallery)
+    const videoPaths = utils.getVideoPaths(item.filename, gallery)
 
     const out: Item = {
       id,
@@ -155,7 +155,7 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
       coordinateAccuracy: (accuracy === null || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
-      mediaPath: (item.type === 'video') ? videoPaths[0] : photoPath,
+      mediaPath: (item.type === 'video' && videoPaths) ? videoPaths[0] : photoPath,
       videoPaths,
       reference: reference(item),
     }

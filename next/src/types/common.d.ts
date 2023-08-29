@@ -33,7 +33,7 @@ type Item = {
   thumbPath: string,
   photoPath: string,
   mediaPath: string,
-  videoPaths: string,
+  videoPaths: string | string[] | null,
   reference: [string, string] | null,
 }
 
@@ -104,6 +104,25 @@ type GalleryAlbum = {
 declare module 'react-image-gallery' {
   interface ReactImageGalleryProps {
     useWindowKeyDown?: boolean;
+  }
+}
+
+// SplitViewer fullscreenMap
+// https://stackoverflow.com/questions/25993861/how-do-i-get-typescript-to-stop-complaining-about-functions-it-doesnt-know-abou
+declare global {
+  interface Document {
+    mozCancelFullScreen?: () => Promise<void>;
+    msExitFullscreen?: () => Promise<void>;
+    webkitExitFullscreen?: () => Promise<void>;
+    mozFullScreenElement?: Element;
+    msFullscreenElement?: Element;
+    webkitFullscreenElement?: Element;
+  }
+
+  interface HTMLElement {
+    msRequestFullscreen?: () => Promise<void>;
+    mozRequestFullScreen?: () => Promise<void>;
+    webkitRequestFullscreen?: () => Promise<void>;
   }
 }
 

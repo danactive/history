@@ -1,6 +1,6 @@
 import utilsFactory from '../utils'
 
-describe('Album library', () => {
+describe('Utils library', () => {
   const gallery = 'demo'
   const lib = utilsFactory()
 
@@ -42,6 +42,15 @@ describe('Album library', () => {
   test('thumbPath', () => {
     const item = { filename: '2016-12-31-01.jpg' }
     const expectedPath = `/galleries/${gallery}/media/thumbs/2016/${item.filename}`
-    expect(lib.thumbPath(item, gallery)).toBe(expectedPath)
+    expect(lib.thumbPath(item.filename, gallery)).toBe(expectedPath)
+  })
+
+  test('videoPaths', () => {
+    const videoFilenames = ['2016-12-31-01.mov', '2023-08-29-01.mp4']
+    const expectedPath = [
+      `/galleries/${gallery}/media/videos/2016/${videoFilenames[0]}`,
+      `/galleries/${gallery}/media/videos/2023/${videoFilenames[1]}`,
+    ]
+    expect(lib.getVideoPaths(videoFilenames, gallery)).toStrictEqual(expectedPath)
   })
 })

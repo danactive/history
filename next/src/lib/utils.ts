@@ -2,14 +2,16 @@ import mime from 'mime-types'
 import path from 'node:path'
 
 import configFile from '../../../config.json'
+import type {
+  AlbumMeta,
+  Item,
+  XmlItem,
+  XmlMeta,
+} from '../types/common'
 
 const { IMAGE_BASE_URL = '' } = process.env
 
-const type = (filepath: string): string | null => {
-  if (!filepath) {
-    return null
-  }
-
+const type = (filepath: string): string => {
   if (filepath.lastIndexOf('.') === 0) {
     return path.parse(filepath).name.substr(1)
   }
@@ -17,7 +19,7 @@ const type = (filepath: string): string | null => {
   return path.extname(filepath).substr(1)
 }
 
-const filenameAsJpg = (filename) => {
+const filenameAsJpg = (filename: Item['filename'][0]) => {
   const currentExt = type(filename)
   const futureExt = (currentExt.toLowerCase() === 'jpg' || currentExt.toLowerCase() === 'jpeg') ? currentExt : 'jpg'
   const imageFilename = filename.replace(currentExt, futureExt)
@@ -31,13 +33,8 @@ const filenameAsJpg = (filename) => {
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
-const rasterPath = (item, gallery, rasterType) => {
-  if (!item || !item.filename) {
-    return ''
-  }
-
-  const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
-  const imageFilename = filenameAsJpg(filename)
+const rasterPath = (filename: XmlItem['filename'], gallery: XmlMeta['gallery'], rasterType: 'photo' | 'thumb') => {
+  const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
 
   return `${IMAGE_BASE_URL}/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
@@ -49,20 +46,16 @@ const rasterPath = (item, gallery, rasterType) => {
  * @param {string} gallery
  * @returns {string[]} path
  */
-const getVideoPaths = (item, gallery) => {
-  if (!item || !item.filename) {
-    return [null]
-  }
-
-  const filenames = Array.isArray(item.filename) ? item.filename : [item.filename]
-  return filenames.map((filename) => {
-    const year = filename.indexOf('-') >= 0 && filename.split('-')[0]
-    return `${IMAGE_BASE_URL}/galleries/${gallery}/media/videos/${year}/${filename}`
+const getVideoPaths = (filename: XmlItem['filename'], gallery: AlbumMeta['gallery']) => {
+  const filenames = Array.isArray(filename) ? filename : [filename]
+  return filenames.map((f) => {
+    const year = f.indexOf('-') >= 0 && f.split('-')[0]
+    return `${IMAGE_BASE_URL}/galleries/${gallery}/media/videos/${year}/${f}`
   })
 }
 
-function customMime(rawExtension) {
-  const extension = (rawExtension) ? rawExtension.toLowerCase() : null
+function customMime(rawExtension: string) {
+  const extension = (rawExtension) ? rawExtension.toLowerCase() : ''
 
   if (['raw', 'arw'].includes(extension)) {
     return 'image/raw'
@@ -88,8 +81,8 @@ function customMime(rawExtension) {
 function utils() {
   return {
     type,
-    mimeType: (extension) => customMime(extension) || mime.lookup(extension),
-    mediumType: (extension) => {
+    mimeType: (extension: string) => customMime(extension) || mime.lookup(extension),
+    mediumType: (extension: string | false) => {
       if (!extension || typeof extension !== 'string') {
         return false
       }
@@ -108,8 +101,8 @@ function utils() {
 
       return extension.split('/')[0]
     },
-    thumbPath: (item, gallery) => rasterPath(item, gallery, 'thumb'),
-    photoPath: (item, gallery) => rasterPath(item, gallery, 'photo'),
+    thumbPath: (filename: XmlItem['filename'], gallery: XmlMeta['gallery']) => rasterPath(filename, gallery, 'thumb'),
+    photoPath: (filename: XmlItem['filename'], gallery: XmlMeta['gallery']) => rasterPath(filename, gallery, 'photo'),
     getVideoPaths,
     filenameAsJpg,
     /*
@@ -131,12 +124,12 @@ function utils() {
         }
 
         return safeDestinationPath
-      } catch (error) {
-        if (error.name === 'TypeError') { // path core module error
+      } catch (e) {
+        if (e instanceof TypeError) { // path core module error
           throw new Error('Invalid file system path')
         }
 
-        throw new Error(error.message)
+        throw e
       }
     },
   }

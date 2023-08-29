@@ -4,11 +4,11 @@ import { transformMapOptions, transformSourceOptions, validatePoint } from '../o
 describe('Options - <SlippyMap />', () => {
   describe('validatePoint', () => {
     test('Empty', () => {
-      const received = validatePoint(undefined)
+      const received = validatePoint([0, 0])
       const expected = {
         isInvalidPoint: true,
-        latitude: null,
-        longitude: null,
+        latitude: 0,
+        longitude: 0,
       }
       expect(received).toEqual(expected)
     })
@@ -32,21 +32,6 @@ describe('Options - <SlippyMap />', () => {
       videoPaths: './',
       reference: null,
     }
-    test('Empty', () => {
-      const received = transformSourceOptions()
-      const expected = {
-        cluster: true, clusterMaxZoom: 13, clusterRadius: 50, data: { features: [], type: 'FeatureCollection' }, type: 'geojson',
-      }
-      expect(received).toEqual(expected)
-    })
-
-    test('All Invalid coordinates', () => {
-      const received = transformSourceOptions()
-      const expected = {
-        cluster: true, clusterMaxZoom: 13, clusterRadius: 50, data: { features: [], type: 'FeatureCollection' }, type: 'geojson',
-      }
-      expect(received).toEqual(expected)
-    })
 
     test('All Valid coordinates', () => {
       const items: Item[] = [
@@ -78,11 +63,13 @@ describe('Options - <SlippyMap />', () => {
         { ...mockItem, coordinates: null },
         { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
       ]
-      const received = transformSourceOptions({ items })
+      const received = transformSourceOptions({ items, selected: { coordinates: items[2].coordinates } })
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: {},
+          properties: {
+            selected: true,
+          },
           type: 'Feature',
         },
       ]
@@ -94,12 +81,6 @@ describe('Options - <SlippyMap />', () => {
   })
 
   describe('Mapbox Map - transformMapOptions', () => {
-    test('Empty', () => {
-      const received = transformMapOptions()
-      const expected = {}
-      expect(received).toEqual(expected)
-    })
-
     test('Empty Null', () => {
       const received = transformMapOptions({ coordinates: null })
       const expected = {}

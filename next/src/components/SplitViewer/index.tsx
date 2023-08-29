@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
 import React, { useContext, useRef, type LegacyRef } from 'react'
-import ImageGallery, { type ReactImageGalleryItem } from 'react-image-gallery'
+import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
 import type { MapRef } from 'react-map-gl'
 import styled from 'styled-components'
@@ -13,6 +13,7 @@ import Video from '../Video'
 
 import { Viewed } from '../../hooks/useMemory'
 import { Item } from '../../types/common'
+import { validatePoint } from '../SlippyMap/options'
 
 const Split = styled.section`
   display: grid;
@@ -30,30 +31,38 @@ const Right = styled.section`
   height: 80vh;
 `
 
-type ImageGalleryType = ReactImageGalleryItem & {
+interface ImageGalleryType extends ReactImageGalleryItem {
   filename: string;
   mediaPath: string;
-  renderItem?(item: ReactImageGalleryItem & { mediaPath: string; }): React.ReactNode;
+  caption: string;
+  renderItem?(item: ReactImageGalleryItem & { caption: string; mediaPath: string; }): React.ReactNode;
 }
 
 const toCarousel = (item: Item) => {
   const imageGallery: ImageGalleryType = {
+    caption: item.caption,
     original: item.photoPath || item.thumbPath,
     thumbnail: item.thumbPath,
-    description: item.description,
     filename: Array.isArray(item.filename) ? item.filename[0] : item.filename,
     mediaPath: item.mediaPath,
+  }
+
+  if (item.description) {
+    imageGallery.description = item.description
+    imageGallery.caption = item.caption
   }
 
   const extension = getExt(item.mediaPath)
   const isVideo = config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
-    imageGallery.renderItem = ({ original, mediaPath, description }) => (
+    imageGallery.renderItem = ({
+      original, mediaPath, description, caption,
+    }) => (
       <Video
         extension={extension}
         src={mediaPath}
         poster={original}
-        description={description}
+        description={description ?? caption}
       />
     )
   }
@@ -76,31 +85,34 @@ function SplitViewer({
 }) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
-  const refMapBox = useRef(null)
+  const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
   const fullscreenMap = () => {
     const div = refMapBox.current
-    if (div.requestFullscreen) {
+    if (div?.requestFullscreen) {
       div.requestFullscreen()
-    } else if (div.webkitRequestFullscreen) {
+    } else if (div?.webkitRequestFullscreen) {
       div.webkitRequestFullscreen()
-    } else if (div.msRequestFullScreen) {
-      div.msRequestFullScreen()
-    } else if (div.mozRequestFullScreen) {
+    } else if (div?.msRequestFullscreen) {
+      div.msRequestFullscreen()
+    } else if (div?.mozRequestFullScreen) {
       div.mozRequestFullScreen()
     } else {
       console.error('Failed to fullscreen') // eslint-disable-line no-console
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
-  const handleBeforeSlide = (carouselIndex) => {
+  const handleBeforeSlide: ReactImageGalleryProps['onBeforeSlide'] = (carouselIndex) => {
     setMemoryIndex(carouselIndex)
     setViewed(carouselIndex)
-    const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
-    mapRef.current.flyTo({
-      center: items[carouselIndex].coordinates,
-      zoom,
-    })
+    const { isInvalidPoint, latitude, longitude } = validatePoint(items[carouselIndex].coordinates)
+    if (mapRef && mapRef.current && !isInvalidPoint) {
+      const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
+      mapRef.current.flyTo({
+        center: [longitude, latitude],
+        zoom,
+      })
+    }
   }
   return (
     <>

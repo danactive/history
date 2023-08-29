@@ -3,12 +3,13 @@ import {
   useContext,
   useEffect,
   useState,
-  type MutableRefObject,
+  type RefObject,
 } from 'react'
 import Map, { Layer, Source, type MapRef } from 'react-map-gl'
 
 import config from '../../../../config.json'
 import type { Item } from '../../types/common'
+import AlbumContext from '../Context'
 import {
   clusterCountLayer,
   clusterLayer,
@@ -17,17 +18,15 @@ import {
 } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
-import AlbumContext from '../Context'
-
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 export default function SlippyMap(
   { items = [], centroid, mapRef }:
-  { items: Item[], centroid: Item, mapRef: MutableRefObject<MapRef> },
+  { items: Item[], centroid: Item, mapRef: RefObject<MapRef> | null },
 ) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
-  const coordinates = centroid?.coordinates ?? null
+  const { coordinates } = centroid
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
 
@@ -36,7 +35,9 @@ export default function SlippyMap(
   }, [centroid])
   const onClick = (event) => {
     const feature = event.features[0]
-    if (!feature) return
+    if (!(feature && mapRef?.current)) {
+      return
+    }
     const clusterId = feature.properties.cluster_id
 
     const mapboxSource = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
@@ -46,14 +47,21 @@ export default function SlippyMap(
         return
       }
 
-      mapRef.current.flyTo({
-        center: feature.geometry.coordinates,
-        zoom: clickZoom,
-      })
+      if (mapRef?.current) {
+        mapRef.current.flyTo({
+          center: feature.geometry.coordinates,
+          zoom: clickZoom,
+        })
+      }
     })
   }
 
   const geoJsonSource = transformSourceOptions({ items, selected: { coordinates } })
+  const layerIds = []
+  if (clusterLayer.id) layerIds.push(clusterLayer.id)
+  if (clusterCountLayer.id) layerIds.push(clusterCountLayer.id)
+  if (selectedPointLayer.id) layerIds.push(selectedPointLayer.id)
+  if (unclusteredPointLayer.id) layerIds.push(unclusteredPointLayer.id)
 
   return (
     <>
@@ -69,7 +77,7 @@ export default function SlippyMap(
         ref={mapRef}
         mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={[clusterLayer.id, clusterCountLayer.id, selectedPointLayer.id, unclusteredPointLayer.id]}
+        interactiveLayerIds={layerIds}
         onClick={onClick}
         onMove={(evt) => setViewport(evt.viewState)}
       >
