@@ -1,9 +1,9 @@
-const gallery = require('../../../../../next/src/lib/galleries');
+const gallery = require('../../gallery/lib/gallery');
 
 async function handler(request, reply) {
   const isRaw = request.query.raw;
-  const viewPath = 'api/server/plugins/home/components/page.jsx';
-  const { galleries } = await gallery.get();
+  const viewPath = 'plugins/home/components/page.jsx';
+  const galleries = await gallery.getGalleries();
   const out = { galleries };
 
   if (isRaw) {

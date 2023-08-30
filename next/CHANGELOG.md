@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.0.0](https://github.com/danactive/history/compare/v8.3.0...v9.0.0) (2023-08-30)
+
+
+### Features
+
+* **Next > CI:** Add Playwright end-to-end test workflow ([fbf5186](https://github.com/danactive/history/commit/fbf5186d1a343e4c7f38cf88deebeaf85b4de3ba))
+* **Next > Dep:** Major update to glob v7 to v10 ([882d08a](https://github.com/danactive/history/commit/882d08a067ee6e30bc7f78c8acd22b93cf6d687a))
+* **Next > Dep:** Major update to styled-components v5 to v6 ([c58337e](https://github.com/danactive/history/commit/c58337ee1698e12059a9a095c6d5e771f01c21f3))
+* **Next > Image Gallery:** Improve types ([ebc4f13](https://github.com/danactive/history/commit/ebc4f133ee9106fdc6326c400781a1098f0b498f))
+* **Next > MUI:** Add MUI Joy UI ([1037fa1](https://github.com/danactive/history/commit/1037fa1369c514d436695505a4043d7c96361c45))
+* **Next > MUI:** Drop GenericList, List, ListItem, LoadingIndicator as duplicate UI components of MUI ([6422bbd](https://github.com/danactive/history/commit/6422bbd43081e025d238485f46dc91ddeeff6fb1))
+* **Next > package:** Upgrade Next.js to v13 ([dca2868](https://github.com/danactive/history/commit/dca28689fb5017b20f601fade66c87d4164357f9))
+* **Next > TypeScript:** Add TypeScript with some errors, lint, test ([1dd2e0f](https://github.com/danactive/history/commit/1dd2e0f931ba036799952dfc8875278bf5522269))
+
+
+### Bug Fixes
+
+* **API > Deps:** Update hapi-swagger due to vulnerability ([29ee6b8](https://github.com/danactive/history/commit/29ee6b89a50db21b304e4383df1ee51256cb360b))
+* **API > MapBox:** Upgrade from Mapbox GL JS v0 to v2 ([e52a310](https://github.com/danactive/history/commit/e52a310f1cfd1558b6b2a2efd9e26698ca3f550e))
+* **API > v7:** Rollback to v7 to stop sharing code with Next.js ([0f39075](https://github.com/danactive/history/commit/0f39075b86ce4842664c11ce436cf3068a6e902e))
+* **API > Video:** Add default dimensions for video playback otherwise broken modal ([28a2639](https://github.com/danactive/history/commit/28a2639436b702fc39715476e2023ea40487ef9a))
+* **Next > CI:** Disable eslint errors with TypeScript code ([8bb0b32](https://github.com/danactive/history/commit/8bb0b322393fe92257679ab957b91592a72f5522))
+* **Next > CI:** Drop Font import as Jest is not configured yet. Polyfil for matchMedia ([55f0eba](https://github.com/danactive/history/commit/55f0ebaa553ee6ccdbd9ba91990b29edd5ab794a))
+* **Next > CI:** Enable eslint in CI ([9a24de8](https://github.com/danactive/history/commit/9a24de8aa0e787d2c002f636d228a34587fd4bca))
+* **Next > CI:** Enable unit testing in CI ([6258fed](https://github.com/danactive/history/commit/6258fed2781ddf306e3298acbc14c76bd51ca99f))
+* **Next > CI:** Enable unit testing in CI ([4f7706b](https://github.com/danactive/history/commit/4f7706be9b6f876a18de62f304dddf110aa89727))
+* **Next > CI:** Tighter version control as CI build failing ([0d50f8b](https://github.com/danactive/history/commit/0d50f8b39b5e5ede9e6289120613cde17a193c8e))
+* **Next > CI:** Tighter version control as CI build failing ([15e3595](https://github.com/danactive/history/commit/15e3595d32c2342f9dc021089fb17856f17c4ab8))
+* **Next > CI:** Vercel deploy UI failed so this updates the Node.js version ([819e0c3](https://github.com/danactive/history/commit/819e0c3e22a0e3992ba4a8418d54eaa6cab666bb))
+* **Next > Image Gallery:** Update CSS based on npm module tests still pass ([d6ccfe6](https://github.com/danactive/history/commit/d6ccfe6072c1809bc8ec23dc727ce25c8c556123))
+* **Next > Loadable:** Drop loadable due to underuse ([270734f](https://github.com/danactive/history/commit/270734f1a0c1d393fb388582ce8291d49d913a6d))
+* **Next > Node:** Reduce type error ([cc03121](https://github.com/danactive/history/commit/cc031210ec86bf78b7a4b25ce063871d308703a8))
+* **Next > Node:** Update to latest LTE version ([c005221](https://github.com/danactive/history/commit/c005221a80be3714199f29f2cdf5e9fceb71ac83))
+* **Next > npm:** Decrease underused deps ([6f3257f](https://github.com/danactive/history/commit/6f3257f977e94d9a944613c61671139332bf75ff))
+* **Next > Today:** Fix date format so OS can change away from YYYY-MM-DD ([e0435f8](https://github.com/danactive/history/commit/e0435f87646f7d4435e47cb7af8de98f105c1766))
+* **Next > TypeScript:** Album transpiles with TS ([4c7d850](https://github.com/danactive/history/commit/4c7d850c3a0e641aff511ef3346c6b654b2fb519))
+* **Next > TypeScript:** Album transpiles with TS passes lint ([794779f](https://github.com/danactive/history/commit/794779f1754a7e1600c74ebdd8c918d6fc2859bb))
+* **Next > TypeScript:** Album transpiles with TS passing tests ([e8f1aaa](https://github.com/danactive/history/commit/e8f1aaabb4293c846567246971115fb8bc0fd445))
+* **Next > TypeScript:** Restory mapbox filter has selected so orange marker appears ([29a5baf](https://github.com/danactive/history/commit/29a5baf12f8561f9cb90140624d1965401cfcd13))
+* **Next > TypeScript:** Upgrade jest to support typescript ([893950c](https://github.com/danactive/history/commit/893950ccaed8de44611bcd9ff36f82f02e7c00e6))
+
 ## [8.3.0](https://github.com/danactive/history/compare/v8.2.0...v8.3.0) (2022-11-14)
 
 
@@ -479,7 +520,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **Babel:** Decrease babel config ([ccb48f6](https://github.com/danactive/history/commit/ccb48f6))
 * **package:** Remove dev dependency babel-tape-runner ([fded616](https://github.com/danactive/history/commit/fded616))
-* **package:** Update @hapi/joi to version 15.0.3 ([0da52f4](https://github.com/danactive/history/commit/0da52f4))
+* **package:** Update joi to version 15.0.3 ([0da52f4](https://github.com/danactive/history/commit/0da52f4))
 * **package:** Update @hapi/wreck to version 15.0.1 ([4096fe6](https://github.com/danactive/history/commit/4096fe6))
 * **package:** Update app-root-path to version 2.2.1 ([a4ce5be](https://github.com/danactive/history/commit/a4ce5be))
 * **package:** Update dependency @hapi/hapi ([f7be9fc](https://github.com/danactive/history/commit/f7be9fc))
@@ -1158,7 +1199,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### 1.0.0 - Replace express.js for hapi.js
 #### 2015-Feb-15
-* Replace grunt.js with gulp.js 
+* Replace grunt.js with gulp.js
 * Mostly async using callbacks and promises
 * Restructure folders to public and src
 
@@ -1217,7 +1258,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ###0.5.0 - added Node.js for admin section
 #### 2012-May-06
-* (Fix) Character association 
+* (Fix) Character association
 * (Add) Node.js modules Express & GraphicsMagick
 * (Add) Admin: Get getcode from map
 

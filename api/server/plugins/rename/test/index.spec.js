@@ -2,7 +2,7 @@ const tape = require('tape-catch');
 
 tape('Verify /rename route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
   const path = require('path');
 
   const lib = require('../lib');
