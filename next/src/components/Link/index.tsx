@@ -1,5 +1,5 @@
-import { memo } from 'react'
 import NextLink from 'next/link'
+import { memo, type ReactNode } from 'react'
 import styled from 'styled-components'
 
 const ColouredLink = styled.a`
@@ -24,6 +24,8 @@ const ColouredLink = styled.a`
 
 function Link({
   children, href, title = '', ...props
+}: {
+  children: ReactNode, href: string, title?: string,
 }) {
   return (
     <NextLink href={href} {...props} passHref legacyBehavior>

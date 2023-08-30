@@ -1,13 +1,18 @@
 import { List, ListDivider, ListItem } from '@mui/joy'
 import { CssVarsProvider } from '@mui/joy/styles'
+import { type GetStaticProps } from 'next'
 import Head from 'next/head'
 import { Fragment } from 'react'
 import styled from 'styled-components'
 
 import Link from '../src/components/Link'
-import getGalleries from '../src/lib/galleries'
+import getGalleries, { type Gallery } from '../src/lib/galleries'
 
-export async function getStaticProps() {
+type Props = {
+  galleries: { id: Gallery; gallery: Gallery }[]
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
   const { galleries } = await getGalleries()
 
   return {
@@ -27,7 +32,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 `
 
-function Home({ galleries }) {
+function Home({ galleries }: Props) {
   return (
     <>
       <Head>

@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 import Home from '../pages'
 
 test('renders deploy link', () => {
-  const { getByText } = render(<Home galleries={['demo']} />)
+  const { getByText } = render(<Home galleries={[{ id: 'demo', gallery: 'demo' }]} />)
   const h1 = getByText(
     /List of Galleries/,
   )

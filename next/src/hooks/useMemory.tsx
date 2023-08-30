@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { RefObject, useEffect, useState } from 'react'
+import type ReactImageGallery from 'react-image-gallery'
 import styled from 'styled-components'
 
 import Link from '../components/Link'
+import type { Item } from '../types/common'
 
 const City = styled.h3`
   display: inline;
@@ -14,7 +16,10 @@ const Location = styled.h4`
 interface Viewed {
   (index: number): void;
 }
-const useMemory = (filtered, refImageGallery) => {
+const useMemory = (
+  filtered: Item[],
+  refImageGallery: RefObject<ReactImageGallery>,
+) => {
   const [viewedList, setViewedList] = useState(new Set<string>())
   const [details, setDetails] = useState(filtered[0])
 
@@ -23,7 +28,9 @@ const useMemory = (filtered, refImageGallery) => {
     setViewedList(new Set([...viewedList, filtered[index]?.id ?? filtered[index]?.filename]))
   }
   useEffect(() => {
-    setViewed(refImageGallery.current.getCurrentIndex())
+    if (refImageGallery.current) {
+      setViewed(refImageGallery.current.getCurrentIndex())
+    }
   }, [filtered[0]])
 
   const memoryHtml = details ? (

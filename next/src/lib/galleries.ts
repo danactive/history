@@ -53,5 +53,5 @@ async function get(returnEnvelope = false): Promise<
   }
 }
 
-export { errorSchema }
+export { errorSchema, type Gallery }
 export default get

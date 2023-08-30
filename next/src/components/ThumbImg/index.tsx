@@ -50,7 +50,7 @@ function ThumbImg({
   viewed: boolean,
 }) {
   const [viewed, setViewed] = useState(previewed)
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     setViewed(true)
     onClick?.()

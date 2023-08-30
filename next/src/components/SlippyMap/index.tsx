@@ -1,3 +1,4 @@
+import { type FeatureCollection } from 'geojson'
 import type { GeoJSONSource } from 'mapbox-gl'
 import {
   useContext,
@@ -38,12 +39,12 @@ export default function SlippyMap(
     return null
   }
 
-  const onClick = (event) => {
+  const onClick = (event: FeatureCollection) => {
     const feature = event.features[0]
     if (!(feature && mapRef?.current)) {
       return
     }
-    const clusterId = feature.properties.cluster_id
+    const clusterId = feature.properties?.cluster_id
 
     const mapboxSource = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
 
@@ -54,6 +55,7 @@ export default function SlippyMap(
 
       if (mapRef?.current) {
         mapRef.current.flyTo({
+          // @ts-ignore
           center: feature.geometry.coordinates,
           zoom: clickZoom,
         })
@@ -83,6 +85,8 @@ export default function SlippyMap(
         mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
         mapboxAccessToken={MAPBOX_TOKEN}
         interactiveLayerIds={layerIds}
+        /*
+        // @ts-ignore */
         onClick={onClick}
         onMove={(evt) => setViewport(evt.viewState)}
       >

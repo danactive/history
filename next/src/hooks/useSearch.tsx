@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 import Select from 'react-select/creatable'
+import styled from 'styled-components'
 
 interface ServerSideItem {
   corpus: string;
@@ -21,13 +21,18 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
+interface ReactSelectNewValue {
+  value: string;
+  label: string;
+}
+
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: object[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState(null)
+  const [selectedOption, setSelectedOption] = useState<ReactSelectNewValue | null>(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -39,7 +44,7 @@ function useSearch<ItemType extends ServerSideItem>(
     return `${router.asPath}?keyword=${keyword}`
   }
 
-  function handleSubmit(event) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setKeyword(selectedOption?.value ?? '')
     setMemoryIndex?.(0)
@@ -54,6 +59,8 @@ function useSearch<ItemType extends ServerSideItem>(
           isClearable
           options={indexedKeywords}
           value={selectedOption}
+          /*
+          // @ts-ignore */
           onChange={setSelectedOption}
         />
         <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
@@ -72,7 +79,11 @@ function useSearch<ItemType extends ServerSideItem>(
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword?.toString())
-      setSelectedOption({ label: router.query.keyword, value: router.query.keyword })
+      const newValue: ReactSelectNewValue = {
+        label: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
+        value: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
+      }
+      setSelectedOption(newValue)
     }
   }, [router.isReady])
 
