@@ -2,7 +2,7 @@ const validation = require('../../../lib/validation');
 
 const handler = (request, reply) => new Promise((resolve) => {
   const isRaw = request.query.raw;
-  const viewPath = 'api/server/plugins/video/components/page.jsx';
+  const viewPath = 'plugins/video/components/page.jsx';
   const handleResponse = (json) => ((isRaw) ? resolve(json) : resolve(reply.view(viewPath, json)));
 
   handleResponse({ video: request.query });

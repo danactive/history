@@ -3,7 +3,7 @@ const tape = require('tape-catch');
 tape('Verify home / route', { skip: false }, (describe) => {
   const hapi = require('@hapi/hapi');
   const hapiReactViews = require('hapi-react-views');
-  const joi = require('@hapi/joi');
+  const joi = require('joi');
   const inert = require('@hapi/inert');
   const path = require('path');
   const querystring = require('querystring');
@@ -28,7 +28,7 @@ tape('Verify home / route', { skip: false }, (describe) => {
       engines: {
         jsx: hapiReactViews,
       },
-      relativeTo: path.join(__dirname, '../../../../../'),
+      relativeTo: path.join(__dirname, '../../../'),
     };
 
     const request = {
