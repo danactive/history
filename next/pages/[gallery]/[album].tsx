@@ -1,9 +1,12 @@
+import type { GetStaticPaths, GetStaticProps } from 'next'
+import { type ParsedUrlQuery } from 'node:querystring'
+
+import AlbumPageComponent from '../../src/components/AlbumPage'
 import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords from '../../src/lib/search'
-
-import AlbumPageComponent from '../../src/components/AlbumPage'
+import type { AlbumMeta, Item } from '../../src/types/common'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -14,8 +17,24 @@ async function buildStaticPaths() {
   return groups.flat()
 }
 
-export async function getStaticProps({ params: { gallery, album } }) {
-  const { album: { items, meta } } = await getAlbum(gallery, album)
+interface ServerSideAlbumItem extends Item {
+  corpus: string;
+}
+
+type Props = {
+  items?: ServerSideAlbumItem[];
+  meta: AlbumMeta;
+  indexedKeywords: object[];
+}
+
+interface Params extends ParsedUrlQuery {
+  gallery: NonNullable<AlbumMeta['gallery']>
+  album: NonNullable<AlbumMeta['albumName']>
+}
+
+export const getStaticProps: GetStaticProps<Props, Params> = async (context) => {
+  const params = context.params!
+  const { album: { items, meta } } = await getAlbum(params.gallery, params.album)
   const preparedItems = items.map((item) => ({
     ...item,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
@@ -26,15 +45,15 @@ export async function getStaticProps({ params: { gallery, album } }) {
   }
 }
 
-export async function getStaticPaths() {
-  // Define these albums as allowed, otherwise 404
-  return {
+// Define these albums as allowed, otherwise 404
+export const getStaticPaths: GetStaticPaths = async () => (
+  {
     paths: await buildStaticPaths(),
     fallback: false,
   }
-}
+)
 
-function AlbumPage({ items = [], meta, indexedKeywords }) {
+function AlbumPage({ items = [], meta, indexedKeywords }: Props) {
   return <AlbumPageComponent items={items} meta={meta} indexedKeywords={indexedKeywords} />
 }
 

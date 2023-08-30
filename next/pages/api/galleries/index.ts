@@ -1,6 +1,8 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
+
 import get, { errorSchema } from '../../../src/lib/galleries'
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req
   switch (method) {
     case 'GET': {

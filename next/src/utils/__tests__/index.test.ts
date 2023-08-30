@@ -5,7 +5,6 @@ describe('Utilities', () => {
   describe('getExt', () => {
     test('Missing filename', () => {
       expect(getExt('')).toBe(null)
-      expect(getExt(null)).toBe(null)
     })
     test('Multiple filenames', () => {
       expect(getExt(['2021-12-25.mp4', '2021-12-25.webm'])).toBe('mp4')

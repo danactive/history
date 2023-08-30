@@ -1,10 +1,12 @@
-export default function handler(req, res) {
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { gallery },
     method,
   } = req
 
-  const errorSchema = (message) => {
+  const errorSchema = (message: string) => {
     const out = { gallery: [] }
     if (!message) return out
     return { ...out, error: { message } }

@@ -1,3 +1,5 @@
+import type { GalleryAlbum, Item } from '../types/common'
+
 /**
  * Index search keywords from search xml element and dedupe
  *
@@ -5,14 +7,14 @@
  * @param {string} items.search
  * @returns {{ indexedKeywords }}
  */
-function indexKeywords(items) {
+function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] }[]) {
   const summedKeywords = items.reduce((out, item) => {
-    item?.search?.split(', ').forEach((i) => {
+    item.search?.split(', ').forEach((val) => {
       // eslint-disable-next-line no-param-reassign
-      out[i] = (out[i] || 0) + 1
-    }, {})
+      out[val] = (out[val] || 0) + 1
+    })
     return out
-  }, {})
+  }, {} as Record<string, number>)
 
   const sortedKeywords = Object.fromEntries(
     Object.entries(summedKeywords).sort(([, a], [, b]) => {
@@ -23,7 +25,12 @@ function indexKeywords(items) {
   )
 
   // prepare for react-select in useSearch custom hook
-  return { indexedKeywords: Object.keys(sortedKeywords).map((i) => ({ label: `${i} (${sortedKeywords[i]})`, value: i })) }
+  return {
+    indexedKeywords: Object.keys(sortedKeywords).map((key) => ({
+      label: `${key} (${sortedKeywords[key]})`,
+      value: key,
+    })),
+  }
 }
 
 export default indexKeywords

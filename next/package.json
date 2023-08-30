@@ -41,6 +41,7 @@
     "@playwright/test": "^1.37.1",
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
+    "@types/boom": "^7.3.2",
     "@types/geojson": "^7946.0.10",
     "@types/jest": "^29.5.4",
     "@types/mime-types": "^2.1.1",

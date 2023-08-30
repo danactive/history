@@ -1,15 +1,36 @@
+import { Item } from '../../types/common'
 import indexKeywords from '../search'
 
 describe('Search hook', () => {
+  const mockItem: Item = {
+    id: '0',
+    filename: '2023-08-23-00.jpg',
+    city: 'North Vancouver',
+    location: 'Canada',
+    caption: 'Mock caption',
+    description: null,
+    search: null,
+    title: 'Mock title',
+    coordinates: null,
+    coordinateAccuracy: null,
+    thumbPath: './',
+    photoPath: './',
+    mediaPath: './',
+    videoPaths: './',
+    reference: null,
+  }
   describe('No multiples', () => {
     test('No search', () => {
-      const actual = indexKeywords([{}])
+      const actual = indexKeywords([mockItem])
       const expected = { indexedKeywords: [] }
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
     test('One word', () => {
       const keyword = 'keyword'
-      const actual = indexKeywords([{ search: keyword }])
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keyword,
+      }])
       const expected = { indexedKeywords: [{ label: `${keyword} (1)`, value: keyword }] }
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
@@ -17,21 +38,45 @@ describe('Search hook', () => {
   describe('Multiples', () => {
     test('Duplicate', () => {
       const keyword = 'keyword'
-      const actual = indexKeywords([{ search: keyword }, { search: keyword }])
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keyword,
+      }, {
+        ...mockItem,
+        search: keyword,
+      }])
       const expected = { indexedKeywords: [{ label: `${keyword} (2)`, value: keyword }] }
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
     test('Duplicate plus another', () => {
       const keyword = 'keyword'
       const keyword2 = 'keyword2'
-      const actual = indexKeywords([{ search: keyword }, { search: keyword }, { search: keyword2 }])
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keyword,
+      }, {
+        ...mockItem,
+        search: keyword,
+      }, {
+        ...mockItem,
+        search: keyword2,
+      }])
       const expected = { indexedKeywords: [{ label: `${keyword} (2)`, value: keyword }, { label: `${keyword2} (1)`, value: keyword2 }] }
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
     test('Order some most to least', () => {
       const keyword2 = 'keyword'
       const keyword1 = 'keyword2'
-      const actual = indexKeywords([{ search: keyword2 }, { search: keyword1 }, { search: keyword1 }])
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keyword2,
+      }, {
+        ...mockItem,
+        search: keyword1,
+      }, {
+        ...mockItem,
+        search: keyword1,
+      }])
       const expected = { indexedKeywords: [{ label: `${keyword1} (2)`, value: keyword1 }, { label: `${keyword2} (1)`, value: keyword2 }] }
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
@@ -41,8 +86,8 @@ describe('Search hook', () => {
       const items = []
       const oneCount = 9999
       const twoCount = 100000
-      for (let j = 0; j < oneCount; j += 1) items.push({ search: keyword1 })
-      for (let i = 0; i < twoCount; i += 1) items.push({ search: keyword2 })
+      for (let j = 0; j < oneCount; j += 1) items.push({ ...mockItem, search: keyword1 })
+      for (let i = 0; i < twoCount; i += 1) items.push({ ...mockItem, search: keyword2 })
       const actual = indexKeywords(items)
       const expected = {
         indexedKeywords: [

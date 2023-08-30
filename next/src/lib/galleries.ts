@@ -1,4 +1,4 @@
-import fsCallback from 'fs'
+import fsCallback from 'fs' // Dirent type is missing from Node.js v18 fix to import fs from 'node:fs/promises' with v20
 
 const fs = fsCallback.promises
 
@@ -33,8 +33,8 @@ async function get(returnEnvelope = false): Promise<
   Galleries | ErrorOptionalMessage | GalleryBody | ErrorOptionalMessageBody
 > {
   try {
-    const hasPrefix = (content) => content.isDirectory()
-    const namesOnly = (content) => content.name
+    const hasPrefix = (content: fsCallback.Dirent) => content.isDirectory()
+    const namesOnly = (content: fsCallback.Dirent) => content.name
 
     const contents = await fs.readdir('../public/galleries', { withFileTypes: true })
     const body = { galleries: contents.filter(hasPrefix).map(namesOnly) }

@@ -1,4 +1,6 @@
-export function getExt(filenames) {
+import type { Item } from '../types/common'
+
+export function getExt(filenames: Item['filename']) {
   if (!filenames) return null
   const filename = Array.isArray(filenames) ? filenames[0] : filenames
   const extDot = filename.lastIndexOf('.') + 1
@@ -6,7 +8,7 @@ export function getExt(filenames) {
   return extension.toLowerCase()
 }
 
-export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj).reduce(
+export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj as object | {}).reduce(
   (acc, key) => (obj[key as keyof T] === undefined
     ? { ...acc }
     : { ...acc, [key]: obj[key as keyof T] }),

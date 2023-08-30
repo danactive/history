@@ -1,4 +1,6 @@
+import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
+import { type ParsedUrlQuery } from 'node:querystring'
 import styled, { css } from 'styled-components'
 
 import config from '../../config.json'
@@ -9,24 +11,35 @@ import indexKeywords from '../src/lib/search'
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
-import type { GalleryAlbum } from '../src/types/common'
+import type { AlbumMeta, GalleryAlbum } from '../src/types/common'
 
-interface ServerSideAlbum extends GalleryAlbum {
+interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
 
-export async function getStaticProps({ params: { gallery } }) {
-  const { albums } = await getAlbums(gallery)
-  const preparedAlbums = albums.map((album) => ({
+type Props = {
+  gallery: NonNullable<AlbumMeta['gallery']>;
+  albums: ServerSideAlbumItem[];
+  indexedKeywords: object[];
+}
+
+interface Params extends ParsedUrlQuery {
+  gallery: NonNullable<AlbumMeta['gallery']>
+}
+
+export const getStaticProps: GetStaticProps<Props, Params> = async (context) => {
+  const params = context.params!
+  const { albums } = await getAlbums(params.gallery)
+  const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
     ...album,
     corpus: [album.h1, album.h2, album.year].join(' '),
   }))
   return {
-    props: { gallery, albums: preparedAlbums, ...indexKeywords(albums) },
+    props: { gallery: params.gallery, albums: preparedAlbums, ...indexKeywords(albums) },
   }
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
   const { galleries } = await getGalleries()
   // Define these galleries as allowed, otherwise 404
   const paths = galleries.map((gallery) => ({ params: { gallery } }))
@@ -61,10 +74,7 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-function AlbumsPage(
-  { gallery, albums, indexedKeywords }:
-  { gallery: string; albums: ServerSideAlbum[]; indexedKeywords: object[] },
-) {
+function AlbumsPage({ gallery, albums, indexedKeywords }: Props) {
   const {
     filtered,
     searchBox,

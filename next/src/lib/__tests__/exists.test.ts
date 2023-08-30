@@ -4,7 +4,7 @@ import pathExists from '../exists'
 
 describe('Exists library', () => {
   describe('Expect result', () => {
-    const successTest = async (expect, testPath) => {
+    const successTest = async (expect: jest.Expect, testPath: string) => {
       expect.hasAssertions()
       try {
         const verifiedPath = await pathExists(testPath)
@@ -48,13 +48,13 @@ describe('Exists library', () => {
   })
 
   describe('Expect result', () => {
-    const failureTest = async (expect, testPath) => {
+    const failureTest = async (expect: jest.Expect, testPath: string | null) => {
       expect.hasAssertions()
       try {
         const verifiedPath = await pathExists(testPath)
         expect(verifiedPath).toBeUndefined()
       } catch (error) {
-        expect(error.isBoom).toBeTruthy()
+        expect('isBoom' in (error as Error)).toBeTruthy()
       }
     }
 
@@ -65,7 +65,7 @@ describe('Exists library', () => {
 
     test('* Safe path throws error', async () => {
       const testPath = true
-      await failureTest(expect, testPath)
+      await failureTest(expect, null)
     })
   })
 })

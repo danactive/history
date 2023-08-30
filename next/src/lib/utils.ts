@@ -33,7 +33,7 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
-const rasterPath = (filename: XmlItem['filename'], gallery: XmlMeta['gallery'], rasterType: 'photo' | 'thumb') => {
+const rasterPath = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>, rasterType: 'photo' | 'thumb') => {
   const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
 
@@ -46,7 +46,7 @@ const rasterPath = (filename: XmlItem['filename'], gallery: XmlMeta['gallery'], 
  * @param {string} gallery
  * @returns {string[]} path
  */
-const getVideoPaths = (filename: XmlItem['filename'], gallery: AlbumMeta['gallery']) => {
+const getVideoPaths = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => {
   const filenames = Array.isArray(filename) ? filename : [filename]
   return filenames.map((f) => {
     const year = f.indexOf('-') >= 0 && f.split('-')[0]
@@ -101,8 +101,8 @@ function utils() {
 
       return extension.split('/')[0]
     },
-    thumbPath: (filename: XmlItem['filename'], gallery: XmlMeta['gallery']) => rasterPath(filename, gallery, 'thumb'),
-    photoPath: (filename: XmlItem['filename'], gallery: XmlMeta['gallery']) => rasterPath(filename, gallery, 'photo'),
+    thumbPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'thumb'),
+    photoPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'photo'),
     getVideoPaths,
     filenameAsJpg,
     /*

@@ -3,7 +3,12 @@ import fs from 'node:fs/promises'
 import xml2js, { type ParserOptions } from 'xml2js'
 
 import utilsFactory from './utils'
-import type { GalleryAlbum, XmlGallery, XmlGalleryAlbum } from '../types/common'
+import type {
+  AlbumMeta,
+  GalleryAlbum,
+  XmlGallery,
+  XmlGalleryAlbum,
+} from '../types/common'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -21,7 +26,7 @@ const utils = utilsFactory()
  * @param {string} gallery name of gallery
  * @returns {string} album as JSON
  */
-async function getGalleryFromFilesystem(gallery: string): Promise<XmlGallery> {
+async function getGalleryFromFilesystem(gallery: NonNullable<AlbumMeta['gallery']>): Promise<XmlGallery> {
   const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/gallery.xml`)
   return parser.parseStringPromise(fileBuffer)
 }
@@ -61,7 +66,10 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
   return { albums: [transform(dirty.gallery.album)] }
 }
 
-async function get<T extends boolean = false>(gallery: string, returnEnvelope?: T): Promise<T extends true ? GalleryAlbumBody : GalleryAlbums>;
+async function get<T extends boolean = false>(
+  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][],
+  returnEnvelope?: T,
+): Promise<T extends true ? GalleryAlbumBody : GalleryAlbums>;
 
 /**
  * Get Albums from local filesystem
@@ -69,13 +77,16 @@ async function get<T extends boolean = false>(gallery: string, returnEnvelope?: 
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: string, returnEnvelope = false): Promise<
+async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][], returnEnvelope = false): Promise<
   GalleryAlbums
   | ErrorOptionalMessage
   | GalleryAlbumBody
   | ErrorOptionalMessageBody
 > {
   try {
+    if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
+      throw new ReferenceError('Gallery name is missing')
+    }
     const galleryRaw = await getGalleryFromFilesystem(gallery)
     const body = transformJsonSchema(galleryRaw, gallery)
 

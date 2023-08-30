@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import xml2js, { type ParserOptions } from 'xml2js'
 
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
-import { Album } from '../types/common'
+import type { Album, AlbumMeta } from '../types/common'
 
 const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
@@ -14,7 +14,7 @@ const parser = new xml2js.Parser(parseOptions)
 * @param {string} album name of album
 * @returns {string} album XML
 */
-async function getXmlFromFilesystem(gallery: string, album: string) {
+async function getXmlFromFilesystem(gallery: NonNullable<AlbumMeta['gallery']>, album: string) {
   const fileBuffer = await fs.readFile(`../public/galleries/${gallery}/${album}.xml`)
   return parser.parseStringPromise(fileBuffer)
 }
@@ -24,7 +24,11 @@ type ErrorOptionalMessageBody = {
   body: ErrorOptionalMessage; status: number;
 }
 type ReturnAlbumOrErrors = Promise<Envelope | Album | ErrorOptionalMessage | ErrorOptionalMessageBody>
-async function get<T extends boolean = false>(gallery: string, album: string, returnEnvelope?: T): Promise<T extends true ? Envelope : Album>
+async function get<T extends boolean = false>(
+  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][],
+  album: AlbumMeta['albumName'] | AlbumMeta['albumName'][],
+  returnEnvelope?: T,
+): Promise<T extends true ? Envelope : Album>
 /**
  * Get Album XML from local filesystem
  * @param {string} gallery name of gallery
@@ -32,8 +36,18 @@ async function get<T extends boolean = false>(gallery: string, album: string, re
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {object} album containing meta and items with keys filename, photoCity, photoLoc, thumbCaption, photoDesc
  */
-async function get(gallery: string, album: string, returnEnvelope: boolean): ReturnAlbumOrErrors {
+async function get(
+  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][],
+  album: AlbumMeta['albumName'] | AlbumMeta['albumName'][],
+  returnEnvelope: boolean,
+): ReturnAlbumOrErrors {
   try {
+    if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
+      throw new ReferenceError('Gallery name is missing')
+    }
+    if (!album === null || album === undefined || Array.isArray(album)) {
+      throw new ReferenceError('Album name is missing')
+    }
     const xml = await getXmlFromFilesystem(gallery, album)
     const body = transformJsonSchema(xml)
 

@@ -21,18 +21,23 @@ import { transformMapOptions, transformSourceOptions } from './options'
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 export default function SlippyMap(
-  { items = [], centroid, mapRef }:
-  { items: Item[], centroid: Item, mapRef: RefObject<MapRef> | null },
+  { items = [], centroid = null, mapRef }:
+  { items: Item[], centroid: Item | null, mapRef: RefObject<MapRef> | null },
 ) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
-  const { coordinates } = centroid
+  const { coordinates } = centroid ?? { coordinates: [0, 0] }
   const zoom = centroid?.coordinateAccuracy ?? metaZoom
   const [viewport, setViewport] = useState(transformMapOptions({ coordinates, zoom }))
 
   useEffect(() => {
     setViewport(transformMapOptions({ coordinates, zoom }))
   }, [centroid])
+
+  if (centroid === null) {
+    return null
+  }
+
   const onClick = (event) => {
     const feature = event.features[0]
     if (!(feature && mapRef?.current)) {

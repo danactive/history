@@ -1,6 +1,8 @@
+import type { NextApiRequest, NextApiResponse } from 'next'
+
 import get, { errorSchema } from '../../../../src/lib/albums'
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { gallery },
     method,

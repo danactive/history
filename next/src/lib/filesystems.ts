@@ -4,8 +4,8 @@ import path from 'node:path'
 import utilsFactory from './utils'
 
 type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
-const errorSchema = (message, destinationPath = ''): ErrorOptionalMessage => {
-  const out = { files: [], destinationPath }
+const errorSchema = (message: string): ErrorOptionalMessage => {
+  const out = { files: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }
@@ -30,7 +30,10 @@ type ErrorOptionalMessageBody = {
   body: ErrorOptionalMessage; status: number;
 }
 
-async function get<T extends boolean = false>(destinationPath: string, returnEnvelope?: T): Promise<T extends true ? FilesystemBody : Filesystems>;
+async function get<T extends boolean = false>(
+  destinationPath: string | string[] | undefined,
+  returnEnvelope?: T,
+): Promise<T extends true ? FilesystemBody : Filesystems>;
 
 /**
  * Get file/folder listing from local filesystem
@@ -38,10 +41,16 @@ async function get<T extends boolean = false>(destinationPath: string, returnEnv
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} files
  */
-async function get(destinationPath = '', returnEnvelope = false): Promise<
+async function get(
+  destinationPath: string | string[] | undefined = '',
+  returnEnvelope = false,
+): Promise<
   Filesystems | ErrorOptionalMessage | FilesystemBody | ErrorOptionalMessageBody
 > {
   try {
+    if (destinationPath === null || destinationPath === undefined || Array.isArray(destinationPath)) {
+      throw new ReferenceError('Filesystem path is missing')
+    }
     const utils = utilsFactory()
     const publicPath = utils.safePublicPath('/')
     const globPath = path.join(publicPath, destinationPath)
@@ -52,21 +61,18 @@ async function get(destinationPath = '', returnEnvelope = false): Promise<
 
     const files = await glob(decodeURI(`${globPath}/*`))
 
-    const webPaths = files.map((file) => {
-      const fileMeta: Filesystem = {
-        ext: utils.type(file), // case-insensitive
-        name: null,
-        filename: null,
+    const webPaths = files.map((file): Filesystem => {
+      const fileExt = utils.type(file) // case-insensitive
+      const fileName = path.basename(file, `.${fileExt}`)
+      const mediumType = utils.mediumType(utils.mimeType(fileExt))
+
+      return {
+        filename: (fileExt === '') ? fileName : `${fileName}.${fileExt}`,
+        mediumType: mediumType || 'folder',
         path: file.replace(globPath, destinationPath),
-        mediumType: null,
+        ext: fileExt,
+        name: fileName,
       }
-      fileMeta.name = path.basename(file, `.${fileMeta.ext}`)
-      fileMeta.filename = (fileMeta.ext === '') ? fileMeta.name : `${fileMeta.name}.${fileMeta.ext}`
-
-      const mediumType = utils.mediumType(utils.mimeType(fileMeta.ext))
-      fileMeta.mediumType = mediumType || 'folder'
-
-      return fileMeta
     })
 
     const body = { files: webPaths, destinationPath }
@@ -77,10 +83,10 @@ async function get(destinationPath = '', returnEnvelope = false): Promise<
     return body
   } catch (e) {
     if (returnEnvelope) {
-      return { body: errorSchema('No files or folders are found', destinationPath), status: 404 }
+      return { body: errorSchema('No files or folders are found'), status: 404 }
     }
 
-    return errorSchema(null, destinationPath)
+    throw e
   }
 }
 

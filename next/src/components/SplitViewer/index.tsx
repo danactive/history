@@ -53,7 +53,7 @@ const toCarousel = (item: Item) => {
   }
 
   const extension = getExt(item.mediaPath)
-  const isVideo = config.supportedFileTypes.video.includes(extension) && item.mediaPath
+  const isVideo = extension && config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
     imageGallery.renderItem = ({
       original, mediaPath, description, caption,

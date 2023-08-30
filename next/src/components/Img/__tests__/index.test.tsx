@@ -16,7 +16,7 @@ describe('<Img />', () => {
   test('should render an <img> tag', () => {
     const { image } = renderComponent()
     expect(image).toBeInTheDocument()
-    expect(image.tagName).toBe('IMG')
+    expect(image?.tagName).toBe('IMG')
   })
 
   test('should have a src attribute', () => {

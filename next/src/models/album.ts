@@ -22,7 +22,11 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
 const utils = utilsFactory()
 
 function isValidMeta(schema: unknown): schema is { album: { meta: Album['album']['meta'], item: XmlAlbum['album']['item'] } } {
-  if ('album' in (schema as any) && 'meta' in ((schema as any).album)) {
+  if (
+    'album' in (schema as any)
+    && 'meta' in ((schema as any).album)
+    && 'gallery' in ((schema as any).album.meta)
+  ) {
     return true
   }
   return false
@@ -115,6 +119,9 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
     throw new ReferenceError('XML is missing <meta> element in parent <album> element')
   }
   const meta = transformMeta(dirty)
+  if (!('gallery' in meta) || !meta.gallery) {
+    throw new ReferenceError('XML is missing <gallery> element in parent <meta> element')
+  }
 
   if (!isValidItem(dirty)) {
     return { album: { items: [], meta } }
