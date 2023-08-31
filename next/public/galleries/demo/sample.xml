@@ -4,7 +4,7 @@
 	<meta>
 		<gallery>demo</gallery>
 		<album_name>sample</album_name>
-		<album_version>2.0</album_version>
+		<album_version>2.2</album_version>
 		<geo>
 			<google_zoom>11</google_zoom>
 		</geo>
@@ -29,6 +29,7 @@
 		<photo_loc>Dining Room</photo_loc>
 		<thumb_caption>Gingerbread</thumb_caption>
 		<photo_desc>Gingerbread persons</photo_desc>
+		<search>best^, baked goods, house</search>
 	</item>
 	<item id="2">
 		<filename>2005-07-30-01.jpg</filename>
@@ -56,6 +57,7 @@
 		<geo>
 			<lat>49.25</lat>
 			<lon>-123.1</lon>
+			<accuracy>10</accuracy>
 		</geo>
 	</item>
 	<item id="5">
@@ -67,7 +69,7 @@
 		<photo_city>Vancouver International Airport, BC</photo_city>
 		<photo_loc>YVR</photo_loc>
 		<thumb_caption>Airport</thumb_caption>
-		<photo_desc/>
+		<search>aerodrome, airdrome</search>
 		<ref>
 			<name>Vancouver_International_Airport</name>
 			<source>wikipedia</source>
@@ -83,6 +85,7 @@
 		<photo_loc>Brass Fish Tavern</photo_loc>
 		<thumb_caption>Tavern</thumb_caption>
 		<photo_desc>Located in the iconic art deco  Marine building</photo_desc>
+		<search>best^</search>
 		<ref>
 			<name>Marine_Building</name>
 			<source>wikipedia</source>

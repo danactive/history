@@ -1,4 +1,4 @@
-const joi = require('@hapi/joi');
+const joi = require('joi');
 
 module.exports = {
   albumStem: joi.string().regex(/^[a-z0-9_-]{1,25}$/i).required().example('country2017'),

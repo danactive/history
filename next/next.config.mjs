@@ -1,11 +1,10 @@
-module.exports = {
+const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   compiler: {
     styledComponents: true,
   },
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', '127.0.0.1'],
   },
   experimental: {
     newNextLinkBehavior: true,
@@ -14,3 +13,4 @@ module.exports = {
     dirs: ['pages', 'src', '__tests__'],
   },
 }
+export default nextConfig
