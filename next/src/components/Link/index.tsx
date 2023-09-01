@@ -1,5 +1,5 @@
 import NextLink from 'next/link'
-import { memo } from 'react'
+import { memo, type ReactNode } from 'react'
 import styled from 'styled-components'
 
 const ColouredLink = styled(NextLink)`
@@ -22,9 +22,17 @@ const ColouredLink = styled(NextLink)`
   }
 `
 
-function Link({ children, href, ...props }) {
+interface InputGroupProps extends React.ComponentPropsWithoutRef<'a'> {
+  children: ReactNode;
+  href: string;
+}
+
+function Link(
+  { children, ...props }:
+  InputGroupProps,
+) {
   return (
-    <ColouredLink href={href} {...props}>{children}</ColouredLink>
+    <ColouredLink {...props}>{children}</ColouredLink>
   )
 }
 

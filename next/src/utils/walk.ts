@@ -1,20 +1,26 @@
-const config = require('../../../config.json')
+import config from '../../../config.json'
+import { type ItemFile } from '../../pages/admin/walk'
+import type { Filesystem } from '../lib/filesystems'
 
-export function isImage(file) {
+export function isImage(file: Filesystem) {
   return (
     file.mediumType === 'image'
     && config.supportedFileTypes.photo.includes(file.ext.toLowerCase())
   )
 }
 
-export function parseHash(find, from) {
-  if (!find || !from) return ''
+/**
+ * Read hash in URL
+ * @param find it's always "path"
+ * @param from URL with path is located
+ */
+export function parseHash(find: 'path', from: string) {
   const found = RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)
   return found?.[2] ?? null
 }
 
-export function addParentDirectoryNav(itemFiles, path) {
-  const file = {
+export function addParentDirectoryNav(itemFiles: ItemFile[], path: string) {
+  const file: ItemFile = {
     filename: '..',
     content: '..',
     name: 'UpDirectory',
@@ -27,13 +33,13 @@ export function addParentDirectoryNav(itemFiles, path) {
       const splitPath = path.split('/')
       splitPath.pop()
       itemFiles.unshift({
-        path: splitPath.join('/'),
         ...file,
+        path: splitPath.join('/'),
       })
     } else {
       itemFiles.unshift({
-        path: '',
         ...file,
+        path: '',
       })
     }
   }
@@ -41,7 +47,7 @@ export function addParentDirectoryNav(itemFiles, path) {
   return itemFiles
 }
 
-export function isAnyImageOrVideo(file) {
+export function isAnyImageOrVideo(file: Filesystem) {
   const images = file.mediumType === 'image'
     && (config.supportedFileTypes.photo.includes(file.ext.toLowerCase())
       || config.rawFileTypes.photo.includes(file.ext.toLowerCase()))
@@ -51,11 +57,11 @@ export function isAnyImageOrVideo(file) {
   return images || videos
 }
 
-export function associateMedia(items) {
+export function associateMedia(items: ItemFile[]) {
   // `data` is an array of objects, `key` is the key (or property accessor) to group by
   // reduce runs this anonymous function on each element of `data` (the `item` parameter,
   // returning the `storage` parameter at the end
-  const groupBy = (data, key) => data.reduce((storage, item) => {
+  const groupBy = (data: object[], key: keyof typeof items) => data.reduce((storage, item) => {
     // get the first instance of the key by which we're grouping
     const group = item[key]
 
@@ -138,7 +144,7 @@ export function generateImageFilenames(fullCount = 6, extSet = 'jpgraw') {
   return jpgs(fullCount)
 }
 
-export function getJpgLike(fileGroup) {
+export function getJpgLike(fileGroup: typeof associateMedia) {
   const isJpgLikeExt = (file = { ext: '' }) => file.ext === 'JPG' || file.ext === 'jpg'
   const withJpg = fileGroup.find(isJpgLikeExt)
   if (withJpg) {
@@ -160,7 +166,7 @@ export function getJpgLike(fileGroup) {
   return null
 }
 
-export function mergeMedia(items) {
+export function mergeMedia(items: typeof associateMedia) {
   const merged = Object.keys(items.grouped).map((name) => {
     const fileGroup = items.grouped[name]
 
@@ -183,6 +189,6 @@ export function mergeMedia(items) {
   return merged
 }
 
-export function organizeByMedia(items) {
+export function organizeByMedia(items: ItemFile[]) {
   return mergeMedia(associateMedia(items))
 }

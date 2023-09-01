@@ -12,6 +12,6 @@ describe('<ListFile />', () => {
     const path = 'testPath'
     const content = 'Link text'
     const { getByText } = render(<ListFile item={{ mediumType: 'folder', path, content }} />)
-    expect(getByText(content).href).toBe(`http://localhost/#path=${path}`)
+    expect(getByText(content).closest('a')?.href).toBe(`http://localhost/#path=${path}`)
   })
 })

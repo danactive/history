@@ -1,18 +1,19 @@
-import React from 'react'
+import { ListItem } from '@mui/joy'
 
 import Link from '../Link'
-import ListItem from '../ListItem'
 
 function ListFile({ item: file }) {
   if (!file || !file.content) return null
 
   if (file.mediumType === 'folder') {
     return (
-      <ListItem item={<Link href={`#path=${file.path}`}>{file.content}</Link>} />
+      <ListItem>
+        <Link href={`#path=${file.path}`}>{file.content}</Link>
+      </ListItem>
     )
   }
 
-  return <ListItem item={file.content} />
+  return <ListItem>{file.content}</ListItem>
 }
 
 export default ListFile

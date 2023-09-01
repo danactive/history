@@ -18,12 +18,14 @@ type Filesystem = {
   mediumType: string;
 }
 
-type Filesystems = {
-  albums: Filesystem[]
+type FilesystemBody = {
+  files: Filesystem[];
+  destinationPath: string;
 }
 
-type FilesystemBody = {
-  body: Filesystems; status: number;
+type FilesystemEnvelope = {
+  body: FilesystemBody;
+  status: number;
 }
 
 type ErrorOptionalMessageBody = {
@@ -33,7 +35,7 @@ type ErrorOptionalMessageBody = {
 async function get<T extends boolean = false>(
   destinationPath: string | string[] | undefined,
   returnEnvelope?: T,
-): Promise<T extends true ? FilesystemBody : Filesystems>;
+): Promise<T extends true ? FilesystemEnvelope : FilesystemBody>;
 
 /**
  * Get file/folder listing from local filesystem
@@ -45,7 +47,7 @@ async function get(
   destinationPath: string | string[] | undefined = '',
   returnEnvelope = false,
 ): Promise<
-  Filesystems | ErrorOptionalMessage | FilesystemBody | ErrorOptionalMessageBody
+  FilesystemEnvelope | FilesystemBody | ErrorOptionalMessage | ErrorOptionalMessageBody
 > {
   try {
     if (destinationPath === null || destinationPath === undefined || Array.isArray(destinationPath)) {
@@ -90,5 +92,5 @@ async function get(
   }
 }
 
-export { errorSchema, type Filesystem }
+export { errorSchema, type Filesystem, type FilesystemBody }
 export default get

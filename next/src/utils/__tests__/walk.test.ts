@@ -1,3 +1,5 @@
+import { type ItemFile } from '../../../pages/admin/walk'
+import { type Filesystem } from '../../lib/filesystems'
 import {
   isImage,
   parseHash,
@@ -10,17 +12,24 @@ import {
 } from '../walk'
 
 describe('Walk - util', () => {
+  const mockFile: Filesystem = {
+    mediumType: 'MediumType',
+    ext: 'Extension',
+    name: 'Name',
+    filename: 'Filename',
+    path: 'Path',
+  }
   describe('isImage', () => {
     test('detect JPG', () => {
-      expect(isImage({ mediumType: 'image', ext: 'JPEG' })).toEqual(true)
-      expect(isImage({ mediumType: 'image', ext: 'jpeg' })).toEqual(true)
-      expect(isImage({ mediumType: 'image', ext: 'JPG' })).toEqual(true)
-      expect(isImage({ mediumType: 'image', ext: 'jpg' })).toEqual(true)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'JPEG' })).toEqual(true)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'jpeg' })).toEqual(true)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'JPG' })).toEqual(true)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'jpg' })).toEqual(true)
     })
 
     test('ignore RAW', () => {
-      expect(isImage({ mediumType: 'image', ext: 'RAW' })).toEqual(false)
-      expect(isImage({ mediumType: 'image', ext: 'ARW' })).toEqual(false)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'RAW' })).toEqual(false)
+      expect(isImage({ ...mockFile, mediumType: 'image', ext: 'ARW' })).toEqual(false)
     })
   })
 
@@ -38,27 +47,26 @@ describe('Walk - util', () => {
   })
 
   describe('addParentDirectoryNav', () => {
-    const file = {
+    const mockFileFolder: ItemFile = {
       filename: '..',
       content: '..',
+      path: '..',
       mediumType: 'folder',
       id: 'item-up-directory',
       name: 'UpDirectory',
     }
-    let dummyFile
+    let dummyFile: ItemFile
 
     beforeEach(() => {
       dummyFile = { id: 'testid.js', ext: 'js' }
     })
 
     test('hide when at root folder', () => {
-      expect(addParentDirectoryNav([dummyFile], null)).toEqual([dummyFile])
-      expect(addParentDirectoryNav([dummyFile])).toEqual([dummyFile])
       expect(addParentDirectoryNav([dummyFile], '')).toEqual([dummyFile])
     })
 
     test('one level deep', () => {
-      const expectedFile = { ...file, path: '' }
+      const expectedFile = { ...mockFileFolder, path: '' }
       expect(addParentDirectoryNav([dummyFile], 'galleries')).toEqual([
         expectedFile,
         dummyFile,
@@ -66,7 +74,7 @@ describe('Walk - util', () => {
     })
 
     test('two levels deep', () => {
-      const expectedFile = { ...file, path: 'galleries' }
+      const expectedFile = { ...mockFileFolder, path: 'galleries' }
       expect(addParentDirectoryNav([dummyFile], 'galleries/demo')).toEqual([
         expectedFile,
         dummyFile,
@@ -74,7 +82,7 @@ describe('Walk - util', () => {
     })
 
     test('three levels deep', () => {
-      const expectedFile = { ...file, path: 'galleries/demo' }
+      const expectedFile = { ...mockFileFolder, path: 'galleries/demo' }
       expect(
         addParentDirectoryNav([dummyFile], 'galleries/demo/thumbs'),
       ).toEqual([expectedFile, dummyFile])
@@ -83,43 +91,43 @@ describe('Walk - util', () => {
 
   describe('isAnyImageOrVideo', () => {
     test('images', () => {
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'JPEG' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'JPEG' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'jpeg' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'jpeg' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'JPG' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'JPG' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'jpg' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'jpg' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'RAW' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'RAW' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'image', ext: 'ARW' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'image', ext: 'ARW' })).toEqual(
         true,
       )
     })
 
     test('videos', () => {
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mp4' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'mp4' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'webm' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'webm' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'avi' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'avi' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mov' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'mov' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'm2ts' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'm2ts' })).toEqual(
         true,
       )
-      expect(isAnyImageOrVideo({ mediumType: 'video', ext: 'mts' })).toEqual(
+      expect(isAnyImageOrVideo({ ...mockFile, mediumType: 'video', ext: 'mts' })).toEqual(
         true,
       )
     })
