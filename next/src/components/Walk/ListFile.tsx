@@ -1,8 +1,9 @@
 import { ListItem } from '@mui/joy'
 
+import { type ItemFile } from '../../../pages/admin/walk'
 import Link from '../Link'
 
-function ListFile({ item: file }) {
+function ListFile({ item: file }: { item: ItemFile }) {
   if (!file || !file.content) return null
 
   if (file.mediumType === 'folder') {

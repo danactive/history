@@ -1,14 +1,16 @@
 import { List, ListDivider } from '@mui/joy'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import ListFile from '../../src/components/Walk/ListFile'
 import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
 import { isImage, organizeByMedia, parseHash } from '../../src/utils/walk'
 
 type ItemFile = Partial<Filesystem> & {
-  id?: Filesystem['path'];
+  id: Filesystem['path'];
   content?: Filesystem['filename'];
+  grouped?: string;
+  flat?: string;
 }
 
 function WalkPage() {
@@ -41,11 +43,11 @@ function WalkPage() {
 
   return (
     <List>
-      {organizeByMedia(itemFiles).map((item, i) => (
-        <>
+      {organizeByMedia(itemFiles).filter((item): item is ItemFile => !!item).map((item, i) => (
+        <Fragment key={item.id}>
           {i > 0 && <ListDivider />}
-          <ListFile item={item} key={item.id} />
-        </>
+          <ListFile item={item} />
+        </Fragment>
       ))}
     </List>
   )

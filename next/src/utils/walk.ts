@@ -2,9 +2,10 @@ import config from '../../../config.json'
 import { type ItemFile } from '../../pages/admin/walk'
 import type { Filesystem } from '../lib/filesystems'
 
-export function isImage(file: Filesystem) {
+export function isImage(file: Partial<Filesystem>) {
   return (
-    file.mediumType === 'image'
+    file.ext
+    && file.mediumType === 'image'
     && config.supportedFileTypes.photo.includes(file.ext.toLowerCase())
   )
 }
@@ -57,24 +58,25 @@ export function isAnyImageOrVideo(file: Filesystem) {
   return images || videos
 }
 
-export function associateMedia(items: ItemFile[]) {
+export function associateMedia(items: ItemFile | ItemFile[]) {
   // `data` is an array of objects, `key` is the key (or property accessor) to group by
   // reduce runs this anonymous function on each element of `data` (the `item` parameter,
   // returning the `storage` parameter at the end
-  const groupBy = (data: object[], key: keyof typeof items) => data.reduce((storage, item) => {
+  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: any, item) => {
     // get the first instance of the key by which we're grouping
-    const group = item[key]
+    const groupKey = item[key]
 
+    if (groupKey === undefined) { return out }
     // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
     // eslint-disable-next-line no-param-reassign
-    storage[group] = storage[group] || []
+    out[groupKey] = out[groupKey] || []
 
     // add this item to its group within `storage`
-    storage[group].push(item)
+    out[groupKey].push(item)
 
     // return the updated storage to the reduce function, which will then loop through the next
-    return storage
-  }, {}) // {} is the initial value of the storage
+    return out
+  }, {})
 
   if (items instanceof Array) {
     return {
@@ -83,10 +85,10 @@ export function associateMedia(items: ItemFile[]) {
     }
   }
 
-  return { flat: items }
+  return { flat: [items], grouped: null }
 }
 
-export function generateImageFilenames(fullCount = 6, extSet = 'jpgraw') {
+export function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): ItemFile[] {
   const halfCount = Math.floor(fullCount / 2)
 
   const docs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
@@ -144,8 +146,8 @@ export function generateImageFilenames(fullCount = 6, extSet = 'jpgraw') {
   return jpgs(fullCount)
 }
 
-export function getJpgLike(fileGroup: typeof associateMedia) {
-  const isJpgLikeExt = (file = { ext: '' }) => file.ext === 'JPG' || file.ext === 'jpg'
+export function getJpgLike(fileGroup: ItemFile[]) {
+  const isJpgLikeExt = (file: ItemFile = { id: '123', ext: '' }) => file.ext === 'JPG' || file.ext === 'jpg'
   const withJpg = fileGroup.find(isJpgLikeExt)
   if (withJpg) {
     return {
@@ -154,7 +156,7 @@ export function getJpgLike(fileGroup: typeof associateMedia) {
     }
   }
 
-  const isJpegLikeExt = (file = { ext: '' }) => file.ext === 'JPEG' || file.ext === 'jpeg'
+  const isJpegLikeExt = (file: ItemFile = { id: '123', ext: '' }) => file.ext === 'JPEG' || file.ext === 'jpeg'
   const withJpeg = fileGroup.find(isJpegLikeExt)
   if (withJpeg) {
     return {
@@ -166,8 +168,8 @@ export function getJpgLike(fileGroup: typeof associateMedia) {
   return null
 }
 
-export function mergeMedia(items: typeof associateMedia) {
-  const merged = Object.keys(items.grouped).map((name) => {
+export function mergeMedia(items: ReturnType<typeof associateMedia>) {
+  return Object.keys(items.grouped).map((name) => {
     const fileGroup = items.grouped[name]
 
     const jpgLike = getJpgLike(fileGroup)
@@ -176,17 +178,20 @@ export function mergeMedia(items: typeof associateMedia) {
       return items.flat.find((file) => file.name === name)
     }
 
-    // TODO danctive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
+    // TODO danactive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
     const found = items.flat.find(
       (file) => file.filename === fileGroup[jpgLike.index].filename,
     )
+
+    if (!found) {
+      throw new ReferenceError('Missing found item')
+    }
+
     return {
       ...found,
-      content: fileGroup.reduce((acc, next) => `${acc} +${next.ext}`, name),
+      content: fileGroup.reduce((acc: string, next: ItemFile) => `${acc} +${next.ext}`, name),
     }
   })
-
-  return merged
 }
 
 export function organizeByMedia(items: ItemFile[]) {

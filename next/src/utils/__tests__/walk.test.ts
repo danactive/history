@@ -135,7 +135,6 @@ describe('Walk - util', () => {
 
   describe('associateMedia', () => {
     test('JPG and RAW', () => {
-      /* eslint-disable object-curly-newline */
       const expected = {
         DSC03721: [
           {
@@ -210,7 +209,6 @@ describe('Walk - util', () => {
           },
         ],
       }
-      /* eslint-enable object-curly-newline */
       const generated = generateImageFilenames(8, 'jpgraw')
       const received = associateMedia(generated)
       expect(received.grouped).toEqual(expected)
@@ -228,7 +226,6 @@ describe('Walk - util', () => {
     test('JPG and RAW', () => {
       const generated = generateImageFilenames(8, 'jpgraw')
       const received = mergeMedia(associateMedia(generated))
-      /* eslint-disable object-curly-newline */
       const expected = [
         {
           content: 'DSC03721 +RAW +JPG',
@@ -263,7 +260,6 @@ describe('Walk - util', () => {
           name: 'DSC03724',
         },
       ]
-      /* eslint-enable object-curly-newline */
       expect(received).toEqual(expected)
     })
 
@@ -292,16 +288,16 @@ describe('Walk - util', () => {
       const received = getJpgLike(
         associateMedia(generateImageFilenames(2, 'jpgraw')).grouped.DSC03721,
       )
-      expect(received.ext).toEqual('JPG')
-      expect(received.index).toEqual(1)
+      expect(received?.ext).toEqual('JPG')
+      expect(received?.index).toEqual(1)
     })
 
     test('JPEG', () => {
       const received = getJpgLike(
         associateMedia(generateImageFilenames(1, 'jpeg')).grouped.DSC03721,
       )
-      expect(received.ext).toEqual('JPEG')
-      expect(received.index).toEqual(0)
+      expect(received?.ext).toEqual('JPEG')
+      expect(received?.index).toEqual(0)
     })
 
     test('check immutability', () => {
