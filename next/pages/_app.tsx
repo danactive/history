@@ -33,6 +33,14 @@ const themeMui = extendTheme({
           border: '1px solid silver',
           borderRadius: '3px',
           backgroundColor: '#545454',
+          color: 'red',
+        },
+      },
+    },
+    JoyListItem: {
+      styleOverrides: {
+        root: {
+          color: '#C0C0C0',
         },
       },
     },

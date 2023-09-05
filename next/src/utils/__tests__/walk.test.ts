@@ -5,14 +5,77 @@ import {
   parseHash,
   addParentDirectoryNav,
   associateMedia,
-  generateImageFilenames,
   isAnyImageOrVideo,
   mergeMedia,
   getJpgLike,
 } from '../walk'
 
+function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): ItemFile[] {
+  const halfCount = Math.floor(fullCount / 2)
+
+  const docs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+    id: `item-doc-${k}`,
+    path: 'harddrive-docs',
+    label: `Document${k + 1}.DOC`,
+    filename: `Document${k + 1}.DOC`,
+    name: `Document${k + 1}`,
+    mediumType: 'text',
+    ext: 'DOC',
+  }))
+
+  const jpgs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+    id: `item-jpg-${k}`,
+    path: 'harddrive-jpgs',
+    label: `DSC0372${k + 1}.JPG`,
+    filename: `DSC0372${k + 1}.JPG`,
+    name: `DSC0372${k + 1}`,
+    mediumType: 'image',
+    ext: 'JPG',
+  }))
+
+  const jpegs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+    id: `item-jpeg-${k}`,
+    path: 'harddrive-jpegs',
+    label: `DSC0372${k + 1}.JPEG`,
+    filename: `DSC0372${k + 1}.JPEG`,
+    name: `DSC0372${k + 1}`,
+    mediumType: 'image',
+    ext: 'JPEG',
+  }))
+
+  const raws = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+    id: `item-raw-${k}`,
+    path: 'harddrive-raws',
+    label: `DSC0372${k + 1}.RAW`,
+    filename: `DSC0372${k + 1}.RAW`,
+    name: `DSC0372${k + 1}`,
+    mediumType: 'image',
+    ext: 'RAW',
+  }))
+
+  if (extSet === 'jpgraw' || extSet === 'rawjpg') {
+    return raws().concat(jpgs())
+  }
+
+  if (extSet === 'jpgdoc' || extSet === 'docjpg') {
+    return docs().concat(jpgs())
+  }
+
+  if (extSet === 'docraw' || extSet === 'rawdoc') {
+    return docs().concat(raws())
+  }
+
+  if (extSet === 'jpeg') {
+    return jpegs(fullCount)
+  }
+
+  return jpgs(fullCount)
+}
+
 describe('Walk - util', () => {
   const mockFile: Filesystem = {
+    id: 'identity',
+    label: 'label',
     mediumType: 'MediumType',
     ext: 'Extension',
     name: 'Name',
@@ -49,7 +112,7 @@ describe('Walk - util', () => {
   describe('addParentDirectoryNav', () => {
     const mockFileFolder: ItemFile = {
       filename: '..',
-      content: '..',
+      label: '..',
       path: '..',
       mediumType: 'folder',
       id: 'item-up-directory',
@@ -58,7 +121,12 @@ describe('Walk - util', () => {
     let dummyFile: ItemFile
 
     beforeEach(() => {
-      dummyFile = { id: 'testid.js', ext: 'js' }
+      dummyFile = {
+        id: 'testid.js',
+        label: 'Label',
+        ext: 'js',
+        path: 'harddrive',
+      }
     })
 
     test('hide when at root folder', () => {
@@ -138,72 +206,80 @@ describe('Walk - util', () => {
       const expected = {
         DSC03721: [
           {
-            content: 'DSC03721.RAW',
+            label: 'DSC03721.RAW',
             filename: 'DSC03721.RAW',
             name: 'DSC03721',
             id: 'item-raw-0',
+            path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
           },
           {
-            content: 'DSC03721.JPG',
+            label: 'DSC03721.JPG',
             filename: 'DSC03721.JPG',
             name: 'DSC03721',
             id: 'item-jpg-0',
+            path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
           },
         ],
         DSC03722: [
           {
-            content: 'DSC03722.RAW',
+            label: 'DSC03722.RAW',
             filename: 'DSC03722.RAW',
             name: 'DSC03722',
             id: 'item-raw-1',
+            path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
           },
           {
-            content: 'DSC03722.JPG',
+            label: 'DSC03722.JPG',
             filename: 'DSC03722.JPG',
             name: 'DSC03722',
             id: 'item-jpg-1',
+            path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
           },
         ],
         DSC03723: [
           {
-            content: 'DSC03723.RAW',
+            label: 'DSC03723.RAW',
             filename: 'DSC03723.RAW',
             name: 'DSC03723',
             id: 'item-raw-2',
+            path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
           },
           {
-            content: 'DSC03723.JPG',
+            label: 'DSC03723.JPG',
             filename: 'DSC03723.JPG',
             name: 'DSC03723',
             id: 'item-jpg-2',
+            path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
           },
         ],
         DSC03724: [
           {
-            content: 'DSC03724.RAW',
+            label: 'DSC03724.RAW',
             filename: 'DSC03724.RAW',
             name: 'DSC03724',
             id: 'item-raw-3',
+            path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
           },
           {
-            content: 'DSC03724.JPG',
+            label: 'DSC03724.JPG',
             filename: 'DSC03724.JPG',
             name: 'DSC03724',
             id: 'item-jpg-3',
+            path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
           },
@@ -228,33 +304,37 @@ describe('Walk - util', () => {
       const received = mergeMedia(associateMedia(generated))
       const expected = [
         {
-          content: 'DSC03721 +RAW +JPG',
+          label: 'DSC03721 +RAW +JPG',
           filename: 'DSC03721.JPG',
           id: 'item-jpg-0',
+          path: 'harddrive-jpgs',
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03721',
         },
         {
-          content: 'DSC03722 +RAW +JPG',
+          label: 'DSC03722 +RAW +JPG',
           filename: 'DSC03722.JPG',
           id: 'item-jpg-1',
+          path: 'harddrive-jpgs',
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03722',
         },
         {
-          content: 'DSC03723 +RAW +JPG',
+          label: 'DSC03723 +RAW +JPG',
           filename: 'DSC03723.JPG',
           id: 'item-jpg-2',
+          path: 'harddrive-jpgs',
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03723',
         },
         {
-          content: 'DSC03724 +RAW +JPG',
+          label: 'DSC03724 +RAW +JPG',
           filename: 'DSC03724.JPG',
           id: 'item-jpg-3',
+          path: 'harddrive-jpgs',
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03724',

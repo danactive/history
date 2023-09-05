@@ -22,8 +22,9 @@ export function parseHash(find: 'path', from: string) {
 
 export function addParentDirectoryNav(itemFiles: ItemFile[], path: string) {
   const file: ItemFile = {
+    path: 'harddrive',
     filename: '..',
-    content: '..',
+    label: '..',
     name: 'UpDirectory',
     mediumType: 'folder',
     id: 'item-up-directory',
@@ -62,7 +63,7 @@ export function associateMedia(items: ItemFile | ItemFile[]) {
   // `data` is an array of objects, `key` is the key (or property accessor) to group by
   // reduce runs this anonymous function on each element of `data` (the `item` parameter,
   // returning the `storage` parameter at the end
-  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: any, item) => {
+  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: Record<string, ItemFile[]>, item) => {
     // get the first instance of the key by which we're grouping
     const groupKey = item[key]
 
@@ -85,69 +86,11 @@ export function associateMedia(items: ItemFile | ItemFile[]) {
     }
   }
 
-  return { flat: [items], grouped: null }
-}
-
-export function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): ItemFile[] {
-  const halfCount = Math.floor(fullCount / 2)
-
-  const docs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
-    id: `item-doc-${k}`,
-    content: `Document${k + 1}.DOC`,
-    filename: `Document${k + 1}.DOC`,
-    name: `Document${k + 1}`,
-    mediumType: 'text',
-    ext: 'DOC',
-  }))
-
-  const jpgs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
-    id: `item-jpg-${k}`,
-    content: `DSC0372${k + 1}.JPG`,
-    filename: `DSC0372${k + 1}.JPG`,
-    name: `DSC0372${k + 1}`,
-    mediumType: 'image',
-    ext: 'JPG',
-  }))
-
-  const jpegs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
-    id: `item-jpeg-${k}`,
-    content: `DSC0372${k + 1}.JPEG`,
-    filename: `DSC0372${k + 1}.JPEG`,
-    name: `DSC0372${k + 1}`,
-    mediumType: 'image',
-    ext: 'JPEG',
-  }))
-
-  const raws = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
-    id: `item-raw-${k}`,
-    content: `DSC0372${k + 1}.RAW`,
-    filename: `DSC0372${k + 1}.RAW`,
-    name: `DSC0372${k + 1}`,
-    mediumType: 'image',
-    ext: 'RAW',
-  }))
-
-  if (extSet === 'jpgraw' || extSet === 'rawjpg') {
-    return raws().concat(jpgs())
-  }
-
-  if (extSet === 'jpgdoc' || extSet === 'docjpg') {
-    return docs().concat(jpgs())
-  }
-
-  if (extSet === 'docraw' || extSet === 'rawdoc') {
-    return docs().concat(raws())
-  }
-
-  if (extSet === 'jpeg') {
-    return jpegs(fullCount)
-  }
-
-  return jpgs(fullCount)
+  throw new Error('Flat only')
 }
 
 export function getJpgLike(fileGroup: ItemFile[]) {
-  const isJpgLikeExt = (file: ItemFile = { id: '123', ext: '' }) => file.ext === 'JPG' || file.ext === 'jpg'
+  const isJpgLikeExt = (file: ItemFile) => file.ext === 'JPG' || file.ext === 'jpg'
   const withJpg = fileGroup.find(isJpgLikeExt)
   if (withJpg) {
     return {
@@ -156,7 +99,7 @@ export function getJpgLike(fileGroup: ItemFile[]) {
     }
   }
 
-  const isJpegLikeExt = (file: ItemFile = { id: '123', ext: '' }) => file.ext === 'JPEG' || file.ext === 'jpeg'
+  const isJpegLikeExt = (file: ItemFile) => file.ext === 'JPEG' || file.ext === 'jpeg'
   const withJpeg = fileGroup.find(isJpegLikeExt)
   if (withJpeg) {
     return {
@@ -169,13 +112,17 @@ export function getJpgLike(fileGroup: ItemFile[]) {
 }
 
 export function mergeMedia(items: ReturnType<typeof associateMedia>) {
-  return Object.keys(items.grouped).map((name) => {
+  return Object.keys(items.grouped).map((name): ItemFile => {
     const fileGroup = items.grouped[name]
 
     const jpgLike = getJpgLike(fileGroup)
 
     if (jpgLike === null) {
-      return items.flat.find((file) => file.name === name)
+      const foundJpgLike = items.flat.find((file) => file.name === name)
+      if (!foundJpgLike) {
+        throw new ReferenceError('Missing found JPG like item')
+      }
+      return foundJpgLike
     }
 
     // TODO danactive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
@@ -189,7 +136,7 @@ export function mergeMedia(items: ReturnType<typeof associateMedia>) {
 
     return {
       ...found,
-      content: fileGroup.reduce((acc: string, next: ItemFile) => `${acc} +${next.ext}`, name),
+      label: fileGroup.reduce((acc: string, next: ItemFile) => `${acc} +${next.ext}`, name),
     }
   })
 }

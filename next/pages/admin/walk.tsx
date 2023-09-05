@@ -7,8 +7,9 @@ import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
 import { isImage, organizeByMedia, parseHash } from '../../src/utils/walk'
 
 type ItemFile = Partial<Filesystem> & {
-  id: Filesystem['path'];
-  content?: Filesystem['filename'];
+  id: Filesystem['id'];
+  path: Filesystem['path'];
+  label: string;
   grouped?: string;
   flat?: string;
 }
@@ -32,18 +33,13 @@ function WalkPage() {
   if (isLoading) return <p>Loading...</p>
   if (!data) return <p>No filesystem data</p>
 
-  const itemFiles = data.files.map((file): ItemFile => ({
-    id: file.path,
-    content: file.filename,
-    ...file,
-  }))
-  const itemImages = itemFiles.filter((file) => isImage(file))
+  const itemImages = data.files.filter((file) => isImage(file))
   // eslint-disable-next-line no-console
   console.log('itemImages', itemImages)
 
   return (
     <List>
-      {organizeByMedia(itemFiles).filter((item): item is ItemFile => !!item).map((item, i) => (
+      {organizeByMedia(data.files).map((item, i) => (
         <Fragment key={item.id}>
           {i > 0 && <ListDivider />}
           <ListFile item={item} />

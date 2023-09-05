@@ -11,6 +11,8 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
 }
 
 type Filesystem = {
+  id: string;
+  label: string;
   ext: string;
   name: string;
   filename: string;
@@ -67,14 +69,26 @@ async function get(
       const fileExt = utils.type(file) // case-insensitive
       const fileName = path.basename(file, `.${fileExt}`)
       const mediumType = utils.mediumType(utils.mimeType(fileExt))
+      const filePath = file.replace(globPath, destinationPath)
+      const filename = (fileExt === '') ? fileName : `${fileName}.${fileExt}`
 
       return {
-        filename: (fileExt === '') ? fileName : `${fileName}.${fileExt}`,
+        filename,
+        label: filename,
         mediumType: mediumType || 'folder',
-        path: file.replace(globPath, destinationPath),
+        id: filePath,
+        path: filePath,
         ext: fileExt,
         name: fileName,
       }
+    }).sort((a, b) => {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
     })
 
     const body = { files: webPaths, destinationPath }
