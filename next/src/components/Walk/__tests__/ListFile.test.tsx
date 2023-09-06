@@ -14,7 +14,7 @@ describe('<ListFile />', () => {
     const { getByText } = render(<ListFile item={{ ...mockItemFile, label }} />)
     expect(getByText(label)).toBeInTheDocument()
   })
-  test('should render a folder', () => {
+  test('should render a folder with path', () => {
     const path = 'testPath'
     const label = 'Link text'
     const { getByText } = render(<ListFile
@@ -26,5 +26,18 @@ describe('<ListFile />', () => {
       }}
     />)
     expect(getByText(label).closest('a')?.href).toBe(`http://localhost/#path=${path}`)
+  })
+  test('should render a folder with path', () => {
+    const path = ''
+    const label = 'Link text'
+    const { getByText } = render(<ListFile
+      item={{
+        ...mockItemFile,
+        mediumType: 'folder',
+        path,
+        label,
+      }}
+    />)
+    expect(getByText(label).closest('a')?.href).toBe('http://localhost/')
   })
 })

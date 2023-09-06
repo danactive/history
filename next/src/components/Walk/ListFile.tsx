@@ -5,9 +5,10 @@ import Link from '../Link'
 
 function ListFile({ item: file }: { item: ItemFile }) {
   if (file.mediumType === 'folder') {
+    const href = file.path ? `#path=${file.path}` : ''
     return (
       <ListItem>
-        <Link href={`#path=${file.path}`}>{file.label}</Link>
+        <Link href={href}>{file.label}</Link>
       </ListItem>
     )
   }

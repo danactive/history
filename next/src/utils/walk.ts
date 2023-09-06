@@ -20,7 +20,7 @@ export function parseHash(find: 'path', from: string) {
   return found?.[2] ?? null
 }
 
-export function addParentDirectoryNav(itemFiles: ItemFile[], path: string) {
+export function addParentDirectoryNav(itemFiles: ItemFile[], path: string | null) {
   const file: ItemFile = {
     path: 'harddrive',
     filename: '..',

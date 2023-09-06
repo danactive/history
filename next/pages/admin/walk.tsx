@@ -1,10 +1,15 @@
-import { List, ListDivider } from '@mui/joy'
+import { List, ListDivider, ListItem } from '@mui/joy'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 
 import ListFile from '../../src/components/Walk/ListFile'
 import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
-import { isImage, organizeByMedia, parseHash } from '../../src/utils/walk'
+import {
+  addParentDirectoryNav,
+  isImage,
+  organizeByMedia,
+  parseHash,
+} from '../../src/utils/walk'
 
 type ItemFile = Partial<Filesystem> & {
   id: Filesystem['id'];
@@ -34,18 +39,21 @@ function WalkPage() {
   if (!data) return <p>No filesystem data</p>
 
   const itemImages = data.files.filter((file) => isImage(file))
-  // eslint-disable-next-line no-console
-  console.log('itemImages', itemImages)
+  const hasImages = !isLoading && itemImages.length > 0
+  const fsItems = addParentDirectoryNav(organizeByMedia(data.files), pathQs)
 
   return (
-    <List>
-      {organizeByMedia(data.files).map((item, i) => (
-        <Fragment key={item.id}>
-          {i > 0 && <ListDivider />}
-          <ListFile item={item} />
-        </Fragment>
-      ))}
-    </List>
+    <>
+      <List>
+        {fsItems.map((item, i) => (
+          <Fragment key={item.id}>
+            {i > 0 && <ListDivider />}
+            <ListFile item={item} />
+          </Fragment>
+        ))}
+      </List>
+      {hasImages && (<div>TODO display OrganizeThumbs</div>)}
+    </>
   )
 }
 
