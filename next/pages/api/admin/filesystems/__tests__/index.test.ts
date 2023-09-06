@@ -26,11 +26,18 @@ describe('Filesystem API', () => {
       })
     })
 
-    function matchFile(expect: jest.Expect, file: Filesystem) {
+    function matchPFile(expect: jest.Expect, file: Filesystem) {
       expect(file.filename).toEqual('P1160066.JPG')
       expect(file.ext).toEqual('JPG')
       expect(file.mediumType).toEqual('image')
       expect(file.name).toEqual('P1160066')
+    }
+
+    function matchJFile(expect: jest.Expect, file: Filesystem) {
+      expect(file.filename).toEqual('jay.js')
+      expect(file.ext).toEqual('js')
+      expect(file.mediumType).toEqual('application')
+      expect(file.name).toEqual('jay')
     }
 
     test('* GET fixtures has test files', async () => {
@@ -42,7 +49,8 @@ describe('Filesystem API', () => {
 
           expect(response.status).toBe(200)
 
-          matchFile(expect, result.files[2])
+          matchPFile(expect, result.files[1])
+          matchJFile(expect, result.files[0])
           expect(result.files.length).toEqual(3)
         },
         params: { path: 'test/fixtures/walkable' },
@@ -58,7 +66,7 @@ describe('Filesystem API', () => {
 
           expect(response.status).toBe(200)
 
-          matchFile(expect, result.files[0])
+          matchPFile(expect, result.files[0])
           expect(result.files.length).toEqual(1)
         },
         params: { path: 'test/fixtures/walk%20able' },

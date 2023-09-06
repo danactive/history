@@ -2,7 +2,7 @@ import NextLink from 'next/link'
 import { memo, type ReactNode } from 'react'
 import styled from 'styled-components'
 
-const ColouredLink = styled.a`
+const ColouredLink = styled(NextLink)`
   color: #6cc0e5;
 
   &:hover {
@@ -22,15 +22,17 @@ const ColouredLink = styled.a`
   }
 `
 
-function Link({
-  children, href, title = '', ...props
-}: {
-  children: ReactNode, href: string, title?: string,
-}) {
+interface InputGroupProps extends React.ComponentPropsWithoutRef<'a'> {
+  children: ReactNode;
+  href: string;
+}
+
+function Link(
+  { children, ...props }:
+  InputGroupProps,
+) {
   return (
-    <NextLink href={href} {...props} passHref legacyBehavior>
-      <ColouredLink title={title}>{children}</ColouredLink>
-    </NextLink>
+    <ColouredLink {...props}>{children}</ColouredLink>
   )
 }
 

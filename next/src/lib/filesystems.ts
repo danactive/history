@@ -11,6 +11,8 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
 }
 
 type Filesystem = {
+  id: string;
+  label: string;
   ext: string;
   name: string;
   filename: string;
@@ -18,12 +20,14 @@ type Filesystem = {
   mediumType: string;
 }
 
-type Filesystems = {
-  albums: Filesystem[]
+type FilesystemBody = {
+  files: Filesystem[];
+  destinationPath: string;
 }
 
-type FilesystemBody = {
-  body: Filesystems; status: number;
+type FilesystemEnvelope = {
+  body: FilesystemBody;
+  status: number;
 }
 
 type ErrorOptionalMessageBody = {
@@ -33,7 +37,7 @@ type ErrorOptionalMessageBody = {
 async function get<T extends boolean = false>(
   destinationPath: string | string[] | undefined,
   returnEnvelope?: T,
-): Promise<T extends true ? FilesystemBody : Filesystems>;
+): Promise<T extends true ? FilesystemEnvelope : FilesystemBody>;
 
 /**
  * Get file/folder listing from local filesystem
@@ -45,7 +49,7 @@ async function get(
   destinationPath: string | string[] | undefined = '',
   returnEnvelope = false,
 ): Promise<
-  Filesystems | ErrorOptionalMessage | FilesystemBody | ErrorOptionalMessageBody
+  FilesystemEnvelope | FilesystemBody | ErrorOptionalMessage | ErrorOptionalMessageBody
 > {
   try {
     if (destinationPath === null || destinationPath === undefined || Array.isArray(destinationPath)) {
@@ -65,15 +69,19 @@ async function get(
       const fileExt = utils.type(file) // case-insensitive
       const fileName = path.basename(file, `.${fileExt}`)
       const mediumType = utils.mediumType(utils.mimeType(fileExt))
+      const filePath = file.replace(globPath, destinationPath)
+      const filename = (fileExt === '') ? fileName : `${fileName}.${fileExt}`
 
       return {
-        filename: (fileExt === '') ? fileName : `${fileName}.${fileExt}`,
+        filename,
+        label: filename,
         mediumType: mediumType || 'folder',
-        path: file.replace(globPath, destinationPath),
+        id: filePath,
+        path: filePath,
         ext: fileExt,
         name: fileName,
       }
-    })
+    }).sort((a, b) => a.name.localeCompare(b.name))
 
     const body = { files: webPaths, destinationPath }
     if (returnEnvelope) {
@@ -90,5 +98,5 @@ async function get(
   }
 }
 
-export { errorSchema, type Filesystem }
+export { errorSchema, type Filesystem, type FilesystemBody }
 export default get
