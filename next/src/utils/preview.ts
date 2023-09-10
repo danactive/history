@@ -1,6 +1,6 @@
 import { type DraggableLocation } from '@hello-pangea/dnd'
 
-import { type Filesystem } from '../lib/filesystems'
+import { type Filesystem } from '../models/filesystems'
 
 export function groupIntoColumns(items: Filesystem[]) {
   const IMAGE_PER_COLUMN = 4

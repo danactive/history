@@ -1,11 +1,34 @@
-import React from 'react'
 import { type DraggableProvided } from '@hello-pangea/dnd'
+import React from 'react'
 import styled from 'styled-components'
 
+import config from '../../../../config.json'
 import { type Filesystem } from '../../lib/filesystems'
+import Img from '../Img'
+import Link from '../Link'
 
 const getBorderColor = (isDragging: boolean) => (isDragging ? '#e6df55' : 'transparent')
 const getBackgroundColor = (isDragging: boolean) => (isDragging ? '#877e7a' : 'transparent')
+
+function DraggableThumb({ item }: { item: Filesystem }) {
+  const { filename, absolutePath } = item
+  return (
+    <>
+      <span key={`label-${filename}`}>
+        <Link href={filename} target="_blank" title="View original in new tab">
+          {filename}
+        </Link>
+      </span>
+      <Img
+        key={`thumbnail-${filename}`}
+        alt="No preview yet"
+        src={absolutePath}
+        width={config.resizeDimensions.preview.width}
+        height={config.resizeDimensions.preview.height}
+      />
+    </>
+  )
+}
 
 const Container = styled.div<{ $isDragging: boolean }>`
   border: ${(props) => getBorderColor(props.$isDragging)} 5px solid
@@ -25,7 +48,7 @@ function getStyle(provided: DraggableProvided, style?: React.CSSProperties) {
   }
 }
 
-function PreviewItem(
+function PreviewImage(
   {
     item,
     isDragging,
@@ -51,9 +74,9 @@ function PreviewItem(
       data-is-dragging={isDragging}
       data-index={index}
     >
-      {item.label}
+      <DraggableThumb item={item} />
     </Container>
   )
 }
 
-export default React.memo(PreviewItem)
+export default React.memo(PreviewImage)

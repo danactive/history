@@ -2,11 +2,8 @@ import { DragDropContext, type DraggableLocation } from '@hello-pangea/dnd'
 import type { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 
-import config from '../../../../config.json'
 import type { Filesystem } from '../../lib/filesystems'
 import { groupIntoColumns, reorderOnRelease } from '../../utils/preview'
-import Img from '../Img'
-import Link from '../Link'
 import PreviewColumn from './PreviewColumn'
 
 const grid = 4
@@ -22,27 +19,6 @@ const HorizontalScrollContainer = styled.div`
   padding: ${grid}px;
   overflow: auto;
 `
-
-export function DraggableThumb({ item }: { item: Filesystem }) {
-  const { filename } = item
-  if (!filename) throw new ReferenceError('Filename is missing')
-  return (
-    <>
-      <span key={`label-${filename}`}>
-        <Link href={filename} target="_blank" title="View original in new tab">
-          {filename}
-        </Link>
-      </span>
-      <Img
-        key={`thumbnail-${filename}`}
-        alt="No preview yet"
-        src={filename}
-        width={config.resizeDimensions.preview.width}
-        height={config.resizeDimensions.preview.height}
-      />
-    </>
-  )
-}
 
 export default function OrganizePreviews(
   { items, setItems }:

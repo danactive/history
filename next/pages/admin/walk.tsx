@@ -2,7 +2,7 @@ import { List, ListDivider } from '@mui/joy'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 
-import OrganizePreviews, { DraggableThumb } from '../../src/components/OrganizePreviews'
+import OrganizePreviews from '../../src/components/OrganizePreviews'
 import ListFile from '../../src/components/Walk/ListFile'
 import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
 import {
@@ -56,14 +56,7 @@ function WalkPage() {
         ))}
       </List>
       {hasImages && (
-      <OrganizePreviews
-        key="walk-OrganizePreviews"
-        setItems={setPreviewList}
-        items={previewList.map((item) => ({
-          ...item,
-          content: <DraggableThumb item={item} />,
-        }))}
-      />
+      <OrganizePreviews setItems={setPreviewList} items={previewList} />
       )}
     </>
   )

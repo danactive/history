@@ -3,7 +3,7 @@ import { Draggable, Droppable, type DroppableProvided } from '@hello-pangea/dnd'
 import styled from 'styled-components'
 
 import { type Filesystem } from '../../lib/filesystems'
-import PreviewItem from './PreviewItem'
+import PreviewImage from './PreviewImage'
 
 const grid = 4
 
@@ -50,7 +50,7 @@ const InnerPreviewColumn = React.memo(function InnerPreviewColumn(
   return items.map((item, index) => (
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(dragProvided, dragSnapshot) => (
-        <PreviewItem
+        <PreviewImage
           key={item.id}
           item={item}
           index={index}
