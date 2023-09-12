@@ -15,7 +15,7 @@ function DraggableThumb({ item }: { item: Filesystem }) {
   return (
     <>
       <span key={`label-${filename}`}>
-        <Link href={filename} target="_blank" title="View original in new tab">
+        <Link href={absolutePath} target="_blank" title="View original in new tab">
           {filename}
         </Link>
       </span>
@@ -31,10 +31,10 @@ function DraggableThumb({ item }: { item: Filesystem }) {
 }
 
 const Container = styled.div<{ $isDragging: boolean }>`
-  border: ${(props) => getBorderColor(props.$isDragging)} 5px solid
-  background-color: ${(props) => getBackgroundColor(props.$isDragging)}
-  box-sizing: border-box
-  padding: 4px
+  border: ${(props) => getBorderColor(props.$isDragging)} 5px solid;
+  background-color: ${(props) => getBackgroundColor(props.$isDragging)};
+  box-sizing: border-box;
+  padding: 4px;
 `
 
 function getStyle(provided: DraggableProvided, style?: React.CSSProperties) {

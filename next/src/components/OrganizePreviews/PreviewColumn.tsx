@@ -19,27 +19,27 @@ export const getBackgroundColor = (isDraggingOver: boolean, isDraggingFrom: bool
 }
 
 const Wrapper = styled.div<{ $isDraggingOver: boolean, $isDraggingFrom: boolean }>`
-  background-color: ${(props) => getBackgroundColor(props.$isDraggingOver, props.$isDraggingFrom)}
-  display: flex
-  flex-direction: column
-  padding: ${grid}px
-  border: ${grid}px
-  padding-bottom: 0
-  transition: background-color 0.2s ease, opacity 0.1s ease
-  user-select: none
-  width: 285px
+  background-color: ${(props) => getBackgroundColor(props.$isDraggingOver, props.$isDraggingFrom)};
+  display: flex;
+  flex-direction: column;
+  padding: ${grid}px;
+  border: ${grid}px;
+  padding-bottom: 0;
+  transition: background-color 0.2s ease, opacity 0.1s ease;
+  user-select: none;
+  width: 285px;
 `
 
 const scrollContainerHeight = 250
 
 const DropZone = styled.div`
   /* stop the list collapsing when empty */
-  min-height: ${scrollContainerHeight}px
+  min-height: ${scrollContainerHeight}px;
   /*
     not relying on the items for a margin-bottom
     as it will collapse when the list is empty
   */
-  padding-bottom: ${grid}px
+  padding-bottom: ${grid}px;
 `
 
 // eslint-disable-next-line prefer-arrow-callback
