@@ -16,7 +16,7 @@ export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj as object
 )
 
 export function isNotEmpty(value: unknown): value is string {
-  if (typeof value !== 'undefined' || value !== null || value !== '') {
+  if (typeof value !== 'undefined' && value !== null && value !== '' && value !== undefined) {
     return true
   }
   return false

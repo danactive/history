@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import type { Filesystem } from '../../lib/filesystems'
 import { groupIntoColumns, reorderOnRelease } from '../../utils/preview'
+import ActionButtons from './ActionButtons'
 import PreviewColumn from './PreviewColumn'
 
 const grid = 4
@@ -52,10 +53,13 @@ export default function OrganizePreviews(
   )
 
   return (
-    <DragDropContext onDragEnd={({ source, destination }) => onDragEnd({ source, destination })}>
-      <HorizontalScrollContainer>
-        {columnItems.map(makeColumn)}
-      </HorizontalScrollContainer>
-    </DragDropContext>
+    <>
+      <ActionButtons items={items} />
+      <DragDropContext onDragEnd={({ source, destination }) => onDragEnd({ source, destination })}>
+        <HorizontalScrollContainer>
+          {columnItems.map(makeColumn)}
+        </HorizontalScrollContainer>
+      </DragDropContext>
+    </>
   )
 }

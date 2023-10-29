@@ -56,7 +56,7 @@ function WalkPage() {
         ))}
       </List>
       {hasImages && (
-      <OrganizePreviews setItems={setPreviewList} items={previewList} />
+        <OrganizePreviews setItems={setPreviewList} items={previewList} />
       )}
     </>
   )
