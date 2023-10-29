@@ -17,7 +17,7 @@ interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
 
-type Props = {
+type ComponentProps = {
   gallery: NonNullable<AlbumMeta['gallery']>;
   albums: ServerSideAlbumItem[];
   indexedKeywords: object[];
@@ -27,7 +27,7 @@ interface Params extends ParsedUrlQuery {
   gallery: NonNullable<AlbumMeta['gallery']>
 }
 
-export const getStaticProps: GetStaticProps<Props, Params> = async (context) => {
+export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
   const params = context.params!
   const { albums } = await getAlbums(params.gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
@@ -74,7 +74,7 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-function AlbumsPage({ gallery, albums, indexedKeywords }: Props) {
+function AlbumsPage({ gallery, albums, indexedKeywords }: ComponentProps) {
   const {
     filtered,
     searchBox,

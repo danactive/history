@@ -34,3 +34,10 @@ function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] 
 }
 
 export default indexKeywords
+
+export function addGeographyToSearch(item: Item) {
+  const hasComma = item.city.lastIndexOf(',') !== -1
+  const country = hasComma ? item.city.substring(item.city.lastIndexOf(', ') + 1).trim() : item.city.trim()
+
+  return item.search === null ? country : `${item.search}, ${country}`
+}
