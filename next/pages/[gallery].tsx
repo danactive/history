@@ -32,10 +32,10 @@ export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (con
   const { albums } = await getAlbums(params.gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
     ...album,
-    corpus: [album.h1, album.h2, album.year].join(' '),
+    corpus: [album.h1, album.h2, album.year, album.search].join(' '),
   }))
   return {
-    props: { gallery: params.gallery, albums: preparedAlbums, ...indexKeywords(albums) },
+    props: { gallery: params.gallery, albums: preparedAlbums, ...indexKeywords(preparedAlbums) },
   }
 }
 
