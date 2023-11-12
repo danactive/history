@@ -31,7 +31,7 @@ export default function ActionButtons(
       },
       method: 'POST',
       body: JSON.stringify(postBody),
-    };
+    }
     /*
     curl -d '{"filenames":["a.jpg","b.jpg"], "prefix": "2020-06-13",
     "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'

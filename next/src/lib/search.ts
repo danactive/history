@@ -16,18 +16,26 @@ function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] 
     return out
   }, {} as Record<string, number>)
 
-  const sortedKeywords = Object.fromEntries(
-    Object.entries(summedKeywords).sort(([, a], [, b]) => {
-      if (b < a) return -1
-      if (a < b) return 1
-      return 0
-    }),
-  )
+  function isNum(n: string) {
+    return Number.isFinite(Number(n))
+  }
+
+  const sortedKeywords = Object.entries(summedKeywords).sort(([nameA, numA], [nameB, numB]) => {
+    if (numB - numA !== 0) {
+      return numB - numA
+    }
+
+    if (isNum(nameA) && isNum(nameB)) {
+      return Number(nameB) - Number(nameA)
+    }
+
+    return nameA.localeCompare(nameB)
+  })
 
   // prepare for react-select in useSearch custom hook
   return {
-    indexedKeywords: Object.keys(sortedKeywords).map((key) => ({
-      label: `${key} (${sortedKeywords[key]})`,
+    indexedKeywords: sortedKeywords.map(([key, count]) => ({
+      label: `${key} (${count})`,
       value: key,
     })),
   }
