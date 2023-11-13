@@ -81,6 +81,7 @@ describe('Walk - util', () => {
     name: 'Name',
     filename: 'Filename',
     path: 'Path',
+    absolutePath: 'Absolute Path',
   }
   describe('isImage', () => {
     test('detect JPG', () => {

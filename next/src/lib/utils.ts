@@ -6,7 +6,6 @@ import type {
   AlbumMeta,
   Item,
   XmlItem,
-  XmlMeta,
 } from '../types/common'
 
 const { IMAGE_BASE_URL = '' } = process.env

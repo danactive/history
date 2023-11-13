@@ -17,7 +17,7 @@ describe('Albums library', () => {
             version: '1.8',
             thumbPath: '/galleries/demo/media/thumbs/2004/2004-01-04-01.jpg',
             year: '2001-2005',
-            search: null,
+            search: '2001, 2004, British Columbia',
           },
         ],
       }

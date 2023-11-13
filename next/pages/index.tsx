@@ -6,11 +6,11 @@ import { Fragment } from 'react'
 import Link from '../src/components/Link'
 import getGalleries, { type Gallery } from '../src/lib/galleries'
 
-type Props = {
+type ComponentProps = {
   galleries: { id: Gallery; gallery: Gallery }[]
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<ComponentProps> = async () => {
   const { galleries } = await getGalleries()
 
   return {
@@ -20,7 +20,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 }
 
-function Home({ galleries }: Props) {
+function Home({ galleries }: ComponentProps) {
   return (
     <>
       <Head>

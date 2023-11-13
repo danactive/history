@@ -1,7 +1,8 @@
-import { List, ListDivider, ListItem } from '@mui/joy'
+import { List, ListDivider } from '@mui/joy'
 import { useRouter } from 'next/router'
 import { Fragment, useEffect, useState } from 'react'
 
+import OrganizePreviews from '../../src/components/OrganizePreviews'
 import ListFile from '../../src/components/Walk/ListFile'
 import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
 import {
@@ -21,7 +22,8 @@ type ItemFile = Partial<Filesystem> & {
 
 function WalkPage() {
   const { asPath } = useRouter()
-  const [data, setData] = useState<FilesystemBody | null>(null)
+  const [fileList, setFileList] = useState<Filesystem[] | null>(null)
+  const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)
   const pathQs = parseHash('path', asPath)
 
@@ -30,17 +32,18 @@ function WalkPage() {
     fetch(`/api/admin/filesystems?path=${pathQs ?? '/'}`)
       .then((response) => response.json())
       .then((result: FilesystemBody) => {
-        setData(result)
         setLoading(false)
+        setFileList(result.files)
+        const itemImages = result.files.filter((file) => isImage(file))
+        setPreviewList(itemImages)
       })
   }, [asPath])
 
   if (isLoading) return <p>Loading...</p>
-  if (!data) return <p>No filesystem data</p>
+  if (!fileList) return <p>No filesystem data</p>
 
-  const itemImages = data.files.filter((file) => isImage(file))
-  const hasImages = !isLoading && itemImages.length > 0
-  const fsItems = addParentDirectoryNav(organizeByMedia(data.files), pathQs)
+  const hasImages = !isLoading && previewList && previewList.length > 0
+  const fsItems = addParentDirectoryNav(organizeByMedia(fileList), pathQs)
 
   return (
     <>
@@ -52,7 +55,9 @@ function WalkPage() {
           </Fragment>
         ))}
       </List>
-      {hasImages && (<div>TODO display OrganizeThumbs</div>)}
+      {hasImages && (
+        <OrganizePreviews setItems={setPreviewList} items={previewList} />
+      )}
     </>
   )
 }

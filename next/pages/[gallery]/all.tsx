@@ -9,7 +9,7 @@ import config from '../../../config.json'
 import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
-import indexKeywords from '../../src/lib/search'
+import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
 
 import AlbumContext from '../../src/components/Context'
 import Img from '../../src/components/Img'
@@ -34,7 +34,7 @@ interface ServerSideAllItem extends Item {
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
 }
 
-type Props = {
+type ComponentProps = {
   items: ServerSideAllItem[];
   indexedKeywords: object[];
 }
@@ -43,7 +43,7 @@ interface Params extends ParsedUrlQuery {
   gallery: NonNullable<AlbumMeta['gallery']>
 }
 
-export const getStaticProps: GetStaticProps<Props, Params> = async (context) => {
+export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
   const params = context.params!
   const { albums } = await getAlbums(params.gallery)
 
@@ -60,6 +60,7 @@ export const getStaticProps: GetStaticProps<Props, Params> = async (context) => 
     album: albumName,
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
     coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
+    search: addGeographyToSearch(item),
   }))
 
   // reverse order for albums in ascending order (oldest on top)
@@ -90,7 +91,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-function AllPage({ items = [], indexedKeywords }: Props) {
+function AllPage({ items = [], indexedKeywords }: ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {

@@ -2,22 +2,13 @@ import { glob } from 'glob'
 import path from 'node:path'
 
 import utilsFactory from './utils'
+import transform, { type Filesystem } from '../models/filesystems'
 
 type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
   const out = { files: [] }
   if (!message) return out
   return { ...out, error: { message } }
-}
-
-type Filesystem = {
-  id: string;
-  label: string;
-  ext: string;
-  name: string;
-  filename: string;
-  path: string;
-  mediumType: string;
 }
 
 type FilesystemBody = {
@@ -65,23 +56,7 @@ async function get(
 
     const files = await glob(decodeURI(`${globPath}/*`))
 
-    const webPaths = files.map((file): Filesystem => {
-      const fileExt = utils.type(file) // case-insensitive
-      const fileName = path.basename(file, `.${fileExt}`)
-      const mediumType = utils.mediumType(utils.mimeType(fileExt))
-      const filePath = file.replace(globPath, destinationPath)
-      const filename = (fileExt === '') ? fileName : `${fileName}.${fileExt}`
-
-      return {
-        filename,
-        label: filename,
-        mediumType: mediumType || 'folder',
-        id: filePath,
-        path: filePath,
-        ext: fileExt,
-        name: fileName,
-      }
-    }).sort((a, b) => a.name.localeCompare(b.name))
+    const webPaths = files.map((file) => transform(file, { destinationPath, globPath })).sort((a, b) => a.name.localeCompare(b.name))
 
     const body = { files: webPaths, destinationPath }
     if (returnEnvelope) {

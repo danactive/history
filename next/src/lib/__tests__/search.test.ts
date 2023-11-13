@@ -98,4 +98,80 @@ describe('Search hook', () => {
       expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
     })
   })
+
+  describe('Numbers and alphabet', () => {
+    test('Sort by count for years', () => {
+      const keywordYear1 = '1999'
+      const keywordYear23 = '2023'
+      const keywordYear22 = '2022'
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keywordYear23,
+      }, {
+        ...mockItem,
+        search: keywordYear1,
+      }, {
+        ...mockItem,
+        search: keywordYear23,
+      }, {
+        ...mockItem,
+        search: keywordYear1,
+      }, {
+        ...mockItem,
+        search: keywordYear1,
+      }, {
+        ...mockItem,
+        search: keywordYear22,
+      }, {
+        ...mockItem,
+        search: keywordYear22,
+      }, {
+        ...mockItem,
+        search: keywordYear22,
+      }, {
+        ...mockItem,
+        search: keywordYear23,
+      }])
+      const expected = {
+        indexedKeywords: [
+          { label: `${keywordYear23} (3)`, value: keywordYear23 },
+          { label: `${keywordYear22} (3)`, value: keywordYear22 },
+          { label: `${keywordYear1} (3)`, value: keywordYear1 },
+        ],
+      }
+      expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
+    })
+
+    test('Year latest, then asc', () => {
+      const keywordYear1 = '1999'
+      const keywordYear2 = '2023'
+      const keywordAlpha = 'Apple'
+      const keywordBeta = 'Banana'
+      const actual = indexKeywords([{
+        ...mockItem,
+        search: keywordAlpha,
+      }, {
+        ...mockItem,
+        search: keywordYear1,
+      }, {
+        ...mockItem,
+        search: keywordBeta,
+      }, {
+        ...mockItem,
+        search: keywordAlpha,
+      }, {
+        ...mockItem,
+        search: keywordYear2,
+      }])
+      const expected = {
+        indexedKeywords: [
+          { label: `${keywordAlpha} (2)`, value: keywordAlpha },
+          { label: `${keywordYear2} (1)`, value: keywordYear2 },
+          { label: `${keywordYear1} (1)`, value: keywordYear1 },
+          { label: `${keywordBeta} (1)`, value: keywordBeta },
+        ],
+      }
+      expect(actual.indexedKeywords).toStrictEqual(expected.indexedKeywords)
+    })
+  })
 })

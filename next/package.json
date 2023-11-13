@@ -18,6 +18,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hello-pangea/dnd": "^16.3.0",
     "@mui/joy": "^5.0.0-alpha.89",
     "@types/react-image-gallery": "^1.2.0",
     "@types/xml2js": "^0.4.12",
