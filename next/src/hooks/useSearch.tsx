@@ -97,7 +97,7 @@ function useSearch<ItemType extends ServerSideItem>(
     const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+      return new RegExp(`\\b${keywordWithoutAccentLow}\\b`).test(corpusWithoutAccentLow)
     }
   }
   const filtered = items.filter((item) => {
