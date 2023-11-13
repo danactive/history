@@ -32,7 +32,7 @@ function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] 
     return nameA.localeCompare(nameB)
   })
 
-  // prepare for react-select in useSearch custom hook
+  // prepare for combo box in useSearch custom hook
   return {
     indexedKeywords: sortedKeywords.map(([key, count]) => ({
       label: `${key} (${count})`,

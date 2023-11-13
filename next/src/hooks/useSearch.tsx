@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Select from 'react-select/creatable'
 import styled from 'styled-components'
+import ComboBox from '../components/ComboBox'
 
 interface ServerSideItem {
   corpus: string;
@@ -11,7 +11,7 @@ const Row = styled.div`
   display: flex;
   align-items: center;
 `
-const AutoComplete = styled(Select)`
+const AutoComplete = styled(ComboBox)`
   width: 20rem;
 `
 const SearchCount = styled.h3`
