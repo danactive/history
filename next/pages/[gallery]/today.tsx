@@ -56,7 +56,8 @@ export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (con
       albumCoordinateAccuracy,
       items: itemsMatchDate,
     })
-    return prevItems.concat(preparedItems)
+    // ensure the photos are morning to night
+    return prevItems.concat(preparedItems.reverse())
   }, Promise.resolve([] as ServerSideTodayItem[]))).reverse()
 
   return {
