@@ -9,7 +9,7 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 
-import type { Item } from '../../types/common'
+import type { IndexedKeywords, Item } from '../../types/common'
 
 interface ServerSidePhotoItem extends Item {
   corpus: string;
@@ -22,7 +22,7 @@ const Wrapper = styled.ul`
 
 function AlbumPage(
   { items = [], meta, indexedKeywords }:
-  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords: object[] },
+  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords: IndexedKeywords[] },
 ) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)

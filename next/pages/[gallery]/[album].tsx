@@ -6,7 +6,7 @@ import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
-import type { AlbumMeta, Item } from '../../src/types/common'
+import type { AlbumMeta, IndexedKeywords, Item } from '../../src/types/common'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -24,7 +24,7 @@ interface ServerSideAlbumItem extends Item {
 type ComponentProps = {
   items?: ServerSideAlbumItem[];
   meta: AlbumMeta;
-  indexedKeywords: object[];
+  indexedKeywords: IndexedKeywords[];
 }
 
 interface Params extends ParsedUrlQuery {

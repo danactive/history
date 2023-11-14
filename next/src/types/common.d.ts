@@ -100,6 +100,11 @@ type GalleryAlbum = {
   search: string | null;
 }
 
+type IndexedKeywords = {
+  label: string;
+  value: string;
+}
+
 // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/54659
 declare module 'react-image-gallery' {
   interface ReactImageGalleryProps {
@@ -137,4 +142,5 @@ export type {
   XmlAlbum,
   Item,
   ItemReferenceSource,
+  IndexedKeywords,
 }

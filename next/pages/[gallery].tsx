@@ -11,7 +11,7 @@ import indexKeywords from '../src/lib/search'
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
-import type { AlbumMeta, GalleryAlbum } from '../src/types/common'
+import type { AlbumMeta, GalleryAlbum, IndexedKeywords } from '../src/types/common'
 
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
@@ -20,7 +20,7 @@ interface ServerSideAlbumItem extends GalleryAlbum {
 type ComponentProps = {
   gallery: NonNullable<AlbumMeta['gallery']>;
   albums: ServerSideAlbumItem[];
-  indexedKeywords: object[];
+  indexedKeywords: IndexedKeywords[];
 }
 
 interface Params extends ParsedUrlQuery {

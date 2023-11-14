@@ -8,7 +8,7 @@ import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
 
 import AlbumPageComponent from '../../src/components/AlbumPage'
-import type { AlbumMeta, Item } from '../../src/types/common'
+import type { AlbumMeta, IndexedKeywords, Item } from '../../src/types/common'
 
 interface ServerSideTodayItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
@@ -18,7 +18,7 @@ interface ServerSideTodayItem extends Item {
 
 type ComponentProps = {
   items: ServerSideTodayItem[];
-  indexedKeywords: object[];
+  indexedKeywords: IndexedKeywords[];
 }
 
 interface Params extends ParsedUrlQuery {

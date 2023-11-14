@@ -1,4 +1,4 @@
-import type { GalleryAlbum, Item } from '../types/common'
+import type { GalleryAlbum, IndexedKeywords, Item } from '../types/common'
 
 /**
  * Index search keywords from search xml element and dedupe
@@ -32,12 +32,14 @@ function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] 
     return nameA.localeCompare(nameB)
   })
 
+  const indexedKeywords: IndexedKeywords[] = sortedKeywords.map(([key, count]) => ({
+    label: `${key} (${count})`,
+    value: key,
+  }))
+
   // prepare for combo box in useSearch custom hook
   return {
-    indexedKeywords: sortedKeywords.map(([key, count]) => ({
-      label: `${key} (${count})`,
-      value: key,
-    })),
+    indexedKeywords,
   }
 }
 

@@ -18,7 +18,7 @@ import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 
-import { AlbumMeta, Item } from '../../src/types/common'
+import { AlbumMeta, IndexedKeywords, Item } from '../../src/types/common'
 
 const AlbumName = styled.b`
   margin-right: 1rem;
@@ -36,7 +36,7 @@ interface ServerSideAllItem extends Item {
 
 type ComponentProps = {
   items: ServerSideAllItem[];
-  indexedKeywords: object[];
+  indexedKeywords: IndexedKeywords[];
 }
 
 interface Params extends ParsedUrlQuery {

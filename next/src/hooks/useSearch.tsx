@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ComboBox from '../components/ComboBox'
+import { IndexedKeywords } from '../types/common';
 
 interface ServerSideItem {
   corpus: string;
@@ -28,7 +29,7 @@ interface ReactSelectNewValue {
 
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
-  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: object[] },
+  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
@@ -55,14 +56,7 @@ function useSearch<ItemType extends ServerSideItem>(
     <form onSubmit={handleSubmit}>
       <Row>
         <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
-        <AutoComplete
-          isClearable
-          options={indexedKeywords}
-          value={selectedOption}
-          /*
-          // @ts-ignore */
-          onChange={setSelectedOption}
-        />
+        <AutoComplete options={indexedKeywords} />
         <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
         <ShareLink>{getShareUrlStem()}</ShareLink>
       </Row>
