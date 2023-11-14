@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ComboBox from '../components/ComboBox'
-import { IndexedKeywords } from '../types/common';
+import { FilmOptionType, IndexedKeywords } from '../types/common';
 
 interface ServerSideItem {
   corpus: string;
@@ -22,18 +22,13 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
-interface ReactSelectNewValue {
-  value: string;
-  label: string;
-}
-
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState<ReactSelectNewValue | null>(null)
+  const [selectedOption, setSelectedOption] = useState<FilmOptionType | null>(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -56,7 +51,11 @@ function useSearch<ItemType extends ServerSideItem>(
     <form onSubmit={handleSubmit}>
       <Row>
         <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
-        <AutoComplete options={indexedKeywords} />
+        <AutoComplete
+          options={indexedKeywords}
+          onChange={setSelectedOption}
+          value={selectedOption}
+        />
         <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
         <ShareLink>{getShareUrlStem()}</ShareLink>
       </Row>
@@ -73,7 +72,7 @@ function useSearch<ItemType extends ServerSideItem>(
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword?.toString())
-      const newValue: ReactSelectNewValue = {
+      const newValue: FilmOptionType = {
         label: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
         value: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
       }

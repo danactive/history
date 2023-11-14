@@ -4,18 +4,18 @@ import FormLabel from '@mui/joy/FormLabel'
 import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete'
 import AutocompleteOption from '@mui/joy/AutocompleteOption'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
-import { IndexedKeywords } from '../types/common'
-
-interface FilmOptionType extends Partial<IndexedKeywords> {
-  inputValue?: string;
-  label: string;
-}
+import { IndexedKeywords, FilmOptionType } from '../types/common'
 
 const filter = createFilterOptions<FilmOptionType>()
 
-export default function FreeSoloCreateOption({ options: propOptions }: { options: FilmOptionType[] }) {
-  const [value, setValue] = React.useState<FilmOptionType | null>(null)
-
+export default function FreeSoloCreateOption(
+  { options: propOptions, onChange: setValue, value }:
+  {
+    options: FilmOptionType[],
+    onChange: Function,
+    value: FilmOptionType,
+  },
+) {
   return (
     <FormControl id="free-solo-with-text-demo">
       <FormLabel>Free solo with text demo</FormLabel>
