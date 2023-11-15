@@ -9,11 +9,15 @@ import { IndexedKeywords, FilmOptionType } from '../types/common'
 const filter = createFilterOptions<FilmOptionType>()
 
 export default function FreeSoloCreateOption(
-  { options: propOptions, onChange: setValue, value }:
+  {
+    options: propOptions,
+    onChange,
+    value,
+  }:
   {
     options: FilmOptionType[],
     onChange: Function,
-    value: FilmOptionType,
+    value: string | null,
   },
 ) {
   return (
@@ -23,16 +27,11 @@ export default function FreeSoloCreateOption(
         value={value}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
-            setValue({
-              label: newValue,
-            })
+            onChange(newValue)
           } else if (newValue && newValue.inputValue) {
-            // Create a new value from the user input
-            setValue({
-              label: newValue.inputValue,
-            })
+            onChange(newValue.inputValue)
           } else {
-            setValue(newValue)
+            onChange(newValue?.value)
           }
         }}
         filterOptions={(options, params) => {

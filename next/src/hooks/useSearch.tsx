@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ComboBox from '../components/ComboBox'
-import { FilmOptionType, IndexedKeywords } from '../types/common';
+import { FilmOptionType, IndexedKeywords } from '../types/common'
 
 interface ServerSideItem {
   corpus: string;
@@ -28,7 +28,7 @@ function useSearch<ItemType extends ServerSideItem>(
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState<FilmOptionType | null>(null)
+  const [selectedOption, setSelectedOption] = useState<string>('')
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -42,7 +42,7 @@ function useSearch<ItemType extends ServerSideItem>(
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setKeyword(selectedOption?.value ?? '')
+    setKeyword(selectedOption ?? '')
     setMemoryIndex?.(0)
   }
 
