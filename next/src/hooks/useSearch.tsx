@@ -22,13 +22,17 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
+function escapeRegExp(string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+}
+
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState<string>('')
+  const [selectedOption, setSelectedOption] = useState<FilmOptionType | null>(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -42,7 +46,8 @@ function useSearch<ItemType extends ServerSideItem>(
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setKeyword(selectedOption ?? '')
+    console.log(`Filter "${selectedOption?.value ?? ''}"`)
+    setKeyword(selectedOption?.value ?? '')
     setMemoryIndex?.(0)
   }
 
@@ -90,7 +95,12 @@ function useSearch<ItemType extends ServerSideItem>(
     const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      return new RegExp(`\\b${keywordWithoutAccentLow}\\b`).test(corpusWithoutAccentLow)
+      // console.log('escapeRegExp(keywordWithoutAccentLow)', escapeRegExp(keywordWithoutAccentLow), `\\b${escapeRegExp(keywordWithoutAccentLow)}\\b`)
+      return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+      // console.log('corpusWithoutAccentLow', corpusWithoutAccentLow)
+      // return new RegExp(`\b${escapeRegExp(keywordWithoutAccentLow)}\b`).test(corpusWithoutAccentLow)
+      // return /\bBC\b/.test(corpusWithoutAccentLow)
+      // return (/\bkeywordWithoutAccentLow\b/g).test(corpusWithoutAccentLow)
     }
   }
   const filtered = items.filter((item) => {

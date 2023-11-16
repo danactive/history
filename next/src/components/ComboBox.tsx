@@ -17,7 +17,7 @@ export default function FreeSoloCreateOption(
   {
     options: FilmOptionType[],
     onChange: Function,
-    value: string | null,
+    value: FilmOptionType | null,
   },
 ) {
   return (
@@ -27,11 +27,14 @@ export default function FreeSoloCreateOption(
         value={value}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
-            onChange(newValue)
+            console.log('1newValue', newValue)
+            onChange({ value: newValue })
           } else if (newValue && newValue.inputValue) {
-            onChange(newValue.inputValue)
+            console.log('2newValue', newValue.inputValue)
+            onChange({ value: newValue.inputValue })
           } else {
-            onChange(newValue?.value)
+            console.log('3newValue', newValue?.value)
+            onChange(newValue)
           }
         }}
         filterOptions={(options, params) => {
