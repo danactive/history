@@ -21,6 +21,7 @@ function Menu({ showMenu, imageFilenames, path }) {
   const [date, setDate] = useState(moment().hour(1));
 
   function handleRename() {
+    // TODO get this POST /admin/rename
     const postBody = {
       filenames: imageFilenames,
       prefix: date.toISOString().split('T')[0],
