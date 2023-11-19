@@ -96,11 +96,15 @@ function useSearch<ItemType extends ServerSideItem>(
     return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
       // console.log('escapeRegExp(keywordWithoutAccentLow)', escapeRegExp(keywordWithoutAccentLow), `\\b${escapeRegExp(keywordWithoutAccentLow)}\\b`)
-      return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+      // return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
       // console.log('corpusWithoutAccentLow', corpusWithoutAccentLow)
       // return new RegExp(`\b${escapeRegExp(keywordWithoutAccentLow)}\b`).test(corpusWithoutAccentLow)
       // return /\bBC\b/.test(corpusWithoutAccentLow)
-      // return (/\bkeywordWithoutAccentLow\b/g).test(corpusWithoutAccentLow)
+      const specials = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/
+      if (specials.test(keywordWithoutAccentLow)) {
+        return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
+      }
+      return new RegExp(`\\b${keywordWithoutAccentLow}\\b`, 'g').test(corpusWithoutAccentLow)
     }
   }
   const filtered = items.filter((item) => {
