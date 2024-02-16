@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import ComboBox from '../components/ComboBox'
+import ComboBox, { type TYPES } from '../components/ComboBox'
 import { FilmOptionType, IndexedKeywords } from '../types/common'
 
 interface ServerSideItem {

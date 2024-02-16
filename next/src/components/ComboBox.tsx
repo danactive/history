@@ -6,35 +6,40 @@ import AutocompleteOption from '@mui/joy/AutocompleteOption'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
 import { IndexedKeywords, FilmOptionType } from '../types/common'
 
+export const TYPES = {
+  A: 'A',
+  B: 'B',
+  C: 'C',
+} as const
+
 const filter = createFilterOptions<FilmOptionType>()
 
-export default function FreeSoloCreateOption(
+export default function ComboBox(
   {
     options: propOptions,
     onChange,
-    value,
+    value: valueText,
   }:
   {
     options: FilmOptionType[],
-    onChange: Function,
+    onChange: ({ value, label, type }: { value: string; label: string; type: keyof typeof TYPES, }) => void,
     value: FilmOptionType | null,
   },
 ) {
   return (
     <FormControl id="free-solo-with-text-demo">
-      <FormLabel>Free solo with text demo</FormLabel>
       <Autocomplete
-        value={value}
+        value={valueText}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
             console.log('1newValue', newValue)
-            onChange({ value: newValue })
+            onChange({ value: newValue, label: newValue, type: TYPES.A })
           } else if (newValue && newValue.inputValue) {
             console.log('2newValue', newValue.inputValue)
-            onChange({ value: newValue.inputValue })
+            onChange({ value: newValue.inputValue, label: newValue.inputValue, type: TYPES.B })
           } else {
             console.log('3newValue', newValue?.value)
-            onChange(newValue)
+            onChange({ ...newValue, type: TYPES.C })
           }
         }}
         filterOptions={(options, params) => {
