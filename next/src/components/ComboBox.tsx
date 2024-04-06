@@ -22,7 +22,7 @@ export default function ComboBox(
   }:
   {
     options: FilmOptionType[],
-    onChange: ({ value, label, type }: { value: string; label: string; type: keyof typeof TYPES, }) => void,
+    onChange: ({ label, value }: { label: string; value: string; }) => void,
     value: FilmOptionType | null,
   },
 ) {
@@ -32,14 +32,9 @@ export default function ComboBox(
         value={valueText}
         onChange={(event, newValue) => {
           if (typeof newValue === 'string') {
-            console.log('1newValue', newValue)
-            onChange({ value: newValue, label: newValue, type: TYPES.A })
-          } else if (newValue && newValue.inputValue) {
-            console.log('2newValue', newValue.inputValue)
-            onChange({ value: newValue.inputValue, label: newValue.inputValue, type: TYPES.B })
-          } else {
-            console.log('3newValue', newValue?.value)
-            onChange({ ...newValue, type: TYPES.C })
+            onChange({ label: newValue, value: newValue })
+          } else if (newValue?.label && newValue?.value) {
+            onChange({ label: newValue.label, value: newValue.value })
           }
         }}
         filterOptions={(options, params) => {

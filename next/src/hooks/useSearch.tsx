@@ -46,7 +46,6 @@ function useSearch<ItemType extends ServerSideItem>(
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    console.log(`Filter "${selectedOption?.value ?? ''}"`)
     setKeyword(selectedOption?.value ?? '')
     setMemoryIndex?.(0)
   }
@@ -79,7 +78,7 @@ function useSearch<ItemType extends ServerSideItem>(
       setKeyword(router.query.keyword?.toString())
       const newValue: FilmOptionType = {
         label: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
-        value: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
+        inputValue: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
       }
       setSelectedOption(newValue)
     }
@@ -95,11 +94,6 @@ function useSearch<ItemType extends ServerSideItem>(
     const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      // console.log('escapeRegExp(keywordWithoutAccentLow)', escapeRegExp(keywordWithoutAccentLow), `\\b${escapeRegExp(keywordWithoutAccentLow)}\\b`)
-      // return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
-      // console.log('corpusWithoutAccentLow', corpusWithoutAccentLow)
-      // return new RegExp(`\b${escapeRegExp(keywordWithoutAccentLow)}\b`).test(corpusWithoutAccentLow)
-      // return /\bBC\b/.test(corpusWithoutAccentLow)
       const specials = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/
       if (specials.test(keywordWithoutAccentLow)) {
         return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
