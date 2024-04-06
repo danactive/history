@@ -22,10 +22,6 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
-function escapeRegExp(string: string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
-}
-
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
@@ -94,11 +90,7 @@ function useSearch<ItemType extends ServerSideItem>(
     const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     return (k: string) => {
       const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      const specials = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/
-      if (specials.test(keywordWithoutAccentLow)) {
-        return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
-      }
-      return new RegExp(`\\b${keywordWithoutAccentLow}\\b`, 'g').test(corpusWithoutAccentLow)
+      return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
     }
   }
   const filtered = items.filter((item) => {
