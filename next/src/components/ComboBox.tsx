@@ -30,11 +30,13 @@ export default function ComboBox(
     <FormControl id="free-solo-with-text-demo">
       <Autocomplete
         value={valueText}
-        onChange={(event, newValue) => {
+        onChange={(event, newValue): void => {
           if (typeof newValue === 'string') {
             onChange({ label: newValue, value: newValue })
           } else if (newValue?.label && newValue?.value) {
             onChange({ label: newValue.label, value: newValue.value })
+          } else if (newValue === null) { // clear
+            onChange({ label: '', value: '' })
           }
         }}
         filterOptions={(options, params) => {
