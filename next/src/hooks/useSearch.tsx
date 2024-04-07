@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import ComboBox, { type TYPES } from '../components/ComboBox'
+import ComboBox from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
 
 interface ServerSideItem {
