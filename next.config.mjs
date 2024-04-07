@@ -3,9 +3,6 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  images: {
-    domains: ['localhost', '127.0.0.1'],
-  },
   eslint: {
     dirs: ['pages', 'src', '__tests__'],
   },
