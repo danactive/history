@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import Select from 'react-select/creatable'
 import styled from 'styled-components'
+import ComboBox from '../components/ComboBox'
+import { IndexedKeywords } from '../types/common'
 
 interface ServerSideItem {
   corpus: string;
@@ -11,7 +12,7 @@ const Row = styled.div`
   display: flex;
   align-items: center;
 `
-const AutoComplete = styled(Select)`
+const AutoComplete = styled(ComboBox)`
   width: 20rem;
 `
 const SearchCount = styled.h3`
@@ -21,18 +22,13 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
-interface ReactSelectNewValue {
-  value: string;
-  label: string;
-}
-
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
-  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: object[] },
+  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState<ReactSelectNewValue | null>(null)
+  const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -56,12 +52,9 @@ function useSearch<ItemType extends ServerSideItem>(
       <Row>
         <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
         <AutoComplete
-          isClearable
           options={indexedKeywords}
-          value={selectedOption}
-          /*
-          // @ts-ignore */
           onChange={setSelectedOption}
+          value={selectedOption}
         />
         <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
         <ShareLink>{getShareUrlStem()}</ShareLink>
@@ -79,9 +72,10 @@ function useSearch<ItemType extends ServerSideItem>(
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword?.toString())
-      const newValue: ReactSelectNewValue = {
-        label: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
-        value: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
+      const value = Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword
+      const newValue: IndexedKeywords = {
+        label: value,
+        value,
       }
       setSelectedOption(newValue)
     }

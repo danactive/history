@@ -3,7 +3,7 @@ const filenamer = require('./filenames');
 const renamer = require('./rename');
 const routes = require('../../../lib/routes');
 const validation = require('../../../lib/validation');
-
+// TODO copy to Next
 const formatJson = (json) => ({ xml: json.xml, filenames: json.filenames });
 
 const handler = (request) => new Promise((reply) => {

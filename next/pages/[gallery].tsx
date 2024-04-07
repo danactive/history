@@ -11,31 +11,31 @@ import indexKeywords from '../src/lib/search'
 import Img from '../src/components/Img'
 import Link from '../src/components/Link'
 import useSearch from '../src/hooks/useSearch'
-import type { AlbumMeta, GalleryAlbum } from '../src/types/common'
+import type { AlbumMeta, GalleryAlbum, IndexedKeywords } from '../src/types/common'
 
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
 
-type Props = {
+type ComponentProps = {
   gallery: NonNullable<AlbumMeta['gallery']>;
   albums: ServerSideAlbumItem[];
-  indexedKeywords: object[];
+  indexedKeywords: IndexedKeywords[];
 }
 
 interface Params extends ParsedUrlQuery {
   gallery: NonNullable<AlbumMeta['gallery']>
 }
 
-export const getStaticProps: GetStaticProps<Props, Params> = async (context) => {
+export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
   const params = context.params!
   const { albums } = await getAlbums(params.gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
     ...album,
-    corpus: [album.h1, album.h2, album.year].join(' '),
+    corpus: [album.h1, album.h2, album.year, album.search].join(' '),
   }))
   return {
-    props: { gallery: params.gallery, albums: preparedAlbums, ...indexKeywords(albums) },
+    props: { gallery: params.gallery, albums: preparedAlbums, ...indexKeywords(preparedAlbums) },
   }
 }
 
@@ -74,7 +74,7 @@ const AlbumYear = styled.h3`
   color: #8B5A2B;
 `
 
-function AlbumsPage({ gallery, albums, indexedKeywords }: Props) {
+function AlbumsPage({ gallery, albums, indexedKeywords }: ComponentProps) {
   const {
     filtered,
     searchBox,
