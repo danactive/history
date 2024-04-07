@@ -29,7 +29,7 @@ function Page(props) {
         <link rel="stylesheet" href="./album/static/lib/fluid960gs-reset.css" />
         <link rel="stylesheet" href="./album/static/lib/fluid960gs-text.css" />
         <link rel="stylesheet" href="./album/static/lib/fluid960gs-grid.css" />
-        <link rel="stylesheet" href="./album/static/album.css" />
+        <link rel="stylesheet" href="./album/static/album-styles.css" />
       </head>
       <body>
         <div className="container_16">

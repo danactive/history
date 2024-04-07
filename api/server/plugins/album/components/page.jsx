@@ -13,7 +13,7 @@ function Page({ album }) {
         </title>
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet" />
-        <link href="./album/static/album.css" rel="stylesheet" />
+        <link href="./album/static/album-styles.css" rel="stylesheet" />
         <link href="./album/static/map.css" rel="stylesheet" />
       </head>
       <body>
