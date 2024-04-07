@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.0.0](https://github.com/danactive/history/compare/v9.1.0...v10.0.0) (2024-04-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Next:** Root is now Next.js with /api and /ui legacy apps
+
+### Features
+
+* **Next:** Flatten /next to / (root) ([14effd1](https://github.com/danactive/history/commit/14effd15ef747a0b499f1255cd016bd771f517de))
+
+
+### Bug Fixes
+
+* **Next:** CI to build root ([7d92bf0](https://github.com/danactive/history/commit/7d92bf00b27260ffc73041b9e8878e50368557d4))
+* **Next:** Upgrade to Next.js v13.5 from 13.4 ([8631656](https://github.com/danactive/history/commit/8631656cc89600a87cb683f3513493253eeaecf4))
+* **Next:** Upgrade to Node.js v20 from v18 ([3f0ed8d](https://github.com/danactive/history/commit/3f0ed8d425f8eddac66a11df9e23e86fbe3b5147))
+
 ## [9.1.0](https://github.com/danactive/history/compare/v9.0.0...v9.1.0) (2024-04-07)
 
 
