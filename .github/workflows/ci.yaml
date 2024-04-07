@@ -24,16 +24,13 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version-file: "next/.nvmrc"
+          node-version-file: ".nvmrc"
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
-        with:
-          working-directory: next
 
       - name: Lint
         run: npm run lint:ci
-        working-directory: next
 
   typecheck:
     name: TypeScript
@@ -45,16 +42,13 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version-file: "next/.nvmrc"
+          node-version-file: ".nvmrc"
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
-        with:
-          working-directory: next
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
-        working-directory: next
 
   unittest:
     name: Jest
@@ -66,16 +60,13 @@ jobs:
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
-          node-version-file: "next/.nvmrc"
+          node-version-file: ".nvmrc"
 
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
-        with:
-          working-directory: next
 
       - name: Unit Test runner
         run: npm run test:ci
-        working-directory: next
   e2etest:
     name: Playwright
     timeout-minutes: 60
@@ -87,20 +78,16 @@ jobs:
     - name: ⎔ Setup node
       uses: actions/setup-node@v3
       with:
-        node-version-file: "next/.nvmrc"
+        node-version-file: ".nvmrc"
 
     - name: 📥 Download deps
       uses: bahmutov/npm-install@v1
-      with:
-        working-directory: next
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-      working-directory: next
 
     - name: Run Playwright tests
       run: npx playwright test
-      working-directory: next
 
     - uses: actions/upload-artifact@v3
       if: always()
