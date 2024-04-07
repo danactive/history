@@ -85,7 +85,7 @@
 		<photo_loc>Brass Fish Tavern</photo_loc>
 		<thumb_caption>Tavern</thumb_caption>
 		<photo_desc>Located in the iconic art deco  Marine building</photo_desc>
-		<search>best^</search>
+		<search>best^, fish</search>
 		<ref>
 			<name>Marine_Building</name>
 			<source>wikipedia</source>

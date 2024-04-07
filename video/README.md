@@ -37,4 +37,4 @@ docker run -v $PWD:/temp/ jrottenberg/ffmpeg -stats -i /temp/input.mov -an /temp
   * This seems to be a tool [GitHub](https://github.com/DolbyLaboratories/dlb_mp4base/tree/master)
 * Related issue but no solution [Reddit](https://www.reddit.com/r/ffmpeg/comments/y2nrcc/ffmpeg_struggles_to_transcode_iphone_13_pro_hevc/)
 * Intro article [Medium](https://medium.com/abraia/video-transcoding-and-optimization-for-web-with-ffmpeg-made-easy-511635214df0)
-* [More ffmpeg command details](../public/galleries/demo/media/videos/README.md)
+* [More ffmpeg command details](./public/galleries/demo/media/videos/README.md)
