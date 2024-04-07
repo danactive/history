@@ -1,5 +1,5 @@
 {
-  "name": "history-nextjs-app",
+  "name": "history-app",
   "version": "9.1.0",
   "private": true,
   "type": "commonjs",
@@ -67,8 +67,8 @@
     "typescript": "^5.2.2"
   },
   "engines": {
-    "node": "18",
-    "npm": "9"
+    "node": "20",
+    "npm": "10"
   },
   "license": "MIT"
 }
