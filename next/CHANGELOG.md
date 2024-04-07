@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.1.0](https://github.com/danactive/history/compare/v9.0.0...v9.1.0) (2024-04-07)
+
+
+### Features
+
+* **Next > Components:** Extend MUI theme ([42fdcc7](https://github.com/danactive/history/commit/42fdcc7fbea0cf1846454706178755588872162b))
+* **Next > Organize Previews > Rename:** Allow todo photos to be renamed ([3d3a680](https://github.com/danactive/history/commit/3d3a680421337630fa814dd19806db7bd8980a80))
+* **Next > Organize Previews:** Add page to sort thumbnail previews ([dbdd4a4](https://github.com/danactive/history/commit/dbdd4a4cd36956558e0c56b5d3f659b5fe33732d))
+* **Next > Search:** Add country or province to search keyword ([5377101](https://github.com/danactive/history/commit/53771018c9db5bf828d9724b4ccb56603d2b5914))
+* **Next > Search:** Add search support to gallery search keyword ([ad0d764](https://github.com/danactive/history/commit/ad0d764d0c2f998afc130be621164c91b7a0297e))
+* **Next > Search:** Sort by keyword count then name ([a538734](https://github.com/danactive/history/commit/a538734d3b96c0605f2d3b35a1618cd188706153))
+* **Next > Today:** Fix order of today items so morning to night still oldest album to recent ([0092097](https://github.com/danactive/history/commit/00920972ea331dcbf02fea8eef3c9e4dd1a574ca))
+* **Next > Walk:** Add folder traversal with .. link ([9e92867](https://github.com/danactive/history/commit/9e928676cdfd460fc81788c22cf634d476c167cc))
+* **Next > Walk:** Add list of root local filesystem no traversal (yet) ([6ce921a](https://github.com/danactive/history/commit/6ce921ae2cfea9df6203d0fe2e911142270b8d32))
+* **Next > Walk:** Add list of root local filesystem with traversal ([a91fba4](https://github.com/danactive/history/commit/a91fba45c57cfe4e0e385180add445d9c9c38c1a))
+
+
+### Bug Fixes
+
+* **Next > Link:** Upgrade next/link to use future non-hyperlink element ([4a09739](https://github.com/danactive/history/commit/4a097397d30df74f4af6ca2090798e6336b6f427))
+
 ## [9.0.0](https://github.com/danactive/history/compare/v8.3.0...v9.0.0) (2023-08-30)
 
 
