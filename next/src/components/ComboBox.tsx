@@ -1,18 +1,10 @@
-import * as React from 'react'
 import FormControl from '@mui/joy/FormControl'
-import FormLabel from '@mui/joy/FormLabel'
 import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete'
 import AutocompleteOption from '@mui/joy/AutocompleteOption'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
-import { IndexedKeywords, FilmOptionType } from '../types/common'
+import { IndexedKeywords } from '../types/common'
 
-export const TYPES = {
-  A: 'A',
-  B: 'B',
-  C: 'C',
-} as const
-
-const filter = createFilterOptions<FilmOptionType>()
+const filter = createFilterOptions<IndexedKeywords>()
 
 export default function ComboBox(
   {
@@ -21,9 +13,9 @@ export default function ComboBox(
     value: valueText,
   }:
   {
-    options: FilmOptionType[],
+    options: IndexedKeywords[],
     onChange: ({ label, value }: { label: string; value: string; }) => void,
-    value: FilmOptionType | null,
+    value: IndexedKeywords | null,
   },
 ) {
   return (
@@ -31,9 +23,9 @@ export default function ComboBox(
       <Autocomplete
         value={valueText}
         onChange={(event, newValue): void => {
-          if (typeof newValue === 'string') {
+          if (typeof newValue === 'string') { // free text
             onChange({ label: newValue, value: newValue })
-          } else if (newValue?.label && newValue?.value) {
+          } else if (newValue?.label && newValue?.value) { // selected keyword
             onChange({ label: newValue.label, value: newValue.value })
           } else if (newValue === null) { // clear
             onChange({ label: '', value: '' })
@@ -47,7 +39,7 @@ export default function ComboBox(
           const isExisting = options.some((option) => inputValue === option.label)
           if (inputValue !== '' && !isExisting) {
             filtered.push({
-              inputValue,
+              value: inputValue,
               label: `Add "${inputValue}"`,
             })
           }
@@ -65,8 +57,8 @@ export default function ComboBox(
             return option
           }
           // Add "xxx" option created dynamically
-          if (option.inputValue) {
-            return option.inputValue
+          if (option.value) {
+            return option.value
           }
           // Regular option
           return option.label

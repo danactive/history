@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import ComboBox, { type TYPES } from '../components/ComboBox'
-import { FilmOptionType, IndexedKeywords } from '../types/common'
+import { IndexedKeywords } from '../types/common'
 
 interface ServerSideItem {
   corpus: string;
@@ -28,7 +28,7 @@ function useSearch<ItemType extends ServerSideItem>(
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
-  const [selectedOption, setSelectedOption] = useState<FilmOptionType | null>(null)
+  const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -72,9 +72,10 @@ function useSearch<ItemType extends ServerSideItem>(
   useEffect(() => {
     if (router.isReady && router.query.keyword) {
       setKeyword(router.query.keyword?.toString())
-      const newValue: FilmOptionType = {
-        label: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
-        inputValue: Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword,
+      const value = Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword
+      const newValue: IndexedKeywords = {
+        label: value,
+        value,
       }
       setSelectedOption(newValue)
     }

@@ -131,11 +131,6 @@ declare global {
   }
 }
 
-interface FilmOptionType extends Partial<IndexedKeywords> {
-  inputValue?: string;
-  label: string;
-}
-
 export type {
   AlbumMeta,
   XmlMeta,
@@ -148,5 +143,4 @@ export type {
   Item,
   ItemReferenceSource,
   IndexedKeywords,
-  FilmOptionType,
 }
