@@ -1,13 +1,13 @@
 import { testApiHandler } from 'next-test-api-route-handler'
 
 import config from '../../config.json'
-import handler from '../../pages/api/galleries/[gallery]/albums/[album]'
+import pagesHandler from '../../pages/api/galleries/[gallery]/albums/[album]'
 
 describe('Album endpoint', () => {
   describe('Expect result', () => {
     test('* GET has album', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -25,7 +25,7 @@ describe('Album endpoint', () => {
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'POST' })
           const result = await response.json()
