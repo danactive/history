@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { testApiHandler } from 'next-test-api-route-handler'
 
 import pagesHandler from '../../pages/api/galleries'

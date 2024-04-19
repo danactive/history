@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { testApiHandler } from 'next-test-api-route-handler'
 import fs from 'node:fs'
 import path from 'node:path'

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { testApiHandler } from 'next-test-api-route-handler'
 
 import config from '../../config.json'
