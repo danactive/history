@@ -1,12 +1,16 @@
+/**
+ * @jest-environment node
+ */
+
 import { testApiHandler } from 'next-test-api-route-handler'
 
-import handler from '../../pages/api/galleries'
+import pagesHandler from '../../pages/api/galleries'
 
 describe('Galleries endpoint', () => {
   describe('Expect result', () => {
     test('* GET has galleries', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -23,7 +27,7 @@ describe('Galleries endpoint', () => {
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'POST' })
           const result = await response.json()

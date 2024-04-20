@@ -1,9 +1,13 @@
+/**
+ * @jest-environment node
+ */
+
 import { testApiHandler } from 'next-test-api-route-handler'
 import fs from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
 
-import handler from '..'
+import pagesHandler from '..'
 import utilsFactory from '../../../../../src/lib/utils'
 import type { Filesystem } from '../../../../../src/lib/filesystems'
 
@@ -11,7 +15,7 @@ describe('Filesystem API', () => {
   describe('Expect result', () => {
     test('* GET root has favicon', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -42,7 +46,7 @@ describe('Filesystem API', () => {
 
     test('* GET fixtures has test files', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -59,7 +63,7 @@ describe('Filesystem API', () => {
 
     test('* GET fixtures has test files with space in path', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -76,7 +80,7 @@ describe('Filesystem API', () => {
     test('* GET fixtures and verify all files exist in the filesystem', async () => {
       const params = { path: 'test/fixtures/walkable' }
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -107,7 +111,7 @@ describe('Filesystem API', () => {
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'POST' })
           const result = await response.json()
@@ -121,7 +125,7 @@ describe('Filesystem API', () => {
 
     test('* GET protected path', async () => {
       await testApiHandler({
-        handler,
+        pagesHandler,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
