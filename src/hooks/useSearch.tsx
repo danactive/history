@@ -4,10 +4,6 @@ import styled from 'styled-components'
 import ComboBox from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
 
-interface ServerSideItem {
-  corpus: string;
-}
-
 const Row = styled.div`
   display: flex;
   align-items: center;
@@ -22,7 +18,7 @@ const ShareLink = styled.nav`
   margin-left: 1rem;
 `
 
-function useSearch<ItemType extends ServerSideItem>(
+function useSearch<ItemType>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {

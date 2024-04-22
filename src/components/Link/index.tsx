@@ -3,15 +3,12 @@ import { memo, type ReactNode } from 'react'
 
 import styles from './styles.module.css'
 
-interface InputGroupProps extends React.ComponentPropsWithoutRef<'a'> {
+interface InputProps extends React.ComponentPropsWithoutRef<'a'> {
   children: ReactNode;
   href: string;
 }
 
-function Link(
-  { children, ...props }:
-  InputGroupProps,
-) {
+function Link({ children, ...props }: InputProps) {
   return (
     <NextLink className={styles.link} {...props}>{children}</NextLink>
   )

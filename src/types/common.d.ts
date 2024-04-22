@@ -100,6 +100,10 @@ type GalleryAlbum = {
   search: string | null;
 }
 
+interface ServerSideAlbumItem extends GalleryAlbum {
+  corpus: string;
+}
+
 type IndexedKeywords = {
   label: string;
   value: string;
@@ -138,6 +142,7 @@ export type {
   XmlGallery,
   XmlGalleryAlbum,
   GalleryAlbum,
+  ServerSideAlbumItem,
   XmlItem,
   XmlAlbum,
   Item,
