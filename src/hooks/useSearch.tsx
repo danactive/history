@@ -5,7 +5,11 @@ import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
 import styles from './search.module.css'
 
-function useSearch<ItemType>(
+interface ServerSideItem {
+  corpus: string;
+}
+
+function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
