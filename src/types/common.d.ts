@@ -104,6 +104,13 @@ interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
 
+interface ServerSideAllItem extends Item {
+  album?: NonNullable<AlbumMeta['albumName']>;
+  gallery?: NonNullable<AlbumMeta['gallery']>;
+  corpus: string;
+  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+}
+
 type IndexedKeywords = {
   label: string;
   value: string;
@@ -143,6 +150,7 @@ export type {
   XmlGalleryAlbum,
   GalleryAlbum,
   ServerSideAlbumItem,
+  ServerSideAllItem,
   XmlItem,
   XmlAlbum,
   Item,
