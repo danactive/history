@@ -1,6 +1,5 @@
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles'
 import { type AppProps } from 'next/app'
-import { ThemeProvider } from 'styled-components'
 import '../app/global.css'
 
 const themeMui = extendTheme({
@@ -35,18 +34,10 @@ const themeMui = extendTheme({
   },
 })
 
-const themeStyled = {
-  colors: {
-    primary: '#0070f3',
-  },
-}
-
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider theme={themeStyled}>
-      <CssVarsProvider theme={themeMui}>
-        <Component {...pageProps} />
-      </CssVarsProvider>
-    </ThemeProvider>
+    <CssVarsProvider theme={themeMui}>
+      <Component {...pageProps} />
+    </CssVarsProvider>
   )
 }

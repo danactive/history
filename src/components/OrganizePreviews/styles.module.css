@@ -1,0 +1,11 @@
+.column {
+  margin: 0 5px;
+}
+
+.horizontalScrollContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: var(--grid)px;
+  overflow: auto;
+}
