@@ -1,11 +1,43 @@
 .column {
-  margin: 0 5px;
+  margin: 0 var(--grid2Px);
 }
 
 .horizontalScrollContainer {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: var(--grid)px;
+  padding: var(--gridPx);
   overflow: auto;
+}
+
+.isDraggingOver {
+  background-color: #BA8570;
+}
+
+.isDraggingFrom {
+  background-color: #496149;
+}
+
+.isWithoutDrag {
+  background-color: #545454;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: var(--gridPx);
+  padding-bottom: 0;
+  transition: background-color 0.2s ease, opacity 0.1s ease;
+  user-select: none;
+  width: 285px;
+}
+
+.dropZone {
+  /* scrollContainerHeight: stop the list collapsing when empty */
+  min-height: 250px;
+  /*
+    not relying on the items for a margin-bottom
+    as it will collapse when the list is empty
+  */
+  padding-bottom: var(--gridPx);
 }

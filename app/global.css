@@ -8,3 +8,8 @@ body {
   padding: 0 16px;
   flex-direction: column;
 }
+
+html {
+  --gridPx: 4px;
+  --grid2Px: calc(2 * 4px);
+}
