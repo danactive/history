@@ -41,3 +41,18 @@
   */
   padding-bottom: var(--gridPx);
 }
+
+.container {
+  border-width: 5px;
+  border-style: solid;
+  box-sizing: border-box;
+  padding: 4px;
+}
+.draggingOff {
+  border-color: transparent;
+  background-color: transparent;
+}
+.draggingOn {
+  border-color: #e6df55;
+  background-color: #877e7a;
+}
