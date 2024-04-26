@@ -1,25 +1,11 @@
 import { DragDropContext, type DraggableLocation } from '@hello-pangea/dnd'
 import type { Dispatch, SetStateAction } from 'react'
-import styled from 'styled-components'
 
 import type { Filesystem } from '../../lib/filesystems'
 import { groupIntoColumns, reorderOnRelease } from '../../utils/preview'
 import ActionButtons from './ActionButtons'
 import PreviewColumn from './PreviewColumn'
-
-const grid = 4
-
-const Column = styled.div`
-  margin: 0 ${grid * 2}px;
-`
-
-const HorizontalScrollContainer = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: ${grid}px;
-  overflow: auto;
-`
+import styles from './styles.module.css'
 
 export default function OrganizePreviews(
   { items, setItems }:
@@ -43,22 +29,22 @@ export default function OrganizePreviews(
   }
 
   const makeColumn = (columnItem: Filesystem[], index: number) => (
-    <Column key={`column-${index}`}>
+    <div className={styles.column} key={`column-${index}`}>
       <PreviewColumn
         key={`column-${index}`}
         columnId={index.toString()}
         items={columnItem}
       />
-    </Column>
+    </div>
   )
 
   return (
     <>
       <ActionButtons items={items} />
       <DragDropContext onDragEnd={({ source, destination }) => onDragEnd({ source, destination })}>
-        <HorizontalScrollContainer>
+        <div className={styles.horizontalScrollContainer}>
           {columnItems.map(makeColumn)}
-        </HorizontalScrollContainer>
+        </div>
       </DragDropContext>
     </>
   )

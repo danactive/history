@@ -1,38 +1,15 @@
-import React, { useState } from 'react'
-import styled, { css } from 'styled-components'
+import { MouseEvent, useState } from 'react'
 
 import config from '../../../config.json'
-
 import Img from '../Img'
+import styles from './styles.module.css'
 
-const Bullet = styled.li`
-  width: 195px;
-  height: 110px;
-  background-color: #545454;
-  padding-bottom: 6px;
-  float: left;
-  margin: 6px;
-`
-
-const Caption = styled.span`
-  font-weight: bold;
-  font-size: 11px;
-  margin: 0 5px;
-`
-
-const ImgButton = styled.a<{ $viewed: boolean }>`
-  display: block;
-  border-style: solid;
-  border-width: 5px 5px 20px;
-  border-color: #545454;
-  :hover {
-    border-color: orange;
+function getViewed(viewed: boolean) {
+  if (viewed) {
+    return `${styles.highlight} ${styles.imgButton}`
   }
-
-  ${(props) => props.$viewed && css`
-      border-color: white;
-  `}
-`
+  return styles.imgButton
+}
 
 function ThumbImg({
   onClick,
@@ -50,7 +27,7 @@ function ThumbImg({
   viewed: boolean,
 }) {
   const [viewed, setViewed] = useState(previewed)
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     setViewed(true)
     onClick?.()
@@ -61,12 +38,12 @@ function ThumbImg({
   const { width, height } = config.resizeDimensions.thumb
 
   return (
-    <Bullet>
-      <ImgButton $viewed={viewed} href={href} onClick={handleClick} id={id}>
+    <li className={styles.bullet}>
+      <a className={getViewed(viewed)} href={href} onClick={handleClick} id={id}>
         <Img src={src} alt="Preview thumbnail (scaled down dimensions)" width={width} height={height} />
-      </ImgButton>
-      <Caption>{caption}</Caption>
-    </Bullet>
+      </a>
+      <span className={styles.caption}>{caption}</span>
+    </li>
   )
 }
 

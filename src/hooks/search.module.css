@@ -1,0 +1,13 @@
+.row {
+  display: flex;
+  align-items: center;
+}
+.autocomplete {
+  width: 20rem;
+}
+.searchCount {
+  margin-right: 1rem;
+}
+.shareLink {
+  margin-left: 1rem;
+}

@@ -8,11 +8,13 @@ const filter = createFilterOptions<IndexedKeywords>()
 
 export default function ComboBox(
   {
+    className,
     options: propOptions,
     onChange,
     value: valueText,
   }:
   {
+    className: string,
     options: IndexedKeywords[],
     onChange: ({ label, value }: { label: string; value: string; }) => void,
     value: IndexedKeywords | null,
@@ -21,6 +23,7 @@ export default function ComboBox(
   return (
     <FormControl id="free-solo-with-text-demo">
       <Autocomplete
+        className={className}
         value={valueText}
         onChange={(event, newValue): void => {
           if (typeof newValue === 'string') { // free text

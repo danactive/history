@@ -3,7 +3,6 @@ import Head from 'next/head'
 import { type ParsedUrlQuery } from 'node:querystring'
 import { useMemo, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
-import styled from 'styled-components'
 
 import config from '../../config.json'
 import getAlbum from '../../src/lib/album'
@@ -11,28 +10,15 @@ import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
 
+import All from '../../src/components/All'
 import AlbumContext from '../../src/components/Context'
-import Img from '../../src/components/Img'
-import Link from '../../src/components/Link'
 import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
 
-import { AlbumMeta, IndexedKeywords, Item } from '../../src/types/common'
-
-const AlbumName = styled.b`
-  margin-right: 1rem;
-`
-const SlideTo = styled.button`
-  margin-left: 1rem;
-`
-
-interface ServerSideAllItem extends Item {
-  album?: NonNullable<AlbumMeta['albumName']>;
-  gallery?: NonNullable<AlbumMeta['gallery']>;
-  corpus: string;
-  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
-}
+import {
+  AlbumMeta, IndexedKeywords, Item, ServerSideAllItem,
+} from '../../src/types/common'
 
 type ComponentProps = {
   items: ServerSideAllItem[];
@@ -100,12 +86,7 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     searchBox,
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml } = useMemory(filtered, refImageGallery)
-  const showThumbnail = (kw = '') => kw.length > 2
-  const { width, height } = config.resizeDimensions.thumb
 
-  function selectThumb(index: number) {
-    refImageGallery.current?.slideToIndex(index)
-  }
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   return (
@@ -124,18 +105,7 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        <ul>
-          {filtered.map((item, index) => (
-            <li key={item.filename.toString()}>
-              <AlbumName>{item.album}</AlbumName>
-              <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>
-                {!showThumbnail(keyword) && item.caption}
-                {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
-              </Link>
-              <SlideTo type="button" onClick={() => selectThumb(index)}><a>Slide to</a></SlideTo>
-            </li>
-          ))}
-        </ul>
+        <All items={filtered} keyword={keyword} refImageGallery={refImageGallery} />
       </AlbumContext.Provider>
     </div>
   )

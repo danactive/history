@@ -1,14 +1,18 @@
 import { type DraggableProvided } from '@hello-pangea/dnd'
-import React from 'react'
-import styled from 'styled-components'
+import { CSSProperties, memo } from 'react'
 
 import config from '../../../config.json'
 import { type Filesystem } from '../../lib/filesystems'
 import Img from '../Img'
 import Link from '../Link'
+import styles from './styles.module.css'
 
-const getBorderColor = (isDragging: boolean) => (isDragging ? '#e6df55' : 'transparent')
-const getBackgroundColor = (isDragging: boolean) => (isDragging ? '#877e7a' : 'transparent')
+function getDraggingStyle(isDragging: boolean) {
+  if (isDragging) {
+    return `${styles.container} ${styles.draggingOn}`
+  }
+  return `${styles.container} ${styles.draggingOff}`
+}
 
 function DraggableThumb({ item }: { item: Filesystem }) {
   const { filename, absolutePath } = item
@@ -30,14 +34,7 @@ function DraggableThumb({ item }: { item: Filesystem }) {
   )
 }
 
-const Container = styled.div<{ $isDragging: boolean }>`
-  border: ${(props) => getBorderColor(props.$isDragging)} 5px solid;
-  background-color: ${(props) => getBackgroundColor(props.$isDragging)};
-  box-sizing: border-box;
-  padding: 4px;
-`
-
-function getStyle(provided: DraggableProvided, style?: React.CSSProperties) {
+function getStyle(provided: DraggableProvided, style?: CSSProperties) {
   if (!style) {
     return provided.draggableProps.style
   }
@@ -60,13 +57,13 @@ function PreviewImage(
     item: Filesystem,
     isDragging: boolean,
     provided: DraggableProvided,
-    style?: React.CSSProperties,
+    style?: CSSProperties,
     index: number,
   },
 ) {
   return (
-    <Container
-      $isDragging={isDragging}
+    <div
+      className={getDraggingStyle(isDragging)}
       ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
@@ -75,8 +72,8 @@ function PreviewImage(
       data-index={index}
     >
       <DraggableThumb item={item} />
-    </Container>
+    </div>
   )
 }
 
-export default React.memo(PreviewImage)
+export default memo(PreviewImage)

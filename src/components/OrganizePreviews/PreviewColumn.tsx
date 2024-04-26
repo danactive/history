@@ -1,49 +1,22 @@
-import React from 'react'
 import { Draggable, Droppable, type DroppableProvided } from '@hello-pangea/dnd'
-import styled from 'styled-components'
+import { memo, type CSSProperties } from 'react'
 
 import { type Filesystem } from '../../lib/filesystems'
 import PreviewImage from './PreviewImage'
+import styles from './styles.module.css'
 
-const grid = 4
-
-export const getBackgroundColor = (isDraggingOver: boolean, isDraggingFrom: boolean) => {
-  // Colour swatch #545454 compound https://color.adobe.com/create/color-wheel
+function dragClass(isDraggingOver: boolean, isDraggingFrom: boolean) {
   if (isDraggingOver) {
-    return '#BA8570'
+    return `${styles.isDraggingOver} ${styles.wrapper}`
   }
   if (isDraggingFrom) {
-    return '#496149'
+    return `${styles.isDraggingFrom} ${styles.wrapper}`
   }
-  return '#545454' // base colour
+  return `${styles.isWithoutDrag} ${styles.wrapper}`
 }
 
-const Wrapper = styled.div<{ $isDraggingOver: boolean, $isDraggingFrom: boolean }>`
-  background-color: ${(props) => getBackgroundColor(props.$isDraggingOver, props.$isDraggingFrom)};
-  display: flex;
-  flex-direction: column;
-  padding: ${grid}px;
-  border: ${grid}px;
-  padding-bottom: 0;
-  transition: background-color 0.2s ease, opacity 0.1s ease;
-  user-select: none;
-  width: 285px;
-`
-
-const scrollContainerHeight = 250
-
-const DropZone = styled.div`
-  /* stop the list collapsing when empty */
-  min-height: ${scrollContainerHeight}px;
-  /*
-    not relying on the items for a margin-bottom
-    as it will collapse when the list is empty
-  */
-  padding-bottom: ${grid}px;
-`
-
 // eslint-disable-next-line prefer-arrow-callback
-const InnerPreviewColumn = React.memo(function InnerPreviewColumn(
+const InnerPreviewColumn = memo(function InnerPreviewColumn(
   { items }:
   { items: Filesystem[] },
 ) {
@@ -68,10 +41,10 @@ function InnerList(
   { items: Filesystem[], dropProvided: DroppableProvided },
 ) {
   return (
-    <DropZone ref={dropProvided.innerRef}>
+    <div className={styles.dropZone} ref={dropProvided.innerRef}>
       <InnerPreviewColumn items={items} />
       {dropProvided.placeholder}
-    </DropZone>
+    </div>
   )
 }
 
@@ -85,7 +58,7 @@ export default function PreviewColumn({
   ignoreContainerClipping?: boolean,
   isCombineEnabled?: boolean,
   columnId?: string,
-  style?: React.CSSProperties,
+  style?: CSSProperties,
   items: Filesystem[],
 }) {
   return (
@@ -96,14 +69,13 @@ export default function PreviewColumn({
       isCombineEnabled={isCombineEnabled}
     >
       {(dropProvided, dropSnapshot) => (
-        <Wrapper
+        <div
+          className={dragClass(dropSnapshot.isDraggingOver, Boolean(dropSnapshot.draggingFromThisWith))}
           style={style}
-          $isDraggingOver={dropSnapshot.isDraggingOver}
-          $isDraggingFrom={Boolean(dropSnapshot.draggingFromThisWith)}
           {...dropProvided.droppableProps}
         >
           <InnerList items={items} dropProvided={dropProvided} />
-        </Wrapper>
+        </div>
       )}
     </Droppable>
   )

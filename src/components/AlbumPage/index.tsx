@@ -1,24 +1,19 @@
 import Head from 'next/head'
 import { useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
-import styled from 'styled-components'
 
 import useMemory from '../../hooks/useMemory'
 import useSearch from '../../hooks/useSearch'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
+import styles from './styles.module.css'
 
 import type { IndexedKeywords, Item } from '../../types/common'
 
 interface ServerSidePhotoItem extends Item {
   corpus: string;
 }
-
-const Wrapper = styled.ul`
-  list-style: none;
-  padding-left: 2px;
-`
 
 function AlbumPage(
   { items = [], meta, indexedKeywords }:
@@ -52,7 +47,7 @@ function AlbumPage(
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        <Wrapper>
+        <ul className={styles.wrapper}>
           {filtered.map((item, index) => (
             <ThumbImg
               onClick={() => selectThumb(index)}
@@ -63,7 +58,7 @@ function AlbumPage(
               viewed={viewedList.has(item.id)}
             />
           ))}
-        </Wrapper>
+        </ul>
       </AlbumContext.Provider>
     </div>
   )

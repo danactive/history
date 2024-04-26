@@ -1,18 +1,10 @@
 import { RefObject, useEffect, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
-import styled from 'styled-components'
 
 import Link from '../components/Link'
 import type { Item } from '../types/common'
+import styles from './memory.module.css'
 
-const City = styled.h3`
-  display: inline;
-  margin-right: 1rem;
-`
-const Location = styled.h4`
-  display: inline;
-  margin-right: 1rem;
-`
 interface Viewed {
   (index: number): void;
 }
@@ -35,8 +27,8 @@ const useMemory = (
 
   const memoryHtml = details ? (
     <>
-      <City>{details.title}</City>
-      <Location>{details.filename}</Location>
+      <h3 className={styles.city}>{details.title}</h3>
+      <h4 className={styles.location}>{details.filename}</h4>
       {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null

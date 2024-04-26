@@ -1,26 +1,13 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import ComboBox from '../components/ComboBox'
+
+import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
+import styles from './search.module.css'
 
 interface ServerSideItem {
   corpus: string;
 }
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-`
-const AutoComplete = styled(ComboBox)`
-  width: 20rem;
-`
-const SearchCount = styled.h3`
-  margin-right: 1rem;
-`
-const ShareLink = styled.nav`
-  margin-left: 1rem;
-`
 
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
@@ -49,16 +36,17 @@ function useSearch<ItemType extends ServerSideItem>(
   const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
   const getSearchBox = (filtered: ItemType[]) => (
     <form onSubmit={handleSubmit}>
-      <Row>
-        <SearchCount>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</SearchCount>
+      <div className={styles.row}>
+        <h3 className={styles.searchCount}>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
         <AutoComplete
+          className={styles.autocomplete}
           options={indexedKeywords}
           onChange={setSelectedOption}
           value={selectedOption}
         />
         <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
-        <ShareLink>{getShareUrlStem()}</ShareLink>
-      </Row>
+        <nav className={styles.shareLink}>{getShareUrlStem()}</nav>
+      </div>
     </form>
   )
 
