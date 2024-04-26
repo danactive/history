@@ -8,8 +8,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      App folder
-      <body>{children}</body>
+      <body>
+        <h1>App root layout</h1>
+        {children}
+      </body>
     </html>
   )
 }
