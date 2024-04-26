@@ -9,7 +9,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <h1>App root layout</h1>
         {children}
       </body>
     </html>

@@ -1,6 +1,6 @@
 import { CssVarsProvider, extendTheme } from '@mui/joy/styles'
 import { type AppProps } from 'next/app'
-import '../app/global.css'
+import '../src/app/global.css'
 
 const themeMui = extendTheme({
   components: {
