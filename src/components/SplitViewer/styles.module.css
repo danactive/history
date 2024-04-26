@@ -1,0 +1,15 @@
+.split {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-areas: 'left right';
+}
+
+.left {
+  grid-area: left;
+  height: 80vh;
+}
+
+.right {
+  grid-area: right;
+  height: 80vh;
+}
