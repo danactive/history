@@ -21,7 +21,7 @@ export default async function Index() {
           <Fragment key={`frag${item.gallery}`}>
             {i > 0 && <ListDivider />}
             <ListItem>
-              <Link href={`/${item.gallery}`}>
+              <Link href={`/${item.gallery}`} title={`${item.gallery} gallery`}>
                 {item.gallery}
               </Link>
             </ListItem>
