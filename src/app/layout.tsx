@@ -1,4 +1,5 @@
 // These styles apply to every route in the application
+import ThemeRegistry from './ThemeRegistery'
 import './global.css'
 
 export default function RootLayout({
@@ -7,10 +8,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>
-        {children}
-      </body>
-    </html>
+    <ThemeRegistry options={{ key: 'joy' }}>
+      <html lang="en">
+        <body>
+          {children}
+        </body>
+      </html>
+    </ThemeRegistry>
   )
 }
