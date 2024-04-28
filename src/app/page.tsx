@@ -1,9 +1,13 @@
 import { List, ListDivider, ListItem } from '@mui/joy'
+import { type Metadata } from 'next'
 import { Fragment } from 'react'
 
 import Link from '../components/Link'
-
 import getGalleryNames, { type Gallery } from '../lib/galleries'
+
+export const metadata: Metadata = {
+  title: 'History App - List Galleries',
+}
 
 async function getGalleries(): Promise<{ id: Gallery; gallery: Gallery }[]> {
   const { galleries } = await getGalleryNames()
