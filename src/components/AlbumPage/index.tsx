@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import useMemory from '../../hooks/useMemory'
-import useSearch from '../../hooks/useSearch'
+import useSearch from '../../hooks/useSearchPage'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'

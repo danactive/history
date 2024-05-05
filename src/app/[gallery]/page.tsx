@@ -7,8 +7,8 @@ import indexKeywords from '../../lib/search'
 
 import Galleries from '../../components/Albums'
 import Link from '../../components/Link'
-import useSearch from '../../hooks/useSearch'
 import type { AlbumMeta, IndexedKeywords, ServerSideAlbumItem } from '../../types/common'
+import SearchBox from '../../components/SearchBox'
 
 type ComponentProps = {
   gallery: NonNullable<AlbumMeta['gallery']>;
@@ -44,20 +44,16 @@ export const generateStaticParams = async () => {
 
 async function AlbumsPage({ params }: { params: { gallery: string } }) {
   const { gallery } = params
-  const { albums } = await getAlbums({ gallery })
-  // const {
-  //   filtered,
-  //   searchBox,
-  // } = useSearch({ items: albums, indexedKeywords })
+  const { albums, indexedKeywords } = await getAlbums({ gallery })
 
   return (
-    <div>
-      {/* <div>{searchBox}</div> */}
+    <>
+      <SearchBox albums={albums} indexedKeywords={indexedKeywords} />
       <h1>Links</h1>
       <ul><li><Link href={`/${gallery}/all`}>All</Link></li></ul>
       <ul><li><Link href={`/${gallery}/today`}>Today</Link></li></ul>
       <Galleries items={albums} gallery={gallery} />
-    </div>
+    </>
   )
 }
 
