@@ -38,6 +38,7 @@ export default function ActionButtons(
     -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
     */
 
+    // eslint-disable-next-line no-console
     return fetch('/api/admin/rename', options).then((s) => console.log(s))
   }
 

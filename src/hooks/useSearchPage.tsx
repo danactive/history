@@ -1,6 +1,4 @@
-'use client'
-
-import { usePathname, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import AutoComplete from '../components/ComboBox'
@@ -15,19 +13,18 @@ function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
 ): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
-  const searchParams = useSearchParams()
-  const pathname = usePathname()
-  const [keyword, setKeyword] = useState(searchParams?.get('keyword') || '')
+  const router = useRouter()
+  const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
 
   const getShareUrlStem = () => {
-    if (pathname?.includes('keyword=')) {
-      return decodeURI(pathname)
+    if (router.asPath.includes('keyword=')) {
+      return decodeURI(router.asPath)
       // const urlParts = new URL(window.location)
       // urlParts.searchParams.set('keyword', keyword)
       // return urlParts.toString()
     }
-    return `${pathname ?? ''}?keyword=${keyword}`
+    return `${router.asPath}?keyword=${keyword}`
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -61,16 +58,20 @@ function useSearch<ItemType extends ServerSideItem>(
   }
 
   useEffect(() => {
-    if (searchParams?.get('keyword')) {
-      const keywordQuery = searchParams.get('keyword') ?? ''
-      setKeyword(keywordQuery)
+    if (router.isReady && router.query.keyword) {
+      setKeyword(router.query.keyword?.toString())
+      const value = Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword
       const newValue: IndexedKeywords = {
-        label: keywordQuery,
-        value: keywordQuery,
+        label: value,
+        value,
       }
       setSelectedOption(newValue)
     }
-  }, [])
+  }, [router.isReady])
+
+  if (!router.isReady) {
+    return defaultReturn
+  }
 
   const AND_OPERATOR = '&&'
   const OR_OPERATOR = '||'

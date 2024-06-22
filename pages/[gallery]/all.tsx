@@ -14,7 +14,7 @@ import All from '../../src/components/All'
 import AlbumContext from '../../src/components/Context'
 import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
-import useSearch from '../../src/hooks/useSearch'
+import useSearch from '../../src/hooks/useSearchPage'
 
 import {
   AlbumMeta, IndexedKeywords, Item, ServerSideAllItem,

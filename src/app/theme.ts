@@ -1,8 +1,6 @@
-import { CssVarsProvider, extendTheme } from '@mui/joy/styles'
-import { type AppProps } from 'next/app'
-import '../src/app/global.css'
+import { extendTheme } from '@mui/joy/styles'
 
-const themeMui = extendTheme({
+const theme = extendTheme({
   components: {
     JoyListDivider: {
       defaultProps: {
@@ -34,10 +32,4 @@ const themeMui = extendTheme({
   },
 })
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <CssVarsProvider theme={themeMui}>
-      <Component {...pageProps} />
-    </CssVarsProvider>
-  )
-}
+export default theme

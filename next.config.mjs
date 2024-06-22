@@ -1,10 +1,8 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  compiler: {
-    styledComponents: true,
-  },
   eslint: {
-    dirs: ['pages', 'src', '__tests__'],
+    dirs: ['pages', 'src', '__mocks__', '__tests__'],
   },
 }
 export default nextConfig
