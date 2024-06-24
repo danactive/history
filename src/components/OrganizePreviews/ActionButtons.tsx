@@ -10,7 +10,6 @@ export default function ActionButtons(
 ) {
   const { asPath } = useRouter()
   const pathQs = parseHash('path', asPath)
-  const path = pathQs ?? '/'
   function rename() {
     // eslint-disable-next-line no-alert
     const date = window.prompt('Date of images (YYYY-MM-DD)?')
@@ -19,7 +18,7 @@ export default function ActionButtons(
     const postBody = {
       filenames: items.map((i) => i.filename),
       prefix: date,
-      source_folder: path,
+      source_folder: pathQs,
       preview: false,
       raw: true,
       rename_associated: true,

@@ -106,7 +106,7 @@ describe('Walk - util', () => {
 
     test('find 0', () => {
       const received = parseHash('path', 'http://localhost')
-      expect(received).toBeNull()
+      expect(received).toBe('/')
     })
   })
 

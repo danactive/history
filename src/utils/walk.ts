@@ -17,7 +17,7 @@ export function isImage(file: Partial<Filesystem>) {
  */
 export function parseHash(find: 'path', from: string) {
   const found = RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)
-  return found?.[2] ?? null
+  return found?.[2] ?? '/'
 }
 
 export function addParentDirectoryNav(itemFiles: ItemFile[], path: string | null) {

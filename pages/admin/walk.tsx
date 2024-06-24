@@ -29,7 +29,7 @@ function WalkPage() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(`/api/admin/filesystems?path=${pathQs ?? '/'}`)
+    fetch(`/api/admin/filesystems?path=${pathQs}`)
       .then((response) => response.json())
       .then((result: FilesystemBody) => {
         setLoading(false)
