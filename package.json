@@ -24,6 +24,7 @@
     "camelcase": "^6.3.0",
     "color-thief-react": "^2.1.0",
     "glob": "^10.3.4",
+    "heic-convert": "^2.1.0",
     "mapbox-gl": "^2.15.0",
     "mime-types": "^2.1.35",
     "next": "^14.1.4",
