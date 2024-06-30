@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.1.0](https://github.com/danactive/history/compare/v10.0.0...v10.1.0) (2024-06-30)
+
+
+### Features
+
+* **Admin > Walk:** Generate JPGs when HEIF/HEIC files are found ([855cf33](https://github.com/danactive/history/commit/855cf33680a8bce9c5527309c0c05f8ccfb4d3c7))
+* **Next:** Add 404 not found page ([09a4a00](https://github.com/danactive/history/commit/09a4a00d824f377c865f55aa0371e1df6d633f68))
+* **Next:** Remove styled-components replaced by CSS Modules for React Server Components ([1dd7532](https://github.com/danactive/history/commit/1dd753239289520a14f004cae269572c8e66cddd))
+
+
+### Bug Fixes
+
+* next/package.json & next/package-lock.json to reduce vulnerabilities ([33cc85f](https://github.com/danactive/history/commit/33cc85f5c268d239ff1ee57137a23afc34079ed7))
+* **Next:** Fix monorepo deploy to ignore /api and /ui apps ([0061eb9](https://github.com/danactive/history/commit/0061eb97dd2bb8910623a26e056f24274dcc9a5a))
+
 ## [10.0.0](https://github.com/danactive/history/compare/v9.1.0...v10.0.0) (2024-04-07)
 
 
