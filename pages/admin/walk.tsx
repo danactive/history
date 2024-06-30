@@ -6,8 +6,8 @@ import {
 
 import OrganizePreviews from '../../src/components/OrganizePreviews'
 import ListFile from '../../src/components/Walk/ListFile'
-import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
-import type { HeifBody } from '../../src/lib/heifs'
+import type { Filesystem, FilesystemResponseBody } from '../../src/lib/filesystems'
+import type { HeifResponseBody } from '../../src/lib/heifs'
 import {
   addParentDirectoryNav,
   isImage,
@@ -36,17 +36,17 @@ function WalkPage() {
       setLoading(true)
       const fetchData = async () => {
         const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
-        const resultPossibleHeif: FilesystemBody = await response.json()
+        const resultPossibleHeif: FilesystemResponseBody = await response.json()
         const heifResponse = await fetch('/api/admin/heifs', {
           body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
         })
-        const resultHeif: HeifBody = await heifResponse.json()
+        const resultHeif: HeifResponseBody = await heifResponse.json()
         // eslint-disable-next-line no-console
         console.log(`Newly created HEIF files ${resultHeif.created.length}`)
         const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
-        const result: FilesystemBody = await resultResponse.json()
+        const result: FilesystemResponseBody = await resultResponse.json()
         setLoading(false)
         setFileList(result.files)
         const itemImages = result.files.filter((file) => isImage(file))

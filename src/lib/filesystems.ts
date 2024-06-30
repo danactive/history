@@ -73,5 +73,5 @@ async function get(
   }
 }
 
-export { errorSchema, type Filesystem, type ResponseBody as FilesystemBody }
+export { errorSchema, type Filesystem, type ResponseBody as FilesystemResponseBody }
 export default get
