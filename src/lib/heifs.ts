@@ -1,32 +1,67 @@
 import convert from 'heic-convert'
 import { readFile, writeFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import type { Filesystem } from './filesystems'
 import utilsFactory, { isStandardError } from './utils'
 
-type HeifBody = {
+type ResponseBody = {
   created: string[];
 }
 
-type ErrorOptionalMessage = HeifBody & { error?: { message: string } }
+type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
   const out = { created: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }
 
-type HeifEnvelope = {
-  body: HeifBody;
+type ResponseEnvelope = {
+  body: ResponseBody;
   status: number;
+}
+
+function uniqueHeifs(files: Filesystem[]) {
+  const groupedFiles = files.reduce((groups: Record<string, Filesystem[]>, file) => {
+    const nameWithoutExt = basename(file.name, file.ext)
+    if (!groups[nameWithoutExt]) {
+      // eslint-disable-next-line no-param-reassign
+      groups[nameWithoutExt] = []
+    }
+    groups[nameWithoutExt].push(file)
+    return groups
+  }, {})
+
+  const heifFilesWithoutJpg = Object.values(groupedFiles)
+    .filter((filteredFiles) => filteredFiles.some((file) => file.ext === 'heic') && !filteredFiles.some((file) => file.ext === 'jpg'))
+    .flat()
+
+  return heifFilesWithoutJpg
+}
+
+const utils = utilsFactory()
+async function processHeif(file: Filesystem, destinationPath: string): Promise<string> {
+  const filenameHeif = utils.filenameAsJpg(file.filename)
+  // eslint-disable-next-line no-await-in-loop
+  const inputBuffer = await readFile(`public/${file.path}`)
+  // eslint-disable-next-line no-await-in-loop
+  const outputBuffer = await convert({
+    buffer: inputBuffer, // the HEIF file buffer
+    format: 'JPEG', // output format
+    quality: 0.8, // the jpeg compression quality, between 0 and 1
+  })
+  // eslint-disable-next-line no-await-in-loop
+  await writeFile(`public${destinationPath}/${filenameHeif}`, new Uint8Array(outputBuffer))
+  return filenameHeif
 }
 
 async function post<T extends boolean = false>(
   files: Filesystem[],
   destinationPath: string,
   returnEnvelope?: T,
-): Promise<T extends true ? HeifEnvelope : HeifBody>;
+): Promise<T extends true ? ResponseEnvelope : ResponseBody>;
 
 /**
- * Generate a photo image from HEIC files
+ * Generate a photo image from HEIF files
  * @param {string} destinationPath path to save the converted files
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} files
@@ -37,21 +72,10 @@ async function post(
   returnEnvelope = false,
 ) {
   try {
-    const utils = utilsFactory()
     const heifs: string[] = []
-    for (const file of files) {
+    for (const file of uniqueHeifs(files)) {
       // eslint-disable-next-line no-await-in-loop
-      const inputBuffer = await readFile(`public/${file.path}`)
-      // eslint-disable-next-line no-await-in-loop
-      const outputBuffer = await convert({
-        buffer: inputBuffer, // the HEIC file buffer
-        format: 'JPEG', // output format
-        quality: 0.8, // the jpeg compression quality, between 0 and 1
-      })
-      const filenameHeif = utils.filenameAsJpg(file.filename)
-      // eslint-disable-next-line no-await-in-loop
-      await writeFile(`public${destinationPath}/${filenameHeif}`, new Uint8Array(outputBuffer))
-      heifs.push(filenameHeif)
+      heifs.push(await processHeif(file, destinationPath))
     }
 
     const body = { created: heifs }
@@ -73,5 +97,5 @@ async function post(
   }
 }
 
-export { type HeifBody }
+export { type ResponseBody as HeifBody }
 export default post

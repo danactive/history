@@ -23,10 +23,6 @@ type ItemFile = Partial<Filesystem> & {
   flat?: string;
 }
 
-function isHeif(file: Filesystem) {
-  return file.ext === 'heic'
-}
-
 function WalkPage() {
   const { asPath } = useRouter()
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
@@ -41,9 +37,8 @@ function WalkPage() {
       const fetchData = async () => {
         const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
         const resultPossibleHeif: FilesystemBody = await response.json()
-        const heifFiles = resultPossibleHeif.files.filter(isHeif)
         const heifResponse = await fetch('/api/admin/heifs', {
-          body: JSON.stringify({ files: heifFiles, destinationPath: pathQs }),
+          body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
         })
