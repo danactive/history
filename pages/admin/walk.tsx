@@ -1,10 +1,13 @@
 import { List, ListDivider } from '@mui/joy'
 import { useRouter } from 'next/router'
-import { Fragment, useEffect, useState } from 'react'
+import {
+  Fragment, useEffect, useRef, useState,
+} from 'react'
 
 import OrganizePreviews from '../../src/components/OrganizePreviews'
 import ListFile from '../../src/components/Walk/ListFile'
-import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
+import type { Filesystem, FilesystemResponseBody } from '../../src/lib/filesystems'
+import type { HeifResponseBody } from '../../src/lib/heifs'
 import {
   addParentDirectoryNav,
   isImage,
@@ -26,17 +29,32 @@ function WalkPage() {
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)
   const pathQs = parseHash('path', asPath)
+  const lastFetchedPath = useRef('')
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`/api/admin/filesystems?path=${pathQs ?? '/'}`)
-      .then((response) => response.json())
-      .then((result: FilesystemBody) => {
+    if (asPath !== lastFetchedPath.current) {
+      setLoading(true)
+      const fetchData = async () => {
+        const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+        const resultPossibleHeif: FilesystemResponseBody = await response.json()
+        const heifResponse = await fetch('/api/admin/heifs', {
+          body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+        const resultHeif: HeifResponseBody = await heifResponse.json()
+        // eslint-disable-next-line no-console
+        console.log(`Newly created HEIF files ${resultHeif.created.length}`)
+        const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+        const result: FilesystemResponseBody = await resultResponse.json()
         setLoading(false)
         setFileList(result.files)
         const itemImages = result.files.filter((file) => isImage(file))
         setPreviewList(itemImages)
-      })
+      }
+      fetchData()
+      lastFetchedPath.current = asPath
+    }
   }, [asPath])
 
   if (isLoading) return <p>Loading...</p>

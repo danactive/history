@@ -4,20 +4,20 @@ import path from 'node:path'
 import utilsFactory from './utils'
 import transform, { type Filesystem } from '../models/filesystems'
 
-type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
-const errorSchema = (message: string): ErrorOptionalMessage => {
-  const out = { files: [] }
-  if (!message) return out
-  return { ...out, error: { message } }
-}
-
-type FilesystemBody = {
+type ResponseBody = {
   files: Filesystem[];
   destinationPath: string;
 }
 
-type FilesystemEnvelope = {
-  body: FilesystemBody;
+type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
+const errorSchema = (message: string): ErrorOptionalMessage => {
+  const out = { files: [], destinationPath: '' }
+  if (!message) return out
+  return { ...out, error: { message } }
+}
+
+type ResponseEnvelope = {
+  body: ResponseBody;
   status: number;
 }
 
@@ -28,7 +28,7 @@ type ErrorOptionalMessageBody = {
 async function get<T extends boolean = false>(
   destinationPath: string | string[] | undefined,
   returnEnvelope?: T,
-): Promise<T extends true ? FilesystemEnvelope : FilesystemBody>;
+): Promise<T extends true ? ResponseEnvelope : ResponseBody>;
 
 /**
  * Get file/folder listing from local filesystem
@@ -40,7 +40,7 @@ async function get(
   destinationPath: string | string[] | undefined = '',
   returnEnvelope = false,
 ): Promise<
-  FilesystemEnvelope | FilesystemBody | ErrorOptionalMessage | ErrorOptionalMessageBody
+  ResponseEnvelope | ResponseBody | ErrorOptionalMessage | ErrorOptionalMessageBody
 > {
   try {
     if (destinationPath === null || destinationPath === undefined || Array.isArray(destinationPath)) {
@@ -73,5 +73,5 @@ async function get(
   }
 }
 
-export { errorSchema, type Filesystem, type FilesystemBody }
+export { errorSchema, type Filesystem, type ResponseBody as FilesystemResponseBody }
 export default get

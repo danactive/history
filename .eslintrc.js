@@ -23,6 +23,7 @@ module.exports = {
       ts: 'never',
       tsx: 'never',
     }], // support React in TypeScript
+    'no-restricted-syntax': 'off', // Node.js no longer needs to be transpiled so this is unnecessary
   },
   overrides: [
     {
