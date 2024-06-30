@@ -37,6 +37,11 @@ describe('Utils library', () => {
       const expected = 'filename.jpg'
       expect(actual).toBe(expected)
     })
+    test('heif', () => {
+      const actual = unit('filename.heic.heif')
+      const expected = 'filename.heic.jpg'
+      expect(actual).toBe(expected)
+    })
   })
 
   test('thumbPath', () => {

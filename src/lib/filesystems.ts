@@ -4,16 +4,16 @@ import path from 'node:path'
 import utilsFactory from './utils'
 import transform, { type Filesystem } from '../models/filesystems'
 
-type ErrorOptionalMessage = { files: object[]; error?: { message: string } }
-const errorSchema = (message: string): ErrorOptionalMessage => {
-  const out = { files: [] }
-  if (!message) return out
-  return { ...out, error: { message } }
-}
-
 type FilesystemBody = {
   files: Filesystem[];
   destinationPath: string;
+}
+
+type ErrorOptionalMessage = FilesystemBody & { error?: { message: string } }
+const errorSchema = (message: string): ErrorOptionalMessage => {
+  const out = { files: [], destinationPath: '' }
+  if (!message) return out
+  return { ...out, error: { message } }
 }
 
 type FilesystemEnvelope = {

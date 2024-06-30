@@ -1,10 +1,13 @@
 import { List, ListDivider } from '@mui/joy'
 import { useRouter } from 'next/router'
-import { Fragment, useEffect, useState } from 'react'
+import {
+  Fragment, useEffect, useRef, useState,
+} from 'react'
 
 import OrganizePreviews from '../../src/components/OrganizePreviews'
 import ListFile from '../../src/components/Walk/ListFile'
 import type { Filesystem, FilesystemBody } from '../../src/lib/filesystems'
+import type { HeifBody } from '../../src/lib/heifs'
 import {
   addParentDirectoryNav,
   isImage,
@@ -20,23 +23,43 @@ type ItemFile = Partial<Filesystem> & {
   flat?: string;
 }
 
+function isHeif(file: Filesystem) {
+  return file.ext === 'heic'
+}
+
 function WalkPage() {
   const { asPath } = useRouter()
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)
   const pathQs = parseHash('path', asPath)
+  const lastFetchedPath = useRef('')
 
   useEffect(() => {
-    setLoading(true)
-    fetch(`/api/admin/filesystems?path=${pathQs}`)
-      .then((response) => response.json())
-      .then((result: FilesystemBody) => {
+    if (asPath !== lastFetchedPath.current) {
+      setLoading(true)
+      const fetchData = async () => {
+        const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+        const resultPossibleHeif: FilesystemBody = await response.json()
+        const heifFiles = resultPossibleHeif.files.filter(isHeif)
+        const heifResponse = await fetch('/api/admin/heifs', {
+          body: JSON.stringify({ files: heifFiles, destinationPath: pathQs }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
+        const resultHeif: HeifBody = await heifResponse.json()
+        // eslint-disable-next-line no-console
+        console.log(`Newly created HEIF files ${resultHeif.created.length}`)
+        const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+        const result: FilesystemBody = await resultResponse.json()
         setLoading(false)
         setFileList(result.files)
         const itemImages = result.files.filter((file) => isImage(file))
         setPreviewList(itemImages)
-      })
+      }
+      fetchData()
+      lastFetchedPath.current = asPath
+    }
   }, [asPath])
 
   if (isLoading) return <p>Loading...</p>

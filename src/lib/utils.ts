@@ -10,10 +10,10 @@ import type {
 
 const type = (filepath: string): string => {
   if (filepath.lastIndexOf('.') === 0) {
-    return path.parse(filepath).name.substr(1)
+    return path.parse(filepath).name.substring(1)
   }
 
-  return path.extname(filepath).substr(1)
+  return path.extname(filepath).substring(1)
 }
 
 const filenameAsJpg = (filename: Item['filename'][0]) => {
@@ -75,6 +75,14 @@ function customMime(rawExtension: string) {
   return false
 }
 
+function isStandardError(error: unknown): error is Error {
+  if (error instanceof Error) return true
+  if ('message' in (error as any) && 'stack' in (error as any)) {
+    return true
+  }
+  return false
+}
+
 function utils() {
   return {
     type,
@@ -133,3 +141,4 @@ function utils() {
 }
 
 export default utils
+export { isStandardError }
