@@ -23,6 +23,25 @@ type ItemFile = Partial<Filesystem> & {
   flat?: string;
 }
 
+async function getImages(pathQs: string): Promise<Filesystem[]> {
+  const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+  const resultPossibleHeif: FilesystemResponseBody = await response.json()
+  const heifResponse = await fetch('/api/admin/heifs', {
+    body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
+    headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+  })
+  const resultHeif: HeifResponseBody = await heifResponse.json()
+  // eslint-disable-next-line no-console
+  console.log(`Newly created HEIF files ${resultHeif.created.length}`)
+  if (resultHeif.created.length > 0) {
+    const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+    const result: FilesystemResponseBody = await resultResponse.json()
+    return result.files
+  }
+  return resultPossibleHeif.files
+}
+
 function WalkPage() {
   const { asPath } = useRouter()
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
@@ -35,21 +54,10 @@ function WalkPage() {
     if (asPath !== lastFetchedPath.current) {
       setLoading(true)
       const fetchData = async () => {
-        const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
-        const resultPossibleHeif: FilesystemResponseBody = await response.json()
-        const heifResponse = await fetch('/api/admin/heifs', {
-          body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'POST',
-        })
-        const resultHeif: HeifResponseBody = await heifResponse.json()
-        // eslint-disable-next-line no-console
-        console.log(`Newly created HEIF files ${resultHeif.created.length}`)
-        const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
-        const result: FilesystemResponseBody = await resultResponse.json()
+        const files = await getImages(pathQs)
         setLoading(false)
-        setFileList(result.files)
-        const itemImages = result.files.filter((file) => isImage(file))
+        setFileList(files)
+        const itemImages = files.filter((file) => isImage(file))
         setPreviewList(itemImages)
       }
       fetchData()
