@@ -1,3 +1,4 @@
+// Ported to Next.js
 const path = require('path');
 
 const utils = require('../../utils');
