@@ -1,5 +1,6 @@
 import mime from 'mime-types'
 import path from 'node:path'
+import { glob } from 'glob'
 
 import configFile from '../../config.json'
 import type {
@@ -136,6 +137,22 @@ function utils() {
 
         throw e
       }
+    },
+
+    /*
+    Find associated path and filename based on file without extension
+
+    @method glob
+    @param {string} sourceFolder Folder that contains the files
+    @param {string} pattern glob file extension pattern to find matching filenames
+    @param {object} [options]
+    @param {bool} [options.ignoreExtension] Apply pattern without file extension
+    @return {Promise} array of string associated filenames with absolute path
+    */
+    glob: async (sourceFolder: string, pattern: string, options = {}) => {
+      const find = `${sourceFolder}${pattern}`
+      const files = await glob(find)
+      return files
     },
   }
 }
