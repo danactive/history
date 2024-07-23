@@ -46,8 +46,8 @@ function renamePaths(
   { preview, renameAssociated }: { preview?: boolean, renameAssociated?: boolean } = {},
 ) {
   return new Promise((resolve, reject) => {
-    const renamedFilenames = []
-    const q = async.queue((rename, next) => {
+    const renamedFilenames: string[] = []
+    const q = async.queue((rename: { newName: string; oldName: string }, next: () => void) => {
       function renameFile() {
         if (preview && renameAssociated) {
           renamedFilenames.push(rename.newName)
@@ -65,9 +65,9 @@ function renamePaths(
         }
       }
 
-      exists.pathExists(rename.oldName)
+      exists(rename.oldName)
         .then(renameFile)
-        .catch((error) => reject(Boom.boomify(error)))
+        .catch((error: Error) => reject(Boom.boomify(error)))
     }, 2)
 
     {
@@ -105,7 +105,7 @@ function renamePaths(
 
       const filenamePairs: Pair[] = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }))
 
-      async.map(filenamePairs, transformFilenames, (error: Error, transformedPairs) => {
+      async.map(filenamePairs, transformFilenames, (error: Error, transformedPairs: any) => {
         if (error) {
           reject(error)
           return
