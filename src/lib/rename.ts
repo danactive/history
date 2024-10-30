@@ -78,23 +78,18 @@ function renamePaths(
         reject(Boom.boomify(error as Error))
       }
 
-      const transformFilenames = (pair: Pair, cb: Function) => {
+      const transformFilenames = async (pair: Pair, cb: Function) => {
         if (renameAssociated) {
-          let oldNames: string[]
+          const associatedFilenames = await utils.glob(`${path.join(fullPath, pair.current)}.*`)
+          const oldNames: string[] = associatedFilenames
+          const endWithoutExt = pair.future.length - path.extname(pair.future).length
+          const futureFile = pair.future.substr(0, endWithoutExt) // strip extension
 
-          utils.glob(path.join(fullPath, pair.current), '.*', { ignoreExtension: true })
-            .then((associatedFilenames) => {
-              oldNames = associatedFilenames
-              const endWithoutExt = pair.future.length - path.extname(pair.future).length
-              const futureFile = pair.future.substr(0, endWithoutExt) // strip extension
+          const reassignFilenames = await reassignAssociated(associatedFilenames, futureFile)
 
-              return reassignAssociated(associatedFilenames, futureFile)
-            })
-            .then((reassignFilenames) => {
-              const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
+          const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
 
-              cb(null, reassignPairs)
-            })
+          cb(null, reassignPairs)
         } else {
           const oldName = path.join(fullPath, pair.current)
           const newName = path.join(fullPath, pair.future)

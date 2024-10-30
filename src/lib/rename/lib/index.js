@@ -1,10 +1,10 @@
-const existsChecker = require('../../exists/lib/exists');
-const filenamer = require('./filenames');
-const renamer = require('./rename');
-const routes = require('../../../lib/routes');
-const validation = require('../../../lib/validation');
+const existsChecker = require('../../exists/lib/exists')
+const filenamer = require('./filenames')
+const renamer = require('./rename')
+const routes = require('../../../lib/routes')
+const validation = require('../../../lib/validation')
 // TODO copy to Next
-const formatJson = (json) => ({ xml: json.xml, filenames: json.filenames });
+const formatJson = (json) => ({ xml: json.xml, filenames: json.filenames })
 
 const handler = (request) => new Promise((reply) => {
   const {
@@ -13,34 +13,34 @@ const handler = (request) => new Promise((reply) => {
     preview,
     rename_associated: renameAssociated,
     source_folder: sourceFolder,
-  } = request.payload;
+  } = request.payload
 
-  const handleResponse = (json) => reply(formatJson(json));
-  const handleError = routes.createErrorReply(reply);
+  const handleResponse = (json) => reply(formatJson(json))
+  const handleError = routes.createErrorReply(reply)
 
-  const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix);
+  const lookupFilenames = () => filenamer.futureFilenamesOutputs(fromFilenames, prefix)
 
   const renamePaths = (futureFilenames) => {
-    const options = { preview, renameAssociated };
-    const toFilenames = futureFilenames.filenames;
+    const options = { preview, renameAssociated }
+    const toFilenames = futureFilenames.filenames
 
     renamer.renamePaths(sourceFolder, fromFilenames, toFilenames, options)
       .then(() => reply({ xml: futureFilenames.xml, filenames: toFilenames }))
-      .catch(handleError);
-  };
+      .catch(handleError)
+  }
 
   if (preview === true) {
     existsChecker.pathExists(sourceFolder)
       .then(lookupFilenames)
       .then(handleResponse)
-      .catch(handleError);
+      .catch(handleError)
   } else {
     existsChecker.pathExists(sourceFolder)
       .then(lookupFilenames)
       .then(renamePaths)
-      .catch(handleError);
+      .catch(handleError)
   }
-});
+})
 
 const register = (server) => {
   server.route({
@@ -67,13 +67,13 @@ const register = (server) => {
         failAction: (request, reply, error) => reply.response(`Response validation error (${error.message})`).code(400),
       },
     },
-  });
-};
+  })
+}
 
 const plugin = {
   register,
   name: 'rename',
   version: '2.2.0',
-};
+}
 
-module.exports = { plugin };
+module.exports = { plugin }
