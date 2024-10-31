@@ -7,9 +7,6 @@ import { reassignAssociated, renamePaths } from '../rename'
 describe('Verify rename library', () => {
   const utils = utilFactory()
 
-  test('One test minimum', () => {
-    expect(1).toBe(1)
-  })
   /*
   *######                                                    #
   *#     # ######   ##    ####   ####  #  ####  #    #      # #    ####   ####   ####   ####  #   ##   ##### ###### #####
@@ -20,22 +17,22 @@ describe('Verify rename library', () => {
   *#     # ###### #    #  ####   ####  #  ####  #    #    #     #  ####   ####   ####   ####  # #    #   #   ###### #####
   *
   */
-  // test('* Reassign many associated absolute filenames', () => {
-  //   const filepath = '/public/test/fixtures/renameable/'
-  //   const absoluteAssociatedFilenames = [`${filepath}bee.bat`, `${filepath}bee.bin`, `${filepath}bee.bmp`]
-  //   const futureFile = 'dan'
-  //   const futureAssociatedFilenames = [
-  //     `${filepath}${futureFile}.bat`,
-  //     `${filepath}${futureFile}.bin`,
-  //     `${filepath}${futureFile}.bmp`,
-  //   ]
+  test('* Reassign many associated absolute filenames', () => {
+    const filepath = '/public/test/fixtures/renameable/'
+    const absoluteAssociatedFilenames = [`${filepath}bee.bat`, `${filepath}bee.bin`, `${filepath}bee.bmp`]
+    const futureFile = 'renamed_by_unit_test'
+    const futureAssociatedFilenames = [
+      `${filepath}${futureFile}.bat`,
+      `${filepath}${futureFile}.bin`,
+      `${filepath}${futureFile}.bmp`,
+    ]
 
-  //   expect.assertions(1)
-  //   reassignAssociated(absoluteAssociatedFilenames, futureFile)
-  //     .then((futureFilenames) => {
-  //       expect(futureAssociatedFilenames).toStrictEqual(futureFilenames)
-  //     })
-  // })
+    expect.assertions(1)
+    reassignAssociated(absoluteAssociatedFilenames, futureFile)
+      .then((futureFilenames) => {
+        expect(futureAssociatedFilenames).toStrictEqual(futureFilenames)
+      })
+  })
 
   /*
   *     ######                                        ######
@@ -66,31 +63,31 @@ describe('Verify rename library', () => {
   //   await runTest({ filenames: temps, futureFilenames: originals })
   // })
 
-  // test('* Caught fake source folder', async () => {
-  //   const filenames = ['cee.css', 'jay.js', 'el.log']
-  //   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
-  //   const sourceFolder = '/test/fixtures/FAKE'
+  test('* Caught fake source folder', async () => {
+    const filenames = ['cee.css', 'jay.js', 'el.log']
+    const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
+    const sourceFolder = '/test/fixtures/FAKE'
 
-  //   expect.assertions(1)
-  //   try {
-  //     await renamePaths(sourceFolder, filenames, futureFilenames)
-  //   } catch (error) {
-  //     expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
-  //   }
-  // })
+    expect.assertions(1)
+    try {
+      await renamePaths(sourceFolder, filenames, futureFilenames)
+    } catch (error) {
+      expect(error).toBeInstanceOf(TypeError)
+    }
+  })
 
-  // test('* Caught fake source filenames', async () => {
-  //   const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log']
-  //   const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
-  //   const sourceFolder = '/test/fixtures/renameable'
+  test('* Caught fake source filenames', async () => {
+    const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log']
+    const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
+    const sourceFolder = '/test/fixtures/renameable'
 
-  //   expect.assertions(1)
-  //   try {
-  //     await renamePaths(sourceFolder, filenames, futureFilenames)
-  //   } catch (error) {
-  //     expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
-  //   }
-  // })
+    expect.assertions(1)
+    try {
+      await renamePaths(sourceFolder, filenames, futureFilenames)
+    } catch (error) {
+      expect(error).toBeInstanceOf(TypeError)
+    }
+  })
 
   // test('* Rename associated is false so one filename', async () => {
   //   const originals = ['bee.bat']
