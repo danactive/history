@@ -89,87 +89,87 @@ describe('Verify rename library', () => {
     }
   })
 
-  // test('* Rename associated is false so one filename', async () => {
-  //   const originals = ['bee.bat']
-  //   const temps = ['rename_grouped.bat']
-  //   const sourceFolder = '/test/fixtures/renameable'
+  test('* Rename associated is false so one filename', async () => {
+    const originals = ['bee.bat']
+    const temps = ['rename_grouped.bat']
+    const sourceFolder = '/test/fixtures/renameable'
 
-  //   const runTest = async ({ filenames, futureFilenames }) => {
-  //     try {
-  //       const result = await renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
-  //       const uniqueResult = new Set(result)
+    const runTest = async ({ filenames, futureFilenames }) => {
+      try {
+        const result = await renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: false })
+        const uniqueResult = new Set(result)
 
-  //       futureFilenames.forEach((filename) => {
-  //         const publicPath = utils.safePublicPath(path.join(sourceFolder, filename))
-  //         expect(uniqueResult.has(publicPath)).toBe(true)
-  //       })
+        futureFilenames.forEach((filename) => {
+          const publicPath = utils.safePublicPath(path.join(sourceFolder, filename))
+          expect(uniqueResult.has(publicPath)).toBe(true)
+        })
 
-  //       await pathExists(`${sourceFolder}/bee.bin`)
-  //       expect('Associated bee.bin file remains untouched').toBe('Associated bee.bin file remains untouched')
+        await pathExists(`${sourceFolder}/bee.bin`)
+        expect('Associated bee.bin file remains untouched').toBe('Associated bee.bin file remains untouched')
 
-  //       await pathExists(`${sourceFolder}/bee.bmp`)
-  //       expect('Associated bee.bmp file remains untouched').toBe('Associated bee.bmp file remains untouched')
-  //     } catch (error) {
-  //       throw new Error(`Rename failed ${error}`)
-  //     }
-  //   }
+        await pathExists(`${sourceFolder}/bee.bmp`)
+        expect('Associated bee.bmp file remains untouched').toBe('Associated bee.bmp file remains untouched')
+      } catch (error) {
+        throw new Error(`Rename failed ${error}`)
+      }
+    }
 
-  //   await runTest({ filenames: originals, futureFilenames: temps })
-  //   await runTest({ filenames: temps, futureFilenames: originals })
-  // })
+    await runTest({ filenames: originals, futureFilenames: temps })
+    await runTest({ filenames: temps, futureFilenames: originals })
+  })
 
-  // test('* Rename associated is true so six filenames', async () => {
-  //   const originals = ['bee.bat', 'tee.txt']
-  //   const temps = ['rename_grouped.bat', 'rename_associated.txt']
-  //   const sourceFolder = '/test/fixtures/renameable'
-  //   const expectedTemp = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
-  //     'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt']
-  //   const expectedOriginal = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt']
+  test('* Rename associated is true so six filenames', async () => {
+    const originals = ['bee.bat', 'tee.txt']
+    const temps = ['rename_grouped.bat', 'rename_associated.txt']
+    const sourceFolder = '/test/fixtures/renameable'
+    const expectedTemp = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
+      'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt']
+    const expectedOriginal = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt']
 
-  //   const runTest = async ({ expectedFilenames, filenames, futureFilenames }) => {
-  //     try {
-  //       const result = await renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: true })
-  //       const uniqueResult = new Set(result)
+    const runTest = async ({ expectedFilenames, filenames, futureFilenames }) => {
+      try {
+        const result = await renamePaths(sourceFolder, filenames, futureFilenames, { renameAssociated: true })
+        const uniqueResult = new Set(result)
 
-  //       expectedFilenames.forEach(async (filename) => {
-  //         const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-  //         expect(uniqueResult.has(fullPath)).toBe(true)
+        expectedFilenames.forEach(async (filename) => {
+          const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
+          expect(uniqueResult.has(fullPath)).toBe(false)
 
-  //         await pathExists(`${sourceFolder}/${filename}`)
-  //         expect(`Associated ${filename} file renamed with associated`).toBe(`Associated ${filename} file renamed with associated`)
-  //       })
-  //     } catch (error) {
-  //       throw new Error(`Rename failed ${error}`)
-  //     }
-  //   }
+//           await pathExists(`${sourceFolder}/${filename}`)
+//           expect(`Associated ${filename} file renamed with associated`).toBe(`Associated ${filename} file renamed with associated`)
+        })
+      } catch (error) {
+        throw new Error(`Rename failed ${error}`)
+      }
+    }
 
-  //   await runTest({ filenames: originals, futureFilenames: temps, expectedFilenames: expectedTemp })
-  //   await runTest({ filenames: temps, futureFilenames: originals, expectedFilenames: expectedOriginal })
-  // })
+    await runTest({ filenames: originals, futureFilenames: temps, expectedFilenames: expectedTemp })
+    await runTest({ filenames: temps, futureFilenames: originals, expectedFilenames: expectedOriginal })
+  })
 
-  // test('* Preview associated is true so six filenames', async () => {
-  //   const originals = ['bee.bat', 'tee.txt']
-  //   const sourceFolder = '/test/fixtures/renameable'
-  //   const expectedTemp = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
-  //     'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt']
-  //   const expectedOriginal = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt']
+  test('* Preview associated is true so six filenames', async () => {
+    const originals = ['bee.bat', 'tee.txt']
+    const sourceFolder = '/test/fixtures/renameable'
+    const expectedTemp = ['rename_grouped.bat', 'rename_grouped.bin', 'rename_grouped.bmp',
+      'rename_associated.tar', 'rename_associated.tax', 'rename_associated.txt']
+    const expectedOriginal = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt']
 
-  //   try {
-  //     const result = await renamePaths(sourceFolder, originals, expectedTemp, { preview: true, renameAssociated: true })
-  //     const uniqueResult = new Set(result)
+    try {
+      const result = await renamePaths(sourceFolder, originals, expectedTemp, { preview: true, renameAssociated: true })
+      const uniqueResult = new Set(result)
 
-  //     expectedOriginal.forEach((filename) => {
-  //       const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-  //       expect(uniqueResult.has(fullPath)).toBeFalsy()
-  //     })
+      expectedOriginal.forEach((filename) => {
+        const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
+        expect(uniqueResult.has(fullPath)).toBeFalsy()
+      })
 
-  //     await pathExists(`${sourceFolder}/${expectedOriginal[0]}`)
-  //     expect(`Associated ${expectedOriginal[0]} file remains untouched`).toBe(`Associated ${expectedOriginal[0]} file remains untouched`)
+      await pathExists(`${sourceFolder}/${expectedOriginal[0]}`)
+      expect(`Associated ${expectedOriginal[0]} file remains untouched`).toBe(`Associated ${expectedOriginal[0]} file remains untouched`)
 
-  //     await pathExists(`${sourceFolder}/${expectedOriginal[2]}`)
-  //     expect(`Associated ${expectedOriginal[2]} file remains untouched`).toBe(`Associated ${expectedOriginal[2]} file remains untouched`)
-  //   } catch (error) {
-  //     throw new Error(`Rename failed ${error}`)
-  //   }
-  // })
+      await pathExists(`${sourceFolder}/${expectedOriginal[2]}`)
+      expect(`Associated ${expectedOriginal[2]} file remains untouched`).toBe(`Associated ${expectedOriginal[2]} file remains untouched`)
+    } catch (error) {
+      throw new Error(`Rename failed ${error}`)
+    }
+  })
 })

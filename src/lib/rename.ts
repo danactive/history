@@ -1,6 +1,6 @@
 import async from 'async'
 import Boom from 'boom'
-import fs from 'node:fs'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 
 import exists from './exists'
@@ -39,83 +39,67 @@ Renamed file paths
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 */
-function renamePaths(
+async function renamePaths(
   sourceFolder: string,
   filenames: string[],
   futureFilenames: string[],
-  { preview, renameAssociated }: { preview?: boolean, renameAssociated?: boolean } = {},
+  { preview, renameAssociated }: { preview?: boolean, renameAssociated?: boolean } = { preview: false, renameAssociated: false },
 ) {
-  return new Promise((resolve, reject) => {
-    const renamedFilenames: string[] = []
-    const q = async.queue((rename: { newName: string; oldName: string }, next: () => void) => {
-      function renameFile() {
-        if (preview && renameAssociated) {
-          renamedFilenames.push(rename.newName)
-          next()
-        } else {
-          fs.rename(rename.oldName, rename.newName, (error) => {
-            if (error) {
-              reject(Boom.boomify(error))
-            }
+  const renamedFilenames: string[] = []
+  const q = async.queue(async (rename: { newName: string; oldName: string }, next: () => void) => {
+    const isExist = await exists(rename.oldName)
+    console.log('rename', rename.oldName, rename.newName, isExist)
+    if (!preview) {
+      await fs.rename(rename.oldName, rename.newName)
+    }
+    renamedFilenames.push(rename.newName)
+    next()
+  }, 2)
 
-            renamedFilenames.push(rename.newName)
+  q.error((err, task) => {
+    console.error('task experienced an error', err, task)
+  })
 
-            next()
-          })
-        }
-      }
+  const fullPath = utils.safePublicPath(sourceFolder)
+  const transformFilenames = async (pair: Pair) => {
+    if (renameAssociated) {
+      const associatedFilenames = await utils.glob(`${path.join(fullPath, pair.current)}.*`)
+      const oldNames: string[] = associatedFilenames
+      const endWithoutExt = pair.future.length - path.extname(pair.future).length
+      const futureFile = pair.future.substr(0, endWithoutExt) // strip extension
 
-      exists(rename.oldName)
-        .then(renameFile)
-        .catch((error: Error) => reject(Boom.boomify(error)))
-    }, 2)
+      const reassignFilenames = await reassignAssociated(associatedFilenames, futureFile)
 
-    {
-      let fullPath: string
-      try {
-        fullPath = utils.safePublicPath(sourceFolder)
-      } catch (error) {
-        reject(Boom.boomify(error as Error))
-      }
+      const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
 
-      const transformFilenames = async (pair: Pair) => {
-        if (renameAssociated) {
-          const associatedFilenames = await utils.glob(`${path.join(fullPath, pair.current)}.*`)
-          const oldNames: string[] = associatedFilenames
-          const endWithoutExt = pair.future.length - path.extname(pair.future).length
-          const futureFile = pair.future.substr(0, endWithoutExt) // strip extension
+      return reassignPairs
+    }
+    const oldName = path.join(fullPath, pair.current)
+    const newName = path.join(fullPath, pair.future)
 
-          const reassignFilenames = await reassignAssociated(associatedFilenames, futureFile)
+    return { oldName, newName }
+  }
 
-          const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
+  const filenamePairs: Pair[] = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }))
 
-          return reassignPairs
-        }
-        const oldName = path.join(fullPath, pair.current)
-        const newName = path.join(fullPath, pair.future)
-
-        return { oldName, newName }
-      }
-
-      const filenamePairs: Pair[] = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }))
-
-      async.map(filenamePairs, transformFilenames, (error: Error, transformedPairs: any) => {
-        if (error) {
-          reject(error)
-          return
-        }
-
-        if (Array.isArray(transformedPairs)) {
-          q.push([...[].concat(...transformedPairs)])
-        } else {
-          q.push(transformedPairs)
-        }
-      })
+  async.map(filenamePairs, transformFilenames, (error: Error, transformedPairs: any) => {
+    if (error) {
+      console.log('transformedPairs error', error)
     }
 
-    // assign a queue callback
-    q.drain = () => resolve(renamedFilenames)
+    if (Array.isArray(transformedPairs)) {
+      q.push([...[].concat(...transformedPairs)])
+    } else {
+      q.push(transformedPairs)
+    }
   })
+
+  // queue completes
+  q.drain(() => {
+    console.log('all items have been processed')
+  })
+  // console.log('drain renamedFilenames', renamedFilenames)
+  // return renamedFilenames
 }
 
 export {
