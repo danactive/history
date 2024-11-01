@@ -78,7 +78,7 @@ function renamePaths(
         reject(Boom.boomify(error as Error))
       }
 
-      const transformFilenames = async (pair: Pair, cb: Function) => {
+      const transformFilenames = async (pair: Pair) => {
         if (renameAssociated) {
           const associatedFilenames = await utils.glob(`${path.join(fullPath, pair.current)}.*`)
           const oldNames: string[] = associatedFilenames
@@ -89,13 +89,12 @@ function renamePaths(
 
           const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
 
-          cb(null, reassignPairs)
-        } else {
-          const oldName = path.join(fullPath, pair.current)
-          const newName = path.join(fullPath, pair.future)
-
-          cb(null, { oldName, newName })
+          return reassignPairs
         }
+        const oldName = path.join(fullPath, pair.current)
+        const newName = path.join(fullPath, pair.future)
+
+        return { oldName, newName }
       }
 
       const filenamePairs: Pair[] = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }))
@@ -114,7 +113,7 @@ function renamePaths(
       })
     }
 
-    // assign a callback
+    // assign a queue callback
     q.drain = () => resolve(renamedFilenames)
   })
 }

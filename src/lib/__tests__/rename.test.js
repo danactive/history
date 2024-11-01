@@ -44,24 +44,24 @@ describe('Verify rename library', () => {
   *     #     # ###### #    # #    # #    # ######    #       #    #   #   #    #  ####
   *
   */
-  // test('* Rename real source folder', async () => {
-  //   const originals = ['cee.css', 'jay.js', 'el.log']
-  //   const temps = ['changed.css', 'renamed.js', 'temp.txt']
-  //   const sourceFolder = '/test/fixtures/renameable'
+  test('* Rename real source folder', async () => {
+    const originals = ['cee.css', 'jay.js', 'el.log']
+    const temps = ['changed.css', 'renamed.js', 'temp.txt']
+    const sourceFolder = '/test/fixtures/renameable'
 
-  //   const runTest = async ({ filenames, futureFilenames }) => {
-  //     const result = await renamePaths(sourceFolder, filenames, futureFilenames)
-  //     const uniqueResult = new Set(result)
+    const runTest = async ({ filenames, futureFilenames }) => {
+      const result = await renamePaths(sourceFolder, filenames, futureFilenames)
+      const uniqueResult = new Set(result)
 
-  //     futureFilenames.forEach((filename) => {
-  //       const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-  //       expect(uniqueResult.has(fullPath)).toBe(true)
-  //     })
-  //   }
+      futureFilenames.forEach((filename) => {
+        const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
+        expect(uniqueResult.has(fullPath)).toBe(true)
+      })
+    }
 
-  //   await runTest({ filenames: originals, futureFilenames: temps })
-  //   await runTest({ filenames: temps, futureFilenames: originals })
-  // })
+    await runTest({ filenames: originals, futureFilenames: temps })
+    await runTest({ filenames: temps, futureFilenames: originals })
+  })
 
   test('* Caught fake source folder', async () => {
     const filenames = ['cee.css', 'jay.js', 'el.log']
@@ -72,7 +72,7 @@ describe('Verify rename library', () => {
     try {
       await renamePaths(sourceFolder, filenames, futureFilenames)
     } catch (error) {
-      expect(error).toBeInstanceOf(TypeError)
+      expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
     }
   })
 
@@ -85,7 +85,7 @@ describe('Verify rename library', () => {
     try {
       await renamePaths(sourceFolder, filenames, futureFilenames)
     } catch (error) {
-      expect(error).toBeInstanceOf(TypeError)
+      expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
     }
   })
 
