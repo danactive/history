@@ -47,8 +47,8 @@ async function renamePaths(
 ) {
   const renamedFilenames: string[] = []
   const q = async.queue(async (rename: { newName: string; oldName: string }, next: () => void) => {
+    console.log('Processing', rename.oldName, rename.newName)
     const isExist = await exists(rename.oldName)
-    console.log('rename', rename.oldName, rename.newName, isExist)
     if (!preview) {
       await fs.rename(rename.oldName, rename.newName)
     }
@@ -88,8 +88,10 @@ async function renamePaths(
     }
 
     if (Array.isArray(transformedPairs)) {
+      console.log('Nov 4 push if=', [...[].concat(...transformedPairs)])
       q.push([...[].concat(...transformedPairs)])
     } else {
+      console.log('Nov 4 push else=', transformedPairs)
       q.push(transformedPairs)
     }
   })
