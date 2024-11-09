@@ -70,6 +70,8 @@ export const reference = (item: XmlItem): [string, string] | null => {
         return 'https://www.facebook.com/'
       case 'google':
         return 'https://www.google.com/search?q='
+      case 'instagram':
+        return 'https://www.instagram.com/'
       case 'wikipedia':
         return 'https://en.wikipedia.org/wiki/'
       case 'youtube':
