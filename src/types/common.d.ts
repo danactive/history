@@ -27,6 +27,7 @@ type Item = {
   caption: string,
   description: string | null,
   search: string | null,
+  persons: string | null,
   title: string,
   coordinates: [number, number] | null,
   coordinateAccuracy: number | null,

@@ -28,7 +28,8 @@ const useMemory = (
   const memoryHtml = details ? (
     <>
       <h3 className={styles.city}>{details.title}</h3>
-      <h4 className={styles.location}>{details.filename}</h4>
+      {details.persons && <h4 className={styles.person}>{details.persons}</h4>}
+      <h5 className={styles.filename}>{details.filename}</h5>
       {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null

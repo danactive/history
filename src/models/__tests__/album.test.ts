@@ -1,6 +1,6 @@
 import config from '../../../config.json'
 import type { XmlAlbum, XmlItem } from '../../types/common'
-import transformJsonSchema, { reference } from '../album'
+import transformJsonSchema, { persons, reference } from '../album'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
@@ -100,6 +100,32 @@ describe('Album library', () => {
       expect(result.album.items[1].mediaPath).toEqual('/galleries/demo/media/videos/2016/2016-Video-Filename.mov') // Video Path
       expect(result.album.items[1].reference?.[0]).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference URL
       expect(result.album.items[1].reference?.[1]).toEqual('Purshia_tridentata') // Wikipedia reference name
+    })
+  })
+
+  describe('persons', () => {
+    test('0 out of 2 match', () => {
+      const samplePerson = 'Manitoba'
+      const actual = persons(samplePerson, ['Alberta', 'Saskatchewan'])
+      expect(actual).toBe(null)
+    })
+
+    test('1 out of 1 match', () => {
+      const samplePerson = 'British Columbia'
+      const actual = persons(samplePerson, [samplePerson])
+      expect(actual).toBe(samplePerson)
+    })
+
+    test('1 out of 2 match', () => {
+      const samplePerson = 'British Columbia'
+      const actual = persons(samplePerson, ['Alberta', samplePerson, 'Saskatchewan'])
+      expect(actual).toBe(samplePerson)
+    })
+
+    test('2 out of 2 match', () => {
+      const out = 'British Columbia, Alberta'
+      const actual = persons(out, ['Alberta', 'British Columbia', 'Saskatchewan'])
+      expect(actual).toBe(out)
     })
   })
 

@@ -63,6 +63,23 @@ function assertCannotReach(x: never) {
   throw new Error(`Reference source missing: TypeScript should block this at compile time ${x}`)
 }
 
+export const persons = (photoSearchValues: XmlItem['search'], definedPersonInclusionList: string[]): string | null => {
+  if (photoSearchValues) {
+    const names = photoSearchValues.split(', ')
+    const output = names.reduce((acc: string[], cur) => {
+      if (definedPersonInclusionList.includes(cur)) {
+        acc.push(cur)
+      }
+      return acc
+    }, [])
+    if (output.length > 0) {
+      return output.join(', ')
+    }
+    return null
+  }
+  return null
+}
+
 export const reference = (item: XmlItem): [string, string] | null => {
   const baseUrl = (source: ItemReferenceSource) => {
     switch (source) {
@@ -159,6 +176,7 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
       caption: caption(item),
       description: item.photoDesc || null,
       search: item.search || null,
+      persons: persons(item.search, []),
       title: title(item),
       coordinates: longitude && latitude ? [longitude, latitude] : null,
       coordinateAccuracy: (accuracy === null || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
