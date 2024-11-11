@@ -10,6 +10,7 @@ describe('Search hook', () => {
     caption: 'Mock caption',
     description: null,
     search: null,
+    persons: null,
     title: 'Mock title',
     coordinates: null,
     coordinateAccuracy: null,

@@ -1,23 +1,6 @@
-import camelCase from 'camelcase'
-import fs from 'node:fs/promises'
-import xml2js, { type ParserOptions } from 'xml2js'
-
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
 import type { Album, AlbumMeta } from '../types/common'
-
-const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
-const parser = new xml2js.Parser(parseOptions)
-
-/**
-* Get album XML from local filesystem
-* @param {string} gallery name of gallery
-* @param {string} album name of album
-* @returns {string} album XML
-*/
-async function getXmlFromFilesystem(gallery: NonNullable<AlbumMeta['gallery']>, album: string) {
-  const fileBuffer = await fs.readFile(`public/galleries/${gallery}/${album}.xml`)
-  return parser.parseStringPromise(fileBuffer)
-}
+import { getAlbumFromFilesystem } from './xml'
 
 type Envelope = { body: Album, status: number }
 type ErrorOptionalMessageBody = {
@@ -48,8 +31,8 @@ async function get(
     if (!album === null || album === undefined || Array.isArray(album)) {
       throw new ReferenceError('Album name is missing')
     }
-    const xml = await getXmlFromFilesystem(gallery, album)
-    const body = transformJsonSchema(xml)
+    const json = await getAlbumFromFilesystem(gallery, album)
+    const body = transformJsonSchema(json)
 
     if (returnEnvelope) {
       return { body, status: 200 }

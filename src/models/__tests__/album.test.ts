@@ -106,26 +106,31 @@ describe('Album library', () => {
   describe('persons', () => {
     test('0 out of 2 match', () => {
       const samplePerson = 'Manitoba'
-      const actual = persons(samplePerson, ['Alberta', 'Saskatchewan'])
+      const actual = persons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
       expect(actual).toBe(null)
     })
 
     test('1 out of 1 match', () => {
       const samplePerson = 'British Columbia'
-      const actual = persons(samplePerson, [samplePerson])
+      const actual = persons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
       expect(actual).toBe(samplePerson)
     })
 
     test('1 out of 2 match', () => {
       const samplePerson = 'British Columbia'
-      const actual = persons(samplePerson, ['Alberta', samplePerson, 'Saskatchewan'])
+      const person1 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
+      const person2 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
+      const actual = persons(samplePerson, [person1, person2])
       expect(actual).toBe(samplePerson)
     })
 
     test('2 out of 2 match', () => {
-      const out = 'British Columbia, Alberta'
-      const actual = persons(out, ['Alberta', 'British Columbia', 'Saskatchewan'])
-      expect(actual).toBe(out)
+      const expected = 'British Columbia, Yukon Territory'
+      const person1 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
+      const person2 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
+      const person3 = { first: 'Northwest', last: 'Territories', full: 'Northwest Territories' }
+      const actual = persons(expected, [person1, person2, person3])
+      expect(actual).toBe(expected)
     })
   })
 

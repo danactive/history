@@ -17,7 +17,7 @@ type XmlMeta = {
   clusterMaxZoom?: string,
 }
 
-type ItemReferenceSource = 'facebook' | 'google' | 'wikipedia' | 'youtube'
+type ItemReferenceSource = 'facebook' | 'google' | 'instagram' | 'wikipedia' | 'youtube'
 
 type Item = {
   id: string,
@@ -101,6 +101,19 @@ type GalleryAlbum = {
   search: string | null;
 }
 
+type XmlPerson = {
+  first: string,
+  last: string,
+}
+
+type XmlPersons = {
+  persons: XmlPerson | XmlPerson[]
+}
+
+type Person = XmlPerson & {
+  full: string,
+}
+
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
@@ -153,6 +166,9 @@ export type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   XmlItem,
+  Person,
+  XmlPerson,
+  XmlPersons,
   XmlAlbum,
   Item,
   ItemReferenceSource,

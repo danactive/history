@@ -7,6 +7,7 @@ import type {
   AlbumMeta,
   Item,
   ItemReferenceSource,
+  Person,
   XmlAlbum,
   XmlItem,
 } from '../types/common'
@@ -63,15 +64,20 @@ function assertCannotReach(x: never) {
   throw new Error(`Reference source missing: TypeScript should block this at compile time ${x}`)
 }
 
-export const persons = (photoSearchValues: XmlItem['search'], definedPersonInclusionList: string[]): string | null => {
+export const persons = (photoSearchValues: XmlItem['search'], definedPersonInclusionList: Person[]): string | null => {
   if (photoSearchValues) {
+    const output: string[] = []
     const names = photoSearchValues.split(', ')
-    const output = names.reduce((acc: string[], cur) => {
-      if (definedPersonInclusionList.includes(cur)) {
-        acc.push(cur)
+
+    for (let p = 0; p < definedPersonInclusionList.length; p += 1) {
+      if (names.includes(definedPersonInclusionList[p].full)) {
+        output.push(definedPersonInclusionList[p].full)
       }
-      return acc
-    }, [])
+      if (output.length === names.length) {
+        break
+      }
+    }
+
     if (output.length > 0) {
       return output.join(', ')
     }
