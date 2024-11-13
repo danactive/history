@@ -1,13 +1,13 @@
 import config from '../../../config.json'
 import type { XmlAlbum, XmlItem } from '../../types/common'
-import transformJsonSchema, { persons, reference } from '../album'
+import transformJsonSchema, { transformPersons, transformReference } from '../album'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
     test('Meta', () => {
       const mock = { album: { meta: { gallery: 'demo' } } }
       const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
-      const result = transformJsonSchema(mock)
+      const result = transformJsonSchema(mock, [])
       expect(result.album.meta).toEqual(expected)
       expect(result.album.items.length).toEqual(0)
     })
@@ -26,7 +26,7 @@ describe('Album library', () => {
         },
       }
       const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
-      const result = transformJsonSchema(mock)
+      const result = transformJsonSchema(mock, [])
       expect(result.album.meta).toEqual(expected)
       if (Array.isArray(mock.album.item)) {
         expect(mock.album.item).toHaveLength(0)
@@ -72,7 +72,7 @@ describe('Album library', () => {
           ],
         },
       }
-      const result = transformJsonSchema(mock)
+      const result = transformJsonSchema(mock, [])
 
       expect(result.album.meta).toEqual(expectedMeta) // Meta (w/ Items)
       if (mock.album.item && Array.isArray(mock.album.item)) {
@@ -103,16 +103,16 @@ describe('Album library', () => {
     })
   })
 
-  describe('persons', () => {
+  describe('transformPersons', () => {
     test('0 out of 2 match', () => {
       const samplePerson = 'Manitoba'
-      const actual = persons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
+      const actual = transformPersons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
       expect(actual).toBe(null)
     })
 
     test('1 out of 1 match', () => {
       const samplePerson = 'British Columbia'
-      const actual = persons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
+      const actual = transformPersons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
       expect(actual).toBe(samplePerson)
     })
 
@@ -120,7 +120,7 @@ describe('Album library', () => {
       const samplePerson = 'British Columbia'
       const person1 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
       const person2 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
-      const actual = persons(samplePerson, [person1, person2])
+      const actual = transformPersons(samplePerson, [person1, person2])
       expect(actual).toBe(samplePerson)
     })
 
@@ -129,7 +129,7 @@ describe('Album library', () => {
       const person1 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
       const person2 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
       const person3 = { first: 'Northwest', last: 'Territories', full: 'Northwest Territories' }
-      const actual = persons(expected, [person1, person2, person3])
+      const actual = transformPersons(expected, [person1, person2, person3])
       expect(actual).toBe(expected)
     })
   })
@@ -150,7 +150,7 @@ describe('Album library', () => {
           source: 'youtube',
         },
       }
-      const actual = reference(mock)
+      const actual = transformReference(mock)
       if (actual === null) {
         expect(actual).not.toBeNull()
       } else {
@@ -166,7 +166,7 @@ describe('Album library', () => {
           source: 'wikipedia',
         },
       }
-      const actual = reference(mock)
+      const actual = transformReference(mock)
       if (actual === null) {
         expect(actual).not.toBeNull()
       } else {

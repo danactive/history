@@ -1,6 +1,7 @@
-import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
+import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
+import transformPersonSchema from '../models/person'
 import type { Album, AlbumMeta } from '../types/common'
-import { getAlbumFromFilesystem } from './xml'
+import { getAlbumFromFilesystem, getPersonsFromFilesystem } from './xml'
 
 type Envelope = { body: Album, status: number }
 type ErrorOptionalMessageBody = {
@@ -31,8 +32,9 @@ async function get(
     if (!album === null || album === undefined || Array.isArray(album)) {
       throw new ReferenceError('Album name is missing')
     }
-    const json = await getAlbumFromFilesystem(gallery, album)
-    const body = transformJsonSchema(json)
+    const jsonAlbum = await getAlbumFromFilesystem(gallery, album)
+    const jsonPersons = await getPersonsFromFilesystem(gallery)
+    const body = transformAlbumSchema(jsonAlbum, transformPersonSchema(jsonPersons))
 
     if (returnEnvelope) {
       return { body, status: 200 }
@@ -51,5 +53,5 @@ async function get(
   }
 }
 
-export { transformJsonSchema }
+export { transformAlbumSchema as transformJsonSchema }
 export default get

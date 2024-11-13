@@ -102,15 +102,17 @@ type GalleryAlbum = {
 }
 
 type XmlPerson = {
-  first: string,
-  last: string,
+  $: {
+    first: string,
+    last: string,
+  }
 }
 
 type XmlPersons = {
-  persons: XmlPerson | XmlPerson[]
+  persons: { person: XmlPerson | XmlPerson[] }
 }
 
-type Person = XmlPerson & {
+type Person = XmlPerson['$'] & {
   full: string,
 }
 

@@ -8,18 +8,19 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
 }
 
 function transform(person: XmlPerson): Person {
+  const { first, last } = person.$
   return {
-    first: person.first,
-    last: person.last,
-    full: `${person.first} ${person.last}`,
+    first,
+    last,
+    full: `${first} ${last}`,
   }
 }
 
 function transformJsonSchema(json: XmlPersons): Person[] {
-  if (Array.isArray(json.persons)) {
-    return json.persons.map(transform)
+  if (Array.isArray(json.persons.person)) {
+    return json.persons.person.map(transform)
   }
-  return [transform(json.persons)]
+  return [transform(json.persons.person)]
 }
 
 export default transformJsonSchema
