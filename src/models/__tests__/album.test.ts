@@ -104,31 +104,47 @@ describe('Album library', () => {
   })
 
   describe('transformPersons', () => {
+    const mockPerson = { dob: '2024-11-12' }
+
     test('0 out of 2 match', () => {
       const samplePerson = 'Manitoba'
-      const actual = transformPersons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
+      const actual = transformPersons(samplePerson, [{
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: '',
+      }])
       expect(actual).toBe(null)
     })
 
     test('1 out of 1 match', () => {
       const samplePerson = 'British Columbia'
-      const actual = transformPersons(samplePerson, [{ first: 'British', last: 'Columbia', full: 'British Columbia' }])
+      const actual = transformPersons(samplePerson, [{
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: 'British Columbia',
+      }])
       expect(actual).toBe(samplePerson)
     })
 
     test('1 out of 2 match', () => {
       const samplePerson = 'British Columbia'
-      const person1 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
-      const person2 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
+      const person1 = {
+        ...mockPerson, first: 'Yukon', last: 'Territory', full: 'Yukon Territory', display: 'Yukon Territory',
+      }
+      const person2 = {
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: 'British Columbia',
+      }
       const actual = transformPersons(samplePerson, [person1, person2])
       expect(actual).toBe(samplePerson)
     })
 
     test('2 out of 2 match', () => {
       const expected = 'British Columbia, Yukon Territory'
-      const person1 = { first: 'British', last: 'Columbia', full: 'British Columbia' }
-      const person2 = { first: 'Yukon', last: 'Territory', full: 'Yukon Territory' }
-      const person3 = { first: 'Northwest', last: 'Territories', full: 'Northwest Territories' }
+      const person1 = {
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: 'British Columbia',
+      }
+      const person2 = {
+        ...mockPerson, first: 'Yukon', last: 'Territory', full: 'Yukon Territory', display: 'Yukon Territory',
+      }
+      const person3 = {
+        ...mockPerson, first: 'Northwest', last: 'Territories', full: 'Northwest Territories', display: 'Northwest Territories',
+      }
       const actual = transformPersons(expected, [person1, person2, person3])
       expect(actual).toBe(expected)
     })

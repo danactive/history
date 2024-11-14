@@ -71,7 +71,7 @@ export const transformPersons = (photoSearchValues: XmlItem['search'], definedPe
 
     for (let p = 0; p < definedPersonInclusionList.length; p += 1) {
       if (names.includes(definedPersonInclusionList[p].full)) {
-        output.push(definedPersonInclusionList[p].full)
+        output.push(definedPersonInclusionList[p].display)
       }
       if (output.length === names.length) {
         break

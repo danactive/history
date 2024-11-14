@@ -1,7 +1,7 @@
 import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
-import transformPersonSchema from '../models/person'
 import type { Album, AlbumMeta } from '../types/common'
-import { getAlbumFromFilesystem, getPersonsFromFilesystem } from './xml'
+import getPersons from './persons'
+import { getAlbumFromFilesystem } from './xml'
 
 type Envelope = { body: Album, status: number }
 type ErrorOptionalMessageBody = {
@@ -33,8 +33,15 @@ async function get(
       throw new ReferenceError('Album name is missing')
     }
     const jsonAlbum = await getAlbumFromFilesystem(gallery, album)
-    const jsonPersons = await getPersonsFromFilesystem(gallery)
-    const body = transformAlbumSchema(jsonAlbum, transformPersonSchema(jsonPersons))
+
+    let relativeDate = null
+    if (jsonAlbum.album.item) {
+      const filenames = Array.isArray(jsonAlbum.album.item) ? jsonAlbum.album.item[0].filename : jsonAlbum.album.item.filename
+      const filename = Array.isArray(filenames) ? filenames[0] : filenames
+      relativeDate = new Date(filename.substring(0, 10))
+    }
+
+    const body = transformAlbumSchema(jsonAlbum, await getPersons(gallery, relativeDate))
 
     if (returnEnvelope) {
       return { body, status: 200 }

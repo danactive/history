@@ -105,6 +105,7 @@ type XmlPerson = {
   $: {
     first: string,
     last: string,
+    dob: string | null,
   }
 }
 
@@ -114,6 +115,7 @@ type XmlPersons = {
 
 type Person = XmlPerson['$'] & {
   full: string,
+  display: string,
 }
 
 interface ServerSideAlbumItem extends GalleryAlbum {
