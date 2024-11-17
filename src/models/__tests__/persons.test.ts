@@ -7,7 +7,6 @@ describe('transform', () => {
         first: 'John',
         last: 'Doe',
         full: 'John Doe',
-        display: 'John Doe',
         dob: null,
       }
       const person = {
@@ -17,7 +16,7 @@ describe('transform', () => {
           dob: expected.dob,
         },
       }
-      const result = transform(person, { relativeDate: new Date('2024-11-12') })
+      const result = transform(person)
       expect(result).toEqual(expected)
     })
 
@@ -26,7 +25,6 @@ describe('transform', () => {
         first: 'John',
         last: 'Doe',
         full: 'John Doe',
-        display: 'John Doe (1yr)',
         dob: '2023-11-12',
       }
       const person = {
@@ -36,7 +34,7 @@ describe('transform', () => {
           dob: expected.dob,
         },
       }
-      const result = transform(person, { relativeDate: new Date('2024-11-12') })
+      const result = transform(person)
       expect(result).toEqual(expected)
     })
 
@@ -45,7 +43,6 @@ describe('transform', () => {
         first: 'John',
         last: 'Doe',
         full: 'John Doe',
-        display: 'John Doe (1yr)',
         dob: '2023-11-12',
       }
       const person = {
@@ -55,7 +52,7 @@ describe('transform', () => {
           dob: expected.dob,
         },
       }
-      const result = transform(person, { relativeDate: new Date('2025-11-11') })
+      const result = transform(person)
       expect(result).toEqual(expected)
     })
 
@@ -64,7 +61,6 @@ describe('transform', () => {
         first: 'John',
         last: 'Doe',
         full: 'John Doe',
-        display: 'John Doe (3yrs)',
         dob: '2021-11-12',
       }
       const person = {
@@ -74,7 +70,7 @@ describe('transform', () => {
           dob: expected.dob,
         },
       }
-      const result = transform(person, { relativeDate: new Date('2024-11-13') })
+      const result = transform(person)
       expect(result).toEqual(expected)
     })
   })

@@ -7,45 +7,22 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
   return { ...out, error: { message } }
 }
 
-function calculateAge(birthDate: Date, referenceDate: Date) {
-  let age = referenceDate.getFullYear() - birthDate.getFullYear()
-  const m = referenceDate.getMonth() - birthDate.getMonth()
-
-  if (m < 0 || (m === 0 && referenceDate.getDate() < birthDate.getDate())) {
-    age -= 1
-  }
-  return age === 1 ? '1yr' : `${age}yrs`
-}
-
-function transform(person: XmlPerson, options?: { relativeDate?: Date | null }): Person {
+function transform(person: XmlPerson): Person {
   const { first, last, dob } = person.$
-
-  let referenceDate: Date
-  if (options?.relativeDate) {
-    referenceDate = options.relativeDate
-  } else if (dob) {
-    referenceDate = new Date(dob)
-  } else {
-    referenceDate = new Date()
-  }
-
-  const formattedAge = dob ? ` (${calculateAge(new Date(dob), referenceDate)})` : ''
 
   return {
     first,
     last,
     full: `${first} ${last}`,
-    display: `${first} ${last}${formattedAge}`,
-    dob,
+    dob: dob ?? null,
   }
 }
 
-function transformJsonSchema(xml: XmlPersons, ageRelativeDate: Date | null): Person[] {
-  const personOptions = { relativeDate: ageRelativeDate }
+function transformJsonSchema(xml: XmlPersons): Person[] {
   if (Array.isArray(xml.persons.person)) {
-    return xml.persons.person.map((p) => transform(p, personOptions))
+    return xml.persons.person.map((p) => transform(p))
   }
-  return [transform(xml.persons.person, personOptions)]
+  return [transform(xml.persons.person)]
 }
 
 export default transformJsonSchema

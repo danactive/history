@@ -9,19 +9,16 @@ type ErrorOptionalMessageBody = {
 type ReturnAlbumOrErrors = Promise<Envelope | Person[] | ErrorOptionalMessage | ErrorOptionalMessageBody>
 async function get<T extends boolean = false>(
   gallery: AlbumMeta['gallery'],
-  personAgeRelativeDate: Date | null,
   returnEnvelope?: T,
 ): Promise<T extends true ? Envelope : Person[]>
 /**
  * Get Persons XML from local filesystem
  * @param {string} gallery name of gallery
- * @param {date} personAgeRelativeDate calculate person age based on this date
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {object} person
  */
 async function get(
   gallery: AlbumMeta['gallery'],
-  personAgeRelativeDate: Date | null,
   returnEnvelope: boolean,
 ): ReturnAlbumOrErrors {
   try {
@@ -29,7 +26,7 @@ async function get(
       throw new ReferenceError('Gallery name is missing')
     }
     const json = await getPersonsFromFilesystem(gallery)
-    const body = transformJsonSchema(json, personAgeRelativeDate)
+    const body = transformJsonSchema(json)
 
     if (returnEnvelope) {
       return { body, status: 200 }

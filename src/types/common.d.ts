@@ -19,6 +19,27 @@ type XmlMeta = {
 
 type ItemReferenceSource = 'facebook' | 'google' | 'instagram' | 'wikipedia' | 'youtube'
 
+type XmlPerson = {
+  $: {
+    first: string,
+    last: string,
+    dob: string | null,
+  }
+}
+
+type XmlPersons = {
+  persons: { person: XmlPerson | XmlPerson[] }
+}
+
+type Person = XmlPerson['$'] & {
+  full: string,
+}
+
+type PersonItem = {
+  full: Person['full'],
+  dob: Person['dob'],
+}
+
 type Item = {
   id: string,
   filename: string | string[],
@@ -27,7 +48,7 @@ type Item = {
   caption: string,
   description: string | null,
   search: string | null,
-  persons: string | null,
+  persons: PersonItem[] | null,
   title: string,
   coordinates: [number, number] | null,
   coordinateAccuracy: number | null,
@@ -101,23 +122,6 @@ type GalleryAlbum = {
   search: string | null;
 }
 
-type XmlPerson = {
-  $: {
-    first: string,
-    last: string,
-    dob: string | null,
-  }
-}
-
-type XmlPersons = {
-  persons: { person: XmlPerson | XmlPerson[] }
-}
-
-type Person = XmlPerson['$'] & {
-  full: string,
-  display: string,
-}
-
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
@@ -171,6 +175,7 @@ export type {
   ServerSideAllItem,
   XmlItem,
   Person,
+  PersonItem,
   XmlPerson,
   XmlPersons,
   XmlAlbum,

@@ -41,7 +41,7 @@ async function get(
       relativeDate = new Date(filename.substring(0, 10))
     }
 
-    const body = transformAlbumSchema(jsonAlbum, await getPersons(gallery, relativeDate))
+    const body = transformAlbumSchema(jsonAlbum, await getPersons(gallery))
 
     if (returnEnvelope) {
       return { body, status: 200 }
