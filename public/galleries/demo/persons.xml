@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<persons>
+	<person first="Mister" last="Gingerbread" dob="2004-01-02" />
+	<person first="Missus" last="Gingerbread" dob="2004-01-02" />
+</persons>

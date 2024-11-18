@@ -4,6 +4,7 @@ import type ReactImageGallery from 'react-image-gallery'
 import Link from '../components/Link'
 import type { Item } from '../types/common'
 import styles from './memory.module.css'
+import applyAge from '../utils/person'
 
 interface Viewed {
   (index: number): void;
@@ -28,7 +29,8 @@ const useMemory = (
   const memoryHtml = details ? (
     <>
       <h3 className={styles.city}>{details.title}</h3>
-      <h4 className={styles.location}>{details.filename}</h4>
+      {details.persons && <h4 className={styles.person}>{applyAge(details.persons, details.filename)}</h4>}
+      <h5 className={styles.filename}>{details.filename}</h5>
       {details.reference && <Link href={details.reference[0]}>{decodeURI(details.reference[1]).replaceAll('_', ' ')}</Link>}
     </>
   ) : null

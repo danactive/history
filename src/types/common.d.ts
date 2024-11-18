@@ -17,7 +17,28 @@ type XmlMeta = {
   clusterMaxZoom?: string,
 }
 
-type ItemReferenceSource = 'facebook' | 'google' | 'wikipedia' | 'youtube'
+type ItemReferenceSource = 'facebook' | 'google' | 'instagram' | 'wikipedia' | 'youtube'
+
+type XmlPerson = {
+  $: {
+    first: string,
+    last: string,
+    dob: string | null,
+  }
+}
+
+type XmlPersons = {
+  persons: { person: XmlPerson | XmlPerson[] }
+}
+
+type Person = XmlPerson['$'] & {
+  full: string,
+}
+
+type PersonItem = {
+  full: Person['full'],
+  dob: Person['dob'],
+}
 
 type Item = {
   id: string,
@@ -27,6 +48,7 @@ type Item = {
   caption: string,
   description: string | null,
   search: string | null,
+  persons: PersonItem[] | null,
   title: string,
   coordinates: [number, number] | null,
   coordinateAccuracy: number | null,
@@ -152,6 +174,10 @@ export type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   XmlItem,
+  Person,
+  PersonItem,
+  XmlPerson,
+  XmlPersons,
   XmlAlbum,
   Item,
   ItemReferenceSource,
