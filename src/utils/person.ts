@@ -32,26 +32,29 @@ function applyAge(persons: Item['persons'], filename: Item['filename']) {
   const firstFilename = Array.isArray(filename) ? filename[0] : filename
   const filenamePossibleDate = firstFilename.substring(0, 10)
 
-  const possibleYear = filenamePossibleDate.substring(0, 4)
+  const possibleFilenameYear = filenamePossibleDate.substring(0, 4)
   const validYearPattern = /^(18|19|20|21)\d{2}$/
 
-  const invalidYear = !validYearPattern.test(possibleYear)
+  const invalidYear = !validYearPattern.test(possibleFilenameYear)
   if (invalidYear) {
     return persons.map((person) => person.full).join(', ')
   }
 
-  const possibleMonth = filenamePossibleDate.substring(5, 7)
+  const possibleFilenameMonth = filenamePossibleDate.substring(5, 7)
   const validMonthPattern = /^(0[1-9]|1[0-2])$/
-  const invalidMonth = !validMonthPattern.test(possibleMonth)
+  const validMonth = validMonthPattern.test(possibleFilenameMonth)
   const referenceDate = new Date(filenamePossibleDate)
 
   return persons.map((person) => {
     let age: string | null = null
     if (person.dob) {
-      if (invalidMonth) {
-        age = calculateAgeByYear(new Date(person.dob), possibleYear)
-      } else {
+      const possibleDobMonth = person.dob.substring(5, 7)
+      const validDobMonth = validMonthPattern.test(possibleDobMonth)
+      if (validMonth && validDobMonth) {
         age = calculateAge(new Date(person.dob), referenceDate)
+      } else {
+        const birthdate = (validDobMonth) ? new Date(person.dob) : new Date(`${person.dob}-01-02`)
+        age = calculateAgeByYear(birthdate, possibleFilenameYear)
       }
     }
     const formattedAge = age ? ` (${age})` : ''

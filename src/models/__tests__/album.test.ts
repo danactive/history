@@ -152,6 +152,25 @@ describe('Album library', () => {
         expect(actuals.map((actual) => actual.full).join(', ')).toBe(expected)
       }
     })
+
+    test('Person order', () => {
+      expect.assertions(2)
+      const search = 'British Columbia, Yukon Territory'
+      const person1 = {
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: 'British Columbia',
+      }
+      const person2 = {
+        ...mockPerson, first: 'Yukon', last: 'Territory', full: 'Yukon Territory', display: 'Yukon Territory',
+      }
+      const person3 = {
+        ...mockPerson, first: 'Northwest', last: 'Territories', full: 'Northwest Territories', display: 'Northwest Territories',
+      }
+      const actuals = transformPersons(search, [person3, person2, person1])
+      expect(actuals).toHaveLength(2)
+      if (actuals) {
+        expect(actuals.map((actual) => actual.full).join(', ')).toBe(search)
+      }
+    })
   })
 
   describe('reference', () => {

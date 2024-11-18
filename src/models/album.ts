@@ -70,13 +70,14 @@ export const transformPersons = (photoSearchValues: XmlItem['search'], definedPe
     const output: PersonItem[] = []
     const names = photoSearchValues.split(', ')
 
-    for (let p = 0; p < definedPersonInclusionList.length; p += 1) {
-      const person = definedPersonInclusionList[p]
-      if (names.includes(person.full)) {
-        output.push({ full: person.full, dob: person.dob })
-      }
-      if (output.length === names.length) {
-        break
+    for (let n = 0; n < names.length; n += 1) {
+      const name = names[n];
+      for (let p = 0; p < definedPersonInclusionList.length; p += 1) {
+        const person = definedPersonInclusionList[p];
+        if (name === person.full) {
+          output.push({ full: person.full, dob: person.dob });
+          break; // Break the inner loop once a match is found
+        }
       }
     }
 
