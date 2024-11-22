@@ -17,3 +17,16 @@ export namespace Gallery {
     gallery: NonNullable<AlbumMeta['gallery']>
   }
 }
+
+export namespace Album {
+  export type ComponentProps = {
+    items: ServerSidePhotoItem[];
+    meta?: object;
+    indexedKeywords: IndexedKeywords[];
+  }
+
+  export interface Params extends ParsedUrlQuery {
+    gallery: NonNullable<AlbumMeta['gallery']>
+    album: NonNullable<AlbumMeta['albumName']>
+  }
+}
