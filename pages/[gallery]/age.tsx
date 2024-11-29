@@ -3,6 +3,8 @@ import Head from 'next/head'
 import { type ParsedUrlQuery } from 'node:querystring'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import config from '../../config.json'
 import getAlbum from '../../src/lib/album'
@@ -62,12 +64,25 @@ function calculateAge(dob: string, photoDate: string): number {
   return age
 }
 
+type PersonMatch = {
+  name: string;
+  age: number;
+  photoDate: string;
+}
+
 function AgePage({ items = [] }: ComponentProps) {
+  const router = useRouter()
+  const { gallery } = router.query
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [selectedAge, setSelectedAge] = useState<number | null>(null)
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const [uniqueAges, setUniqueAges] = useState<number[]>([])
   const [mounted, setMounted] = useState(false)
+
+  const zooms = useMemo(() => ({ 
+    geo: { zoom: config.defaultZoom } 
+  }), [])
 
   useEffect(() => {
     const ages = new Set(
@@ -85,6 +100,40 @@ function AgePage({ items = [] }: ComponentProps) {
     setMounted(true)
   }, [items])
 
+  const peopleAtSelectedAge = useMemo(() => {
+    if (selectedAge === null) return []
+    
+    const matches: PersonMatch[] = []
+    items.forEach(item => {
+      if (!item.persons || !item.filename) return
+      const photoDate = Array.isArray(item.filename) 
+        ? item.filename[0].substring(0, 10)
+        : item.filename.substring(0, 10)
+      
+      item.persons.forEach(person => {
+        if (!person.dob) return
+        const age = calculateAge(person.dob, photoDate)
+        if (age === selectedAge) {
+          matches.push({
+            name: person.full,
+            age,
+            photoDate
+          })
+        }
+      })
+    })
+
+    // Get unique names with their earliest photo date
+    return Array.from(
+      matches.reduce((acc, match) => {
+        if (!acc.has(match.name) || acc.get(match.name)!.photoDate > match.photoDate) {
+          acc.set(match.name, match)
+        }
+        return acc
+      }, new Map<string, PersonMatch>())
+    ).map(([_, match]) => match.name).sort()
+  }, [items, selectedAge])
+
   const filteredItems = useMemo(() => {
     if (selectedAge === null) return []
     return items.filter(item => {
@@ -94,13 +143,16 @@ function AgePage({ items = [] }: ComponentProps) {
         : item.filename.substring(0, 10)
       return item.persons.some(person => {
         if (!person.dob) return false
-        return calculateAge(person.dob, photoDate) === selectedAge
+        const matchesAge = calculateAge(person.dob, photoDate) === selectedAge
+        const matchesPerson = selectedPerson ? person.full === selectedPerson : true
+        return matchesAge && matchesPerson
       })
     })
-  }, [items, selectedAge])
+  }, [items, selectedAge, selectedPerson])
 
   const { setViewed, memoryHtml } = useMemory(filteredItems, refImageGallery)
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
+
+  if (!mounted) return null
 
   return (
     <div>
@@ -108,21 +160,7 @@ function AgePage({ items = [] }: ComponentProps) {
         <title>History App - Ages</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-wrap gap-2 p-4">
-        {uniqueAges.map((age) => (
-          <button
-            key={age}
-            onClick={() => setSelectedAge(age === selectedAge ? null : age)}
-            className={`px-3 py-1 rounded transition-colors ${
-              selectedAge === age 
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-100 hover:bg-gray-200'
-            }`}
-          >
-            {age}
-          </button>
-        ))}
-      </div>
+
       <AlbumContext.Provider value={zooms}>
         {memoryHtml}
         <SplitViewer
@@ -132,6 +170,42 @@ function AgePage({ items = [] }: ComponentProps) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
+
+        <div className="p-4 border-t border-gray-200">
+          {/* Ages list */}
+          <div>
+            {uniqueAges.map((age, index) => (
+              <span key={age}>
+                <button
+                  onClick={() => {
+                    setSelectedAge(age === selectedAge ? null : age)
+                    setSelectedPerson(null)
+                  }}
+                >
+                  {age}
+                </button>
+                {index < uniqueAges.length - 1 && <span> · </span>}
+              </span>
+            ))}
+          </div>
+
+          {/* People list */}
+          {selectedAge !== null && peopleAtSelectedAge.length > 0 && (
+            <div>
+              {peopleAtSelectedAge.map((name, index) => (
+                <span key={name}>
+                  <button
+                    onClick={() => setSelectedPerson(name === selectedPerson ? null : name)}
+                  >
+                    {name}
+                  </button>
+                  {index < peopleAtSelectedAge.length - 1 && <span> · </span>}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
         <All items={filteredItems} keyword="" refImageGallery={refImageGallery} />
       </AlbumContext.Provider>
     </div>
