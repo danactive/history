@@ -135,7 +135,8 @@ function AgePage({ items = [] }: ComponentProps) {
   }, [items, selectedAge])
 
   const filteredItems = useMemo(() => {
-    if (selectedAge === null) return []
+    if (selectedAge === null) return items
+    
     return items.filter(item => {
       if (!item.persons || !item.filename) return false
       const photoDate = Array.isArray(item.filename) 
@@ -161,6 +162,40 @@ function AgePage({ items = [] }: ComponentProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <div className="p-4">
+        <select
+          value={selectedAge || ''}
+          onChange={(e) => {
+            const value = e.target.value
+            setSelectedAge(value ? parseInt(value) : null)
+            setSelectedPerson(null)
+          }}
+        >
+          <option value="">All ages</option>
+          {uniqueAges.map((age) => (
+            <option key={age} value={age}>
+              {age}
+            </option>
+          ))}
+        </select>
+
+        {selectedAge !== null && peopleAtSelectedAge.length > 0 && (
+          <select
+            value={selectedPerson || ''}
+            onChange={(e) => {
+              setSelectedPerson(e.target.value || null)
+            }}
+          >
+            <option value="">All people at {selectedAge}...</option>
+            {peopleAtSelectedAge.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+
       <AlbumContext.Provider value={zooms}>
         {memoryHtml}
         <SplitViewer
@@ -170,41 +205,6 @@ function AgePage({ items = [] }: ComponentProps) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-
-        <div className="p-4 border-t border-gray-200">
-          {/* Ages list */}
-          <div>
-            {uniqueAges.map((age, index) => (
-              <span key={age}>
-                <button
-                  onClick={() => {
-                    setSelectedAge(age === selectedAge ? null : age)
-                    setSelectedPerson(null)
-                  }}
-                >
-                  {age}
-                </button>
-                {index < uniqueAges.length - 1 && <span> · </span>}
-              </span>
-            ))}
-          </div>
-
-          {/* People list */}
-          {selectedAge !== null && peopleAtSelectedAge.length > 0 && (
-            <div>
-              {peopleAtSelectedAge.map((name, index) => (
-                <span key={name}>
-                  <button
-                    onClick={() => setSelectedPerson(name === selectedPerson ? null : name)}
-                  >
-                    {name}
-                  </button>
-                  {index < peopleAtSelectedAge.length - 1 && <span> · </span>}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
 
         <All items={filteredItems} keyword="" refImageGallery={refImageGallery} />
       </AlbumContext.Provider>
