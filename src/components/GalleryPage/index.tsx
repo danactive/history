@@ -21,7 +21,7 @@ function GalleryPage({ gallery, albums, indexedKeywords }: Gallery.ComponentProp
       <ul>
         <li>View <Link href={`/${gallery}/all`}>All</Link></li>
         <li><Link href={`/${gallery}/today`}>Today</Link></li>
-        <li><Link href={`/${gallery}/today`}>by Age</Link></li>
+        <li><Link href={`/${gallery}/age`}>by Age</Link></li>
       </ul>
       <Galleries items={filtered} gallery={gallery} />
     </>
