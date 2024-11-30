@@ -1,7 +1,7 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import { type ParsedUrlQuery } from 'node:querystring'
-import { useMemo, useRef, useState, useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import config from '../../config.json'
@@ -9,72 +9,25 @@ import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
-
 import All from '../../src/components/All'
 import AlbumContext from '../../src/components/Context'
 import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
 import useSearch from '../../src/hooks/useSearch'
-
 import {
-  AlbumMeta, IndexedKeywords, Item, ServerSideAllItem,
+  AlbumMeta,
+  IndexedKeywords,
+  Item,
+  ServerSideAllItem,
 } from '../../src/types/common'
 
 type ComponentProps = {
-  items: ServerSideAllItem[];
-  indexedKeywords: IndexedKeywords[];
+  items: ServerSideAllItem[]
+  indexedKeywords: IndexedKeywords[]
 }
 
 interface Params extends ParsedUrlQuery {
   gallery: NonNullable<AlbumMeta['gallery']>
-}
-
-export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
-  const params = context.params!
-  const { albums } = await getAlbums(params.gallery)
-
-  const prepareItems = (
-    { albumName, albumCoordinateAccuracy, items }:
-    {
-      albumName: AlbumMeta['albumName'],
-      albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
-      items: Item[],
-    },
-  ) => items.map((item) => ({
-    ...item,
-    gallery: params.gallery,
-    album: albumName,
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
-    search: addGeographyToSearch(item),
-  }))
-
-  // reverse order for albums in ascending order (oldest on top)
-  const allItems = (await albums.reduce(async (previousPromise, album) => {
-    const prev = await previousPromise
-    const { album: { items, meta } } = await getAlbum(params.gallery, album.name)
-    const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
-    const preparedItems = prepareItems({
-      albumName: album.name,
-      albumCoordinateAccuracy,
-      items,
-    })
-    return prev.concat(preparedItems)
-  }, Promise.resolve([] as ServerSideAllItem[]))).reverse()
-
-  return {
-    props: { items: allItems, ...indexKeywords(allItems) },
-  }
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { galleries } = await getGalleries()
-  // Define these galleries as allowed, otherwise 404
-  const paths = galleries.map((gallery) => ({ params: { gallery } }))
-  return {
-    paths,
-    fallback: false,
-  }
 }
 
 function calculateAge(dob: string, photoDate: string): number | null {
@@ -83,7 +36,7 @@ function calculateAge(dob: string, photoDate: string): number | null {
     const photo = new Date(photoDate.substring(0, 10))
     
     // Validate dates
-    if (isNaN(birth.getTime()) || isNaN(photo.getTime())) {
+    if (Number.isNaN(birth.getTime()) || Number.isNaN(photo.getTime())) {
       return null
     }
     
@@ -99,9 +52,9 @@ function calculateAge(dob: string, photoDate: string): number | null {
 }
 
 type PersonMatch = {
-  name: string;
-  age: number;
-  photoDate: string;
+  name: string
+  age: number
+  photoDate: string
 }
 
 function AllPage({ items = [], indexedKeywords }: ComponentProps) {
@@ -110,6 +63,7 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
   const [selectedAge, setSelectedAge] = useState<number | null>(null)
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
   const [uniqueAges, setUniqueAges] = useState<number[]>([])
+
   const {
     filtered: keywordFiltered,
     keyword,
@@ -170,42 +124,6 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     }
   }, [keywordFiltered, selectedAge, keyword])
 
-  const peopleAtSelectedAge = useMemo(() => {
-    if (selectedAge === null) return []
-    
-    const matches: PersonMatch[] = []
-    ageFiltered.forEach(item => {
-      if (!item.persons || !item.filename) return
-      const photoDate = Array.isArray(item.filename) 
-        ? item.filename[0].substring(0, 10)
-        : item.filename.substring(0, 10)
-      
-      item.persons.forEach(person => {
-        if (!person.dob) return
-        const age = calculateAge(person.dob, photoDate)
-        if (age === selectedAge) {
-          matches.push({
-            name: person.full,
-            age,
-            photoDate
-          })
-        }
-      })
-    })
-
-    return Array.from(
-      matches.reduce((acc, match) => {
-        if (!acc.has(match.name) || acc.get(match.name)!.photoDate > match.photoDate) {
-          acc.set(match.name, match)
-        }
-        return acc
-      }, new Map<string, PersonMatch>())
-    ).map(([_, match]) => match.name).sort()
-  }, [ageFiltered, selectedAge])
-
-  const { setViewed, memoryHtml } = useMemory(ageFiltered, refImageGallery)
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
-
   const agesWithCounts = useMemo(() => {
     const counts = new Map<number, number>()
     
@@ -244,10 +162,14 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     ).length
   }, [keywordFiltered])
 
-  const peopleWithCounts = useMemo(() => {
-    if (selectedAge === null) return []
+  const { peopleAtSelectedAge, peopleWithCounts } = useMemo(() => {
+    if (selectedAge === null) {
+      return { peopleAtSelectedAge: [], peopleWithCounts: [] }
+    }
     
+    const matches: PersonMatch[] = []
     const counts = new Map<string, number>()
+    
     ageFiltered.forEach(item => {
       if (!item.persons || !item.filename) return
       const photoDate = Array.isArray(item.filename) 
@@ -258,16 +180,36 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
         if (!person.dob) return
         const age = calculateAge(person.dob, photoDate)
         if (age === selectedAge) {
+          matches.push({
+            name: person.full,
+            age,
+            photoDate
+          })
           counts.set(person.full, (counts.get(person.full) || 0) + 1)
         }
       })
     })
 
-    return peopleAtSelectedAge.map(name => ({
-      name,
-      count: counts.get(name) || 0
-    }))
-  }, [ageFiltered, selectedAge, peopleAtSelectedAge])
+    const uniquePeople = Array.from(
+      matches.reduce((acc, match) => {
+        if (!acc.has(match.name) || acc.get(match.name)!.photoDate > match.photoDate) {
+          acc.set(match.name, match)
+        }
+        return acc
+      }, new Map<string, PersonMatch>())
+    ).map(([_, match]) => match.name).sort()
+
+    return {
+      peopleAtSelectedAge: uniquePeople,
+      peopleWithCounts: uniquePeople.map(name => ({
+        name,
+        count: counts.get(name) || 0
+      }))
+    }
+  }, [ageFiltered, selectedAge])
+
+  const { setViewed, memoryHtml } = useMemory(ageFiltered, refImageGallery)
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
 
   return (
     <div>
@@ -330,6 +272,54 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
       </AlbumContext.Provider>
     </div>
   )
+}
+
+export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
+  const params = context.params!
+  const { albums } = await getAlbums(params.gallery)
+
+  const prepareItems = (
+    { albumName, albumCoordinateAccuracy, items }:
+    {
+      albumName: AlbumMeta['albumName'],
+      albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
+      items: Item[],
+    },
+  ) => items.map((item) => ({
+    ...item,
+    gallery: params.gallery,
+    album: albumName,
+    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
+    search: addGeographyToSearch(item),
+  }))
+
+  // reverse order for albums in ascending order (oldest on top)
+  const allItems = (await albums.reduce(async (previousPromise, album) => {
+    const prev = await previousPromise
+    const { album: { items, meta } } = await getAlbum(params.gallery, album.name)
+    const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
+    const preparedItems = prepareItems({
+      albumName: album.name,
+      albumCoordinateAccuracy,
+      items,
+    })
+    return prev.concat(preparedItems)
+  }, Promise.resolve([] as ServerSideAllItem[]))).reverse()
+
+  return {
+    props: { items: allItems, ...indexKeywords(allItems) },
+  }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const { galleries } = await getGalleries()
+  // Define these galleries as allowed, otherwise 404
+  const paths = galleries.map((gallery) => ({ params: { gallery } }))
+  return {
+    paths,
+    fallback: false,
+  }
 }
 
 export default AllPage
