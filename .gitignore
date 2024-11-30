@@ -36,6 +36,9 @@ yarn-error.log*
 # typescript
 tsconfig.tsbuildinfo
 
+# IDE
+.vscode
+
 api/node_modules
 api/.nyc_output
 api/server/plugins/*/public/assets
