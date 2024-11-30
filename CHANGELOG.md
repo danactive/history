@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.2.0](https://github.com/danactive/history/compare/v10.1.0...v10.2.0) (2024-11-30)
+
+
+### Features
+
+* **View Album > Person:** Add person logic without defined person inclusion list ([d4425e6](https://github.com/danactive/history/commit/d4425e6f8b9743496338bddff1b656778818347e))
+* **View Album > Person:** Add sample person to demo ([4ed8086](https://github.com/danactive/history/commit/4ed8086ac842fe550a5ba15708c6c2cdc7db0887))
+* **View Album > Person:** Display age on album based on filename in frontend ([4780276](https://github.com/danactive/history/commit/478027668b00c74638e6b67b63f00cc701ab1cfb))
+* **View Album > Person:** Display age on album based on first album filename ([3b9d01a](https://github.com/danactive/history/commit/3b9d01a90454cdd74d6dd2f1ccb3b15826dedfd1))
+* **View Album > Person:** Display persons on album ([14a73f4](https://github.com/danactive/history/commit/14a73f4444b9faf7d0b8e28508bf0998d35497a3))
+* **View Album:** Add instagram as supported reference ([c77bd1f](https://github.com/danactive/history/commit/c77bd1f7a779f59bb4205e7cd05e2156cb066e6d))
+* **View All > Person:** Filter by keyword then age then person ([ae0fbc8](https://github.com/danactive/history/commit/ae0fbc818089538ac7238df3c35e16d5627557a6))
+
+
+### Bug Fixes
+
+* **API > Edit Album:** Fix incorrect CSS filename ([8b7d544](https://github.com/danactive/history/commit/8b7d544ff2195e4bcb5a1af7035ac9c2e66692c4))
+* package.json & package-lock.json to reduce vulnerabilities ([ec404b1](https://github.com/danactive/history/commit/ec404b186685b07954ed1dcf79867f7655387299))
+* **View Album > Person:** Persons with age display based on search value ([54017de](https://github.com/danactive/history/commit/54017def39d04ffcd3cef66fd3711e215a8fa655))
+* **Walk:** Performance increase when getting directory list ([75e241b](https://github.com/danactive/history/commit/75e241bebf1bdd86f40715ac47c82e281a5a9c11))
+
 ## [10.1.0](https://github.com/danactive/history/compare/v10.0.0...v10.1.0) (2024-06-30)
 
 
