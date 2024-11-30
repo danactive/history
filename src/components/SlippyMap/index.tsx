@@ -52,12 +52,13 @@ export default function SlippyMap(
       if (err) {
         return
       }
+      const zoomNotNull = clickZoom === null ? undefined : clickZoom // dep upgrade changed type rules
 
       if (mapRef?.current) {
         mapRef.current.flyTo({
           // @ts-ignore
           center: feature.geometry.coordinates,
-          zoom: clickZoom,
+          zoom: zoomNotNull,
         })
       }
     })

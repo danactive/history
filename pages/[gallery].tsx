@@ -1,27 +1,13 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
-import Head from 'next/head'
-import { type ParsedUrlQuery } from 'node:querystring'
 
+import GalleryPageComponent from '../src/components/GalleryPage'
 import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import indexKeywords from '../src/lib/search'
+import type { ServerSideAlbumItem } from '../src/types/common'
+import { Gallery } from '../src/types/pages'
 
-import Galleries from '../src/components/Albums'
-import Link from '../src/components/Link'
-import useSearch from '../src/hooks/useSearch'
-import type { AlbumMeta, IndexedKeywords, ServerSideAlbumItem } from '../src/types/common'
-
-type ComponentProps = {
-  gallery: NonNullable<AlbumMeta['gallery']>;
-  albums: ServerSideAlbumItem[];
-  indexedKeywords: IndexedKeywords[];
-}
-
-interface Params extends ParsedUrlQuery {
-  gallery: NonNullable<AlbumMeta['gallery']>
-}
-
-export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
+export const getStaticProps: GetStaticProps<Gallery.ComponentProps, Gallery.Params> = async (context) => {
   const params = context.params!
   const { albums } = await getAlbums(params.gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
@@ -43,25 +29,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
-function AlbumsPage({ gallery, albums, indexedKeywords }: ComponentProps) {
-  const {
-    filtered,
-    searchBox,
-  } = useSearch({ items: albums, indexedKeywords })
-
+function GalleryPage({ gallery, albums, indexedKeywords }: Gallery.ComponentProps) {
   return (
-    <div>
-      <Head>
-        <title>History App - List Albums</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div>{searchBox}</div>
-      <h1>Links</h1>
-      <ul><li><Link href={`/${gallery}/all`}>All</Link></li></ul>
-      <ul><li><Link href={`/${gallery}/today`}>Today</Link></li></ul>
-      <Galleries items={filtered} gallery={gallery} />
-    </div>
+    <GalleryPageComponent albums={albums} gallery={gallery} indexedKeywords={indexedKeywords} />
   )
 }
 
-export default AlbumsPage
+export default GalleryPage

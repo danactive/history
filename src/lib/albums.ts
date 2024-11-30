@@ -1,7 +1,3 @@
-import camelCase from 'camelcase'
-import fs from 'node:fs/promises'
-import xml2js, { type ParserOptions } from 'xml2js'
-
 import utilsFactory from './utils'
 import type {
   AlbumMeta,
@@ -9,6 +5,7 @@ import type {
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
+import { getGalleryFromFilesystem } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -17,19 +14,7 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
   return { ...out, error: { message } }
 }
 
-const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
-const parser = new xml2js.Parser(parseOptions)
 const utils = utilsFactory()
-
-/**
- * Get Gallery from local filesystem
- * @param {string} gallery name of gallery
- * @returns {string} album as JSON
- */
-async function getGalleryFromFilesystem(gallery: NonNullable<AlbumMeta['gallery']>): Promise<XmlGallery> {
-  const fileBuffer = await fs.readFile(`public/galleries/${gallery}/gallery.xml`)
-  return parser.parseStringPromise(fileBuffer)
-}
 
 type GalleryAlbums = {
   albums: GalleryAlbum[]

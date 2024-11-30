@@ -9,16 +9,9 @@ import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
 
-import type { IndexedKeywords, Item } from '../../types/common'
+import type { Album } from '../../types/pages'
 
-interface ServerSidePhotoItem extends Item {
-  corpus: string;
-}
-
-function AlbumPage(
-  { items = [], meta, indexedKeywords }:
-  { items: ServerSidePhotoItem[], meta?: object, indexedKeywords: IndexedKeywords[] },
-) {
+function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
   const {

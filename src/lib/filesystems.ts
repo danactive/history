@@ -51,7 +51,8 @@ async function get(
     const globPath = path.join(publicPath, destinationPath)
 
     if (!globPath.startsWith(publicPath)) {
-      return { body: errorSchema('Invalid system path'), status: 404 }
+      const body = errorSchema('Invalid system path')
+      return (returnEnvelope ? { body, status: 404 } : body)
     }
 
     const files = await glob(decodeURI(`${globPath}/*`))
@@ -59,11 +60,7 @@ async function get(
     const webPaths = files.map((file) => transform(file, { destinationPath, globPath })).sort((a, b) => a.name.localeCompare(b.name))
 
     const body = { files: webPaths, destinationPath }
-    if (returnEnvelope) {
-      return { body, status: 200 }
-    }
-
-    return body
+    return (returnEnvelope ? { body, status: 200 } : body)
   } catch (e) {
     if (returnEnvelope) {
       return { body: errorSchema('No files or folders are found'), status: 404 }

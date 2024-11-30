@@ -7,6 +7,8 @@ import type {
   AlbumMeta,
   Item,
   ItemReferenceSource,
+  Person,
+  PersonItem,
   XmlAlbum,
   XmlItem,
 } from '../types/common'
@@ -51,7 +53,7 @@ function title(item: XmlItem): string {
   return item.photoCity
 }
 
-function caption(item: XmlItem) {
+function transformCaption(item: XmlItem) {
   if (item.type === 'video') {
     return `Video: ${item.thumbCaption}`
   }
@@ -63,7 +65,31 @@ function assertCannotReach(x: never) {
   throw new Error(`Reference source missing: TypeScript should block this at compile time ${x}`)
 }
 
-export const reference = (item: XmlItem): [string, string] | null => {
+export const transformPersons = (photoSearchValues: XmlItem['search'], definedPersonInclusionList: Person[]): PersonItem[] | null => {
+  if (photoSearchValues) {
+    const output: PersonItem[] = []
+    const names = photoSearchValues.split(', ')
+
+    for (let n = 0; n < names.length; n += 1) {
+      const name = names[n]
+      for (let p = 0; p < definedPersonInclusionList.length; p += 1) {
+        const person = definedPersonInclusionList[p]
+        if (name === person.full) {
+          output.push({ full: person.full, dob: person.dob })
+          break // Break the inner loop once a match is found
+        }
+      }
+    }
+
+    if (output.length > 0) {
+      return output
+    }
+    return null
+  }
+  return null
+}
+
+export const transformReference = (item: XmlItem): [string, string] | null => {
   const baseUrl = (source: ItemReferenceSource) => {
     switch (source) {
       case 'facebook':
@@ -113,7 +139,7 @@ function transformMeta(dirty: XmlAlbum): AlbumMeta {
  * @param {object} dirty
  * @returns {object} clean JSON
  */
-const transformJsonSchema = (dirty: XmlAlbum): Album => {
+const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
   if (!('album' in dirty)) {
     throw new ReferenceError('XML is missing <album> element in parent root element')
   }
@@ -156,9 +182,10 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
       filename,
       city: item.photoCity,
       location: item.photoLoc || null,
-      caption: caption(item),
+      caption: transformCaption(item),
       description: item.photoDesc || null,
       search: item.search || null,
+      persons: transformPersons(item.search, persons),
       title: title(item),
       coordinates: longitude && latitude ? [longitude, latitude] : null,
       coordinateAccuracy: (accuracy === null || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
@@ -166,7 +193,7 @@ const transformJsonSchema = (dirty: XmlAlbum): Album => {
       photoPath,
       mediaPath: (item.type === 'video' && videoPaths) ? videoPaths[0] : photoPath,
       videoPaths,
-      reference: reference(item),
+      reference: transformReference(item),
     }
 
     return removeUndefinedFields(out)

@@ -23,6 +23,7 @@ describe('Options - <SlippyMap />', () => {
       caption: 'Mock caption',
       description: null,
       search: null,
+      persons: null,
       title: 'Mock title',
       coordinates: null,
       coordinateAccuracy: null,

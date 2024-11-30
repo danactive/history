@@ -3,7 +3,12 @@
   margin-right: 1rem;
 }
 
-.location {
+.person {
+  display: inline;
+  margin-right: 1rem;
+}
+
+.filename {
   display: inline;
   margin-right: 1rem;
 }
