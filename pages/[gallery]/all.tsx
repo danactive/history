@@ -1,7 +1,7 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import { type ParsedUrlQuery } from 'node:querystring'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, useEffect } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import config from '../../config.json'
@@ -77,17 +77,197 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 }
 
+function calculateAge(dob: string, photoDate: string): number | null {
+  try {
+    const birth = new Date(dob.substring(0, 10))
+    const photo = new Date(photoDate.substring(0, 10))
+    
+    // Validate dates
+    if (isNaN(birth.getTime()) || isNaN(photo.getTime())) {
+      return null
+    }
+    
+    let age = photo.getFullYear() - birth.getFullYear()
+    const m = photo.getMonth() - birth.getMonth()
+    if (m < 0 || (m === 0 && photo.getDate() < birth.getDate())) {
+      age--
+    }
+    return age
+  } catch (e) {
+    return null
+  }
+}
+
+type PersonMatch = {
+  name: string;
+  age: number;
+  photoDate: string;
+}
+
 function AllPage({ items = [], indexedKeywords }: ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndex] = useState(0)
+  const [selectedAge, setSelectedAge] = useState<number | null>(null)
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
+  const [uniqueAges, setUniqueAges] = useState<number[]>([])
   const {
-    filtered,
+    filtered: keywordFiltered,
     keyword,
     searchBox,
+    setFiltered
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
-  const { setViewed, memoryHtml } = useMemory(filtered, refImageGallery)
 
+  const [ageFiltered, setAgeFiltered] = useState(keywordFiltered)
+
+  // Update age filtered results whenever keyword search or age/person selection changes
+  useEffect(() => {
+    if (selectedAge === null) {
+      setAgeFiltered(keywordFiltered)
+      return
+    }
+    
+    const filtered = keywordFiltered.filter(item => {
+      if (!item.persons || !item.filename) return false
+      const photoDate = Array.isArray(item.filename) 
+        ? item.filename[0].substring(0, 10)
+        : item.filename.substring(0, 10)
+      return item.persons.some(person => {
+        if (!person.dob) return false
+        const matchesAge = calculateAge(person.dob, photoDate) === selectedAge
+        const matchesPerson = selectedPerson ? person.full === selectedPerson : true
+        return matchesAge && matchesPerson
+      })
+    })
+
+    setAgeFiltered(filtered)
+  }, [keywordFiltered, selectedAge, selectedPerson])
+
+  // Update the search results with our age-filtered items
+  useEffect(() => {
+    setFiltered(ageFiltered)
+  }, [ageFiltered, setFiltered])
+
+  // Update uniqueAges whenever keyword search changes
+  useEffect(() => {
+    const ages = new Set(
+      keywordFiltered.flatMap(item => 
+        item.persons?.map(person => {
+          if (!person.dob || !item.filename) return null
+          const photoDate = Array.isArray(item.filename) 
+            ? item.filename[0].substring(0, 10)
+            : item.filename.substring(0, 10)
+          const age = calculateAge(person.dob, photoDate)
+          return age
+        })
+      ).filter((age): age is number => age !== null && !isNaN(age))
+    )
+    setUniqueAges(Array.from(ages).sort((a, b) => a - b))
+    
+    // Reset age and person filters if the selected age is no longer available
+    if (selectedAge !== null && !ages.has(selectedAge)) {
+      setSelectedAge(null)
+      setSelectedPerson(null)
+    }
+  }, [keywordFiltered, selectedAge, keyword])
+
+  const peopleAtSelectedAge = useMemo(() => {
+    if (selectedAge === null) return []
+    
+    const matches: PersonMatch[] = []
+    ageFiltered.forEach(item => {
+      if (!item.persons || !item.filename) return
+      const photoDate = Array.isArray(item.filename) 
+        ? item.filename[0].substring(0, 10)
+        : item.filename.substring(0, 10)
+      
+      item.persons.forEach(person => {
+        if (!person.dob) return
+        const age = calculateAge(person.dob, photoDate)
+        if (age === selectedAge) {
+          matches.push({
+            name: person.full,
+            age,
+            photoDate
+          })
+        }
+      })
+    })
+
+    return Array.from(
+      matches.reduce((acc, match) => {
+        if (!acc.has(match.name) || acc.get(match.name)!.photoDate > match.photoDate) {
+          acc.set(match.name, match)
+        }
+        return acc
+      }, new Map<string, PersonMatch>())
+    ).map(([_, match]) => match.name).sort()
+  }, [ageFiltered, selectedAge])
+
+  const { setViewed, memoryHtml } = useMemory(ageFiltered, refImageGallery)
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+
+  const agesWithCounts = useMemo(() => {
+    const counts = new Map<number, number>()
+    
+    keywordFiltered.forEach(item => {
+      if (!item.persons || !item.filename) return
+      const photoDate = Array.isArray(item.filename) 
+        ? item.filename[0].substring(0, 10)
+        : item.filename.substring(0, 10)
+      
+      // Track if we've counted this photo for this age already
+      const agesCounted = new Set<number>()
+      
+      item.persons.forEach(person => {
+        if (!person.dob) return
+        const age = calculateAge(person.dob, photoDate)
+        if (age !== null && !agesCounted.has(age)) {
+          counts.set(age, (counts.get(age) || 0) + 1)
+          agesCounted.add(age)
+        }
+      })
+    })
+
+    return uniqueAges
+      .map(age => ({
+        age,
+        count: counts.get(age) || 0
+      }))
+      .filter(({ count, age }) => count > 0 && !isNaN(age))
+      .sort((a, b) => a.age - b.age)
+  }, [keywordFiltered, uniqueAges, keyword])
+
+  const totalPhotoCount = useMemo(() => {
+    // Count unique photos, not persons
+    return keywordFiltered.filter(item => 
+      item.persons?.some(person => person.dob)
+    ).length
+  }, [keywordFiltered])
+
+  const peopleWithCounts = useMemo(() => {
+    if (selectedAge === null) return []
+    
+    const counts = new Map<string, number>()
+    ageFiltered.forEach(item => {
+      if (!item.persons || !item.filename) return
+      const photoDate = Array.isArray(item.filename) 
+        ? item.filename[0].substring(0, 10)
+        : item.filename.substring(0, 10)
+      
+      item.persons.forEach(person => {
+        if (!person.dob) return
+        const age = calculateAge(person.dob, photoDate)
+        if (age === selectedAge) {
+          counts.set(person.full, (counts.get(person.full) || 0) + 1)
+        }
+      })
+    })
+
+    return peopleAtSelectedAge.map(name => ({
+      name,
+      count: counts.get(name) || 0
+    }))
+  }, [ageFiltered, selectedAge, peopleAtSelectedAge])
 
   return (
     <div>
@@ -96,16 +276,57 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <AlbumContext.Provider value={zooms}>
-        {searchBox}
+        <div className="p-4">
+          {searchBox}
+          <div className="mt-4">
+            <select
+              value={selectedAge || ''}
+              onChange={(e) => {
+                const value = e.target.value
+                setSelectedAge(value ? parseInt(value) : null)
+                setSelectedPerson(null)
+              }}
+            >
+              <option value="">
+                All ages ({totalPhotoCount} {totalPhotoCount === 1 ? 'photo' : 'photos'})
+              </option>
+              {agesWithCounts.map(({ age, count }) => (
+                <option key={age} value={age}>
+                  {age} ({count} {count === 1 ? 'photo' : 'photos'})
+                </option>
+              ))}
+            </select>
+
+            {selectedAge !== null && peopleAtSelectedAge.length > 0 && (
+              <select
+                className="ml-2"
+                value={selectedPerson || ''}
+                onChange={(e) => {
+                  setSelectedPerson(e.target.value || null)
+                }}
+              >
+                <option value="">
+                  All people at {selectedAge} ({peopleAtSelectedAge.length} {peopleAtSelectedAge.length === 1 ? 'person' : 'people'})
+                </option>
+                {peopleWithCounts.map(({ name, count }) => (
+                  <option key={name} value={name}>
+                    {name} ({count} {count === 1 ? 'photo' : 'photos'})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        </div>
+
         {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
-          items={filtered}
+          items={ageFiltered}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        <All items={filtered} keyword={keyword} refImageGallery={refImageGallery} />
+        <All items={ageFiltered} keyword={keyword} refImageGallery={refImageGallery} />
       </AlbumContext.Provider>
     </div>
   )

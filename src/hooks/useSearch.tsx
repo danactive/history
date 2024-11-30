@@ -12,10 +12,11 @@ interface ServerSideItem {
 function useSearch<ItemType extends ServerSideItem>(
   { items, setMemoryIndex, indexedKeywords }:
   { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
-): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; } {
+): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; setFiltered: Function; } {
   const router = useRouter()
   const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
+  const [filteredItems, setFilteredItems] = useState(items)
 
   const getShareUrlStem = () => {
     if (router.asPath.includes('keyword=')) {
@@ -55,6 +56,7 @@ function useSearch<ItemType extends ServerSideItem>(
     keyword: '',
     setKeyword,
     searchBox: getSearchBox(items),
+    setFilteredItems,
   }
 
   useEffect(() => {
@@ -68,9 +70,11 @@ function useSearch<ItemType extends ServerSideItem>(
       setSelectedOption(newValue)
     }
   }, [router.isReady])
-
   if (!router.isReady) {
-    return defaultReturn
+    return {
+      ...defaultReturn,
+      setFiltered: () => {}, // Add missing setFiltered property
+    }
   }
 
   const AND_OPERATOR = '&&'
@@ -93,6 +97,7 @@ function useSearch<ItemType extends ServerSideItem>(
 
   return {
     filtered,
+    setFiltered: setFilteredItems,
     keyword,
     setKeyword,
     searchBox: getSearchBox(filtered),
