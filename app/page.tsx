@@ -1,26 +1,28 @@
 import { List, ListDivider, ListItem } from '@mui/joy'
-import { type GetStaticProps } from 'next'
-import Head from 'next/head'
 import { Fragment } from 'react'
-
+import Head from 'next/head'
 import Link from '../src/components/Link'
 import getGalleries, { type Gallery } from '../src/lib/galleries'
 
-type ComponentProps = {
+export const metadata = {
+  title: 'History App',
+}
+
+type PageProps = {
   galleries: { id: Gallery; gallery: Gallery }[]
 }
 
-export const getStaticProps: GetStaticProps<ComponentProps> = async () => {
+async function getGalleryData(): Promise<PageProps> {
   const { galleries } = await getGalleries()
 
   return {
-    props: {
-      galleries: galleries.map((gallery) => ({ id: gallery, gallery })),
-    },
+    galleries: galleries.map((gallery) => ({ id: gallery, gallery })),
   }
 }
 
-function Home({ galleries }: ComponentProps) {
+export default async function Home() {
+  const { galleries } = await getGalleryData()
+
   return (
     <>
       <Head>
@@ -47,4 +49,3 @@ function Home({ galleries }: ComponentProps) {
   )
 }
 
-export default Home
