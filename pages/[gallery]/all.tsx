@@ -1,7 +1,9 @@
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import { type ParsedUrlQuery } from 'node:querystring'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useEffect, useMemo, useRef, useState,
+} from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import config from '../../config.json'
@@ -34,16 +36,16 @@ function calculateAge(dob: string, photoDate: string): number | null {
   try {
     const birth = new Date(dob.substring(0, 10))
     const photo = new Date(photoDate.substring(0, 10))
-    
+
     // Validate dates
     if (Number.isNaN(birth.getTime()) || Number.isNaN(photo.getTime())) {
       return null
     }
-    
+
     let age = photo.getFullYear() - birth.getFullYear()
     const m = photo.getMonth() - birth.getMonth()
     if (m < 0 || (m === 0 && photo.getDate() < birth.getDate())) {
-      age--
+      age -= 1
     }
     return age
   } catch (e) {
@@ -68,7 +70,7 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     filtered: keywordFiltered,
     keyword,
     searchBox,
-    setFiltered
+    setFiltered,
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
 
   const [ageFiltered, setAgeFiltered] = useState(keywordFiltered)
@@ -79,13 +81,13 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
       setAgeFiltered(keywordFiltered)
       return
     }
-    
-    const filtered = keywordFiltered.filter(item => {
+
+    const filtered = keywordFiltered.filter((item) => {
       if (!item.persons || !item.filename) return false
-      const photoDate = Array.isArray(item.filename) 
+      const photoDate = Array.isArray(item.filename)
         ? item.filename[0].substring(0, 10)
         : item.filename.substring(0, 10)
-      return item.persons.some(person => {
+      return item.persons.some((person) => {
         if (!person.dob) return false
         const matchesAge = calculateAge(person.dob, photoDate) === selectedAge
         const matchesPerson = selectedPerson ? person.full === selectedPerson : true
@@ -104,20 +106,17 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
   // Update uniqueAges whenever keyword search changes
   useEffect(() => {
     const ages = new Set(
-      keywordFiltered.flatMap(item => 
-        item.persons?.map(person => {
-          if (!person.dob || !item.filename) return null
-          const photoDate = Array.isArray(item.filename) 
-            ? item.filename[0].substring(0, 10)
-            : item.filename.substring(0, 10)
-          const age = calculateAge(person.dob, photoDate)
-          return age
-        })
-      ).filter((age): age is number => age !== null && !isNaN(age))
+      keywordFiltered.flatMap((item) => item.persons?.map((person) => {
+        if (!person.dob || !item.filename) return null
+        const photoDate = Array.isArray(item.filename)
+          ? item.filename[0].substring(0, 10)
+          : item.filename.substring(0, 10)
+        const age = calculateAge(person.dob, photoDate)
+        return age
+      })).filter((age): age is number => age !== null && !Number.isNaN(age)),
     )
     setUniqueAges(Array.from(ages).sort((a, b) => a - b))
-    
-    // Reset age and person filters if the selected age is no longer available
+
     if (selectedAge !== null && !ages.has(selectedAge)) {
       setSelectedAge(null)
       setSelectedPerson(null)
@@ -126,17 +125,16 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
 
   const agesWithCounts = useMemo(() => {
     const counts = new Map<number, number>()
-    
-    keywordFiltered.forEach(item => {
+
+    keywordFiltered.forEach((item) => {
       if (!item.persons || !item.filename) return
-      const photoDate = Array.isArray(item.filename) 
+      const photoDate = Array.isArray(item.filename)
         ? item.filename[0].substring(0, 10)
         : item.filename.substring(0, 10)
-      
-      // Track if we've counted this photo for this age already
+
       const agesCounted = new Set<number>()
-      
-      item.persons.forEach(person => {
+
+      item.persons.forEach((person) => {
         if (!person.dob) return
         const age = calculateAge(person.dob, photoDate)
         if (age !== null && !agesCounted.has(age)) {
@@ -147,43 +145,38 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     })
 
     return uniqueAges
-      .map(age => ({
-        age,
-        count: counts.get(age) || 0
-      }))
-      .filter(({ count, age }) => count > 0 && !isNaN(age))
+      .map((age) => ({ age, count: counts.get(age) || 0 }))
+      .filter(({ count, age }) => count > 0 && !Number.isNaN(age))
       .sort((a, b) => a.age - b.age)
   }, [keywordFiltered, uniqueAges, keyword])
 
-  const totalPhotoCount = useMemo(() => {
-    // Count unique photos, not persons
-    return keywordFiltered.filter(item => 
-      item.persons?.some(person => person.dob)
-    ).length
-  }, [keywordFiltered])
+  const totalPhotoCount = useMemo(
+    () => keywordFiltered.filter((item) => item.persons?.some((person) => person.dob)).length,
+    [keywordFiltered],
+  )
 
   const { peopleAtSelectedAge, peopleWithCounts } = useMemo(() => {
     if (selectedAge === null) {
       return { peopleAtSelectedAge: [], peopleWithCounts: [] }
     }
-    
+
     const matches: PersonMatch[] = []
     const counts = new Map<string, number>()
-    
-    ageFiltered.forEach(item => {
+
+    ageFiltered.forEach((item) => {
       if (!item.persons || !item.filename) return
-      const photoDate = Array.isArray(item.filename) 
+      const photoDate = Array.isArray(item.filename)
         ? item.filename[0].substring(0, 10)
         : item.filename.substring(0, 10)
-      
-      item.persons.forEach(person => {
+
+      item.persons.forEach((person) => {
         if (!person.dob) return
         const age = calculateAge(person.dob, photoDate)
         if (age === selectedAge) {
           matches.push({
             name: person.full,
             age,
-            photoDate
+            photoDate,
           })
           counts.set(person.full, (counts.get(person.full) || 0) + 1)
         }
@@ -196,15 +189,15 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
           acc.set(match.name, match)
         }
         return acc
-      }, new Map<string, PersonMatch>())
+      }, new Map<string, PersonMatch>()),
     ).map(([_, match]) => match.name).sort()
 
     return {
       peopleAtSelectedAge: uniquePeople,
-      peopleWithCounts: uniquePeople.map(name => ({
+      peopleWithCounts: uniquePeople.map((name) => ({
         name,
-        count: counts.get(name) || 0
-      }))
+        count: counts.get(name) || 0,
+      })),
     }
   }, [ageFiltered, selectedAge])
 
@@ -224,8 +217,8 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
             <select
               value={selectedAge || ''}
               onChange={(e) => {
-                const value = e.target.value
-                setSelectedAge(value ? parseInt(value) : null)
+                const { value } = e.target
+                setSelectedAge(value ? parseInt(value, 10) : null)
                 setSelectedPerson(null)
               }}
             >
