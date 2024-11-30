@@ -1,5 +1,6 @@
 import mime from 'mime-types'
 import path from 'node:path'
+import { glob as globNpm } from 'glob'
 
 import configFile from '../../config.json'
 import type {
@@ -136,6 +137,18 @@ function utils() {
 
         throw e
       }
+    },
+
+    /*
+    Find associated files based on glob pattern
+
+    @method glob
+    @param {string} pattern glob file extension pattern to find matching filenames
+    @return {string[]} array of string associated filenames with absolute path
+    */
+    glob: async (pattern: string) => {
+      const files = await globNpm(pattern)
+      return files.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
     },
   }
 }

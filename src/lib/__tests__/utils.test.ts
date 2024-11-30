@@ -1,3 +1,4 @@
+import path from 'node:path'
 import utilsFactory from '../utils'
 
 describe('Utils library', () => {
@@ -57,5 +58,37 @@ describe('Utils library', () => {
       `/galleries/${gallery}/media/videos/2023/${videoFilenames[1]}`,
     ]
     expect(lib.getVideoPaths(videoFilenames, gallery)).toStrictEqual(expectedPath)
+  })
+
+  test('* File - Glob', async () => {
+    expect.assertions(14)
+    const expectedHtm = path.join(__dirname, '../../../public/test/fixtures/renameable/aitch.htm')
+    const expectedHtml = path.join(__dirname, '../../../public/test/fixtures/renameable/aitch.html')
+
+    let files = await lib.glob('public/test/fixtures/renameable/*.fake')
+    expect(files.length).toBe(0)
+    expect(files.length).toBe([].length)
+
+    files = await lib.glob('public/test/fixtures/renameable/*.htm')
+    expect(files.length).toBe(1)
+    expect(path.resolve(files[0])).toBe(expectedHtm)
+
+    files = await lib.glob('public/test/fixtures/renameable/*.html')
+    expect(files.length).toBe(1)
+    expect(path.resolve(files[0])).toBe(expectedHtml)
+
+    files = await lib.glob('public/test/fixtures/renameable/*.htm*')
+    expect(files.length).toBe(2)
+    expect(path.resolve(files[0])).toBe(expectedHtm)
+    expect(path.resolve(files[1])).toBe(expectedHtml)
+
+    files = await lib.glob('public/test/fixtures/renameable/aitch.*')
+    expect(files.length).toBe(2)
+    expect(path.resolve(files[0])).toBe(expectedHtm)
+    expect(path.resolve(files[1])).toBe(expectedHtml)
+
+    files = await lib.glob('public/test/fixtures/renameable/*.*')
+    expect(path.resolve(files[0])).toBe(expectedHtm)
+    expect(path.resolve(files[1])).toBe(expectedHtml)
   })
 })
