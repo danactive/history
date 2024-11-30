@@ -1,11 +1,8 @@
-// These styles apply to every route in the application
-import './global.css'
-import type { Metadata } from 'next'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'History App',
-  description: 'History App Gallery',
-}
+import { CssVarsProvider } from '@mui/joy/styles'
+import './global.css'
+import { themeMui } from '../src/theme'
 
 export default function RootLayout({
   children,
@@ -15,8 +12,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <h1>App root layout</h1>
-        {children}
+        <CssVarsProvider theme={themeMui}>
+          {children}
+        </CssVarsProvider>
       </body>
     </html>
   )
