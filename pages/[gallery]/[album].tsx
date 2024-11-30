@@ -6,7 +6,7 @@ import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
-import type { AlbumMeta, IndexedKeywords, Item } from '../../src/types/common'
+import type { Album } from '../../src/types/pages'
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -17,22 +17,7 @@ async function buildStaticPaths() {
   return groups.flat()
 }
 
-interface ServerSideAlbumItem extends Item {
-  corpus: string;
-}
-
-type ComponentProps = {
-  items?: ServerSideAlbumItem[];
-  meta: AlbumMeta;
-  indexedKeywords: IndexedKeywords[];
-}
-
-interface Params extends ParsedUrlQuery {
-  gallery: NonNullable<AlbumMeta['gallery']>
-  album: NonNullable<AlbumMeta['albumName']>
-}
-
-export const getStaticProps: GetStaticProps<ComponentProps, Params> = async (context) => {
+export const getStaticProps: GetStaticProps<Album.ComponentProps, Album.Params> = async (context) => {
   const params = context.params!
   const { album: { items, meta } } = await getAlbum(params.gallery, params.album)
   const preparedItems = items.map((item) => ({
@@ -54,7 +39,7 @@ export const getStaticPaths: GetStaticPaths = async () => (
   }
 )
 
-function AlbumPage({ items = [], meta, indexedKeywords }: ComponentProps) {
+function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   return <AlbumPageComponent items={items} meta={meta} indexedKeywords={indexedKeywords} />
 }
 

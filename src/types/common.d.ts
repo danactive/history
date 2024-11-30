@@ -126,6 +126,10 @@ interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
 
+interface ServerSidePhotoItem extends Item {
+  corpus: string;
+}
+
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
   gallery?: NonNullable<AlbumMeta['gallery']>;
