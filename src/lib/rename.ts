@@ -39,69 +39,77 @@ Renamed file paths
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 */
-async function renamePaths(
+export function renamePaths(
   sourceFolder: string,
   filenames: string[],
   futureFilenames: string[],
-  { preview, renameAssociated }: { preview?: boolean, renameAssociated?: boolean } = { preview: false, renameAssociated: false },
-) {
-  const renamedFilenames: string[] = []
-  const q = async.queue(async (rename: { newName: string; oldName: string }, next: () => void) => {
-    console.log('Processing', rename.oldName, rename.newName)
-    const isExist = await exists(rename.oldName)
-    if (!preview) {
-      await fs.rename(rename.oldName, rename.newName)
-    }
-    renamedFilenames.push(rename.newName)
-    next()
-  }, 2)
+  options: { preview?: boolean; renameAssociated?: boolean } = {}
+): Promise<string[]> {
+  const renamedFilenames = new Set<string>()
+  
+  return new Promise((resolve, reject) => {
+    const q = async.queue(async (task: { oldName: string; newName: string }) => {
+      try {
+        // Verify source exists
+        await exists(task.oldName)
+        
+        if (!options.preview) {
+          await fs.rename(task.oldName, task.newName)
+        }
+        
+        renamedFilenames.add(task.newName)
 
-  q.error((err, task) => {
-    console.error('task experienced an error', err, task)
+        // Handle associated files if enabled
+        if (options.renameAssociated) {
+          const baseOld = path.parse(task.oldName).name
+          const baseNew = path.parse(task.newName).name
+          const dir = path.dirname(task.oldName)
+          
+          // Find all files that start with the same base name
+          const files = await fs.readdir(dir)
+          const associated = files.filter(f => 
+            f.startsWith(baseOld) && f !== path.basename(task.oldName)
+          )
+          
+          // Rename each associated file
+          for (const file of associated) {
+            const ext = path.extname(file)
+            const newName = path.join(dir, `${baseNew}${ext}`)
+            if (!options.preview) {
+              await fs.rename(path.join(dir, file), newName)
+            }
+            renamedFilenames.add(newName)
+          }
+        }
+      } catch (err) {
+        throw err
+      }
+    }, 1)
+
+    // Handle errors
+    q.error((err) => {
+      reject(err)
+    })
+
+    // Process all files
+    const pairs = filenames.map((filename, i) => ({
+      current: utils.safePublicPath(path.join(sourceFolder, filename)),
+      future: utils.safePublicPath(path.join(sourceFolder, futureFilenames[i]))
+    }))
+    
+    // Add tasks to queue
+    pairs.forEach(pair => {
+      q.push({
+        oldName: pair.current,
+        newName: pair.future
+      })
+    })
+
+    // Handle completion
+    q.drain(() => {
+      resolve(Array.from(renamedFilenames))
+    })
   })
-
-  const fullPath = utils.safePublicPath(sourceFolder)
-  const transformFilenames = async (pair: Pair) => {
-    if (renameAssociated) {
-      const associatedFilenames = await utils.glob(`${path.join(fullPath, pair.current)}.*`)
-      const oldNames: string[] = associatedFilenames
-      const endWithoutExt = pair.future.length - path.extname(pair.future).length
-      const futureFile = pair.future.substr(0, endWithoutExt) // strip extension
-
-      const reassignFilenames = await reassignAssociated(associatedFilenames, futureFile)
-
-      const reassignPairs = oldNames.map((oldName, index) => ({ oldName, newName: reassignFilenames[index] }))
-
-      return reassignPairs
-    }
-    const oldName = path.join(fullPath, pair.current)
-    const newName = path.join(fullPath, pair.future)
-
-    return { oldName, newName }
-  }
-
-  const filenamePairs: Pair[] = filenames.map((filename, index) => ({ current: filename, future: futureFilenames[index] }))
-
-  async.map(filenamePairs, transformFilenames, (error: Error, transformedPairs: any) => {
-    if (error) {
-      console.log('transformedPairs error', error)
-    }
-
-    if (Array.isArray(transformedPairs)) {
-      console.log('Nov 4 push if=', [...[].concat(...transformedPairs)])
-      q.push([...[].concat(...transformedPairs)])
-    } else {
-      console.log('Nov 4 push else=', transformedPairs)
-      q.push(transformedPairs)
-    }
-  })
-
-  // queue completes
-  q.drain(() => {
-    console.log('all items have been processed')
-  })
-  // console.log('drain renamedFilenames', renamedFilenames)
-  // return renamedFilenames
 }
 
 export {

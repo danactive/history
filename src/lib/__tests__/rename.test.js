@@ -133,10 +133,9 @@ describe('Verify rename library', () => {
 
         expectedFilenames.forEach(async (filename) => {
           const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-          expect(uniqueResult.has(fullPath)).toBe(false)
-
-//           await pathExists(`${sourceFolder}/${filename}`)
-//           expect(`Associated ${filename} file renamed with associated`).toBe(`Associated ${filename} file renamed with associated`)
+          expect(uniqueResult.has(fullPath)).toBe(true)
+          await pathExists(`${sourceFolder}/${filename}`)
+          expect(`Associated ${filename} file renamed with associated`).toBe(`Associated ${filename} file renamed with associated`)
         })
       } catch (error) {
         throw new Error(`Rename failed ${error}`)
@@ -160,7 +159,7 @@ describe('Verify rename library', () => {
 
       expectedOriginal.forEach((filename) => {
         const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-        expect(uniqueResult.has(fullPath)).toBeFalsy()
+        expect(uniqueResult.has(fullPath)).toBe(false)
       })
 
       await pathExists(`${sourceFolder}/${expectedOriginal[0]}`)
