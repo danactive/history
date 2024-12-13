@@ -116,7 +116,7 @@ function utils() {
 
     @method safePublicPath
     @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
-    @return {Promise} string
+    @return {Promise} string of safe file system path
     */
     safePublicPath: (rawDestinationPath: string): string => {
       try {
