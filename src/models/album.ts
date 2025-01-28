@@ -165,7 +165,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     if (!('filename' in item)) {
       throw new ReferenceError(`XML is missing <filename> element in parent <item id="${id}" /> element`)
     }
-    const { filename } = item
+    const { filename, photoDate } = item
     if (!('photoCity' in item)) {
       throw new ReferenceError(`XML is missing <photo_city> element in parent <item id="${id}" filename="${filename}" /> element`)
     }
@@ -180,6 +180,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     const out: Item = {
       id,
       filename,
+      photoDate: photoDate || null,
       city: item.photoCity,
       location: item.photoLoc || null,
       caption: transformCaption(item),

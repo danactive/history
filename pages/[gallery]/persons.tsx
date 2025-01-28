@@ -84,9 +84,11 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
 
     const filtered = keywordFiltered.filter((item) => {
       if (!item.persons || !item.filename) return false
-      const photoDate = Array.isArray(item.filename)
+      // TODO support photo_date
+      const filenameDate = Array.isArray(item.filename)
         ? item.filename[0].substring(0, 10)
         : item.filename.substring(0, 10)
+      const photoDate = item.photoDate || filenameDate
       return item.persons.some((person) => {
         if (!person.dob) return false
         const matchesAge = calculateAge(person.dob, photoDate) === selectedAge
@@ -108,9 +110,10 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
     const ages = new Set(
       keywordFiltered.flatMap((item) => item.persons?.map((person) => {
         if (!person.dob || !item.filename) return null
-        const photoDate = Array.isArray(item.filename)
+        const filenameDate = Array.isArray(item.filename)
           ? item.filename[0].substring(0, 10)
           : item.filename.substring(0, 10)
+        const photoDate = item.photoDate || filenameDate
         const age = calculateAge(person.dob, photoDate)
         return age
       })).filter((age): age is number => age !== null && !Number.isNaN(age)),

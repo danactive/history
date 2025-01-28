@@ -43,20 +43,20 @@ export function renamePaths(
   sourceFolder: string,
   filenames: string[],
   futureFilenames: string[],
-  options: { preview?: boolean; renameAssociated?: boolean } = {}
+  options: { preview?: boolean; renameAssociated?: boolean } = {},
 ): Promise<string[]> {
   const renamedFilenames = new Set<string>()
-  
+
   return new Promise((resolve, reject) => {
     const q = async.queue(async (task: { oldName: string; newName: string }) => {
       try {
         // Verify source exists
         await exists(task.oldName)
-        
+
         if (!options.preview) {
           await fs.rename(task.oldName, task.newName)
         }
-        
+
         renamedFilenames.add(task.newName)
 
         // Handle associated files if enabled
@@ -64,13 +64,11 @@ export function renamePaths(
           const baseOld = path.parse(task.oldName).name
           const baseNew = path.parse(task.newName).name
           const dir = path.dirname(task.oldName)
-          
+
           // Find all files that start with the same base name
           const files = await fs.readdir(dir)
-          const associated = files.filter(f => 
-            f.startsWith(baseOld) && f !== path.basename(task.oldName)
-          )
-          
+          const associated = files.filter((f) => f.startsWith(baseOld) && f !== path.basename(task.oldName))
+
           // Rename each associated file
           for (const file of associated) {
             const ext = path.extname(file)
@@ -94,14 +92,14 @@ export function renamePaths(
     // Process all files
     const pairs = filenames.map((filename, i) => ({
       current: utils.safePublicPath(path.join(sourceFolder, filename)),
-      future: utils.safePublicPath(path.join(sourceFolder, futureFilenames[i]))
+      future: utils.safePublicPath(path.join(sourceFolder, futureFilenames[i])),
     }))
-    
+
     // Add tasks to queue
-    pairs.forEach(pair => {
+    pairs.forEach((pair) => {
       q.push({
         oldName: pair.current,
-        newName: pair.future
+        newName: pair.future,
       })
     })
 
