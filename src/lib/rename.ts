@@ -39,7 +39,7 @@ Renamed file paths
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 */
-export function renamePaths(
+function renamePaths(
   sourceFolder: string,
   filenames: string[],
   futureFilenames: string[],
@@ -49,43 +49,44 @@ export function renamePaths(
 
   return new Promise((resolve, reject) => {
     const q = async.queue(async (task: { oldName: string; newName: string }) => {
-      try {
-        // Verify source exists
-        await exists(task.oldName)
+      // Verify source exists
+      await exists(task.oldName)
 
-        if (!options.preview) {
-          await fs.rename(task.oldName, task.newName)
-        }
+      if (!options.preview) {
+        await fs.rename(task.oldName, task.newName)
+      }
 
-        renamedFilenames.add(task.newName)
+      renamedFilenames.add(task.newName)
 
-        // Handle associated files if enabled
-        if (options.renameAssociated) {
-          const baseOld = path.parse(task.oldName).name
-          const baseNew = path.parse(task.newName).name
-          const dir = path.dirname(task.oldName)
+      // Handle associated files if enabled
+      if (options.renameAssociated) {
+        const baseOld = path.parse(task.oldName).name
+        const baseNew = path.parse(task.newName).name
+        const dir = path.dirname(task.oldName)
 
-          // Find all files that start with the same base name
-          const files = await fs.readdir(dir)
-          const associated = files.filter((f) => f.startsWith(baseOld) && f !== path.basename(task.oldName))
+        // Find all files that start with the same base name
+        const files = await fs.readdir(dir)
+        const associated = files.filter((f) => f.startsWith(baseOld) && f !== path.basename(task.oldName))
 
-          // Rename each associated file
-          for (const file of associated) {
-            const ext = path.extname(file)
-            const newName = path.join(dir, `${baseNew}${ext}`)
-            if (!options.preview) {
-              await fs.rename(path.join(dir, file), newName)
-            }
-            renamedFilenames.add(newName)
+        const renamePromises = associated.map((file) => {
+          const ext = path.extname(file)
+          const name = path.join(dir, file)
+          const newName = path.join(dir, `${baseNew}${ext}`)
+          if (options.preview) {
+            return Promise.resolve(newName)
           }
-        }
-      } catch (err) {
-        throw err
+          return fs.rename(name, newName).then(() => newName)
+        })
+
+        const renamedFiles = await Promise.all(renamePromises)
+        renamedFiles.forEach((newName) => {
+          renamedFilenames.add(newName)
+        })
       }
     }, 1)
 
     // Handle errors
-    q.error((err) => {
+    q.error((err: any) => {
       reject(err)
     })
 
