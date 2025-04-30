@@ -40,7 +40,6 @@
     "@playwright/test": "^1.48.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^15.0.7",
-    "@types/async": "2.6.4",
     "@types/boom": "^7.3.5",
     "@types/geojson": "^7946.0.14",
     "@types/heic-convert": "^1.2.3",
