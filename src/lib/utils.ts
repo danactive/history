@@ -1,6 +1,7 @@
 import mime from 'mime-types'
 import path from 'node:path'
 import { glob as globNpm } from 'glob'
+import { z } from 'zod/v4-mini';
 
 import configFile from '../../config.json'
 import type {
@@ -84,6 +85,21 @@ function isStandardError(error: unknown): error is Error {
   return false
 }
 
+function isZodError(error: unknown): error is z.core.$ZodError {
+  if (error instanceof z.core.$ZodError) return true
+  return false
+}
+
+function simplifyZodMessages(error: z.core.$ZodError) {
+  return error?.issues.reduce((prev: string, curr) => {
+    if (prev === '')
+      prev += curr.message
+    else
+      prev += '; ' + curr.message
+    return prev
+  }, '')
+}
+
 function utils() {
   return {
     type,
@@ -153,5 +169,7 @@ function utils() {
   }
 }
 
+
+
 export default utils
-export { isStandardError }
+export { isStandardError, isZodError, simplifyZodMessages }

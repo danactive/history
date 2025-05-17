@@ -97,5 +97,5 @@ async function post(
   }
 }
 
-export { type ResponseBody as HeifResponseBody }
+export { errorSchema, type ResponseBody as HeifResponseBody }
 export default post
