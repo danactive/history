@@ -57,9 +57,18 @@ async function get(
 
     const files = await glob(decodeURI(`${globPath}/*`))
 
-    const webPaths = files.map((file) => transform(file, { destinationPath, globPath })).sort((a, b) => a.name.localeCompare(b.name))
+    const sortedFiles = files
+      .map((file) => transform(file, { destinationPath, globPath }))
+      .sort((a, b) => {
+        // Prioritize folders over files
+        if (a.mediumType === 'folder' && b.mediumType !== 'folder') return -1;
+        if (a.mediumType !== 'folder' && b.mediumType === 'folder') return 1;
 
-    const body = { files: webPaths, destinationPath }
+        // Then sort alphabetically
+        return a.name.localeCompare(b.name);
+      })
+
+    const body = { files: sortedFiles, destinationPath }
     return (returnEnvelope ? { body, status: 200 } : body)
   } catch (e) {
     if (returnEnvelope) {

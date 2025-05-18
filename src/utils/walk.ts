@@ -63,21 +63,24 @@ export function associateMedia(items: ItemFile | ItemFile[]) {
   // `data` is an array of objects, `key` is the key (or property accessor) to group by
   // reduce runs this anonymous function on each element of `data` (the `item` parameter,
   // returning the `storage` parameter at the end
-  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: Record<string, ItemFile[]>, item) => {
+  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: Map<string, ItemFile[]>, item) => {
     // get the first instance of the key by which we're grouping
     const groupKey = item[key]
 
     if (groupKey === undefined) { return out }
     // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
     // eslint-disable-next-line no-param-reassign
-    out[groupKey] = out[groupKey] || []
+    const groupKeyStr = String(groupKey)
+    if (!out.has(groupKeyStr)) {
+      out.set(groupKeyStr, [])
+    }
 
     // add this item to its group within `storage`
-    out[groupKey].push(item)
+    out.get(groupKeyStr)!.push(item)
 
     // return the updated storage to the reduce function, which will then loop through the next
     return out
-  }, {})
+  }, new Map<string, ItemFile[]>())
 
   if (items instanceof Array) {
     return {
@@ -112,20 +115,21 @@ export function getJpgLike(fileGroup: ItemFile[]) {
 }
 
 export function mergeMedia(items: ReturnType<typeof associateMedia>) {
-  return Object.keys(items.grouped).map((name): ItemFile => {
-    const fileGroup = items.grouped[name]
-
+  return Array.from(items.grouped.entries()).map(([name, fileGroup]): ItemFile => {
+    // try to find the "jpg-like" item in the group
     const jpgLike = getJpgLike(fileGroup)
 
+    // if not found in the group, look it up in the flat list by name
     if (jpgLike === null) {
       const foundJpgLike = items.flat.find((file) => file.name === name)
       if (!foundJpgLike) {
-        throw new ReferenceError('Missing found JPG like item')
+        throw new ReferenceError('Missing found JPG-like item')
       }
       return foundJpgLike
     }
 
     // TODO danactive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
+    // find the representative file based on the JPG-like index in the group
     const found = items.flat.find(
       (file) => file.filename === fileGroup[jpgLike.index].filename,
     )
@@ -134,9 +138,13 @@ export function mergeMedia(items: ReturnType<typeof associateMedia>) {
       throw new ReferenceError('Missing found item')
     }
 
+    // merge all extensions into label
     return {
       ...found,
-      label: fileGroup.reduce((acc: string, next: ItemFile) => `${acc} +${next.ext}`, name),
+      label: fileGroup.reduce(
+        (acc: string, next: ItemFile) => `${acc} +${next.ext}`,
+        name,
+      ),
     }
   })
 }

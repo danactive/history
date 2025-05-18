@@ -204,8 +204,8 @@ describe('Walk - util', () => {
 
   describe('associateMedia', () => {
     test('JPG and RAW', () => {
-      const expected = {
-        DSC03721: [
+      const expected = new Map([
+        ['DSC03721', [
           {
             label: 'DSC03721.RAW',
             filename: 'DSC03721.RAW',
@@ -224,8 +224,8 @@ describe('Walk - util', () => {
             mediumType: 'image',
             ext: 'JPG',
           },
-        ],
-        DSC03722: [
+        ]],
+        ['DSC03722', [
           {
             label: 'DSC03722.RAW',
             filename: 'DSC03722.RAW',
@@ -244,8 +244,8 @@ describe('Walk - util', () => {
             mediumType: 'image',
             ext: 'JPG',
           },
-        ],
-        DSC03723: [
+        ]],
+        ['DSC03723', [
           {
             label: 'DSC03723.RAW',
             filename: 'DSC03723.RAW',
@@ -264,8 +264,8 @@ describe('Walk - util', () => {
             mediumType: 'image',
             ext: 'JPG',
           },
-        ],
-        DSC03724: [
+        ]],
+        ['DSC03724', [
           {
             label: 'DSC03724.RAW',
             filename: 'DSC03724.RAW',
@@ -284,8 +284,8 @@ describe('Walk - util', () => {
             mediumType: 'image',
             ext: 'JPG',
           },
-        ],
-      }
+        ]],
+      ])
       const generated = generateImageFilenames(8, 'jpgraw')
       const received = associateMedia(generated)
       expect(received.grouped).toEqual(expected)
@@ -366,26 +366,32 @@ describe('Walk - util', () => {
 
   describe('getJpgLike', () => {
     test('JPG', () => {
-      const received = getJpgLike(
-        associateMedia(generateImageFilenames(2, 'jpgraw')).grouped.DSC03721,
-      )
+      const fileGroup = associateMedia(generateImageFilenames(2, 'jpgraw')).grouped.get('DSC03721')
+      if (!fileGroup) {
+        fail('Mock data is bad')
+      }
+      const received = getJpgLike(fileGroup)
       expect(received?.ext).toEqual('JPG')
       expect(received?.index).toEqual(1)
     })
 
     test('JPEG', () => {
-      const received = getJpgLike(
-        associateMedia(generateImageFilenames(1, 'jpeg')).grouped.DSC03721,
-      )
+      const fileGroup = associateMedia(generateImageFilenames(1, 'jpeg')).grouped.get('DSC03721')
+      if (!fileGroup) {
+        fail('Mock data is bad')
+      }
+      const received = getJpgLike(fileGroup)
       expect(received?.ext).toEqual('JPEG')
       expect(received?.index).toEqual(0)
     })
 
     test('check immutability', () => {
+      const fileGroup = associateMedia(generateImageFilenames(1, 'jpeg')).grouped.get('DSC03721')
+      if (!fileGroup) {
+        fail('Mock data is bad')
+      }
       const generated = generateImageFilenames(1, 'jpeg')
-      getJpgLike(
-        associateMedia(generateImageFilenames(1, 'jpeg')).grouped.DSC03721,
-      )
+      getJpgLike(fileGroup)
       expect(generateImageFilenames(1, 'jpeg')).toEqual(generated)
     })
   })
