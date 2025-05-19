@@ -74,7 +74,7 @@ function customMime(rawExtension: string) {
     return 'video'
   }
 
-  return false
+  return null
 }
 
 function isStandardError(error: unknown): error is Error {
@@ -103,10 +103,10 @@ function simplifyZodMessages(error: z.core.$ZodError) {
 function utils() {
   return {
     type,
-    mimeType: (extension: string) => customMime(extension) || mime.lookup(extension),
-    mediumType: (extension: string | false) => {
+    mimeType: (extension: string) => customMime(extension) || mime.lookup(extension) || (extension === '' ? 'blank' : 'unknown'),
+    mediumType: (extension: string) => {
       if (!extension || typeof extension !== 'string') {
-        return false
+        return 'unknown'
       }
 
       if (extension.indexOf('/') === -1) {
@@ -118,10 +118,20 @@ function utils() {
           return 'video'
         }
 
-        return false
+        if (['blank'].includes(extension)) {
+          return 'folder'
+        }
+
+        return 'unknown'
       }
 
-      return extension.split('/')[0]
+      const type = extension.split('/')[0]
+      switch (type) {
+        case "application":
+          return extension.split('/')[1]
+        default:
+          return type
+      }
     },
     thumbPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'thumb'),
     photoPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'photo'),

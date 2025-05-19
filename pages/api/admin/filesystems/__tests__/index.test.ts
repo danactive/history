@@ -40,7 +40,7 @@ describe('Filesystem API', () => {
     function matchJFile(expect: jest.Expect, file: Filesystem) {
       expect(file.filename).toEqual('jay.js')
       expect(file.ext).toEqual('js')
-      expect(file.mediumType).toEqual('application')
+      expect(file.mediumType).toEqual('text')
       expect(file.name).toEqual('jay')
     }
 

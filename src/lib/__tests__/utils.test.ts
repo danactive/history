@@ -5,6 +5,68 @@ describe('Utils library', () => {
   const gallery = 'demo'
   const lib = utilsFactory()
 
+  describe('mimeType', () => {
+    const unit = lib.mimeType
+
+    test('txt', () => {
+      const actual = unit('txt')
+      const expected = 'text/plain'
+      expect(actual).toBe(expected)
+    })
+
+    test('supported image', () => {
+      const actual = unit('jpg')
+      const expected = 'image'
+      expect(actual).toBe(expected)
+    })
+
+    test('RAW', () => {
+      const actual = unit('raw')
+      const expected = 'image/raw'
+      expect(actual).toBe(expected)
+    })
+
+    test('afphoto', () => {
+      const actual = unit('afphoto')
+      const expected = 'unknown'
+      expect(actual).toBe(expected)
+    })
+
+    test('xml', () => {
+      const actual = unit('sample.xml')
+      const expected = 'application/xml'
+      expect(actual).toBe(expected)
+    })
+  })
+
+  describe('mediumType', () => {
+    const unit = lib.mediumType
+
+    test('image', () => {
+      const actual = unit('photo')
+      const expected = 'image'
+      expect(actual).toBe(expected)
+    })
+
+    test('video', () => {
+      const actual = unit('video')
+      const expected = 'video'
+      expect(actual).toBe(expected)
+    })
+
+    test('unknown', () => {
+      const actual = unit('unknown')
+      const expected = 'unknown'
+      expect(actual).toBe(expected)
+    })
+
+    test('xml', () => {
+      const actual = unit('application/xml')
+      const expected = 'xml'
+      expect(actual).toBe(expected)
+    })
+  })
+
   describe('filenameAsJpg', () => {
     const unit = lib.filenameAsJpg
 

@@ -25,7 +25,7 @@ function transform(file: string, { destinationPath, globPath }: { destinationPat
   return {
     filename,
     label: filename,
-    mediumType: mediumType || 'folder',
+    mediumType: mediumType,
     id: filePath,
     path: filePath,
     absolutePath: filePath,
