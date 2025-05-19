@@ -91,11 +91,9 @@ function isZodError(error: unknown): error is z.core.$ZodError {
 }
 
 function simplifyZodMessages(error: z.core.$ZodError) {
-  return error?.issues.reduce((prev: string, curr) => {
-    if (prev === '')
-      prev += curr.message
-    else
-      prev += '; ' + curr.message
+  return error?.issues.reduce((prev: string, curr: z.core.$ZodIssue) => {
+    if (prev === '') prev += curr.message
+    else prev += `; ${curr.message}`
     return prev
   }, '')
 }
@@ -127,7 +125,7 @@ function utils() {
 
       const type = extension.split('/')[0]
       switch (type) {
-        case "application":
+        case 'application':
           return extension.split('/')[1]
         default:
           return type
@@ -178,8 +176,6 @@ function utils() {
     },
   }
 }
-
-
 
 export default utils
 export { isStandardError, isZodError, simplifyZodMessages }

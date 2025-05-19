@@ -5,6 +5,7 @@ describe('Search hook', () => {
   const mockItem: Item = {
     id: '0',
     filename: '2023-08-23-00.jpg',
+    photoDate: '2023-08-23',
     city: 'North Vancouver',
     location: 'Canada',
     caption: 'Mock caption',

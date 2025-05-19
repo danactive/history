@@ -61,11 +61,11 @@ async function get(
       .map((file) => transform(file, { destinationPath, globPath }))
       .sort((a, b) => {
         // Prioritize folders over files
-        if (a.mediumType === 'folder' && b.mediumType !== 'folder') return -1;
-        if (a.mediumType !== 'folder' && b.mediumType === 'folder') return 1;
+        if (a.mediumType === 'folder' && b.mediumType !== 'folder') return -1
+        if (a.mediumType !== 'folder' && b.mediumType === 'folder') return 1
 
         // Then sort alphabetically
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       })
 
     const body = { files: sortedFiles, destinationPath }

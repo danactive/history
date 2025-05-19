@@ -19,6 +19,7 @@ describe('Album library', () => {
           item: {
             $: { id: '1' },
             filename: '2023-01-02-03.jpg',
+            photoDate: '2023-01-02',
             photoCity: 'City',
             photoLoc: 'Location',
             thumbCaption: 'Caption',
@@ -47,6 +48,7 @@ describe('Album library', () => {
             {
               $: { id: '1' },
               filename: expectFilenamePhoto,
+              photoDate: '2016-01-01',
               photoLoc: 'Location',
               photoCity: 'City',
               thumbCaption: 'Caption',
@@ -55,6 +57,7 @@ describe('Album library', () => {
               $: { id: '2' },
               type: 'video',
               filename: [expectFilenameVideo1, expectFilenameVideo2],
+              photoDate: '2016-01-01',
               size: { w: '1280', h: '720' },
               photoLoc: 'Location',
               photoCity: 'City',
@@ -177,6 +180,7 @@ describe('Album library', () => {
     const mockItem = {
       $: { id: '1' },
       filename: '2016-Image-Filename.jpg',
+      photoDate: '2016-01-01',
       photoLoc: 'Location',
       photoCity: 'City',
       thumbCaption: 'Caption',
