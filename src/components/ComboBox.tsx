@@ -3,6 +3,7 @@ import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete'
 import AutocompleteOption from '@mui/joy/AutocompleteOption'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
 import { IndexedKeywords } from '../types/common'
+import type { FilterOptionsState } from '@mui/base'
 
 const filter = createFilterOptions<IndexedKeywords>()
 
@@ -25,7 +26,7 @@ export default function ComboBox(
       <Autocomplete
         className={className}
         value={valueText}
-        onChange={(event, newValue): void => {
+        onChange={(_event: any, newValue: any): void => {
           if (typeof newValue === 'string') { // free text
             onChange({ label: newValue, value: newValue })
           } else if (newValue?.label && newValue?.value) { // selected keyword
@@ -34,7 +35,7 @@ export default function ComboBox(
             onChange({ label: '', value: '' })
           }
         }}
-        filterOptions={(options, params) => {
+        filterOptions={(options: IndexedKeywords[], params: FilterOptionsState<IndexedKeywords>) => {
           const filtered = filter(options, params)
 
           const { inputValue } = params
@@ -54,7 +55,7 @@ export default function ComboBox(
         handleHomeEndKeys
         freeSolo
         options={propOptions}
-        getOptionLabel={(option) => {
+        getOptionLabel={(option: string | { value: any; label: any }) => {
           // Value selected with enter, right from the input
           if (typeof option === 'string') {
             return option

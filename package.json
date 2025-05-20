@@ -2,7 +2,7 @@
   "name": "history-app",
   "version": "10.1.0",
   "private": true,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "next dev -p 3030",
     "build": "next build",
@@ -43,7 +43,7 @@
     "@testing-library/react": "^15.0.7",
     "@types/boom": "^7.3.5",
     "@types/geojson": "^7946.0.16",
-    "@types/heic-convert": "^1.2.3",
+    "@types/heic-convert": "^2.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^20.17.48",
     "@types/react": "^18.3.21",

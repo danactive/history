@@ -1,7 +1,7 @@
 import mime from 'mime-types'
 import path from 'node:path'
 import { glob as globNpm } from 'glob'
-import { z } from 'zod/v4-mini';
+import { z } from 'zod/v4-mini'
 
 import configFile from '../../config.json'
 import type {
