@@ -1,4 +1,4 @@
-import type { GeoJSONSourceRaw, LayerProps, ViewState } from 'react-map-gl'
+import type { GeoJSONSourceRaw, LayerProps, ViewState } from 'react-map-gl/mapbox'
 import type { Feature, FeatureCollection } from 'geojson'
 
 import config from '../../../config.json'

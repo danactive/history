@@ -4,7 +4,7 @@ import {
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
-import type { MapRef } from 'react-map-gl'
+import type { MapRef } from 'react-map-gl/mapbox'
 
 import config from '../../../config.json'
 import { Viewed } from '../../hooks/useMemory'
