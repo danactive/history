@@ -1,3 +1,4 @@
+// @ts-ignore
 import async from 'async'
 import Boom from 'boom'
 import fs from 'node:fs/promises'

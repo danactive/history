@@ -1,3 +1,4 @@
+// @ts-ignore @types/mime-types has not published v3.0.1 to match the library
 import mime from 'mime-types'
 import path from 'node:path'
 import { glob as globNpm } from 'glob'
