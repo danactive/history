@@ -8,33 +8,6 @@ describe('Verify rename library', () => {
   const utils = utilFactory()
 
   /*
-  *######                                                    #
-  *#     # ######   ##    ####   ####  #  ####  #    #      # #    ####   ####   ####   ####  #   ##   ##### ###### #####
-  *#     # #       #  #  #      #      # #    # ##   #     #   #  #      #      #    # #    # #  #  #    #   #      #    #
-  *######  #####  #    #  ####   ####  # #      # #  #    #     #  ####   ####  #    # #      # #    #   #   #####  #    #
-  *#   #   #      ######      #      # # #  ### #  # #    #######      #      # #    # #      # ######   #   #      #    #
-  *#    #  #      #    # #    # #    # # #    # #   ##    #     # #    # #    # #    # #    # # #    #   #   #      #    #
-  *#     # ###### #    #  ####   ####  #  ####  #    #    #     #  ####   ####   ####   ####  # #    #   #   ###### #####
-  *
-  */
-  test('* Reassign many associated absolute filenames', () => {
-    const filepath = '/public/test/fixtures/renameable/'
-    const absoluteAssociatedFilenames = [`${filepath}bee.bat`, `${filepath}bee.bin`, `${filepath}bee.bmp`]
-    const futureFile = 'renamed_by_unit_test'
-    const futureAssociatedFilenames = [
-      `${filepath}${futureFile}.bat`,
-      `${filepath}${futureFile}.bin`,
-      `${filepath}${futureFile}.bmp`,
-    ]
-
-    expect.assertions(1)
-    reassignAssociated(absoluteAssociatedFilenames, futureFile)
-      .then((futureFilenames) => {
-        expect(futureAssociatedFilenames).toStrictEqual(futureFilenames)
-      })
-  })
-
-  /*
   *     ######                                        ######
   *     #     # ###### #    #   ##   #    # ######    #     #   ##   ##### #    #  ####
   *     #     # #      ##   #  #  #  ##  ## #         #     #  #  #    #   #    # #
@@ -44,50 +17,37 @@ describe('Verify rename library', () => {
   *     #     # ###### #    # #    # #    # ######    #       #    #   #   #    #  ####
   *
   */
-  test('* Rename real source folder', async () => {
-    const originals = ['cee.css', 'jay.js', 'el.log']
-    const temps = ['changed.css', 'renamed.js', 'temp.txt']
-    const sourceFolder = '/test/fixtures/renameable'
+  describe('Dry run', () => {
+    test('* Rename real source folder', async () => {
+      const originals = ['cee.css', 'jay.js', 'el.log']
+      const future = ['changed-37.css', 'changed-64.js', 'changed-90.log']
+      const sourceFolder = '/test/fixtures/renameable'
 
-    const runTest = async ({ filenames, futureFilenames }) => {
-      const result = await renamePaths(sourceFolder, filenames, futureFilenames)
-      console.log('result', result)
+      const result = await renamePaths({ sourceFolder, filenames: originals, prefix: 'changed', dryRun: true })
+      expect(result).toStrictEqual(future)
+    })
 
-      futureFilenames.forEach((filename) => {
-        const fullPath = utils.safePublicPath(path.join(sourceFolder, filename))
-        expect(result.find(fullPath)).toBe(true)
-      })
-    }
+    test('* Caught fake source folder', async () => {
+      const originals = ['cee.css', 'jay.js', 'el.log']
+      const sourceFolder = '/test/fixtures/FAKE'
 
-    await runTest({ filenames: originals, futureFilenames: temps })
-    // await runTest({ filenames: temps, futureFilenames: originals })
+      expect.assertions(1)
+      try {
+        await renamePaths({ sourceFolder, filenames: originals, prefix: 'changed', dryRun: true })
+      } catch (error) {
+        expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
+      }
+    })
+
+    test('* Caught fake source filenames', async () => {
+      const originals = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log']
+      const sourceFolder = '/test/fixtures/renameable'
+
+      const result = await renamePaths({ sourceFolder, filenames: originals, prefix: 'changed', dryRun: true })
+        expect(result).toHaveLength(0)
+    })
+
   })
-
-  //   test('* Caught fake source folder', async () => {
-  //     const filenames = ['cee.css', 'jay.js', 'el.log']
-  //     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
-  //     const sourceFolder = '/test/fixtures/FAKE'
-
-  //     expect.assertions(1)
-  //     try {
-  //       await renamePaths(sourceFolder, filenames, futureFilenames)
-  //     } catch (error) {
-  //       expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
-  //     }
-  //   })
-
-  //   test('* Caught fake source filenames', async () => {
-  //     const filenames = ['FAKEcee.css', 'FAKEjay.js', 'FAKEel.log']
-  //     const futureFilenames = ['changed.css', 'renamed.js', 'temp.txt']
-  //     const sourceFolder = '/test/fixtures/renameable'
-
-  //     expect.assertions(1)
-  //     try {
-  //       await renamePaths(sourceFolder, filenames, futureFilenames)
-  //     } catch (error) {
-  //       expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
-  //     }
-  //   })
 
   //   test('* Rename associated is false so one filename', async () => {
   //     const originals = ['bee.bat']

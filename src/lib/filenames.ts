@@ -46,7 +46,7 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
     const increment = maxRange / photosInDay
     const incrementInt = Math.floor(increment)
     const incrementFloat = increment - incrementInt
-    const output = []
+    const filenames = []
 
     for (let i = 1, photoIncrement = 0, prevBuildUp = 0; i <= photosInDay; i += 1) {
       const buildUp = Math.floor(incrementFloat * i)
@@ -62,10 +62,10 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
       }
 
       prevBuildUp = buildUp
-      output.push((photoIncrement < 10) ? `0${photoIncrement}` : photoIncrement)
+      filenames.push((photoIncrement < 10) ? `0${photoIncrement}` : photoIncrement)
     }
 
-    return output
+    return filenames
   }
 
   function xmlSchema(filename: string, id: number, sourceFile: string, file: string) {
