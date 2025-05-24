@@ -142,8 +142,9 @@ function utils() {
     @method safePublicPath
     @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
     @return {Promise} string of safe file system path
+    @throws {Error}
     */
-    safePublicPath: (rawDestinationPath: string): string => {
+    safePublicPath: (rawDestinationPath: string): string | never => {
       try {
         const normalizedDestinationPath = path.normalize(rawDestinationPath)
         const publicPath = path.normalize(path.join(process.cwd(), 'public'))

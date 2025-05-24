@@ -6,7 +6,9 @@ import {
   useState,
   type RefObject,
 } from 'react'
-import Map, { Layer, Source, type MapRef, type ViewStateChangeEvent } from 'react-map-gl/mapbox'
+import Map, {
+  Layer, Source, type MapRef, type ViewStateChangeEvent,
+} from 'react-map-gl/mapbox'
 
 import config from '../../../config.json'
 import type { Item } from '../../types/common'

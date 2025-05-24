@@ -1,32 +1,21 @@
-// @ts-ignore
-import async from 'async'
-import Boom from 'boom'
-import fs from 'node:fs/promises'
+import fs, { readdir } from 'node:fs/promises'
 import path from 'node:path'
 
 import exists from './exists'
 import utilsFactory from './utils'
-
-type Pair = { current: string, future: string }
+import { validateRequestBody } from '../models/rename'
 
 const utils = utilsFactory()
 
-/*
-Reassign associated filename based on file without extension
+type ResponseBody = {
+  renamed: string[];
+}
 
-@method reassignAssociated
-@param {string[]} [absoluteFolderFilenames] Filenames that contains the raw camera photo files with absolute path
-@param {string} [futureFile] Future file (without extension) of renamed new name based on date
-@return {Promise} associated filenames with path
-*/
-function reassignAssociated(absoluteFolderFilenames: string[], futureFile: string): Promise<string[]> {
-  return new Promise((resolve) => {
-    resolve(absoluteFolderFilenames.map((filename) => {
-      const fileParts = path.parse(filename)
-
-      return path.join(fileParts.dir, futureFile + fileParts.ext)
-    }))
-  })
+type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
+const errorSchema = (message: string): ErrorOptionalMessage => {
+  const out = { renamed: [] }
+  if (!message) return out
+  return { ...out, error: { message } }
 }
 
 /*
@@ -40,79 +29,27 @@ Renamed file paths
 @param {bool} options.renameAssociated Find matching files with different extensions, then rename them
 @return {Promise}
 */
-function renamePaths(
-  sourceFolder: string,
-  filenames: string[],
-  futureFilenames: string[],
-  options: { preview?: boolean; renameAssociated?: boolean } = {},
+// // futureFilenames: string[],
+  // options: { preview?: boolean; renameAssociated?: boolean } = {},
+async function renamePaths(
+  {
+    sourceFolder,
+    filenames,
+  }: ReturnType<typeof validateRequestBody>
 ): Promise<string[]> {
-  const renamedFilenames = new Set<string>()
+  //{"filenames":["2024-12-01-50.jpg","2024-12-05-50.jpg"],"prefix":"ppp","source_folder":"/galleries/dan/todo/originals","preview":false,"raw":true,"rename_associated":true}
+  const fullPath = utils.safePublicPath(sourceFolder)
+  const files = await readdir(fullPath)
 
-  return new Promise((resolve, reject) => {
-    const q = async.queue(async (task: { oldName: string; newName: string }) => {
-      // Verify source exists
-      await exists(task.oldName)
-
-      if (!options.preview) {
-        await fs.rename(task.oldName, task.newName)
-      }
-
-      renamedFilenames.add(task.newName)
-
-      // Handle associated files if enabled
-      if (options.renameAssociated) {
-        const baseOld = path.parse(task.oldName).name
-        const baseNew = path.parse(task.newName).name
-        const dir = path.dirname(task.oldName)
-
-        // Find all files that start with the same base name
-        const files = await fs.readdir(dir)
-        const associated = files.filter((f) => f.startsWith(baseOld) && f !== path.basename(task.oldName))
-
-        const renamePromises = associated.map((file) => {
-          const ext = path.extname(file)
-          const name = path.join(dir, file)
-          const newName = path.join(dir, `${baseNew}${ext}`)
-          if (options.preview) {
-            return Promise.resolve(newName)
-          }
-          return fs.rename(name, newName).then(() => newName)
-        })
-
-        const renamedFiles = await Promise.all(renamePromises)
-        renamedFiles.forEach((newName) => {
-          renamedFilenames.add(newName)
-        })
-      }
-    }, 1)
-
-    // Handle errors
-    q.error((err: any) => {
-      reject(err)
-    })
-
-    // Process all files
-    const pairs = filenames.map((filename, i) => ({
-      current: utils.safePublicPath(path.join(sourceFolder, filename)),
-      future: utils.safePublicPath(path.join(sourceFolder, futureFilenames[i])),
-    }))
-
-    // Add tasks to queue
-    pairs.forEach((pair) => {
-      q.push({
-        oldName: pair.current,
-        newName: pair.future,
-      })
-    })
-
-    // Handle completion
-    q.drain(() => {
-      resolve(Array.from(renamedFilenames))
-    })
-  })
+  return files.reduce((prev: string[], file) => {
+    if (file === filenames[0]) {
+      prev.push(file)
+    }
+    return prev
+  }, [])
 }
 
 export {
-  reassignAssociated,
+  errorSchema,
   renamePaths,
 }

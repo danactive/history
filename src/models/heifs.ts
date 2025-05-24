@@ -10,6 +10,6 @@ const requestSchema = z.object({
     z.trim(),
     z.minLength(1, 'destinationPath needs a value'),
   ),
-})
+}, 'JSON object body is expected')
 
 export default requestSchema

@@ -1,9 +1,9 @@
-import FormControl from '@mui/joy/FormControl'
+import type { FilterOptionsState } from '@mui/base'
 import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete'
 import AutocompleteOption from '@mui/joy/AutocompleteOption'
+import FormControl from '@mui/joy/FormControl'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
 import { IndexedKeywords } from '../types/common'
-import type { FilterOptionsState } from '@mui/base'
 
 const filter = createFilterOptions<IndexedKeywords>()
 
