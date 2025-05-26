@@ -32,47 +32,47 @@ async function renamePaths(
     filenames,
     prefix,
     sourceFolder,
-  }: ReturnType<typeof validateRequestBody>
+  }: ReturnType<typeof validateRequestBody>,
 ): Promise<string[]> {
   const fullPath = await checkPathExists(sourceFolder)
-  const filesOnDisk = await readdir(fullPath);
+  const filesOnDisk = await readdir(fullPath)
 
   // Filter filesOnDisk to those present in filenames (and preserve filename order)
-  const existingFilenames = filenames.filter(f => filesOnDisk.includes(f));
+  const existingFilenames = filenames.filter((f) => filesOnDisk.includes(f))
 
   // Extract base names in order from `filenames` (excluding duplicates)
-  const seenBases = new Set<string>();
-  const orderedBaseNames: string[] = [];
+  const seenBases = new Set<string>()
+  const orderedBaseNames: string[] = []
 
   for (const filename of existingFilenames) {
-    const base = path.parse(filename).name;
+    const base = path.parse(filename).name
     if (!seenBases.has(base)) {
-      seenBases.add(base);
-      orderedBaseNames.push(base);
+      seenBases.add(base)
+      orderedBaseNames.push(base)
     }
   }
 
   // Generate new base names in the same order
-  const generatedFilenames = futureFilenamesOutputs(orderedBaseNames, prefix); // { files: string[] }
+  const generatedFilenames = futureFilenamesOutputs(orderedBaseNames, prefix) // { files: string[] }
 
   // Map of original base => new base
-  const baseMap = new Map<string, string>();
+  const baseMap = new Map<string, string>()
   orderedBaseNames.forEach((base, index) => {
-    baseMap.set(base, generatedFilenames.files[index]);
-  });
+    baseMap.set(base, generatedFilenames.files[index])
+  })
 
   // Final output: filenames in same order as `filenames`, but renamed with same extension
-  const futureFilenames = existingFilenames.map(originalFile => {
-    const parsed = path.parse(originalFile);
-    const newBase = baseMap.get(parsed.name);
-    return newBase ? `${newBase}${parsed.ext}` : originalFile; // fallback just in case
-  });
+  const futureFilenames = existingFilenames.map((originalFile) => {
+    const parsed = path.parse(originalFile)
+    const newBase = baseMap.get(parsed.name)
+    return newBase ? `${newBase}${parsed.ext}` : originalFile // fallback just in case
+  })
 
   if (dryRun) {
-    return futureFilenames;
+    return futureFilenames
   }
   // TODO execute rename
-  return [ "todo" ]
+  return ['todo']
 }
 
 export {

@@ -31,3 +31,5 @@ export const themeMui = extendTheme({
     },
   },
 })
+
+export default themeMui

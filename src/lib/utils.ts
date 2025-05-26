@@ -93,7 +93,9 @@ function isZodError(error: unknown): error is z.core.$ZodError {
 
 function simplifyZodMessages(error: z.core.$ZodError) {
   return error?.issues.reduce((prev: string, curr: z.core.$ZodIssue) => {
+    // eslint-disable-next-line no-param-reassign
     if (prev === '') prev += curr.message
+    // eslint-disable-next-line no-param-reassign
     else prev += `; ${curr.message}`
     return prev
   }, '')
@@ -124,12 +126,12 @@ function utils() {
         return 'unknown'
       }
 
-      const type = extension.split('/')[0]
-      switch (type) {
+      const etype = extension.split('/')[0]
+      switch (etype) {
         case 'application':
           return extension.split('/')[1]
         default:
-          return type
+          return etype
       }
     },
     thumbPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'thumb'),

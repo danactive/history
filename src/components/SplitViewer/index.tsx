@@ -99,6 +99,7 @@ function SplitViewer({
       })
     }
   }
+  /* eslint-disable react/no-unused-prop-types */
   return (
     <>
       <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString">
