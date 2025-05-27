@@ -1,4 +1,4 @@
-import { readdir } from 'node:fs/promises'
+import { readdir, rename } from 'node:fs/promises'
 import path from 'node:path'
 
 import checkPathExists from './exists'
@@ -6,12 +6,14 @@ import { validateRequestBody } from '../models/rename'
 import { futureFilenamesOutputs } from './filenames'
 
 type ResponseBody = {
-  renamed: string[];
+  renamed: boolean;
+  filenames: string[];
+  xml: string;
 }
 
 type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
-  const out = { renamed: [] }
+  const out = { renamed: false, filenames: [], xml: "" }
   if (!message) return out
   return { ...out, error: { message } }
 }
@@ -28,12 +30,12 @@ Renamed file paths
 */
 async function renamePaths(
   {
-    dryRun,
+    dryRun = false,
     filenames,
     prefix,
     sourceFolder,
   }: ReturnType<typeof validateRequestBody>,
-): Promise<string[]> {
+): Promise<ResponseBody> {
   const fullPath = await checkPathExists(sourceFolder)
   const filesOnDisk = await readdir(fullPath)
 
@@ -68,11 +70,32 @@ async function renamePaths(
     return newBase ? `${newBase}${parsed.ext}` : originalFile // fallback just in case
   })
 
-  if (dryRun) {
-    return futureFilenames
+  const out = {
+    filenames: futureFilenames,
+    xml: generatedFilenames.xml,
   }
-  // TODO execute rename
-  return ['todo']
+
+  if (dryRun) {
+    return {
+      ...out,
+      renamed: false,
+    }
+  }
+
+  // Rename files on the filesystem
+  for (let i = 0; i < existingFilenames.length; i++) {
+    const from = path.join(fullPath, existingFilenames[i])
+    const to = path.join(fullPath, futureFilenames[i])
+
+    if (from !== to) {
+      await rename(from, to)
+    }
+  }
+
+  return {
+    ...out,
+    renamed: true,
+  }
 }
 
 export {
