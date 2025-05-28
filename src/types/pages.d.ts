@@ -1,5 +1,7 @@
 import { type ParsedUrlQuery } from 'node:querystring'
 
+import type { Filesystem } from './lib/filesystems'
+
 import type {
   AlbumMeta,
   IndexedKeywords,
@@ -28,5 +30,15 @@ export namespace Album {
   export interface Params extends ParsedUrlQuery {
     gallery: NonNullable<AlbumMeta['gallery']>
     album: NonNullable<AlbumMeta['albumName']>
+  }
+}
+
+export namespace Walk {
+  export type ItemFile = Partial<Filesystem> & {
+    id: Filesystem['id'];
+    path: Filesystem['path'];
+    label: string;
+    grouped?: string;
+    flat?: string;
   }
 }

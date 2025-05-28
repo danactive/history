@@ -1,4 +1,4 @@
-import { type ItemFile } from '../../../pages/admin/walk'
+import type { Walk } from '../../types/pages'
 import { type Filesystem } from '../../lib/filesystems'
 import {
   isImage,
@@ -10,7 +10,7 @@ import {
   getJpgLike,
 } from '../walk'
 
-function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): ItemFile[] {
+function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile[] {
   const halfCount = Math.floor(fullCount / 2)
 
   const docs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
@@ -111,7 +111,7 @@ describe('Walk - util', () => {
   })
 
   describe('addParentDirectoryNav', () => {
-    const mockFileFolder: ItemFile = {
+    const mockFileFolder: Walk.ItemFile = {
       filename: '..',
       label: '..',
       path: '..',
@@ -119,7 +119,7 @@ describe('Walk - util', () => {
       id: 'item-up-directory',
       name: 'UpDirectory',
     }
-    let dummyFile: ItemFile
+    let dummyFile: Walk.ItemFile
 
     beforeEach(() => {
       dummyFile = {

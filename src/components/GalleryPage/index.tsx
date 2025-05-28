@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 import useSearch from '../../hooks/useSearch'
-import { Gallery } from '../../types/pages'
+import type { Gallery } from '../../types/pages'
 import Galleries from '../Albums'
 import Link from '../Link'
 import styles from './styles.module.css'

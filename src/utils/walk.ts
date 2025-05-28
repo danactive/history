@@ -1,5 +1,5 @@
 import config from '../../config.json'
-import { type ItemFile } from '../../pages/admin/walk'
+import type { Walk } from '../types/pages'
 import type { Filesystem } from '../lib/filesystems'
 
 export function isImage(file: Partial<Filesystem>) {
@@ -20,8 +20,8 @@ export function parseHash(find: 'path', from: string) {
   return found?.[2] ?? '/'
 }
 
-export function addParentDirectoryNav(itemFiles: ItemFile[], path: string | null) {
-  const file: ItemFile = {
+export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string | null) {
+  const file: Walk.ItemFile = {
     path: 'harddrive',
     filename: '..',
     label: '..',
@@ -59,11 +59,11 @@ export function isAnyImageOrVideo(file: Filesystem) {
   return images || videos
 }
 
-export function associateMedia(items: ItemFile | ItemFile[]) {
+export function associateMedia(items: Walk.ItemFile | Walk.ItemFile[]) {
   // `data` is an array of objects, `key` is the key (or property accessor) to group by
   // reduce runs this anonymous function on each element of `data` (the `item` parameter,
   // returning the `storage` parameter at the end
-  const groupBy = (data: ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: Map<string, ItemFile[]>, item) => {
+  const groupBy = (data: Walk.ItemFile[], key: NonNullable<keyof typeof data[0]>) => data.reduce((out: Map<string, Walk.ItemFile[]>, item) => {
     // get the first instance of the key by which we're grouping
     const groupKey = item[key]
 
@@ -80,7 +80,7 @@ export function associateMedia(items: ItemFile | ItemFile[]) {
 
     // return the updated storage to the reduce function, which will then loop through the next
     return out
-  }, new Map<string, ItemFile[]>())
+  }, new Map<string, Walk.ItemFile[]>())
 
   if (items instanceof Array) {
     return {
@@ -92,8 +92,8 @@ export function associateMedia(items: ItemFile | ItemFile[]) {
   throw new Error('Flat only')
 }
 
-export function getJpgLike(fileGroup: ItemFile[]) {
-  const isJpgLikeExt = (file: ItemFile) => file.ext === 'JPG' || file.ext === 'jpg'
+export function getJpgLike(fileGroup: Walk.ItemFile[]) {
+  const isJpgLikeExt = (file: Walk.ItemFile) => file.ext === 'JPG' || file.ext === 'jpg'
   const withJpg = fileGroup.find(isJpgLikeExt)
   if (withJpg) {
     return {
@@ -102,7 +102,7 @@ export function getJpgLike(fileGroup: ItemFile[]) {
     }
   }
 
-  const isJpegLikeExt = (file: ItemFile) => file.ext === 'JPEG' || file.ext === 'jpeg'
+  const isJpegLikeExt = (file: Walk.ItemFile) => file.ext === 'JPEG' || file.ext === 'jpeg'
   const withJpeg = fileGroup.find(isJpegLikeExt)
   if (withJpeg) {
     return {
@@ -115,7 +115,7 @@ export function getJpgLike(fileGroup: ItemFile[]) {
 }
 
 export function mergeMedia(items: ReturnType<typeof associateMedia>) {
-  return Array.from(items.grouped.entries()).map(([name, fileGroup]): ItemFile => {
+  return Array.from(items.grouped.entries()).map(([name, fileGroup]): Walk.ItemFile => {
     // try to find the "jpg-like" item in the group
     const jpgLike = getJpgLike(fileGroup)
 
@@ -142,13 +142,13 @@ export function mergeMedia(items: ReturnType<typeof associateMedia>) {
     return {
       ...found,
       label: fileGroup.reduce(
-        (acc: string, next: ItemFile) => `${acc} +${next.ext}`,
+        (acc: string, next: Walk.ItemFile) => `${acc} +${next.ext}`,
         name,
       ),
     }
   })
 }
 
-export function organizeByMedia(items: ItemFile[]) {
+export function organizeByMedia(items: Walk.ItemFile[]) {
   return mergeMedia(associateMedia(items))
 }

@@ -1,9 +1,9 @@
 import { ListItem } from '@mui/joy'
 
-import { type ItemFile } from '../../../pages/admin/walk'
+import type { Walk } from '../../types/pages'
 import Link from '../Link'
 
-function ListFile({ item: file }: { item: ItemFile }) {
+function ListFile({ item: file }: { item: Walk.ItemFile }) {
   if (file.mediumType === 'folder') {
     const href = file.path ? `#path=${file.path}` : ''
     return (

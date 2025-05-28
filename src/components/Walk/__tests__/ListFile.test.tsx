@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
 
 import ListFile from '../ListFile'
-import { type ItemFile } from '../../../../pages/admin/walk'
+import type { Walk } from '../../../types/pages'
 
 describe('<ListFile />', () => {
-  const mockItemFile: ItemFile = {
+  const mockItemFile: Walk.ItemFile = {
     id: '123',
     label: 'One Two Three',
     path: '123',

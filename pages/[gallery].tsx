@@ -5,7 +5,7 @@ import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import indexKeywords from '../src/lib/search'
 import type { ServerSideAlbumItem } from '../src/types/common'
-import { Gallery } from '../src/types/pages'
+import type { Gallery } from '../src/types/pages'
 
 export const getStaticProps: GetStaticProps<Gallery.ComponentProps, Gallery.Params> = async (context) => {
   const params = context.params!

@@ -5,7 +5,7 @@ import Link from '../src/components/Link'
 import getGalleries, { type Gallery } from '../src/lib/galleries'
 
 export const metadata = {
-  title: 'History App',
+  title: 'Galleries - History App',
 }
 
 type PageProps = {

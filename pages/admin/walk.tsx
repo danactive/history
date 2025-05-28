@@ -15,14 +15,6 @@ import {
   parseHash,
 } from '../../src/utils/walk'
 
-type ItemFile = Partial<Filesystem> & {
-  id: Filesystem['id'];
-  path: Filesystem['path'];
-  label: string;
-  grouped?: string;
-  flat?: string;
-}
-
 async function getImages(pathQs: string): Promise<Filesystem[]> {
   const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
   const resultPossibleHeif: FilesystemResponseBody = await response.json()
@@ -88,5 +80,4 @@ function WalkPage() {
   )
 }
 
-export { type ItemFile }
 export default WalkPage
