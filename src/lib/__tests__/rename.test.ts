@@ -13,7 +13,7 @@ describe('Verify rename library', () => {
       const sourceFolder = '/test/fixtures/renameable'
 
       const result = await renamePaths({
-        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
       })
       expect(result.renamed).toBe(false)
       expect(result.filenames).toStrictEqual(expected)
@@ -27,7 +27,7 @@ describe('Verify rename library', () => {
       const expected = ['changed-50.bat', 'changed-50.bin', 'changed-50.bmp', 'changed-90.tar', 'changed-90.tax', 'changed-90.txt']
 
       const result = await renamePaths({
-        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
       })
       expect(result.renamed).toBe(false)
       expect(result.filenames).toStrictEqual(expected)
@@ -42,10 +42,10 @@ describe('Verify rename library', () => {
       expect.assertions(1)
       try {
         await renamePaths({
-          sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
+          sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
         })
       } catch (error) {
-        expect(error.message).toContain('pathExists: File system path is absolute and not found due to error')
+        expect((error as Error).message).toContain('pathExists: File system path is absolute and not found due to error')
       }
     })
 
@@ -54,7 +54,7 @@ describe('Verify rename library', () => {
       const sourceFolder = '/test/fixtures/renameable'
 
       const result = await renamePaths({
-        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
       })
       expect(result.renamed).toBe(false)
       expect(result.filenames).toHaveLength(0)
@@ -69,7 +69,7 @@ describe('Verify rename library', () => {
       const sourceFolder = '/test/fixtures/renameable'
 
       const result = await renamePaths({
-        sourceFolder, filenames: originals, prefix: 'changed',
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: false, renameAssociated: false,
       })
       expect(result.renamed).toBe(true)
       expect(pathExists(`${sourceFolder}/${expected[0]}`)).toBeTruthy()

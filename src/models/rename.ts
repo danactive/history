@@ -10,6 +10,7 @@ const requestSchema = z.object({
     z.trim(),
     z.minLength(1, 'source_folder needs a value'),
   ),
+  rename_associated: z.boolean('rename_associated missing bool property'),
 }, 'JSON object body is expected')
 
 type RequestSchema = z.infer<typeof requestSchema>
@@ -21,6 +22,7 @@ function validateRequestBody(body: RequestSchema) {
     filenames: body.filenames,
     prefix: body.prefix,
     sourceFolder: body.source_folder,
+    renameAssociated: body.rename_associated,
   }
 }
 

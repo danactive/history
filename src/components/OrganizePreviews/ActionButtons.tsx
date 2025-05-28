@@ -23,6 +23,7 @@ export default function ActionButtons(
       filenames: items.map((i) => i.filename),
       prefix: date ?? new Date().toISOString().split('T')[0],
       source_folder: pathQs,
+      rename_associated: true,
     }
 
     const options = {

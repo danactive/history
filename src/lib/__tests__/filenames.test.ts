@@ -109,7 +109,6 @@ describe('Filenames', () => {
       expect(result.xml).toBe(
         `<item id="100"><filename>${prefix}-50.jpg</filename></item>`
         + `<item id="101"><filename>${prefix}-90.jpg</filename></item>`,
-        'XML',
       )
     })
 
@@ -128,7 +127,6 @@ describe('Filenames', () => {
         `<item id="100"><filename>${prefix}-37.jpg</filename></item>`
         + `<item id="101"><filename>${prefix}-64.jpg</filename></item>`
         + `<item id="102"><filename>${prefix}-90.jpg</filename></item>`,
-        'XML',
       )
     })
 
@@ -150,7 +148,6 @@ describe('Filenames', () => {
         + `<item id="101"><filename>${prefix}-50.jpg</filename></item>`
         + `<item id="102"><type>video</type><filename>${prefix}-70.mp4</filename><filename>${prefix}-70.webm</filename></item>`
         + `<item id="103"><filename>${prefix}-90.jpg</filename></item>`,
-        'XML',
       )
     })
 
@@ -250,7 +247,6 @@ describe('Filenames', () => {
       expect(result.files[0]).toBe(`${prefix}-50`)
       expect(result.xml).toBe(
         `<item id="10"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`,
-        'XML',
       )
     })
 
@@ -266,7 +262,6 @@ describe('Filenames', () => {
       expect(result.xml).toBe(
         `<item id="20"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`
         + `<item id="21"><type>video</type><filename>${prefix}-90.mp4</filename><filename>${prefix}-90.webm</filename></item>`,
-        'XML',
       )
     })
 
@@ -285,7 +280,6 @@ describe('Filenames', () => {
         `<item id="30"><type>video</type><filename>${prefix}-37.mp4</filename><filename>${prefix}-37.webm</filename></item>`
         + `<item id="31"><type>video</type><filename>${prefix}-64.mp4</filename><filename>${prefix}-64.webm</filename></item>`
         + `<item id="32"><filename>${prefix}-90.jpg</filename></item>`,
-        'XML',
       )
     })
   })
