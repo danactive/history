@@ -1,27 +1,28 @@
 import Button from '@mui/joy/Button'
+import Textarea from '@mui/joy/Textarea'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
+import type { RenameResponseBody, RenameRequestBody } from '../../lib/rename'
 import { parseHash } from '../../utils/walk'
 
 export default function ActionButtons(
   { items }:
   { items: Filesystem[] },
 ) {
+  const [textXml, setTextXml] = useState('')
   const { asPath } = useRouter()
   const pathQs = parseHash('path', asPath)
-  function rename() {
+  async function rename() {
     // eslint-disable-next-line no-alert
-    const date = window.prompt('Date of images (YYYY-MM-DD)?')
-    // TODO POST http://localhost:8000/admin/rename
-
-    const postBody = {
+    let date = window.prompt('Date of images (YYYY-MM-DD)?')
+    if (date === '') date = null
+    const postBody: RenameRequestBody = {
+      dry_run: false,
       filenames: items.map((i) => i.filename),
-      prefix: date,
+      prefix: date ?? new Date().toISOString().split('T')[0],
       source_folder: pathQs,
-      preview: false,
-      raw: true,
-      rename_associated: true,
     }
 
     const options = {
@@ -31,15 +32,22 @@ export default function ActionButtons(
       method: 'POST',
       body: JSON.stringify(postBody),
     }
-    /*
-    curl -d '{"filenames":["a.jpg","b.jpg"], "prefix": "2020-06-13",
-    "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'
-    -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
-    */
 
-    // eslint-disable-next-line no-console
-    return fetch('/api/admin/rename', options).then((s) => console.log(s))
+    const response = await fetch('/api/admin/rename', options)
+    const result: RenameResponseBody = await response.json()
+    setTextXml(result.xml)
   }
 
-  return <div><Button onClick={() => rename()}>Rename</Button></div>
+  return (
+    <div>
+      <Button onClick={() => rename()}>Rename</Button>
+      <Textarea
+        disabled={false}
+        minRows={2}
+        size="sm"
+        variant="outlined"
+        value={textXml}
+      />
+    </div>
+  )
 }

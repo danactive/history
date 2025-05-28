@@ -12,7 +12,9 @@ const requestSchema = z.object({
   ),
 }, 'JSON object body is expected')
 
-function validateRequestBody(body: z.infer<typeof requestSchema>) {
+type RequestSchema = z.infer<typeof requestSchema>
+
+function validateRequestBody(body: RequestSchema) {
   requestSchema.parse(body || {})
   return {
     dryRun: body.dry_run,
@@ -22,5 +24,5 @@ function validateRequestBody(body: z.infer<typeof requestSchema>) {
   }
 }
 
-export { validateRequestBody }
+export { validateRequestBody, type RequestSchema }
 export default requestSchema

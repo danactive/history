@@ -29,6 +29,15 @@ export const themeMui = extendTheme({
         },
       },
     },
+    JoyTextarea: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: '#C0C0C0',
+          backgroundColor: '#545454',
+          fontSize: theme.vars.fontSize.md,
+        }),
+      },
+    },
   },
 })
 

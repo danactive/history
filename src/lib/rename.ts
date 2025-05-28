@@ -1,8 +1,8 @@
 import { readdir, rename } from 'node:fs/promises'
 import path from 'node:path'
 
+import { validateRequestBody, type RequestSchema } from '../models/rename'
 import checkPathExists from './exists'
-import { validateRequestBody } from '../models/rename'
 import { futureFilenamesOutputs } from './filenames'
 
 type ResponseBody = {
@@ -13,7 +13,7 @@ type ResponseBody = {
 
 type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
-  const out = { renamed: false, filenames: [], xml: "" }
+  const out = { renamed: false, filenames: [], xml: '' }
   if (!message) return out
   return { ...out, error: { message } }
 }
@@ -83,14 +83,17 @@ async function renamePaths(
   }
 
   // Rename files on the filesystem
-  for (let i = 0; i < existingFilenames.length; i++) {
-    const from = path.join(fullPath, existingFilenames[i])
-    const to = path.join(fullPath, futureFilenames[i])
+  await Promise.all(
+    existingFilenames.map((originalFile, index) => {
+      const from = path.join(fullPath, originalFile)
+      const to = path.join(fullPath, futureFilenames[index])
 
-    if (from !== to) {
-      await rename(from, to)
-    }
-  }
+      if (from !== to) {
+        return rename(from, to)
+      }
+      return Promise.resolve() // no-op if no change
+    }),
+  )
 
   return {
     ...out,
@@ -101,4 +104,6 @@ async function renamePaths(
 export {
   errorSchema,
   renamePaths,
+  type ResponseBody as RenameResponseBody,
+  type RequestSchema as RenameRequestBody,
 }

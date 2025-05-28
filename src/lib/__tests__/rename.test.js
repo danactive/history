@@ -1,7 +1,7 @@
 import { rename } from 'node:fs/promises'
 
-import { renamePaths } from '../rename'
 import pathExists from '../exists'
+import { renamePaths } from '../rename'
 import utilsFactory from '../utils'
 
 describe('Verify rename library', () => {
@@ -15,9 +15,10 @@ describe('Verify rename library', () => {
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
       })
-      expect(result.renamed).toBe(false);
+      expect(result.renamed).toBe(false)
       expect(result.filenames).toStrictEqual(expected)
-      expect(result.xml).toStrictEqual('<item id=\"100\"><filename>changed-37.jpg</filename></item><item id=\"101\"><filename>changed-64.jpg</filename></item><item id=\"102\"><filename>changed-90.jpg</filename></item>')
+      expect(result.xml).toStrictEqual('<item id="100"><filename>changed-37.jpg</filename></item>'
+      + '<item id="101"><filename>changed-64.jpg</filename></item><item id="102"><filename>changed-90.jpg</filename></item>')
     })
 
     test('* Rename files with associated names', async () => {
@@ -28,9 +29,10 @@ describe('Verify rename library', () => {
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
       })
-      expect(result.renamed).toBe(false);
+      expect(result.renamed).toBe(false)
       expect(result.filenames).toStrictEqual(expected)
-      expect(result.xml).toStrictEqual('<item id=\"100\"><filename>changed-50.jpg</filename></item><item id=\"101\"><filename>changed-90.jpg</filename></item>')
+      expect(result.xml).toStrictEqual('<item id="100"><filename>changed-50.jpg</filename></item>'
+        + '<item id="101"><filename>changed-90.jpg</filename></item>')
     })
 
     test('* Caught fake source folder', async () => {
@@ -54,9 +56,9 @@ describe('Verify rename library', () => {
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed', dryRun: true,
       })
-      expect(result.renamed).toBe(false);
+      expect(result.renamed).toBe(false)
       expect(result.filenames).toHaveLength(0)
-      expect(result.xml).toBe("");
+      expect(result.xml).toBe('')
     })
   })
 
@@ -69,7 +71,7 @@ describe('Verify rename library', () => {
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed',
       })
-      expect(result.renamed).toBe(true);
+      expect(result.renamed).toBe(true)
       expect(pathExists(`${sourceFolder}/${expected[0]}`)).toBeTruthy()
       expect(pathExists(`${sourceFolder}/${expected[1]}`)).toBeTruthy()
       expect(pathExists(`${sourceFolder}/${expected[2]}`)).toBeTruthy()
