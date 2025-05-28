@@ -25,7 +25,7 @@ describe('<ListFile />', () => {
         label,
       }}
     />)
-    expect(getByText(label).closest('a')?.href).toBe(`http://localhost/#path=${path}`)
+    expect(getByText(label).closest('a')?.href).toBe(`http://localhost/?path=${path}`)
   })
   test('should render a folder with path', () => {
     const path = ''

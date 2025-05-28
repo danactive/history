@@ -10,17 +10,7 @@ export function isImage(file: Partial<Filesystem>) {
   )
 }
 
-/**
- * Read hash in URL
- * @param find it's always "path"
- * @param from URL with path is located
- */
-export function parseHash(find: 'path', from: string) {
-  const found = RegExp(`[#&]${find}(=([^&#]*)|&|#|$)`).exec(from)
-  return found?.[2] ?? '/'
-}
-
-export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string | null) {
+export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string | null | undefined) {
   const file: Walk.ItemFile = {
     path: 'harddrive',
     filename: '..',

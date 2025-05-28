@@ -1,19 +1,18 @@
-import { List, ListDivider } from '@mui/joy'
-import { useRouter } from 'next/router'
-import {
-  Fragment, useEffect, useRef, useState,
-} from 'react'
+'use client'
 
-import OrganizePreviews from '../../src/components/OrganizePreviews'
-import ListFile from '../../src/components/Walk/ListFile'
-import type { Filesystem, FilesystemResponseBody } from '../../src/lib/filesystems'
-import type { HeifResponseBody } from '../../src/lib/heifs'
+import { List, ListDivider } from '@mui/joy'
+import { useSearchParams } from 'next/navigation'
+import { Fragment, useEffect, useState } from 'react'
+
+import OrganizePreviews from '../../../src/components/OrganizePreviews'
+import ListFile from '../../../src/components/Walk/ListFile'
+import type { Filesystem, FilesystemResponseBody } from '../../../src/lib/filesystems'
+import type { HeifResponseBody } from '../../../src/lib/heifs'
 import {
   addParentDirectoryNav,
   isImage,
   organizeByMedia,
-  parseHash,
-} from '../../src/utils/walk'
+} from '../../../src/utils/walk'
 
 async function getImages(pathQs: string): Promise<Filesystem[]> {
   const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
@@ -35,15 +34,14 @@ async function getImages(pathQs: string): Promise<Filesystem[]> {
 }
 
 function WalkPage() {
-  const { asPath } = useRouter()
+  const searchParams = useSearchParams()
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)
-  const pathQs = parseHash('path', asPath)
-  const lastFetchedPath = useRef('')
+  const pathQs = searchParams?.get('path') ?? '/'
 
   useEffect(() => {
-    if (asPath !== lastFetchedPath.current) {
+    if (pathQs) {
       setLoading(true)
       const fetchData = async () => {
         const files = await getImages(pathQs)
@@ -53,9 +51,8 @@ function WalkPage() {
         setPreviewList(itemImages)
       }
       fetchData()
-      lastFetchedPath.current = asPath
     }
-  }, [asPath])
+  }, [pathQs])
 
   if (isLoading) return <p>Loading...</p>
   if (!fileList) return <p>No filesystem data</p>

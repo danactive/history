@@ -1,19 +1,18 @@
 import Button from '@mui/joy/Button'
 import Textarea from '@mui/joy/Textarea'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
-import type { RenameResponseBody, RenameRequestBody } from '../../lib/rename'
-import { parseHash } from '../../utils/walk'
+import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
 
 export default function ActionButtons(
   { items }:
   { items: Filesystem[] },
 ) {
   const [textXml, setTextXml] = useState('')
-  const { asPath } = useRouter()
-  const pathQs = parseHash('path', asPath)
+  const searchParams = useSearchParams()
+  const pathQs = searchParams?.get('path') ?? '/'
   async function rename() {
     // eslint-disable-next-line no-alert
     let date = window.prompt('Date of images (YYYY-MM-DD)?')

@@ -2,7 +2,6 @@ import type { Walk } from '../../types/pages'
 import { type Filesystem } from '../../lib/filesystems'
 import {
   isImage,
-  parseHash,
   addParentDirectoryNav,
   associateMedia,
   isAnyImageOrVideo,
@@ -94,19 +93,6 @@ describe('Walk - util', () => {
     test('ignore RAW', () => {
       expect(isImage({ ...mockFile, mediumType: 'image', ext: 'RAW' })).toEqual(false)
       expect(isImage({ ...mockFile, mediumType: 'image', ext: 'ARW' })).toEqual(false)
-    })
-  })
-
-  describe('parseHash', () => {
-    test('find 1', () => {
-      const path = 'dotca'
-      const received = parseHash('path', `http://localhost#path=${path}`)
-      expect(received).toBe(path)
-    })
-
-    test('find 0', () => {
-      const received = parseHash('path', 'http://localhost')
-      expect(received).toBe('/')
     })
   })
 

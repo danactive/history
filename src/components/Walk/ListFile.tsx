@@ -5,7 +5,7 @@ import Link from '../Link'
 
 function ListFile({ item: file }: { item: Walk.ItemFile }) {
   if (file.mediumType === 'folder') {
-    const href = file.path ? `#path=${file.path}` : ''
+    const href = file.path ? `?path=${file.path}` : ''
     return (
       <ListItem>
         <Link href={href}>{file.label}</Link>
