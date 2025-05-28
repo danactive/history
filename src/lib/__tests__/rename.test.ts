@@ -7,7 +7,7 @@ import utilsFactory from '../utils'
 describe('Verify rename library', () => {
   const utils = utilsFactory()
   describe('Dry run', () => {
-    test('* Rename files', async () => {
+    test('* Rename exact files', async () => {
       const originals = ['cee.css', 'jay.js', 'el.log']
       const expected = ['changed-37.css', 'changed-64.js', 'changed-90.log']
       const sourceFolder = '/test/fixtures/renameable'
@@ -21,13 +21,41 @@ describe('Verify rename library', () => {
       + '<item id="101"><filename>changed-64.jpg</filename></item><item id="102"><filename>changed-90.jpg</filename></item>')
     })
 
-    test('* Rename files with associated names', async () => {
+    test('* Rename files without associated names', async () => {
+      const originals = ['cee.css', 'jay.js', 'el.log']
+      const expected = ['changed-37.css', 'changed-64.js', 'changed-90.log']
+      const sourceFolder = '/test/fixtures/renameable'
+
+      const result = await renamePaths({
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: true,
+      })
+      expect(result.renamed).toBe(false)
+      expect(result.filenames).toStrictEqual(expected)
+      expect(result.xml).toStrictEqual('<item id="100"><filename>changed-37.jpg</filename></item>'
+      + '<item id="101"><filename>changed-64.jpg</filename></item><item id="102"><filename>changed-90.jpg</filename></item>')
+    })
+
+    test('* Rename exact files with same names', async () => {
       const sourceFolder = '/test/fixtures/renameable'
       const originals = ['bee.bat', 'bee.bin', 'bee.bmp', 'tee.tar', 'tee.tax', 'tee.txt']
       const expected = ['changed-50.bat', 'changed-50.bin', 'changed-50.bmp', 'changed-90.tar', 'changed-90.tax', 'changed-90.txt']
 
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
+      })
+      expect(result.renamed).toBe(false)
+      expect(result.filenames).toStrictEqual(expected)
+      expect(result.xml).toStrictEqual('<item id="100"><filename>changed-50.jpg</filename></item>'
+        + '<item id="101"><filename>changed-90.jpg</filename></item>')
+    })
+
+    test('* Rename files without associated names', async () => {
+      const sourceFolder = '/test/fixtures/renameable'
+      const originals = ['bee.bat', 'tee.tar']
+      const expected = ['changed-50.bat', 'changed-50.bin', 'changed-50.bmp', 'changed-90.tar', 'changed-90.tax', 'changed-90.txt']
+
+      const result = await renamePaths({
+        sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: true,
       })
       expect(result.renamed).toBe(false)
       expect(result.filenames).toStrictEqual(expected)
