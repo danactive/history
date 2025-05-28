@@ -18,10 +18,16 @@ export default function ActionButtons(
     // eslint-disable-next-line no-alert
     let date = window.prompt('Date of images (YYYY-MM-DD)?')
     if (date === '') date = null
+    const today = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date()).replace(/\//g, '-')
+
     const postBody: RenameRequestBody = {
       dry_run: false,
       filenames: items.map((i) => i.filename),
-      prefix: date ?? new Date().toISOString().split('T')[0],
+      prefix: date ?? today,
       source_folder: pathQs,
       rename_associated: true,
     }

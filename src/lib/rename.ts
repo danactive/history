@@ -28,103 +28,81 @@ Renamed file paths
 @param {bool} [dryRun] Preview the renaming of files without the filesystem change
 @return {Promise}
 */
-async function renamePaths(
-  {
-    dryRun = false,
-    filenames,
-    prefix,
-    sourceFolder,
-    renameAssociated = false,
-  }: ReturnType<typeof validateRequestBody>,
-): Promise<ResponseBody> {
+async function renamePaths({
+  dryRun = false,
+  filenames,
+  prefix,
+  sourceFolder,
+  renameAssociated = false,
+}: ReturnType<typeof validateRequestBody>): Promise<ResponseBody> {
   const fullPath = await checkPathExists(sourceFolder)
   const filesOnDisk = await readdir(fullPath)
 
+  // Filter only filenames that exist if renameAssociated is false
+  const filtered = renameAssociated ? filenames : filenames.filter((f) => filesOnDisk.includes(f))
+
+  // Extract unique base names in order
+  const baseSeen = new Set<string>()
+  const orderedBases = filtered
+    .map((f) => path.parse(f).name)
+    .filter((base) => {
+      if (baseSeen.has(base)) return false
+      baseSeen.add(base)
+      return true
+    })
+
+  if (orderedBases.length === 0) {
+    return { filenames: [], xml: '', renamed: false }
+  }
+
+  const generated = futureFilenamesOutputs(orderedBases, prefix)
+  const baseToNewBase = new Map(orderedBases.map((b, i) => [b, generated.files[i]]))
+
+  const seenOutput = new Set<string>()
+  const renameOps: { from: string; to: string }[] = []
   const outputFilenames: string[] = []
-  const renameOperations: { from: string; to: string }[] = []
 
-  // Filter input to those that exist on disk (for renameAssociated = false)
-  const filteredFilenames = filenames.filter((f) => filesOnDisk.includes(f))
+  filenames.forEach((original) => {
+    const originalBase = path.parse(original).name
+    const newBase = baseToNewBase.get(originalBase)
+    if (!newBase) return
 
-  // Extract unique base names in order of appearance in `filenames`
-  const seenBases = new Set<string>()
-  const orderedBaseNames: string[] = []
-
-  for (const filename of filteredFilenames) {
-    const base = path.parse(filename).name
-    if (!seenBases.has(base)) {
-      seenBases.add(base)
-      orderedBaseNames.push(base)
-    }
-  }
-
-  if (orderedBaseNames.length === 0) {
-    return {
-      filenames: [],
-      xml: '',
-      renamed: false,
-    }
-  }
-
-  const generatedFilenames = futureFilenamesOutputs(orderedBaseNames, prefix) // { files: string[], xml: string }
-
-  const baseMap = new Map<string, string>()
-  orderedBaseNames.forEach((base, index) => {
-    baseMap.set(base, generatedFilenames.files[index])
-  })
-
-  // Build outputFilenames and renameOperations preserving original `filenames` order
-  for (const original of filenames) {
-    const parsed = path.parse(original)
-    const base = parsed.name
-    const newBase = baseMap.get(base)
-
-    if (!newBase) continue
-
-    const matches = filesOnDisk.filter((f) => path.parse(f).name === base)
-
+    let matches: string[]
     if (renameAssociated) {
-      for (const match of matches) {
-        const matchParsed = path.parse(match)
-        const renamed = `${newBase}${matchParsed.ext}`
+      matches = filesOnDisk.filter((f) => path.parse(f).name === originalBase)
+    } else if (filesOnDisk.includes(original)) {
+      matches = [original]
+    } else {
+      matches = []
+    }
+
+    matches.forEach((match) => {
+      const { ext } = path.parse(match)
+      const renamed = `${newBase}${ext}`
+      if (!seenOutput.has(renamed)) {
+        seenOutput.add(renamed)
         outputFilenames.push(renamed)
-        renameOperations.push({
+        renameOps.push({
           from: path.join(fullPath, match),
           to: path.join(fullPath, renamed),
         })
       }
-    } else {
-      if (matches.includes(original)) {
-        const renamed = `${newBase}${parsed.ext}`
-        outputFilenames.push(renamed)
-        renameOperations.push({
-          from: path.join(fullPath, original),
-          to: path.join(fullPath, renamed),
-        })
-      }
-    }
-  }
+    })
+  })
 
   if (dryRun) {
     return {
       filenames: outputFilenames,
-      xml: generatedFilenames.xml,
+      xml: generated.xml,
       renamed: false,
     }
   }
 
-  await Promise.all(
-    renameOperations.map(({ from, to }) => {
-      if (from !== to) {
-        return rename(from, to)
-      }
-      return Promise.resolve()
-    }),
-  )
+  await Promise.all(renameOps.map(({ from, to }) => (from === to ? Promise.resolve() : rename(from, to))))
 
   return {
     filenames: outputFilenames,
-    xml: generatedFilenames.xml,
+    xml: generated.xml,
     renamed: true,
   }
 }
