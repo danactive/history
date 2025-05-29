@@ -68,10 +68,10 @@ export default function ComboBox(
           return option.label
         }}
         renderOption={(props, option) => (
-          <AutocompleteOption {...props}>
+          <AutocompleteOption {...props} key={option.label}>
             {option.label?.startsWith('Add "') && (
-              <ListItemDecorator>
-                Add icon
+              <ListItemDecorator key={`${option.label}deco`}>
+                &gt; {/* TODO Insert Add icon */}
               </ListItemDecorator>
             )}
             {option.label}
