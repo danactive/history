@@ -16,8 +16,6 @@
     "release": "standard-version"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
     "@hello-pangea/dnd": "^18.0.1",
     "@mui/joy": "^5.0.0-beta.32",
     "boom": "^7.3.0",
