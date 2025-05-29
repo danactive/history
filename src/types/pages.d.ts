@@ -5,6 +5,7 @@ import type { Filesystem } from './lib/filesystems'
 import type {
   AlbumMeta,
   IndexedKeywords,
+  ServerSideAllItem,
   ServerSideAlbumItem,
   ServerSidePhotoItem,
 } from './common'
