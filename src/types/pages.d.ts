@@ -27,7 +27,7 @@ export namespace Album {
     indexedKeywords: IndexedKeywords[];
   }
 
-  export interface Params extends ParsedUrlQuery {
+  export interface Params {
     gallery: NonNullable<AlbumMeta['gallery']>
     album: NonNullable<AlbumMeta['albumName']>
   }
@@ -40,5 +40,16 @@ export namespace Walk {
     label: string;
     grouped?: string;
     flat?: string;
+  }
+}
+
+export namespace All {
+  export type ComponentProps = {
+    items: ServerSideAllItem[];
+    indexedKeywords: IndexedKeywords[];
+  }
+
+  export interface Params {
+    gallery: NonNullable<AlbumMeta['gallery']>
   }
 }

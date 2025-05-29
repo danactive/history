@@ -11,7 +11,7 @@ import getAlbum from '../../src/lib/album'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../src/lib/search'
-import All from '../../src/components/All'
+import AllItems from '../../src/components/All/Items'
 import AlbumContext from '../../src/components/Context'
 import SplitViewer from '../../src/components/SplitViewer'
 import useMemory from '../../src/hooks/useMemory'
@@ -264,7 +264,7 @@ function AllPage({ items = [], indexedKeywords }: ComponentProps) {
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        <All items={ageFiltered} keyword={keyword} refImageGallery={refImageGallery} />
+        <AllItems items={ageFiltered} keyword={keyword} refImageGallery={refImageGallery} />
       </AlbumContext.Provider>
     </div>
   )
