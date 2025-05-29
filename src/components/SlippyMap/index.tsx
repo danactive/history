@@ -9,6 +9,7 @@ import {
 import Map, {
   Layer, Source, type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 import config from '../../../config.json'
 import type { Item } from '../../types/common'
