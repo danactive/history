@@ -1,6 +1,6 @@
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/person'
 import type { AlbumMeta, Person } from '../types/common'
-import { getPersonsFromFilesystem } from './xml'
+import { readPersons } from './xml'
 
 type Envelope = { body: Person[], status: number }
 type ErrorOptionalMessageBody = {
@@ -25,8 +25,8 @@ async function get(
     if (gallery === null || gallery === undefined) {
       throw new ReferenceError('Gallery name is missing')
     }
-    const json = await getPersonsFromFilesystem(gallery)
-    const body = transformJsonSchema(json)
+    const xmlPerson = await readPersons(gallery)
+    const body = transformJsonSchema(xmlPerson)
 
     if (returnEnvelope) {
       return { body, status: 200 }

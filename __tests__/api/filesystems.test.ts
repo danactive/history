@@ -123,6 +123,7 @@ describe('Filesystem API', () => {
 
           const result = await response.json()
           expect(result.files.length).toBe(0)
+          expect(result.error.message.toLowerCase()).toContain('not allowed')
         },
       })
     })

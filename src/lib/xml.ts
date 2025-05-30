@@ -41,7 +41,7 @@ async function readPersons(gallery: NonNullable<AlbumMeta['gallery']>): Promise<
 }
 
 export {
-  readAlbum as getAlbumFromFilesystem,
-  readGallery as getGalleryFromFilesystem,
-  readPersons as getPersonsFromFilesystem,
+  readAlbum,
+  readGallery,
+  readPersons,
 }

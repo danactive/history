@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import get, { errorSchema } from '../../../../src/lib/filesystems'
 
-async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const path = searchParams.get('path')
+import get, { errorSchema } from '../../../../../src/lib/albums'
 
-  const out = await get(path, true)
+async function GET(request: NextRequest, { params: { gallery } }: { params: { gallery: string } }) {
+  const out = await get(gallery, true)
   return NextResponse.json(out.body, { status: out.status })
 }
 
 // Catch-all for unsupported methods
-function notSupported(req: NextRequest) {
+function notSupported(req: Request) {
   return NextResponse.json(errorSchema(`Method ${req.method} Not Allowed`), { status: 405 })
 }
 

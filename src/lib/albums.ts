@@ -5,7 +5,7 @@ import type {
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
-import { getGalleryFromFilesystem } from './xml'
+import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
 const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -52,7 +52,7 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
 }
 
 async function get<T extends boolean = false>(
-  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][],
+  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null,
   returnEnvelope?: T,
 ): Promise<T extends true ? GalleryAlbumBody : GalleryAlbums>;
 
@@ -62,7 +62,7 @@ async function get<T extends boolean = false>(
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][], returnEnvelope = false): Promise<
+async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null, returnEnvelope = false): Promise<
   GalleryAlbums
   | ErrorOptionalMessage
   | GalleryAlbumBody
@@ -72,8 +72,8 @@ async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][], retur
     if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
       throw new ReferenceError('Gallery name is missing')
     }
-    const galleryRaw = await getGalleryFromFilesystem(gallery)
-    const body = transformJsonSchema(galleryRaw, gallery)
+    const xmlGallery = await readGallery(gallery)
+    const body = transformJsonSchema(xmlGallery, gallery)
 
     if (returnEnvelope) {
       return { body, status: 200 }
@@ -94,7 +94,7 @@ async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][], retur
 
 export {
   errorSchema,
-  getGalleryFromFilesystem,
+  readGallery,
   transformJsonSchema,
 }
 export default get
