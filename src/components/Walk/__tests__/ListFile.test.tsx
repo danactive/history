@@ -1,43 +1,52 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 import ListFile from '../ListFile'
-import { type ItemFile } from '../../../../pages/admin/walk'
+import type { Walk } from '../../../types/pages'
 
 describe('<ListFile />', () => {
-  const mockItemFile: ItemFile = {
+  const mockItemFile: Walk.ItemFile = {
     id: '123',
     label: 'One Two Three',
     path: '123',
   }
   test('should render file label', () => {
     const label = 'label'
-    const { getByText } = render(<ListFile item={{ ...mockItemFile, label }} />)
-    expect(getByText(label)).toBeInTheDocument()
+    render(<ListFile item={{ ...mockItemFile, label }} />)
+    const labelElement = screen.queryByText(label)
+    expect(labelElement).toBeInTheDocument()
   })
   test('should render a folder with path', () => {
     const path = 'testPath'
     const label = 'Link text'
-    const { getByText } = render(<ListFile
-      item={{
-        ...mockItemFile,
-        mediumType: 'folder',
-        path,
-        label,
-      }}
-    />)
-    expect(getByText(label).closest('a')?.href).toBe(`http://localhost/#path=${path}`)
+    render(
+      <ListFile
+        item={{
+          ...mockItemFile,
+          mediumType: 'folder',
+          path,
+          label,
+        }}
+      />,
+    )
+
+    const linkElement = screen.queryByRole('link', { name: label })
+    expect(linkElement).toHaveAttribute('href', `?path=${path}`)
   })
   test('should render a folder with path', () => {
     const path = ''
     const label = 'Link text'
-    const { getByText } = render(<ListFile
-      item={{
-        ...mockItemFile,
-        mediumType: 'folder',
-        path,
-        label,
-      }}
-    />)
-    expect(getByText(label).closest('a')?.href).toBe('http://localhost/')
+    render(
+      <ListFile
+        item={{
+          ...mockItemFile,
+          mediumType: 'folder',
+          path,
+          label,
+        }}
+      />,
+    )
+
+    const linkElement = screen.queryByRole('link', { name: label })
+    expect(linkElement).not.toBeInTheDocument()
   })
 })

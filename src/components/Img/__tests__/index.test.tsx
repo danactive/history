@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 
 import Img from '../index'
 
@@ -7,9 +7,9 @@ const expectedValues = {
   src: '/public/galleries/demo/media/thumbs/2001/2001-03-21-01.jpg',
 }
 const renderComponent = (props = {}) => {
-  const utils = render(<Img src={expectedValues.src} alt={expectedValues.alt} {...props} />)
-  const image = utils.queryByAltText(expectedValues.alt)
-  return { ...utils, image }
+  render(<Img src={expectedValues.src} alt={expectedValues.alt} {...props} />)
+  const image = screen.queryByAltText(expectedValues.alt)
+  return { image }
 }
 
 describe('<Img />', () => {

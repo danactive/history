@@ -1,8 +1,11 @@
 import { type ParsedUrlQuery } from 'node:querystring'
 
+import type { Filesystem } from './lib/filesystems'
+
 import type {
   AlbumMeta,
   IndexedKeywords,
+  ServerSideAllItem,
   ServerSideAlbumItem,
   ServerSidePhotoItem,
 } from './common'
@@ -13,7 +16,7 @@ export namespace Gallery {
     albums: ServerSideAlbumItem[];
     indexedKeywords: IndexedKeywords[];
   }
-  export interface Params extends ParsedUrlQuery {
+  export interface Params {
     gallery: NonNullable<AlbumMeta['gallery']>
   }
 }
@@ -25,8 +28,29 @@ export namespace Album {
     indexedKeywords: IndexedKeywords[];
   }
 
-  export interface Params extends ParsedUrlQuery {
+  export interface Params {
     gallery: NonNullable<AlbumMeta['gallery']>
     album: NonNullable<AlbumMeta['albumName']>
+  }
+}
+
+export namespace Walk {
+  export type ItemFile = Partial<Filesystem> & {
+    id: Filesystem['id'];
+    path: Filesystem['path'];
+    label: string;
+    grouped?: string;
+    flat?: string;
+  }
+}
+
+export namespace All {
+  export type ComponentProps = {
+    items: ServerSideAllItem[];
+    indexedKeywords: IndexedKeywords[];
+  }
+
+  export interface Params {
+    gallery: NonNullable<AlbumMeta['gallery']>
   }
 }

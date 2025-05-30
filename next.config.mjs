@@ -4,7 +4,7 @@ const nextConfig = {
     styledComponents: true,
   },
   eslint: {
-    dirs: ['pages', 'src', '__tests__'],
+    dirs: ['pages', 'src', '__tests__', 'app'],
   },
 }
 export default nextConfig

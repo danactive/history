@@ -1,3 +1,5 @@
+'use client'
+
 import Head from 'next/head'
 import { useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'

@@ -26,7 +26,7 @@ type ErrorOptionalMessageBody = {
 }
 
 async function get<T extends boolean = false>(
-  destinationPath: string | string[] | undefined,
+  destinationPath: string | string[] | null | undefined,
   returnEnvelope?: T,
 ): Promise<T extends true ? ResponseEnvelope : ResponseBody>;
 
@@ -37,7 +37,7 @@ async function get<T extends boolean = false>(
  * @returns {Promise} files
  */
 async function get(
-  destinationPath: string | string[] | undefined = '',
+  destinationPath: string | string[] | null | undefined = '',
   returnEnvelope = false,
 ): Promise<
   ResponseEnvelope | ResponseBody | ErrorOptionalMessage | ErrorOptionalMessageBody
@@ -57,9 +57,18 @@ async function get(
 
     const files = await glob(decodeURI(`${globPath}/*`))
 
-    const webPaths = files.map((file) => transform(file, { destinationPath, globPath })).sort((a, b) => a.name.localeCompare(b.name))
+    const sortedFiles = files
+      .map((file) => transform(file, { destinationPath, globPath }))
+      .sort((a, b) => {
+        // Prioritize folders over files
+        if (a.mediumType === 'folder' && b.mediumType !== 'folder') return -1
+        if (a.mediumType !== 'folder' && b.mediumType === 'folder') return 1
 
-    const body = { files: webPaths, destinationPath }
+        // Then sort alphabetically
+        return a.name.localeCompare(b.name)
+      })
+
+    const body = { files: sortedFiles, destinationPath }
     return (returnEnvelope ? { body, status: 200 } : body)
   } catch (e) {
     if (returnEnvelope) {

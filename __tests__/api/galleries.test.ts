@@ -4,13 +4,13 @@
 
 import { testApiHandler } from 'next-test-api-route-handler'
 
-import pagesHandler from '../../pages/api/galleries'
+import { GET, POST } from '../../app/api/galleries/route'
 
 describe('Galleries endpoint', () => {
   describe('Expect result', () => {
     test('* GET has galleries', async () => {
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET },
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -27,7 +27,7 @@ describe('Galleries endpoint', () => {
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
       await testApiHandler({
-        pagesHandler,
+        appHandler: { POST },
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'POST' })
           const result = await response.json()

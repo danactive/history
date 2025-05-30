@@ -1,6 +1,9 @@
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+'use client'
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  type Dispatch, type SetStateAction, useEffect, useMemo, useState,
+} from 'react'
 import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
 import styles from './search.module.css'
@@ -9,99 +12,101 @@ interface ServerSideItem {
   corpus: string;
 }
 
-function useSearch<ItemType extends ServerSideItem>(
-  { items, setMemoryIndex, indexedKeywords }:
-  { items: ItemType[]; setMemoryIndex?: Function; indexedKeywords: IndexedKeywords[] },
-): { filtered: ItemType[]; keyword: string; setKeyword: Function; searchBox: JSX.Element; setFiltered: Function; } {
+interface UseSearchProps<ItemType> {
+  items: ItemType[];
+  setMemoryIndex?: Dispatch<SetStateAction<number>>;
+  indexedKeywords?: IndexedKeywords[];
+}
+
+export default function useSearch<ItemType extends ServerSideItem>({
+  items,
+  setMemoryIndex,
+  indexedKeywords = [],
+}: UseSearchProps<ItemType>) {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const [keyword, setKeyword] = useState(router.query.keyword?.toString() || '')
+  const pathname = usePathname()
+
+  const [keyword, setKeyword] = useState<string>(searchParams?.get('keyword') ?? '')
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
-  const [filteredItems, setFilteredItems] = useState(items)
+  const [filteredItems, setFilteredItems] = useState<ItemType[]>(items)
 
-  const getShareUrlStem = () => {
-    if (router.asPath.includes('keyword=')) {
-      return decodeURI(router.asPath)
-      // const urlParts = new URL(window.location)
-      // urlParts.searchParams.set('keyword', keyword)
-      // return urlParts.toString()
+  const AND_OPERATOR = '&&'
+  const OR_OPERATOR = '||'
+
+  const normalize = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+
+  const matchCorpus = (corpus: string, kword: string): boolean => {
+    const normalizedCorpus = normalize(corpus)
+    const normalizedKeyword = normalize(kword)
+
+    if (normalizedKeyword.includes(AND_OPERATOR)) {
+      return normalizedKeyword
+        .split(AND_OPERATOR)
+        .every((term) => normalizedCorpus.includes(term.trim()))
     }
-    return `${router.asPath}?keyword=${keyword}`
+
+    return normalizedKeyword
+      .split(OR_OPERATOR)
+      .some((term) => normalizedCorpus.includes(term.trim()))
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const filtered = useMemo(() => {
+    if (!keyword) return items
+    return items.filter((item) => matchCorpus(item.corpus, keyword))
+  }, [items, keyword])
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setKeyword(selectedOption?.value ?? '')
+    const newKeyword = selectedOption?.value ?? ''
+    setKeyword(newKeyword)
     setMemoryIndex?.(0)
+    router.push(`${pathname}?keyword=${encodeURIComponent(newKeyword)}`)
   }
 
-  const keywordResultLabel = keyword === '' ? null : (<> for &quot;{keyword}&quot;</>)
-  const getSearchBox = (filtered: ItemType[]) => (
+  const keywordResultLabel = keyword
+    ? <> for &quot;{keyword}&quot;</>
+    : null
+
+  const searchBox = (
     <form onSubmit={handleSubmit}>
       <div className={styles.row}>
-        <h3 className={styles.searchCount}>Search results {filtered?.length} of {items?.length}{keywordResultLabel}</h3>
+        <h3 className={styles.searchCount}>
+          Search results {filtered.length} of {items.length}
+          {keywordResultLabel}
+        </h3>
         <AutoComplete
           className={styles.autocomplete}
           options={indexedKeywords}
           onChange={setSelectedOption}
           value={selectedOption}
         />
-        <input type="submit" value="Filter" title="`&&` is AND; `||` is OR; for example `breakfast||lunch`" />
-        <nav className={styles.shareLink}>{getShareUrlStem()}</nav>
+        <input
+          type="submit"
+          value="Filter"
+          title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
+        />
       </div>
     </form>
   )
 
-  const defaultReturn = {
-    filtered: items,
-    keyword: '',
-    setKeyword,
-    searchBox: getSearchBox(items),
-    setFilteredItems,
-  }
+  useEffect(() => {
+    const value = searchParams?.get('keyword') ?? ''
+    if (value && value !== keyword) {
+      setKeyword(value)
+      setSelectedOption({ label: value, value })
+    }
+  }, [searchParams, keyword])
 
   useEffect(() => {
-    if (router.isReady && router.query.keyword) {
-      setKeyword(router.query.keyword?.toString())
-      const value = Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword
-      const newValue: IndexedKeywords = {
-        label: value,
-        value,
-      }
-      setSelectedOption(newValue)
-    }
-  }, [router.isReady])
-  if (!router.isReady) {
-    return {
-      ...defaultReturn,
-      setFiltered: () => {}, // Add missing setFiltered property
-    }
-  }
-
-  const AND_OPERATOR = '&&'
-  const OR_OPERATOR = '||'
-  const normalizeCorpus = (corpus: string) => {
-    const corpusWithoutAccentLow = corpus.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    return (k: string) => {
-      const keywordWithoutAccentLow = k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-      return corpusWithoutAccentLow.indexOf(keywordWithoutAccentLow) !== -1
-    }
-  }
-  const filtered = items.filter((item) => {
-    if (!keyword) return true
-    const findMatch = normalizeCorpus(item.corpus)
-    if (keyword.includes(AND_OPERATOR)) {
-      return keyword.split(AND_OPERATOR).every(findMatch)
-    }
-    return keyword.split(OR_OPERATOR).some(findMatch)
-  })
+    setFilteredItems(filtered)
+  }, [filtered])
 
   return {
     filtered,
-    setFiltered: setFilteredItems,
     keyword,
     setKeyword,
-    searchBox: getSearchBox(filtered),
+    searchBox,
+    setFiltered: setFilteredItems,
   }
 }
-
-export default useSearch

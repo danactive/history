@@ -4,7 +4,7 @@ import {
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
-import type { MapRef } from 'react-map-gl'
+import type { MapRef } from 'react-map-gl/mapbox'
 
 import config from '../../../config.json'
 import { Viewed } from '../../hooks/useMemory'
@@ -99,10 +99,11 @@ function SplitViewer({
       })
     }
   }
+  /* eslint-disable react/no-unused-prop-types */
   return (
     <>
       <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString">
-        {({ data: colour }) => (
+        {({ data: colour }: { data?: string }) => (
           <style global jsx>
             {`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background {
                 background: ${colour};

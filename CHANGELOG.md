@@ -2,6 +2,53 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.3.0](https://github.com/danactive/history/compare/v10.1.0...v10.3.0) (2025-05-30)
+
+
+### Features
+
+* **Admin > Rename:** Add /api/admin/rename ([8387623](https://github.com/danactive/history/commit/8387623a5138fd68a5074070992755f94e21ed22))
+* **Admin > Walk > Rename:** Display XML in textarea ([2655fb8](https://github.com/danactive/history/commit/2655fb8402302a840465ed07c3956feb33017cdc))
+* **Admin > Walk:** Add request validation for /api/admin/heifs ([dfb4858](https://github.com/danactive/history/commit/dfb4858c3ad10d9786c9cbaebfbcbd5a27e60919))
+* **Admin > Walk:** Display folders above files while keeping alphabetical order ([1ff6014](https://github.com/danactive/history/commit/1ff60144b13164269dd1455dae0af5288c6114c8))
+* **Admin > Walk:** Move from pages to Next.js App Router ([0488d82](https://github.com/danactive/history/commit/0488d82158f7c6b8ed77c19ad44e4e4840e4c063))
+* **Admin:** Add page that links to Walk ([60e20b0](https://github.com/danactive/history/commit/60e20b0794e51f7558fa83edafb5923696a87d5c))
+* **API > Admin > Filesystems:** Move from pages to Next.js App Router ([87023c2](https://github.com/danactive/history/commit/87023c24ad09d112392601215fa1563fcf565c77))
+* **API > Admin > Heifs:** Move from pages to Next.js App Router ([52aeb61](https://github.com/danactive/history/commit/52aeb61b2c1f2774f64dad71fd6f5e567c8968e9))
+* **API > Admin > Rename:** Move from pages to Next.js App Router ([0e4aa7a](https://github.com/danactive/history/commit/0e4aa7a56d4c28068f1a87976261d26a01d822e1))
+* **API > Galleries:** Move from pages to Next.js App Router ([79a3c94](https://github.com/danactive/history/commit/79a3c9412baed83974acb6c7d7dc7fefcc11363f))
+* **API > Gallery > Albums > Album:** Move from pages to Next.js App Router ([58bc907](https://github.com/danactive/history/commit/58bc907377a596e395f483c45e1698b949303868))
+* **API > Gallery > Albums:** Move from pages to Next.js App Router ([b1beb00](https://github.com/danactive/history/commit/b1beb00f0261dcc4081314c49029658b49589f0d))
+* **Galleries > View:** Upgrade from Page Layout to App Layout ([5095e8e](https://github.com/danactive/history/commit/5095e8e3c194c572fc835f23a62b9abc39382170))
+* **Gallery > Album:** Move from pages to Next.js App Router ([b1acde8](https://github.com/danactive/history/commit/b1acde8f204dd1dac74dff549a58bd6774185a79))
+* **Gallery > All:** Move from pages to Next.js App Router ([fdcbdc7](https://github.com/danactive/history/commit/fdcbdc7d9a3915b0ef3e8d78f97db91d90e390b8))
+* **Gallery > Persons:** Move from pages to Next.js App Router ([998d641](https://github.com/danactive/history/commit/998d64126b0d8ec82850c881f766224798a5acb4))
+* **Gallery > Today:** Move from pages to Next.js App Router ([bd133bb](https://github.com/danactive/history/commit/bd133bb229a385af5abee39b813e0292ab35bca4))
+* **Gallery:** Move from pages to Next.js App Router ([41b7b6c](https://github.com/danactive/history/commit/41b7b6cb297959b80daf332fdbeeb8fd17f6c659))
+* **package:** Apply ESM to support ESM only modules ([60b59fc](https://github.com/danactive/history/commit/60b59fcce3f892cf7aec1d3c46c6a51f8a52ae44))
+* **Theme:** Centralize MUI theme ([832b622](https://github.com/danactive/history/commit/832b6225c30ab5209430e773745b79fa30df431b))
+* **View Album > Person:** Add person logic without defined person inclusion list ([d4425e6](https://github.com/danactive/history/commit/d4425e6f8b9743496338bddff1b656778818347e))
+* **View Album > Person:** Add sample person to demo ([4ed8086](https://github.com/danactive/history/commit/4ed8086ac842fe550a5ba15708c6c2cdc7db0887))
+* **View Album > Person:** Display age on album based on filename in frontend ([4780276](https://github.com/danactive/history/commit/478027668b00c74638e6b67b63f00cc701ab1cfb))
+* **View Album > Person:** Display age on album based on first album filename ([3b9d01a](https://github.com/danactive/history/commit/3b9d01a90454cdd74d6dd2f1ccb3b15826dedfd1))
+* **View Album > Person:** Display persons on album ([14a73f4](https://github.com/danactive/history/commit/14a73f4444b9faf7d0b8e28508bf0998d35497a3))
+* **View Album:** Add instagram as supported reference ([c77bd1f](https://github.com/danactive/history/commit/c77bd1f7a779f59bb4205e7cd05e2156cb066e6d))
+* **View All > Person:** Filter by keyword then age then person ([ae0fbc8](https://github.com/danactive/history/commit/ae0fbc818089538ac7238df3c35e16d5627557a6))
+* **Walk > Rename:** Port filename from hapi to Next.js ([7ae5c4f](https://github.com/danactive/history/commit/7ae5c4feb02fba269751a960cae879d467099da9))
+* **Walk > Rename:** Tests are passing for glob ([b0fa30a](https://github.com/danactive/history/commit/b0fa30a2ec6e165afa4d9426fed610054acc4002))
+
+
+### Bug Fixes
+
+* **Admin > Walk:** Unknown file type was above folder ([b2f3e95](https://github.com/danactive/history/commit/b2f3e95b4b1de632f5ca0f507496660fa6dfe868))
+* **API > Edit Album:** Fix incorrect CSS filename ([8b7d544](https://github.com/danactive/history/commit/8b7d544ff2195e4bcb5a1af7035ac9c2e66692c4))
+* **API:** Add jQuery since there is no build to reproduce it ([bf769d7](https://github.com/danactive/history/commit/bf769d7cb309ed760c45143552bae4179bd99075))
+* **API:** nvm to Node.js v15 that works on Apple Silicon ([1929758](https://github.com/danactive/history/commit/192975809b3f3157a8703e476ba1b99dce98924c))
+* **eslint:** Enable testing-library lint rules ([2a2ac42](https://github.com/danactive/history/commit/2a2ac42a2fe0501779de15279d15178c886d8dc5))
+* package.json & package-lock.json to reduce vulnerabilities ([ec404b1](https://github.com/danactive/history/commit/ec404b186685b07954ed1dcf79867f7655387299))
+* **View Album > Person:** Persons with age display based on search value ([54017de](https://github.com/danactive/history/commit/54017def39d04ffcd3cef66fd3711e215a8fa655))
+* **Walk:** Performance increase when getting directory list ([75e241b](https://github.com/danactive/history/commit/75e241bebf1bdd86f40715ac47c82e281a5a9c11))
+
 ## [10.2.0](https://github.com/danactive/history/compare/v10.1.0...v10.2.0) (2024-11-30)
 
 

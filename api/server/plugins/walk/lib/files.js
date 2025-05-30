@@ -22,9 +22,7 @@ async function listFiles(destPath = '') {
     out.name = path.basename(file, `.${out.ext}`);
     out.filename = (out.ext === '') ? out.name : `${out.name}.${out.ext}`;
     out.path = file.replace(globPath, destPath);
-
-    const mediumType = utils.file.mediumType(utils.file.mimeType(out.ext));
-    out.mediumType = mediumType || 'folder';
+    out.mediumType = utils.file.mediumType(utils.file.mimeType(out.ext));
 
     return out;
   });

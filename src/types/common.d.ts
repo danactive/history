@@ -43,6 +43,7 @@ type PersonItem = {
 type Item = {
   id: string,
   filename: string | string[],
+  photoDate: string | null,
   city: string,
   location: string | null,
   caption: string,
@@ -66,6 +67,7 @@ type XmlItem = {
   type?: 'video' | 'photo',
   size?: { w: string, h: string },
   filename: string | string[],
+  photoDate: string | null,
   photoCity: string,
   photoLoc?: string,
   thumbCaption: string,

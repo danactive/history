@@ -45,6 +45,7 @@ async function processHeif(file: Filesystem, destinationPath: string): Promise<s
   const inputBuffer = await readFile(`public/${file.path}`)
   // eslint-disable-next-line no-await-in-loop
   const outputBuffer = await convert({
+    // @ts-ignore @types/heic-convert v2.1.0 has incorrect type https://github.com/catdad-experiments/heic-convert/issues/42
     buffer: inputBuffer, // the HEIF file buffer
     format: 'JPEG', // output format
     quality: 0.8, // the jpeg compression quality, between 0 and 1
@@ -97,5 +98,5 @@ async function post(
   }
 }
 
-export { type ResponseBody as HeifResponseBody }
+export { errorSchema, type ResponseBody as HeifResponseBody }
 export default post

@@ -1,4 +1,4 @@
-import type { GeoJSONSourceRaw, LayerProps, ViewState } from 'react-map-gl'
+import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 import type { Feature, FeatureCollection } from 'geojson'
 
 import config from '../../../config.json'
@@ -34,7 +34,7 @@ type ItemWithCoordinate = {
 export function transformSourceOptions(
   { items = [], selected }:
   { items?: Item[], selected: ItemWithCoordinate },
-): GeoJSONSourceRaw {
+): GeoJSONSourceSpecification {
   const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)

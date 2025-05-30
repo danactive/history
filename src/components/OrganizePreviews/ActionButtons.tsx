@@ -1,26 +1,33 @@
 import Button from '@mui/joy/Button'
-import { useRouter } from 'next/router'
+import Textarea from '@mui/joy/Textarea'
+import { useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
-import { parseHash } from '../../utils/walk'
+import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
 
 export default function ActionButtons(
   { items }:
   { items: Filesystem[] },
 ) {
-  const { asPath } = useRouter()
-  const pathQs = parseHash('path', asPath)
-  function rename() {
+  const [textXml, setTextXml] = useState('')
+  const searchParams = useSearchParams()
+  const pathQs = searchParams?.get('path') ?? '/'
+  async function rename() {
     // eslint-disable-next-line no-alert
-    const date = window.prompt('Date of images (YYYY-MM-DD)?')
-    // TODO POST http://localhost:8000/admin/rename
+    let date = window.prompt('Date of images (YYYY-MM-DD)?')
+    if (date === '') date = null
+    const today = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date()).replace(/\//g, '-')
 
-    const postBody = {
+    const postBody: RenameRequestBody = {
+      dry_run: false,
       filenames: items.map((i) => i.filename),
-      prefix: date,
+      prefix: date ?? today,
       source_folder: pathQs,
-      preview: false,
-      raw: true,
       rename_associated: true,
     }
 
@@ -31,15 +38,22 @@ export default function ActionButtons(
       method: 'POST',
       body: JSON.stringify(postBody),
     }
-    /*
-    curl -d '{"filenames":["a.jpg","b.jpg"], "prefix": "2020-06-13",
-    "source_folder": "/todo/doit", "preview": "false", "raw": "true", "rename_associated": "true"}'
-    -i http://127.0.0.1:8000/admin/rename  -H "Content-Type: application/json"
-    */
 
-    // eslint-disable-next-line no-console
-    return fetch('/api/admin/rename', options).then((s) => console.log(s))
+    const response = await fetch('/api/admin/rename', options)
+    const result: RenameResponseBody = await response.json()
+    setTextXml(result.xml)
   }
 
-  return <div><Button onClick={() => rename()}>Rename</Button></div>
+  return (
+    <div>
+      <Button onClick={() => rename()}>Rename</Button>
+      <Textarea
+        disabled={false}
+        minRows={2}
+        size="sm"
+        variant="outlined"
+        value={textXml}
+      />
+    </div>
+  )
 }

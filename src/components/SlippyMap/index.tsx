@@ -6,7 +6,10 @@ import {
   useState,
   type RefObject,
 } from 'react'
-import Map, { Layer, Source, type MapRef } from 'react-map-gl'
+import Map, {
+  Layer, Source, type MapRef, type ViewStateChangeEvent,
+} from 'react-map-gl/mapbox'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 import config from '../../../config.json'
 import type { Item } from '../../types/common'
@@ -89,7 +92,7 @@ export default function SlippyMap(
         /*
         // @ts-ignore */
         onClick={onClick}
-        onMove={(evt) => setViewport(evt.viewState)}
+        onMove={(evt: ViewStateChangeEvent) => setViewport(evt.viewState)}
       >
         <Source id="slippyMap" {...geoJsonSource}>
           <Layer {...clusterLayer} />

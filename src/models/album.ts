@@ -23,6 +23,11 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
 
 const utils = utilsFactory()
 
+type DebugInfo = { id: string, filenameId: string }
+function missingXmlMessage(xmlElement: string, debug: DebugInfo) {
+  return `XML is missing <${xmlElement}> element in parent <item id="${debug.id}" filename="${debug.filenameId}" /> element`
+}
+
 function isValidMeta(schema: unknown): schema is { album: { meta: Album['album']['meta'], item: XmlAlbum['album']['item'] } } {
   if (
     'album' in (schema as any)
@@ -53,7 +58,15 @@ function title(item: XmlItem): string {
   return item.photoCity
 }
 
-function transformCaption(item: XmlItem) {
+function transformCaption(item: XmlItem, debug: DebugInfo) {
+  if (!('thumbCaption' in item)) {
+    throw new ReferenceError(missingXmlMessage('thumb_caption', debug))
+  }
+
+  if (item.thumbCaption === '') {
+    throw new ReferenceError(missingXmlMessage('thumb_caption', debug))
+  }
+
   if (item.type === 'video') {
     return `Video: ${item.thumbCaption}`
   }
@@ -165,9 +178,13 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     if (!('filename' in item)) {
       throw new ReferenceError(`XML is missing <filename> element in parent <item id="${id}" /> element`)
     }
-    const { filename } = item
+    const { filename, photoDate } = item
+    const debugInfo = {
+      id,
+      filenameId: Array.isArray(filename) ? filename[0] : filename,
+    }
     if (!('photoCity' in item)) {
-      throw new ReferenceError(`XML is missing <photo_city> element in parent <item id="${id}" filename="${filename}" /> element`)
+      throw new ReferenceError(missingXmlMessage('photo_city', debugInfo))
     }
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
@@ -180,9 +197,10 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     const out: Item = {
       id,
       filename,
+      photoDate: photoDate || null,
       city: item.photoCity,
       location: item.photoLoc || null,
-      caption: transformCaption(item),
+      caption: transformCaption(item, debugInfo),
       description: item.photoDesc || null,
       search: item.search || null,
       persons: transformPersons(item.search, persons),

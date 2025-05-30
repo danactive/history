@@ -1,5 +1,8 @@
+// @ts-ignore @types/mime-types has not published v3.0.1 to match the library
 import mime from 'mime-types'
 import path from 'node:path'
+import { glob as globNpm } from 'glob'
+import { z } from 'zod/v4-mini'
 
 import configFile from '../../config.json'
 import type {
@@ -72,7 +75,7 @@ function customMime(rawExtension: string) {
     return 'video'
   }
 
-  return false
+  return null
 }
 
 function isStandardError(error: unknown): error is Error {
@@ -83,13 +86,28 @@ function isStandardError(error: unknown): error is Error {
   return false
 }
 
+function isZodError(error: unknown): error is z.core.$ZodError {
+  if (error instanceof z.core.$ZodError) return true
+  return false
+}
+
+function simplifyZodMessages(error: z.core.$ZodError) {
+  return error?.issues.reduce((prev: string, curr: z.core.$ZodIssue) => {
+    // eslint-disable-next-line no-param-reassign
+    if (prev === '') prev += curr.message
+    // eslint-disable-next-line no-param-reassign
+    else prev += `; ${curr.message}`
+    return prev
+  }, '')
+}
+
 function utils() {
   return {
     type,
-    mimeType: (extension: string) => customMime(extension) || mime.lookup(extension),
-    mediumType: (extension: string | false) => {
+    mimeType: (extension: string) => customMime(extension) || mime.lookup(extension) || (extension === '' ? 'blank' : 'unknown'),
+    mediumType: (extension: string) => {
       if (!extension || typeof extension !== 'string') {
-        return false
+        return 'unknown'
       }
 
       if (extension.indexOf('/') === -1) {
@@ -101,10 +119,20 @@ function utils() {
           return 'video'
         }
 
-        return false
+        if (['blank'].includes(extension)) {
+          return 'folder'
+        }
+
+        return 'unknown'
       }
 
-      return extension.split('/')[0]
+      const etype = extension.split('/')[0]
+      switch (etype) {
+        case 'application':
+          return extension.split('/')[1]
+        default:
+          return etype
+      }
     },
     thumbPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'thumb'),
     photoPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'photo'),
@@ -115,9 +143,10 @@ function utils() {
 
     @method safePublicPath
     @param {string} relative or absolute path from /history/public folder; root absolute paths are rejected
-    @return {Promise} string
+    @return {Promise} string of safe file system path
+    @throws {Error}
     */
-    safePublicPath: (rawDestinationPath: string): string => {
+    safePublicPath: (rawDestinationPath: string): string | never => {
       try {
         const normalizedDestinationPath = path.normalize(rawDestinationPath)
         const publicPath = path.normalize(path.join(process.cwd(), 'public'))
@@ -137,8 +166,20 @@ function utils() {
         throw e
       }
     },
+
+    /*
+    Find associated files based on glob pattern
+
+    @method glob
+    @param {string} pattern glob file extension pattern to find matching filenames
+    @return {string[]} array of string associated filenames with absolute path
+    */
+    glob: async (pattern: string) => {
+      const files = await globNpm(pattern)
+      return files.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+    },
   }
 }
 
 export default utils
-export { isStandardError }
+export { isStandardError, isZodError, simplifyZodMessages }
