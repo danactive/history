@@ -26,7 +26,7 @@ type ErrorOptionalMessageBody = {
 }
 
 async function get<T extends boolean = false>(
-  destinationPath: string | string[] | undefined,
+  destinationPath: string | string[] | null | undefined,
   returnEnvelope?: T,
 ): Promise<T extends true ? ResponseEnvelope : ResponseBody>;
 
@@ -37,7 +37,7 @@ async function get<T extends boolean = false>(
  * @returns {Promise} files
  */
 async function get(
-  destinationPath: string | string[] | undefined = '',
+  destinationPath: string | string[] | null | undefined = '',
   returnEnvelope = false,
 ): Promise<
   ResponseEnvelope | ResponseBody | ErrorOptionalMessage | ErrorOptionalMessageBody

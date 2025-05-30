@@ -7,25 +7,26 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
 
-import pagesHandler from '..'
-import utilsFactory from '../../../../../src/lib/utils'
-import type { Filesystem } from '../../../../../src/lib/filesystems'
+import { GET, POST } from '../../app/api/admin/filesystems/route'
+import utilsFactory from '../../src/lib/utils'
+import type { Filesystem } from '../../src/lib/filesystems'
 
 describe('Filesystem API', () => {
   describe('Expect result', () => {
     test('* GET root has favicon', async () => {
       await testApiHandler({
-        pagesHandler,
-        test: async ({ fetch }) => {
-          const response = await fetch({ method: 'GET' })
-          const result = await response.json()
+        appHandler: { GET },
+        url: '/my-url?path=/',
+        async test({ fetch }) {
+          const res = await fetch({ method: 'GET' })
+          expect(res.status).toBe(200)
 
-          expect(response.status).toBe(200)
-
+          const result = await res.json()
+          expect(Array.isArray(result.files)).toBe(true)
           expect(result.files.length).toBeGreaterThan(0)
 
-          const filenames = result.files.map((fileMeta: Filesystem) => fileMeta.filename)
-          expect(filenames.includes('favicon.ico')).toBeTruthy()
+          const filenames = result.files.map((f: Filesystem) => f.filename)
+          expect(filenames.includes('favicon.ico')).toBe(true)
         },
       })
     })
@@ -45,8 +46,10 @@ describe('Filesystem API', () => {
     }
 
     test('* GET fixtures has test files', async () => {
+      const params = { path: 'test/fixtures/walkable' }
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET },
+        url: `/my-url?path=/${params.path}`,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -57,13 +60,14 @@ describe('Filesystem API', () => {
           matchJFile(expect, result.files[0])
           expect(result.files.length).toEqual(3)
         },
-        params: { path: 'test/fixtures/walkable' },
       })
     })
 
     test('* GET fixtures has test files with space in path', async () => {
+      const params = { path: 'test/fixtures/walk%20able' }
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET },
+        url: `/my-url?path=/${params.path}`,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -73,14 +77,14 @@ describe('Filesystem API', () => {
           matchPFile(expect, result.files[0])
           expect(result.files.length).toEqual(1)
         },
-        params: { path: 'test/fixtures/walk%20able' },
       })
     })
 
     test('* GET fixtures and verify all files exist in the filesystem', async () => {
       const params = { path: 'test/fixtures/walkable' }
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET },
+        url: `/my-url?path=/${params.path}`,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -103,29 +107,31 @@ describe('Filesystem API', () => {
             }
           })
         },
-        params,
       })
     })
   })
 
   describe('Expect error', () => {
     test('* POST verb is denied', async () => {
+      const params = { path: '/' }
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET, POST },
+        url: `/my-url?path=/${params.path}`,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'POST' })
-          const result = await response.json()
-
           expect(response.status).toBe(405)
 
+          const result = await response.json()
           expect(result.files.length).toBe(0)
         },
       })
     })
 
     test('* GET protected path', async () => {
+      const params = { path: '../' }
       await testApiHandler({
-        pagesHandler,
+        appHandler: { GET },
+        url: `/my-url?path=/${params.path}`,
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
           const result = await response.json()
@@ -134,7 +140,6 @@ describe('Filesystem API', () => {
 
           expect(result.files.length).toBe(0)
         },
-        params: { path: '../' },
       })
     })
   })
