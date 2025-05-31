@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - '**'  # Match all branches, including main and others
   pull_request: {}
 
 concurrency:
