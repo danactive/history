@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 3030",
+    "dev": "next dev --turbopack -p 3030",
     "build": "next build",
     "start": "next start -p 3030",
-    "lint": "next lint . --fix",
+    "lint": "npx eslint . --ext .ts,.tsx --fix",
     "lint:ci": "next lint .",
     "test": "jest --watch",
     "test:ci": "jest --ci",
@@ -27,7 +27,7 @@
     "heic-convert": "^2.1.0",
     "mapbox-gl": "^3.12.0",
     "mime-types": "^3.0.1",
-    "next": "^14.2.29",
+    "next": "^15.3.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-image-gallery": "^1.4.0",
@@ -52,7 +52,7 @@
     "@types/xml2js": "^0.4.14",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-next": "^14.2.29",
+    "eslint-config-next": "^15.3.3",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -65,7 +65,7 @@
     "snyk": "^1.1297.1",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.3.4",
-    "typescript": "^5.7.0"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": "22",
@@ -74,5 +74,9 @@
   "license": "MIT",
   "peerDependencies": {
     "@testing-library/dom": "^10.4.0"
+  },
+  "overrides": {
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5"
   }
 }

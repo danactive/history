@@ -57,7 +57,8 @@ async function getTodayItems(gallery: string) {
   return { items: allItems, indexedKeywords }
 }
 
-export default async function TodayPage({ params }: { params: { gallery: string } }) {
+export default async function TodayPage(props: { params: Promise<{ gallery: string }> }) {
+  const params = await props.params
   const { items, indexedKeywords } = await getTodayItems(params.gallery)
   return (
     <Suspense fallback={<div>Loading...</div>}>

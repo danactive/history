@@ -33,7 +33,14 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-async function AlbumPage({ params: { album, gallery } }: { params: Album.Params }) {
+async function AlbumPage(props: { params: Promise<Album.Params> }) {
+  const params = await props.params
+
+  const {
+    album,
+    gallery,
+  } = params
+
   const { items, meta, indexedKeywords } = await getAlbumData({ album, gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>

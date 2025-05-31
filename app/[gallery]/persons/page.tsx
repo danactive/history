@@ -54,7 +54,13 @@ async function getPersonsData({ gallery }: All.Params): Promise<All.ComponentPro
   }
 }
 
-export default async function PersonPage({ params: { gallery } }: { params: { gallery: string } }) {
+export default async function PersonPage(props: { params: Promise<{ gallery: string }> }) {
+  const params = await props.params
+
+  const {
+    gallery,
+  } = params
+
   const { items, indexedKeywords } = await getPersonsData({ gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>

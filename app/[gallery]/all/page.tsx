@@ -49,16 +49,20 @@ async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> 
 
 export async function generateStaticParams() {
   const { galleries } = await getGalleries()
-  // Define these galleries as allowed, otherwise 404
-  const paths = galleries.map((gallery) => ({ params: { gallery } }))
-  return paths
+  return galleries.map((gallery) => ({ params: { gallery } }))
 }
 
 export const metadata: Metadata = {
   title: 'All - History App',
 }
 
-async function AllServer({ params: { gallery } }: { params: All.Params }) {
+async function AllServer(props: { params: Promise<All.Params> }) {
+  const params = await props.params
+
+  const {
+    gallery,
+  } = params
+
   const { items = [], indexedKeywords }: All.ComponentProps = await getAllData({ gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>

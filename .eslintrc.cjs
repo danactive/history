@@ -1,5 +1,9 @@
 module.exports = {
-  extends: ['airbnb', 'airbnb/hooks', 'next', 'plugin:testing-library/react', 'plugin:jest-dom/recommended'],
+  // TODO enable airbnb/hooks after resolve conflict with next
+  // TODO enable airbnb it has better reasoning but Next v15 has ugly
+  // extends: ['airbnb', 'airbnb/hooks', 'next', 'plugin:testing-library/react', 'plugin:jest-dom/recommended'],
+  extends: ['next', 'plugin:testing-library/react', 'plugin:jest-dom/recommended'],
+  ignorePatterns: ['node_modules/', 'ui/', 'api/'],
   parserOptions: {
     ecmaVersion: 2020,
   },
@@ -25,7 +29,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['**/*.{ts,tsx,mjs,cjs,js,jsx}'],
       rules: {
         'no-unused-vars': 'off',
         'no-undef': 'off',

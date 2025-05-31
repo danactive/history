@@ -26,7 +26,13 @@ async function getAlbumsData(gallery: string): Promise<Gallery.ComponentProps> {
   }
 }
 
-async function GalleryPage({ params: { gallery } }: { params: Gallery.Params }) {
+async function GalleryPage(props: { params: Promise<Gallery.Params> }) {
+  const params = await props.params
+
+  const {
+    gallery,
+  } = params
+
   const { albums, indexedKeywords } = await getAlbumsData(gallery)
 
   return (
