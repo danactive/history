@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from 'next'
 import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/AlbumPage'
@@ -6,6 +7,17 @@ import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { Album } from '../../../src/types/pages'
+
+export async function generateMetadata(
+  { params }: { params: Promise<Album.Params> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const album = (await params).album
+
+  return {
+    title: `Album ${album} - History App`,
+  }
+}
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()

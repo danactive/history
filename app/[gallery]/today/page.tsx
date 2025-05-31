@@ -1,17 +1,22 @@
 import { Suspense } from 'react'
 
+import type { Metadata } from 'next'
 import config from '../../../config.json'
+import AlbumPageComponent from '../../../src/components/AlbumPage'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
-import AlbumPageComponent from '../../../src/components/AlbumPage'
-import type { AlbumMeta, IndexedKeywords, Item } from '../../../src/types/common'
+import type { AlbumMeta, Item } from '../../../src/types/common'
 
 interface ServerSideTodayItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+}
+
+export const metadata: Metadata = {
+  title: 'Today - History App',
 }
 
 export async function generateStaticParams() {

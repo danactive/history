@@ -1,8 +1,8 @@
 'use client'
 
 import { CssVarsProvider } from '@mui/joy/styles'
-import './global.css'
 import { themeMui } from '../src/theme'
+import './global.css'
 
 export default function RootLayout({
   children,

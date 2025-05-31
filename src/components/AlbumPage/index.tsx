@@ -1,6 +1,6 @@
 'use client'
 
-import Head from 'next/head'
+import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
@@ -12,6 +12,10 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
+
+export const metadata: Metadata = {
+  title: 'Album - History App',
+}
 
 function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
@@ -37,10 +41,6 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
 
   return (
     <div>
-      <Head>
-        <title>History App - Album</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <AlbumContext.Provider value={meta}>
         {searchBox}
         {memoryHtml}
