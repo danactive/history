@@ -16,7 +16,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 ## Installation
 
 ### Development
-1. Node.js v18 LTS [Download](https://nodejs.org/)
+1. Node.js via [nvm](https://github.com/nvm-sh/nvm)
 2. Install project dependencies `npm ci`
 
 #### How-to run on LOCAL
