@@ -1,15 +1,14 @@
 import type { Metadata } from 'next'
-import type { ParsedUrlQuery } from 'node:querystring'
+import { Suspense } from 'react'
 
 import config from '../../../config.json'
+import AllClient from '../../../src/components/All/AllClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
-
-import type { All } from '../../../src/types/pages'
 import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/common'
-import AllClient from '../../../src/components/All/AllClient'
+import type { All } from '../../../src/types/pages'
 
 async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> {
   const { albums } = await getAlbums(gallery)
@@ -62,7 +61,9 @@ export const metadata: Metadata = {
 async function AllServer({ params: { gallery } }: { params: All.Params }) {
   const { items = [], indexedKeywords }: All.ComponentProps = await getAllData({ gallery })
   return (
-    <AllClient items={items} indexedKeywords={indexedKeywords} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AllClient items={items} indexedKeywords={indexedKeywords} />
+    </Suspense>
   )
 }
 
