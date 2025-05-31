@@ -3,8 +3,8 @@ import type ReactImageGallery from 'react-image-gallery'
 
 import Link from '../components/Link'
 import type { Item } from '../types/common'
-import styles from './memory.module.css'
 import applyAge from '../utils/person'
+import styles from './memory.module.css'
 
 interface Viewed {
   (index: number): void;
