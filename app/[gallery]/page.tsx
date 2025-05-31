@@ -1,11 +1,16 @@
 import { Suspense } from 'react'
 
+import type { Metadata } from 'next'
 import GalleryPageComponent from '../../src/components/GalleryPage'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
 import indexKeywords from '../../src/lib/search'
 import type { ServerSideAlbumItem } from '../../src/types/common'
 import type { Gallery } from '../../src/types/pages'
+
+export const metadata: Metadata = {
+  title: 'Albums - History App',
+}
 
 export async function generateStaticParams() {
   const { galleries } = await getGalleries()
