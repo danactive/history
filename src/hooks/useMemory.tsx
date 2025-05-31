@@ -11,7 +11,7 @@ interface Viewed {
 }
 const useMemory = (
   filtered: Item[],
-  refImageGallery: RefObject<ReactImageGallery>,
+  refImageGallery: RefObject<ReactImageGallery | null>,
 ) => {
   const [viewedList, setViewedList] = useState(new Set<string>())
   const [details, setDetails] = useState(filtered[0])

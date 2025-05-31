@@ -26,7 +26,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzh
 
 export default function SlippyMap(
   { items = [], centroid = null, mapRef }:
-  { items: Item[], centroid: Item | null, mapRef: RefObject<MapRef> | null },
+  { items: Item[], centroid: Item | null, mapRef: RefObject<MapRef | null> | null },
 ) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
