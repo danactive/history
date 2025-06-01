@@ -1,3 +1,4 @@
+import getGalleries from './galleries'
 import utilsFactory from './utils'
 import type {
   AlbumMeta,
@@ -71,6 +72,10 @@ async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | unde
   try {
     if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
       throw new ReferenceError('Gallery name is missing')
+    }
+    const { galleries } = await getGalleries(false)
+    if (!galleries.includes(gallery)) {
+      throw new ReferenceError(`Gallery name (${gallery}) is not expected`)
     }
     const xmlGallery = await readGallery(gallery)
     const body = transformJsonSchema(xmlGallery, gallery)

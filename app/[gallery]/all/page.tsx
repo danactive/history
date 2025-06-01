@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   title: 'All - History App',
 }
 
-async function AllServer(props: { params: Promise<All.Params> }) {
+export default async function AllServer(props: { params: Promise<All.Params> }) {
   const params = await props.params
 
   const {
@@ -70,5 +70,3 @@ async function AllServer(props: { params: Promise<All.Params> }) {
     </Suspense>
   )
 }
-
-export default AllServer

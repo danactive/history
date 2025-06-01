@@ -31,7 +31,7 @@ async function getAlbumsData(gallery: string): Promise<Gallery.ComponentProps> {
   }
 }
 
-async function GalleryPage(props: { params: Promise<Gallery.Params> }) {
+export default async function GalleryServer(props: { params: Promise<Gallery.Params> }) {
   const params = await props.params
 
   const {
@@ -46,5 +46,3 @@ async function GalleryPage(props: { params: Promise<Gallery.Params> }) {
     </Suspense>
   )
 }
-
-export default GalleryPage

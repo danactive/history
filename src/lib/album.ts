@@ -1,5 +1,6 @@
 import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
 import type { Album, AlbumMeta } from '../types/common'
+import getGalleries from './galleries'
 import getPersons from './persons'
 import { readAlbum } from './xml'
 
@@ -31,6 +32,10 @@ async function get(
     }
     if (!album === null || album === undefined || Array.isArray(album)) {
       throw new ReferenceError('Album name is missing')
+    }
+    const { galleries } = await getGalleries(false)
+    if (!galleries.includes(gallery)) {
+      throw new ReferenceError(`Gallery name (${gallery}) is not expected`)
     }
     const xmlAlbum = await readAlbum(gallery, album)
 

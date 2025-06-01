@@ -1,6 +1,7 @@
 'use client'
 
 import type { Metadata } from 'next'
+
 import useSearch from '../../hooks/useSearch'
 import type { Gallery } from '../../types/pages'
 import Galleries from '../Albums'
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   title: 'List Albums - History App',
 }
 
-function GalleryPage({ gallery, albums, indexedKeywords }: Gallery.ComponentProps) {
+export default function GalleryClient({ gallery, albums, indexedKeywords }: Gallery.ComponentProps) {
   const {
     filtered,
     searchBox,
@@ -30,5 +31,3 @@ function GalleryPage({ gallery, albums, indexedKeywords }: Gallery.ComponentProp
     </>
   )
 }
-
-export default GalleryPage

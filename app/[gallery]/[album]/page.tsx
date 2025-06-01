@@ -45,7 +45,7 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-async function AlbumPage(props: { params: Promise<Album.Params> }) {
+export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
   const params = await props.params
 
   const {
@@ -60,5 +60,3 @@ async function AlbumPage(props: { params: Promise<Album.Params> }) {
     </Suspense>
   )
 }
-
-export default AlbumPage

@@ -59,7 +59,7 @@ async function getPersonsData({ gallery }: All.Params): Promise<All.ComponentPro
   }
 }
 
-export default async function PersonPage(props: { params: Promise<{ gallery: string }> }) {
+export default async function PersonsServer(props: { params: Promise<{ gallery: string }> }) {
   const params = await props.params
 
   const {

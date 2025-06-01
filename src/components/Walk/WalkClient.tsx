@@ -33,7 +33,7 @@ async function getImages(pathQs: string): Promise<Filesystem[]> {
   return resultPossibleHeif.files
 }
 
-function WalkPage() {
+export default function WalkClient() {
   const searchParams = useSearchParams()
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
@@ -64,10 +64,11 @@ function WalkPage() {
     <>
       <List>
         {fsItems.map((item, i) => (
-          <Fragment key={item.id}>
+          // TODO something starting Next.js v15 started to add HTML attribute to Fragment with browser errors
+          <span key={item.id}>
             {i > 0 && <ListDivider />}
             <ListFile item={item} />
-          </Fragment>
+          </span>
         ))}
       </List>
       {hasImages && (
@@ -76,5 +77,3 @@ function WalkPage() {
     </>
   )
 }
-
-export default WalkPage
