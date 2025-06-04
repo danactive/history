@@ -1,7 +1,6 @@
+import JoyLink from '@mui/joy/Link'
 import NextLink from 'next/link'
-import { memo, type ReactNode } from 'react'
-
-import styles from './styles.module.css'
+import { type ReactNode } from 'react'
 
 interface InputProps extends React.ComponentPropsWithoutRef<'a'> {
   children: ReactNode;
@@ -10,8 +9,10 @@ interface InputProps extends React.ComponentPropsWithoutRef<'a'> {
 
 function Link({ children, ...props }: InputProps) {
   return (
-    <NextLink className={styles.link} {...props}>{children}</NextLink>
+    <JoyLink {...props} color='primary' component={NextLink}>
+      {children}
+    </JoyLink>
   )
 }
 
-export default memo(Link)
+export default Link
