@@ -3,7 +3,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import get from '../../../../../../src/lib/album'
 import { errorSchema } from '../../../../../../src/models/album'
 
-async function GET(request: NextRequest, { params: { gallery, album } }: { params: { gallery: string, album: string } }) {
+async function GET(
+  request: NextRequest,
+  props: { params: Promise<{ gallery: string, album: string }> },
+) {
+  const params = await props.params
+
+  const {
+    gallery,
+    album,
+  } = params
+
   const out = await get(gallery, album, true)
   return NextResponse.json(out.body, { status: out.status })
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { Button } from '@mui/joy'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction, useEffect, useMemo, useState,
@@ -81,11 +82,13 @@ export default function useSearch<ItemType extends ServerSideItem>({
           onChange={setSelectedOption}
           value={selectedOption}
         />
-        <input
+        <Button
           type="submit"
-          value="Filter"
           title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
-        />
+          color='neutral'
+        >
+          Filter
+        </Button>
       </div>
     </form>
   )

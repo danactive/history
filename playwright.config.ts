@@ -1,6 +1,6 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
-import config from './config.json' assert { type: 'json' }
+import config from './config.json' with { type: 'json' }
 
 /**
  * Read environment variables from file.
@@ -57,4 +57,4 @@ export default defineConfig({
     port: config.nextPort,
     reuseExistingServer: !process.env.CI,
   },
-});
+})

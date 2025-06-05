@@ -1,7 +1,11 @@
+import type { Metadata } from 'next'
+
 import Link from '../../src/components/Link'
 
-function AdminPage() {
-  return <div><Link href="/admin/walk">Walk</Link></div>
+export const metadata: Metadata = {
+  title: 'Admin - History App',
 }
 
-export default AdminPage
+export default function AdminServer() {
+  return <div><Link href="/admin/walk">Walk</Link></div>
+}

@@ -1,8 +1,5 @@
-'use client'
-
-import { CssVarsProvider } from '@mui/joy/styles'
+import ThemeRegistry from '../src/components/ThemeRegistry'
 import './global.css'
-import { themeMui } from '../src/theme'
 
 export default function RootLayout({
   children,
@@ -12,9 +9,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <CssVarsProvider theme={themeMui}>
+        <ThemeRegistry options={{ key: 'joy' }}>
           {children}
-        </CssVarsProvider>
+        </ThemeRegistry>
       </body>
     </html>
   )

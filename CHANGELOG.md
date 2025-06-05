@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.3.1](https://github.com/danactive/history/compare/v10.3.0...v10.3.1) (2025-06-05)
+
+
+### Bug Fixes
+
+* **CI:** Run all lint/tests on all branches without PRs ([3819a69](https://github.com/danactive/history/commit/3819a69b5d8d1249599cb66d344dea5c87419edf))
+* **CI:** Update playwright to v4 ([3cdb382](https://github.com/danactive/history/commit/3cdb382640e66b09eadc6ee0299ff04d2ea034f8))
+* **Gallery > All:** Link to specific selected photo displays on load ([8d2d197](https://github.com/danactive/history/commit/8d2d197de82e5f7060e0b051aa699b55d284f2e2))
+* **Gallery:** Lookup gallery names to verify if incoming gallery param is valid ([315964f](https://github.com/danactive/history/commit/315964f640efd81c725a40610f0f421c09c38ed2))
+* **Link:** MUI Joy link serves Next link (works in server and client) ([9eaad55](https://github.com/danactive/history/commit/9eaad557c975411a12eb38f716b40ecaac0bef67))
+* **Styles:** Decrease hydration error with MUI Joy components ([cd866b2](https://github.com/danactive/history/commit/cd866b28a3b5c97f92c61f4d95fabf0d3adea76d))
+
+
 ## [10.3.0](https://github.com/danactive/history/compare/v10.1.0...v10.3.0) (2025-05-30)
 
 

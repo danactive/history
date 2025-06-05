@@ -1,13 +1,16 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 
-import WalkPageComp from '../../../src/components/Walk/WalkPage'
+import WalkClient from '../../../src/components/Walk/WalkClient'
 
-function WalkPage() {
+export const metadata: Metadata = {
+  title: 'Admin > Walk - History App',
+}
+
+export default function WalkServer() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <WalkPageComp />
+      <WalkClient />
     </Suspense>
   )
 }
-
-export default WalkPage

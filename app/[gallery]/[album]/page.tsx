@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from 'next'
 import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/AlbumPage'
@@ -6,6 +7,17 @@ import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { Album } from '../../../src/types/pages'
+
+export async function generateMetadata(
+  { params }: { params: Promise<Album.Params> },
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const album = (await params).album
+
+  return {
+    title: `Album ${album} - History App`,
+  }
+}
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
@@ -33,7 +45,14 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-async function AlbumPage({ params: { album, gallery } }: { params: Album.Params }) {
+export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
+  const params = await props.params
+
+  const {
+    album,
+    gallery,
+  } = params
+
   const { items, meta, indexedKeywords } = await getAlbumData({ album, gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -41,5 +60,3 @@ async function AlbumPage({ params: { album, gallery } }: { params: Album.Params 
     </Suspense>
   )
 }
-
-export default AlbumPage

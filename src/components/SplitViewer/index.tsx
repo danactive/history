@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
 import {
-  useContext, useRef, type LegacyRef, type ReactNode,
+  useContext, useRef, type Ref, type ReactNode,
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
@@ -63,7 +63,7 @@ function SplitViewer({
   setMemoryIndex,
 }: {
   items: Item[];
-  refImageGallery: LegacyRef<ImageGallery> | null;
+  refImageGallery: Ref<ImageGallery> | null;
   setViewed: Viewed;
   memoryIndex: number;
   setMemoryIndex: Function;

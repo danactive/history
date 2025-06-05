@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 
+import type { Metadata } from 'next'
 import config from '../../../config.json'
 import PersonsClient from '../../../src/components/Persons/PersonsClient'
 import getAlbum from '../../../src/lib/album'
@@ -8,6 +9,10 @@ import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/common'
 import type { All } from '../../../src/types/pages'
+
+export const metadata: Metadata = {
+  title: 'Persons - History App',
+}
 
 export async function generateStaticParams() {
   const { galleries } = await getGalleries()
@@ -54,7 +59,13 @@ async function getPersonsData({ gallery }: All.Params): Promise<All.ComponentPro
   }
 }
 
-export default async function PersonPage({ params: { gallery } }: { params: { gallery: string } }) {
+export default async function PersonsServer(props: { params: Promise<{ gallery: string }> }) {
+  const params = await props.params
+
+  const {
+    gallery,
+  } = params
+
   const { items, indexedKeywords } = await getPersonsData({ gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>

@@ -1,4 +1,5 @@
 import type ReactImageGallery from 'react-image-gallery'
+
 import config from '../../../config.json'
 import type { ServerSideAllItem } from '../../types/common'
 import Img from '../Img'
@@ -8,7 +9,7 @@ import styles from './styles.module.css'
 interface InputProps {
   items: ServerSideAllItem[],
   keyword: string,
-  refImageGallery: React.RefObject<ReactImageGallery>,
+  refImageGallery: React.RefObject<ReactImageGallery | null>,
 }
 
 function All({ items, keyword, refImageGallery }: InputProps) {
@@ -23,7 +24,7 @@ function All({ items, keyword, refImageGallery }: InputProps) {
       {items.map((item, index) => (
         <li key={item.filename.toString()}>
           <b className={styles.albumName}>{item.album}</b>
-          <Link href={`/${item.gallery}/${item.album}#select${item.id}`} title={item.corpus}>
+          <Link href={`/${item.gallery}/${item.album}?select=${item.id}`} title={item.corpus}>
             {!showThumbnail(keyword) && item.caption}
             {showThumbnail(keyword) && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
           </Link>

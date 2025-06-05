@@ -1,17 +1,21 @@
 'use client'
 
-import Head from 'next/head'
-import { useRef, useState } from 'react'
+import type { Metadata } from 'next'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import useMemory from '../../hooks/useMemory'
 import useSearch from '../../hooks/useSearch'
+import type { Album } from '../../types/pages'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
 
-import type { Album } from '../../types/pages'
+export const metadata: Metadata = {
+  title: 'Album - History App',
+}
 
 function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
@@ -21,6 +25,15 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     searchBox,
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
+  const searchParams = useSearchParams()
+  const selectId = searchParams.get('select')
+
+  useEffect(() => {
+    if (selectId) {
+      selectThumb(filtered.findIndex(f => f.id === selectId))
+    }
+  }, [selectId])
+
 
   function selectThumb(index: number) {
     refImageGallery.current?.slideToIndex(index)
@@ -28,10 +41,6 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
 
   return (
     <div>
-      <Head>
-        <title>History App - Album</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <AlbumContext.Provider value={meta}>
         {searchBox}
         {memoryHtml}

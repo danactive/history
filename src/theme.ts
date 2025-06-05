@@ -2,6 +2,25 @@ import { extendTheme } from '@mui/joy/styles'
 
 export const themeMui = extendTheme({
   components: {
+    JoyLink: {
+      styleOverrides: {
+        root: {
+          color: '#6cc0e5',
+          '&:hover': {
+            color: '#e6df55',
+          },
+          '&:active': {
+            color: '#999540',
+          },
+          '&:visited': {
+            color: '#e68393',
+          },
+          '&:visited:hover': {
+            color: '#e6df55',
+          },
+        },
+      },
+    },
     JoyListDivider: {
       defaultProps: {
         inset: 'gutter',
