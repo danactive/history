@@ -83,7 +83,7 @@ function SplitViewer({
     } else if (div?.mozRequestFullScreen) {
       div.mozRequestFullScreen()
     } else {
-      console.error('Failed to fullscreen') // eslint-disable-line no-console
+      console.error('Failed to fullscreen')
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
@@ -99,7 +99,6 @@ function SplitViewer({
       })
     }
   }
-  /* eslint-disable react/no-unused-prop-types */
   return (
     <>
       <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString">

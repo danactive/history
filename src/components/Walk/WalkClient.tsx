@@ -23,7 +23,7 @@ async function getImages(pathQs: string): Promise<Filesystem[]> {
     method: 'POST',
   })
   const resultHeif: HeifResponseBody = await heifResponse.json()
-  // eslint-disable-next-line no-console
+   
   console.log(`Newly created HEIF files ${resultHeif.created.length}`)
   if (resultHeif.created.length > 0) {
     const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)

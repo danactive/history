@@ -59,7 +59,7 @@ export function associateMedia(items: Walk.ItemFile | Walk.ItemFile[]) {
 
     if (groupKey === undefined) { return out }
     // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
-    // eslint-disable-next-line no-param-reassign
+     
     const groupKeyStr = String(groupKey)
     if (!out.has(groupKeyStr)) {
       out.set(groupKeyStr, [])
