@@ -99,7 +99,7 @@ describe('Filesystem API', () => {
           await result.files.forEach(async (file: Filesystem) => {
             try {
               const filenamePath = path.join(publicPath, params.path, file.filename)
-              const options = fs.constants.R_OK | fs.constants.W_OK // eslint-disable-line no-bitwise
+              const options = fs.constants.R_OK | fs.constants.W_OK  
               const existsError = await fsAccess(filenamePath, options)
               expect(existsError).toBeUndefined()
             } catch (error) {

@@ -10,7 +10,7 @@ import type { GalleryAlbum, IndexedKeywords, Item } from '../types/common'
 function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] }[]) {
   const summedKeywords = items.reduce((out, item) => {
     item.search?.split(', ').forEach((val) => {
-      // eslint-disable-next-line no-param-reassign
+       
       out[val] = (out[val] || 0) + 1
     })
     return out

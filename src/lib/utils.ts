@@ -93,9 +93,9 @@ function isZodError(error: unknown): error is z.core.$ZodError {
 
 function simplifyZodMessages(error: z.core.$ZodError) {
   return error?.issues.reduce((prev: string, curr: z.core.$ZodIssue) => {
-    // eslint-disable-next-line no-param-reassign
+     
     if (prev === '') prev += curr.message
-    // eslint-disable-next-line no-param-reassign
+     
     else prev += `; ${curr.message}`
     return prev
   }, '')

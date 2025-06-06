@@ -24,7 +24,7 @@ function uniqueHeifs(files: Filesystem[]) {
   const groupedFiles = files.reduce((groups: Record<string, Filesystem[]>, file) => {
     const nameWithoutExt = basename(file.name, file.ext)
     if (!groups[nameWithoutExt]) {
-      // eslint-disable-next-line no-param-reassign
+       
       groups[nameWithoutExt] = []
     }
     groups[nameWithoutExt].push(file)
@@ -41,16 +41,16 @@ function uniqueHeifs(files: Filesystem[]) {
 const utils = utilsFactory()
 async function processHeif(file: Filesystem, destinationPath: string): Promise<string> {
   const filenameHeif = utils.filenameAsJpg(file.filename)
-  // eslint-disable-next-line no-await-in-loop
+   
   const inputBuffer = await readFile(`public/${file.path}`)
-  // eslint-disable-next-line no-await-in-loop
+   
   const outputBuffer = await convert({
     // @ts-ignore @types/heic-convert v2.1.0 has incorrect type https://github.com/catdad-experiments/heic-convert/issues/42
     buffer: inputBuffer, // the HEIF file buffer
     format: 'JPEG', // output format
     quality: 0.8, // the jpeg compression quality, between 0 and 1
   })
-  // eslint-disable-next-line no-await-in-loop
+   
   await writeFile(`public${destinationPath}/${filenameHeif}`, new Uint8Array(outputBuffer))
   return filenameHeif
 }
@@ -75,7 +75,7 @@ async function post(
   try {
     const heifs: string[] = []
     for (const file of uniqueHeifs(files)) {
-      // eslint-disable-next-line no-await-in-loop
+       
       heifs.push(await processHeif(file, destinationPath))
     }
 

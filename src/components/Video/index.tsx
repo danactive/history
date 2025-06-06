@@ -35,7 +35,6 @@ function VideoPlayerHtml5(
   return (
     <>
       {description && <span className="image-gallery-description">{description}</span>}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         poster={poster}
         controls

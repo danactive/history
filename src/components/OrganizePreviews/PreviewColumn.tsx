@@ -15,7 +15,7 @@ function dragClass(isDraggingOver: boolean, isDraggingFrom: boolean) {
   return `${styles.isWithoutDrag} ${styles.wrapper}`
 }
 
-// eslint-disable-next-line prefer-arrow-callback
+ 
 const InnerPreviewColumn = memo(function InnerPreviewColumn(
   { items }:
   { items: Filesystem[] },

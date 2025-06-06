@@ -91,7 +91,7 @@ async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | unde
       return { body: errorSchema(message), status: 404 }
     }
 
-    // eslint-disable-next-line no-console
+     
     console.error('ERROR', message, e)
     throw e
   }

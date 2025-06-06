@@ -14,7 +14,7 @@ export default function ActionButtons(
   const searchParams = useSearchParams()
   const pathQs = searchParams?.get('path') ?? '/'
   async function rename() {
-    // eslint-disable-next-line no-alert
+     
     let date = window.prompt('Date of images (YYYY-MM-DD)?')
     if (date === '') date = null
     const today = new Intl.DateTimeFormat('en-CA', {
