@@ -18,7 +18,7 @@ export default [
       "@typescript-eslint": ts, // TypeScript recommended rules
       "testing-library": testingLibrary,
       "jest-dom": jestDom,
-      next,
+      "@next/next": next,
       jsdoc,
     },
     languageOptions: {
@@ -31,6 +31,7 @@ export default [
       },
     },
     rules: {
+      ...next.configs.recommended.rules,
       "max-len": [2, 150, 4], // increase page width
       "semi": ["error", "never"], // remove semicolons
       "jsdoc/require-description": "warn", // Ensure descriptions are present
