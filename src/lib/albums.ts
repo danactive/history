@@ -61,7 +61,7 @@ async function get<T extends boolean = false>(
  * Get Albums from local filesystem
  * @param {string} gallery name of gallery
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
- * @returns {Object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
+ * @returns {object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
 async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null, returnEnvelope = false): Promise<
   GalleryAlbums
