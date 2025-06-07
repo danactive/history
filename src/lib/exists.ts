@@ -1,3 +1,4 @@
+// TODO replace boom
 import boom from 'boom'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -9,10 +10,10 @@ const getStat = promisify(fs.stat)
 
 const MODULE_NAME = 'pathExists'
 
-/*
+/**
 Verify if a path exists on the file system
 
-@method pathExists
+@function pathExists
 @param {string} verifyPath relative/absolute path (file or folder) on the file system
 @returns {Promise} root absolute path
 */

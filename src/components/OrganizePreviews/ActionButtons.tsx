@@ -13,6 +13,7 @@ export default function ActionButtons(
   const [textXml, setTextXml] = useState('')
   const searchParams = useSearchParams()
   const pathQs = searchParams?.get('path') ?? '/'
+
   async function rename() {
      
     let date = window.prompt('Date of images (YYYY-MM-DD)?')
@@ -44,9 +45,28 @@ export default function ActionButtons(
     setTextXml(result.xml)
   }
 
+  async function resize() {
+    const postBody = {
+      source_folder: pathQs,
+    }
+
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(postBody),
+    }
+
+    const response = await fetch('/api/admin/resize', options)
+    const result: RenameResponseBody = await response.json()
+    console.log('Resize', result)
+  }
+
   return (
     <div>
-      <Button onClick={() => rename()}>Rename</Button>
+      <Button color='neutral' onClick={() => rename()}>Rename</Button>
+      <Button color='neutral' onClick={() => resize()}>Resize</Button>
       <Textarea
         disabled={false}
         minRows={2}
