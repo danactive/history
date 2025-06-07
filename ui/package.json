@@ -85,7 +85,7 @@
     "offline-plugin": "^5.0.7",
     "react": "16.14.0",
     "react-app-polyfill": "^1.0.6",
-    "react-beautiful-dnd": "13.1.0",
+    "react-beautiful-dnd": "13.1.1",
     "react-dates": "^21.8.0",
     "react-dom": "16.14.0",
     "react-helmet-async": "1.0.7",
