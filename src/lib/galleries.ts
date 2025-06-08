@@ -11,26 +11,26 @@ const errorSchema = (message?: string) => {
 
 type Gallery = string
 
-type Galleries = {
+type GalleryBody = {
   galleries: Gallery[]
 }
 
-type GalleryBody = {
-  body: Galleries; status: number;
+type GalleryResponse = {
+  body: GalleryBody; status: number;
 }
 
 type ErrorOptionalMessageBody = {
   body: ErrorOptionalMessage; status: number;
 }
 
-async function get<T extends boolean = false>(returnEnvelope?: T): Promise<T extends true ? GalleryBody : Galleries>;
+async function get<T extends boolean = false>(returnEnvelope?: T): Promise<T extends true ? GalleryResponse : GalleryBody>;
 /**
  * Get Galleries from local filesystem
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {Promise} galleries
  */
 async function get(returnEnvelope = false): Promise<
-  Galleries | ErrorOptionalMessage | GalleryBody | ErrorOptionalMessageBody
+  GalleryBody | ErrorOptionalMessage | GalleryResponse | ErrorOptionalMessageBody
 > {
   try {
     const hasPrefix = (content: fsCallback.Dirent) => content.isDirectory()
