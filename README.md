@@ -30,15 +30,10 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 
 ### Legacy Development
 1. Node.js v12 [Download](https://nodejs.org/)
-1. Folder **api** is the backend; **ui** is the frontend
+1. Folder **api** is for editing album using jQuery
 1. Install project dependencies `npm ci`
-1. Optional [configuration](#environment-configuration)
 1. Start web server `npm start`
 1. View address in browser (printed in terminal on successful load)
-
-#### Environment configuration
-1. Create a `.env` file in the project root
-1. To enable Dropbox for hosting photos place Dropbox API v2 access token `HISTORY_DROPBOX_ACCESS_TOKEN=`
 
 ## Changelog of releases
 See [CHANGELOG](CHANGELOG.md)
