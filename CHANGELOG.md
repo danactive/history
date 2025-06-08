@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.4.0](https://github.com/danactive/history/compare/v10.3.1...v10.4.0) (2025-06-08)
+
+
+### Features
+
+* **Admin > Walk > Resize:** Add resize route for producing photos and thumbs ([505c15a](https://github.com/danactive/history/commit/505c15af5699edc934111ff4d91195f7ebea989a))
+* **package > eslint > jsdoc:** Add jsdoc checker ([3f8ea69](https://github.com/danactive/history/commit/3f8ea69627daaf5b01b6e3179c4989f1a231ee39))
+* **package > eslint:** Update to flat config and remove Airbnb comments to disable rules since it still doesn't work with eslint v9 and conflicts with Next.js ([63dc5cb](https://github.com/danactive/history/commit/63dc5cb53459392ac3bf7e07842d736915843705))
+
+
+### Bug Fixes
+
+* **eslint > Next:** Fix npm run build to detect next ([20aa798](https://github.com/danactive/history/commit/20aa798e7198a5a0d883e74dd9e387d5dd8e008b))
+* **Next > API > Exists:** Remove boom from hapi references as it's old ([8174560](https://github.com/danactive/history/commit/81745602515113b59e1aad0cc29b4ab354353298))
+
 ### [10.3.1](https://github.com/danactive/history/compare/v10.3.0...v10.3.1) (2025-06-05)
 
 
