@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.0.0](https://github.com/danactive/history/compare/v10.4.0...v11.0.0) (2025-06-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **UI:** Next.js in root has functional equivalents so delete obsolete UI project
+
+### Features
+
+* **UI:** Delete React boilerplate project losing Dropbox infinite scroll ([0a7c450](https://github.com/danactive/history/commit/0a7c4506b1565dc321a7abd76a20d71899a1ce74))
+
 ## [10.4.0](https://github.com/danactive/history/compare/v10.3.1...v10.4.0) (2025-06-08)
 
 
