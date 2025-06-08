@@ -62,7 +62,6 @@ export default function ActionButtons(
 
     const response = await fetch('/api/admin/resize', options)
     const result: ResizeResponseBody = await response.json()
-    console.log('Resize', result)
   }
 
   return (
