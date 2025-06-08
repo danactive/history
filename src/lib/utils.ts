@@ -28,8 +28,8 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
 
 /**
  * Photo or thumbnail path to public folder on local filesystem
- * @param {object} item
- * @param {string} gallery
+ * @param {object} filename file plus extension
+ * @param {string} gallery name
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
@@ -42,8 +42,8 @@ const rasterPath = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMet
 
 /**
  * Video paths to public folder on local filesystem
- * @param {object} item
- * @param {string} gallery
+ * @param {object} filename file plus extension
+ * @param {string} gallery name
  * @returns {string[]} path
  */
 const getVideoPaths = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => {
@@ -93,9 +93,9 @@ function isZodError(error: unknown): error is z.core.$ZodError {
 
 function simplifyZodMessages(error: z.core.$ZodError) {
   return error?.issues.reduce((prev: string, curr: z.core.$ZodIssue) => {
-     
+
     if (prev === '') prev += curr.message
-     
+
     else prev += `; ${curr.message}`
     return prev
   }, '')

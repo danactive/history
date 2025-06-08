@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
 import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
+import type { ResizeRequestBody, ResizeResponseBody } from '../../lib/resize'
 
 export default function ActionButtons(
   { items }:
@@ -15,7 +16,7 @@ export default function ActionButtons(
   const pathQs = searchParams?.get('path') ?? '/'
 
   async function rename() {
-     
+
     let date = window.prompt('Date of images (YYYY-MM-DD)?')
     if (date === '') date = null
     const today = new Intl.DateTimeFormat('en-CA', {
@@ -46,8 +47,9 @@ export default function ActionButtons(
   }
 
   async function resize() {
-    const postBody = {
+    const postBody: ResizeRequestBody = {
       source_folder: pathQs,
+      get_metadata: false,
     }
 
     const options = {
@@ -59,7 +61,7 @@ export default function ActionButtons(
     }
 
     const response = await fetch('/api/admin/resize', options)
-    const result: RenameResponseBody = await response.json()
+    const result: ResizeResponseBody = await response.json()
     console.log('Resize', result)
   }
 

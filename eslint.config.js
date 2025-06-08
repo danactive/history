@@ -35,10 +35,12 @@ export default [
       "max-len": [2, 150, 4], // increase page width
       "semi": ["error", "never"], // remove semicolons
       "jsdoc/require-description": "warn", // Ensure descriptions are present
-      "jsdoc/require-param-type": "error", // Enforce TypeScript types in @param
-      "jsdoc/require-returns-type": "error", // Enforce TypeScript types in @returns
+      "jsdoc/require-param-description": "error", // Enforce if JSDoc comment exists than have a desc
+      "jsdoc/require-param-type": "error", // Enforce TS types in @param
+      "jsdoc/check-param-names": "error",  // Enforce TS names in @param
+      "jsdoc/require-returns-type": "error", // Enforce TS types in @returns
       "jsdoc/check-tag-names": "error", // Validate JSDoc tag names
-      "jsdoc/check-types": "error", // Ensure TypeScript types are correctly used
+      "jsdoc/check-types": "error", // Ensure TS types are correctly used
     },
     settings: {
       jsdoc: {

@@ -3,14 +3,14 @@ import type { GalleryAlbum, IndexedKeywords, Item } from '../types/common'
 /**
  * Index search keywords from search xml element and dedupe
  *
- * @param {object[]} items
- * @param {string} items.search
+ * @param {object[]} items photos, albums, galleries any item that may be searched
+ * @param {string} items.search keyword
  * @returns {{ indexedKeywords }}
  */
 function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] }[]) {
   const summedKeywords = items.reduce((out, item) => {
     item.search?.split(', ').forEach((val) => {
-       
+
       out[val] = (out[val] || 0) + 1
     })
     return out
