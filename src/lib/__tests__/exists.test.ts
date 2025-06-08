@@ -54,7 +54,7 @@ describe('Exists library', () => {
         const verifiedPath = await pathExists(testPath)
         expect(verifiedPath).toBeUndefined()
       } catch (error) {
-        expect('isBoom' in (error as Error)).toBeTruthy()
+        expect((error as Error).message).toContain('pathExists')
       }
     }
 

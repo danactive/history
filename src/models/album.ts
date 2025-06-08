@@ -149,7 +149,7 @@ function transformMeta(dirty: XmlAlbum): AlbumMeta {
 
 /**
  * Transform dirty JSON from XML into clean JSON schema
- * @param {object} dirty
+ * @param {object} dirty raw XML before processing
  * @returns {object} clean JSON
  */
 const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {

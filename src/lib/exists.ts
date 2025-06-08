@@ -1,4 +1,3 @@
-import boom from 'boom'
 import fs from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
@@ -9,16 +8,16 @@ const getStat = promisify(fs.stat)
 
 const MODULE_NAME = 'pathExists'
 
-/*
+/**
 Verify if a path exists on the file system
 
-@method pathExists
+@function pathExists
 @param {string} verifyPath relative/absolute path (file or folder) on the file system
 @returns {Promise} root absolute path
 */
 const pathExists = async (verifyPath: string | undefined | null) => {
   if (verifyPath === undefined || verifyPath === null) {
-    throw boom.notFound(`${MODULE_NAME}: File system path is missing (${verifyPath})`)
+    throw new Error(`${MODULE_NAME}: File system path is missing (${verifyPath})`)
   }
 
   const utils = utilsFactory()
@@ -31,14 +30,13 @@ const pathExists = async (verifyPath: string | undefined | null) => {
       return verifiedPath
     }
 
-    throw boom.notFound('File failed')
+    throw new Error(`${MODULE_NAME}: File failed - not a file or directory`)
   } catch (error) {
     if (typeof verifyPath === 'string') {
       const pathType = path.isAbsolute(verifyPath) ? 'absolute' : 'relative'
-
-      throw boom.notFound(`${MODULE_NAME}: File system path is ${pathType} and not found due to error (${error})`)
+      throw new Error(`${MODULE_NAME}: File system path is ${pathType} and not found due to error (${(error as Error).message})`)
     } else {
-      throw boom.notFound(`${MODULE_NAME}: File system path is not found due to error (${error})`)
+      throw new Error(`${MODULE_NAME}: File system path is not found due to error (${(error as Error).message})`)
     }
   }
 }

@@ -6,7 +6,7 @@ const utils = utilsFactory()
 
 /**
  * Count unique filenames
- * @param {string[]} sourceFilenames
+ * @param {string[]} sourceFilenames list of filenames
  * @returns {Set} uniques
  */
 function uniqueFiles(sourceFilenames: string[]) {
