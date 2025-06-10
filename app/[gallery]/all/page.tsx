@@ -11,7 +11,7 @@ import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/comm
 import type { All } from '../../../src/types/pages'
 
 async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> {
-  const { albums } = await getAlbums(gallery)
+  const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
     { albumName, albumCoordinateAccuracy, items }:

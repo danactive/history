@@ -71,7 +71,7 @@ async function resize({ sourceFolder, metadata }: ReturnType<typeof validateRequ
     const filesOnDisk = await readdir(originalPath)
 
     const jpgs = filesOnDisk.filter(file =>
-      config.supportedFileTypes.photo.includes(path.extname(file).toLowerCase().substring(1))
+      config.supportedFileTypes.photo.includes(path.extname(file).toLowerCase().substring(1)),
     )
 
     const photoDims = config.resizeDimensions.photo

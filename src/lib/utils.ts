@@ -101,6 +101,15 @@ function simplifyZodMessages(error: z.core.$ZodError) {
   }, '')
 }
 
+function isValidStringArray(arr: unknown): arr is string[] {
+  return (
+    Array.isArray(arr) &&
+    arr.length > 0 &&
+    arr.every((item): item is string => typeof item === 'string' && item.trim().length > 0)
+  )
+}
+
+
 function utils() {
   return {
     type,
@@ -182,4 +191,4 @@ function utils() {
 }
 
 export default utils
-export { isStandardError, isZodError, simplifyZodMessages }
+export { isStandardError, isZodError, simplifyZodMessages, isValidStringArray }

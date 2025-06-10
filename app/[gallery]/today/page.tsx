@@ -25,7 +25,7 @@ export async function generateStaticParams() {
 }
 
 async function getTodayItems(gallery: string) {
-  const { albums } = await getAlbums(gallery)
+  const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
     { albumName, albumCoordinateAccuracy, items }:

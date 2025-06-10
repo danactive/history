@@ -20,7 +20,7 @@ export async function generateStaticParams() {
 }
 
 async function getAlbumsData(gallery: string): Promise<Gallery.ComponentProps> {
-  const { albums } = await getAlbums(gallery)
+  const { [gallery]: { albums } } = await getAlbums(gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
     ...album,
     corpus: [album.h1, album.h2, album.year, album.search].join(' '),

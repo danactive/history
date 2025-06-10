@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 }
 
 async function getPersonsData({ gallery }: All.Params): Promise<All.ComponentProps> {
-  const { albums } = await getAlbums(gallery)
+  const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
     { albumName, albumCoordinateAccuracy, items }:

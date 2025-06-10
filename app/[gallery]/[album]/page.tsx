@@ -10,7 +10,7 @@ import type { Album } from '../../../src/types/pages'
 
 export async function generateMetadata(
   { params }: { params: Promise<Album.Params> },
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const album = (await params).album
 
@@ -22,7 +22,7 @@ export async function generateMetadata(
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
   const groups = await Promise.all(galleries.map(async (gallery) => {
-    const { albums } = await getAlbums(gallery)
+    const { [gallery]: { albums } } = await getAlbums(gallery)
     return albums.map(({ name: album }) => ({ params: { gallery, album } }))
   }))
   return groups.flat()
