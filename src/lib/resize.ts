@@ -2,10 +2,10 @@ import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
-import config from '../../config.json'
+import config from '../models/config'
+import { validateRequestBody, type RequestSchema } from '../models/resize'
 import pathExists from './exists'
 import utilsFactory, { isStandardError } from './utils'
-import { validateRequestBody, type RequestSchema } from '../models/resize'
 
 const utils = utilsFactory()
 
@@ -71,7 +71,7 @@ async function resize({ sourceFolder, metadata }: ReturnType<typeof validateRequ
     const filesOnDisk = await readdir(originalPath)
 
     const jpgs = filesOnDisk.filter(file =>
-      config.supportedFileTypes.photo.includes(path.extname(file).toLowerCase().substring(1))
+      config.supportedFileTypes.photo.includes(path.extname(file).toLowerCase().substring(1)),
     )
 
     const photoDims = config.resizeDimensions.photo
@@ -114,7 +114,10 @@ async function resize({ sourceFolder, metadata }: ReturnType<typeof validateRequ
       const thumbOutputPath = path.join(thumbPath, jpg)
       try {
         await sharp(buffer)
-          .resize(thumbDims.width, thumbDims.height, { fit: 'fill' })
+          .resize(thumbDims.width, thumbDims.height, {
+            fit: sharp.fit.cover, // Crop to cover the output size without distortion
+            position: sharp.strategy.attention, // Focus on the most "interesting" part
+          })
           .toFile(thumbOutputPath)
 
         if (metadata) {

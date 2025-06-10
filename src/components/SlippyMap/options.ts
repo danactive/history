@@ -1,7 +1,7 @@
 import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 import type { Feature, FeatureCollection } from 'geojson'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 
 import type { Item } from '../../types/common'
 

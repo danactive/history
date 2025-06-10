@@ -1,12 +1,12 @@
-import config from '../../../config.json'
-import type { AlbumMeta, ServerSideAlbumItem } from '../../types/common'
+import config from '../../../src/models/config'
+import type { Gallery, ServerSideAlbumItem } from '../../types/common'
 import Img from '../Img'
 import Link from '../Link'
 import styles from './styles.module.css'
 
 interface InputProps {
   items: ServerSideAlbumItem[],
-  gallery: NonNullable<AlbumMeta['gallery']>,
+  gallery: Gallery,
 }
 
 function Galleries({ items, gallery }: InputProps) {

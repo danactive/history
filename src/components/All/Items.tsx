@@ -1,6 +1,6 @@
 import type ReactImageGallery from 'react-image-gallery'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
 import Img from '../Img'
 import Link from '../Link'

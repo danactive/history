@@ -1,11 +1,13 @@
-import getGalleries from './galleries'
-import utilsFactory from './utils'
+import config from '../models/config'
 import type {
   AlbumMeta,
+  Gallery,
   GalleryAlbum,
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
+import getGalleries from './galleries'
+import utilsFactory, { isValidStringArray } from './utils'
 import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
@@ -17,12 +19,14 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
 
 const utils = utilsFactory()
 
-type GalleryAlbums = {
+type AlbumsBody = {
   albums: GalleryAlbum[]
 }
 
-type GalleryAlbumBody = {
-  body: GalleryAlbums; status: number;
+export type GalleryAlbumsBody = Record<Gallery, AlbumsBody>
+
+type AlbumsResponse = {
+  body: GalleryAlbumsBody; status: number;
 }
 
 type ErrorOptionalMessageBody = {
@@ -35,7 +39,7 @@ type ErrorOptionalMessageBody = {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery = 'demo'): GalleryAlbums {
+function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery: Gallery = config.defaultGallery): AlbumsBody {
   const transform = (album: XmlGalleryAlbum) => ({
     name: album.albumName,
     h1: album.albumH1,
@@ -52,46 +56,68 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
   return { albums: [transform(dirty.gallery.album)] }
 }
 
+async function get(): Promise<GalleryAlbumsBody>
 async function get<T extends boolean = false>(
-  gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null,
+  galleryOrGalleries: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null,
   returnEnvelope?: T,
-): Promise<T extends true ? GalleryAlbumBody : GalleryAlbums>;
+): Promise<T extends true ? AlbumsResponse : GalleryAlbumsBody>;
 
 /**
  * Get Albums from local filesystem
- * @param {string} gallery name of gallery
+ * @param {string | string[]} galleryOrGalleries name of gallery
  * @param {boolean} returnEnvelope will enable a return value with HTTP status code and body
  * @returns {object} albums containing array of album with keys name, h1, h2, version, thumbPath, year
  */
-async function get(gallery: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null, returnEnvelope = false): Promise<
-  GalleryAlbums
+async function get(galleryOrGalleries: AlbumMeta['gallery'] | AlbumMeta['gallery'][] | undefined | null = null, returnEnvelope = false): Promise<
+  GalleryAlbumsBody
   | ErrorOptionalMessage
-  | GalleryAlbumBody
+  | AlbumsResponse
   | ErrorOptionalMessageBody
 > {
   try {
-    if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
-      throw new ReferenceError('Gallery name is missing')
-    }
     const { galleries } = await getGalleries(false)
-    if (!galleries.includes(gallery)) {
-      throw new ReferenceError(`Gallery name (${gallery}) is not expected`)
+    galleryOrGalleries = galleryOrGalleries ?? galleries
+
+    const inputGalleries = Array.isArray(galleryOrGalleries)
+      ? galleryOrGalleries
+      : [galleryOrGalleries]
+
+    if (!isValidStringArray<Gallery>(inputGalleries)) {
+      throw new ReferenceError('All gallery names must be non-empty strings')
     }
-    const xmlGallery = await readGallery(gallery)
-    const body = transformJsonSchema(xmlGallery, gallery)
+
+    const isAllowedGallery = inputGalleries.every(g => galleries.includes(g))
+    if (!isAllowedGallery) {
+      throw new ReferenceError(`One or more gallery names are not expected: ${inputGalleries}`)
+    }
+
+    const partialOut: Partial<GalleryAlbumsBody> = {}
+
+    for (const gallery of inputGalleries) {
+      const xmlGallery = await readGallery(gallery)
+      const body = transformJsonSchema(xmlGallery, gallery)
+      partialOut[gallery] = body
+    }
+
+    const fullOut = partialOut as GalleryAlbumsBody
 
     if (returnEnvelope) {
-      return { body, status: 200 }
+      return { body: fullOut, status: 200 }
     }
 
-    return body
+    // If only one gallery was requested, return just that slice
+    if (!Array.isArray(galleryOrGalleries)) {
+      return { [galleryOrGalleries]: fullOut[galleryOrGalleries] } as GalleryAlbumsBody
+    }
+
+    return fullOut
   } catch (e) {
-    const message = `No albums was found; gallery=${gallery};`
+    const message = `No albums was found; gallery=${galleryOrGalleries};`
     if (returnEnvelope) {
       return { body: errorSchema(message), status: 404 }
     }
 
-     
+
     console.error('ERROR', message, e)
     throw e
   }

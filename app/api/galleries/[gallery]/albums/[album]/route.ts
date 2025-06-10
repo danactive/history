@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import get from '../../../../../../src/lib/album'
 import { errorSchema } from '../../../../../../src/models/album'
+import type { Gallery } from '../../../../../../src/types/common'
 
 async function GET(
   request: NextRequest,
-  props: { params: Promise<{ gallery: string, album: string }> },
+  props: { params: Promise<{ gallery: Gallery, album: string }> },
 ) {
   const params = await props.params
 

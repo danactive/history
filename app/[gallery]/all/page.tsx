@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import AllClient from '../../../src/components/All/AllClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
@@ -11,7 +11,7 @@ import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/comm
 import type { All } from '../../../src/types/pages'
 
 async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> {
-  const { albums } = await getAlbums(gallery)
+  const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
     { albumName, albumCoordinateAccuracy, items }:

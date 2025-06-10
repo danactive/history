@@ -1,12 +1,11 @@
-// @ts-ignore @types/mime-types has not published v3.0.1 to match the library
+import { glob as globNpm } from 'glob'
 import mime from 'mime-types'
 import path from 'node:path'
-import { glob as globNpm } from 'glob'
 import { z } from 'zod/v4-mini'
 
-import configFile from '../../config.json'
+import configFile from '../models/config'
 import type {
-  AlbumMeta,
+  Gallery,
   Item,
   XmlItem,
 } from '../types/common'
@@ -33,7 +32,7 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
-const rasterPath = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>, rasterType: 'photo' | 'thumb') => {
+const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: 'photo' | 'thumb') => {
   const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
   const year = imageFilename.indexOf('-') >= 0 && imageFilename.split('-')[0]
 
@@ -46,7 +45,7 @@ const rasterPath = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMet
  * @param {string} gallery name
  * @returns {string[]} path
  */
-const getVideoPaths = (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => {
+const getVideoPaths = (filename: XmlItem['filename'], gallery: Gallery) => {
   const filenames = Array.isArray(filename) ? filename : [filename]
   return filenames.map((f) => {
     const year = f.indexOf('-') >= 0 && f.split('-')[0]
@@ -101,6 +100,14 @@ function simplifyZodMessages(error: z.core.$ZodError) {
   }, '')
 }
 
+function isValidStringArray<T extends string = string>(arr: unknown): arr is T[] {
+  return (
+    Array.isArray(arr) &&
+    arr.length > 0 &&
+    arr.every((item): item is T => typeof item === 'string' && item.trim().length > 0)
+  )
+}
+
 function utils() {
   return {
     type,
@@ -134,8 +141,8 @@ function utils() {
           return etype
       }
     },
-    thumbPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'thumb'),
-    photoPath: (filename: XmlItem['filename'], gallery: NonNullable<AlbumMeta['gallery']>) => rasterPath(filename, gallery, 'photo'),
+    thumbPath: (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'thumb'),
+    photoPath: (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'photo'),
     getVideoPaths,
     filenameAsJpg,
     /*
@@ -182,4 +189,5 @@ function utils() {
 }
 
 export default utils
-export { isStandardError, isZodError, simplifyZodMessages }
+export { isStandardError, isValidStringArray, isZodError, simplifyZodMessages }
+

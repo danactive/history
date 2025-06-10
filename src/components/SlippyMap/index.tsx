@@ -11,7 +11,7 @@ import Map, {
 } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import type { Item } from '../../types/common'
 import AlbumContext from '../Context'
 import {

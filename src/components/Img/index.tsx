@@ -1,6 +1,7 @@
-import Image from 'next/image'
+import Image, { type ImageProps } from 'next/image'
+import { type RefObject } from 'react'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 
 function Img({
   alt,
@@ -9,15 +10,25 @@ function Img({
   width = config.resizeDimensions.thumb.width,
   height = config.resizeDimensions.thumb.height,
   title,
-}: {
-  alt: string;
+  ref,
+  ...NextProps
+}: ImageProps & {
   className?: string;
-  src: string;
   width?: number;
   height?: number;
   title?: string;
+  ref?: RefObject<HTMLImageElement | null>
 }) {
-  return <Image className={className} src={src} alt={alt} width={width} height={height} title={title} />
+  return <Image
+    className={className}
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    title={title}
+    {...NextProps}
+    ref={ref}
+  />
 }
 
 export default Img

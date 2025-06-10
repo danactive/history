@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import config from '../../config.json'
+import config from './config'
 import utilsFactory from '../lib/utils'
 import type {
   Album,

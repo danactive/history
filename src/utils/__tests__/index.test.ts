@@ -1,4 +1,4 @@
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import { getExt } from '../index'
 
 describe('Utilities', () => {

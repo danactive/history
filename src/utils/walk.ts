@@ -1,4 +1,4 @@
-import config from '../../config.json'
+import config from '../models/config'
 import type { Walk } from '../types/pages'
 import type { Filesystem } from '../lib/filesystems'
 
@@ -59,7 +59,7 @@ export function associateMedia(items: Walk.ItemFile | Walk.ItemFile[]) {
 
     if (groupKey === undefined) { return out }
     // set `storage` for this instance of group to the outer scope (if not empty) or initialize it
-     
+
     const groupKeyStr = String(groupKey)
     if (!out.has(groupKeyStr)) {
       out.set(groupKeyStr, [])

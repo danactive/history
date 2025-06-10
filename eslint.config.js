@@ -41,6 +41,7 @@ export default [
       "jsdoc/require-returns-type": "error", // Enforce TS types in @returns
       "jsdoc/check-tag-names": "error", // Validate JSDoc tag names
       "jsdoc/check-types": "error", // Ensure TS types are correctly used
+      "comma-dangle": ["error", "always-multiline"],
     },
     settings: {
       jsdoc: {

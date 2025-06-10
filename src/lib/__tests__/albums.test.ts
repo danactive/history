@@ -1,10 +1,10 @@
-import config from '../../../config.json'
-import type { AlbumMeta } from '../../types/common'
+import config from '../../models/config'
+import type { Gallery } from '../../types/common'
 import { readGallery, transformJsonSchema } from '../albums'
 
 describe('Albums library', () => {
   describe('readGallery', () => {
-    const unit = async (gallery: NonNullable<AlbumMeta['gallery']>) => transformJsonSchema(await readGallery(gallery), gallery)
+    const unit = async (gallery: Gallery) => transformJsonSchema(await readGallery(gallery), gallery)
 
     test('Default Album', async () => {
       const actual = await unit(config.defaultGallery)

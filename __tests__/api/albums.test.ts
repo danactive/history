@@ -4,8 +4,9 @@
 
 import { testApiHandler } from 'next-test-api-route-handler'
 
-import config from '../../config.json'
 import { GET, POST } from '../../app/api/galleries/[gallery]/albums/route'
+import { type GalleryAlbumsBody } from '../../src/lib/albums'
+import config from '../../src/models/config'
 
 describe('Albums endpoint', () => {
   describe('Expect result', () => {
@@ -14,12 +15,12 @@ describe('Albums endpoint', () => {
         appHandler: { GET },
         test: async ({ fetch }) => {
           const response = await fetch({ method: 'GET' })
-          const result = await response.json()
+          const result: GalleryAlbumsBody = await response.json()
 
           expect(response.status).toBe(200)
 
-          expect(result.albums.length).toBeGreaterThan(0)
-          expect(result.albums[0].name).toBe(config.defaultAlbum)
+          expect(result.demo.albums.length).toBeGreaterThan(0)
+          expect(result.demo.albums[0].name).toBe(config.defaultAlbum)
         },
         params: { gallery: config.defaultGallery },
       })

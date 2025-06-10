@@ -1,7 +1,7 @@
 import { type DraggableProvided } from '@hello-pangea/dnd'
 import { CSSProperties, memo } from 'react'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import { type Filesystem } from '../../lib/filesystems'
 import Img from '../Img'
 import Link from '../Link'

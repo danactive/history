@@ -4,6 +4,7 @@ import type { Filesystem } from './lib/filesystems'
 
 import type {
   AlbumMeta,
+  Gallery as GalleryName,
   IndexedKeywords,
   ServerSideAllItem,
   ServerSideAlbumItem,
@@ -12,12 +13,12 @@ import type {
 
 export namespace Gallery {
   export type ComponentProps = {
-    gallery: NonNullable<AlbumMeta['gallery']>;
+    gallery: GalleryName;
     albums: ServerSideAlbumItem[];
     indexedKeywords: IndexedKeywords[];
   }
   export interface Params {
-    gallery: NonNullable<AlbumMeta['gallery']>
+    gallery: GalleryName
   }
 }
 
@@ -29,7 +30,7 @@ export namespace Album {
   }
 
   export interface Params {
-    gallery: NonNullable<AlbumMeta['gallery']>
+    gallery: GalleryName;
     album: NonNullable<AlbumMeta['albumName']>
   }
 }
@@ -51,6 +52,6 @@ export namespace All {
   }
 
   export interface Params {
-    gallery: NonNullable<AlbumMeta['gallery']>
+    gallery: GalleryName
   }
 }

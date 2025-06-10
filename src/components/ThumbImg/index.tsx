@@ -1,6 +1,6 @@
 import { MouseEvent, useState } from 'react'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import Img from '../Img'
 import styles from './styles.module.css'
 

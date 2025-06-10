@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import get, { errorSchema } from '../../../../../src/lib/albums'
+import type { Gallery } from '../../../../../src/types/common'
 
-async function GET(request: NextRequest, props: { params: Promise<{ gallery: string }> }) {
+async function GET(request: NextRequest, props: { params: Promise<{ gallery: Gallery }> }) {
   const params = await props.params
 
   const {

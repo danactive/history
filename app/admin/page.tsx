@@ -7,5 +7,10 @@ export const metadata: Metadata = {
 }
 
 export default function AdminServer() {
-  return <div><Link href="/admin/walk">Walk</Link></div>
+  return (
+    <ul>
+      <li><Link href="/admin/walk">Walk</Link></li>
+      <li><Link href="/admin/album">Edit Album</Link></li>
+    </ul>
+  )
 }
