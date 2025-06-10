@@ -11,6 +11,10 @@ import io
 app = FastAPI()
 model = MobileNetV2(weights="imagenet")
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 @app.post("/classify")
 async def classify_image(req: Request):
     try:

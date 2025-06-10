@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import fs from "node:fs/promises"
 
 import utilsFactory from "../../../../src/lib/utils"
+import config from "../../../../src/models/config"
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
     const fullPath = utils.safePublicPath(relativePath)
     const buffer = await fs.readFile(fullPath)
 
-    const res = await fetch("http://localhost:8000/classify", {
+    const res = await fetch(`http://localhost:${config.pythonPort}/classify`, {
       method: "POST",
       headers: {
         "Content-Type": "image/jpeg",

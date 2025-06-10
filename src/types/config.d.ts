@@ -8,6 +8,7 @@ export type Dimension = {
 export type Config = {
   apiPort: number
   nextPort: number
+  pythonPort: number
   defaultAlbum: string
   defaultGallery: Gallery
   defaultZoom: number

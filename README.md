@@ -23,6 +23,10 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 3. `npm run dev` will standup both the frontend and backend
 4. View address in browser (printed in terminal on successful load)
 
+#### Image classifier
+1. `docker build -t image-classifier .`
+1. `docker run -v $(pwd)/config.json:/config.json -p 8080:8080 image-classifier`
+
 #### How-to build for PROD
 3. `npm run build` Bundle JavaScript files, and pre-compile
 4. `npm start` Run built app

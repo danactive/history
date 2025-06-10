@@ -24,7 +24,7 @@ export default function AdminAlbumClient(
     event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
-    const selectedAlbum = galleryAlbum.dan.albums.find(a => a.name === newValue)
+    const selectedAlbum = galleryAlbum[selectedGallery].albums.find(a => a.name === newValue)
     if (selectedAlbum) {
       setAlbum(selectedAlbum)
     }

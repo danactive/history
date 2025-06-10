@@ -1,11 +1,13 @@
 # Dockerfile
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /
 
 # Install dependencies
 RUN pip install --no-cache-dir fastapi uvicorn tensorflow pillow python-multipart
 
-COPY ./main.py .
+COPY config.json /config.json
+COPY main.py /main.py
+COPY start.py /start.py
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "/start.py"]
