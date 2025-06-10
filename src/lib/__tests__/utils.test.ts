@@ -1,8 +1,10 @@
 import path from 'node:path'
+
+import config from '../../models/config'
 import utilsFactory from '../utils'
 
 describe('Utils library', () => {
-  const gallery = 'demo'
+  const gallery = config.defaultGallery
   const lib = utilsFactory()
 
   describe('mimeType', () => {

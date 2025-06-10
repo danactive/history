@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import getAlbums from "../../../src/lib/albums"
 import config from "../../../src/models/config"
 import { type Gallery } from '../../../src/types/common'
-import AdminAlbumClient from './AdminAlbumClient'
+import AdminAlbumClient from '../../../src/components/EditAlbum/AdminAlbumClient'
 
 export const metadata: Metadata = {
   title: 'Admin > Edit Album - History App',

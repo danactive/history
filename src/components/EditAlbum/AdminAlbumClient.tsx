@@ -4,13 +4,16 @@ import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 
-import { type GalleryAlbumsBody } from '../../../src/lib/albums'
-import { type Gallery } from '../../../src/lib/galleries'
+import { type GalleryAlbumsBody } from '../../lib/albums'
+import { type Gallery } from '../../lib/galleries'
 
 export default function AdminAlbumClient(
   { galleries, galleryAlbum, selectedGallery }:
   { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: Gallery },
 ) {
+  function handleAlbumChange() {
+
+  }
   return (
     <form>
         <Stack
@@ -45,6 +48,7 @@ export default function AdminAlbumClient(
           <label htmlFor="select-album-label" id="select-album">Album</label>
           <Select
             defaultValue=""
+            onChange={handleAlbumChange}
             slotProps={{
               button: {
                 id: 'select-album-label',

@@ -1,5 +1,6 @@
 import path from 'node:path'
 
+import type { Item } from '../types/common'
 import utilsFactory from './utils'
 
 const utils = utilsFactory()
@@ -25,16 +26,38 @@ function videoTypeInList(sourceFilenames: string[], sourceFile: string) {
   return videoFiles.length > 0
 }
 
+function formatId(filename: string, xmlStartPhotoId: number, i: number) {
+  if (formatIdPrefix(filename) === '') return (xmlStartPhotoId + i).toString()
+  return formatIdPrefix(filename) + formatIdSuffix(xmlStartPhotoId + i)
+}
+/**
+ * Define an XML id attr based on the filename date
+ * @param {string} filename file plus extension
+ * @returns {string} four digit id prefix
+ */
+function formatIdPrefix(filename: Extract<Item['filename'], string>) {
+  const [year, month, day] = filename.split('-')
+  if (year.length !== 4 || Number.isNaN(year)) {
+    return ''
+  }
+  return `${month.padStart(2, '0')}${day.padStart(2, '0')}`
+}
+
+function formatIdSuffix(suffix: number): string {
+  if (suffix >= 100) return suffix.toString().slice(1)
+  return suffix.toString()
+}
+
 /*
 Generate renamed files
 
 @method futureFilenamesOutputs
 @param {string[]} sourceFilenames List of filenames to rename
 @param {string} prefix Root of filename with increment added before extension
-@param {string} [xmlStartPhotoId] initial position
+@param {number} [xmlStartPhotoId] initial position
 @return {json}
 */
-function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlStartPhotoId = 100) {
+function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlStartPhotoId: number = 100) {
   const uniqueFilenames = uniqueFiles(sourceFilenames)
   const photosInDay = uniqueFilenames.size
 
@@ -68,7 +91,7 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
     return filenames
   }
 
-  function xmlSchema(filename: string, id: number, sourceFile: string, file: string) {
+  function xmlSchema(filename: string, id: string, sourceFile: string, file: string) {
     const hasVideo = videoTypeInList(sourceFilenames, sourceFile)
 
     if (hasVideo) {
@@ -89,7 +112,7 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
       files.push(file)
       const filename = `${file}.jpg`
       filenames.push(filename)
-      xml += xmlSchema(filename, (xmlStartPhotoId + i), unique, file)
+      xml += xmlSchema(filename, formatId(filename, xmlStartPhotoId, i), unique, file)
       i += 1
     })
 

@@ -5,6 +5,7 @@
 import { testApiHandler } from 'next-test-api-route-handler'
 
 import { GET, POST } from '../../app/api/galleries/route'
+import config from '../../src/models/config'
 
 describe('Galleries endpoint', () => {
   describe('Expect result', () => {
@@ -18,7 +19,7 @@ describe('Galleries endpoint', () => {
           expect(response.status).toBe(200)
 
           expect(result.galleries.length).toBeGreaterThan(0)
-          expect(result.galleries.includes('demo')).toBeTruthy()
+          expect(result.galleries.includes(config.defaultGallery)).toBeTruthy()
         },
       })
     })
@@ -36,7 +37,7 @@ describe('Galleries endpoint', () => {
           expect(result.error.message.toLowerCase()).toContain('not allowed')
 
           expect(result.galleries.length).toBe(0)
-          expect(result.galleries.includes('demo')).toBeFalsy()
+          expect(result.galleries.includes(config.defaultGallery)).toBeFalsy()
         },
       })
     })

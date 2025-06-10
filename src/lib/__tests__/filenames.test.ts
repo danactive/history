@@ -94,7 +94,7 @@ describe('Filenames', () => {
 
       expect(result.filenames[0]).toBe(`${prefix}-50.jpg`)
       expect(result.files[0]).toBe(`${prefix}-50`)
-      expect(result.xml).toBe(`<item id="100"><filename>${prefix}-50.jpg</filename></item>`)
+      expect(result.xml).toBe(`<item id="120100"><filename>${prefix}-50.jpg</filename></item>`)
     })
 
     test('Two photos per day', () => {
@@ -107,8 +107,8 @@ describe('Filenames', () => {
       expect(result.files[0]).toBe(`${prefix}-50`)
       expect(result.files[1]).toBe(`${prefix}-90`)
       expect(result.xml).toBe(
-        `<item id="100"><filename>${prefix}-50.jpg</filename></item>`
-        + `<item id="101"><filename>${prefix}-90.jpg</filename></item>`,
+        `<item id="120200"><filename>${prefix}-50.jpg</filename></item>`
+        + `<item id="120201"><filename>${prefix}-90.jpg</filename></item>`,
       )
     })
 
@@ -124,9 +124,9 @@ describe('Filenames', () => {
       expect(result.files[1]).toBe(`${prefix}-64`)
       expect(result.files[2]).toBe(`${prefix}-90`)
       expect(result.xml).toBe(
-        `<item id="100"><filename>${prefix}-37.jpg</filename></item>`
-        + `<item id="101"><filename>${prefix}-64.jpg</filename></item>`
-        + `<item id="102"><filename>${prefix}-90.jpg</filename></item>`,
+        `<item id="120300"><filename>${prefix}-37.jpg</filename></item>`
+        + `<item id="120301"><filename>${prefix}-64.jpg</filename></item>`
+        + `<item id="120302"><filename>${prefix}-90.jpg</filename></item>`,
       )
     })
 
@@ -144,10 +144,10 @@ describe('Filenames', () => {
       expect(result.files[2]).toBe(`${prefix}-70`)
       expect(result.files[3]).toBe(`${prefix}-90`)
       expect(result.xml).toBe(
-        `<item id="100"><filename>${prefix}-30.jpg</filename></item>`
-        + `<item id="101"><filename>${prefix}-50.jpg</filename></item>`
-        + `<item id="102"><type>video</type><filename>${prefix}-70.mp4</filename><filename>${prefix}-70.webm</filename></item>`
-        + `<item id="103"><filename>${prefix}-90.jpg</filename></item>`,
+        `<item id="120400"><filename>${prefix}-30.jpg</filename></item>`
+        + `<item id="120401"><filename>${prefix}-50.jpg</filename></item>`
+        + `<item id="120402"><type>video</type><filename>${prefix}-70.mp4</filename><filename>${prefix}-70.webm</filename></item>`
+        + `<item id="120403"><filename>${prefix}-90.jpg</filename></item>`,
       )
     })
 
@@ -246,7 +246,7 @@ describe('Filenames', () => {
       expect(result.filenames[0]).toBe(`${prefix}-50.jpg`)
       expect(result.files[0]).toBe(`${prefix}-50`)
       expect(result.xml).toBe(
-        `<item id="10"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`,
+        `<item id="013110"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`,
       )
     })
 
@@ -260,8 +260,8 @@ describe('Filenames', () => {
       expect(result.files[0]).toBe(`${prefix}-50`)
       expect(result.files[1]).toBe(`${prefix}-90`)
       expect(result.xml).toBe(
-        `<item id="20"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`
-        + `<item id="21"><type>video</type><filename>${prefix}-90.mp4</filename><filename>${prefix}-90.webm</filename></item>`,
+        `<item id="023120"><type>video</type><filename>${prefix}-50.mp4</filename><filename>${prefix}-50.webm</filename></item>`
+        + `<item id="023121"><type>video</type><filename>${prefix}-90.mp4</filename><filename>${prefix}-90.webm</filename></item>`,
       )
     })
 
@@ -277,9 +277,9 @@ describe('Filenames', () => {
       expect(result.files[1]).toBe(`${prefix}-64`)
       expect(result.files[2]).toBe(`${prefix}-90`)
       expect(result.xml).toBe(
-        `<item id="30"><type>video</type><filename>${prefix}-37.mp4</filename><filename>${prefix}-37.webm</filename></item>`
-        + `<item id="31"><type>video</type><filename>${prefix}-64.mp4</filename><filename>${prefix}-64.webm</filename></item>`
-        + `<item id="32"><filename>${prefix}-90.jpg</filename></item>`,
+        `<item id="033130"><type>video</type><filename>${prefix}-37.mp4</filename><filename>${prefix}-37.webm</filename></item>`
+        + `<item id="033131"><type>video</type><filename>${prefix}-64.mp4</filename><filename>${prefix}-64.webm</filename></item>`
+        + `<item id="033132"><filename>${prefix}-90.jpg</filename></item>`,
       )
     })
   })

@@ -1,3 +1,4 @@
+import config from '../models/config'
 import type {
   AlbumMeta,
   Gallery,
@@ -38,7 +39,7 @@ type ErrorOptionalMessageBody = {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery: Gallery = 'demo'): AlbumsBody {
+function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery: Gallery = config.defaultGallery): AlbumsBody {
   const transform = (album: XmlGalleryAlbum) => ({
     name: album.albumName,
     h1: album.albumH1,
