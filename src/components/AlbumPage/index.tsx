@@ -51,7 +51,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
         />
-        <ul className={styles.wrapper}>
+        <ul className={styles.thumbWrapper}>
           {filtered.map((item, index) => (
             <ThumbImg
               onClick={() => selectThumb(index)}

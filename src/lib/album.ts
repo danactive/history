@@ -59,11 +59,15 @@ async function get(
       return { body: errorSchema(message), status: 404 }
     }
 
-     
+
     console.error('ERROR', message, e)
     throw e
   }
 }
 
-export { transformAlbumSchema as transformJsonSchema }
+export {
+  transformAlbumSchema as transformJsonSchema,
+  type Envelope as AlbumResponse,
+  type Album as AlbumResponseBody,
+}
 export default get

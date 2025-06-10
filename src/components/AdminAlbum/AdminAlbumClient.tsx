@@ -3,17 +3,29 @@
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
+import { useState } from 'react'
 
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
+import type { GalleryAlbum } from '../../types/common'
+import AdminAlbumAlbum from './Album'
 
 export default function AdminAlbumClient(
   { galleries, galleryAlbum, selectedGallery }:
   { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: Gallery },
 ) {
-  function handleAlbumChange() {
+  const [album, setAlbum] = useState<GalleryAlbum | null>(null)
 
+  const handleAlbumChange = (
+    event: React.SyntheticEvent | null,
+    newValue: string | null,
+  ) => {
+    const selectedAlbum = galleryAlbum.dan.albums.find(a => a.name === newValue)
+    if (selectedAlbum) {
+      setAlbum(selectedAlbum)
+    }
   }
+
   return (
     <form>
         <Stack
@@ -37,14 +49,7 @@ export default function AdminAlbumClient(
             <Option value="">Select a Gallery</Option>
             {galleries.map(gallery => <Option key={gallery} value={gallery}>{gallery}</Option>)}
           </Select>
-        </Stack>
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{
-            alignItems: "center",
-          }}
-        >
+
           <label htmlFor="select-album-label" id="select-album">Album</label>
           <Select
             defaultValue=""
@@ -61,6 +66,7 @@ export default function AdminAlbumClient(
             {galleryAlbum[selectedGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
           </Select>
         </Stack>
+        {album ? <AdminAlbumAlbum gallery={selectedGallery} album={album} /> : <div>Select an album</div>}
       </form>
   )
 }
