@@ -1,13 +1,13 @@
 import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
-import config from '../../../config.json'
 import AlbumPageComponent from '../../../src/components/AlbumPage'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
-import type { AlbumMeta, Item } from '../../../src/types/common'
+import config from '../../../src/models/config'
+import type { AlbumMeta, Gallery, Item } from '../../../src/types/common'
 
 interface ServerSideTodayItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
@@ -24,7 +24,7 @@ export async function generateStaticParams() {
   return galleries.map((gallery) => ({ gallery }))
 }
 
-async function getTodayItems(gallery: string) {
+async function getTodayItems(gallery: Gallery) {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
@@ -62,7 +62,7 @@ async function getTodayItems(gallery: string) {
   return { items: allItems, indexedKeywords }
 }
 
-export default async function TodayServer(props: { params: Promise<{ gallery: string }> }) {
+export default async function TodayServer(props: { params: Promise<{ gallery: Gallery }> }) {
   const params = await props.params
   const { items, indexedKeywords } = await getTodayItems(params.gallery)
   return (

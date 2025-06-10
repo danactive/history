@@ -29,6 +29,7 @@ yarn-error.log*
 
 # typescript
 tsconfig.tsbuildinfo
+generated.ts
 
 # IDE
 .vscode

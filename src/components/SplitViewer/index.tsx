@@ -6,7 +6,7 @@ import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps }
 import 'react-image-gallery/styles/css/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'
 import { Item } from '../../types/common'
 import { getExt } from '../../utils'

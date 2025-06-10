@@ -2,7 +2,7 @@ import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
 
-import config from '../../config.json'
+import config from '../models/config'
 import pathExists from './exists'
 import utilsFactory, { isStandardError } from './utils'
 import { validateRequestBody, type RequestSchema } from '../models/resize'

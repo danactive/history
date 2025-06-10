@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 
-import config from "../../../config.json"
 import getAlbums from "../../../src/lib/albums"
+import config from "../../../src/models/config"
+import { type Gallery } from '../../../src/types/common'
 import AdminAlbumClient from './AdminAlbumClient'
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 
 export default async function AdminAlbumServer() {
   const galleryAlbum = await getAlbums()
-  const galleries = Object.keys(galleryAlbum)
+  const galleries = Object.keys(galleryAlbum) as Gallery[]
   const selectedGallery = galleries.find(gallery => config.defaultGallery !== gallery) ?? config.defaultGallery
 
   return (

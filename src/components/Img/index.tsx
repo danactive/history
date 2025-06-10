@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 
 function Img({
   alt,

@@ -1,12 +1,12 @@
-import config from '../../../config.json'
+import config from '../config'
 import type { XmlAlbum, XmlItem } from '../../types/common'
 import transformJsonSchema, { transformPersons, transformReference } from '../album'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
     test('Meta', () => {
-      const mock = { album: { meta: { gallery: 'demo' } } }
-      const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
+      const mock: XmlAlbum = { album: { meta: { gallery: config.defaultGallery } } }
+      const expected = { gallery: config.defaultGallery, geo: { zoom: config.defaultZoom } }
       const result = transformJsonSchema(mock, [])
       expect(result.album.meta).toEqual(expected)
       expect(result.album.items.length).toEqual(0)
@@ -15,7 +15,7 @@ describe('Album library', () => {
     test('Only one photo', () => {
       const mock: XmlAlbum = {
         album: {
-          meta: { gallery: 'demo' },
+          meta: { gallery: config.defaultGallery },
           item: {
             $: { id: '1' },
             filename: '2023-01-02-03.jpg',
@@ -26,7 +26,7 @@ describe('Album library', () => {
           },
         },
       }
-      const expected = { gallery: 'demo', geo: { zoom: config.defaultZoom } }
+      const expected = { gallery: config.defaultGallery, geo: { zoom: config.defaultZoom } }
       const result = transformJsonSchema(mock, [])
       expect(result.album.meta).toEqual(expected)
       if (Array.isArray(mock.album.item)) {
@@ -37,13 +37,13 @@ describe('Album library', () => {
     })
 
     test('Raw items', () => {
-      const expectedMeta = { gallery: 'demo', geo: { zoom: 10 } }
+      const expectedMeta = { gallery: config.defaultGallery, geo: { zoom: 10 } }
       const expectFilenamePhoto = '2016-Image-Filename.jpg'
       const expectFilenameVideo1 = '2016-Video-Filename.mov'
       const expectFilenameVideo2 = '2016-Video-Filename.mov'
       const mock: XmlAlbum = {
         album: {
-          meta: { gallery: 'demo', markerZoom: '10' },
+          meta: { gallery: config.defaultGallery, markerZoom: '10' },
           item: [
             {
               $: { id: '1' },

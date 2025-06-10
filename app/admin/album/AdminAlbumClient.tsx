@@ -9,7 +9,7 @@ import { type Gallery } from '../../../src/lib/galleries'
 
 export default function AdminAlbumClient(
   { galleries, galleryAlbum, selectedGallery }:
-  { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: string },
+  { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: Gallery },
 ) {
   return (
     <form>

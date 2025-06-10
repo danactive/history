@@ -1,5 +1,9 @@
+import type { GeneratedGallery } from './generated'
+
+type Gallery = GeneratedGallery
+
 type AlbumMeta = {
-  gallery?: string,
+  gallery?: Gallery,
   geo?: {
     zoom: number
   },
@@ -10,7 +14,7 @@ type AlbumMeta = {
 }
 
 type XmlMeta = {
-  gallery?: string,
+  gallery?: Gallery,
   albumName?: string,
   albumVersion?: string,
   markerZoom?: string | never,
@@ -134,7 +138,7 @@ interface ServerSidePhotoItem extends Item {
 
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
-  gallery?: NonNullable<AlbumMeta['gallery']>;
+  gallery?: Gallery;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
 }
@@ -171,6 +175,7 @@ declare global {
 }
 
 export type {
+  Gallery,
   AlbumMeta,
   XmlMeta,
   Album,

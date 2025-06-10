@@ -1,5 +1,5 @@
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/person'
-import type { AlbumMeta, Person } from '../types/common'
+import type { Gallery, Person } from '../types/common'
 import { readPersons } from './xml'
 
 type Envelope = { body: Person[], status: number }
@@ -8,7 +8,7 @@ type ErrorOptionalMessageBody = {
 }
 type ReturnAlbumOrErrors = Promise<Envelope | Person[] | ErrorOptionalMessage | ErrorOptionalMessageBody>
 async function get<T extends boolean = false>(
-  gallery: AlbumMeta['gallery'],
+  gallery: Gallery,
   returnEnvelope?: T,
 ): Promise<T extends true ? Envelope : Person[]>
 /**
@@ -18,7 +18,7 @@ async function get<T extends boolean = false>(
  * @returns {object} person
  */
 async function get(
-  gallery: AlbumMeta['gallery'],
+  gallery: Gallery,
   returnEnvelope: boolean,
 ): ReturnAlbumOrErrors {
   try {
@@ -39,7 +39,7 @@ async function get(
       return { body: errorSchema(message), status: 404 }
     }
 
-     
+
     console.error('ERROR', message, e)
     throw e
   }

@@ -1,13 +1,13 @@
 import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
-import config from '../../../config.json'
 import PersonsClient from '../../../src/components/Persons/PersonsClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
-import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/common'
+import config from '../../../src/models/config'
+import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../../../src/types/common'
 import type { All } from '../../../src/types/pages'
 
 export const metadata: Metadata = {
@@ -59,7 +59,7 @@ async function getPersonsData({ gallery }: All.Params): Promise<All.ComponentPro
   }
 }
 
-export default async function PersonsServer(props: { params: Promise<{ gallery: string }> }) {
+export default async function PersonsServer(props: { params: Promise<{ gallery: Gallery }> }) {
   const params = await props.params
 
   const {

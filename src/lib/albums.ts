@@ -1,5 +1,6 @@
 import type {
   AlbumMeta,
+  Gallery,
   GalleryAlbum,
   XmlGallery,
   XmlGalleryAlbum,
@@ -21,7 +22,7 @@ type AlbumsBody = {
   albums: GalleryAlbum[]
 }
 
-export type GalleryAlbumsBody = Record<NonNullable<AlbumMeta['gallery']>, AlbumsBody>
+export type GalleryAlbumsBody = Record<Gallery, AlbumsBody>
 
 type AlbumsResponse = {
   body: GalleryAlbumsBody; status: number;
@@ -37,7 +38,7 @@ type ErrorOptionalMessageBody = {
  * @param {string} gallery name of gallery
  * @returns {object} clean JSON
  */
-function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery = 'demo'): AlbumsBody {
+function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gallery: Gallery = 'demo'): AlbumsBody {
   const transform = (album: XmlGalleryAlbum) => ({
     name: album.albumName,
     h1: album.albumH1,
@@ -76,46 +77,39 @@ async function get(galleryOrGalleries: AlbumMeta['gallery'] | AlbumMeta['gallery
     const { galleries } = await getGalleries(false)
     galleryOrGalleries = galleryOrGalleries ?? galleries
 
-    if (Array.isArray(galleryOrGalleries)) {
-      if (!isValidStringArray(galleryOrGalleries)) {
-        throw new ReferenceError('All gallery names cannot be nullish')
-      }
+    const inputGalleries = Array.isArray(galleryOrGalleries)
+      ? galleryOrGalleries
+      : [galleryOrGalleries]
 
-      const isAllowedGallery = galleryOrGalleries.every(g => galleries.includes(g))
-      if (!isAllowedGallery) {
-        throw new ReferenceError(`One of the gallery names is not expected: ${galleryOrGalleries}`)
-      }
-
-      const out: GalleryAlbumsBody = {}
-      for (const gallery of galleries) {
-        const xmlGallery = await readGallery(gallery)
-        const body = transformJsonSchema(xmlGallery, gallery)
-        out[gallery] = body
-      }
-
-      if (returnEnvelope) {
-        return { body: out, status: 200 }
-      }
-
-      return out
+    if (!isValidStringArray<Gallery>(inputGalleries)) {
+      throw new ReferenceError('All gallery names must be non-empty strings')
     }
 
-    if (typeof galleryOrGalleries !== 'string' || !galleryOrGalleries.trim()) {
-      throw new ReferenceError('Gallery must be a non-empty string')
+    const isAllowedGallery = inputGalleries.every(g => galleries.includes(g))
+    if (!isAllowedGallery) {
+      throw new ReferenceError(`One or more gallery names are not expected: ${inputGalleries}`)
     }
 
-    if (!galleries.includes(galleryOrGalleries)) {
-      throw new ReferenceError(`Gallery name (${galleryOrGalleries}) is not expected`)
+    const partialOut: Partial<GalleryAlbumsBody> = {}
+
+    for (const gallery of inputGalleries) {
+      const xmlGallery = await readGallery(gallery)
+      const body = transformJsonSchema(xmlGallery, gallery)
+      partialOut[gallery] = body
     }
 
-    const xmlGallery = await readGallery(galleryOrGalleries)
-    const body = transformJsonSchema(xmlGallery, galleryOrGalleries)
+    const fullOut = partialOut as GalleryAlbumsBody
 
     if (returnEnvelope) {
-      return { body: { [galleryOrGalleries]: body }, status: 200 }
+      return { body: fullOut, status: 200 }
     }
 
-    return { [galleryOrGalleries]: body }
+    // If only one gallery was requested, return just that slice
+    if (!Array.isArray(galleryOrGalleries)) {
+      return { [galleryOrGalleries]: fullOut[galleryOrGalleries] } as GalleryAlbumsBody
+    }
+
+    return fullOut
   } catch (e) {
     const message = `No albums was found; gallery=${galleryOrGalleries};`
     if (returnEnvelope) {

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 import AllClient from '../../../src/components/All/AllClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'

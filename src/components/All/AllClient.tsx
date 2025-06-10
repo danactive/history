@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
-import config from '../../../config.json'
+import config from '../../../src/models/config'
 
 import useMemory from '../../hooks/useMemory'
 import useSearch from '../../hooks/useSearch'
