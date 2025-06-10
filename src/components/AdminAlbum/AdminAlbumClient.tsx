@@ -7,14 +7,18 @@ import { useState } from 'react'
 
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
-import type { GalleryAlbum } from '../../types/common'
-import AdminAlbumAlbum from './Album'
+import type { GalleryAlbum, Item } from '../../types/common'
+import Photo from './Photo'
+import Thumbs from './Thumbs'
+
+export type ItemState = Item | null
 
 export default function AdminAlbumClient(
   { galleries, galleryAlbum, selectedGallery }:
   { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: Gallery },
 ) {
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
+  const [item, setItem] = useState<ItemState>(null)
 
   const handleAlbumChange = (
     event: React.SyntheticEvent | null,
@@ -28,6 +32,7 @@ export default function AdminAlbumClient(
 
   return (
     <form>
+        <Photo item={item} />
         <Stack
           direction="row"
           spacing={2}
@@ -66,7 +71,7 @@ export default function AdminAlbumClient(
             {galleryAlbum[selectedGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
           </Select>
         </Stack>
-        {album ? <AdminAlbumAlbum gallery={selectedGallery} album={album} /> : <div>Select an album</div>}
+        {album ? <Thumbs gallery={selectedGallery} album={album} setItem={setItem} /> : <div>Select an album</div>}
       </form>
   )
 }
