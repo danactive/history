@@ -1,15 +1,12 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = [
-  // export npm modules to browser scripts
   {
     mode: 'none',
     entry: {
       album: './server/plugins/album/lib/browser.js',
       editAlbum: './server/plugins/editAlbum/lib/browser.js',
-    },
-    resolve: {
-      extensions: ['.css', '.js', '.jsx'],
     },
     output: {
       path: path.resolve(__dirname),
@@ -18,13 +15,11 @@ module.exports = [
     module: {
       rules: [
         {
-          exclude: /(node_modules)/,
-          test: /\.jsx$/,
-          use: [
-            {
-              loader: 'babel-loader',
-            },
-          ],
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+          },
         },
         {
           test: /\.css$/,
@@ -41,5 +36,16 @@ module.exports = [
         },
       ],
     },
+    resolve: {
+      extensions: ['.css', '.js', '.jsx'],
+      fallback: {
+        process: require.resolve('process/browser'),
+      },
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
+    ],
   },
 ];
