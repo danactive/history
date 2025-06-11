@@ -4,14 +4,18 @@ const hapiReactViews = require('hapi-react-views');
 const joi = require('joi');
 const notifier = require('node-notifier');
 
-require('tuxharness');
-
 const config = require('../../config.json');
 const log = require('./plugins/log');
 const plugins = require('./lib/plugins');
 
 const { apiPort: port, uiPort } = config;
 const logger = log.createLogger('server');
+
+require('@babel/register')({
+  extensions: ['.js', '.jsx'],
+  presets: ['@babel/preset-env', '@babel/preset-react']
+});
+
 
 const server = hapi.Server({
   port,
