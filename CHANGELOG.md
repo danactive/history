@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.1.0](https://github.com/danactive/history/compare/v11.0.0...v11.1.0) (2025-06-11)
+
+
+### Features
+
+* **Admin > Album:** Add new Edit Album page ([475a641](https://github.com/danactive/history/commit/475a641a2d4ddea24b2d618280b52d8d68e337cc))
+* **Admin > Edit Album:** Add image classifier in Python/Docker as Tensorflow.js fails on Next.js Turbopack & ESM ([de3dc15](https://github.com/danactive/history/commit/de3dc15dc0a8139394b95fe52ec20b15fcb1b431))
+* **Admin > Edit Album:** Display thumbs ([f648bdb](https://github.com/danactive/history/commit/f648bdb8d7115768597497b78a2d85648e0c313a))
+* **Admin > Edit Album:** Get albums will get from multiple galleries ([e5c91a9](https://github.com/danactive/history/commit/e5c91a91f89194582df4272ca2830d10ce9dfbae))
+* **Admin > Walk > Resize:** Crop thumbs based on interesting ([924a99e](https://github.com/danactive/history/commit/924a99e72bcb91321f22bb7c9fa6738c14785186))
+* **Image Classifier:** Upgrade training dataset from ImageNet to iNaturalist 2021 ([e0b29e5](https://github.com/danactive/history/commit/e0b29e554569a87480e08fa95597d6e05e972247))
+* **Types > Config:** Generate on build types for galleries ([167940b](https://github.com/danactive/history/commit/167940bbe66d1ebfe2f3c63b8561ebc88fbc3b75))
+
+
+### Bug Fixes
+
+* **config:** Add Python Port to config and fix CI ([9435898](https://github.com/danactive/history/commit/9435898575ab89d4ebb7e052a0863720a90d67c1))
+
 ## [11.0.0](https://github.com/danactive/history/compare/v10.4.0...v11.0.0) (2025-06-08)
 
 
