@@ -38,7 +38,7 @@
     "gm": "^1.25.0",
     "hapi-react-views": "^11.0.0",
     "hapi-swagger": "^15.0.0",
-    "isomorphic-fetch": "^2.2.1",
+    "isomorphic-fetch": "^3.0.0",
     "joi": "^17.9.2",
     "jquery-colorbox": "^1.6.4",
     "mime-types": "^2.1.35",
