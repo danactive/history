@@ -37,7 +37,10 @@ def health_check():
 @app.post("/classify")
 async def classify_image(req: Request):
     try:
+        # This reads raw image/jpeg bytes
         img_bytes = await req.body()
+
+        # Load and process the image
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
         input_tensor = transform(img).unsqueeze(0)  # shape: (1, 3, 384, 384)
 

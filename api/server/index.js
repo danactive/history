@@ -12,7 +12,7 @@ const { apiPort: port, uiPort } = config;
 const logger = log.createLogger('server');
 
 require('@babel/register')({
-  extensions: ['.js', '.jsx'], // <-- THIS IS VALID HERE
+  extensions: ['.js', '.jsx'],
   presets: ['@babel/preset-env', '@babel/preset-react']
 });
 
