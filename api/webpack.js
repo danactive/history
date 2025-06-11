@@ -1,20 +1,6 @@
 const path = require('path');
-const TapWebpackPlugin = require('tap-webpack-plugin');
 
 module.exports = [
-  // test bundle configuration
-  {
-    mode: 'none',
-    target: 'node',
-    entry: './server/test/webpack',
-    output: {
-      path: path.resolve(__dirname),
-      filename: './tmp/test.js',
-    },
-    plugins: [
-      new TapWebpackPlugin(),
-    ],
-  },
   // export npm modules to browser scripts
   {
     mode: 'none',
@@ -46,7 +32,12 @@ module.exports = [
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
-          use: ['url-loader?limit=100000'],
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: 100_000, // 100 KB
+            },
+          },
         },
       ],
     },
