@@ -1,2 +1,9 @@
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.DS_Store
+*.ipynb
+.env
+.git
+**/[Rr][Ee][Aa][Dd][Mm][Ee].[Mm][Dd]

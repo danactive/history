@@ -17,24 +17,21 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 
 ### Development
 1. Node.js via [nvm](https://github.com/nvm-sh/nvm)
-2. Install project dependencies `npm ci`
+1. Install project dependencies `npm ci`
 
 #### How-to run on LOCAL
-3. `npm run dev` will standup both the frontend and backend
-4. View address in browser (printed in terminal on successful load)
-
-#### Image classifier
-1. `docker build -t image-classifier .`
-1. `docker run -v $(pwd)/config.json:/config.json -p 8080:8080 image-classifier`
+1. `npm run dev` will standup both the frontend and backend
+1. View address in browser (printed in terminal on successful load)
+1. Start the image classifier in /scripts/api for the Admin > Edit Album page
 
 #### How-to build for PROD
-3. `npm run build` Bundle JavaScript files, and pre-compile
-4. `npm start` Run built app
-5. View address in browser (printed in terminal on successful load)
+1. `npm run build` Bundle JavaScript files, and pre-compile
+1. `npm start` Run built app
+1. View address in browser (printed in terminal on successful load)
 
 ### Legacy Development
-1. Node.js v12 [Download](https://nodejs.org/)
-1. Folder **api** is for editing album using jQuery
+1. Node.js v20 via nvm
+1. Folder **api** is for editing album using React/jQuery
 1. Install project dependencies `npm ci`
 1. Start web server `npm start`
 1. View address in browser (printed in terminal on successful load)
