@@ -11,3 +11,10 @@ docker run --rm \
   -v "$HOME/.cache/huggingface":/root/.cache/huggingface \
   weights-loader
 ```
+
+Then copy from the Hugging Face cache to the repo
+- `mkdir -p models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21`
+- ```
+cp $HOME/.cache/huggingface/hub/models--timm--eva02_large_patch14_clip_336.merged2b_ft_inat21/snapshots/*/pytorch_model.bin \
+   models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21/
+```

@@ -1,20 +1,26 @@
 from fastapi import FastAPI, Request, Query
 from fastapi.responses import JSONResponse
 from PIL import Image
-from timm import list_models
 import io
 import torch
 import timm
 import json
 import torchvision.transforms as T
 import base64
+import os
 
-# Load label mapping
+# Load class labels
 with open("inat21_class_index.json", "r") as f:
     idx_to_label = json.load(f)
 
-model_name = "hf-hub:timm/eva02_large_patch14_clip_336.merged2b_ft_inat21"
-model = timm.create_model(model_name, pretrained=True)
+# Offline model setup
+model_name = "eva02_large_patch14_clip_336"  # base architecture name
+checkpoint_path = "models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21/pytorch_model.bin"
+
+# Load model without pretraining, then load offline weights
+model = timm.create_model(model_name, pretrained=False, num_classes=len(idx_to_label))
+checkpoint = torch.load(checkpoint_path, map_location="cpu")
+model.load_state_dict(checkpoint)
 model.eval()
 
 main_py_app = FastAPI()
@@ -90,8 +96,7 @@ async def classify_image(req: Request, debug: bool = Query(False)):
             "max_prob": float(probs.max()),
             "min_prob": float(probs.min()),
             "resized_image": img_base64,
-            "timm": list_models(pretrained=True, filter='hf-hub:*inat21*'),
-            "confirm_order": model.default_cfg.get("label_url")
+            "confirm_order": "offline_weights_loaded",
         }
 
     except Exception as e:

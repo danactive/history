@@ -21,3 +21,7 @@ This project serves a high-accuracy image classification API using a **Vision Tr
 - Normalized using CLIP-style mean and std values:
   - `mean = [0.48145466, 0.4578275, 0.40821073]`
   - `std = [0.26862954, 0.26130258, 0.27577711]`
+
+## CLI commands
+- `docker build -f scripts/api/Dockerfile -t image-classifier .`
+- `docker run -p 8080:8080 image-classifier`
