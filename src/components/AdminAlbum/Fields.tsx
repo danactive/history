@@ -1,7 +1,7 @@
 import Input from '@mui/joy/Input'
 import Stack from '@mui/joy/Stack'
 
-import { type AlbumResponseBody } from "../../lib/album"
+import { type AlbumResponseBody } from '../../lib/album'
 import { type ItemState } from './AdminAlbumClient'
 import Xml from './Xml'
 
@@ -15,7 +15,7 @@ export default function Fields(
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         {children}

@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server"
-import fs from "node:fs/promises"
+import { NextResponse } from 'next/server'
+import fs from 'node:fs/promises'
 
-import utilsFactory from "../../../../src/lib/utils"
-import config from "../../../../src/models/config"
+import utilsFactory from '../../../../src/lib/utils'
+import config from '../../../../src/models/config'
 
 export type Prediction = {
   label: string;
@@ -14,12 +14,12 @@ export async function POST(req: Request) {
     const utils = utilsFactory()
 
     const url = new URL(req.url)
-    const debug = url.searchParams.get("debug") === "true"
+    const debug = url.searchParams.get('debug') === 'true'
 
     const { path: relativePath } = await req.json()
 
     if (!relativePath) {
-      return NextResponse.json({ error: "Missing image path" }, { status: 400 })
+      return NextResponse.json({ error: 'Missing image path' }, { status: 400 })
     }
 
     const fullPath = utils.safePublicPath(relativePath)
@@ -28,15 +28,15 @@ export async function POST(req: Request) {
     const classifyUrl = `http://localhost:${config.pythonPort}/classify?debug=${debug}`
 
     const res = await fetch(classifyUrl, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "image/jpeg",
+        'Content-Type': 'image/jpeg',
       },
       body: buffer,
     })
 
     if (!res.ok) {
-      return NextResponse.json({ error: "Python backend failed" }, { status: 500 })
+      return NextResponse.json({ error: 'Python backend failed' }, { status: 500 })
     }
 
     const data = await res.json()
@@ -44,6 +44,6 @@ export async function POST(req: Request) {
 
   } catch (err: any) {
     console.error(err)
-    return NextResponse.json({ error: err.message || "Unexpected error" }, { status: 500 })
+    return NextResponse.json({ error: err.message || 'Unexpected error' }, { status: 500 })
   }
 }

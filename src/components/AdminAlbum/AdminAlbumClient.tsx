@@ -45,7 +45,7 @@ export default function AdminAlbumClient(
           direction="row"
           spacing={2}
           sx={{
-            alignItems: "center",
+            alignItems: 'center',
           }}
         >
           <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>

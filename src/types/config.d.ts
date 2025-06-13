@@ -1,4 +1,4 @@
-import type { Gallery } from "./common"
+import type { Gallery } from './common'
 
 export type Dimension = {
   width: number

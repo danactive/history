@@ -77,12 +77,12 @@ describe('Verify rename library', () => {
     expect(result.renamed).toBe(true)
     expect(result.filenames).toStrictEqual(expected)
     expect(result.xml).toBe(
-      `<item id="061300"><filename>2025-06-13-23.jpg</filename></item>` +
-      `<item id="061301"><filename>2025-06-13-37.jpg</filename></item>` +
-      `<item id="061302"><filename>2025-06-13-50.jpg</filename></item>` +
-      `<item id="061303"><filename>2025-06-13-64.jpg</filename></item>` +
-      `<item id="061304"><filename>2025-06-13-77.jpg</filename></item>` +
-      `<item id="061305"><filename>2025-06-13-90.jpg</filename></item>`,
+      '<item id="061300"><filename>2025-06-13-23.jpg</filename></item>' +
+      '<item id="061301"><filename>2025-06-13-37.jpg</filename></item>' +
+      '<item id="061302"><filename>2025-06-13-50.jpg</filename></item>' +
+      '<item id="061303"><filename>2025-06-13-64.jpg</filename></item>' +
+      '<item id="061304"><filename>2025-06-13-77.jpg</filename></item>' +
+      '<item id="061305"><filename>2025-06-13-90.jpg</filename></item>',
     )
   })
 })
