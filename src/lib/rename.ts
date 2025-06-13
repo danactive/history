@@ -1,4 +1,5 @@
-import { readdir, rename } from 'node:fs/promises'
+import * as fs from './fs'; // 👈 local wrapper, not 'node:fs/promises'
+
 import path from 'node:path'
 
 import { validateRequestBody, type RequestSchema } from '../models/rename'
@@ -36,7 +37,7 @@ async function renamePaths({
   renameAssociated = false,
 }: ReturnType<typeof validateRequestBody>): Promise<ResponseBody> {
   const fullPath = await checkPathExists(sourceFolder)
-  const filesOnDisk = await readdir(fullPath)
+  const filesOnDisk = await fs.readdir(fullPath);
 
   // Filter filenames if renameAssociated is false; else take all input filenames
   const filtered = renameAssociated ? filenames : filenames.filter((f) => filesOnDisk.includes(f))
@@ -105,7 +106,7 @@ async function renamePaths({
   // Actually rename the files
   await Promise.all(
     renameOps.map(({ from, to }) =>
-      from === to ? Promise.resolve() : rename(from, to)
+      from === to ? Promise.resolve() : fs.rename(from, to)
     )
   )
 
