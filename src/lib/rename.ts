@@ -38,7 +38,7 @@ async function renamePaths({
   const fullPath = await checkPathExists(sourceFolder)
   const filesOnDisk = await readdir(fullPath)
 
-  // Filter only filenames that exist if renameAssociated is false
+  // Filter filenames if renameAssociated is false; else take all input filenames
   const filtered = renameAssociated ? filenames : filenames.filter((f) => filesOnDisk.includes(f))
 
   // Extract unique base names in order
@@ -62,23 +62,21 @@ async function renamePaths({
   const renameOps: { from: string; to: string }[] = []
   const outputFilenames: string[] = []
 
-  filenames.forEach((original) => {
-    const originalBase = path.parse(original).name
-    const newBase = baseToNewBase.get(originalBase)
-    if (!newBase) return
-
-    let matches: string[]
-    if (renameAssociated) {
-      matches = filesOnDisk.filter((f) => path.parse(f).name === originalBase)
-    } else if (filesOnDisk.includes(original)) {
-      matches = [original]
-    } else {
-      matches = []
+  // For each base, find all files on disk sharing that base, rename all
+  for (const base of orderedBases) {
+    const newBase = baseToNewBase.get(base)
+    if (!newBase) {
+      // Defensive: skip if no new base
+      continue
     }
 
-    matches.forEach((match) => {
-      const { ext } = path.parse(match)
+    // Find all files on disk matching this base (any extension)
+    const matches = filesOnDisk.filter((f) => path.parse(f).name === base)
+
+    for (const match of matches) {
+      const ext = path.parse(match).ext
       const renamed = `${newBase}${ext}`
+
       if (!seenOutput.has(renamed)) {
         seenOutput.add(renamed)
         outputFilenames.push(renamed)
@@ -87,10 +85,16 @@ async function renamePaths({
           to: path.join(fullPath, renamed),
         })
       }
-    })
-  })
+    }
+  }
+
+  if (renameOps.length === 0) {
+    // Nothing to rename
+    return { filenames: [], xml: '', renamed: false }
+  }
 
   if (dryRun) {
+    // Dry run, do not rename
     return {
       filenames: outputFilenames,
       xml: generated.xml,
@@ -98,7 +102,12 @@ async function renamePaths({
     }
   }
 
-  await Promise.all(renameOps.map(({ from, to }) => (from === to ? Promise.resolve() : rename(from, to))))
+  // Actually rename the files
+  await Promise.all(
+    renameOps.map(({ from, to }) =>
+      from === to ? Promise.resolve() : rename(from, to)
+    )
+  )
 
   return {
     filenames: outputFilenames,
