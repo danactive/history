@@ -15,6 +15,6 @@ export default async function AdminAlbumServer() {
   const selectedGallery = galleries.find(gallery => config.defaultGallery !== gallery) ?? config.defaultGallery
 
   return (
-    <AdminAlbumClient galleries={galleries} selectedGallery={selectedGallery} galleryAlbum={galleryAlbum} />
+    <AdminAlbumClient galleries={galleries} gallery={selectedGallery} galleryAlbum={galleryAlbum} />
   )
 }

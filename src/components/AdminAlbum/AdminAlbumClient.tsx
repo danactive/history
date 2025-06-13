@@ -4,27 +4,33 @@ import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import { useState } from 'react'
+import useSWR from 'swr'
 
+import { type AlbumResponseBody } from '../../lib/album'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
 import type { GalleryAlbum, Item } from '../../types/common'
+import Fields from './Fields'
 import Photo from './Photo'
 import Thumbs from './Thumbs'
 
 export type ItemState = Item | null
 
+const fetcher = (url: string) => fetch(url).then(r => r.json())
+
 export default function AdminAlbumClient(
-  { galleries, galleryAlbum, selectedGallery }:
-  { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, selectedGallery: Gallery },
+  { galleries, galleryAlbum, gallery }:
+  { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, gallery: Gallery },
 ) {
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
   const [item, setItem] = useState<ItemState>(null)
+  const { data, error } = useSWR<AlbumResponseBody>(album?.name ? `/api/galleries/${gallery}/albums/${album?.name}` : null, fetcher)
 
   const handleAlbumChange = (
     event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
-    const selectedAlbum = galleryAlbum[selectedGallery].albums.find(a => a.name === newValue)
+    const selectedAlbum = galleryAlbum[gallery].albums.find(a => a.name === newValue)
     if (selectedAlbum) {
       setAlbum(selectedAlbum)
     }
@@ -32,7 +38,9 @@ export default function AdminAlbumClient(
 
   return (
     <form>
-        <Photo item={item} />
+        <Fields albumEntity={data?.album} item={item}>
+          <Photo item={item} />
+        </Fields>
         <Stack
           direction="row"
           spacing={2}
@@ -42,7 +50,7 @@ export default function AdminAlbumClient(
         >
           <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>
           <Select
-            defaultValue={selectedGallery}
+            defaultValue={gallery}
             slotProps={{
               button: {
                 id: 'select-gallery-label',
@@ -68,10 +76,11 @@ export default function AdminAlbumClient(
             variant='solid'
           >
             <Option value="">Select a Album</Option>
-            {galleryAlbum[selectedGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
+            {galleryAlbum[gallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
           </Select>
         </Stack>
-        {album ? <Thumbs gallery={selectedGallery} album={album} setItem={setItem} /> : <div>Select an album</div>}
+        {error && <div>{JSON.stringify(error)}</div>}
+        {!error && album ? <Thumbs album={data?.album} setItem={setItem} /> : <div>Select an album</div>}
       </form>
   )
 }

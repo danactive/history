@@ -40,7 +40,12 @@ function ThumbImg({
   return (
     <li className={styles.bullet}>
       <a className={getViewed(viewed)} href={href} onClick={handleClick} id={id}>
-        <Img src={src} alt="Preview thumbnail (scaled down dimensions)" width={width} height={height} />
+        <Img
+          src={src}
+          alt={caption}
+          width={width}
+          height={height}
+        />
       </a>
       <span className={styles.caption}>{caption}</span>
     </li>

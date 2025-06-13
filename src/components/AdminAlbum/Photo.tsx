@@ -1,7 +1,11 @@
+import Button from "@mui/joy/Button"
+import Stack from "@mui/joy/Stack"
 import useSWRMutation from "swr/mutation"
 
+import type { Prediction } from "../../../app/api/admin/classify/route"
 import config from "../../models/config"
 import Img from "../Img"
+import Link from "../Link"
 import type { ItemState } from "./AdminAlbumClient"
 
 const fetcher = async (url: string, { arg }: { arg: string }) =>
@@ -21,23 +25,39 @@ export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
 
   return (
     <>
-      <Img
-        src={item.photoPath}
-        alt={item.caption}
-        width={config.resizeDimensions.photo.width}
-        height={config.resizeDimensions.photo.height-100}
-      />
-      <button
-        onClick={(e) => {
-          e.preventDefault()
-          trigger(item.photoPath)
-        }}
-      >
-        Classify Image
-      </button>
-      {isMutating && <p>Classifying...</p>}
-      {error && <p>Error loading classification</p>}
-      {data && <p>Predictions: {JSON.stringify(data.predictions)}</p>}
+      <Stack direction="column">
+        <Img
+          src={item.photoPath}
+          alt={item.caption}
+          width={config.resizeDimensions.photo.width-200}
+          height={config.resizeDimensions.photo.height-200}
+        />
+        <Button
+          onClick={(e) => {
+            e.preventDefault()
+            trigger(item.photoPath)
+          }}
+        >
+          Classify Image
+        </Button>
+        {isMutating && <p>Classifying...</p>}
+        {error && <p>Error loading classification</p>}
+        {data && <p>Predictions:
+          {data.predictions.map((p: Prediction) =>
+            (
+              <div key={p.label}>
+                <Link
+                  href={`https://en.wikipedia.org/w/index.php?search=${p.label}`}
+                  target="_blank"
+                >
+                  {p.label}
+                </Link> {(p.score * 100).toFixed(2)}%
+              </div>
+            ),
+          )}
+          </p>
+        }
+      </Stack>
     </>
   )
 }

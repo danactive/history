@@ -1,28 +1,20 @@
 import { type Dispatch, type SetStateAction } from 'react'
-import useSWR from 'swr'
 
-import { type AlbumResponseBody } from '../../lib/album'
-import type { Gallery, GalleryAlbum } from "../../types/common"
+import { AlbumResponseBody } from '../../lib/album'
 import styles from '../AlbumPage/styles.module.css'
 import ThumbImg from '../ThumbImg'
 import { ItemState } from './AdminAlbumClient'
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
-
 export default function AdminAlbumThumbs(
-  { gallery, album, setItem }:
-  { gallery: Gallery, album: GalleryAlbum, setItem: Dispatch<SetStateAction<ItemState>> },
+  { album, setItem }:
+  { album: AlbumResponseBody['album'] | undefined, setItem: Dispatch<SetStateAction<ItemState>> },
 ) {
-  const { data, error, isLoading } = useSWR<AlbumResponseBody>(`/api/galleries/${gallery}/albums/${album.name}`, fetcher)
-
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
-  if (!data) return <div>no data</div>
+  if (!album) return <div>Loading...</div>
 
   return (
     <>
       <ul className={styles.thumbWrapper}>
-        {data.album.items.map((item, index) => (
+        {album.items.map((item) => (
           <ThumbImg
             onClick={() => setItem(item)}
             src={item.thumbPath}

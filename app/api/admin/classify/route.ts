@@ -4,6 +4,11 @@ import fs from "node:fs/promises"
 import utilsFactory from "../../../../src/lib/utils"
 import config from "../../../../src/models/config"
 
+export type Prediction = {
+  label: string;
+  score: number;
+}
+
 export async function POST(req: Request) {
   try {
     const utils = utilsFactory()

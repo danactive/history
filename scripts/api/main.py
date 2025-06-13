@@ -7,7 +7,6 @@ import timm
 import json
 import torchvision.transforms as T
 import base64
-import os
 
 # Load class labels
 with open("inat21_class_index.json", "r") as f:
