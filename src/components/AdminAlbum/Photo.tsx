@@ -40,9 +40,9 @@ export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
         >
           Classify Image
         </Button>
-        {isMutating && <p>Classifying...</p>}
-        {error && <p>Error loading classification</p>}
-        {data && <p>Predictions:
+        {isMutating && <div>Classifying...</div>}
+        {error && <div>Error loading classification</div>}
+        {data && <div>Predictions:
           {data.predictions.map((p: Prediction) =>
             (
               <div key={p.label}>
@@ -55,7 +55,7 @@ export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
               </div>
             ),
           )}
-          </p>
+          </div>
         }
       </Stack>
     </>

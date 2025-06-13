@@ -20,8 +20,12 @@ export default function Fields(
       >
         {children}
         <Stack direction="column">
-          <Input defaultValue={item?.city} />
-          <Input defaultValue={item?.caption} />
+          <Input value={item?.filename} />
+          <Input value={item?.city} />
+          <Input value={item?.location ?? ''} />
+          <Input value={item?.caption} />
+          <Input value={item?.description ?? ''} />
+          <Input value={item?.search ?? ''} />
           <Xml jsonBlob={JSON.stringify(albumEntity)} />
         </Stack>
       </Stack>
