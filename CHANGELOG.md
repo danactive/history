@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.2.0](https://github.com/danactive/history/compare/v11.1.0...v11.2.0) (2025-06-13)
+
+
+### Features
+
+* **Admin > Edit Album:** Prediction results link to wikipedia ([bc3d6e3](https://github.com/danactive/history/commit/bc3d6e3af84d42c4d6b8ebf717d48faefdbbd14b))
+* **Image Classifier:** Add Load Weights script. Switch model to correctly identify with debug output ([e3dedfe](https://github.com/danactive/history/commit/e3dedfe5d780ae5b40a45ad4ef6a57e8c2bf2abd))
+* **Image Classifier:** Improve model weight management for offline; Hugging Face Hub only one-time download ([a571e55](https://github.com/danactive/history/commit/a571e55d1476710b1ab4163f898a2c82b71e127d))
+
 ## [11.1.0](https://github.com/danactive/history/compare/v11.0.0...v11.1.0) (2025-06-11)
 
 
