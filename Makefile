@@ -10,3 +10,9 @@ build-load-weights:
 		--build-arg FILENAMES="$(FILENAMES)" \
 		-f apps/load-weights/Dockerfile \
 		-t weights-loader .
+
+build-classifier:
+	docker build -f apps/api/Dockerfile -t image-classifier .
+
+classifier:
+	docker run -p 8080:8080 image-classifier
