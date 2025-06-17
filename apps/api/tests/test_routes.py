@@ -37,6 +37,6 @@ def test_classify_route():
     print("DEBUG BODY:", body)
 
     assert "predictions" in body
-    predictions = body["predictions"]["predictions"]
+    predictions = body["predictions"]
     assert isinstance(predictions, list), f"Expected list, got: {type(predictions)}"
     assert all("label" in pred and "score" in pred for pred in predictions)

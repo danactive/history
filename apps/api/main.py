@@ -1,12 +1,10 @@
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import logging
 import sys
 import traceback
 from aesthetic import score_aesthetic
 from classify import classify_image
-from PIL import Image
-import io
 
 # Setup logging once
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -30,22 +28,17 @@ def error_response(e: Exception):
     )
 
 @main_py_app.post("/classify")
-async def classify_endpoint(req: Request, debug: bool = Query(False)):
+async def classify_endpoint(req: Request):
     try:
-        results, debug_data = await classify_image(req, debug)
-        return {"predictions": results} if not debug else {
-            "predictions": results,
-            **debug_data
-        }
+        results = await classify_image(req)
+        return results
     except Exception as e:
         return error_response(e)
 
 @main_py_app.post("/scores")
 async def score_endpoint(req: Request):
     try:
-        img_bytes = await req.body()
-        img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-        score = score_aesthetic(img)
+        score = await score_aesthetic(req)
         return {"aesthetic_score": round(score, 3)}
     except Exception as e:
         return error_response(e)

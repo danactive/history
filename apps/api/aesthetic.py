@@ -1,10 +1,12 @@
+from fastapi import Request
 import torch
 import torch.nn as nn
-from PIL import Image
 import torchvision.transforms as T
 import open_clip
+from PIL import Image
 import logging
 from collections import OrderedDict
+import io
 
 # Set up logging once
 logging.basicConfig(level=logging.DEBUG)
@@ -69,21 +71,14 @@ def load_clip_model() -> tuple[torch.nn.Module, callable]:
 _clip_model, preprocess = load_clip_model()
 regression_head = load_aesthetic_head(HEAD_PATH)
 
-def score_aesthetic(pil_image: Image.Image) -> float:
-    model, _, preprocess = open_clip.create_model_and_transforms(
-        'ViT-L-14',
-        pretrained=None
-    )
-    model.eval()
+async def score_aesthetic(req: Request) -> float:
+  img_bytes = await req.body()
+  img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
-    logger.info("Load your checkpoint...")
-    logger.info("Load your regression head...")
+  with torch.no_grad():
+    image_tensor = preprocess(img).unsqueeze(0)
+    image_features = _clip_model.encode_image(image_tensor)
+    image_features /= image_features.norm(dim=-1, keepdim=True)
+    score = regression_head(image_features).item()
 
-    with torch.no_grad():
-        image_tensor = preprocess(pil_image).unsqueeze(0)
-        image_features = model.encode_image(image_tensor)
-        image_features /= image_features.norm(dim=-1, keepdim=True)
-        score = regression_head(image_features).item()
-
-    return float(score)
-
+  return float(score)

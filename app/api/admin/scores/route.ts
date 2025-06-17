@@ -1,15 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import fs from 'node:fs/promises'
 
 import utilsFactory from '../../../../src/lib/utils'
 import config from '../../../../src/models/config'
 
-async function POST(req: Request) {
+export async function POST(req: Request) {
   try {
     const utils = utilsFactory()
-
-    const url = new URL(req.url)
-    const debug = url.searchParams.get('debug') === 'true'
 
     const { path: relativePath } = await req.json()
 
@@ -20,7 +17,7 @@ async function POST(req: Request) {
     const fullPath = utils.safePublicPath(relativePath)
     const buffer = await fs.readFile(fullPath)
 
-    const classifyUrl = `http://localhost:${config.pythonPort}/scores?debug=${debug}`
+    const classifyUrl = `http://localhost:${config.pythonPort}/scores`
 
     const res = await fetch(classifyUrl, {
       method: 'POST',
@@ -41,19 +38,4 @@ async function POST(req: Request) {
     console.error(err)
     return NextResponse.json({ error: err.message || 'Unexpected error' }, { status: 500 })
   }
-}
-
-// Catch-all for unsupported methods
-function notSupported(req: NextRequest) {
-  return NextResponse.json(`Method ${req.method} Not Allowed`, { status: 405 })
-}
-
-export {
-  notSupported as GET,
-  POST,
-  notSupported as PUT,
-  notSupported as DELETE,
-  notSupported as PATCH,
-  notSupported as OPTIONS,
-  notSupported as HEAD,
 }

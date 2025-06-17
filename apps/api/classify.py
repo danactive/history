@@ -1,10 +1,9 @@
 from fastapi import Request
 import torch
 import timm
-import json
-from PIL import Image
 import torchvision.transforms as T
-import base64
+from PIL import Image
+import json
 import io
 import logging
 
@@ -49,12 +48,11 @@ debug_transform = T.Compose([
   T.CenterCrop(input_size),
 ])
 
-async def classify_image(req: Request, debug: bool):
+async def classify_image(req: Request):
   img_bytes = await req.body()
   img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
 
   # Image preparation
-  resized_img = debug_transform(img)
   input_tensor = transform(img).unsqueeze(0)
 
   with torch.no_grad():
@@ -74,29 +72,4 @@ async def classify_image(req: Request, debug: bool):
   if not isinstance(results, list):
     results = [results]
 
-  if not debug:
-    return {"predictions": results}, {}
-
-  # Debug details
-  topk_debug = torch.topk(probs, k=50)
-  top_50 = [
-    {
-      "label": idx_to_label.get(str(idx.item()), f"Unknown ({idx.item()})"),
-      "score": float(score)
-    }
-    for idx, score in zip(topk_debug.indices[0], topk_debug.values[0])
-  ]
-
-  buffered = io.BytesIO()
-  resized_img.save(buffered, format="JPEG")
-  img_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-  return {
-    "predictions": results,
-    "top_50": top_50,
-    "logits_shape": list(logits.shape),
-    "max_prob": float(probs.max()),
-    "min_prob": float(probs.min()),
-    "resized_image": img_base64,
-    "confirm_order": "offline_weights_loaded",
-  }
+  return {"predictions": results}

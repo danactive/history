@@ -13,9 +13,6 @@ export async function POST(req: Request) {
   try {
     const utils = utilsFactory()
 
-    const url = new URL(req.url)
-    const debug = url.searchParams.get('debug') === 'true'
-
     const { path: relativePath } = await req.json()
 
     if (!relativePath) {
@@ -25,7 +22,7 @@ export async function POST(req: Request) {
     const fullPath = utils.safePublicPath(relativePath)
     const buffer = await fs.readFile(fullPath)
 
-    const classifyUrl = `http://localhost:${config.pythonPort}/classify?debug=${debug}`
+    const classifyUrl = `http://localhost:${config.pythonPort}/classify`
 
     const res = await fetch(classifyUrl, {
       method: 'POST',
