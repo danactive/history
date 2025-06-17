@@ -66,24 +66,24 @@ def load_clip_model() -> tuple[torch.nn.Module, callable]:
     return model, preprocess
 
 # One-time global setup
-_clip_model, _preprocess = load_clip_model()
-_regression_head = load_aesthetic_head(HEAD_PATH)
+_clip_model, preprocess = load_clip_model()
+regression_head = load_aesthetic_head(HEAD_PATH)
 
 def score_aesthetic(pil_image: Image.Image) -> float:
-    transform = T.Compose([
-        T.Resize(224, interpolation=T.InterpolationMode.BICUBIC),
-        T.CenterCrop(224),
-        T.ToTensor(),
-        T.Normalize(
-            mean=(0.48145466, 0.4578275, 0.40821073),
-            std=(0.26862954, 0.26130258, 0.27577711)
-        ),
-    ])
-    image_tensor = transform(pil_image).unsqueeze(0)
+    model, _, preprocess = open_clip.create_model_and_transforms(
+        'ViT-L-14',
+        pretrained=None
+    )
+    model.eval()
+
+    logger.info("Load your checkpoint...")
+    logger.info("Load your regression head...")
 
     with torch.no_grad():
-        image_features = _clip_model.encode_image(image_tensor)
+        image_tensor = preprocess(pil_image).unsqueeze(0)
+        image_features = model.encode_image(image_tensor)
         image_features /= image_features.norm(dim=-1, keepdim=True)
-        aesthetic_score = _regression_head(image_features).item()
+        score = regression_head(image_features).item()
 
-    return float(aesthetic_score)
+    return float(score)
+

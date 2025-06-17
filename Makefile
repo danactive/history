@@ -19,3 +19,10 @@ build-ai-api:
 
 ai-api:
 	docker run -p 8080:8080 ai-api
+
+build-test:
+	docker build  -f apps/api/Dockerfile --build-arg INSTALL_TEST=true -t ai-api-test .
+
+test:
+	docker run --rm --entrypoint pytest ai-api-test -v
+

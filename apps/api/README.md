@@ -19,12 +19,23 @@ This project serves a high-accuracy image classification API using a **Vision Tr
 - Auto-converted to RGB using Pillow
 - Resized to 384x384, then center cropped to 336x336
 - Normalized using CLIP-style mean and std values:
-  - `mean = [0.48145466, 0.4578275, 0.40821073]`
-  - `std = [0.26862954, 0.26130258, 0.27577711]`
+	- `mean = [0.48145466, 0.4578275, 0.40821073]`
+	- `std = [0.26862954, 0.26130258, 0.27577711]`
 
 ## CLI commands
 - `make build-ai-api`
 - `make ai-api`
 
 
-https://github.com/christophschuhmann/improved-aesthetic-predictor/tree/main
+# Aesthetic Scoring
+
+## Model details
+
+- **[OpenCLIP](https://github.com/mlfoundations/open_clip) ViT-L/14** model (CLIP architecture)
+- **Checkpoint** laion2B-s32B-b82K
+- **Aesthetic scoring** using a trained multilayer perceptron (MLP)
+- Deterministic evaluation
+- A custom regression MLP head trained on:
+  	- AVA dataset (aesthetics annotated)
+	- Logos subset (for composition)
+- [Code sample](https://github.com/christophschuhmann/improved-aesthetic-predictor/tree/main)

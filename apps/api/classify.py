@@ -70,6 +70,10 @@ async def classify_image(req: Request, debug: bool):
     for idx, score in zip(topk.indices[0], topk.values[0])
   ]
 
+  # 💡 Normalize results to always be a list
+  if not isinstance(results, list):
+    results = [results]
+
   if not debug:
     return {"predictions": results}, {}
 
