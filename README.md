@@ -22,7 +22,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 #### How-to run on LOCAL
 1. `npm run dev` will standup both the frontend and backend
 1. View address in browser (printed in terminal on successful load)
-1. Start the image classifier in /scripts/api for the Admin > Edit Album page
+1. Start the image classifier in /apps/api for the Admin > Edit Album page
 
 #### How-to build for PROD
 1. `npm run build` Bundle JavaScript files, and pre-compile

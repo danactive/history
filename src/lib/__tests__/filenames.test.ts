@@ -41,6 +41,27 @@ describe('Filenames', () => {
       expect(results.next().value).toBe('media2')
       expect(results.next().value).toBe('media3')
     })
+
+    test('Six photos per day', () => {
+      const sourceFilenames = [
+        '2024-12-07 15.56.24',
+        '2024-12-07 16.05.01',
+        '2024-12-07 16.05.07',
+        '2024-12-07 17.28.12',
+        '2024-12-07 18.48.47',
+        '2024-12-07 18.55.32',
+      ]
+      const result = uniqueFiles(sourceFilenames)
+      const results = result.values()
+
+      expect(result.size).toBe(6)
+      expect(results.next().value).toBe('2024-12-07 15.56.24')
+      expect(results.next().value).toBe('2024-12-07 16.05.01')
+      expect(results.next().value).toBe('2024-12-07 16.05.07')
+      expect(results.next().value).toBe('2024-12-07 17.28.12')
+      expect(results.next().value).toBe('2024-12-07 18.48.47')
+      expect(results.next().value).toBe('2024-12-07 18.55.32')
+    })
   })
 
   /*
@@ -166,6 +187,25 @@ describe('Filenames', () => {
       expect(result.files[2]).toBe(`${prefix}-58`)
       expect(result.files[3]).toBe(`${prefix}-74`)
       expect(result.files[4]).toBe(`${prefix}-90`)
+    })
+
+    test('Six photos per day', () => {
+      const sourceFilenames = ['media1.jpg', 'media2.jpg', 'media3.jpeg', 'media3.m2ts', 'media4.jpeg', 'media5.jpg', 'media6.jpg']
+      const prefix = '2016-12-06'
+      const result = futureFilenamesOutputs(sourceFilenames, prefix)
+
+      expect(result.filenames[0]).toBe(`${prefix}-23.jpg`)
+      expect(result.filenames[1]).toBe(`${prefix}-37.jpg`)
+      expect(result.filenames[2]).toBe(`${prefix}-50.jpg`)
+      expect(result.filenames[3]).toBe(`${prefix}-64.jpg`)
+      expect(result.filenames[4]).toBe(`${prefix}-77.jpg`)
+      expect(result.filenames[5]).toBe(`${prefix}-90.jpg`)
+      expect(result.files[0]).toBe(`${prefix}-23`)
+      expect(result.files[1]).toBe(`${prefix}-37`)
+      expect(result.files[2]).toBe(`${prefix}-50`)
+      expect(result.files[3]).toBe(`${prefix}-64`)
+      expect(result.files[4]).toBe(`${prefix}-77`)
+      expect(result.files[5]).toBe(`${prefix}-90`)
     })
 
     test('34 photos per day', () => {

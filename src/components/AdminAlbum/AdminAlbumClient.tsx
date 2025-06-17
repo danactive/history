@@ -38,14 +38,14 @@ export default function AdminAlbumClient(
 
   return (
     <form>
-        <Fields albumEntity={data?.album} item={item}>
+        {item && <Fields albumEntity={data?.album} item={item}>
           <Photo item={item} />
-        </Fields>
+        </Fields>}
         <Stack
           direction="row"
           spacing={2}
           sx={{
-            alignItems: "center",
+            alignItems: 'center',
           }}
         >
           <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>

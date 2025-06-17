@@ -1,23 +1,23 @@
-import Button from "@mui/joy/Button"
-import Stack from "@mui/joy/Stack"
-import useSWRMutation from "swr/mutation"
+import Button from '@mui/joy/Button'
+import Stack from '@mui/joy/Stack'
+import useSWRMutation from 'swr/mutation'
 
-import type { Prediction } from "../../../app/api/admin/classify/route"
-import config from "../../models/config"
-import Img from "../Img"
-import Link from "../Link"
-import type { ItemState } from "./AdminAlbumClient"
+import type { Prediction } from '../../../app/api/admin/classify/route'
+import config from '../../models/config'
+import Img from '../Img'
+import Link from '../Link'
+import type { ItemState } from './AdminAlbumClient'
 
 const fetcher = async (url: string, { arg }: { arg: string }) =>
   fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path: arg }),
   }).then((res) => res.json())
 
 export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
   const { trigger, data, error, isMutating } = useSWRMutation(
-    "/api/admin/classify",
+    '/api/admin/classify',
     fetcher,
   )
 
@@ -40,9 +40,9 @@ export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
         >
           Classify Image
         </Button>
-        {isMutating && <p>Classifying...</p>}
-        {error && <p>Error loading classification</p>}
-        {data && <p>Predictions:
+        {isMutating && <div>Classifying...</div>}
+        {error && <div>Error loading classification</div>}
+        {data && <div>Predictions:
           {data.predictions.map((p: Prediction) =>
             (
               <div key={p.label}>
@@ -55,7 +55,7 @@ export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
               </div>
             ),
           )}
-          </p>
+          </div>
         }
       </Stack>
     </>

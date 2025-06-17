@@ -6,6 +6,7 @@ import config from '../models/config'
 import { validateRequestBody, type RequestSchema } from '../models/resize'
 import pathExists from './exists'
 import utilsFactory, { isStandardError } from './utils'
+import { moveRaws } from './rename'
 
 const utils = utilsFactory()
 
@@ -37,7 +38,8 @@ type ResponseBody = {
   } | null
 }
 
-function formatErrorMessage(err: unknown, prefix: string): string {
+type ErrorFormatter = (err: unknown, prefix: string) => string
+const formatErrorMessage: ErrorFormatter = (err, prefix) => {
   if (isStandardError(err)) {
     return `${prefix}: ${err.message}`
   }
@@ -127,6 +129,8 @@ async function resize({ sourceFolder, metadata }: ReturnType<typeof validateRequ
       } catch (err) {
         errors.push(formatErrorMessage(err, `Resize thumbnail: ${jpg}`))
       }
+
+      await moveRaws({ originalPath, filesOnDisk, errors, formatErrorMessage })
     }
 
     return {
@@ -165,4 +169,5 @@ export {
   resize,
   type ResponseBody as ResizeResponseBody,
   type RequestSchema as ResizeRequestBody,
+  type ErrorFormatter,
 }

@@ -1,30 +1,47 @@
 import path from 'node:path'
 
+import config from '../models/config'
 import type { Item } from '../types/common'
 import utilsFactory from './utils'
 
 const utils = utilsFactory()
 
+// Flatten and normalize all supported photo and video extensions
+const allExtensions = [
+  ...Object.values(config.supportedFileTypes),
+  ...Object.values(config.rawFileTypes),
+]
+  .flat()
+  .map((ext) => ext.toLowerCase())
+
 /**
- * Count unique filenames
+ * Ignore file extensions and determine unique files
  * @param {string[]} sourceFilenames list of filenames
  * @returns {Set} uniques
  */
 function uniqueFiles(sourceFilenames: string[]) {
-  const uniques: Set<string> = new Set()
-  sourceFilenames.forEach((filename) => {
-    uniques.add(path.parse(filename).name)
-  })
+  const uniques = new Set<string>()
+
+  for (const filename of sourceFilenames) {
+    const ext = path.extname(filename).toLowerCase().slice(1) // remove dot
+
+    if (allExtensions.includes(ext)) {
+      const base = path.basename(filename, path.extname(filename))
+      uniques.add(base)
+    } else {
+      uniques.add(filename)
+    }
+  }
 
   return uniques
 }
 
-function videoTypeInList(sourceFilenames: string[], sourceFile: string) {
-  const filenameSet = sourceFilenames.filter((s) => s.indexOf(sourceFile) === 0)
+function videoTypeInList(sourceFilenames: string[], baseName: string) {
+  const filenameSet = sourceFilenames.filter((s) => path.parse(s).name === baseName)
   const media = filenameSet.map((f) => utils.mediumType(utils.mimeType(utils.type(f))))
-  const videoFiles = media.filter((m) => m === 'video')
-  return videoFiles.length > 0
+  return media.includes('video')
 }
+
 
 function formatId(filename: string, xmlStartPhotoId: number, i: number) {
   if (formatIdPrefix(filename) === '') return (xmlStartPhotoId + i).toString()
