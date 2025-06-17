@@ -23,5 +23,8 @@ This project serves a high-accuracy image classification API using a **Vision Tr
   - `std = [0.26862954, 0.26130258, 0.27577711]`
 
 ## CLI commands
-- `make build-classifier`
-- `make classifier`
+- `make build-ai-api`
+- `make ai-api`
+
+
+https://github.com/christophschuhmann/improved-aesthetic-predictor/tree/main
