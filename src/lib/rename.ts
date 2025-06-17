@@ -5,6 +5,7 @@ import path from 'node:path'
 import { validateRequestBody, type RequestSchema } from '../models/rename'
 import checkPathExists from './exists'
 import { futureFilenamesOutputs } from './filenames'
+import { type ErrorFormatter } from './resize'
 
 type ResponseBody = {
   renamed: boolean;
@@ -117,9 +118,29 @@ async function renamePaths({
   }
 }
 
-export {
-  errorSchema,
-  renamePaths,
-  type ResponseBody as RenameResponseBody,
-  type RequestSchema as RenameRequestBody,
+async function moveRaws(
+  { originalPath, filesOnDisk, errors, formatErrorMessage }:
+  { originalPath: string, filesOnDisk: string[], errors: string[], formatErrorMessage: ErrorFormatter },
+) {
+  const rawsPath = path.join(path.dirname(originalPath), 'raws')
+  await fs.mkdir(rawsPath, { recursive: true })
+
+  for (const file of filesOnDisk) {
+    if (file.toLowerCase().endsWith('.heic') || file.toLowerCase().endsWith('.heif')) {
+      const sourceFile = path.join(originalPath, file)
+      const destinationFile = path.join(rawsPath, file)
+
+      try {
+        await fs.rename(sourceFile, destinationFile) // Move file
+        console.log(`Moved: ${file} → raws`)
+      } catch (err) {
+        errors.push(formatErrorMessage(err, `Error moving HEIF file: ${file}`))
+      }
+    }
+  }
 }
+
+export {
+  errorSchema, moveRaws, renamePaths, type RequestSchema as RenameRequestBody, type ResponseBody as RenameResponseBody,
+}
+

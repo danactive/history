@@ -11,6 +11,7 @@
     "lint": "echo 'Lint...' && ESLINT_USE_FLAT_CONFIG=true npx eslint . --ext .ts,.tsx --fix",
     "lint:ci": "next lint .",
     "test": "jest --watch",
+    "test:vitest": "npx vitest watch",
     "test:ci": "jest --ci && npx vitest run",
     "test:e2e": "npx playwright test",
     "typecheck": "echo 'Typecheck...' && tsc",
