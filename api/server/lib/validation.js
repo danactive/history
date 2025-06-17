@@ -11,11 +11,9 @@ module.exports = {
   geocode: joi.string().regex(/(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)/).example('49.25,-123.1'),
   prefix: joi.string().isoDate().raw().required()
     .example('2016-12-31'),
-  preview: joi.boolean().truthy('true').falsy('false').default(false),
   raw: joi.boolean().truthy('true').falsy('false').default(false),
   renameAssociated: joi.boolean().truthy('true').falsy('false').default(false)
     .description('JPG and RAW or video and still image are common associated pairs that should rename together'),
-  resize: joi.boolean().truthy('true').falsy('false').default(true),
   sources: joi.string(),
   sourceFolder: joi.string().trim().example('/public/todo/'),
   w: joi.number(),
