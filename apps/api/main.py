@@ -38,7 +38,6 @@ async def classify_endpoint(req: Request):
 @main_py_app.post("/scores")
 async def score_endpoint(req: Request):
     try:
-        score = await score_aesthetic(req)
-        return {"aesthetic_score": round(score, 3)}
+        return {"aesthetic_score": await score_aesthetic(req)}
     except Exception as e:
         return error_response(e)

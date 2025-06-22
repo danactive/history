@@ -42,3 +42,4 @@ coverage
 tmp
 public/resized
 models
+weights.log

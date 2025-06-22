@@ -5,17 +5,12 @@ Hugging Face timm https://huggingface.co/timm/convnext_large_mlp.laion2b_ft_augr
 
 
 ## Image classifier
-1. Build container `make build-load-weights MODEL_REPO=timm/eva02_large_patch14_clip_336.merged2b_ft_inat21 FILENAMES="pytorch_model.bin"`
-1. Run container
-```
-docker run --rm \
-  -v "$HOME/.cache/huggingface":/root/.cache/huggingface \
-  weights-loader
-```
 
-Then copy from the Hugging Face cache to the repo
-- `mkdir -p models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21`
-- ```
-cp $HOME/.cache/huggingface/hub/models--timm--eva02_large_patch14_clip_336.merged2b_ft_inat21/snapshots/*/pytorch_model.bin \
-   models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21/
-```
+`make load-weights MODEL_REPO=timm/eva02_large_patch14_clip_336.merged2b_ft_inat21 FILENAMES="pytorch_model.bin"`
+
+## Aesthetic Scorer
+
+`make load-weights MODEL_REPO=apple/DFN5B-CLIP-ViT-H-14-378 FILENAMES="open_clip_pytorch_model.bin open_clip_config.json"`
+
+
+`make load-weights MODEL_REPO=CrowsonKB/simulacra-aesthetic-model FILENAMES="simulacra_aesthetic_model.pth"`

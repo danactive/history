@@ -36,6 +36,6 @@ This project serves a high-accuracy image classification API using a **Vision Tr
 - **Aesthetic scoring** using a trained multilayer perceptron (MLP)
 - Deterministic evaluation
 - A custom regression MLP head trained on:
-  	- AVA dataset (aesthetics annotated)
+  	- [AVA dataset (aesthetics annotated)](https://github.com/microsoft/LMOps/blob/main/promptist/aesthetic/ava%2Blogos-l14-linearMSE.pth)
 	- Logos subset (for composition)
 - [Code sample](https://github.com/christophschuhmann/improved-aesthetic-predictor/tree/main)
