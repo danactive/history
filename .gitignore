@@ -43,3 +43,4 @@ tmp
 public/resized
 models
 weights.log
+api.log

@@ -15,6 +15,8 @@ ENV PYTHONPATH="/dock"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libjpeg-dev \
+    # For CLIP in requirements.txt
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies

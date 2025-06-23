@@ -14,8 +14,8 @@ with open("/dock/config.json", "r") as config:
 port = config.get("pythonPort")
 
 if __name__ == "__main__":
-  logger.debug("Starting Uvicorn server...")
-  try:
-    uvicorn.run("main:main_py_app", host="0.0.0.0", port=port, log_level="debug", access_log=True)
-  except Exception as e:
-    logger.debug(f"Uvicorn failed to start: {e}")
+    logger.debug(f"Starting Uvicorn server on port {port}...")
+    try:
+        uvicorn.run("main:main_py_app", host="0.0.0.0", port=port, log_level="debug", access_log=True)
+    except Exception as e:
+        logger.error(f"Uvicorn failed to start: {e}")

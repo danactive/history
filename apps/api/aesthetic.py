@@ -7,20 +7,23 @@ from PIL import Image
 import logging
 from collections import OrderedDict
 import io
+import clip
 
 # Set up logging once
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
-HEAD_PATH = "models/aesthetic/ava+logos-l14-linearMSE.pth"
-CHECKPOINT_PATH = "models/laion_CLIP-ViT-L-14-laion2B-s32B-b82K/open_clip_pytorch_model.bin"
+HEAD_PATH = "models/aesthetic/sa_0_4_vit_b_16_linear.pth"
+CHECKPOINT_PATH = "models/openai_CLIP-ViT-L-16/open_clip_pytorch_model.bin"
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def build_head():
     return nn.Sequential(
-        nn.Linear(768, 1024),
+        nn.Linear(512, 512),
         nn.ReLU(),
-        nn.Linear(1024, 128),
+        nn.Linear(512, 128),
         nn.ReLU(),
         nn.Linear(128, 64),
         nn.ReLU(),
@@ -45,26 +48,22 @@ def load_aesthetic_head(head_path: str) -> nn.Module:
             head = build_head()
             head.load_state_dict(renamed, strict=False)
             return head.eval()
+        elif all(isinstance(v, torch.Tensor) for v in loaded.values()):
+            logger.info("🧠 Detected plain state_dict format.")
+            head = build_head()
+            head.load_state_dict(loaded, strict=False)
+            return head.eval()
         else:
-            raise ValueError("❌ Unrecognized dict format in aesthetic head.")
+            raise ValueError(f"❌ Unrecognized dict format in aesthetic head. Keys: {list(loaded.keys())}")
     else:
         logger.info("🧠 Detected direct model object.")
         return loaded.eval()
 
 def load_clip_model() -> tuple[torch.nn.Module, callable]:
-    logger.info("🔧 Creating model and transforms...")
-    model, _, preprocess = open_clip.create_model_and_transforms(
-        'ViT-L-14',
-        pretrained=None
-    )
+    logger.info("🔧 Creating ViT-B/16 model and transforms...")
+    model, preprocess = clip.load("ViT-B/16", device=device)
     model.eval()
-
     logger.info("✅ Model and transforms created.")
-    logger.info(f"📦 Loading checkpoint from: {CHECKPOINT_PATH}")
-    from open_clip import load_checkpoint
-    load_checkpoint(model, CHECKPOINT_PATH)
-    logger.info("✅ Checkpoint loaded.")
-
     return model, preprocess
 
 # One-time global setup

@@ -10,7 +10,6 @@ Hugging Face timm https://huggingface.co/timm/convnext_large_mlp.laion2b_ft_augr
 
 ## Aesthetic Scorer
 
-`make load-weights MODEL_REPO=apple/DFN5B-CLIP-ViT-H-14-378 FILENAMES="open_clip_pytorch_model.bin open_clip_config.json"`
+`make load-weights MODEL_REPO=LAION/CLIP-based-Aesthetic-Predictor FILENAMES="ava+logos-l14-linearMSE.pth"`
 
-
-`make load-weights MODEL_REPO=CrowsonKB/simulacra-aesthetic-model FILENAMES="simulacra_aesthetic_model.pth"`
+https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth

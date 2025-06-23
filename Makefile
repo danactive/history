@@ -31,7 +31,9 @@ build-ai-api:
 	docker build -f apps/api/Dockerfile -t ai-api .
 
 ai-api:
-	docker run -p 8080:8080 ai-api
+	docker run --name ai-api-run -p 8080:8080 ai-api > api.log 2>&1 || true
+	cat api.log
+	docker rm ai-api-run || true
 
 build-test:
 	docker build  -f apps/api/Dockerfile --build-arg INSTALL_TEST=true -t ai-api-test .
