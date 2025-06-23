@@ -2,7 +2,6 @@ from fastapi import Request
 import torch
 import torch.nn as nn
 import torchvision.transforms as T
-import open_clip
 from PIL import Image
 import logging
 from collections import OrderedDict
@@ -15,7 +14,6 @@ logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
 HEAD_PATH = "models/aesthetic/sa_0_4_vit_b_16_linear.pth"
-CHECKPOINT_PATH = "models/openai_CLIP-ViT-L-16/open_clip_pytorch_model.bin"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
