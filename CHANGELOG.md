@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.3.0](https://github.com/danactive/history/compare/v11.2.0...v11.3.0) (2025-06-23)
+
+
+### Features
+
+* **Admin > Resize:** Move HEIFs to raws folder too ([6ae8ab5](https://github.com/danactive/history/commit/6ae8ab535f95e633f15dde98ddbb37b0e7486b0a))
+* **Admin > Walk:** Display aesthetic score per thumb ([50ee360](https://github.com/danactive/history/commit/50ee360a7f37cd5c7064bdd1b73ea533c59b432a))
+* **Aesthetic Scorer:** Add new API route; Enhance load weights for multiple filenames ([cded075](https://github.com/danactive/history/commit/cded075e87f36ef1ba133859aa4af61eb3a078db))
+* **Aesthetic Scorer:** Change aesthetic scoring API using OpenAI CLIP ViT-B/16 and regression head ([bacfa27](https://github.com/danactive/history/commit/bacfa27217d05e49f8813a404a5e82d6be2fa213))
+* **Aesthetic Scorer:** Slower response due to one CPU to be deterministic; Add unit tests ([9ebbb47](https://github.com/danactive/history/commit/9ebbb4762ae8275a1b3e2542eb0037b99f59a0e0))
+* **Image Classifier:** Add Makefile; Adjust weights loader so repo and filenames are passed as args (untested) ([52dcbcd](https://github.com/danactive/history/commit/52dcbcd0ea60eb5c9b1084f637973b7ad6ea2d3c))
+* **Image Classifier:** Improve error logging and move classifier code to own module ([1d1201f](https://github.com/danactive/history/commit/1d1201f5570318da3b90cb4758c35edb9a9c8980))
+* **Unit test:** Add vitest for ESM mocking since Jest does not support ([0c360f8](https://github.com/danactive/history/commit/0c360f8cd39f4452599b89cc9f931d2bca816995))
+
+
+### Bug Fixes
+
+* **Admin > Edit Album:** Fix HTML nesting issue error ([8313ea9](https://github.com/danactive/history/commit/8313ea93ef528acbe58c3ee9d8cbb659ebcc9d24))
+* **Admin > Rename:** Rename all files as edge case only renamed partial; XML with video ([217caf4](https://github.com/danactive/history/commit/217caf4cc420235e3add78c15c2db0f512762459))
+* **Aesthetic Scorer:** Remove debug and nesting response ([23ced58](https://github.com/danactive/history/commit/23ced58f43e2ce034dce59e0131188932427f813))
+* **eslint:** Restore airbnb quote rule https://github.com/airbnb/javascript?tab=readme-ov-file#strings--quotes ([e5952be](https://github.com/danactive/history/commit/e5952be8309d7709eabc152114404b84b0b3ef27))
+* **Weights loader:** Add debug output and expose Docker log file ([2ebc8a9](https://github.com/danactive/history/commit/2ebc8a9e5b28022787c703c81e485338d1fa55b3))
+
 ## [11.2.0](https://github.com/danactive/history/compare/v11.1.0...v11.2.0) (2025-06-13)
 
 
