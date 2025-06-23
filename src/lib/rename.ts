@@ -6,6 +6,7 @@ import { validateRequestBody, type RequestSchema } from '../models/rename'
 import checkPathExists from './exists'
 import { futureFilenamesOutputs } from './filenames'
 import { type ErrorFormatter } from './resize'
+import config from '../models/config'
 
 type ResponseBody = {
   renamed: boolean;
@@ -125,8 +126,18 @@ async function moveRaws(
   const rawsPath = path.join(path.dirname(originalPath), 'raws')
   await fs.mkdir(rawsPath, { recursive: true })
 
+  // Collect all raw extensions from config (lowercase, with dot)
+  const rawExtensions = new Set(
+    [
+      ...['heic', 'heif'],
+      ...(config.rawFileTypes?.photo ?? []),
+      ...(config.rawFileTypes?.video ?? []),
+    ].map(ext => `.${ext.toLowerCase()}`)
+  )
+
   for (const file of filesOnDisk) {
-    if (file.toLowerCase().endsWith('.heic') || file.toLowerCase().endsWith('.heif')) {
+    const ext = path.extname(file).toLowerCase()
+    if (rawExtensions.has(ext)) {
       const sourceFile = path.join(originalPath, file)
       const destinationFile = path.join(rawsPath, file)
 
@@ -134,7 +145,7 @@ async function moveRaws(
         await fs.rename(sourceFile, destinationFile) // Move file
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
-        errors.push(formatErrorMessage(err, `Error moving HEIF file: ${file}`))
+        errors.push(formatErrorMessage(err, `Error moving raw file: ${file}`))
       }
     }
   }
