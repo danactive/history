@@ -29,13 +29,21 @@ This project serves a high-accuracy image classification API using a **Vision Tr
 
 # Aesthetic Scoring
 
-## Model details
+This project provides an API for **aesthetic scoring** of images using a regression head trained on top of OpenAI's CLIP ViT-B/16 backbone.
 
-- **[OpenCLIP](https://github.com/mlfoundations/open_clip) ViT-L/14** model (CLIP architecture)
-- **Checkpoint** laion2B-s32B-b82K
-- **Aesthetic scoring** using a trained multilayer perceptron (MLP)
-- Deterministic evaluation
-- A custom regression MLP head trained on:
-  	- [AVA dataset (aesthetics annotated)](https://github.com/microsoft/LMOps/blob/main/promptist/aesthetic/ava%2Blogos-l14-linearMSE.pth)
-	- Logos subset (for composition)
-- [Code sample](https://github.com/christophschuhmann/improved-aesthetic-predictor/tree/main)
+---
+
+## 🧠 Model Details
+
+- **Backbone:** OpenAI CLIP ViT-B/16
+- **Regression Head:** Multilayer Perceptron (MLP) trained for aesthetic prediction
+- **Head Weights:** `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
+- **Feature Dimension:** 512
+
+
+## Local setup
+
+1. Download the regression head:
+   [sa_0_4_vit_b_16_linear.pth](https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth)
+1. Place it in `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
+1. The OpenAI CLIP backbone weights for ViT-B/16 will be downloaded automatically on first run `make ai-api`

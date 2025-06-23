@@ -9,7 +9,7 @@ from classify import classify_image
 # Setup logging once
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 logger = logging.getLogger("uvicorn")
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
 
 logger.debug("FastAPI is initializing...")
 

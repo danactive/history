@@ -10,6 +10,4 @@ Hugging Face timm https://huggingface.co/timm/convnext_large_mlp.laion2b_ft_augr
 
 ## Aesthetic Scorer
 
-`make load-weights MODEL_REPO=LAION/CLIP-based-Aesthetic-Predictor FILENAMES="ava+logos-l14-linearMSE.pth"`
-
-https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth
+No longer uses weights loader
