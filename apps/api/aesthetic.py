@@ -78,6 +78,7 @@ async def score_aesthetic(req: Request) -> float:
     image_tensor = preprocess(img).unsqueeze(0)
     image_features = _clip_model.encode_image(image_tensor)
     image_features /= image_features.norm(dim=-1, keepdim=True)
-    score = regression_head(image_features).item()
+    score_tensor = regression_head(image_features)
+    score = score_tensor.item()
 
   return float(score)

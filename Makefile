@@ -33,7 +33,8 @@ build-ai-api:
 ai-api:
 	# OpenAI model stores in ~/.cache/clip
 	docker run --rm --name ai-api -p 8080:8080 \
-		-v $(HOME)/.cache/clip:/root/.cache/clip
+		-v $(HOME)/.cache/clip:/root/.cache/clip \
+		ai-api
 
 build-test:
 	docker build  -f apps/api/Dockerfile --build-arg INSTALL_TEST=true -t ai-api-test .
