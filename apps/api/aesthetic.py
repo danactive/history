@@ -2,7 +2,6 @@ from fastapi import Request
 import torch
 import torch.nn as nn
 import torchvision.transforms as T
-import open_clip
 from PIL import Image
 import logging
 from collections import OrderedDict
@@ -15,7 +14,6 @@ logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
 HEAD_PATH = "models/aesthetic/sa_0_4_vit_b_16_linear.pth"
-CHECKPOINT_PATH = "models/openai_CLIP-ViT-L-16/open_clip_pytorch_model.bin"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -78,6 +76,7 @@ async def score_aesthetic(req: Request) -> float:
     image_tensor = preprocess(img).unsqueeze(0)
     image_features = _clip_model.encode_image(image_tensor)
     image_features /= image_features.norm(dim=-1, keepdim=True)
-    score = regression_head(image_features).item()
+    score_tensor = regression_head(image_features)
+    score = score_tensor.item()
 
   return float(score)
