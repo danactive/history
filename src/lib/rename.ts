@@ -132,7 +132,7 @@ async function moveRaws(
       ...['heic', 'heif'],
       ...(config.rawFileTypes?.photo ?? []),
       ...(config.rawFileTypes?.video ?? []),
-    ].map(ext => `.${ext.toLowerCase()}`)
+    ].map(ext => `.${ext.toLowerCase()}`),
   )
 
   for (const file of filesOnDisk) {

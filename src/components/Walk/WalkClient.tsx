@@ -23,7 +23,7 @@ async function getImages(pathQs: string): Promise<Filesystem[]> {
     method: 'POST',
   })
   const resultHeif: HeifResponseBody = await heifResponse.json()
-   
+
   console.log(`Newly created HEIF files ${resultHeif.created.length}`)
   if (resultHeif.created.length > 0) {
     const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
@@ -54,7 +54,7 @@ export default function WalkClient() {
     }
   }, [pathQs])
 
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <p>Loading filesystem and generating JPGs...</p>
   if (!fileList) return <p>No filesystem data</p>
 
   const hasImages = !isLoading && previewList && previewList.length > 0

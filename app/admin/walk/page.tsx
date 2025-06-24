@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function WalkServer() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div>Loading Walk page...</div>}>
       <WalkClient />
     </Suspense>
   )
