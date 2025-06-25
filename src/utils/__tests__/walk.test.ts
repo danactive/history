@@ -75,7 +75,7 @@ describe('Walk - util', () => {
   const mockFile: Filesystem = {
     id: 'identity',
     label: 'label',
-    mediumType: 'MediumType',
+    mediumType: 'unknown',
     ext: 'Extension',
     name: 'Name',
     filename: 'Filename',

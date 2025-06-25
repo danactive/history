@@ -1,6 +1,6 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
-import type { Metadata } from 'next'
 import GalleryPageComponent from '../../src/components/GalleryPage'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
