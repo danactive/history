@@ -10,6 +10,12 @@ export function isImage(file: Partial<Filesystem>) {
   )
 }
 
+/**
+ * Append a parent directory navigation item to the beginning of the itemFiles array.
+ * @param {string[]} itemFiles filesystem items
+ * @param {string} path blank for root
+ * @returns {string[]}
+ */
 export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string | null | undefined) {
   const file: Walk.ItemFile = {
     path: 'harddrive',
@@ -18,6 +24,8 @@ export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string |
     name: 'UpDirectory',
     mediumType: 'folder',
     id: 'item-up-directory',
+    ext: '',
+    absolutePath: '',
   }
 
   if (path) {

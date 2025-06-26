@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 
+import WalkClient from '../../../../src/components/Walk/WalkClient'
 import getFilesystems from '../../../../src/lib/filesystems'
-import type { Filesystem } from '../../../../src/models/filesystems'
-import Link from '../../../../src/components/Link'
 
 export const metadata: Metadata = {
   title: 'Admin > Walk - History App',
@@ -37,20 +36,10 @@ export default async function Page({
 }: {
   params: Promise<{ path?: string[] }>
 }) {
-  const { path: pathArray = [] } = await params
-  const path = pathArray.join('/')
-  const { files } = await getFilesystems(path ? `/${path}` : '/')
-  return (
-    <>
-      <p>name |{path}|</p>
-      <ul>
-        {files.map((file) => (
-          <li key={file.filename}>
-            {file.mediumType === 'folder' && <Link href={`/admin/walk2/${path ? `${path}/` : ''}${file.filename}`}>{file.filename}</Link>}
-            {file.mediumType !== 'folder' && file.filename}
-          </li>
-        ))}
-      </ul>
-    </>
-  )
+  const { path: nextRoutePath = [] } = await params
+  const path = nextRoutePath.join('/')
+  const fsPath = path ? `/${path}` : '/'
+  const { files } = await getFilesystems(fsPath)
+
+  return <WalkClient files={files} />
 }

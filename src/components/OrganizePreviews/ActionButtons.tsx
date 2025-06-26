@@ -1,6 +1,6 @@
 import Button from '@mui/joy/Button'
 import Textarea from '@mui/joy/Textarea'
-import { useSearchParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
@@ -12,8 +12,8 @@ export default function ActionButtons(
   { items: Filesystem[] },
 ) {
   const [textXml, setTextXml] = useState('')
-  const searchParams = useSearchParams()
-  const pathQs = searchParams?.get('path') ?? '/'
+  const params = useParams<{ path: string[] }>()
+  const path = params.path ? `/${params.path.join('/')}` : '/'
 
   async function rename() {
 
@@ -29,7 +29,7 @@ export default function ActionButtons(
       dry_run: false,
       filenames: items.map((i) => i.filename),
       prefix: date ?? today,
-      source_folder: pathQs,
+      source_folder: path,
       rename_associated: true,
     }
 
@@ -48,7 +48,7 @@ export default function ActionButtons(
 
   async function resize() {
     const postBody: ResizeRequestBody = {
-      source_folder: pathQs,
+      source_folder: path,
       get_metadata: false,
     }
 

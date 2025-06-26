@@ -12,7 +12,7 @@ import {
 function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile[] {
   const halfCount = Math.floor(fullCount / 2)
 
-  const docs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+  const docs = (setCount = halfCount): Walk.ItemFile[] => [...Array(setCount).keys()].map((k) => ({
     id: `item-doc-${k}`,
     path: 'harddrive-docs',
     label: `Document${k + 1}.DOC`,
@@ -20,9 +20,10 @@ function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile
     name: `Document${k + 1}`,
     mediumType: 'text',
     ext: 'DOC',
+    absolutePath: `harddrive-docs/Document${k + 1}.DOC`,
   }))
 
-  const jpgs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+  const jpgs = (setCount = halfCount): Walk.ItemFile[] => [...Array(setCount).keys()].map((k) => ({
     id: `item-jpg-${k}`,
     path: 'harddrive-jpgs',
     label: `DSC0372${k + 1}.JPG`,
@@ -30,9 +31,10 @@ function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile
     name: `DSC0372${k + 1}`,
     mediumType: 'image',
     ext: 'JPG',
+    absolutePath: `harddrive-jpgs/DSC0372${k + 1}.JPG`,
   }))
 
-  const jpegs = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+  const jpegs = (setCount = halfCount): Walk.ItemFile[] => [...Array(setCount).keys()].map((k) => ({
     id: `item-jpeg-${k}`,
     path: 'harddrive-jpegs',
     label: `DSC0372${k + 1}.JPEG`,
@@ -40,9 +42,10 @@ function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile
     name: `DSC0372${k + 1}`,
     mediumType: 'image',
     ext: 'JPEG',
+    absolutePath: `harddrive-jpegs/DSC0372${k + 1}.JPEG`,
   }))
 
-  const raws = (setCount = halfCount) => [...Array(setCount).keys()].map((k) => ({
+  const raws = (setCount = halfCount): Walk.ItemFile[] => [...Array(setCount).keys()].map((k) => ({
     id: `item-raw-${k}`,
     path: 'harddrive-raws',
     label: `DSC0372${k + 1}.RAW`,
@@ -50,6 +53,7 @@ function generateImageFilenames(fullCount = 6, extSet = 'jpgraw'): Walk.ItemFile
     name: `DSC0372${k + 1}`,
     mediumType: 'image',
     ext: 'RAW',
+    absolutePath: `harddrive-raws/DSC0372${k + 1}.RAW`,
   }))
 
   if (extSet === 'jpgraw' || extSet === 'rawjpg') {
@@ -104,6 +108,8 @@ describe('Walk - util', () => {
       mediumType: 'folder',
       id: 'item-up-directory',
       name: 'UpDirectory',
+      ext: '',
+      absolutePath: '',
     }
     let dummyFile: Walk.ItemFile
 
@@ -113,6 +119,10 @@ describe('Walk - util', () => {
         label: 'Label',
         ext: 'js',
         path: 'harddrive',
+        mediumType: 'unknown',
+        absolutePath: 'harddrive/Label.js',
+        filename: 'Label.js',
+        name: 'Label',
       }
     })
 
@@ -200,6 +210,7 @@ describe('Walk - util', () => {
             path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
+            absolutePath: 'harddrive-raws/DSC03721.RAW',
           },
           {
             label: 'DSC03721.JPG',
@@ -209,6 +220,7 @@ describe('Walk - util', () => {
             path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
+            absolutePath: 'harddrive-jpgs/DSC03721.JPG',
           },
         ]],
         ['DSC03722', [
@@ -220,6 +232,7 @@ describe('Walk - util', () => {
             path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
+            absolutePath: 'harddrive-raws/DSC03722.RAW',
           },
           {
             label: 'DSC03722.JPG',
@@ -229,6 +242,7 @@ describe('Walk - util', () => {
             path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
+            absolutePath: 'harddrive-jpgs/DSC03722.JPG',
           },
         ]],
         ['DSC03723', [
@@ -240,6 +254,7 @@ describe('Walk - util', () => {
             path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
+            absolutePath: 'harddrive-raws/DSC03723.RAW',
           },
           {
             label: 'DSC03723.JPG',
@@ -249,6 +264,7 @@ describe('Walk - util', () => {
             path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
+            absolutePath: 'harddrive-jpgs/DSC03723.JPG',
           },
         ]],
         ['DSC03724', [
@@ -260,6 +276,7 @@ describe('Walk - util', () => {
             path: 'harddrive-raws',
             mediumType: 'image',
             ext: 'RAW',
+            absolutePath: 'harddrive-raws/DSC03724.RAW',
           },
           {
             label: 'DSC03724.JPG',
@@ -269,6 +286,7 @@ describe('Walk - util', () => {
             path: 'harddrive-jpgs',
             mediumType: 'image',
             ext: 'JPG',
+            absolutePath: 'harddrive-jpgs/DSC03724.JPG',
           },
         ]],
       ])
@@ -289,7 +307,7 @@ describe('Walk - util', () => {
     test('JPG and RAW', () => {
       const generated = generateImageFilenames(8, 'jpgraw')
       const received = mergeMedia(associateMedia(generated))
-      const expected = [
+      const expected: Filesystem[] = [
         {
           label: 'DSC03721 +RAW +JPG',
           filename: 'DSC03721.JPG',
@@ -298,6 +316,7 @@ describe('Walk - util', () => {
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03721',
+          absolutePath: 'harddrive-jpgs/DSC03721.JPG',
         },
         {
           label: 'DSC03722 +RAW +JPG',
@@ -307,6 +326,7 @@ describe('Walk - util', () => {
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03722',
+          absolutePath: 'harddrive-jpgs/DSC03722.JPG',
         },
         {
           label: 'DSC03723 +RAW +JPG',
@@ -316,6 +336,7 @@ describe('Walk - util', () => {
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03723',
+          absolutePath: 'harddrive-jpgs/DSC03723.JPG',
         },
         {
           label: 'DSC03724 +RAW +JPG',
@@ -325,6 +346,7 @@ describe('Walk - util', () => {
           mediumType: 'image',
           ext: 'JPG',
           name: 'DSC03724',
+          absolutePath: 'harddrive-jpgs/DSC03724.JPG',
         },
       ]
       expect(received).toEqual(expected)

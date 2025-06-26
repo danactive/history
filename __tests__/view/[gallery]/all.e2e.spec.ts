@@ -19,7 +19,7 @@ test.describe('All album', () => {
 
 test.describe('Admin > Walk', () => {
   test('Filesystem list', async ({ page }) => {
-    await page.goto('/admin/walk?path=/galleries/demo/media')
+    await page.goto('/admin/walk/galleries/demo/media')
     await expect(page.locator('li').filter({ hasText: 'photos' })).toBeVisible()
     await expect(page.locator('li').filter({ hasText: 'thumbs' })).toBeVisible()
     await expect(page.locator('li').filter({ hasText: 'videos' })).toBeVisible()
