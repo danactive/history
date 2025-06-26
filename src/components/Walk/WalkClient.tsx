@@ -16,9 +16,11 @@ import {
 import OrganizePreviews from '../OrganizePreviews'
 import ListFile from './ListFile'
 
-async function getImages(files: Filesystem[], path: string): Promise<Filesystem[]> {
+async function getImages(path: string): Promise<Filesystem[]> {
+  const response = await fetch(`/api/admin/filesystems?path=${path}`)
+  const resultPossibleHeif: FilesystemResponseBody = await response.json()
   const heifResponse = await fetch('/api/admin/heifs', {
-    body: JSON.stringify({ files, destinationPath: path }),
+    body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: path }),
     headers: { 'Content-Type': 'application/json' },
     method: 'POST',
   })
@@ -30,7 +32,7 @@ async function getImages(files: Filesystem[], path: string): Promise<Filesystem[
     const result: FilesystemResponseBody = await resultResponse.json()
     return result.files
   }
-  return files
+  return resultPossibleHeif.files
 }
 
 export default function WalkClient({ files: filesAtLoad }: { files: Filesystem[] }) {
@@ -43,7 +45,7 @@ export default function WalkClient({ files: filesAtLoad }: { files: Filesystem[]
   useEffect(() => {
     setLoading(true)
     const fetchData = async () => {
-      const files = await getImages(filesAtLoad, path)
+      const files = await getImages(path)
       setLoading(false)
       setFileList(files)
       const itemImages = files.filter((file) => isImage(file))

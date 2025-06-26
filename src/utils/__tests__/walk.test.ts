@@ -304,6 +304,78 @@ describe('Walk - util', () => {
       associateMedia(generated)
       expect(generateImageFilenames(8, 'jpgraw')).toEqual(generated)
     })
+
+    test('MOV and MP4', () => {
+      const movs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mov-${k}`,
+        path: 'harddrive-movs',
+        label: `VID${k + 1}.MOV`,
+        filename: `VID${k + 1}.MOV`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MOV',
+        absolutePath: `harddrive-movs/VID${k + 1}.MOV`,
+      }))
+      const mp4s: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mp4-${k}`,
+        path: 'harddrive-mp4s',
+        label: `VID${k + 1}.MP4`,
+        filename: `VID${k + 1}.MP4`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MP4',
+        absolutePath: `harddrive-mp4s/VID${k + 1}.MP4`,
+      }))
+      const files = movs.concat(mp4s)
+      const expected = new Map([
+        ['VID1', [movs[0], mp4s[0]]],
+        ['VID2', [movs[1], mp4s[1]]],
+      ])
+      const received = associateMedia(files)
+      expect(received.grouped).toEqual(expected)
+      expect(received.flat).toEqual(files)
+    })
+
+    test('JPG, MOV and MP4', () => {
+      const movs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mov-${k}`,
+        path: 'harddrive-movs',
+        label: `VID${k + 1}.MOV`,
+        filename: `VID${k + 1}.MOV`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MOV',
+        absolutePath: `harddrive-movs/VID${k + 1}.MOV`,
+      }))
+      const mp4s: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mp4-${k}`,
+        path: 'harddrive-mp4s',
+        label: `VID${k + 1}.MP4`,
+        filename: `VID${k + 1}.MP4`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MP4',
+        absolutePath: `harddrive-mp4s/VID${k + 1}.MP4`,
+      }))
+      const jpgs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-jpg-${k}`,
+        path: 'harddrive-jpgs',
+        label: `VID${k + 1}.JPG`,
+        filename: `VID${k + 1}.JPG`,
+        name: `VID${k + 1}`,
+        mediumType: 'image',
+        ext: 'JPG',
+        absolutePath: `harddrive-jpgs/VID${k + 1}.JPG`,
+      }))
+      const files = movs.concat(mp4s).concat(jpgs)
+      const expected = new Map([
+        ['VID1', [movs[0], mp4s[0], jpgs[0]]],
+        ['VID2', [movs[1], mp4s[1], jpgs[1]]],
+      ])
+      const received = associateMedia(files)
+      expect(received.grouped).toEqual(expected)
+      expect(received.flat).toEqual(files)
+    })
   })
 
   describe('mergeMedia', () => {
@@ -312,7 +384,7 @@ describe('Walk - util', () => {
       const received = mergeMedia(associateMedia(generated))
       const expected: Filesystem[] = [
         {
-          label: 'DSC03721 +RAW +JPG',
+          label: 'DSC03721 +JPG +RAW',
           filename: 'DSC03721.JPG',
           id: 'item-jpg-0',
           path: 'harddrive-jpgs',
@@ -322,7 +394,7 @@ describe('Walk - util', () => {
           absolutePath: 'harddrive-jpgs/DSC03721.JPG',
         },
         {
-          label: 'DSC03722 +RAW +JPG',
+          label: 'DSC03722 +JPG +RAW',
           filename: 'DSC03722.JPG',
           id: 'item-jpg-1',
           path: 'harddrive-jpgs',
@@ -332,7 +404,7 @@ describe('Walk - util', () => {
           absolutePath: 'harddrive-jpgs/DSC03722.JPG',
         },
         {
-          label: 'DSC03723 +RAW +JPG',
+          label: 'DSC03723 +JPG +RAW',
           filename: 'DSC03723.JPG',
           id: 'item-jpg-2',
           path: 'harddrive-jpgs',
@@ -342,7 +414,7 @@ describe('Walk - util', () => {
           absolutePath: 'harddrive-jpgs/DSC03723.JPG',
         },
         {
-          label: 'DSC03724 +RAW +JPG',
+          label: 'DSC03724 +JPG +RAW',
           filename: 'DSC03724.JPG',
           id: 'item-jpg-3',
           path: 'harddrive-jpgs',
@@ -372,6 +444,88 @@ describe('Walk - util', () => {
       addParentDirectoryNav(generated, 'fake')
       const received = mergeMedia(associateMedia(generated))
       expect(received).toEqual(generated)
+    })
+
+    test('MOV and MP4', () => {
+      const movs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mov-${k}`,
+        path: 'harddrive-movs',
+        label: `VID${k + 1}.MOV`,
+        filename: `VID${k + 1}.MOV`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MOV',
+        absolutePath: `harddrive-movs/VID${k + 1}.MOV`,
+      }))
+      const mp4s: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mp4-${k}`,
+        path: 'harddrive-mp4s',
+        label: `VID${k + 1}.MP4`,
+        filename: `VID${k + 1}.MP4`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MP4',
+        absolutePath: `harddrive-mp4s/VID${k + 1}.MP4`,
+      }))
+      const files = movs.concat(mp4s)
+      const received = mergeMedia(associateMedia(files))
+      const expected: Filesystem[] = [
+        {
+          ...mp4s[0],
+          label: 'VID1 +MOV +MP4',
+        },
+        {
+          ...mp4s[1],
+          label: 'VID2 +MOV +MP4',
+        },
+      ]
+      expect(received).toEqual(expected)
+    })
+
+    test('JPG, MOV and MP4', () => {
+      const movs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mov-${k}`,
+        path: 'harddrive-movs',
+        label: `VID${k + 1}.MOV`,
+        filename: `VID${k + 1}.MOV`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MOV',
+        absolutePath: `harddrive-movs/VID${k + 1}.MOV`,
+      }))
+      const mp4s: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-mp4-${k}`,
+        path: 'harddrive-mp4s',
+        label: `VID${k + 1}.MP4`,
+        filename: `VID${k + 1}.MP4`,
+        name: `VID${k + 1}`,
+        mediumType: 'video',
+        ext: 'MP4',
+        absolutePath: `harddrive-mp4s/VID${k + 1}.MP4`,
+      }))
+      const jpgs: Filesystem[] = [...Array(2).keys()].map((k) => ({
+        id: `item-jpg-${k}`,
+        path: 'harddrive-jpgs',
+        label: `VID${k + 1}.JPG`,
+        filename: `VID${k + 1}.JPG`,
+        name: `VID${k + 1}`,
+        mediumType: 'image',
+        ext: 'JPG',
+        absolutePath: `harddrive-jpgs/VID${k + 1}.JPG`,
+      }))
+      const files = movs.concat(mp4s).concat(jpgs)
+      const received = mergeMedia(associateMedia(files))
+      const expected: Filesystem[] = [
+        {
+          ...jpgs[0],
+          label: 'VID1 +JPG +MOV +MP4',
+        },
+        {
+          ...jpgs[1],
+          label: 'VID2 +JPG +MOV +MP4',
+        },
+      ]
+      expect(received).toEqual(expected)
     })
   })
 

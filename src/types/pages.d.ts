@@ -36,10 +36,7 @@ export namespace Album {
 }
 
 export namespace Walk {
-  export type ItemFile = Filesystem //& {
-  //   grouped?: string;
-  //   flat?: string;
-  // }
+  export type ItemFile = Filesystem
 }
 
 export namespace All {

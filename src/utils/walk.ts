@@ -87,6 +87,7 @@ export function associateMedia(items: Walk.ItemFile | Walk.ItemFile[]) {
 }
 
 export function getJpgLike(fileGroup: Walk.ItemFile[]) {
+  // Prefer JPG
   const isJpgLikeExt = (file: Walk.ItemFile) => file.ext === 'JPG' || file.ext === 'jpg'
   const withJpg = fileGroup.find(isJpgLikeExt)
   if (withJpg) {
@@ -96,12 +97,33 @@ export function getJpgLike(fileGroup: Walk.ItemFile[]) {
     }
   }
 
+  // Then JPEG
   const isJpegLikeExt = (file: Walk.ItemFile) => file.ext === 'JPEG' || file.ext === 'jpeg'
   const withJpeg = fileGroup.find(isJpegLikeExt)
   if (withJpeg) {
     return {
       ext: withJpeg.ext,
       index: fileGroup.findIndex(isJpegLikeExt),
+    }
+  }
+
+  // Then MP4 (for video)
+  const isMp4 = (file: Walk.ItemFile) => file.ext === 'MP4' || file.ext === 'mp4'
+  const withMp4 = fileGroup.find(isMp4)
+  if (withMp4) {
+    return {
+      ext: withMp4.ext,
+      index: fileGroup.findIndex(isMp4),
+    }
+  }
+
+  // Then MOV (for video)
+  const isMov = (file: Walk.ItemFile) => file.ext === 'MOV' || file.ext === 'mov'
+  const withMov = fileGroup.find(isMov)
+  if (withMov) {
+    return {
+      ext: withMov.ext,
+      index: fileGroup.findIndex(isMov),
     }
   }
 
@@ -122,8 +144,6 @@ export function mergeMedia(items: ReturnType<typeof associateMedia>) {
       return foundJpgLike
     }
 
-    // TODO danactive only group if in config supportedFileTypes (ie JPG + RAW, but not JPG + FAKE)
-    // find the representative file based on the JPG-like index in the group
     const found = items.flat.find(
       (file) => file.filename === fileGroup[jpgLike.index].filename,
     )
@@ -132,10 +152,11 @@ export function mergeMedia(items: ReturnType<typeof associateMedia>) {
       throw new ReferenceError('Missing found item')
     }
 
-    // merge all extensions into label
+    // Build label in alphabetical order of ext
+    const sortedGroup = [...fileGroup].sort((a, b) => a.ext.localeCompare(b.ext))
     return {
       ...found,
-      label: fileGroup.reduce(
+      label: sortedGroup.reduce(
         (acc: string, next: Walk.ItemFile) => `${acc} +${next.ext}`,
         name,
       ),
