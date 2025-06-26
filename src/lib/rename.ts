@@ -124,7 +124,9 @@ async function moveRaws(
   { originalPath: string, filesOnDisk: string[], errors: string[], formatErrorMessage: ErrorFormatter },
 ) {
   const rawsPath = path.join(path.dirname(originalPath), 'raws')
+  const videosPath = path.join(path.dirname(originalPath), 'videos')
   await fs.mkdir(rawsPath, { recursive: true })
+  await fs.mkdir(videosPath, { recursive: true })
 
   // Collect all raw extensions from config (lowercase, with dot)
   const rawExtensions = new Set(
@@ -132,6 +134,11 @@ async function moveRaws(
       ...['heic', 'heif'],
       ...(config.rawFileTypes?.photo ?? []),
       ...(config.rawFileTypes?.video ?? []),
+    ].map(ext => `.${ext.toLowerCase()}`),
+  )
+  const videoExtensions = new Set(
+    [
+      ...['mp4'],
     ].map(ext => `.${ext.toLowerCase()}`),
   )
 
@@ -146,6 +153,21 @@ async function moveRaws(
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving raw file: ${file}`))
+      }
+    }
+    // Skip .orig.mp4 files for video
+    if (
+      videoExtensions.has(ext) &&
+      !file.toLowerCase().endsWith('.orig.mp4')
+    ) {
+      const sourceFile = path.join(originalPath, file)
+      const destinationFile = path.join(videosPath, file)
+
+      try {
+        await fs.rename(sourceFile, destinationFile) // Move file
+        console.log(`Moved: ${file} → videos`)
+      } catch (err) {
+        errors.push(formatErrorMessage(err, `Error moving video file: ${file}`))
       }
     }
   }
