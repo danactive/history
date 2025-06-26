@@ -128,28 +128,31 @@ describe('Walk - util', () => {
 
     test('hide when at root folder', () => {
       expect(addParentDirectoryNav([dummyFile], '')).toEqual([dummyFile])
+      expect(addParentDirectoryNav([dummyFile], '/')).toEqual([dummyFile])
+      expect(addParentDirectoryNav([dummyFile], null)).toEqual([dummyFile])
+      expect(addParentDirectoryNav([dummyFile], undefined)).toEqual([dummyFile])
     })
 
     test('one level deep', () => {
-      const expectedFile = { ...mockFileFolder, path: '' }
-      expect(addParentDirectoryNav([dummyFile], 'galleries')).toEqual([
+      const expectedFile = { ...mockFileFolder, path: '/' }
+      expect(addParentDirectoryNav([dummyFile], '/galleries')).toEqual([
         expectedFile,
         dummyFile,
       ])
     })
 
     test('two levels deep', () => {
-      const expectedFile = { ...mockFileFolder, path: 'galleries' }
-      expect(addParentDirectoryNav([dummyFile], 'galleries/demo')).toEqual([
+      const expectedFile = { ...mockFileFolder, path: '/galleries' }
+      expect(addParentDirectoryNav([dummyFile], '/galleries/demo')).toEqual([
         expectedFile,
         dummyFile,
       ])
     })
 
     test('three levels deep', () => {
-      const expectedFile = { ...mockFileFolder, path: 'galleries/demo' }
+      const expectedFile = { ...mockFileFolder, path: '/galleries/demo' }
       expect(
-        addParentDirectoryNav([dummyFile], 'galleries/demo/thumbs'),
+        addParentDirectoryNav([dummyFile], '/galleries/demo/thumbs'),
       ).toEqual([expectedFile, dummyFile])
     })
   })

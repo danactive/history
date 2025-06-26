@@ -28,23 +28,19 @@ export function addParentDirectoryNav(itemFiles: Walk.ItemFile[], path: string |
     absolutePath: '',
   }
 
-  if (path) {
-    if (path.lastIndexOf('/') > -1) {
-      const splitPath = path.split('/')
-      splitPath.pop()
-      itemFiles.unshift({
-        ...file,
-        path: splitPath.join('/'),
-      })
-    } else {
-      itemFiles.unshift({
-        ...file,
-        path: '',
-      })
-    }
+  if (path && path !== '' && path !== '/') {
+    // Remove leading/trailing slashes, split, pop last segment
+    const segments = path.replace(/^\/|\/$/g, '').split('/')
+    segments.pop()
+    // If no segments left, parent is root
+    const parentPath = segments.length === 0 ? '/' : `/${segments.join('/')}`
+    return [
+      { ...file, path: parentPath },
+      ...itemFiles,
+    ]
   }
 
-  return itemFiles
+  return [...itemFiles]
 }
 
 export function isAnyImageOrVideo(file: Filesystem) {
