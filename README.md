@@ -29,13 +29,6 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. `npm start` Run built app
 1. View address in browser (printed in terminal on successful load)
 
-### Legacy Development
-1. Node.js v20 via nvm
-1. Folder **api** is for editing album using React/jQuery
-1. Install project dependencies `npm ci`
-1. Start web server `npm start`
-1. View address in browser (printed in terminal on successful load)
-
 ## Changelog of releases
 See [CHANGELOG](CHANGELOG.md)
 

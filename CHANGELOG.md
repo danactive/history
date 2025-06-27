@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.0.0](https://github.com/danactive/history/compare/v11.4.0...v12.0.0) (2025-06-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* **Old API:** Remove Editing Album XML (use v11 for stale functionality)
+
+### Features
+
+* **Old API:** Remove isomorphic React & jQuery stale hapi.js API ([c8da85b](https://github.com/danactive/history/commit/c8da85bdc96a1d2a46d216a0bca398fade4238d2))
+
 ## [11.4.0](https://github.com/danactive/history/compare/v11.3.0...v11.4.0) (2025-06-27)
 
 

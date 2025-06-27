@@ -1,5 +1,4 @@
 {
-  "apiPort": 8000,
   "nextPort": 3030,
   "pythonPort": 8080,
   "defaultAlbum": "sample",
