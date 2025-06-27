@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.4.0](https://github.com/danactive/history/compare/v11.3.0...v11.4.0) (2025-06-27)
+
+
+### Features
+
+* **Admin > Resize:** Move MP4s to videos folder ([1c76283](https://github.com/danactive/history/commit/1c7628300d884adb0379fcbdf9f61def1dbf6953))
+* **Admin > Walk:** Client side query to get latest filesystem changes ([44daf73](https://github.com/danactive/history/commit/44daf73a0e4eb52f7d91d2b054513b4c6331ea87))
+* **Admin > Walk:** Improve performance by reading filesystem at build time ([aed34d3](https://github.com/danactive/history/commit/aed34d3cd7431e23563419f1385f4fbda1130041))
+* **Admin > Walk:** Move more raw files on resize ([8bafef3](https://github.com/danactive/history/commit/8bafef32f35ac886b54bb0b8fedd3cebc17ec4cd))
+* **Admin > Walk:** Remove loading wait for filesystem ([c46228d](https://github.com/danactive/history/commit/c46228d009bf8644630b41be628bb36795887457))
+
+
+### Bug Fixes
+
+* **Admin > Walk:** Same functionality but fetch using useSWR ([f16d3de](https://github.com/danactive/history/commit/f16d3deb9368768bfcfca60e266c28aa146b6356))
+* **Admin > Walk:** Traverse to parent folder across Next.js routes ([3d092ab](https://github.com/danactive/history/commit/3d092abba5e0ce5b9e91e5ed0d0423c70ba3b3fb))
+* **Aesthetic Scorer:** Downgrade requirements for better compatibility of LAION's predictor ([6905f70](https://github.com/danactive/history/commit/6905f70eae1fb8323c6c5939520be9046f889e55))
+
 ## [11.3.0](https://github.com/danactive/history/compare/v11.2.0...v11.3.0) (2025-06-23)
 
 
