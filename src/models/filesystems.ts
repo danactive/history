@@ -9,8 +9,8 @@ type Filesystem = {
   name: string;
   filename: string;
   path: string;
-  absolutePath: string; // Temporary until next folder moves to root
-  mediumType: string;
+  absolutePath: string;
+  mediumType: 'folder' | 'image' | 'video' | 'unknown' | 'text' | 'xml';
 }
 
 const utils = utilsFactory()

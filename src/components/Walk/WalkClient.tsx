@@ -1,64 +1,64 @@
 'use client'
 
-import { List, ListDivider } from '@mui/joy'
-import { useSearchParams } from 'next/navigation'
-import { Fragment, useEffect, useState } from 'react'
+import List from '@mui/joy/List'
+import ListDivider from '@mui/joy/ListDivider'
+import { useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-import OrganizePreviews from '../OrganizePreviews'
-import ListFile from './ListFile'
-import type { Filesystem, FilesystemResponseBody } from '../../lib/filesystems'
+import type { FilesystemResponseBody } from '../../lib/filesystems'
 import type { HeifResponseBody } from '../../lib/heifs'
+import { Filesystem } from '../../models/filesystems'
 import {
   addParentDirectoryNav,
   isImage,
   organizeByMedia,
 } from '../../utils/walk'
+import OrganizePreviews from '../OrganizePreviews'
+import ListFile from './ListFile'
 
-async function getImages(pathQs: string): Promise<Filesystem[]> {
-  const response = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+async function getImages(path: string): Promise<Filesystem[]> {
+  const response = await fetch(`/api/admin/filesystems?path=${path}`)
   const resultPossibleHeif: FilesystemResponseBody = await response.json()
   const heifResponse = await fetch('/api/admin/heifs', {
-    body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: pathQs }),
+    body: JSON.stringify({ files: resultPossibleHeif.files, destinationPath: path }),
     headers: { 'Content-Type': 'application/json' },
     method: 'POST',
   })
   const resultHeif: HeifResponseBody = await heifResponse.json()
-   
+
   console.log(`Newly created HEIF files ${resultHeif.created.length}`)
   if (resultHeif.created.length > 0) {
-    const resultResponse = await fetch(`/api/admin/filesystems?path=${pathQs}`)
+    const resultResponse = await fetch(`/api/admin/filesystems?path=${path}`)
     const result: FilesystemResponseBody = await resultResponse.json()
     return result.files
   }
   return resultPossibleHeif.files
 }
 
-export default function WalkClient() {
-  const searchParams = useSearchParams()
+export default function WalkClient({ files: filesAtLoad }: { files: Filesystem[] }) {
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)
-  const pathQs = searchParams?.get('path') ?? '/'
+  const params = useParams<{ path: string[] }>()
+  const path = params.path ? `/${params.path.join('/')}` : '/'
 
   useEffect(() => {
-    if (pathQs) {
-      setLoading(true)
-      const fetchData = async () => {
-        const files = await getImages(pathQs)
-        setLoading(false)
-        setFileList(files)
-        const itemImages = files.filter((file) => isImage(file))
-        setPreviewList(itemImages)
-      }
-      fetchData()
+    setLoading(true)
+    const fetchData = async () => {
+      const files = await getImages(path)
+      setLoading(false)
+      setFileList(files)
+      const itemImages = files.filter((file) => isImage(file))
+      setPreviewList(itemImages)
     }
-  }, [pathQs])
+    fetchData()
+  }, [])
 
-  if (isLoading) return <p>Loading...</p>
-  if (!fileList) return <p>No filesystem data</p>
+  if (isLoading) return <p>Generating JPGs...</p>
+  if (!fileList) return <p>Loading filesystem data</p>
 
   const hasImages = !isLoading && previewList && previewList.length > 0
-  const fsItems = addParentDirectoryNav(organizeByMedia(fileList), pathQs)
+  const fsItems = addParentDirectoryNav(organizeByMedia(fileList), path)
 
   return (
     <>
@@ -67,7 +67,7 @@ export default function WalkClient() {
           // TODO something starting Next.js v15 started to add HTML attribute to Fragment with browser errors
           <span key={item.id}>
             {i > 0 && <ListDivider />}
-            <ListFile item={item} />
+            <ListFile item={item} route='/admin/walk' />
           </span>
         ))}
       </List>

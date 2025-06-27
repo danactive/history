@@ -9,6 +9,7 @@ import type {
   Item,
   XmlItem,
 } from '../types/common'
+import { type Filesystem } from './filesystems'
 
 const type = (filepath: string): string => {
   if (filepath.lastIndexOf('.') === 0) {
@@ -112,7 +113,7 @@ function utils() {
   return {
     type,
     mimeType: (extension: string) => customMime(extension) || mime.lookup(extension) || (extension === '' ? 'blank' : 'unknown'),
-    mediumType: (extension: string) => {
+    mediumType: (extension: string): Filesystem['mediumType'] => {
       if (!extension || typeof extension !== 'string') {
         return 'unknown'
       }
@@ -136,9 +137,16 @@ function utils() {
       const etype = extension.split('/')[0]
       switch (etype) {
         case 'application':
-          return extension.split('/')[1]
+          const appType = extension.split('/')[1]
+          if (appType === 'xml' || appType === 'text') {
+            return appType
+          }
+          return 'unknown'
         default:
-          return etype
+          if (etype === 'text' || etype === 'image' || etype === 'video') {
+            return etype
+          }
+          return 'unknown'
       }
     },
     thumbPath: (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'thumb'),

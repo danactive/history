@@ -1,6 +1,6 @@
 import { type ParsedUrlQuery } from 'node:querystring'
 
-import type { Filesystem } from './lib/filesystems'
+import type { Filesystem } from '../lib/filesystems'
 
 import type {
   AlbumMeta,
@@ -36,13 +36,7 @@ export namespace Album {
 }
 
 export namespace Walk {
-  export type ItemFile = Partial<Filesystem> & {
-    id: Filesystem['id'];
-    path: Filesystem['path'];
-    label: string;
-    grouped?: string;
-    flat?: string;
-  }
+  export type ItemFile = Filesystem
 }
 
 export namespace All {

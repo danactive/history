@@ -1,3 +1,5 @@
+'use client'
+
 import { DragDropContext, type DraggableLocation } from '@hello-pangea/dnd'
 import type { Dispatch, SetStateAction } from 'react'
 
