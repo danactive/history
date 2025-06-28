@@ -7,7 +7,7 @@ import type {
   XmlGalleryAlbum,
 } from '../types/common'
 import getGalleries from './galleries'
-import utilsFactory, { isValidStringArray } from './utils'
+import utilsFactory, { handleLibraryError, isValidStringArray } from './utils'
 import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
@@ -111,15 +111,9 @@ async function get(galleryOrGalleries: AlbumMeta['gallery'] | AlbumMeta['gallery
     }
 
     return fullOut
-  } catch (e) {
+  } catch (err) {
     const message = `No albums was found; gallery=${galleryOrGalleries};`
-    if (returnEnvelope) {
-      return { body: errorSchema(message), status: 404 }
-    }
-
-
-    console.error('ERROR', message, e)
-    throw e
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 

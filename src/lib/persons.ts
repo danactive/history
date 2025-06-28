@@ -1,5 +1,6 @@
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/person'
 import type { Gallery, Person } from '../types/common'
+import { handleLibraryError } from './utils'
 import { readPersons } from './xml'
 
 type Envelope = { body: Person[], status: number }
@@ -33,15 +34,9 @@ async function get(
     }
 
     return body
-  } catch (e) {
+  } catch (err) {
     const message = `No person file was found; gallery=${gallery};`
-    if (returnEnvelope) {
-      return { body: errorSchema(message), status: 404 }
-    }
-
-
-    console.error('ERROR', message, e)
-    throw e
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 

@@ -2,6 +2,7 @@ import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '..
 import type { Album, AlbumMeta } from '../types/common'
 import getGalleries from './galleries'
 import getPersons from './persons'
+import { handleLibraryError } from './utils'
 import { readAlbum } from './xml'
 
 type Envelope = { body: Album, status: number }
@@ -53,15 +54,9 @@ async function get(
     }
 
     return body
-  } catch (e) {
+  } catch (err) {
     const message = `No album was found; gallery=${gallery}; album=${album};`
-    if (returnEnvelope) {
-      return { body: errorSchema(message), status: 404 }
-    }
-
-
-    console.error('ERROR', message, e)
-    throw e
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 

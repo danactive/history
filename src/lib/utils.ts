@@ -101,6 +101,18 @@ function simplifyZodMessages(error: z.core.$ZodError) {
   }, '')
 }
 
+function handleLibraryError(err: unknown, message: string, returnEnvelope: boolean, errorSchema: any) {
+  if (returnEnvelope) {
+    if (isStandardError(err)) {
+      return { body: errorSchema(err.message), status: 500 }
+    }
+    return { body: errorSchema(message), status: 404 }
+  }
+
+  console.error('ERROR', message, err)
+  throw err
+}
+
 function isValidStringArray<T extends string = string>(arr: unknown): arr is T[] {
   return (
     Array.isArray(arr) &&
@@ -197,5 +209,5 @@ function utils() {
 }
 
 export default utils
-export { isStandardError, isValidStringArray, isZodError, simplifyZodMessages }
+export { isStandardError, isValidStringArray, isZodError, simplifyZodMessages, handleLibraryError }
 

@@ -2,7 +2,7 @@ import convert from 'heic-convert'
 import { readFile, writeFile } from 'node:fs/promises'
 import { basename } from 'node:path'
 import type { Filesystem } from './filesystems'
-import utilsFactory, { isStandardError } from './utils'
+import utilsFactory, { handleLibraryError, isStandardError } from './utils'
 
 type ResponseBody = {
   created: string[];
@@ -86,16 +86,9 @@ async function post(
     }
 
     return body
-  } catch (e) {
-    if (returnEnvelope && isStandardError(e)) {
-      return { body: errorSchema(e.message), status: 400 }
-    }
-
-    if (returnEnvelope) {
-      return { body: errorSchema('Fail to process HEIFs'), status: 400 }
-    }
-
-    throw e
+  } catch (err) {
+    const message = 'No HEIF files were found'
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 

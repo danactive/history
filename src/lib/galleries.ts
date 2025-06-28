@@ -2,6 +2,7 @@ import type { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 
 import { type Gallery } from '../types/common'
+import { handleLibraryError } from './utils';
 
 type ErrorOptionalMessage = { galleries: object[]; error?: { message: string } }
 const errorSchema = (message?: string) => {
@@ -43,12 +44,9 @@ async function get(returnEnvelope = false): Promise<
     }
 
     return body
-  } catch (e) {
-    if (returnEnvelope) {
-      return { body: errorSchema('No galleries are found'), status: 404 }
-    }
-
-    return errorSchema()
+  } catch (err) {
+    const message = 'No galleries were found'
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 
