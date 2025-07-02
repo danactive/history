@@ -1,7 +1,7 @@
 import { glob } from 'glob'
 import path from 'node:path'
 
-import utilsFactory from './utils'
+import utilsFactory, { handleLibraryError } from './utils'
 import transform, { type Filesystem } from '../models/filesystems'
 
 type ResponseBody = {
@@ -70,12 +70,9 @@ async function get(
 
     const body = { files: sortedFiles, destinationPath }
     return (returnEnvelope ? { body, status: 200 } : body)
-  } catch (e) {
-    if (returnEnvelope) {
-      return { body: errorSchema('No files or folders are found'), status: 404 }
-    }
-
-    throw e
+  } catch (err) {
+    const message = 'No files or folders are found'
+    return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
 }
 

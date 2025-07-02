@@ -80,7 +80,7 @@ export default function AdminAlbumClient(
           </Select>
         </Stack>
         {error && <div>{JSON.stringify(error)}</div>}
-        {!error && album ? <Thumbs album={data?.album} setItem={setItem} /> : <div>Select an album</div>}
+        {!error && data && data.album ? <Thumbs album={data.album} setItem={setItem} /> : <div>Select an album</div>}
       </form>
   )
 }
