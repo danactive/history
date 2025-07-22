@@ -14,4 +14,3 @@ jobs:
         uses: githubocto/repo-visualizer@main
         with:
           excluded_paths: "ignore,.github"
-          file_colors: {"pyt": "#ff9900", "py": "#ff9900"}
