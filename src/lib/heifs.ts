@@ -32,7 +32,7 @@ function uniqueHeifs(files: Filesystem[]) {
   }, {})
 
   const heifFilesWithoutJpg = Object.values(groupedFiles)
-    .filter((filteredFiles) => filteredFiles.some((file) => file.ext === 'heic') && !filteredFiles.some((file) => file.ext === 'jpg'))
+    .filter((filteredFiles) => filteredFiles.some((file) => file.ext.toLocaleLowerCase() === 'heic') && !filteredFiles.some((file) => file.ext.toLocaleLowerCase() === 'jpg'))
     .flat()
 
   return heifFilesWithoutJpg
