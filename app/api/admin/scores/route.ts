@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       headers: {
         'Content-Type': 'image/jpeg',
       },
-      body: buffer as unknown as BodyInit
+      body: buffer as unknown as BodyInit,
     })
 
     if (!res.ok) {
