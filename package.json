@@ -28,7 +28,7 @@
     "heic-convert": "^2.1.0",
     "mapbox-gl": "^3.13.0",
     "mime-types": "^3.0.1",
-    "next": "^15.4.3",
+    "next": "^15.4.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-image-gallery": "^1.4.0",
