@@ -61,29 +61,42 @@ function SplitViewer({
   setViewed,
   memoryIndex,
   setMemoryIndex,
+  mapFilterEnabled,
+  onToggleMapFilter,
+  onMapBoundsChange,
 }: {
   items: Item[];
   refImageGallery: Ref<ImageGallery> | null;
   setViewed: Viewed;
   memoryIndex: number;
   setMemoryIndex: Function;
+  mapFilterEnabled?: boolean;
+  onToggleMapFilter?: () => void;
+  onMapBoundsChange?: (bounds: [[number, number],[number, number]]) => void;
 }) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
-  const fullscreenMap = () => {
+  const fullscreenMap = async () => {
     const div = refMapBox.current
-    if (div?.requestFullscreen) {
-      div.requestFullscreen()
-    } else if (div?.webkitRequestFullscreen) {
-      div.webkitRequestFullscreen()
-    } else if (div?.msRequestFullscreen) {
-      div.msRequestFullscreen()
-    } else if (div?.mozRequestFullScreen) {
-      div.mozRequestFullScreen()
-    } else {
-      console.error('Failed to fullscreen')
+    if (!div) return
+
+    try {
+      // call whichever fullscreen API is available; handle Promise if returned
+      const req =
+        (div as any).requestFullscreen?.() ||
+        (div as any).webkitRequestFullscreen?.() ||
+        (div as any).msRequestFullscreen?.() ||
+        (div as any).mozRequestFullScreen?.()
+
+      if (req && typeof (req as Promise<unknown>).then === 'function') {
+        await req as Promise<unknown>
+      }
+    } catch (err) {
+      // user or browser denied fullscreen — don't throw
+      // eslint-disable-next-line no-console
+      console.warn('Fullscreen request denied', err)
     }
   }
   const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
@@ -125,7 +138,14 @@ function SplitViewer({
           />
         </section>
         <section className={styles.right} key="splitRight" ref={refMapBox}>
-          <SlippyMap mapRef={mapRef} items={items} centroid={items[memoryIndex]} />
+          <SlippyMap
+            mapRef={mapRef}
+            items={items}
+            centroid={items[memoryIndex]}
+            mapFilterEnabled={mapFilterEnabled}
+            onToggleMapFilter={onToggleMapFilter}
+            onBoundsChange={onMapBoundsChange}
+          />
           <button type="button" onClick={fullscreenMap}>Full Map</button>
         </section>
       </section>
