@@ -25,10 +25,23 @@ import { transformMapOptions, transformSourceOptions } from './options'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
-export default function SlippyMap(
-  { items = [], centroid = null, mapRef, mapFilterEnabled = false, onToggleMapFilter, onBoundsChange }:
-  { items: Item[], centroid: Item | null, mapRef: RefObject<MapRef | null> | null, mapFilterEnabled?: boolean, onToggleMapFilter?: () => void, onBoundsChange?: (bounds: [[number, number],[number, number]]) => void },
-) {
+type SlippyMapProps = {
+  items?: Item[]
+  centroid?: Item | null
+  mapRef?: RefObject<MapRef | null> | null
+  mapFilterEnabled?: boolean
+  onToggleMapFilter?: () => void
+  onBoundsChange?: (bounds: [[number, number], [number, number]]) => void
+}
+
+export default function SlippyMap({
+  items = [],
+  centroid = null,
+  mapRef,
+  mapFilterEnabled = false,
+  onToggleMapFilter,
+  onBoundsChange,
+}: SlippyMapProps) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
 
@@ -99,9 +112,12 @@ export default function SlippyMap(
     // when the map filter is OFF and keeps mouse interactions smooth.
     if (!mapFilterEnabled) return
 
-    if (mapRef?.current && typeof onBoundsChange === 'function') {
+    const mr = mapRef?.current
+    if (mr && typeof onBoundsChange === 'function') {
       try {
-        const bounds = mapRef.current.getMap().getBounds().toArray() as [[number, number],[number, number]]
+        const map = mr.getMap?.()
+        if (!map) return
+        const bounds = map.getBounds().toArray() as [[number, number],[number, number]]
         onBoundsChange(bounds)
       } catch {
         // ignore mapbox errors during SSR or unavailable map

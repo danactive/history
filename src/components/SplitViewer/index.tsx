@@ -95,7 +95,7 @@ function SplitViewer({
       }
     } catch (err) {
       // user or browser denied fullscreen — don't throw
-      // eslint-disable-next-line no-console
+
       console.warn('Fullscreen request denied', err)
     }
   }
@@ -104,7 +104,9 @@ function SplitViewer({
     setMemoryIndex(carouselIndex)
     setViewed(carouselIndex)
     const { isInvalidPoint, latitude, longitude } = validatePoint(items[carouselIndex].coordinates)
-    if (mapRef && mapRef.current && !isInvalidPoint) {
+
+    // Only pan/zoom the map when map filtering is OFF to avoid interrupting map-based navigation
+    if (!mapFilterEnabled && mapRef && mapRef.current && !isInvalidPoint) {
       const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
       mapRef.current.flyTo({
         center: [longitude, latitude],
