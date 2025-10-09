@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
 import {
-  useContext, useRef, type Ref, type ReactNode,
+  useContext, useRef, type Ref, type ReactNode, useMemo, useEffect,
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
@@ -69,7 +69,7 @@ function SplitViewer({
   refImageGallery: Ref<ImageGallery> | null;
   setViewed: Viewed;
   memoryIndex: number;
-  setMemoryIndex: Function;
+  setMemoryIndex: (n: number) => void;
   mapFilterEnabled?: boolean;
   onToggleMapFilter?: () => void;
   onMapBoundsChange?: (bounds: [[number, number],[number, number]]) => void;
@@ -78,59 +78,81 @@ function SplitViewer({
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
+
+  // Build carousel items once per items change
+  const carouselItems = useMemo(
+    () => items.filter(i => i.thumbPath).map(toCarousel),
+    [items],
+  )
+
+  // Safe index (do not set state every render)
+  const safeIndex = carouselItems.length === 0
+    ? 0
+    : (memoryIndex >= carouselItems.length ? carouselItems.length - 1 : memoryIndex)
+
+  // Background thumbnail (may be undefined initially)
+  const bgThumb = carouselItems[safeIndex]?.thumbnail
+
+  // Slide handler with bounds + map flight (only when map filter OFF)
+  const handleBeforeSlide: ReactImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
+    if (carouselItems.length === 0) return
+    let nextIdx = nextIdxRaw
+    if (nextIdx < 0 || nextIdx >= carouselItems.length) {
+      nextIdx = Math.max(0, Math.min(nextIdx, carouselItems.length - 1))
+    }
+    const item = items[nextIdx]
+    if (!item) return
+    if (nextIdx !== memoryIndex) {
+      setMemoryIndex(nextIdx)
+      setViewed(nextIdx)
+    }
+    const { isInvalidPoint, latitude, longitude } = validatePoint(item.coordinates)
+    if (!mapFilterEnabled && mapRef.current && !isInvalidPoint) {
+      const zoom = item.coordinateAccuracy ?? metaZoom
+      mapRef.current.flyTo({ center: [longitude, latitude], zoom })
+    }
+  }
+
   const fullscreenMap = async () => {
     const div = refMapBox.current
     if (!div) return
-
     try {
-      // call whichever fullscreen API is available; handle Promise if returned
       const req =
-        (div as any).requestFullscreen?.() ||
-        (div as any).webkitRequestFullscreen?.() ||
-        (div as any).msRequestFullscreen?.() ||
-        (div as any).mozRequestFullScreen?.()
-
+        (div as any).requestFullscreen?.()
+        || (div as any).webkitRequestFullscreen?.()
+        || (div as any).msRequestFullscreen?.()
+        || (div as any).mozRequestFullScreen?.()
       if (req && typeof (req as Promise<unknown>).then === 'function') {
-        await req as Promise<unknown>
+        await req
       }
     } catch (err) {
-      // user or browser denied fullscreen — don't throw
-
+      // eslint-disable-next-line no-console
       console.warn('Fullscreen request denied', err)
     }
   }
-  const carouselItems = items.filter((item) => item.thumbPath).map(toCarousel)
-  const handleBeforeSlide: ReactImageGalleryProps['onBeforeSlide'] = (carouselIndex) => {
-    setMemoryIndex(carouselIndex)
-    setViewed(carouselIndex)
-    const { isInvalidPoint, latitude, longitude } = validatePoint(items[carouselIndex].coordinates)
 
-    // Only pan/zoom the map when map filtering is OFF to avoid interrupting map-based navigation
-    if (!mapFilterEnabled && mapRef && mapRef.current && !isInvalidPoint) {
-      const zoom = items[carouselIndex]?.coordinateAccuracy ?? metaZoom
-      mapRef.current.flyTo({
-        center: [longitude, latitude],
-        zoom,
-      })
-    }
-  }
+
+
   return (
     <>
-      <Color src={`/_next/image?url=${items[memoryIndex]?.thumbPath}&w=384&q=75`} format="rgbString">
-        {({ data: colour }: { data?: string }) => (
-          <style global jsx>
-            {`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background {
-                background: ${colour};
-              }`}
-          </style>
-        )}
-      </Color>
+      {bgThumb ? (
+        <Color src={`/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75`} format="rgbString">
+          {({ data: colour }: { data?: string }) => (
+            <style
+              // eslint-disable-next-line react/no-danger
+              dangerouslySetInnerHTML={{
+                __html: `.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colour}; }`,
+              }}
+            />
+          )}
+        </Color>
+      ) : null}
       <section className={`${styles.split} image-gallery-background`}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery
             ref={refImageGallery}
             onBeforeSlide={handleBeforeSlide}
-            startIndex={memoryIndex}
+            startIndex={safeIndex}
             items={carouselItems}
             showPlayButton={false}
             showThumbnails={false}
@@ -143,7 +165,7 @@ function SplitViewer({
           <SlippyMap
             mapRef={mapRef}
             items={items}
-            centroid={items[memoryIndex]}
+            centroid={items[safeIndex] || items[0] || null}
             mapFilterEnabled={mapFilterEnabled}
             onToggleMapFilter={onToggleMapFilter}
             onBoundsChange={onMapBoundsChange}
