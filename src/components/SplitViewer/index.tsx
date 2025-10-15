@@ -1,6 +1,6 @@
 import Color from 'color-thief-react'
 import {
-  useContext, useRef, type Ref, type ReactNode, useMemo, useEffect,
+  useContext, useRef, type Ref, type ReactNode, useMemo, useEffect, useState,
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
@@ -26,17 +26,16 @@ interface ImageGalleryType extends ReactImageGalleryItem {
 const toCarousel = (item: Item) => {
   const imageGallery: ImageGalleryType = {
     caption: item.caption,
-    original: item.photoPath || item.thumbPath,
-    thumbnail: item.thumbPath,
+    // Provide stable fallbacks so items array length/order does NOT change after first render
+    original: item.photoPath || item.thumbPath || item.mediaPath,
+    thumbnail: item.thumbPath || item.photoPath || item.mediaPath,
     filename: Array.isArray(item.filename) ? item.filename[0] : item.filename,
     mediaPath: item.mediaPath,
   }
-
   if (item.description) {
     imageGallery.description = item.description
     imageGallery.caption = item.caption
   }
-
   const extension = getExt(item.mediaPath)
   const isVideo = extension && config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
@@ -51,7 +50,6 @@ const toCarousel = (item: Item) => {
       />
     )
   }
-
   return imageGallery
 }
 
@@ -79,16 +77,34 @@ function SplitViewer({
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
 
-  // Build carousel items once per items change
+  // Build carousel items
   const carouselItems = useMemo(
-    () => items.filter(i => i.thumbPath).map(toCarousel),
+    () => items.map(toCarousel),
     [items],
   )
 
-  // Safe index (do not set state every render)
   const safeIndex = carouselItems.length === 0
     ? 0
     : (memoryIndex >= carouselItems.length ? carouselItems.length - 1 : memoryIndex)
+
+  // Dynamic centroid (always reflects current selected item)
+  const dynamicCentroid = items[safeIndex] || items[0] || null
+
+  // Locked centroid used while map filter is ON (prevents panning / zooming with next/prev)
+  const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)
+
+  // Update the locked centroid only when map filter is OFF (so user navigation recenters map)
+  useEffect(() => {
+    if (!mapFilterEnabled) {
+      setLockedCentroid(dynamicCentroid)
+    }
+  }, [mapFilterEnabled, dynamicCentroid])
+
+  // Only pass startIndex on first mount; afterward let the gallery manage its own state
+  const initialIndexRef = useRef(safeIndex)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  const startIndexProp = mounted ? undefined : initialIndexRef.current
 
   // Background thumbnail (may be undefined initially)
   const bgThumb = carouselItems[safeIndex]?.thumbnail
@@ -152,7 +168,7 @@ function SplitViewer({
           <ImageGallery
             ref={refImageGallery}
             onBeforeSlide={handleBeforeSlide}
-            startIndex={safeIndex}
+            startIndex={startIndexProp}
             items={carouselItems}
             showPlayButton={false}
             showThumbnails={false}
@@ -165,7 +181,8 @@ function SplitViewer({
           <SlippyMap
             mapRef={mapRef}
             items={items}
-            centroid={items[safeIndex] || items[0] || null}
+            // If filter ON: keep using locked centroid (no pan). If OFF: follow selection.
+            centroid={mapFilterEnabled ? lockedCentroid : dynamicCentroid}
             mapFilterEnabled={mapFilterEnabled}
             onToggleMapFilter={onToggleMapFilter}
             onBoundsChange={onMapBoundsChange}
