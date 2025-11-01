@@ -49,7 +49,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
-          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
+          refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}

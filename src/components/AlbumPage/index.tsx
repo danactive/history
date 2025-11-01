@@ -2,7 +2,7 @@
 
 import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
 
 import type { Album } from '../../types/pages'
@@ -34,6 +34,12 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     selectById,
   } = useMapFilter({ items, indexedKeywords })
 
+  // Wrapper ensures viewed outline reset immediately on toggle
+  const handleToggleWithReset = useCallback(() => {
+    resetViewedList()
+    handleToggleMapFilter()
+  }, [resetViewedList, handleToggleMapFilter])
+
   const resetToken = mapFilterEnabled ? 1 : 0
 
   const searchParams = useSearchParams()
@@ -57,7 +63,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
-          onToggleMapFilter={handleToggleMapFilter}
+          onToggleMapFilter={handleToggleWithReset}
           onMapBoundsChange={handleBoundsChange}
         />
         <ul className={styles.thumbWrapper}>
