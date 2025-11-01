@@ -117,24 +117,36 @@ export default function SlippyMap({
     cursor: 'pointer',
   }
 
+  // Helper to read current bounds immediately
+  const readBounds = (): [[number, number],[number, number]] | null => {
+    try {
+      const map = mapRef?.current?.getMap()
+      if (!map || !map.getBounds) return null
+      return map.getBounds().toArray() as [[number, number],[number, number]]
+    } catch {
+      return null
+    }
+  }
+
+  // Wrap toggle so enabling the filter captures bounds instantly (no move needed)
+  const handleToggleClick = () => {
+    const nextEnabled = !mapFilterEnabled
+    onToggleMapFilter?.()
+    if (nextEnabled && onBoundsChange) {
+      const b = readBounds()
+      if (b) onBoundsChange(b)
+    }
+    // When disabling, onToggleMapFilter clears bounds already
+  }
+
   const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleMove = useCallback((evt: ViewStateChangeEvent) => {
     setViewport(evt.viewState)
     if (!mapFilterEnabled || !onBoundsChange) return
     if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
     moveTimeoutRef.current = setTimeout(() => {
-      const mr = mapRef?.current
-      if (!mr) return
-      const map = mr.getMap()
-      if (!map || !map.getBounds) return
-      try {
-        const boundsObj = map.getBounds()
-        if (!boundsObj) return
-        const bounds = boundsObj.toArray() as [[number, number], [number, number]]
-        onBoundsChange(bounds)
-      } catch {
-        // ignore
-      }
+      const b = readBounds()
+      if (b) onBoundsChange(b)
     }, 100)
   }, [mapFilterEnabled, onBoundsChange, mapRef])
 
@@ -149,7 +161,7 @@ export default function SlippyMap({
         <div
           style={toggleStyle}
           role="button"
-          onClick={onToggleMapFilter}
+          onClick={handleToggleClick}
           aria-pressed={mapFilterEnabled}
           title="Toggle map filter"
         >

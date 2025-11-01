@@ -32,10 +32,18 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
 
   const boundsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleBoundsChange = useCallback((bounds: Bounds) => {
-    if (boundsTimeoutRef.current) clearTimeout(boundsTimeoutRef.current)
-    boundsTimeoutRef.current = setTimeout(() => {
-      setMapBounds(bounds)
-    }, 150)
+    if (!bounds) return
+    // Only update if different (prevents redundant re-renders)
+    setMapBounds(prev => {
+      if (
+        prev &&
+        prev[0][0] === bounds[0][0] &&
+        prev[0][1] === bounds[0][1] &&
+        prev[1][0] === bounds[1][0] &&
+        prev[1][1] === bounds[1][1]
+      ) return prev
+      return bounds
+    })
   }, [])
   useEffect(() => () => {
     if (boundsTimeoutRef.current) clearTimeout(boundsTimeoutRef.current)
