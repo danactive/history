@@ -120,9 +120,11 @@ export default function SlippyMap({
   // Helper to read current bounds immediately
   const readBounds = (): [[number, number],[number, number]] | null => {
     try {
-      const map = mapRef?.current?.getMap()
-      if (!map || !map.getBounds) return null
-      return map.getBounds().toArray() as [[number, number],[number, number]]
+      const mapInstance = mapRef?.current?.getMap()
+      if (!mapInstance) return null
+      const boundsObj = mapInstance.getBounds?.()
+      if (!boundsObj) return null
+      return boundsObj.toArray() as [[number, number],[number, number]]
     } catch {
       return null
     }
