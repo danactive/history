@@ -3,7 +3,7 @@
 import { Button } from '@mui/joy'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
-  type Dispatch, type SetStateAction, useEffect, useMemo, useState,
+  type Dispatch, type SetStateAction, useEffect, useMemo, useState, useCallback,
 } from 'react'
 import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
@@ -31,6 +31,14 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const [keyword, setKeyword] = useState<string>(searchParams?.get('keyword') ?? '')
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
   const [filteredItems, setFilteredItems] = useState<ItemType[]>(items)
+
+  // Count of currently visible thumbnails (consumer updates this)
+  const [visibleCount, setVisibleCount] = useState<number>(items.length)
+
+  // Make setVisibleCount stable to prevent useEffect loops
+  const setVisibleCountStable = useCallback((count: number) => {
+    setVisibleCount((prev) => (prev === count ? prev : count))
+  }, [])
 
   const AND_OPERATOR = '&&'
   const OR_OPERATOR = '||'
@@ -69,11 +77,12 @@ export default function useSearch<ItemType extends ServerSideItem>({
     ? <> for &quot;{keyword}&quot;</>
     : null
 
+  // Keep original name `searchBox` (no breaking change). Visible count is driven externally.
   const searchBox = (
     <form onSubmit={handleSubmit}>
       <div className={styles.row}>
         <h3 className={styles.searchCount}>
-          Search results {filtered.length} of {items.length}
+          Search results {visibleCount} of {items.length}
           {keywordResultLabel}
         </h3>
         <AutoComplete
@@ -110,6 +119,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     keyword,
     setKeyword,
     searchBox,
+    setVisibleCount: setVisibleCountStable, // stable reference
     setFiltered: setFilteredItems,
   }
 }

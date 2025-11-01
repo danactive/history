@@ -18,6 +18,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     filtered,
     keyword,
     searchBox,
+    setVisibleCount,
   } = useSearch({ items, setMemoryIndex, indexedKeywords })
 
   const { setViewed, memoryHtml, viewedList } = useMemory(filtered, refImageGallery)
@@ -90,6 +91,11 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
 
   // expose raw state setter too (for legacy callers) but keep it stable reference
   const setMemoryIndexRaw = setMemoryIndex
+
+  useEffect(() => {
+    // Update visible count for search box (map-filter aware)
+    setVisibleCount(itemsToShow.length)
+  }, [itemsToShow.length, setVisibleCount])
 
   return {
     // UI / interaction

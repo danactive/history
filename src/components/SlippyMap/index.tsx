@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   type RefObject,
+  useRef,
 } from 'react'
 import Map, {
   Layer, Source, type MapRef, type ViewStateChangeEvent,
@@ -50,6 +51,10 @@ export default function SlippyMap({
   const coordinates = activeCentroid?.coordinates ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
 
+  // Track previous coordinates/zoom to avoid unnecessary updates
+  const prevCoordsRef = useRef<[number, number]>([0, 0])
+  const prevZoomRef = useRef<number>(metaZoom)
+
   // avoid calling transformMapOptions during SSR (it may access window/mapbox)
   const [viewport, setViewport] = useState(() => {
     if (typeof window === 'undefined') return {} as any
@@ -58,6 +63,19 @@ export default function SlippyMap({
 
   useEffect(() => {
     if (typeof window === 'undefined') return
+
+    // Only update if coordinates or zoom actually changed
+    const [prevLng, prevLat] = prevCoordsRef.current
+    const [lng, lat] = coordinates
+    const prevZoom = prevZoomRef.current
+
+    if (prevLng === lng && prevLat === lat && prevZoom === zoom) {
+      return // No change, skip update
+    }
+
+    // Update refs and viewport
+    prevCoordsRef.current = coordinates
+    prevZoomRef.current = zoom
     setViewport(transformMapOptions({ coordinates, zoom }))
   }, [coordinates, zoom])
 
