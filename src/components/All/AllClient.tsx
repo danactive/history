@@ -11,7 +11,7 @@ import AllItems from './Items'
 import useMapFilter from '../../hooks/useMapFilter'
 
 export default function AllClient({ items, indexedKeywords }: All.ComponentProps) {
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
 
   const {
     refImageGallery,
@@ -35,7 +35,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
-          refImageGallery={refImageGallery}
+          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}

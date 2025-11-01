@@ -1,5 +1,4 @@
 'use client'
-import { type FeatureCollection } from 'geojson'
 import type { GeoJSONSource } from 'mapbox-gl'
 import {
   useContext,
@@ -7,9 +6,11 @@ import {
   useState,
   type RefObject,
   useRef,
+  useCallback,
+  useMemo,
 } from 'react'
 import Map, {
-  Layer, Source, type MapRef, type ViewStateChangeEvent,
+  Layer, Source, type MapRef, type ViewStateChangeEvent, type MapMouseEvent,
 } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
@@ -48,7 +49,7 @@ export default function SlippyMap({
 
   // Always render the map. Prefer the passed centroid, then first item, then a safe default
   const activeCentroid = centroid ?? (items.length > 0 ? items[0] : null)
-  const coordinates = activeCentroid?.coordinates ?? [0, 0]
+  const coordinates: [number, number] = (activeCentroid?.coordinates as [number, number]) ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
 
   // Track previous coordinates/zoom to avoid unnecessary updates
@@ -68,44 +69,38 @@ export default function SlippyMap({
     const [prevLng, prevLat] = prevCoordsRef.current
     const [lng, lat] = coordinates
     const prevZoom = prevZoomRef.current
-
-    if (prevLng === lng && prevLat === lat && prevZoom === zoom) {
-      return // No change, skip update
-    }
-
-    // Update refs and viewport
+    if (prevLng === lng && prevLat === lat && prevZoom === zoom) return
     prevCoordsRef.current = coordinates
     prevZoomRef.current = zoom
     setViewport(transformMapOptions({ coordinates, zoom }))
   }, [coordinates, zoom])
 
-  const onClick = (event: FeatureCollection) => {
-    const feature = event.features[0]
-    if (!(feature && mapRef?.current)) {
-      return
-    }
+  const onClick = (event: MapMouseEvent) => {
+    const feature = event.features && event.features[0]
+    if (!feature || !mapRef?.current) return
     const clusterId = feature.properties?.cluster_id
+    if (clusterId == null) return
 
-    const mapboxSource = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
+    // Narrow geometry to Point before accessing coordinates
+    if (feature.geometry.type !== 'Point') return
+    const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number]
 
-    mapboxSource.getClusterExpansionZoom(clusterId, (err, clickZoom) => {
-      if (err) {
-        return
-      }
-      const zoomNotNull = clickZoom === null ? undefined : clickZoom // dep upgrade changed type rules
-
-      if (mapRef?.current) {
-        mapRef.current.flyTo({
-          // @ts-ignore
-          center: feature.geometry.coordinates,
-          zoom: zoomNotNull,
-        })
-      }
+    const src = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
+    src.getClusterExpansionZoom(clusterId, (err: any, expansionZoom?: number | null) => {
+      if (err || expansionZoom == null) return
+      mapRef.current?.flyTo({
+        center: coords,
+        zoom: expansionZoom,
+      })
     })
   }
 
-  const geoJsonSource = transformSourceOptions({ items, selected: { coordinates } })
-  const layerIds = []
+  const geoJsonSource = useMemo(
+    () => transformSourceOptions({ items, selected: { coordinates } }),
+    [items, coordinates],
+  )
+
+  const layerIds: string[] = []
   if (clusterLayer.id) layerIds.push(clusterLayer.id)
   if (clusterCountLayer.id) layerIds.push(clusterCountLayer.id)
   if (selectedPointLayer.id) layerIds.push(selectedPointLayer.id)
@@ -122,53 +117,53 @@ export default function SlippyMap({
     cursor: 'pointer',
   }
 
-  const handleMove = (evt: ViewStateChangeEvent) => {
+  const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const handleMove = useCallback((evt: ViewStateChangeEvent) => {
     setViewport(evt.viewState)
-
-    // Only report bounds to parent when map-based filtering is enabled.
-    // This avoids expensive parent updates while the user is panning/zooming
-    // when the map filter is OFF and keeps mouse interactions smooth.
-    if (!mapFilterEnabled) return
-
-    const mr = mapRef?.current
-    if (mr && typeof onBoundsChange === 'function') {
+    if (!mapFilterEnabled || !onBoundsChange) return
+    if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
+    moveTimeoutRef.current = setTimeout(() => {
+      const mr = mapRef?.current
+      if (!mr) return
+      const map = mr.getMap()
+      if (!map || !map.getBounds) return
       try {
-        const map = mr.getMap?.()
-        if (!map) return
-        const bounds = map.getBounds().toArray() as [[number, number],[number, number]]
+        const boundsObj = map.getBounds()
+        if (!boundsObj) return
+        const bounds = boundsObj.toArray() as [[number, number], [number, number]]
         onBoundsChange(bounds)
       } catch {
-        // ignore mapbox errors during SSR or unavailable map
+        // ignore
       }
-    }
-  }
+    }, 100)
+  }, [mapFilterEnabled, onBoundsChange, mapRef])
+
+  useEffect(() => () => {
+    if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
+  }, [])
 
   return (
     <>
-      <style global jsx>
-        {`
-        .mapboxgl-control-container {
-          display: none;
-        }
-      `}
-      </style>
-
-      {/* Ensure the map container has an explicit height so Mapbox can render */}
+      <style global jsx>{`.mapboxgl-control-container{display:none;}`}</style>
       <div style={{ position: 'relative', width: '100%', height: '360px', minHeight: 300 }}>
-        <div style={toggleStyle} role="button" onClick={onToggleMapFilter} aria-pressed={mapFilterEnabled} title="Toggle map filter">
-          <span style={{ fontSize: 12, fontWeight: 600 }}>{mapFilterEnabled ? 'Map filter: ON' : 'Map filter: OFF'}</span>
+        <div
+          style={toggleStyle}
+          role="button"
+          onClick={onToggleMapFilter}
+          aria-pressed={mapFilterEnabled}
+          title="Toggle map filter"
+        >
+          <span style={{ fontSize: 12, fontWeight: 600 }}>
+            {mapFilterEnabled ? 'Map filter: ON' : 'Map filter: OFF'}
+          </span>
         </div>
-
         <Map
           {...viewport}
           ref={mapRef}
-          // ensure the Map fills the container
           style={{ width: '100%', height: '100%' }}
           mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
           mapboxAccessToken={MAPBOX_TOKEN}
           interactiveLayerIds={layerIds}
-          /*
-          // @ts-ignore */
           onClick={onClick}
           onMove={handleMove}
         >

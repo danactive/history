@@ -73,11 +73,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
     router.push(`${pathname}?keyword=${encodeURIComponent(newKeyword)}`)
   }
 
-  const keywordResultLabel = keyword
-    ? <> for &quot;{keyword}&quot;</>
-    : null
+  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
 
-  // Keep original name `searchBox` (no breaking change). Visible count is driven externally.
   const searchBox = (
     <form onSubmit={handleSubmit}>
       <div className={styles.row}>
@@ -94,7 +91,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
         <Button
           type="submit"
           title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
-          color='neutral'
+          color="neutral"
         >
           Filter
         </Button>
@@ -119,7 +116,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     keyword,
     setKeyword,
     searchBox,
-    setVisibleCount: setVisibleCountStable, // stable reference
+    setVisibleCount: setVisibleCountStable,
     setFiltered: setFilteredItems,
   }
 }
