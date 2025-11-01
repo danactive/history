@@ -142,7 +142,7 @@ function SplitViewer({
         await req
       }
     } catch (err) {
-      // eslint-disable-next-line no-console
+
       console.warn('Fullscreen request denied', err)
     }
   }
@@ -154,12 +154,8 @@ function SplitViewer({
       {bgThumb ? (
         <Color src={`/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75`} format="rgbString">
           {({ data: colour }: { data?: string }) => (
-            <style
-              // eslint-disable-next-line react/no-danger
-              dangerouslySetInnerHTML={{
-                __html: `.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colour}; }`,
-              }}
-            />
+            // Removed unused eslint disable for missing rule react/no-danger
+            <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colour}; }`}</style>
           )}
         </Color>
       ) : null}

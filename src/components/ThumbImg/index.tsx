@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react'
+import { MouseEvent, useState, useEffect } from 'react'
 
 import config from '../../../src/models/config'
 import Img from '../Img'
@@ -18,23 +18,33 @@ function ThumbImg({
   src,
   id,
   viewed: previewed = false,
+  resetToken,
 }: {
   onClick?: Function;
-  caption: string,
-  href?: string,
-  src: string,
-  id: string,
-  viewed: boolean,
+  caption: string;
+  href?: string;
+  src: string;
+  id: string;
+  viewed: boolean;
+  resetToken?: number | string; // changes force reset
 }) {
   const [viewed, setViewed] = useState(previewed)
+
+  useEffect(() => {
+    // Sync internal state to external viewed flag (allows reset to false)
+    setViewed(previewed)
+  }, [previewed, resetToken])
+
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     setViewed(true)
     onClick?.()
   }
+
   if (previewed && !viewed) {
     setViewed(true)
   }
+
   const { width, height } = config.resizeDimensions.thumb
 
   return (

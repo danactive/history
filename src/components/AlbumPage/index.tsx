@@ -22,6 +22,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     memoryIndex,
     setMemoryIndex,
     setViewed,
+    resetViewedList,
     memoryHtml,
     viewedList,
     filtered,
@@ -32,6 +33,8 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     itemsToShow,
     selectById,
   } = useMapFilter({ items, indexedKeywords })
+
+  const resetToken = mapFilterEnabled ? 1 : 0
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
@@ -69,6 +72,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
               key={Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename)}
               id={`select${item.id}`}
               viewed={!!viewedList?.has?.(item.id)}
+              resetToken={resetToken}
             />
           ))}
         </ul>

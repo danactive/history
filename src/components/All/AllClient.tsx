@@ -19,6 +19,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     memoryIndex,
     setMemoryIndex,
     setViewed,
+    resetViewedList,
     memoryHtml,
     keyword,
     searchBox,
@@ -27,6 +28,8 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     handleBoundsChange,
     itemsToShow,
   } = useMapFilter({ items, indexedKeywords })
+
+  const resetToken = mapFilterEnabled ? 1 : 0
 
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
     () => itemsToShow.map(i => ({
@@ -53,7 +56,12 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
-        <AllItems items={itemsWithCorpus} keyword={keyword} refImageGallery={refImageGallery} />
+        <AllItems
+          items={itemsWithCorpus}
+          keyword={keyword}
+          refImageGallery={refImageGallery}
+          resetToken={resetToken}
+        />
       </AlbumContext.Provider>
     </div>
   )

@@ -6,9 +6,7 @@ import type { Item } from '../types/common'
 import applyAge from '../utils/person'
 import styles from './memory.module.css'
 
-export interface Viewed {
-  (index: number): void;
-}
+export interface Viewed { (index: number): void }
 
 const useMemory = (
   filtered: Item[],
@@ -16,6 +14,10 @@ const useMemory = (
 ) => {
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
+
+  const resetViewedList = () => {
+    setViewedList(new Set())
+  }
 
   const setViewed: Viewed = (index: number) => {
     const item = filtered[index] ?? filtered[0] ?? null
@@ -42,7 +44,7 @@ const useMemory = (
     } else {
       setDetails(null)
     }
-  }, [filtered, refImageGallery]) // safe dependencies
+  }, [filtered, refImageGallery])
 
   const memoryHtml = details ? (
     <>
@@ -65,6 +67,7 @@ const useMemory = (
 
   return {
     setViewed,
+    resetViewedList,
     memoryHtml,
     viewedList,
   }

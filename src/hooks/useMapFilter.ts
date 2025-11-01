@@ -30,14 +30,6 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
   const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const handleToggleMapFilter = useCallback(() => {
-    setMapFilterEnabled(prev => {
-      const next = !prev
-      if (prev) setMapBounds(null)
-      return next
-    })
-  }, [])
-
   const boundsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleBoundsChange = useCallback((bounds: Bounds) => {
     if (boundsTimeoutRef.current) clearTimeout(boundsTimeoutRef.current)
@@ -60,7 +52,17 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     })
   }, [mapFilterEnabled, mapBounds, filtered])
 
-  const { setViewed, memoryHtml, viewedList } = useMemory(itemsToShow, refImageGallery)
+  // useMemory BEFORE defining handleToggleMapFilter so resetViewedList is available
+  const { setViewed, resetViewedList, memoryHtml, viewedList } = useMemory(itemsToShow, refImageGallery)
+
+  const handleToggleMapFilter = useCallback(() => {
+    setMapFilterEnabled(prev => {
+      const next = !prev
+      resetViewedList()
+      if (prev) setMapBounds(null)
+      return next
+    })
+  }, [resetViewedList])
 
   const selectById = useCallback((id: string) => {
     setSelectedId(prev => (prev === id ? prev : id))
@@ -104,6 +106,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     memoryIndex,
     setMemoryIndex,
     setViewed,
+    resetViewedList,
     memoryHtml,
     viewedList,
     filtered,

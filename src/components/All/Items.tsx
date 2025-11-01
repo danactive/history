@@ -4,15 +4,22 @@ import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
 import Img from '../Img'
 import Link from '../Link'
+import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
 
 interface InputProps {
-  items: ServerSideAllItem[],
-  keyword: string,
-  refImageGallery: React.RefObject<ReactImageGallery | null>,
+  items: ServerSideAllItem[]
+  keyword: string
+  refImageGallery: React.RefObject<ReactImageGallery | null>
+  resetToken?: number | string
 }
 
-function All({ items, keyword, refImageGallery }: InputProps) {
+export default function AllItems({
+  items,
+  keyword,
+  refImageGallery,
+  resetToken,
+}: InputProps) {
   const showThumbnail = (kw = '') => kw.length > 2
   const { width, height } = config.resizeDimensions.thumb
   function selectThumb(index: number) {
@@ -34,5 +41,3 @@ function All({ items, keyword, refImageGallery }: InputProps) {
     </ul>
   )
 }
-
-export default All
