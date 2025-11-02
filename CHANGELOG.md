@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.1.0](https://github.com/danactive/history/compare/v12.0.0...v12.1.0) (2025-11-02)
+
+
+### Features
+
+* **Map Feature:** Apply Map Filter on button press not map move ([2f8f1d0](https://github.com/danactive/history/commit/2f8f1d0ab6726722663ed214e47551967e27162b))
+* **Map Feature:** Ensure media item has unique ids ([4fa5a53](https://github.com/danactive/history/commit/4fa5a532428fd429587c80a9b07783226b19529a))
+* **Map Feature:** Remove reset map filter ([85eb713](https://github.com/danactive/history/commit/85eb7133d316bdc3a416dd7762a351bd005f216f))
+* **Map Feature:** Reset viewed on Map Feature toggle ([f89dabb](https://github.com/danactive/history/commit/f89dabbe455de3a22861208f72a75bd6fef3e86c))
+* **Map Search:** Hook for map filter ([21be439](https://github.com/danactive/history/commit/21be43974dbbf1c21ea0fd6a1890402954df192f))
+* **Map Search:** Rough cut ([1985ca7](https://github.com/danactive/history/commit/1985ca70edce4d4cdb54caf709baa7d07909ec8b))
+
+
+### Bug Fixes
+
+* **Next.js API:** Standardize errors ([c7d4d0d](https://github.com/danactive/history/commit/c7d4d0d0ba616ef25fb0763fa0dd8f91333ee9dd))
+
 ## [12.0.0](https://github.com/danactive/history/compare/v11.4.0...v12.0.0) (2025-06-27)
 
 
