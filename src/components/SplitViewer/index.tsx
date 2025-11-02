@@ -98,11 +98,11 @@ function SplitViewer({
   )
 
   const safeIndex = carouselItems.length === 0
-    ? 0
+    ? -1
     : (memoryIndex >= carouselItems.length ? carouselItems.length - 1 : memoryIndex)
 
   // Dynamic centroid (always reflects current selected item)
-  const dynamicCentroid = items[safeIndex] || items[0] || null
+  const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
 
   // Locked centroid used while map filter is ON (prevents panning / zooming with next/prev)
   const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)

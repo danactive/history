@@ -17,14 +17,14 @@ const useMemory = (
   refImageGallery: RefObject<ReactImageGallery | null>,
   options: MemoryOptions = { autoInitialView: true },
 ) => {
-  // Persist across map/keyword filter changes (no reset)
+  const { autoInitialView = true } = options // destructure to stabilize dependency
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
 
   const setViewed: Viewed = (index: number) => {
     const item = filtered[index] ?? null
     setDetails(item)
-    if (!item || !item.id) return
+    if (!item?.id) return
     setViewedList(prev => {
       if (prev.has(item.id)) return prev
       const next = new Set(prev)
@@ -34,8 +34,7 @@ const useMemory = (
   }
 
   useEffect(() => {
-    // Suppress automatic viewed marking if requested (during map filter enable reset)
-    if (!options.autoInitialView) return
+    if (!autoInitialView) return
     if (refImageGallery.current && filtered.length > 0) {
       const current = refImageGallery.current.getCurrentIndex()
       if (current >= 0) {
@@ -48,7 +47,7 @@ const useMemory = (
     } else {
       setDetails(null)
     }
-  }, [filtered, refImageGallery, options.autoInitialView])
+  }, [filtered, refImageGallery, autoInitialView])
 
   const memoryHtml = details ? (
     <>
