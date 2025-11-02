@@ -1,8 +1,8 @@
 'use client'
 import { useCallback, useMemo, useRef, useState, useEffect, type Dispatch, type SetStateAction } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
-import useMemory from '../hooks/useMemory'
-import useSearch from '../hooks/useSearch'
+import useMemory from './useMemory'
+import useSearch from './useSearch'
 import type { All } from '../types/pages'
 import type { Item } from '../types/common'
 
@@ -30,10 +30,8 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
   const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const boundsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleBoundsChange = useCallback((bounds: Bounds) => {
     if (!bounds) return
-    // Only update if different (prevents redundant re-renders)
     setMapBounds(prev => {
       if (
         prev &&
@@ -44,9 +42,6 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
       ) return prev
       return bounds
     })
-  }, [])
-  useEffect(() => () => {
-    if (boundsTimeoutRef.current) clearTimeout(boundsTimeoutRef.current)
   }, [])
 
   const itemsToShow: Item[] = useMemo(() => {
@@ -60,17 +55,15 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     })
   }, [mapFilterEnabled, mapBounds, filtered])
 
-  // useMemory BEFORE defining handleToggleMapFilter so resetViewedList is available
-  const { setViewed, resetViewedList, memoryHtml, viewedList } = useMemory(itemsToShow, refImageGallery)
+  const { setViewed, memoryHtml, viewedList } = useMemory(itemsToShow, refImageGallery)
 
   const handleToggleMapFilter = useCallback(() => {
     setMapFilterEnabled(prev => {
       const next = !prev
-      resetViewedList()
-      if (prev) setMapBounds(null)
+      if (prev) setMapBounds(null) // turning off clears bounds only
       return next
     })
-  }, [resetViewedList])
+  }, [])
 
   const selectById = useCallback((id: string) => {
     setSelectedId(prev => (prev === id ? prev : id))
@@ -98,15 +91,11 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     }
   }, [itemsToShow, selectedId, memoryIndex, setMemoryIndex])
 
-  const countTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => {
-    if (countTimeoutRef.current) clearTimeout(countTimeoutRef.current)
-    countTimeoutRef.current = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setVisibleCount(itemsToShow.length)
     }, 100)
-    return () => {
-      if (countTimeoutRef.current) clearTimeout(countTimeoutRef.current)
-    }
+    return () => clearTimeout(timeout)
   }, [itemsToShow.length, setVisibleCount])
 
   return {
@@ -114,7 +103,6 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    resetViewedList,
     memoryHtml,
     viewedList,
     filtered,

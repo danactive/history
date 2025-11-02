@@ -15,7 +15,6 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    resetViewedList,
     viewedList,
     keyword,
     searchBox,
@@ -26,15 +25,9 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
     ageFiltered,
     itemsWithCorpus,
     memoryHtml,
-    resetToken,
   } = usePersonsFilter({ items, indexedKeywords })
 
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
-
-  const handleToggleWithReset = () => {
-    resetViewedList()
-    handleToggleMapFilter()
-  }
 
   return (
     <div>
@@ -49,14 +42,14 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
-          onToggleMapFilter={handleToggleWithReset}
+          onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
         <AllItems
           items={itemsWithCorpus}
           keyword={keyword}
           refImageGallery={refImageGallery}
-          resetToken={resetToken}
+          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

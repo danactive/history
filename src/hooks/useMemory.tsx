@@ -12,27 +12,22 @@ const useMemory = (
   filtered: Item[],
   refImageGallery: RefObject<ReactImageGallery | null>,
 ) => {
+  // Persist across map/keyword filter changes (no reset)
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
-
-  const resetViewedList = () => {
-    setViewedList(new Set())
-  }
 
   const setViewed: Viewed = (index: number) => {
     const item = filtered[index] ?? filtered[0] ?? null
     setDetails(item)
-    if (item) {
-      const rawId = item.id ?? (Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename))
-      if (rawId) {
-        setViewedList((prev) => {
-          if (prev.has(rawId)) return prev
-          const next = new Set(prev)
-          next.add(rawId)
-          return next
-        })
-      }
-    }
+    if (!item) return
+    const rawId = item.id ?? (Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename))
+    if (!rawId) return
+    setViewedList(prev => {
+      if (prev.has(rawId)) return prev
+      const next = new Set(prev)
+      next.add(rawId)
+      return next
+    })
   }
 
   useEffect(() => {
@@ -67,7 +62,6 @@ const useMemory = (
 
   return {
     setViewed,
-    resetViewedList,
     memoryHtml,
     viewedList,
   }

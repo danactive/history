@@ -1,12 +1,5 @@
 'use client'
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react'
-import type ReactImageGallery from 'react-image-gallery'
+import { useMemo, useState } from 'react'
 import useMapFilter from './useMapFilter'
 import useMemory from './useMemory'
 import type { All } from '../types/pages'
@@ -27,9 +20,7 @@ function calcAge(dob: string, photoDate: string): number | null {
     const m = shot.getMonth() - birth.getMonth()
     if (m < 0 || (m === 0 && shot.getDate() < birth.getDate())) age -= 1
     return age
-  } catch {
-    return null
-  }
+  } catch { return null }
 }
 
 export default function usePersonsFilter({ items, indexedKeywords }: All.ComponentProps) {
@@ -38,7 +29,6 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    resetViewedList,
     memoryHtml,
     viewedList,
     keyword,
@@ -162,11 +152,7 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     [ageFiltered],
   )
 
-  // Memory (depends on ageFiltered list for gallery)
   const { memoryHtml: personsMemoryHtml, setViewed: personsSetViewed } = useMemory(ageFiltered, refImageGallery)
-
-  const resetToken = mapFilterEnabled ? 1 : 0
-
   // Combined memoryHtml: prefer personsMemoryHtml (same structure)
   const finalMemoryHtml = personsMemoryHtml ?? memoryHtml
 
@@ -233,6 +219,5 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     itemsWithCorpus,
     // memory
     memoryHtml: finalMemoryHtml,
-    resetToken,
   }
 }

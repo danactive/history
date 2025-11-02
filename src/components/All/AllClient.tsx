@@ -19,7 +19,6 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    resetViewedList,
     memoryHtml,
     keyword,
     searchBox,
@@ -27,9 +26,8 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
+    viewedList,
   } = useMapFilter({ items, indexedKeywords })
-
-  const resetToken = mapFilterEnabled ? 1 : 0
 
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
     () => itemsToShow.map(i => ({
@@ -49,7 +47,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
-          refImageGallery={refImageGallery}
+          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
@@ -59,8 +57,8 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <AllItems
           items={itemsWithCorpus}
           keyword={keyword}
-          refImageGallery={refImageGallery}
-          resetToken={resetToken}
+          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
+          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

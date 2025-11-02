@@ -18,43 +18,38 @@ function ThumbImg({
   src,
   id,
   viewed: previewed = false,
-  resetToken,
 }: {
-  onClick?: Function;
+  onClick?: () => void;
   caption: string;
   href?: string;
   src: string;
   id: string;
   viewed: boolean;
-  resetToken?: number | string; // changes force reset
 }) {
+  // Keep visuals (local state for immediate feedback) but never reset globally
   const [viewed, setViewed] = useState(previewed)
 
   useEffect(() => {
-    // Sync internal state to external viewed flag (allows reset to false)
-    setViewed(previewed)
-  }, [previewed, resetToken])
+    if (previewed && !viewed) setViewed(true)
+  }, [previewed, viewed])
 
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
     event.preventDefault()
-    setViewed(true)
+    if (!viewed) setViewed(true)
     onClick?.()
-  }
-
-  if (previewed && !viewed) {
-    setViewed(true)
   }
 
   const { width, height } = config.resizeDimensions.thumb
 
   return (
     <li className={styles.bullet}>
-      <a className={getViewed(viewed)} href={href} onClick={handleClick} id={id}>
+      <a className={getViewed(previewed || viewed)} href={href} onClick={handleClick} id={id}>
         <Img
           src={src}
           alt={caption}
           width={width}
           height={height}
+          loading="lazy"
         />
       </a>
       <span className={styles.caption}>{caption}</span>
