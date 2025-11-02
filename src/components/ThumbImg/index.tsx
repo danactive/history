@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react'
+import { MouseEvent, useState, useEffect } from 'react'
 
 import config from '../../../src/models/config'
 import Img from '../Img'
@@ -17,34 +17,39 @@ function ThumbImg({
   href,
   src,
   id,
-  viewed: previewed = false,
+  viewed: globalViewed = false,
 }: {
-  onClick?: Function;
-  caption: string,
-  href?: string,
-  src: string,
-  id: string,
-  viewed: boolean,
+  onClick?: () => void;
+  caption: string;
+  href?: string;
+  src: string;
+  id: string;
+  viewed: boolean;
 }) {
-  const [viewed, setViewed] = useState(previewed)
-  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  // Keep visuals (local state for immediate feedback) but never reset globally
+  const [viewed, setViewed] = useState(globalViewed)
+
+  useEffect(() => {
+    if (globalViewed && !viewed) setViewed(true)
+  }, [globalViewed, viewed])
+
+  const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
     event.preventDefault()
-    setViewed(true)
+    if (!viewed) setViewed(true)
     onClick?.()
   }
-  if (previewed && !viewed) {
-    setViewed(true)
-  }
+
   const { width, height } = config.resizeDimensions.thumb
 
   return (
     <li className={styles.bullet}>
-      <a className={getViewed(viewed)} href={href} onClick={handleClick} id={id}>
+      <a className={getViewed(globalViewed || viewed)} href={href} onClick={handleClick} id={id}>
         <Img
           src={src}
           alt={caption}
           width={width}
           height={height}
+          priority={false}
         />
       </a>
       <span className={styles.caption}>{caption}</span>

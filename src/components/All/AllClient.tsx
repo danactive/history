@@ -1,28 +1,30 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
+import { useMemo } from 'react'
 
 import config from '../../../src/models/config'
-
-import useMemory from '../../hooks/useMemory'
-import useSearch from '../../hooks/useSearch'
 import { All } from '../../types/pages'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
+import useMapFilter from '../../hooks/useMapFilter'
 
 export default function AllClient({ items, indexedKeywords }: All.ComponentProps) {
-  const refImageGallery = useRef<ReactImageGallery>(null)
-  const [memoryIndex, setMemoryIndex] = useState(0)
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+
   const {
-    filtered,
+    refImageGallery,
+    memoryIndex,
+    setMemoryIndex,
+    setViewed,
+    memoryHtml,
     keyword,
     searchBox,
-  } = useSearch({ items, setMemoryIndex, indexedKeywords })
-  const { setViewed, memoryHtml } = useMemory(filtered, refImageGallery)
-
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+    mapFilterEnabled,
+    handleToggleMapFilter,
+    handleBoundsChange,
+    itemsToShow,
+  } = useMapFilter({ items, indexedKeywords })
 
   return (
     <div>
@@ -31,12 +33,19 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
-          items={filtered}
+          items={itemsToShow}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
+          mapFilterEnabled={mapFilterEnabled}
+          onToggleMapFilter={handleToggleMapFilter}
+          onMapBoundsChange={handleBoundsChange}
         />
-        <AllItems items={filtered} keyword={keyword} refImageGallery={refImageGallery} />
+        <AllItems
+          items={itemsToShow}
+          keyword={keyword}
+          refImageGallery={refImageGallery}
+        />
       </AlbumContext.Provider>
     </div>
   )
