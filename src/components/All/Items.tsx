@@ -10,13 +10,11 @@ interface InputProps {
   items: ServerSideAllItem[];
   keyword: string;
   refImageGallery: React.RefObject<ReactImageGallery | null>;
-  viewedList?: Set<string>;
 }
 
 function All({ items, keyword, refImageGallery }: InputProps) {
   const showThumbnail = (kw = '') => kw.length > 2
   const { width, height } = config.resizeDimensions.thumb
-
   function selectThumb(index: number) {
     refImageGallery.current?.slideToIndex(index)
   }

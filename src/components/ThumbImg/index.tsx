@@ -17,7 +17,7 @@ function ThumbImg({
   href,
   src,
   id,
-  viewed: previewed = false,
+  viewed: globalViewed = false,
 }: {
   onClick?: () => void;
   caption: string;
@@ -27,11 +27,11 @@ function ThumbImg({
   viewed: boolean;
 }) {
   // Keep visuals (local state for immediate feedback) but never reset globally
-  const [viewed, setViewed] = useState(previewed)
+  const [viewed, setViewed] = useState(globalViewed)
 
   useEffect(() => {
-    if (previewed && !viewed) setViewed(true)
-  }, [previewed, viewed])
+    if (globalViewed && !viewed) setViewed(true)
+  }, [globalViewed, viewed])
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
     event.preventDefault()
@@ -43,13 +43,13 @@ function ThumbImg({
 
   return (
     <li className={styles.bullet}>
-      <a className={getViewed(previewed || viewed)} href={href} onClick={handleClick} id={id}>
+      <a className={getViewed(globalViewed || viewed)} href={href} onClick={handleClick} id={id}>
         <Img
           src={src}
           alt={caption}
           width={width}
           height={height}
-          loading="lazy"
+          priority={false}
         />
       </a>
       <span className={styles.caption}>{caption}</span>

@@ -76,6 +76,20 @@ function SplitViewer({
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
+  const fullscreenMap = () => {
+    const div = refMapBox.current
+    if (div?.requestFullscreen) {
+      div.requestFullscreen()
+    } else if (div?.webkitRequestFullscreen) {
+      div.webkitRequestFullscreen()
+    } else if (div?.msRequestFullscreen) {
+      div.msRequestFullscreen()
+    } else if (div?.mozRequestFullScreen) {
+      div.mozRequestFullScreen()
+    } else {
+      console.error('Failed to fullscreen')
+    }
+  }
 
   // Build carousel items
   const carouselItems = useMemo(
@@ -126,24 +140,6 @@ function SplitViewer({
     if (!mapFilterEnabled && mapRef.current && !isInvalidPoint) {
       const zoom = item.coordinateAccuracy ?? metaZoom
       mapRef.current.flyTo({ center: [longitude, latitude], zoom })
-    }
-  }
-
-  const fullscreenMap = async () => {
-    const div = refMapBox.current
-    if (!div) return
-    try {
-      const req =
-        (div as any).requestFullscreen?.()
-        || (div as any).webkitRequestFullscreen?.()
-        || (div as any).msRequestFullscreen?.()
-        || (div as any).mozRequestFullScreen?.()
-      if (req && typeof (req as Promise<unknown>).then === 'function') {
-        await req
-      }
-    } catch (err) {
-
-      console.warn('Fullscreen request denied', err)
     }
   }
 

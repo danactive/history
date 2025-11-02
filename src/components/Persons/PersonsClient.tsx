@@ -15,7 +15,6 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    viewedList,
     keyword,
     searchBox,
     mapFilterEnabled,
@@ -49,7 +48,6 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
           items={itemsWithCorpus}
           keyword={keyword}
           refImageGallery={refImageGallery}
-          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

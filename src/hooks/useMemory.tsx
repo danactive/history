@@ -6,7 +6,7 @@ import type { Item } from '../types/common'
 import applyAge from '../utils/person'
 import styles from './memory.module.css'
 
-export interface Viewed { (index: number): void }
+interface Viewed { (index: number): void }
 
 type MemoryOptions = {
   autoInitialView?: boolean // skip auto mark when false
@@ -77,3 +77,4 @@ const useMemory = (
 }
 
 export default useMemory
+export { type Viewed }

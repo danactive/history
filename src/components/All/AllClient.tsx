@@ -10,7 +10,7 @@ import AllItems from './Items'
 import useMapFilter from '../../hooks/useMapFilter'
 
 export default function AllClient({ items, indexedKeywords }: All.ComponentProps) {
-  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
+  const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   const {
     refImageGallery,
@@ -24,7 +24,6 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    viewedList,
   } = useMapFilter({ items, indexedKeywords })
 
   return (
@@ -46,7 +45,6 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
           items={itemsToShow}
           keyword={keyword}
           refImageGallery={refImageGallery}
-          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

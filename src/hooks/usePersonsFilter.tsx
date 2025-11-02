@@ -28,7 +28,6 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     refImageGallery,
     memoryIndex,
     setMemoryIndex,
-    setViewed,
     memoryHtml,
     viewedList,
     keyword,
