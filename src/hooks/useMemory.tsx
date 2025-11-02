@@ -8,38 +8,47 @@ import styles from './memory.module.css'
 
 export interface Viewed { (index: number): void }
 
+type MemoryOptions = {
+  autoInitialView?: boolean // skip auto mark when false
+}
+
 const useMemory = (
   filtered: Item[],
   refImageGallery: RefObject<ReactImageGallery | null>,
+  options: MemoryOptions = { autoInitialView: true },
 ) => {
   // Persist across map/keyword filter changes (no reset)
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
 
   const setViewed: Viewed = (index: number) => {
-    const item = filtered[index] ?? filtered[0] ?? null
+    const item = filtered[index] ?? null
     setDetails(item)
-    if (!item) return
-    const rawId = item.id ?? (Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename))
-    if (!rawId) return
+    if (!item || !item.id) return
     setViewedList(prev => {
-      if (prev.has(rawId)) return prev
+      if (prev.has(item.id)) return prev
       const next = new Set(prev)
-      next.add(rawId)
+      next.add(item.id)
       return next
     })
   }
 
   useEffect(() => {
+    // Suppress automatic viewed marking if requested (during map filter enable reset)
+    if (!options.autoInitialView) return
     if (refImageGallery.current && filtered.length > 0) {
       const current = refImageGallery.current.getCurrentIndex()
-      if (current >= 0) setViewed(current)
-    } else if (filtered.length > 0) {
+      if (current >= 0) {
+        setViewed(current)
+        return
+      }
+    }
+    if (filtered.length > 0) {
       setViewed(0)
     } else {
       setDetails(null)
     }
-  }, [filtered, refImageGallery])
+  }, [filtered, refImageGallery, options.autoInitialView])
 
   const memoryHtml = details ? (
     <>

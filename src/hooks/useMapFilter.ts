@@ -11,6 +11,8 @@ type Bounds = [[number, number],[number, number]]
 export default function useMapFilter({ items, indexedKeywords }: All.ComponentProps) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
+  const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
+  const autoInitialViewRef = useRef(true) // controls useMemory auto mark
 
   const setMemoryIndex: Dispatch<SetStateAction<number>> = useCallback((value) => {
     setMemoryIndexState(prev => {
@@ -55,15 +57,43 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     })
   }, [mapFilterEnabled, mapBounds, filtered])
 
-  const { setViewed, memoryHtml, viewedList } = useMemory(itemsToShow, refImageGallery)
+  // Pass suppression flag to useMemory
+  const { setViewed, memoryHtml, viewedList } = useMemory(
+    itemsToShow,
+    refImageGallery,
+    { autoInitialView: autoInitialViewRef.current },
+  )
 
   const handleToggleMapFilter = useCallback(() => {
     setMapFilterEnabled(prev => {
       const next = !prev
-      if (prev) setMapBounds(null) // turning off clears bounds only
+      if (next) {
+        // enabling: suppress auto mark for new filtered list; force index 0 after list settles
+        resetIndexOnEnableRef.current = true
+        autoInitialViewRef.current = false
+      } else {
+        // disabling: clear bounds only
+        setMapBounds(null)
+      }
       return next
     })
   }, [])
+
+  // After map filter enables and itemsToShow recalculates, force memoryIndex 0 and mark viewed
+  useEffect(() => {
+    if (mapFilterEnabled && resetIndexOnEnableRef.current) {
+      // Now itemsToShow is narrowed; mark only index 0
+      resetIndexOnEnableRef.current = false
+      setMemoryIndexState(0)
+      // Move gallery to first item if mounted
+      if (refImageGallery.current) {
+        refImageGallery.current.slideToIndex(0)
+      }
+      setViewed(0)
+      // Re-enable auto marking for subsequent filtered changes
+      autoInitialViewRef.current = true
+    }
+  }, [mapFilterEnabled, itemsToShow, setViewed])
 
   const selectById = useCallback((id: string) => {
     setSelectedId(prev => (prev === id ? prev : id))
