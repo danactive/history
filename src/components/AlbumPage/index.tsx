@@ -47,7 +47,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
-          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
+          refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}

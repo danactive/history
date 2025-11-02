@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-
 import config from './config'
 import utilsFactory from '../lib/utils'
 import type {
@@ -174,18 +172,25 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     if (!item) {
       throw new ReferenceError('XML is missing <item> element in parent <album> element')
     }
-    const id = item?.$?.id ?? randomUUID()
+    if (!item.$ || !item.$.id || String(item.$.id).trim() === '') {
+      throw new ReferenceError('XML is missing id attribute in <item /> element')
+    }
+    const id = String(item.$.id).trim()
+
     if (!('filename' in item)) {
       throw new ReferenceError(`XML is missing <filename> element in parent <item id="${id}" /> element`)
     }
+
     const { filename, photoDate } = item
     const debugInfo = {
       id,
       filenameId: Array.isArray(filename) ? filename[0] : filename,
     }
+
     if (!('photoCity' in item)) {
       throw new ReferenceError(missingXmlMessage('photo_city', debugInfo))
     }
+
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
     const accuracy = item?.geo?.accuracy ? Number(item.geo.accuracy) : null
@@ -218,6 +223,15 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
   }
 
   const items = Array.isArray(dirty.album.item) ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
+
+  // Ensure IDs are unique across the album
+  const seen = new Set<string>()
+  for (const it of items) {
+    if (seen.has(it.id)) {
+      throw new ReferenceError(`Duplicate <item id="${it.id}"> found in album`)
+    }
+    seen.add(it.id)
+  }
 
   return {
     album: {

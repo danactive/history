@@ -11,7 +11,6 @@ interface InputProps {
   items: ServerSideAllItem[]
   keyword: string
   refImageGallery: React.RefObject<ReactImageGallery | null>
-  resetToken?: number | string
 }
 
 export default function AllItems({

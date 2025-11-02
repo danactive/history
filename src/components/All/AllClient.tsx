@@ -47,7 +47,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
-          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
+          refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
@@ -57,7 +57,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <AllItems
           items={itemsWithCorpus}
           keyword={keyword}
-          refImageGallery={refImageGallery as React.RefObject<ReactImageGallery>}
+          refImageGallery={refImageGallery}
           viewedList={viewedList}
         />
       </AlbumContext.Provider>
