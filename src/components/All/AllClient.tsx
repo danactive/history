@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
 
 import config from '../../../src/models/config'
 import { All } from '../../types/pages'
@@ -9,7 +8,6 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 import useMapFilter from '../../hooks/useMapFilter'
-import type { ServerSideAllItem } from '../../types/common'
 
 export default function AllClient({ items, indexedKeywords }: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
@@ -29,16 +27,6 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
     viewedList,
   } = useMapFilter({ items, indexedKeywords })
 
-  const itemsWithCorpus: ServerSideAllItem[] = useMemo(
-    () => itemsToShow.map(i => ({
-      // ensure required corpus & coordinateAccuracy satisfy ServerSideAllItem
-      corpus: (i as any).corpus ?? '',
-      ...i,
-      coordinateAccuracy: i.coordinateAccuracy ?? 0,
-    })),
-    [itemsToShow],
-  )
-
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
@@ -55,7 +43,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
           onMapBoundsChange={handleBoundsChange}
         />
         <AllItems
-          items={itemsWithCorpus}
+          items={itemsToShow}
           keyword={keyword}
           refImageGallery={refImageGallery}
           viewedList={viewedList}

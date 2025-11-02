@@ -147,8 +147,6 @@ function SplitViewer({
     }
   }
 
-
-
   return (
     <>
       {bgThumb ? (

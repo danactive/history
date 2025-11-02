@@ -46,7 +46,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ComponentPr
     })
   }, [])
 
-  const itemsToShow: Item[] = useMemo(() => {
+  const itemsToShow = useMemo(() => {
     if (!mapFilterEnabled || !mapBounds) return filtered
     const [[swLng, swLat], [neLng, neLat]] = mapBounds
     return filtered.filter(it => {

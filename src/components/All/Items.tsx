@@ -4,22 +4,16 @@ import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
 import Img from '../Img'
 import Link from '../Link'
-import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
 
 interface InputProps {
-  items: ServerSideAllItem[]
-  keyword: string
-  refImageGallery: React.RefObject<ReactImageGallery | null>
-  viewedList?: Set<string>
+  items: ServerSideAllItem[];
+  keyword: string;
+  refImageGallery: React.RefObject<ReactImageGallery | null>;
+  viewedList?: Set<string>;
 }
 
-export default function AllItems({
-  items,
-  keyword,
-  refImageGallery,
-  viewedList,
-}: InputProps) {
+function All({ items, keyword, refImageGallery }: InputProps) {
   const showThumbnail = (kw = '') => kw.length > 2
   const { width, height } = config.resizeDimensions.thumb
 
@@ -42,3 +36,5 @@ export default function AllItems({
     </ul>
   )
 }
+
+export default All

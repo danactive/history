@@ -159,7 +159,7 @@ export default function SlippyMap({
   return (
     <>
       <style global jsx>{'.mapboxgl-control-container{display:none;}'}</style>
-      <div style={{ position: 'relative', width: '100%', height: '360px', minHeight: 300 }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: 300 }}>
         <div
           style={toggleStyle}
           role="button"
