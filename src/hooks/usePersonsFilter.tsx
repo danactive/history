@@ -201,7 +201,6 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     memoryIndex,
     setMemoryIndex,
     setViewed: personsSetViewed,
-    resetViewedList,
     viewedList,
     keyword,
     searchBox,
