@@ -3,7 +3,6 @@
 import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
 
 import type { Album } from '../../types/pages'
 import AlbumContext from '../Context'
@@ -16,6 +15,14 @@ export const metadata: Metadata = {
   title: 'Album - History App',
 }
 
+/**
+ * Render an album with gallery, map, and thumbnails.
+ * @param {Album.ComponentProps} props Component properties.
+ * @param {Item[]} props.items Items belonging to this album.
+ * @param {AlbumMeta} props.meta Album metadata (geo, etc.).
+ * @param {Map<string, string[]>} props.indexedKeywords Indexed keyword map.
+ * @returns {JSX.Element} Album page markup.
+ */
 function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const {
     refImageGallery,
@@ -29,15 +36,22 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    selectById,
   } = useMapFilter({ items, indexedKeywords })
 
+  // Read ?select=<id> from URL
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
 
+  // Apply selection when param or filtered items change
   useEffect(() => {
-    if (selectId) selectById(selectId)
-  }, [selectId, selectById])
+    if (!selectId || itemsToShow.length === 0) return
+    const idx = itemsToShow.findIndex(i => i.id === selectId)
+    if (idx >= 0) {
+      refImageGallery.current?.slideToIndex(idx)
+      setMemoryIndex(idx)
+      setViewed(idx)
+    }
+  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
 
   return (
     <div>
@@ -63,9 +77,9 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
               }}
               src={item.thumbPath}
               caption={item.caption}
-              key={Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename)}
+              key={item.id}
               id={`select${item.id}`}
-              viewed={!!viewedList?.has(item.id)}
+              viewed={viewedList.has(item.id)}
             />
           ))}
         </ul>

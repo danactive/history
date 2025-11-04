@@ -10,7 +10,7 @@ import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { AlbumMeta, Item, ServerSideAllItem } from '../../../src/types/common'
 import type { All } from '../../../src/types/pages'
 
-async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> {
+export async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
@@ -39,7 +39,7 @@ async function getAllData({ gallery }: All.Params): Promise<All.ComponentProps> 
       albumCoordinateAccuracy,
       items,
     })
-    return prev.concat(preparedItems)
+    return prev.concat(preparedItems.reverse())
   }, Promise.resolve([] as ServerSideAllItem[]))).reverse()
 
   return {

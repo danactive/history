@@ -28,7 +28,7 @@ async function buildStaticPaths() {
   return groups.flat()
 }
 
-async function getAlbumData({ album, gallery }: Album.Params): Promise<Album.ComponentProps> {
+async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.ComponentProps> {
   const { album: { items, meta } } = await getAlbum(gallery, album)
   const preparedItems = items.map((item) => ({
     ...item,
@@ -53,7 +53,7 @@ export default async function AlbumServer(props: { params: Promise<Album.Params>
     gallery,
   } = params
 
-  const { items, meta, indexedKeywords } = await getAlbumData({ album, gallery })
+  const { items, meta, indexedKeywords } = await getAlbumItems({ album, gallery })
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AlbumPageComponent items={items} meta={meta} indexedKeywords={indexedKeywords} />
