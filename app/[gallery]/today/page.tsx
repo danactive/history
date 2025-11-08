@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
-import AlbumPageComponent from '../../../src/components/AlbumPage'
+import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'

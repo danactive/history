@@ -20,7 +20,7 @@ export const metadata: Metadata = {
  * @param {Album.ComponentProps} props Component properties.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
+function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,
@@ -92,4 +92,4 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
   )
 }
 
-export default AlbumPage
+export default AlbumClient
