@@ -18,9 +18,6 @@ export const metadata: Metadata = {
 /**
  * Render an album with gallery, map, and thumbnails.
  * @param {Album.ComponentProps} props Component properties.
- * @param {Item[]} props.items Items belonging to this album.
- * @param {AlbumMeta} props.meta Album metadata (geo, etc.).
- * @param {Map<string, string[]>} props.indexedKeywords Indexed keyword map.
  * @returns {JSX.Element} Album page markup.
  */
 function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
@@ -42,7 +39,7 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
 
-  // Apply selection when param or filtered items change
+  // Apply initial selection
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
     const idx = itemsToShow.findIndex(i => i.id === selectId)
@@ -52,6 +49,13 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
       setViewed(idx)
     }
   }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
+
+  // FIX: Ensure memory (details, filename, etc.) updates on every slide change after initial select.
+  useEffect(() => {
+    if (itemsToShow[memoryIndex]) {
+      setViewed(memoryIndex)
+    }
+  }, [memoryIndex, itemsToShow, setViewed])
 
   return (
     <div>

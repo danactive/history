@@ -18,7 +18,7 @@
     "video": ["mp4", "webm"]
   },
   "rawFileTypes": {
-    "photo": ["arw", "raw"],
+    "photo": ["arw", "raw", "dng"],
     "video": ["avi", "mov", "m2ts", "mts"]
   }
 }
