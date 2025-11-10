@@ -17,8 +17,11 @@ export const metadata: Metadata = {
 
 /**
  * Render an album with gallery, map, and thumbnails.
- * @param {Album.ComponentProps} props Component properties.
- * @returns {JSX.Element} Album page markup.
+ * @param props Component properties.
+ * @param props.items Album items.
+ * @param props.meta Album metadata.
+ * @param props.indexedKeywords Indexed keywords map.
+ * @returns JSX.Element
  */
 function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const {
@@ -35,27 +38,18 @@ function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps
     itemsToShow,
   } = useMapFilter({ items, indexedKeywords })
 
-  // Read ?select=<id> from URL
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
 
-  // Apply initial selection
+  // Apply initial selection WITHOUT calling setViewed (onSlide will handle it)
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
     const idx = itemsToShow.findIndex(i => i.id === selectId)
     if (idx >= 0) {
       refImageGallery.current?.slideToIndex(idx)
       setMemoryIndex(idx)
-      setViewed(idx)
     }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
-
-  // FIX: Ensure memory (details, filename, etc.) updates on every slide change after initial select.
-  useEffect(() => {
-    if (itemsToShow[memoryIndex]) {
-      setViewed(memoryIndex)
-    }
-  }, [memoryIndex, itemsToShow, setViewed])
+  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex])
 
   return (
     <div>

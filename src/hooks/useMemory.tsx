@@ -17,12 +17,13 @@ const useMemory = (
   refImageGallery: RefObject<ReactImageGallery | null>,
   options: MemoryOptions = { autoInitialView: true },
 ) => {
-  const { autoInitialView = true } = options // destructure to stabilize dependency
+  const { autoInitialView = true } = options
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
 
   const setViewed: Viewed = (index: number) => {
-    const item = filtered[index] ?? null
+    if (index < 0 || index >= filtered.length) return
+    const item = filtered[index]
     setDetails(item)
     if (!item?.id) return
     setViewedList(prev => {
@@ -34,18 +35,17 @@ const useMemory = (
   }
 
   useEffect(() => {
-    if (!autoInitialView) return
-    if (refImageGallery.current && filtered.length > 0) {
-      const current = refImageGallery.current.getCurrentIndex()
-      if (current >= 0) {
-        setViewed(current)
-        return
-      }
+    if (!autoInitialView || filtered.length === 0) {
+      if (filtered.length === 0) setDetails(null)
+      return
     }
-    if (filtered.length > 0) {
-      setViewed(0)
+    // Do NOT mark viewed if gallery will immediately trigger onSlide (AlbumClient select flow).
+    // Leave initial mark for gallery except fallback to index 0 when no ref/index yet.
+    const galleryIndex = refImageGallery.current?.getCurrentIndex?.() ?? 0
+    if (galleryIndex >= 0 && galleryIndex < filtered.length) {
+      setViewed(galleryIndex)
     } else {
-      setDetails(null)
+      setViewed(0)
     }
   }, [filtered, refImageGallery, autoInitialView])
 
@@ -68,11 +68,7 @@ const useMemory = (
     </>
   ) : null
 
-  return {
-    setViewed,
-    memoryHtml,
-    viewedList,
-  }
+  return { setViewed, memoryHtml, viewedList }
 }
 
 export default useMemory
