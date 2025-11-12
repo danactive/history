@@ -25,7 +25,6 @@ function uniqueHeifs(files: Filesystem[]) {
   const groupedFiles = files.reduce((groups: Record<string, Filesystem[]>, file) => {
     const nameWithoutExt = basename(file.name, file.ext)
     if (!groups[nameWithoutExt]) {
-
       groups[nameWithoutExt] = []
     }
     groups[nameWithoutExt].push(file)
@@ -34,7 +33,7 @@ function uniqueHeifs(files: Filesystem[]) {
 
   const heifFilesWithoutJpg = Object.values(groupedFiles)
     .filter((filteredFiles) => filteredFiles.some((file) => file.ext === 'heic') && !filteredFiles.some((file) => file.ext === 'jpg'))
-    .flat()
+    .flatMap((group) => group.filter((file) => file.ext === 'heic'))
 
   return heifFilesWithoutJpg
 }
@@ -77,7 +76,6 @@ async function post(
   try {
     const heifs: string[] = []
     for (const file of uniqueHeifs(files)) {
-
       heifs.push(await processHeif(file, destinationPath))
     }
 

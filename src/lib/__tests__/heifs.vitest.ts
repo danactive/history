@@ -30,7 +30,7 @@ const fsEntry = (full: string): Filesystem => {
     filename: full,
     path: full,
     absolutePath: `public/${full}`,
-    mediumType: 'image',
+    mediumType: ext === 'mov' ? 'video' : 'image',
   }
 }
 
@@ -59,6 +59,177 @@ describe('heifs.post()', () => {
     const res = await post(files, '/out')
     expect(res.created).toEqual([])
     expect(convertMock).not.toHaveBeenCalled()
+  })
+
+  it('ignores video files (MOV) and only processes HEIC', async () => {
+    const files = [
+      fsEntry('photo1.jpg'),
+      fsEntry('photo2.heic'),
+      fsEntry('video1.mov'),
+      fsEntry('video2.mov'),
+      fsEntry('photo3.heic'),
+      fsEntry('photo3.jpg'),
+      fsEntry('photo4.heic'),
+    ]
+    const res = await post(files, '/mixed')
+    // Only photo2.heic and photo4.heic should be converted (photo3 has JPG sibling, videos ignored)
+    expect(res.created).toEqual(['photo2.jpg', 'photo4.jpg'])
+    expect(convertMock).toHaveBeenCalledTimes(2)
+    expect(readFileMock).toHaveBeenCalledWith('public/photo2.heic')
+    expect(readFileMock).toHaveBeenCalledWith('public/photo4.heic')
+    expect(writeFileMock).toHaveBeenCalledWith('public/mixed/photo2.jpg', expect.any(Uint8Array))
+    expect(writeFileMock).toHaveBeenCalledWith('public/mixed/photo4.jpg', expect.any(Uint8Array))
+  })
+
+  it('real-world scenario: mixed JPG/HEIC pairs, standalone HEIC, and videos', async () => {
+    const files: Filesystem[] = [
+      {
+        filename: '2025-03-20 14.59.57.jpg',
+        label: '2025-03-20 14.59.57.jpg',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 14.59.57.jpg',
+        path: '/galleries/demo/todo/originals/2025-03-20 14.59.57.jpg',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 14.59.57.jpg',
+        ext: 'jpg',
+        name: '2025-03-20 14.59.57',
+      },
+      {
+        filename: '2025-03-20 14.59.57.heic',
+        label: '2025-03-20 14.59.57.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 14.59.57.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 14.59.57.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 14.59.57.heic',
+        ext: 'heic',
+        name: '2025-03-20 14.59.57',
+      },
+      {
+        filename: '2025-03-20 15.52.40.jpg',
+        label: '2025-03-20 15.52.40.jpg',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 15.52.40.jpg',
+        path: '/galleries/demo/todo/originals/2025-03-20 15.52.40.jpg',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 15.52.40.jpg',
+        ext: 'jpg',
+        name: '2025-03-20 15.52.40',
+      },
+      {
+        filename: '2025-03-20 15.52.40.heic',
+        label: '2025-03-20 15.52.40.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 15.52.40.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 15.52.40.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 15.52.40.heic',
+        ext: 'heic',
+        name: '2025-03-20 15.52.40',
+      },
+      {
+        filename: '2025-03-20 16.15.17.jpg',
+        label: '2025-03-20 16.15.17.jpg',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 16.15.17.jpg',
+        path: '/galleries/demo/todo/originals/2025-03-20 16.15.17.jpg',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 16.15.17.jpg',
+        ext: 'jpg',
+        name: '2025-03-20 16.15.17',
+      },
+      {
+        filename: '2025-03-20 16.15.17.heic',
+        label: '2025-03-20 16.15.17.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 16.15.17.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 16.15.17.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 16.15.17.heic',
+        ext: 'heic',
+        name: '2025-03-20 16.15.17',
+      },
+      {
+        filename: '2025-03-20 16.19.12.mov',
+        label: '2025-03-20 16.19.12.mov',
+        mediumType: 'video',
+        id: '/galleries/demo/todo/originals/2025-03-20 16.19.12.mov',
+        path: '/galleries/demo/todo/originals/2025-03-20 16.19.12.mov',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 16.19.12.mov',
+        ext: 'mov',
+        name: '2025-03-20 16.19.12',
+      },
+      {
+        filename: '2025-03-20 16.19.12.heic',
+        label: '2025-03-20 16.19.12.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 16.19.12.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 16.19.12.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 16.19.12.heic',
+        ext: 'heic',
+        name: '2025-03-20 16.19.12',
+      },
+      {
+        filename: '2025-03-20 16.56.11.mov',
+        label: '2025-03-20 16.56.11.mov',
+        mediumType: 'video',
+        id: '/galleries/demo/todo/originals/2025-03-20 16.56.11.mov',
+        path: '/galleries/demo/todo/originals/2025-03-20 16.56.11.mov',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 16.56.11.mov',
+        ext: 'mov',
+        name: '2025-03-20 16.56.11',
+      },
+      {
+        filename: '2025-03-20 17.33.28.mov',
+        label: '2025-03-20 17.33.28.mov',
+        mediumType: 'video',
+        id: '/galleries/demo/todo/originals/2025-03-20 17.33.28.mov',
+        path: '/galleries/demo/todo/originals/2025-03-20 17.33.28.mov',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 17.33.28.mov',
+        ext: 'mov',
+        name: '2025-03-20 17.33.28',
+      },
+      {
+        filename: '2025-03-20 17.55.41.mov',
+        label: '2025-03-20 17.55.41.mov',
+        mediumType: 'video',
+        id: '/galleries/demo/todo/originals/2025-03-20 17.55.41.mov',
+        path: '/galleries/demo/todo/originals/2025-03-20 17.55.41.mov',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 17.55.41.mov',
+        ext: 'mov',
+        name: '2025-03-20 17.55.41',
+      },
+      {
+        filename: '2025-03-20 18.41.09.heic',
+        label: '2025-03-20 18.41.09.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 18.41.09.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 18.41.09.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 18.41.09.heic',
+        ext: 'heic',
+        name: '2025-03-20 18.41.09',
+      },
+      {
+        filename: '2025-03-20 20.30.18.heic',
+        label: '2025-03-20 20.30.18.heic',
+        mediumType: 'image',
+        id: '/galleries/demo/todo/originals/2025-03-20 20.30.18.heic',
+        path: '/galleries/demo/todo/originals/2025-03-20 20.30.18.heic',
+        absolutePath: '/galleries/demo/todo/originals/2025-03-20 20.30.18.heic',
+        ext: 'heic',
+        name: '2025-03-20 20.30.18',
+      },
+    ]
+
+    const res = await post(files, '/galleries/demo/todo/originals')
+
+    // Expected conversions:
+    // - 2025-03-20 14.59.57.heic → SKIP (has .jpg sibling)
+    // - 2025-03-20 15.52.40.heic → SKIP (has .jpg sibling)
+    // - 2025-03-20 16.15.17.heic → SKIP (has .jpg sibling)
+    // - 2025-03-20 16.19.12.heic → CONVERT (has .mov but no .jpg)
+    // - 2025-03-20 18.41.09.heic → CONVERT (no sibling)
+    // - 2025-03-20 20.30.18.heic → CONVERT (no sibling)
+    expect(res.created.sort()).toEqual([
+      '2025-03-20 16.19.12.jpg',
+      '2025-03-20 18.41.09.jpg',
+      '2025-03-20 20.30.18.jpg',
+    ])
+    expect(convertMock).toHaveBeenCalledTimes(3)
   })
 
   it('envelope success', async () => {
