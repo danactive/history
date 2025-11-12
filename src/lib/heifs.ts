@@ -6,11 +6,12 @@ import utilsFactory, { handleLibraryError, isStandardError } from './utils'
 
 type ResponseBody = {
   created: string[];
+  error?: { message: string };
 }
 
-type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
+type ErrorOptionalMessage = ResponseBody
 const errorSchema = (message: string): ErrorOptionalMessage => {
-  const out = { created: [] }
+  const out: ResponseBody = { created: [] }
   if (!message) return out
   return { ...out, error: { message } }
 }

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import type { Album } from '../../types/pages'
+import type { AlbumMeta } from '../../types/common'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
@@ -17,11 +18,11 @@ export const metadata: Metadata = {
 
 /**
  * Render an album with gallery, map, and thumbnails.
- * @param props Component properties.
- * @param props.items Album items.
- * @param props.meta Album metadata.
- * @param props.indexedKeywords Indexed keywords map.
- * @returns JSX.Element
+ * @param {Album.ComponentProps} props Component properties.
+ * @param {AlbumMeta extends unknown ? Album.ComponentProps['items'] : Album.ComponentProps['items']} props.items Album items.
+ * @param {AlbumMeta} props.meta Album metadata (geo info etc.).
+ * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
+ * @returns {JSX.Element} Album page markup.
  */
 function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const {
@@ -41,7 +42,6 @@ function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
 
-  // Apply initial selection WITHOUT calling setViewed (onSlide will handle it)
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
     const idx = itemsToShow.findIndex(i => i.id === selectId)
