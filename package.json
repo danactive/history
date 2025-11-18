@@ -24,7 +24,7 @@
     "@mui/joy": "^5.0.0-beta.52",
     "camelcase": "^6.3.0",
     "color-thief-react": "^2.1.0",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "heic-convert": "^2.1.0",
     "mapbox-gl": "^3.16.0",
     "mime-types": "^3.0.1",
