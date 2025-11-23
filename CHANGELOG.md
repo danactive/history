@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.2.0](https://github.com/danactive/history/compare/v12.1.0...v12.2.0) (2025-11-23)
+
+
+### Features
+
+* **Admin > Heifs:** Add unit tests, 3 fails ([5e88061](https://github.com/danactive/history/commit/5e88061ae15725b61e3bc1e0f3f39eba0e8b7387))
+* **Map > Markers:** Add labels to unclustered ([d944878](https://github.com/danactive/history/commit/d944878eb2336c7d1b01a6d5a3efc0307633e71f))
+* **Map > Markers:** Swap colours from sunset to christmas ([16391c7](https://github.com/danactive/history/commit/16391c7e8e6a7a16b4b4b3f86006262ded12b1bf))
+
+
+### Bug Fixes
+
+* **Admin > Heifs:** Export JPG when HEIC is after MOV ([b8a71a0](https://github.com/danactive/history/commit/b8a71a0d1142b3c8a295be2f9ac7adf19ea8cbaf))
+* **All:** Reverse album items to complete oldest last ([d04ae42](https://github.com/danactive/history/commit/d04ae4237b964786bbefcc15d54f59950ea8d25d))
+
 ## [12.1.0](https://github.com/danactive/history/compare/v12.0.0...v12.1.0) (2025-11-02)
 
 
