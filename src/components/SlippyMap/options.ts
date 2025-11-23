@@ -5,12 +5,6 @@ import config from '../../../src/models/config'
 
 import type { Item } from '../../types/common'
 
-interface SelectedFeature extends Feature {
-  properties: {
-    selected?: boolean;
-  }
-}
-
 export const validatePoint = (
   coordinates:
   Item['coordinates'],
@@ -31,6 +25,13 @@ type ItemWithCoordinate = {
   coordinates: Item['coordinates']
 }
 
+interface SelectedFeature extends Feature {
+  properties: {
+    selected?: boolean;
+    label?: string;
+  }
+}
+
 export function transformSourceOptions(
   { items = [], selected }:
   { items?: Item[], selected: ItemWithCoordinate },
@@ -45,7 +46,9 @@ export function transformSourceOptions(
         type: 'Point',
         coordinates: [longitude, latitude],
       },
-      properties: {},
+      properties: {
+        label: item.location || item.caption,
+      },
     }
 
     if (selectedLatitude === latitude && selectedLongitude === longitude) {
@@ -67,7 +70,7 @@ export function transformSourceOptions(
     type: 'geojson',
     data,
     cluster: true,
-    clusterMaxZoom: 13, // Max zoom to cluster points on
+    clusterMaxZoom: 16, // Max zoom to cluster points on
     clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
   }
 }

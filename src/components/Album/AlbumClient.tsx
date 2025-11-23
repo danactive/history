@@ -3,9 +3,9 @@
 import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
 
 import type { Album } from '../../types/pages'
+import type { AlbumMeta } from '../../types/common'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
@@ -16,7 +16,15 @@ export const metadata: Metadata = {
   title: 'Album - History App',
 }
 
-function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
+/**
+ * Render an album with gallery, map, and thumbnails.
+ * @param {Album.ComponentProps} props Component properties.
+ * @param {AlbumMeta extends unknown ? Album.ComponentProps['items'] : Album.ComponentProps['items']} props.items Album items.
+ * @param {AlbumMeta} props.meta Album metadata (geo info etc.).
+ * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
+ * @returns {JSX.Element} Album page markup.
+ */
+function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,
@@ -29,15 +37,19 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    selectById,
   } = useMapFilter({ items, indexedKeywords })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
 
   useEffect(() => {
-    if (selectId) selectById(selectId)
-  }, [selectId, selectById])
+    if (!selectId || itemsToShow.length === 0) return
+    const idx = itemsToShow.findIndex(i => i.id === selectId)
+    if (idx >= 0) {
+      refImageGallery.current?.slideToIndex(idx)
+      setMemoryIndex(idx)
+    }
+  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex])
 
   return (
     <div>
@@ -63,9 +75,9 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
               }}
               src={item.thumbPath}
               caption={item.caption}
-              key={Array.isArray(item.filename) ? item.filename.join(',') : String(item.filename)}
+              key={item.id}
               id={`select${item.id}`}
-              viewed={!!viewedList?.has(item.id)}
+              viewed={viewedList.has(item.id)}
             />
           ))}
         </ul>
@@ -74,4 +86,4 @@ function AlbumPage({ items = [], meta, indexedKeywords }: Album.ComponentProps) 
   )
 }
 
-export default AlbumPage
+export default AlbumClient
