@@ -19,9 +19,12 @@ import type { Item } from '../../types/common'
 import AlbumContext from '../Context'
 import {
   clusterCountLayer,
-  clusterLayer,
+  clusterPointLayer,
+  clusterLabelLayer,
   selectedPointLayer,
-  unclusteredPointLayer,
+  selectedLabelLayer,
+  unclusterPointLayer,
+  unclusterLabelLayer,
 } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
 
@@ -101,10 +104,12 @@ export default function SlippyMap({
   )
 
   const layerIds: string[] = []
-  if (clusterLayer.id) layerIds.push(clusterLayer.id)
+  if (clusterPointLayer.id) layerIds.push(clusterPointLayer.id)
   if (clusterCountLayer.id) layerIds.push(clusterCountLayer.id)
+  if (clusterLabelLayer.id) layerIds.push(clusterLabelLayer.id)
   if (selectedPointLayer.id) layerIds.push(selectedPointLayer.id)
-  if (unclusteredPointLayer.id) layerIds.push(unclusteredPointLayer.id)
+  if (unclusterPointLayer.id) layerIds.push(unclusterPointLayer.id)
+  if (unclusterLabelLayer.id) layerIds.push(unclusterLabelLayer.id)
 
   const toggleStyle: React.CSSProperties = {
     position: 'absolute',
@@ -182,10 +187,12 @@ export default function SlippyMap({
           onMove={handleMove}
         >
           <Source id="slippyMap" {...geoJsonSource}>
-            <Layer {...clusterLayer} />
+            <Layer {...clusterPointLayer} />
             <Layer {...clusterCountLayer} />
             <Layer {...selectedPointLayer} />
-            <Layer {...unclusteredPointLayer} />
+            <Layer {...selectedLabelLayer} />
+            <Layer {...unclusterPointLayer} />
+            <Layer {...unclusterLabelLayer} />
           </Source>
         </Map>
       </div>

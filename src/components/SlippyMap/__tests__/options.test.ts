@@ -44,17 +44,17 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: {},
+          properties: { label: 'Canada' },
           type: 'Feature',
         },
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { selected: true },
+          properties: { selected: true, label: 'Canada' },
           type: 'Feature',
         },
       ]
       const expected = {
-        cluster: true, clusterMaxZoom: 13, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
+        cluster: true, clusterMaxZoom: 16, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
       }
       expect(received).toEqual(expected)
     })
@@ -71,12 +71,13 @@ describe('Options - <SlippyMap />', () => {
           geometry: { coordinates: [321, 123], type: 'Point' },
           properties: {
             selected: true,
+            label: 'Canada',
           },
           type: 'Feature',
         },
       ]
       const expected = {
-        cluster: true, clusterMaxZoom: 13, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
+        cluster: true, clusterMaxZoom: 16, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
       }
       expect(received).toEqual(expected)
     })

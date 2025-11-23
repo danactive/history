@@ -10,14 +10,44 @@ const swatches: Record<string, MapboxStop[]> = {
     [250, '#C62828'],
     [500, '#D32F2F'],
     [1000, '#B71C1C'],
-    [1500, '#9E1B35']
+    [1500, '#9E1B35'],
   ],
-};
+}
 
-export const clusterLayer: LayerProps = {
-  id: 'clusters',
+const marker = {
+  types: {
+    cluster: {
+      filter: ['has', 'point_count'],
+      id: 'cluster',
+    },
+    selected: {
+      filter: ['has', 'selected'],
+      id: 'selected',
+    },
+    uncluster: {
+      filter: ['all', ['!', ['has', 'point_count']], ['!', ['has', 'selected']]],
+      id: 'uncluster',
+    },
+  },
+  label: {
+    layout: {
+      'text-field': '{label}',
+      'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+      'text-size': 13,
+      'text-offset': [0, 2.2], // offset below the circle
+    },
+    paint: {
+      'text-color': '#000',
+      'text-halo-color': '#fff',
+      'text-halo-width': 5,
+    },
+  },
+}
+
+export const clusterPointLayer: LayerProps = {
+  id: `${marker.types.cluster.id}-points`,
   type: 'circle',
-  filter: ['has', 'point_count'],
+  filter: marker.types.cluster.filter,
   paint: {
     'circle-color': {
       property: 'point_count',
@@ -37,9 +67,9 @@ export const clusterLayer: LayerProps = {
 }
 
 export const clusterCountLayer: LayerProps = {
-  id: 'cluster-count',
+  id: `${marker.types.cluster.id}-count`,
   type: 'symbol',
-  filter: ['has', 'point_count'],
+  filter: marker.types.cluster.filter,
   layout: {
     'text-field': '{point_count}',
     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
@@ -47,26 +77,56 @@ export const clusterCountLayer: LayerProps = {
   },
 }
 
+export const clusterLabelLayer: LayerProps = {
+  // id: `${marker.types.cluster.id}-labels`,
+  type: 'symbol',
+  filter: marker.types.cluster.filter,
+  layout: {
+    'text-field': 'Coming soon',
+    'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+    'text-size': 12,
+    'text-offset': [0, 3.5], // offset below the circle
+  },
+  paint: marker.label.paint,
+}
+
 export const selectedPointLayer: LayerProps = {
-  id: 'selected-point',
+  id: `${marker.types.selected.id}-points`,
   type: 'circle',
-  filter: ['has', 'selected'],
+  filter: marker.types.selected.filter,
   paint: {
     'circle-color': '#FFFFFF',
-    'circle-radius': 6,
+    'circle-radius': 10,
     'circle-stroke-width': 4,
     'circle-stroke-color': '#000',
   },
 }
 
-export const unclusteredPointLayer: LayerProps = {
-  id: 'unclustered-point',
+export const selectedLabelLayer: LayerProps = {
+  id: `${marker.types.selected.id}-labels`,
+  type: 'symbol',
+  filter: marker.types.selected.filter,
+  layout: marker.label.layout,
+  paint: marker.label.paint,
+}
+
+
+export const unclusterPointLayer: LayerProps = {
+  id: `${marker.types.uncluster.id}-points`,
   type: 'circle',
-  filter: ['all', ['!', ['has', 'point_count']], ['!', ['has', 'selected']]],
+  filter: marker.types.uncluster.filter,
   paint: {
     'circle-color': swatches.christmas[0][1],
-    'circle-radius': 4,
+    'circle-radius': 10,
     'circle-stroke-width': 2,
     'circle-stroke-color': '#000',
   },
+}
+
+export const unclusterLabelLayer: LayerProps = {
+  id: `${marker.types.uncluster.id}-labels`,
+  type: 'symbol',
+  filter: marker.types.uncluster.filter,
+  layout: marker.label.layout,
+  paint: marker.label.paint,
 }
