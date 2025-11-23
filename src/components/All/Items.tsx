@@ -7,9 +7,9 @@ import Link from '../Link'
 import styles from './styles.module.css'
 
 interface InputProps {
-  items: ServerSideAllItem[],
-  keyword: string,
-  refImageGallery: React.RefObject<ReactImageGallery | null>,
+  items: ServerSideAllItem[];
+  keyword: string;
+  refImageGallery: React.RefObject<ReactImageGallery | null>;
 }
 
 function All({ items, keyword, refImageGallery }: InputProps) {

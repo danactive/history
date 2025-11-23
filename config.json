@@ -18,7 +18,7 @@
     "video": ["mp4", "webm"]
   },
   "rawFileTypes": {
-    "photo": ["arw", "raw", "heic", "heif"],
+    "photo": ["arw", "raw", "dng", "heic", "heif"],
     "video": ["avi", "mov", "m2ts", "mts"]
   }
 }

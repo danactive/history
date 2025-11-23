@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction } from 'react'
 
 import { AlbumResponseBody } from '../../lib/album'
-import styles from '../AlbumPage/styles.module.css'
+import styles from '../Album/styles.module.css'
 import ThumbImg from '../ThumbImg'
 import { ItemState } from './AdminAlbumClient'
 
