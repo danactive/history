@@ -57,11 +57,7 @@ function title(item: XmlItem): string {
 }
 
 function transformCaption(item: XmlItem, debug: DebugInfo) {
-  if (!('thumbCaption' in item)) {
-    throw new ReferenceError(missingXmlMessage('thumb_caption', debug))
-  }
-
-  if (item.thumbCaption === '') {
+  if (!('thumbCaption' in item) || item.thumbCaption === '') {
     throw new ReferenceError(missingXmlMessage('thumb_caption', debug))
   }
 

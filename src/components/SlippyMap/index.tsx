@@ -189,6 +189,7 @@ export default function SlippyMap({
           <Source id="slippyMap" {...geoJsonSource}>
             <Layer {...clusterPointLayer} />
             <Layer {...clusterCountLayer} />
+            <Layer {...clusterLabelLayer} />
             <Layer {...selectedPointLayer} />
             <Layer {...selectedLabelLayer} />
             <Layer {...unclusterPointLayer} />
