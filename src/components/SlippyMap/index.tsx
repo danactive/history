@@ -59,7 +59,20 @@ export default function SlippyMap({
   const prevCoordsRef = useRef<[number, number]>([0, 0])
   const prevZoomRef = useRef<number>(metaZoom)
 
-  // avoid calling transformMapOptions during SSR (it may access window/mapbox)
+  // Track current zoom resolution (not every zoom tick, only when crossing thresholds)
+  // Update the resolution helper to match new resolutions
+  const getResolutionForZoom = (z: number): string => {
+    if (z >= 14) return '500m'
+    if (z >= 10) return '2km'
+    if (z >= 6) return '10km'
+    return '50km'
+  }
+
+  const [currentResolution, setCurrentResolution] = useState(() =>
+    getResolutionForZoom(zoom),
+  )
+  const [currentZoom, setCurrentZoom] = useState(zoom)
+
   const [viewport, setViewport] = useState(() => {
     if (typeof window === 'undefined') return {} as any
     return transformMapOptions({ coordinates, zoom })
@@ -76,6 +89,8 @@ export default function SlippyMap({
     prevCoordsRef.current = coordinates
     prevZoomRef.current = zoom
     setViewport(transformMapOptions({ coordinates, zoom }))
+    setCurrentZoom(zoom)
+    setCurrentResolution(getResolutionForZoom(zoom))
   }, [coordinates, zoom])
 
   const onClick = (event: MapMouseEvent) => {
@@ -98,9 +113,14 @@ export default function SlippyMap({
     })
   }
 
+  // Pass current zoom to transformSourceOptions
   const geoJsonSource = useMemo(
-    () => transformSourceOptions({ items, selected: { coordinates } }),
-    [items, coordinates],
+    () => transformSourceOptions({
+      items,
+      selected: { coordinates },
+      zoom: currentZoom,
+    }),
+    [items, coordinates, currentResolution],  // Recalculate when resolution changes
   )
 
   const layerIds: string[] = []
@@ -149,13 +169,22 @@ export default function SlippyMap({
   const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleMove = useCallback((evt: ViewStateChangeEvent) => {
     setViewport(evt.viewState)
+
+    // Update zoom and check if resolution changed
+    const newZoom = evt.viewState.zoom
+    setCurrentZoom(newZoom)
+    const newResolution = getResolutionForZoom(newZoom)
+    if (newResolution !== currentResolution) {
+      setCurrentResolution(newResolution)
+    }
+
     if (!mapFilterEnabled || !onBoundsChange) return
     if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
     moveTimeoutRef.current = setTimeout(() => {
       const b = readBounds()
       if (b) onBoundsChange(b)
     }, 100)
-  }, [mapFilterEnabled, onBoundsChange, mapRef])
+  }, [mapFilterEnabled, onBoundsChange, mapRef, currentResolution])
 
   useEffect(() => () => {
     if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)

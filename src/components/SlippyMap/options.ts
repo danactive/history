@@ -70,17 +70,30 @@ interface SelectedFeature extends Feature {
 }
 
 export function transformSourceOptions(
-  { items = [], selected }:
-  { items?: Item[], selected: ItemWithCoordinate },
+  { items = [], selected, zoom = 10 }:
+  { items?: Item[], selected: ItemWithCoordinate, zoom?: number },
 ): GeoJSONSourceSpecification {
-  const clusterLabels = calculateMostClusterLabels(items)
+  const { labels, itemFrequency } = calculateMultiResolutionLabels(items)
+  const resolution = getResolutionForZoom(zoom)
+
+  // Sort items by frequency (most common labels first)
+  // This ensures Mapbox's clusterProperties picks the most common label
+  const sortedItems = [...items].sort((a, b) => {
+    const coordKeyA = a.coordinates?.join(',') || ''
+    const coordKeyB = b.coordinates?.join(',') || ''
+    const freqA = itemFrequency.get(coordKeyA) || 0
+    const freqB = itemFrequency.get(coordKeyB) || 0
+    return freqB - freqA  // Sort descending (most common first)
+  })
 
   const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
     const coordKey = item.coordinates?.join(',') || ''
-    const commonLabel = clusterLabels.get(coordKey) || 'Unknown'
+
+    // Get label for current zoom's resolution
+    const commonLabel = labels.get(coordKey)?.get(resolution) || 'Unknown'
 
     const point: SelectedFeature = {
       type: 'Feature',
@@ -102,7 +115,7 @@ export function transformSourceOptions(
   }
 
   const hasGeo = (item: Item) => !validatePoint(item?.coordinates).isInvalidPoint
-  const features = items.filter(hasGeo).map(geoJsonFeature)
+  const features = sortedItems.filter(hasGeo).map(geoJsonFeature)  // Use sortedItems
 
   const data: FeatureCollection = {
     type: 'FeatureCollection',
@@ -116,8 +129,7 @@ export function transformSourceOptions(
     clusterMaxZoom: 16,
     clusterRadius: 50,
     clusterProperties: {
-      // This aggregates commonLabel from all features in the cluster
-      // Since they're all the same (pre-calculated), any will work
+      // Now picks from first feature, which is the most common one!
       commonLabel: [
         'coalesce',
         ['get', 'commonLabel'],
@@ -162,4 +174,94 @@ export function transformInaccurateMarkerOptions(coordinateAccuracy: Item['coord
     },
     filter: ['has', 'accuracy'],
   }
+}
+
+/**
+ * Select appropriate clustering resolution based on zoom level
+ * Using industry-standard zoom level practices:
+ * - Zoom 0-5: Continental/country level (50-100km)
+ * - Zoom 6-9: State/region level (10-50km)
+ * - Zoom 10-13: City level (1-10km)
+ * - Zoom 14-16: Neighborhood level (100m-1km)
+ * - Zoom 17+: Street level (<100m)
+ */
+function getResolutionForZoom(zoom: number): ResolutionKey {
+  if (zoom >= 14) return '500m'   // Neighborhood/street level
+  if (zoom >= 10) return '2km'    // City/district level
+  if (zoom >= 6) return '10km'    // Regional level
+  return '50km'                    // Country/continental level
+}
+
+type ResolutionKey = '500m' | '2km' | '10km' | '50km'
+
+type MultiResolutionLabels = {
+  labels: Map<string, Map<ResolutionKey, string>>;
+  itemFrequency: Map<string, number>;
+}
+
+/**
+ * Calculate most common labels at multiple resolutions
+ * Items are sorted by frequency (most common first) for better Mapbox clustering
+ */
+function calculateMultiResolutionLabels(items: Item[]): MultiResolutionLabels {
+  const resolutions: Record<ResolutionKey, number> = {
+    '500m': 200,   // Math.round(lat * 200) / 200 ≈ 500m grid
+    '2km': 50,     // Math.round(lat * 50) / 50 ≈ 2km grid
+    '10km': 10,    // Math.round(lat * 10) / 10 ≈ 10km grid
+    '50km': 2,     // Math.round(lat * 2) / 2 ≈ 50km grid
+  }
+
+  const labels = new Map<string, Map<ResolutionKey, string>>()
+  const itemFrequency = new Map<string, number>()
+
+  // Process each resolution
+  Object.entries(resolutions).forEach(([resolution, multiplier]) => {
+    const resKey = resolution as ResolutionKey
+
+    // Group items by this resolution's grid
+    const grouped = items.reduce((acc, item) => {
+      const { latitude, longitude, isInvalidPoint } = validatePoint(item.coordinates)
+      if (isInvalidPoint) return acc
+
+      const gridKey = `${Math.round(latitude * multiplier) / multiplier},${Math.round(longitude * multiplier) / multiplier}`
+      if (!acc[gridKey]) acc[gridKey] = []
+      acc[gridKey].push(item)
+      return acc
+    }, {} as Record<string, Item[]>)
+
+    // For each grid cell, find most common label
+    Object.entries(grouped).forEach(([gridKey, group]) => {
+      const labelCounts: Record<string, number> = {}
+      group.forEach(item => {
+        const label = item.location || item.caption
+        if (label) labelCounts[label] = (labelCounts[label] || 0) + 1
+      })
+
+      const mostCommon = Object.entries(labelCounts)
+        .sort(([, a], [, b]) => b - a)[0]?.[0] || 'Unknown'
+
+      // Store how frequent each item's label is in this grid (for sorting)
+      group.forEach(item => {
+        const coordKey = `${item.coordinates?.[0]},${item.coordinates?.[1]}`
+        const itemLabel = item.location || item.caption || 'Unknown'
+        const frequency = labelCounts[itemLabel] || 0
+
+        // Track max frequency across all resolutions
+        const currentFreq = itemFrequency.get(coordKey) || 0
+        if (frequency > currentFreq) {
+          itemFrequency.set(coordKey, frequency)
+        }
+
+        // Initialize map if needed
+        if (!labels.has(coordKey)) {
+          labels.set(coordKey, new Map<ResolutionKey, string>())
+        }
+
+        // Store label for this resolution
+        labels.get(coordKey)!.set(resKey, mostCommon)
+      })
+    })
+  })
+
+  return { labels, itemFrequency }
 }
