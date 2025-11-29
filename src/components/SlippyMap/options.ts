@@ -24,12 +24,20 @@ export const validatePoint = (
 type ItemWithCoordinate = {
   coordinates: Item['coordinates']
 }
+
 interface SelectedFeature extends Feature {
   properties: {
     selected?: boolean
     label: string
     commonLabel: string
   }
+}
+
+export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
+
+type MultiResolutionLabels = {
+  labels: Map<string, Map<ResolutionKey, string>>
+  itemFrequency: Map<string, number>
 }
 
 export function transformSourceOptions(
@@ -39,11 +47,25 @@ export function transformSourceOptions(
   const { labels, itemFrequency } = calculateMultiResolutionLabels(items)
   const resolution = getResolutionForZoom(zoom)
 
+  // Get multiplier for current resolution
+  const RESOLUTION_TO_METERS: Record<ResolutionKey, number> = {
+    '100m': 1000,   // Math.round(lat * 1000) / 1000 ≈ 100m grid
+    '300m': 300,    // Math.round(lat * 300) / 300 ≈ 300m grid
+    '1.5km': 67,    // Math.round(lat * 67) / 67 ≈ 1.5km grid
+    '5km': 20,      // Math.round(lat * 20) / 20 ≈ 5km grid
+    '10km': 10,     // Math.round(lat * 10) / 10 ≈ 10km grid
+  }
+  const multiplier = RESOLUTION_TO_METERS[resolution]
+
   // Sort items by frequency (most common labels first)
   // This ensures Mapbox's clusterProperties picks the most common label
   const sortedItems = [...items].sort((a, b) => {
-    const coordKeyA = a.coordinates?.join(',') || ''
-    const coordKeyB = b.coordinates?.join(',') || ''
+    const { latitude: latA, longitude: lngA } = validatePoint(a.coordinates)
+    const { latitude: latB, longitude: lngB } = validatePoint(b.coordinates)
+
+    const coordKeyA = `${Math.round(latA * multiplier) / multiplier},${Math.round(lngA * multiplier) / multiplier}`
+    const coordKeyB = `${Math.round(latB * multiplier) / multiplier},${Math.round(lngB * multiplier) / multiplier}`
+
     const freqA = itemFrequency.get(coordKeyA) || 0
     const freqB = itemFrequency.get(coordKeyB) || 0
     return freqB - freqA  // Sort descending (most common first)
@@ -53,19 +75,33 @@ export function transformSourceOptions(
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
-    const coordKey = item.coordinates?.join(',') || ''
+    // Get the multiplier for current resolution
+    const RESOLUTION_TO_METERS: Record<ResolutionKey, number> = {
+      '100m': 1000,
+      '300m': 300,
+      '1.5km': 67,
+      '5km': 20,
+      '10km': 10,
+    }
+    const multiplier = RESOLUTION_TO_METERS[resolution]
+
+    const coordKey = `${Math.round(latitude * multiplier) / multiplier},${Math.round(longitude * multiplier) / multiplier}`
+    // Example at 1.5km resolution: "121.50,25.05"
 
     // Get label for current zoom's resolution
     const commonLabel = labels.get(coordKey)?.get(resolution) || 'Unknown'
+
+    // Use resolution-appropriate label for individual marker too
+    const individualLabel = getLabelForResolution(item, resolution)
 
     const point: SelectedFeature = {
       type: 'Feature',
       geometry: {
         type: 'Point',
-        coordinates: [longitude, latitude],
+        coordinates: [longitude, latitude],  // Keep exact coords for geometry
       },
       properties: {
-        label: item.location || item.caption,
+        label: individualLabel,  // Changed: was item.location || item.caption
         commonLabel,
       },
     }
@@ -89,7 +125,7 @@ export function transformSourceOptions(
     type: 'geojson',
     data,
     cluster: true,
-    clusterMaxZoom: 18,
+    clusterMaxZoom: 17,
     clusterRadius: 50,
     clusterProperties: {
       // Now picks from first feature, which is the most common one!
@@ -139,26 +175,42 @@ export function transformInaccurateMarkerOptions(coordinateAccuracy: Item['coord
   }
 }
 
-type ResolutionKey = '500m' | '1.5km' | '10km' | '50km'
 /**
  * Select appropriate clustering resolution based on zoom level
  * Using industry-standard zoom level practices:
- * - Zoom 0-5: Continental/country level (50-100km)
- * - Zoom 6-9: State/region level (10-50km)
- * - Zoom 10-13: City level (1-10km)
- * - Zoom 14-16: Neighborhood level (100m-1km)
- * - Zoom 17+: Street level (<100m)
+ * - Zoom 0-5: Country/region level (10km)
+ * - Zoom 6-9: State/province level (5km)
+ * - Zoom 10-13: City level (1.5km)
+ * - Zoom 14-16: Neighborhood level (300m)
+ * - Zoom 17+: Street level (100m)
  */
-function getResolutionForZoom(zoom: number): ResolutionKey {
-  if (zoom >= 14) return '500m'   // Neighborhood/street level
-  if (zoom >= 10) return '1.5km'  // City/district level
-  if (zoom >= 6) return '10km'    // Regional level
-  return '50km'                    // Country/continental level
+export function getResolutionForZoom(zoom: number): ResolutionKey {
+  if (zoom >= 17) return '100m'     // street level - very precise
+  if (zoom >= 14) return '300m'     // neighborhood level
+  if (zoom >= 10) return '1.5km'    // city level
+  if (zoom >= 6)  return '5km'      // province/state level
+  return '10km'                     // country/region level
 }
 
-type MultiResolutionLabels = {
-  labels: Map<string, Map<ResolutionKey, string>>;
-  itemFrequency: Map<string, number>;
+/**
+ * Get the appropriate label property from an item based on resolution
+ * @param {Item} item - The item to extract label from
+ * @param {ResolutionKey} resolution - Current map resolution
+ * @returns {string} Most appropriate label for the given resolution
+ */
+function getLabelForResolution(item: Item, resolution: ResolutionKey): string {
+  // At far zoom levels (10km, 5km), use broader location info
+  if (resolution === '10km' || resolution === '5km') {
+    return item.city || item.location || item.caption || 'Unknown'
+  }
+
+  // At medium zoom (1.5km), prefer location over city
+  if (resolution === '1.5km') {
+    return item.location || item.city || item.caption || 'Unknown'
+  }
+
+  // At close zoom (300m, 100m), use most specific label available
+  return item.location || item.caption || item.city || 'Unknown'
 }
 
 /**
@@ -166,18 +218,19 @@ type MultiResolutionLabels = {
  * Items are sorted by frequency (most common first) for better Mapbox clustering
  */
 function calculateMultiResolutionLabels(items: Item[]): MultiResolutionLabels {
-  const resolutions: Record<ResolutionKey, number> = {
-    '500m': 200,     // Math.round(lat * 200) / 200 ≈ 500m grid
-    '1.5km': 75,     // Math.round(lat * 50) / 50 ≈ 2km grid
-    '10km': 10,      // Math.round(lat * 10) / 10 ≈ 10km grid
-    '50km': 2,       // Math.round(lat * 2) / 2 ≈ 50km grid
+  const RESOLUTION_TO_METERS: Record<ResolutionKey, number> = {
+    '100m': 1000,
+    '300m': 300,
+    '1.5km': 67,
+    '5km': 20,
+    '10km': 10,
   }
 
   const labels = new Map<string, Map<ResolutionKey, string>>()
   const itemFrequency = new Map<string, number>()
 
   // Process each resolution
-  Object.entries(resolutions).forEach(([resolution, multiplier]) => {
+  Object.entries(RESOLUTION_TO_METERS).forEach(([resolution, multiplier]) => {
     const resKey = resolution as ResolutionKey
 
     // Group items by this resolution's grid
@@ -195,8 +248,11 @@ function calculateMultiResolutionLabels(items: Item[]): MultiResolutionLabels {
     Object.entries(grouped).forEach(([gridKey, group]) => {
       const labelCounts: Record<string, number> = {}
       group.forEach(item => {
-        const label = item.location || item.caption
-        if (label) labelCounts[label] = (labelCounts[label] || 0) + 1
+        // Use resolution-appropriate label
+        const label = getLabelForResolution(item, resKey)
+        if (label && label !== 'Unknown') {
+          labelCounts[label] = (labelCounts[label] || 0) + 1
+        }
       })
 
       const mostCommon = Object.entries(labelCounts)
@@ -204,8 +260,11 @@ function calculateMultiResolutionLabels(items: Item[]): MultiResolutionLabels {
 
       // Store how frequent each item's label is in this grid (for sorting)
       group.forEach(item => {
-        const coordKey = `${item.coordinates?.[0]},${item.coordinates?.[1]}`
-        const itemLabel = item.location || item.caption || 'Unknown'
+        const { latitude, longitude } = validatePoint(item.coordinates)
+        const coordKey = `${Math.round(latitude * multiplier) / multiplier},${Math.round(longitude * multiplier) / multiplier}`
+
+        // Use resolution-appropriate label for frequency counting too
+        const itemLabel = getLabelForResolution(item, resKey)
         const frequency = labelCounts[itemLabel] || 0
 
         // Track max frequency across all resolutions

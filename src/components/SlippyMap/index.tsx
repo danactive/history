@@ -62,10 +62,11 @@ export default function SlippyMap({
   // Track current zoom resolution (not every zoom tick, only when crossing thresholds)
   // Update the resolution helper to match new resolutions
   const getResolutionForZoom = (z: number): string => {
-    if (z >= 14) return '500m'
-    if (z >= 10) return '2km'
-    if (z >= 6) return '10km'
-    return '50km'
+    if (z >= 17) return '100m'
+    if (z >= 14) return '300m'
+    if (z >= 10) return '1.5km'
+    if (z >= 6) return '5km'
+    return '10km'
   }
 
   const [currentResolution, setCurrentResolution] = useState(() =>
