@@ -24,43 +24,6 @@ export const validatePoint = (
 type ItemWithCoordinate = {
   coordinates: Item['coordinates']
 }
-
-// Helper: Calculate most common label for items within proximity
-function calculateMostClusterLabels(items: Item[]): Map<string, string> {
-  // Group items by approximate location (round coordinates)
-  const grouped = items.reduce((acc, item) => {
-    const { latitude, longitude, isInvalidPoint } = validatePoint(item.coordinates)
-    if (isInvalidPoint) return acc
-
-    // Round to ~2.5km grid for grouping
-    const key = `${Math.round(latitude * 40) / 40},${Math.round(longitude * 40) / 40}`
-    if (!acc[key]) acc[key] = []
-    acc[key].push(item)
-    return acc
-  }, {} as Record<string, Item[]>)
-
-  // For each group, find most common label
-  const labelMap = new Map<string, string>()
-  Object.values(grouped).forEach(group => {
-    const labelCounts: Record<string, number> = {}
-    group.forEach(item => {
-      const label = item.location || item.caption
-      if (label) labelCounts[label] = (labelCounts[label] || 0) + 1
-    })
-
-    const mostCommon = Object.entries(labelCounts)
-      .sort(([, a], [, b]) => b - a)[0]?.[0] || 'Unknown'  // Fallback to 'Unknown'
-
-    // Assign most common label to all items in group
-    group.forEach(item => {
-      const coords = `${item.coordinates?.[0]},${item.coordinates?.[1]}`
-      labelMap.set(coords, mostCommon)
-    })
-  })
-
-  return labelMap
-}
-
 interface SelectedFeature extends Feature {
   properties: {
     selected?: boolean
@@ -115,7 +78,7 @@ export function transformSourceOptions(
   }
 
   const hasGeo = (item: Item) => !validatePoint(item?.coordinates).isInvalidPoint
-  const features = sortedItems.filter(hasGeo).map(geoJsonFeature)  // Use sortedItems
+  const features = sortedItems.filter(hasGeo).map(geoJsonFeature)
 
   const data: FeatureCollection = {
     type: 'FeatureCollection',
@@ -126,7 +89,7 @@ export function transformSourceOptions(
     type: 'geojson',
     data,
     cluster: true,
-    clusterMaxZoom: 16,
+    clusterMaxZoom: 18,
     clusterRadius: 50,
     clusterProperties: {
       // Now picks from first feature, which is the most common one!
@@ -176,6 +139,7 @@ export function transformInaccurateMarkerOptions(coordinateAccuracy: Item['coord
   }
 }
 
+type ResolutionKey = '500m' | '1.5km' | '10km' | '50km'
 /**
  * Select appropriate clustering resolution based on zoom level
  * Using industry-standard zoom level practices:
@@ -187,12 +151,10 @@ export function transformInaccurateMarkerOptions(coordinateAccuracy: Item['coord
  */
 function getResolutionForZoom(zoom: number): ResolutionKey {
   if (zoom >= 14) return '500m'   // Neighborhood/street level
-  if (zoom >= 10) return '2km'    // City/district level
+  if (zoom >= 10) return '1.5km'  // City/district level
   if (zoom >= 6) return '10km'    // Regional level
   return '50km'                    // Country/continental level
 }
-
-type ResolutionKey = '500m' | '2km' | '10km' | '50km'
 
 type MultiResolutionLabels = {
   labels: Map<string, Map<ResolutionKey, string>>;
@@ -205,10 +167,10 @@ type MultiResolutionLabels = {
  */
 function calculateMultiResolutionLabels(items: Item[]): MultiResolutionLabels {
   const resolutions: Record<ResolutionKey, number> = {
-    '500m': 200,   // Math.round(lat * 200) / 200 ≈ 500m grid
-    '2km': 50,     // Math.round(lat * 50) / 50 ≈ 2km grid
-    '10km': 10,    // Math.round(lat * 10) / 10 ≈ 10km grid
-    '50km': 2,     // Math.round(lat * 2) / 2 ≈ 50km grid
+    '500m': 200,     // Math.round(lat * 200) / 200 ≈ 500m grid
+    '1.5km': 75,     // Math.round(lat * 50) / 50 ≈ 2km grid
+    '10km': 10,      // Math.round(lat * 10) / 10 ≈ 10km grid
+    '50km': 2,       // Math.round(lat * 2) / 2 ≈ 50km grid
   }
 
   const labels = new Map<string, Map<ResolutionKey, string>>()

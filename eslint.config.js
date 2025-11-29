@@ -43,6 +43,7 @@ export default [
       'jsdoc/check-tag-names': 'error', // Validate JSDoc tag names
       'jsdoc/check-types': 'error', // Ensure TS types are correctly used
       'comma-dangle': ['error', 'always-multiline'],
+      // 'no-unused-vars': 2, // Turn off base rule (TypeScript handles this better)
     },
     settings: {
       jsdoc: {
