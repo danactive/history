@@ -1,5 +1,7 @@
 import { type Item } from '../../../types/common'
 import { transformMapOptions, transformSourceOptions, validatePoint } from '../options'
+import { generateClusters } from '../../../lib/generate-clusters'
+import type { ClusteredMarkers } from '../../../lib/generate-clusters'
 
 describe('Options - <SlippyMap />', () => {
   describe('validatePoint', () => {
@@ -40,21 +42,34 @@ describe('Options - <SlippyMap />', () => {
         { ...mockItem, coordinates: [123, 321] },
         { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
       ]
-      const received = transformSourceOptions({ items, selected: items[1] })
+      const clusteredMarkers: ClusteredMarkers = generateClusters(items)
+      const received = transformSourceOptions({ items, selected: items[1], clusteredMarkers })
+
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: { label: 'Canada' },
+          properties: { label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { selected: true, label: 'Canada' },
+          properties: { selected: true, label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]
       const expected = {
-        cluster: true, clusterMaxZoom: 16, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features },
+        cluster: true,
+        clusterMaxZoom: 17,
+        clusterRadius: 50,
+        clusterProperties: {
+          commonLabel: [
+            'coalesce',
+            ['get', 'commonLabel'],
+            'Unknown',
+          ],
+        },
       }
       expect(received).toEqual(expected)
     })
@@ -65,19 +80,33 @@ describe('Options - <SlippyMap />', () => {
         { ...mockItem, coordinates: null },
         { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
       ]
-      const received = transformSourceOptions({ items, selected: { coordinates: items[2].coordinates } })
+      const clusteredMarkers: ClusteredMarkers = generateClusters(items)
+      const received = transformSourceOptions({
+        items,
+        selected: { coordinates: items[2].coordinates },
+        clusteredMarkers,
+      })
+
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: {
-            selected: true,
-            label: 'Canada',
-          },
+          properties: { selected: true, label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]
       const expected = {
-        cluster: true, clusterMaxZoom: 16, clusterRadius: 50, data: { features, type: 'FeatureCollection' }, type: 'geojson',
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features },
+        cluster: true,
+        clusterMaxZoom: 17,
+        clusterRadius: 50,
+        clusterProperties: {
+          commonLabel: [
+            'coalesce',
+            ['get', 'commonLabel'],
+            'Unknown',
+          ],
+        },
       }
       expect(received).toEqual(expected)
     })

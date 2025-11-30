@@ -1,8 +1,8 @@
-import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 import type { Feature, FeatureCollection } from 'geojson'
+import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 
 import config from '../../../src/models/config'
-
+import { type ClusteredMarkers, BASE_MULTIPLIER, generateClusters, getLabelForResolution } from '../../lib/generate-clusters'
 import type { Item } from '../../types/common'
 
 export const validatePoint = (
@@ -41,67 +41,43 @@ type MultiResolutionLabels = {
 }
 
 export function transformSourceOptions(
-  { items = [], selected, zoom = 10 }:
-  { items?: Item[], selected: ItemWithCoordinate, zoom?: number },
+  { items = [], selected, zoom = 10, clusteredMarkers }:
+  {
+    clusteredMarkers: ClusteredMarkers,
+    items?: Item[],
+    selected: ItemWithCoordinate,
+    zoom?: number,
+  },
 ): GeoJSONSourceSpecification {
-  const { labels, itemFrequency } = calculateMultiResolutionLabels(items)
   const resolution = getResolutionForZoom(zoom)
 
-  // Get multiplier for current resolution
-  const RESOLUTION_TO_METERS: Record<ResolutionKey, number> = {
-    '100m': 1000,   // Math.round(lat * 1000) / 1000 ≈ 100m grid
-    '300m': 300,    // Math.round(lat * 300) / 300 ≈ 300m grid
-    '1.5km': 67,    // Math.round(lat * 67) / 67 ≈ 1.5km grid
-    '5km': 20,      // Math.round(lat * 20) / 20 ≈ 5km grid
-    '10km': 10,     // Math.round(lat * 10) / 10 ≈ 10km grid
-  }
-  const multiplier = RESOLUTION_TO_METERS[resolution]
+  // Use server/client precomputed if provided, else compute locally
+  const computed = clusteredMarkers ?? generateClusters(items)
 
-  // Sort items by frequency (most common labels first)
-  // This ensures Mapbox's clusterProperties picks the most common label
+  // Sort items by precomputed frequency (desc)
   const sortedItems = [...items].sort((a, b) => {
     const { latitude: latA, longitude: lngA } = validatePoint(a.coordinates)
     const { latitude: latB, longitude: lngB } = validatePoint(b.coordinates)
-
-    const coordKeyA = `${Math.round(latA * multiplier) / multiplier},${Math.round(lngA * multiplier) / multiplier}`
-    const coordKeyB = `${Math.round(latB * multiplier) / multiplier},${Math.round(lngB * multiplier) / multiplier}`
-
-    const freqA = itemFrequency.get(coordKeyA) || 0
-    const freqB = itemFrequency.get(coordKeyB) || 0
-    return freqB - freqA  // Sort descending (most common first)
+    const keyA = `${Math.round(latA * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngA * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const keyB = `${Math.round(latB * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngB * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const freqA = computed.itemFrequency[keyA] || 0
+    const freqB = computed.itemFrequency[keyB] || 0
+    return freqB - freqA
   })
 
   const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
-    // Get the multiplier for current resolution
-    const RESOLUTION_TO_METERS: Record<ResolutionKey, number> = {
-      '100m': 1000,
-      '300m': 300,
-      '1.5km': 67,
-      '5km': 20,
-      '10km': 10,
-    }
-    const multiplier = RESOLUTION_TO_METERS[resolution]
-
-    const coordKey = `${Math.round(latitude * multiplier) / multiplier},${Math.round(longitude * multiplier) / multiplier}`
-    // Example at 1.5km resolution: "121.50,25.05"
-
-    // Get label for current zoom's resolution
-    const commonLabel = labels.get(coordKey)?.get(resolution) || 'Unknown'
-
-    // Use resolution-appropriate label for individual marker too
+    const baseKey = `${Math.round(latitude * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(longitude * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const commonLabel = computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 
     const point: SelectedFeature = {
       type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [longitude, latitude],  // Keep exact coords for geometry
-      },
+      geometry: { type: 'Point', coordinates: [longitude, latitude] },
       properties: {
-        label: individualLabel,  // Changed: was item.location || item.caption
+        label: individualLabel,
         commonLabel,
       },
     }
@@ -109,7 +85,6 @@ export function transformSourceOptions(
     if (selectedLatitude === latitude && selectedLongitude === longitude) {
       point.properties.selected = true
     }
-
     return point
   }
 
@@ -128,7 +103,6 @@ export function transformSourceOptions(
     clusterMaxZoom: 17,
     clusterRadius: 50,
     clusterProperties: {
-      // Now picks from first feature, which is the most common one!
       commonLabel: [
         'coalesce',
         ['get', 'commonLabel'],
@@ -190,27 +164,6 @@ export function getResolutionForZoom(zoom: number): ResolutionKey {
   if (zoom >= 10) return '1.5km'    // city level
   if (zoom >= 6)  return '5km'      // province/state level
   return '10km'                     // country/region level
-}
-
-/**
- * Get the appropriate label property from an item based on resolution
- * @param {Item} item - The item to extract label from
- * @param {ResolutionKey} resolution - Current map resolution
- * @returns {string} Most appropriate label for the given resolution
- */
-function getLabelForResolution(item: Item, resolution: ResolutionKey): string {
-  // At far zoom levels (10km, 5km), use broader location info
-  if (resolution === '10km' || resolution === '5km') {
-    return item.city || item.location || item.caption || 'Unknown'
-  }
-
-  // At medium zoom (1.5km), prefer location over city
-  if (resolution === '1.5km') {
-    return item.location || item.city || item.caption || 'Unknown'
-  }
-
-  // At close zoom (300m, 100m), use most specific label available
-  return item.location || item.caption || item.city || 'Unknown'
 }
 
 /**

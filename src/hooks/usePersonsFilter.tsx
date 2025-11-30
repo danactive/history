@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useMapFilter from './useMapFilter'
 import useMemory from './useMemory'
 import type { All } from '../types/pages'
@@ -23,7 +23,11 @@ function calcAge(dob: string, photoDate: string): number | null {
   } catch { return null }
 }
 
-export default function usePersonsFilter({ items, indexedKeywords }: All.ComponentProps) {
+export default function usePersonsFilter({
+  items,
+  indexedKeywords,
+  initialAgeSummary,
+}: All.ItemData & { initialAgeSummary?: { ages: { age: number; count: number }[] } }) {
   const {
     refImageGallery,
     memoryIndex,
@@ -41,6 +45,8 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
   // Age/person selection state
   const [selectedAge, setSelectedAge] = useState<number | null>(null)
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
 
   // Apply age/person filter on top of map + keyword filtered items
   const ageFiltered: Item[] = useMemo(() => {
@@ -61,8 +67,11 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     })
   }, [itemsToShow, selectedAge, selectedPerson])
 
-  // Unique ages from current visible items
+  // Unique ages (client recompute only after mount)
   const uniqueAges = useMemo(() => {
+    if (!mounted && initialAgeSummary) {
+      return initialAgeSummary.ages.map(a => a.age)
+    }
     const set = new Set<number>()
     itemsToShow.forEach(item => {
       if (!item.persons || !item.filename) return
@@ -82,9 +91,12 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
       setSelectedPerson(null)
     }
     return Array.from(set).sort((a, b) => a - b)
-  }, [itemsToShow, selectedAge])
+  }, [itemsToShow, selectedAge, mounted, initialAgeSummary])
 
   const agesWithCounts = useMemo(() => {
+    if (!mounted && initialAgeSummary) {
+      return initialAgeSummary.ages
+    }
     const countMap = new Map<number, number>()
     itemsToShow.forEach(item => {
       if (!item.persons || !item.filename) return
@@ -103,7 +115,7 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
       })
     })
     return uniqueAges.map(age => ({ age, count: countMap.get(age) || 0 })).filter(a => a.count > 0)
-  }, [itemsToShow, uniqueAges])
+  }, [itemsToShow, uniqueAges, mounted, initialAgeSummary])
 
   const { peopleAtSelectedAge, peopleWithCounts } = useMemo(() => {
     if (selectedAge === null) return { peopleAtSelectedAge: [], peopleWithCounts: [] }
@@ -156,7 +168,7 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
   const finalMemoryHtml = personsMemoryHtml ?? memoryHtml
 
   // Controls component (ready to render)
-  const controls = (
+  const baseControls = (
     <div className="mt-4">
       <select
         value={selectedAge ?? ''}
@@ -211,7 +223,8 @@ export default function usePersonsFilter({ items, indexedKeywords }: All.Compone
     setSelectedAge,
     selectedPerson,
     setSelectedPerson,
-    controls,
+    controls: baseControls,
+    overrideAgeSummary: !mounted && initialAgeSummary ? baseControls : null,
     // items
     ageFiltered,
     itemsWithCorpus,

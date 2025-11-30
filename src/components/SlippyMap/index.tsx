@@ -1,45 +1,50 @@
 'use client'
 import type { GeoJSONSource } from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 import {
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
   type RefObject,
-  useRef,
-  useCallback,
-  useMemo,
 } from 'react'
 import Map, {
-  Layer, Source, type MapRef, type ViewStateChangeEvent, type MapMouseEvent,
+  Layer, Source,
+  type MapMouseEvent,
+  type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
-import 'mapbox-gl/dist/mapbox-gl.css'
 
 import config from '../../../src/models/config'
 import type { Item } from '../../types/common'
 import AlbumContext from '../Context'
 import {
   clusterCountLayer,
-  clusterPointLayer,
   clusterLabelLayer,
-  selectedPointLayer,
+  clusterPointLayer,
   selectedLabelLayer,
-  unclusterPointLayer,
+  selectedPointLayer,
   unclusterLabelLayer,
+  unclusterPointLayer,
 } from './layers'
 import { transformMapOptions, transformSourceOptions } from './options'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 type SlippyMapProps = {
-  items?: Item[]
-  centroid?: Item | null
-  mapRef?: RefObject<MapRef | null> | null
-  mapFilterEnabled?: boolean
-  onToggleMapFilter?: () => void
-  onBoundsChange?: (bounds: [[number, number], [number, number]]) => void
+  clusteredMarkers: ClusteredMarkers;
+  items?: Item[];
+  centroid?: Item | null;
+  mapRef?: RefObject<MapRef | null> | null;
+  mapFilterEnabled?: boolean;
+  onToggleMapFilter?: () => void;
+  onBoundsChange?: (bounds: [[number, number], [number, number]]) => void;
 }
 
 export default function SlippyMap({
+  clusteredMarkers,
   items = [],
   centroid = null,
   mapRef,
@@ -120,8 +125,9 @@ export default function SlippyMap({
       items,
       selected: { coordinates },
       zoom: currentZoom,
+      clusteredMarkers,
     }),
-    [items, coordinates, currentResolution],  // Recalculate when resolution changes
+    [items, coordinates, currentZoom, clusteredMarkers],
   )
 
   const layerIds: string[] = []

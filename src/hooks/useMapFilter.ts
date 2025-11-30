@@ -8,7 +8,7 @@ import type { Item } from '../types/common'
 
 type Bounds = [[number, number],[number, number]]
 
-export default function useMapFilter({ items, indexedKeywords }: All.ComponentProps) {
+export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
   const refImageGallery = useRef<ReactImageGallery>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter

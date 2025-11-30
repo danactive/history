@@ -4,13 +4,12 @@ import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
+import useMapFilter from '../../hooks/useMapFilter'
 import type { Album } from '../../types/pages'
-import type { AlbumMeta } from '../../types/common'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
-import useMapFilter from '../../hooks/useMapFilter'
 
 export const metadata: Metadata = {
   title: 'Album - History App',
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
  * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps) {
+function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Album.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,
@@ -58,6 +57,7 @@ function AlbumClient({ items = [], meta, indexedKeywords }: Album.ComponentProps
         {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
+          clusteredMarkers={clusteredMarkers}
           items={itemsToShow}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
