@@ -10,34 +10,53 @@ export async function getAllData({ gallery }: All.Params): Promise<All.ItemData>
 
   const prepareItems = (
     { albumName, albumCoordinateAccuracy, items }:
-    {
-      albumName: AlbumMeta['albumName'],
-      albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
-      items: Item[],
-    },
-  ) => items.map((item) => ({
-    ...item,
-    gallery,
-    album: albumName,
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
-    search: addGeographyToSearch(item),
-  }))
+    { albumName: AlbumMeta['albumName']; albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom']; items: Item[] },
+  ) => items.map((item) => {
+    const filenameStr = Array.isArray(item.filename) ? (item.filename[0] ?? '') : (item.filename ?? '')
+    const titleStr = Array.isArray(item.title) ? (item.title[0] ?? '') : (item.title ?? '')
+    const searchStr = addGeographyToSearch(item) ?? ''
+    const corpus = [
+      item.description ?? '',
+      item.caption ?? '',
+      item.location ?? '',
+      item.city ?? '',
+      searchStr,
+    ].join(' ').trim()
 
-  // reverse order for albums in ascending order (oldest on top)
-  const allItems = (await albums.reduce(async (previousPromise, album) => {
-    const prev = await previousPromise
+    return {
+      id: item.id,
+      filename: filenameStr,
+      photoDate: item.photoDate,
+      city: item.city,
+      location: item.location,
+      caption: item.caption,
+      persons: item.persons,
+      coordinates: item.coordinates,
+      coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
+      thumbPath: item.thumbPath,
+      photoPath: item.photoPath,
+      mediaPath: item.mediaPath,
+      description: null,
+      reference: null,
+      videoPaths: null,
+      gallery,
+      album: albumName,
+      title: titleStr,
+      corpus,
+      search: searchStr,
+    }
+  })
+
+  const allItems = (await albums.reduce(async (prevP, album) => {
+    const prev = await prevP
     const { album: { items, meta } } = await getAlbum(gallery, album.name)
     const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
-    const preparedItems = prepareItems({
-      albumName: album.name,
-      albumCoordinateAccuracy,
-      items,
-    })
+    const preparedItems = prepareItems({ albumName: album.name, albumCoordinateAccuracy, items })
     return prev.concat(preparedItems.reverse())
   }, Promise.resolve([] as ServerSideAllItem[]))).reverse()
 
-  return {
-    items: allItems, ...indexKeywords(allItems),
-  }
+  // indexKeywords will run on slim items; keep keyword index small too
+  const { indexedKeywords } = indexKeywords(allItems)
+
+  return { items: allItems, indexedKeywords }
 }
