@@ -28,7 +28,7 @@ import {
   unclusterLabelLayer,
   unclusterPointLayer,
 } from './layers'
-import { transformMapOptions, transformSourceOptions } from './options'
+import { getResolutionForZoom, transformMapOptions, transformSourceOptions } from './options'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
@@ -63,16 +63,6 @@ export default function SlippyMap({
   // Track previous coordinates/zoom to avoid unnecessary updates
   const prevCoordsRef = useRef<[number, number]>([0, 0])
   const prevZoomRef = useRef<number>(metaZoom)
-
-  // Track current zoom resolution (not every zoom tick, only when crossing thresholds)
-  // Update the resolution helper to match new resolutions
-  const getResolutionForZoom = (z: number): string => {
-    if (z >= 17) return '100m'
-    if (z >= 14) return '300m'
-    if (z >= 10) return '1.5km'
-    if (z >= 6) return '5km'
-    return '10km'
-  }
 
   const [currentResolution, setCurrentResolution] = useState(() =>
     getResolutionForZoom(zoom),
