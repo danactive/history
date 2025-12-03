@@ -1,4 +1,5 @@
 import Color from 'color-thief-react'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import {
   useContext, useRef, type Ref, type ReactNode, useMemo, useEffect, useState,
 } from 'react'
@@ -54,6 +55,7 @@ const toCarousel = (item: Item) => {
 }
 
 function SplitViewer({
+  clusteredMarkers,
   items,
   refImageGallery,
   setViewed,
@@ -63,6 +65,7 @@ function SplitViewer({
   onToggleMapFilter,
   onMapBoundsChange,
 }: {
+  clusteredMarkers: ClusteredMarkers;
   items: Item[];
   refImageGallery: Ref<ImageGallery> | null;
   setViewed: Viewed;
@@ -170,6 +173,7 @@ function SplitViewer({
         <section className={styles.right} key="splitRight" ref={refMapBox}>
           <SlippyMap
             mapRef={mapRef}
+            clusteredMarkers={clusteredMarkers}
             items={items}
             // If filter ON: keep using locked centroid (no pan). If OFF: follow selection.
             centroid={mapFilterEnabled ? lockedCentroid : dynamicCentroid}

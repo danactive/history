@@ -131,7 +131,6 @@ async function moveRaws(
   // Collect all raw extensions from config (lowercase, with dot)
   const rawExtensions = new Set(
     [
-      ...['heic', 'heif'],
       ...(config.rawFileTypes?.photo ?? []),
       ...(config.rawFileTypes?.video ?? []),
     ].map(ext => `.${ext.toLowerCase()}`),

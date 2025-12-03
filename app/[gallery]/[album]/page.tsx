@@ -7,56 +7,53 @@ import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { Album } from '../../../src/types/pages'
+import { generateClusters } from '../../../src/lib/generate-clusters'
 
 export async function generateMetadata(
   { params }: { params: Promise<Album.Params> },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const album = (await params).album
-
-  return {
-    title: `Album ${album} - History App`,
-  }
+  return { title: `Album ${album} - History App` }
 }
 
 async function buildStaticPaths() {
   const { galleries } = await getGalleries()
   const groups = await Promise.all(galleries.map(async (gallery) => {
     const { [gallery]: { albums } } = await getAlbums(gallery)
-    return albums.map(({ name: album }) => ({ params: { gallery, album } }))
+    return albums.map(({ name: album }) => ({ gallery, album }))
   }))
   return groups.flat()
-}
-
-async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.ComponentProps> {
-  const { album: { items, meta } } = await getAlbum(gallery, album)
-  const preparedItems = items.map((item) => ({
-    ...item,
-    search: addGeographyToSearch(item),
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-  }))
-
-  return {
-    items: preparedItems, meta, ...indexKeywords(preparedItems),
-  }
 }
 
 export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
+async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.ItemData> {
+  const { album: { items, meta } } = await getAlbum(gallery, album)
+  const preparedItems = items.map((item) => ({
+    ...item,
+    search: addGeographyToSearch(item),
+    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
+  }))
+  return { items: preparedItems, meta, ...indexKeywords(preparedItems) }
+}
+
 export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
   const params = await props.params
-
-  const {
-    album,
-    gallery,
-  } = params
+  const { album, gallery } = params
 
   const { items, meta, indexedKeywords } = await getAlbumItems({ album, gallery })
+  const clusterMarkers = generateClusters(items)
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <AlbumPageComponent items={items} meta={meta} indexedKeywords={indexedKeywords} />
+      <AlbumPageComponent
+        items={items}
+        meta={meta}
+        indexedKeywords={indexedKeywords}
+        clusteredMarkers={clusterMarkers}
+      />
     </Suspense>
   )
 }

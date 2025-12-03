@@ -5,6 +5,7 @@ import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
+import { generateClusters } from '../../../src/lib/generate-clusters'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import config from '../../../src/models/config'
 import type { AlbumMeta, Gallery, Item } from '../../../src/types/common'
@@ -65,9 +66,10 @@ async function getTodayItems(gallery: Gallery) {
 export default async function TodayServer(props: { params: Promise<{ gallery: Gallery }> }) {
   const params = await props.params
   const { items, indexedKeywords } = await getTodayItems(params.gallery)
+  const clusteredMarkers = generateClusters(items)
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AlbumPageComponent items={items} indexedKeywords={indexedKeywords} />
+    <Suspense fallback={<div>Loading Today...</div>}>
+      <AlbumPageComponent items={items} indexedKeywords={indexedKeywords} clusteredMarkers={clusteredMarkers} />
     </Suspense>
   )
 }

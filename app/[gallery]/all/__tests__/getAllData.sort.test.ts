@@ -1,4 +1,4 @@
-import { getAllData } from '../page'
+import { getAllData } from '../../../../src/lib/all'
 import type { Gallery } from '../../../../src/types/common'
 
 // Reduce mocks: keep only data providers (getAlbums/getAlbum). Use real config & search.

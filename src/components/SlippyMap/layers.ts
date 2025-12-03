@@ -78,11 +78,11 @@ export const clusterCountLayer: LayerProps = {
 }
 
 export const clusterLabelLayer: LayerProps = {
-  // id: `${marker.types.cluster.id}-labels`,
+  id: `${marker.types.cluster.id}-labels`,
   type: 'symbol',
   filter: marker.types.cluster.filter,
   layout: {
-    'text-field': 'Coming soon',
+    'text-field': '{commonLabel}',
     'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
     'text-size': 12,
     'text-offset': [0, 3.5], // offset below the circle

@@ -3,13 +3,13 @@
 import { useMemo } from 'react'
 
 import config from '../../../src/models/config'
+import useMapFilter from '../../hooks/useMapFilter'
 import { All } from '../../types/pages'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
-import useMapFilter from '../../hooks/useMapFilter'
 
-export default function AllClient({ items, indexedKeywords }: All.ComponentProps) {
+export default function AllClient({ items, indexedKeywords, clusteredMarkers }: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   const {
@@ -34,6 +34,7 @@ export default function AllClient({ items, indexedKeywords }: All.ComponentProps
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}
+          clusteredMarkers={clusteredMarkers}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}

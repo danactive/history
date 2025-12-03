@@ -1,8 +1,8 @@
-import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 import type { Feature, FeatureCollection } from 'geojson'
+import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 
 import config from '../../../src/models/config'
-
+import { type ClusteredMarkers, BASE_MULTIPLIER, generateClusters, getLabelForResolution } from '../../lib/generate-clusters'
 import type { Item } from '../../types/common'
 
 export const validatePoint = (
@@ -27,39 +27,69 @@ type ItemWithCoordinate = {
 
 interface SelectedFeature extends Feature {
   properties: {
-    selected?: boolean;
-    label?: string;
+    selected?: boolean
+    label: string
+    commonLabel: string
   }
 }
 
+export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
+
+type MultiResolutionLabels = {
+  labels: Map<string, Map<ResolutionKey, string>>
+  itemFrequency: Map<string, number>
+}
+
 export function transformSourceOptions(
-  { items = [], selected }:
-  { items?: Item[], selected: ItemWithCoordinate },
+  { items = [], selected, zoom = 10, clusteredMarkers }:
+  {
+    clusteredMarkers: ClusteredMarkers,
+    items?: Item[],
+    selected: ItemWithCoordinate,
+    zoom?: number,
+  },
 ): GeoJSONSourceSpecification {
+  const resolution = getResolutionForZoom(zoom)
+
+  // Use server/client precomputed if provided, else compute locally
+  const computed = clusteredMarkers ?? generateClusters(items)
+
+  // Sort items by precomputed frequency (desc)
+  const sortedItems = [...items].sort((a, b) => {
+    const { latitude: latA, longitude: lngA } = validatePoint(a.coordinates)
+    const { latitude: latB, longitude: lngB } = validatePoint(b.coordinates)
+    const keyA = `${Math.round(latA * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngA * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const keyB = `${Math.round(latB * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngB * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const freqA = computed.itemFrequency[keyA] || 0
+    const freqB = computed.itemFrequency[keyB] || 0
+    return freqB - freqA
+  })
+
   const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
+    const baseKey = `${Math.round(latitude * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(longitude * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const commonLabel = computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
+    const individualLabel = getLabelForResolution(item, resolution)
+
     const point: SelectedFeature = {
       type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [longitude, latitude],
-      },
+      geometry: { type: 'Point', coordinates: [longitude, latitude] },
       properties: {
-        label: item.location || item.caption,
+        label: individualLabel,
+        commonLabel,
       },
     }
 
     if (selectedLatitude === latitude && selectedLongitude === longitude) {
       point.properties.selected = true
     }
-
     return point
   }
 
   const hasGeo = (item: Item) => !validatePoint(item?.coordinates).isInvalidPoint
-  const features = items.filter(hasGeo).map(geoJsonFeature)
+  const features = sortedItems.filter(hasGeo).map(geoJsonFeature)
 
   const data: FeatureCollection = {
     type: 'FeatureCollection',
@@ -70,8 +100,15 @@ export function transformSourceOptions(
     type: 'geojson',
     data,
     cluster: true,
-    clusterMaxZoom: 16, // Max zoom to cluster points on
-    clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+    clusterMaxZoom: 17,
+    clusterRadius: 50,
+    clusterProperties: {
+      commonLabel: [
+        'coalesce',
+        ['get', 'commonLabel'],
+        'Unknown',
+      ],
+    },
   }
 }
 
@@ -110,4 +147,21 @@ export function transformInaccurateMarkerOptions(coordinateAccuracy: Item['coord
     },
     filter: ['has', 'accuracy'],
   }
+}
+
+/**
+ * Select appropriate clustering resolution based on zoom level
+ * Using industry-standard zoom level practices:
+ * - Zoom 0-5: Country/region level (10km)
+ * - Zoom 6-9: State/province level (5km)
+ * - Zoom 10-13: City level (1.5km)
+ * - Zoom 14-16: Neighborhood level (300m)
+ * - Zoom 17+: Street level (100m)
+ */
+export function getResolutionForZoom(zoom: number): ResolutionKey {
+  if (zoom >= 17) return '100m'     // street level - very precise
+  if (zoom >= 14) return '300m'     // neighborhood level
+  if (zoom >= 10) return '1.5km'    // city level
+  if (zoom >= 6)  return '5km'      // province/state level
+  return '10km'                     // country/region level
 }

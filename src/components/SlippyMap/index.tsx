@@ -1,45 +1,50 @@
 'use client'
 import type { GeoJSONSource } from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 import {
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
   type RefObject,
-  useRef,
-  useCallback,
-  useMemo,
 } from 'react'
 import Map, {
-  Layer, Source, type MapRef, type ViewStateChangeEvent, type MapMouseEvent,
+  Layer, Source,
+  type MapMouseEvent,
+  type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
-import 'mapbox-gl/dist/mapbox-gl.css'
 
 import config from '../../../src/models/config'
 import type { Item } from '../../types/common'
 import AlbumContext from '../Context'
 import {
   clusterCountLayer,
-  clusterPointLayer,
   clusterLabelLayer,
-  selectedPointLayer,
+  clusterPointLayer,
   selectedLabelLayer,
-  unclusterPointLayer,
+  selectedPointLayer,
   unclusterLabelLayer,
+  unclusterPointLayer,
 } from './layers'
-import { transformMapOptions, transformSourceOptions } from './options'
+import { getResolutionForZoom, transformMapOptions, transformSourceOptions } from './options'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
 type SlippyMapProps = {
-  items?: Item[]
-  centroid?: Item | null
-  mapRef?: RefObject<MapRef | null> | null
-  mapFilterEnabled?: boolean
-  onToggleMapFilter?: () => void
-  onBoundsChange?: (bounds: [[number, number], [number, number]]) => void
+  clusteredMarkers: ClusteredMarkers;
+  items?: Item[];
+  centroid?: Item | null;
+  mapRef?: RefObject<MapRef | null> | null;
+  mapFilterEnabled?: boolean;
+  onToggleMapFilter?: () => void;
+  onBoundsChange?: (bounds: [[number, number], [number, number]]) => void;
 }
 
 export default function SlippyMap({
+  clusteredMarkers,
   items = [],
   centroid = null,
   mapRef,
@@ -59,7 +64,11 @@ export default function SlippyMap({
   const prevCoordsRef = useRef<[number, number]>([0, 0])
   const prevZoomRef = useRef<number>(metaZoom)
 
-  // avoid calling transformMapOptions during SSR (it may access window/mapbox)
+  const [currentResolution, setCurrentResolution] = useState(() =>
+    getResolutionForZoom(zoom),
+  )
+  const [currentZoom, setCurrentZoom] = useState(zoom)
+
   const [viewport, setViewport] = useState(() => {
     if (typeof window === 'undefined') return {} as any
     return transformMapOptions({ coordinates, zoom })
@@ -76,6 +85,8 @@ export default function SlippyMap({
     prevCoordsRef.current = coordinates
     prevZoomRef.current = zoom
     setViewport(transformMapOptions({ coordinates, zoom }))
+    setCurrentZoom(zoom)
+    setCurrentResolution(getResolutionForZoom(zoom))
   }, [coordinates, zoom])
 
   const onClick = (event: MapMouseEvent) => {
@@ -98,9 +109,15 @@ export default function SlippyMap({
     })
   }
 
+  // Pass current zoom to transformSourceOptions
   const geoJsonSource = useMemo(
-    () => transformSourceOptions({ items, selected: { coordinates } }),
-    [items, coordinates],
+    () => transformSourceOptions({
+      items,
+      selected: { coordinates },
+      zoom: currentZoom,
+      clusteredMarkers,
+    }),
+    [items, coordinates, currentZoom, clusteredMarkers],
   )
 
   const layerIds: string[] = []
@@ -149,13 +166,22 @@ export default function SlippyMap({
   const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleMove = useCallback((evt: ViewStateChangeEvent) => {
     setViewport(evt.viewState)
+
+    // Update zoom and check if resolution changed
+    const newZoom = evt.viewState.zoom
+    setCurrentZoom(newZoom)
+    const newResolution = getResolutionForZoom(newZoom)
+    if (newResolution !== currentResolution) {
+      setCurrentResolution(newResolution)
+    }
+
     if (!mapFilterEnabled || !onBoundsChange) return
     if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
     moveTimeoutRef.current = setTimeout(() => {
       const b = readBounds()
       if (b) onBoundsChange(b)
     }, 100)
-  }, [mapFilterEnabled, onBoundsChange, mapRef])
+  }, [mapFilterEnabled, onBoundsChange, mapRef, currentResolution])
 
   useEffect(() => () => {
     if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
@@ -189,6 +215,7 @@ export default function SlippyMap({
           <Source id="slippyMap" {...geoJsonSource}>
             <Layer {...clusterPointLayer} />
             <Layer {...clusterCountLayer} />
+            <Layer {...clusterLabelLayer} />
             <Layer {...selectedPointLayer} />
             <Layer {...selectedLabelLayer} />
             <Layer {...unclusterPointLayer} />

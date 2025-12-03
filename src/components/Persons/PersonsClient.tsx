@@ -1,15 +1,20 @@
 'use client'
 
 import { useMemo } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
+
 import config from '../../../src/models/config'
+import usePersonsFilter from '../../hooks/usePersonsFilter'
 import type { All } from '../../types/pages'
+import AllItems from '../All/Items'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
-import AllItems from '../All/Items'
-import usePersonsFilter from '../../hooks/usePersonsFilter'
 
-export default function PersonsClient({ items, indexedKeywords }: All.ComponentProps) {
+export default function PersonsClient({
+  items,
+  indexedKeywords,
+  clusteredMarkers,
+  initialAgeSummary,
+}: All.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,
@@ -24,7 +29,11 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
     ageFiltered,
     itemsWithCorpus,
     memoryHtml,
-  } = usePersonsFilter({ items, indexedKeywords })
+    overrideAgeSummary,
+  } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
+
+  // Replace controls age list if override available
+  const finalControls = overrideAgeSummary ?? controls
 
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
 
@@ -32,10 +41,11 @@ export default function PersonsClient({ items, indexedKeywords }: All.ComponentP
     <div>
       <AlbumContext.Provider value={zooms}>
         {searchBox}
-        {controls}
+        {finalControls}
         {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
+          clusteredMarkers={clusteredMarkers}
           items={ageFiltered}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
