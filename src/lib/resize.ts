@@ -5,10 +5,8 @@ import sharp from 'sharp'
 import config from '../models/config'
 import { validateRequestBody, type RequestSchema } from '../models/resize'
 import pathExists from './exists'
-import utilsFactory, { isStandardError } from './utils'
 import { moveRaws } from './rename'
-
-const utils = utilsFactory()
+import { isStandardError } from './utils'
 
 function errorSchema(msg: string) {
   return msg
@@ -166,8 +164,6 @@ async function resize({ sourceFolder, metadata }: ReturnType<typeof validateRequ
 
 export {
   errorSchema,
-  resize,
-  type ResponseBody as ResizeResponseBody,
-  type RequestSchema as ResizeRequestBody,
-  type ErrorFormatter,
+  resize, type ErrorFormatter, type RequestSchema as ResizeRequestBody, type ResponseBody as ResizeResponseBody,
 }
+
