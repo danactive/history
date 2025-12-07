@@ -7,11 +7,13 @@ interface InputProps extends React.ComponentPropsWithoutRef<'a'> {
   href: string;
 }
 
-function Link({ children, ...props }: InputProps) {
+function Link({ children, href, ...props }: InputProps) {
   return (
-    <JoyLink {...props} color='primary' component={NextLink}>
-      {children}
-    </JoyLink>
+    <NextLink href={href}>
+      <JoyLink {...props} color='primary'>
+        {children}
+      </JoyLink>
+    </NextLink>
   )
 }
 

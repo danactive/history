@@ -35,7 +35,7 @@ async function getImages(path: string): Promise<Filesystem[]> {
   return resultPossibleHeif.files
 }
 
-export default function WalkClient() {
+export default function WalkClient({ files: filesAtLoad }: { files: Filesystem[] }) {
   const [fileList, setFileList] = useState<Filesystem[] | null>(null)
   const [previewList, setPreviewList] = useState<Filesystem[] | null>(null)
   const [isLoading, setLoading] = useState(false)

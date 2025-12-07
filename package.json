@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev -p 3030",
     "generate-types": "tsx ./scripts/generate-types.ts",
-    "build": "npm run generate-types && next build",
+    "build": "npm run generate-types && next build --webpack",
     "start": "next start -p 3030",
     "lint": "echo 'Lint n Fix...' && ESLINT_USE_FLAT_CONFIG=true npx eslint . --ext .ts,.tsx --fix",
     "lint:ci": "echo 'Lint...' && ESLINT_USE_FLAT_CONFIG=true npx eslint . --ext .ts,.tsx ",
