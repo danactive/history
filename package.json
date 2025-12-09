@@ -22,6 +22,7 @@
     "@emotion/styled": "^11.14.1",
     "@hello-pangea/dnd": "^18.0.1",
     "@mui/joy": "^5.0.0-beta.52",
+    "babel-plugin-react-compiler": "^1.0.0",
     "camelcase": "^6.3.0",
     "color-thief-react": "^2.1.0",
     "glob": "^13.0.0",

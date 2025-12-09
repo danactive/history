@@ -3,5 +3,6 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  reactCompiler: true,
 }
 export default nextConfig
