@@ -35,11 +35,6 @@ interface SelectedFeature extends Feature {
 
 export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
 
-type MultiResolutionLabels = {
-  labels: Map<string, Map<ResolutionKey, string>>
-  itemFrequency: Map<string, number>
-}
-
 export function transformSourceOptions(
   { items = [], selected, zoom = 10, clusteredMarkers }:
   {

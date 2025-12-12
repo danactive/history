@@ -31,12 +31,8 @@ async function getAllFolderPaths(path = '/') {
   return paths
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ path?: string[] }>
-}) {
-  const { path: nextRoutePath = [] } = await params
+export default async function Page(props: PageProps<'/admin/walk/[...path]'>) {
+  const { path: nextRoutePath = [] } = await props.params
   const path = nextRoutePath.join('/')
   const fsPath = path ? `/${path}` : '/'
   const { files } = await getFilesystems(fsPath)

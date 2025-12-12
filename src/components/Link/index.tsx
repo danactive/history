@@ -1,18 +1,25 @@
-import JoyLink from '@mui/joy/Link'
-import NextLink from 'next/link'
-import { type ReactNode } from 'react'
+'use client'
 
-interface InputProps extends React.ComponentPropsWithoutRef<'a'> {
-  children: ReactNode;
-  href: string;
-}
+import NextLink, { type LinkProps as NextLinkProps } from 'next/link'
+import JoyLink, { type LinkProps as JoyLinkProps } from '@mui/joy/Link'
 
-function Link({ children, ...props }: InputProps) {
+type Props = JoyLinkProps & {
+  href: NextLinkProps['href'];
+};
+
+export default function Link({ href, children, ...props }: Props) {
   return (
-    <JoyLink {...props} color='primary' component={NextLink}>
+    <JoyLink
+      {...props}
+      href={href}
+      slotProps={{
+        root: {
+          // applied at runtime (avoids function serialization)
+          component: NextLink,
+        },
+      }}
+    >
       {children}
     </JoyLink>
   )
 }
-
-export default Link

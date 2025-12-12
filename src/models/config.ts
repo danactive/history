@@ -1,4 +1,4 @@
-import raw from '../../config.json' assert { type: 'json' }
+import raw from '../../config.json' with { type: 'json' }
 import type { Gallery } from '../types/common'
 import type { Config } from '../types/config'
 

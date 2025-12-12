@@ -3,8 +3,6 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  eslint: {
-    dirs: ['pages', 'src', '__tests__', 'app'],
-  },
+  reactCompiler: true,
 }
 export default nextConfig
