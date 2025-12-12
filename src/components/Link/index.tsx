@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import NextLink, { type LinkProps as NextLinkProps } from "next/link";
-import JoyLink, { type LinkProps as JoyLinkProps } from "@mui/joy/Link";
+import NextLink, { type LinkProps as NextLinkProps } from 'next/link'
+import JoyLink, { type LinkProps as JoyLinkProps } from '@mui/joy/Link'
 
 type Props = JoyLinkProps & {
-  href: NextLinkProps["href"];
+  href: NextLinkProps['href'];
 };
 
 export default function Link({ href, children, ...props }: Props) {
@@ -21,5 +21,5 @@ export default function Link({ href, children, ...props }: Props) {
     >
       {children}
     </JoyLink>
-  );
+  )
 }
