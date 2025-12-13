@@ -39,6 +39,9 @@ export namespace Album {
 
 export namespace Walk {
   export type ItemFile = Filesystem
+  export interface Params {
+    path?: string[];
+  }
 }
 
 export namespace All {
