@@ -1,6 +1,5 @@
 'use client'
 
-import type { Metadata } from 'next'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -10,10 +9,6 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
-
-export const metadata: Metadata = {
-  title: 'Album - History App',
-}
 
 /**
  * Render an album with gallery, map, and thumbnails.

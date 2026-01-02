@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mocks MUST be hoisted before any imports
 vi.mock('heic-convert')
@@ -11,8 +11,8 @@ vi.mocked(convert).mockImplementation(async () => new ArrayBuffer(8))
 vi.mocked(readFile).mockImplementation(async () => Buffer.from('FAKE_HEIC'))
 vi.mocked(writeFile).mockImplementation(async () => undefined)
 
-import post, { errorSchema, type HeifResponseBody } from '../heifs'
 import type { Filesystem } from '../filesystems'
+import post, { errorSchema } from '../heifs'
 
 const convertMock = vi.mocked(convert)
 const readFileMock = vi.mocked(readFile)

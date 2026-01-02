@@ -1,11 +1,17 @@
 import Color from 'color-thief-react'
-import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import {
-  useContext, useRef, type Ref, type ReactNode, useMemo, useEffect, useState,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type Ref,
 } from 'react'
 import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'

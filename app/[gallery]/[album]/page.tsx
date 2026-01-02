@@ -1,17 +1,16 @@
-import type { Metadata, ResolvingMetadata } from 'next'
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
+import { generateClusters } from '../../../src/lib/generate-clusters'
 import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
 import type { Album } from '../../../src/types/pages'
-import { generateClusters } from '../../../src/lib/generate-clusters'
 
 export async function generateMetadata(
   { params }: { params: Promise<Album.Params> },
-  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const album = (await params).album
   return { title: `Album ${album} - History App` }

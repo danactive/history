@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
 import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
-import type { ResizeRequestBody, ResizeResponseBody } from '../../lib/resize'
+import type { ResizeRequestBody } from '../../lib/resize'
 
 export default function ActionButtons(
   { items }:
@@ -60,8 +60,7 @@ export default function ActionButtons(
       body: JSON.stringify(postBody),
     }
 
-    const response = await fetch('/api/admin/resize', options)
-    const result: ResizeResponseBody = await response.json()
+    fetch('/api/admin/resize', options)
   }
 
   return (

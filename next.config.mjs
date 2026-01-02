@@ -1,10 +1,12 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
-  eslint: {
-    dirs: ['pages', 'src', '__tests__', 'app'],
-  },
+  reactCompiler: true,
+  // images: {
+  //   localPatterns: [{ pathname: '/galleries/*/media/**', search: '' }],
+  // },
 }
 export default nextConfig

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import get, { errorSchema } from '../../../src/lib/galleries'
 
-async function GET(req: Request) {
+async function GET() {
   const out = await get(true)
   return NextResponse.json(out.body, { status: out.status })
 }

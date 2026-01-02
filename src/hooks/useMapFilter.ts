@@ -1,10 +1,9 @@
 'use client'
-import { useCallback, useMemo, useRef, useState, useEffect, type Dispatch, type SetStateAction } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
 import type ReactImageGallery from 'react-image-gallery'
+import type { All } from '../types/pages'
 import useMemory from './useMemory'
 import useSearch from './useSearch'
-import type { All } from '../types/pages'
-import type { Item } from '../types/common'
 
 type Bounds = [[number, number],[number, number]]
 

@@ -1,5 +1,3 @@
-import { type ParsedUrlQuery } from 'node:querystring'
-
 import type { Filesystem } from '../lib/filesystems'
 import type { ClusteredMarkers } from '../lib/generate-clusters'
 
@@ -7,8 +5,8 @@ import type {
   AlbumMeta,
   Gallery as GalleryName,
   IndexedKeywords,
-  ServerSideAllItem,
   ServerSideAlbumItem,
+  ServerSideAllItem,
   ServerSidePhotoItem,
 } from './common'
 
@@ -41,6 +39,9 @@ export namespace Album {
 
 export namespace Walk {
   export type ItemFile = Filesystem
+  export interface Params {
+    path?: string[];
+  }
 }
 
 export namespace All {

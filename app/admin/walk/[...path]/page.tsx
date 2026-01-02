@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import WalkClient from '../../../../src/components/Walk/WalkClient'
 import getFilesystems from '../../../../src/lib/filesystems'
+import type { Walk } from '../../../../src/types/pages'
 
 export const metadata: Metadata = {
   title: 'Admin > Walk - History App',
@@ -31,11 +32,7 @@ async function getAllFolderPaths(path = '/') {
   return paths
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ path?: string[] }>
-}) {
+export default async function Page({ params }: { params: Promise<Walk.Params> }) {
   const { path: nextRoutePath = [] } = await params
   const path = nextRoutePath.join('/')
   const fsPath = path ? `/${path}` : '/'

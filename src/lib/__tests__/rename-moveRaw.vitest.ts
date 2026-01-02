@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest'
 import { moveRaws } from '../rename'
-import path from 'path'
+import path from 'node:path'
 
 vi.mock('../fs', async () => {
   return {

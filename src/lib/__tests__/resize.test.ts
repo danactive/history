@@ -2,7 +2,7 @@ import { access, constants, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import sharp from 'sharp'
 
-import config from '../../../src/models/config' assert { type: 'json' }
+import config from '../../../src/models/config' with { type: 'json' }
 import { resize } from '../resize'
 import utilsFactory from '../utils'
 

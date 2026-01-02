@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 
 import pathExists from '../exists'
 
@@ -64,7 +64,6 @@ describe('Exists library', () => {
     })
 
     test('* Safe path throws error', async () => {
-      const testPath = true
       await failureTest(expect, null)
     })
   })

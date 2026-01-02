@@ -31,12 +31,10 @@ async function getAlbumsData(gallery: GalleryName): Promise<Gallery.ComponentPro
   }
 }
 
-export default async function GalleryServer(props: { params: Promise<Gallery.Params> }) {
-  const params = await props.params
-
+export default async function GalleryServer({ params }: { params: Promise<Gallery.Params> }) {
   const {
     gallery,
-  } = params
+  } = await params
 
   const { albums, indexedKeywords } = await getAlbumsData(gallery)
 
