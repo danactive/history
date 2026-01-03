@@ -77,7 +77,7 @@ async function renamePaths({
     const matches = filesOnDisk.filter((f) => path.parse(f).name === base)
 
     for (const match of matches) {
-      const ext = path.parse(match).ext
+      const ext = path.parse(match).ext.toLowerCase()
       const renamed = `${newBase}${ext}`
 
       if (!seenOutput.has(renamed)) {
@@ -87,6 +87,9 @@ async function renamePaths({
           from: path.join(fullPath, match),
           to: path.join(fullPath, renamed),
         })
+      } else if (match !== renamed) {
+        // Collision detected: multiple files would rename to the same lowercase name
+        console.warn(`Skipping ${match}: would collide with existing ${renamed}`)
       }
     }
   }
@@ -137,7 +140,7 @@ async function moveRaws(
   )
   const videoExtensions = new Set(
     [
-      ...['mp4'],
+      ...(config.supportedFileTypes?.video ?? []),
     ].map(ext => `.${ext.toLowerCase()}`),
   )
 
@@ -145,7 +148,8 @@ async function moveRaws(
     const ext = path.extname(file).toLowerCase()
     if (rawExtensions.has(ext)) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(rawsPath, file)
+      const baseName = path.parse(file).name
+      const destinationFile = path.join(rawsPath, `${baseName}${ext}`)
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
@@ -160,7 +164,8 @@ async function moveRaws(
       !file.toLowerCase().endsWith('.orig.mp4')
     ) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(videosPath, file)
+      const baseName = path.parse(file).name
+      const destinationFile = path.join(videosPath, `${baseName}${ext}`)
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
