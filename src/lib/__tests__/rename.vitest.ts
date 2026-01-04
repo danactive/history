@@ -394,7 +394,7 @@ describe('rename library', () => {
       }
 
       const errors: string[] = []
-      
+
       await moveRaws({
         originalPath: originalsDir,
         filesOnDisk: testFiles,
@@ -419,13 +419,13 @@ describe('rename library', () => {
       // Test the collision detection logic by simulating the scenario
       // where filesOnDisk contains both uppercase and lowercase versions
       const testFiles = ['photo.HEIC', 'photo.heic', 'video.MP4', 'video.mp4']
-      
+
       // Only create files that can actually exist on case-insensitive filesystem
       await writeFile(path.join(originalsDir, 'photo.HEIC'), 'content-photo')
       await writeFile(path.join(originalsDir, 'video.MP4'), 'content-video')
-      
+
       const errors: string[] = []
-      
+
       // Pass all files to moveRaws as if they were discovered
       // This simulates a case-sensitive filesystem scenario
       await moveRaws({
@@ -444,6 +444,43 @@ describe('rename library', () => {
 
       expect(rawFiles).toHaveLength(1)
       expect(videoFiles).toHaveLength(1)
+      expect(errors).toHaveLength(0)
+    })
+
+    test('moves all configured video formats to videos folder', async () => {
+      // Test that all video types from config.supportedFileTypes.video are moved
+      // This verifies the behavioral change from hardcoded ['mp4'] to config-based
+      // Note: rawFileTypes.video (like mov) still go to raws folder
+      const testFiles = ['video1.mp4', 'video2.webm', 'raw-video.mov', 'photo.heic']
+      for (const file of testFiles) {
+        await writeFile(path.join(originalsDir, file), `content-${file}`)
+      }
+
+      const errors: string[] = []
+
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: testFiles,
+        errors,
+        formatErrorMessage,
+      })
+
+      const rawsDir = path.join(testDir, 'raws')
+      const videosDir = path.join(testDir, 'videos')
+
+      // Processed videos from config.supportedFileTypes.video go to videos folder
+      const videoFiles = await readdir(videosDir)
+      expect(videoFiles).toContain('video1.mp4')
+      expect(videoFiles).toContain('video2.webm')
+      expect(videoFiles).toHaveLength(2)
+
+      // Raw formats (photos and raw videos) go to raws folder
+      const rawFiles = await readdir(rawsDir)
+      expect(rawFiles).toContain('photo.heic')
+      expect(rawFiles).toContain('raw-video.mov')
+      expect(rawFiles).toHaveLength(2)
+
+      expect(await readdir(originalsDir)).toEqual([])
       expect(errors).toHaveLength(0)
     })
   })
