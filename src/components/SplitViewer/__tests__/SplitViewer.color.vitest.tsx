@@ -13,6 +13,7 @@ vi.mock('color-thief-react', () => ({
 vi.mock('next/image', () => ({
   default: (props: Record<string, unknown>) => {
     const imgProps = props as React.ImgHTMLAttributes<HTMLImageElement>
+    // eslint-disable-next-line @next/next/no-img-element
     return <img {...imgProps} alt={typeof imgProps.alt === 'string' ? imgProps.alt : ''} />
   },
 }))

@@ -12,6 +12,7 @@ type ResponseBody = {
   renamed: boolean;
   filenames: string[];
   xml: string;
+  skipped?: string[];
 }
 
 type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
@@ -64,6 +65,7 @@ async function renamePaths({
   const seenOutput = new Set<string>()
   const renameOps: { from: string; to: string }[] = []
   const outputFilenames: string[] = []
+  const skippedFiles: string[] = []
 
   // For each base, find all files on disk sharing that base, rename all
   for (const base of orderedBases) {
@@ -77,7 +79,7 @@ async function renamePaths({
     const matches = filesOnDisk.filter((f) => path.parse(f).name === base)
 
     for (const match of matches) {
-      const ext = path.parse(match).ext
+      const ext = path.parse(match).ext.toLowerCase()
       const renamed = `${newBase}${ext}`
 
       if (!seenOutput.has(renamed)) {
@@ -87,13 +89,22 @@ async function renamePaths({
           from: path.join(fullPath, match),
           to: path.join(fullPath, renamed),
         })
+      } else if (match !== renamed) {
+        // Collision detected: multiple files would rename to the same lowercase name
+        console.warn(`Skipping ${match}: would collide with existing ${renamed}`)
+        skippedFiles.push(match)
       }
     }
   }
 
   if (renameOps.length === 0) {
     // Nothing to rename
-    return { filenames: [], xml: '', renamed: false }
+    return {
+      filenames: [],
+      xml: '',
+      renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
+    }
   }
 
   if (dryRun) {
@@ -102,6 +113,7 @@ async function renamePaths({
       filenames: outputFilenames,
       xml: generated.xml,
       renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
     }
   }
 
@@ -116,6 +128,7 @@ async function renamePaths({
     filenames: outputFilenames,
     xml: generated.xml,
     renamed: true,
+    ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
   }
 }
 
@@ -137,18 +150,30 @@ async function moveRaws(
   )
   const videoExtensions = new Set(
     [
-      ...['mp4'],
+      ...(config.supportedFileTypes?.video ?? []),
     ].map(ext => `.${ext.toLowerCase()}`),
   )
+
+  // Track destination filenames to detect collisions
+  const seenRaws = new Set<string>()
+  const seenVideos = new Set<string>()
 
   for (const file of filesOnDisk) {
     const ext = path.extname(file).toLowerCase()
     if (rawExtensions.has(ext)) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(rawsPath, file)
+      const baseName = path.parse(file).name
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(rawsPath, destinationFileName)
+
+      if (seenRaws.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in raws`)
+        continue
+      }
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
+        seenRaws.add(destinationFileName)
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving raw file: ${file}`))
@@ -160,10 +185,18 @@ async function moveRaws(
       !file.toLowerCase().endsWith('.orig.mp4')
     ) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(videosPath, file)
+      const baseName = path.parse(file).name
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(videosPath, destinationFileName)
+
+      if (seenVideos.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in videos`)
+        continue
+      }
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
+        seenVideos.add(destinationFileName)
         console.log(`Moved: ${file} → videos`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving video file: ${file}`))
