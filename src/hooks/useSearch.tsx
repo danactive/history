@@ -49,21 +49,68 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const AND_OPERATOR = '&&'
   const OR_OPERATOR = '||'
 
-  const normalize = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const normalize = (text: string) =>
+    text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
 
   const matchCorpus = (corpus: string, kword: string): boolean => {
     const normalizedCorpus = normalize(corpus)
     const normalizedKeyword = normalize(kword)
 
-    if (normalizedKeyword.includes(AND_OPERATOR)) {
-      return normalizedKeyword
-        .split(AND_OPERATOR)
-        .every((term) => normalizedCorpus.includes(term.trim()))
+    // Handle parentheses by evaluating OR expressions first, then AND
+    const evaluateExpression = (expr: string): boolean => {
+      // If there's no AND operator, evaluate as OR expression
+      if (!expr.includes(AND_OPERATOR)) {
+        return expr
+          .split(OR_OPERATOR)
+          .some((term) => normalizedCorpus.includes(term.trim()))
+      }
+
+      // Split by AND carefully, preserving content inside parentheses
+      const andParts: string[] = []
+      let currentPart = ''
+      let depth = 0
+
+      for (let i = 0; i < expr.length; i++) {
+        const char = expr[i]
+        const nextChar = expr[i + 1]
+
+        if (char === '(') depth++
+        if (char === ')') depth--
+
+        // Check for && outside of parentheses
+        if (char === '&' && nextChar === '&' && depth === 0) {
+          andParts.push(currentPart.trim())
+          currentPart = ''
+          i++ // skip the second &
+          continue
+        }
+
+        currentPart += char
+      }
+      if (currentPart.trim()) {
+        andParts.push(currentPart.trim())
+      }
+
+      return andParts.every((part) => {
+        // Check if this part has parentheses
+        const parenMatch = part.match(/^\((.*)\)$/)
+        if (parenMatch) {
+          // Evaluate the OR expression inside parentheses
+          const innerExpr = parenMatch[1]
+          return innerExpr
+            .split(OR_OPERATOR)
+            .some((term) => normalizedCorpus.includes(term.trim()))
+        }
+
+        // Regular term - check if corpus contains it
+        return normalizedCorpus.includes(part)
+      })
     }
 
-    return normalizedKeyword
-      .split(OR_OPERATOR)
-      .some((term) => normalizedCorpus.includes(term.trim()))
+    return evaluateExpression(normalizedKeyword)
   }
 
   const filtered = useMemo(() => {

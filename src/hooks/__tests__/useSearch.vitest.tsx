@@ -137,6 +137,51 @@ describe('Router ready', () => {
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
   })
+
+  it('Complex query with parentheses and caret', () => {
+    const keyword = 'Apple && Banana && (best^ || highlight^)'
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? keyword : null),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/search')
+
+    const items = [
+      { corpus: 'Apple and Banana at the best^ party' },
+      { corpus: 'Apple and Bañana highlight^ reel' },
+      { corpus: 'Apple only' },
+      { corpus: 'Banana only' },
+      { corpus: 'best party' },
+      { corpus: 'Apple and Banana best party' }, // no caret, shouldn't match
+    ]
+    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+
+    // Should match items that have "Apple" AND "Banana" AND ("best^" OR "highlight^")
+    // Note: caret is significant, so "best" won't match "best^"
+    expect(result.current.filtered).toStrictEqual([items[0], items[1]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+
+  it('Multiple AND with parentheses OR', () => {
+    const keyword = 'photo && (sunset || sunrise)'
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? keyword : null),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/search')
+
+    const items = [
+      { corpus: 'photo of sunset at beach' },
+      { corpus: 'photo of sunrise in mountains' },
+      { corpus: 'photo of landscape' },
+      { corpus: 'beautiful sunset view' },
+    ]
+    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+
+    // Should match items that have "photo" AND ("sunset" OR "sunrise")
+    expect(result.current.filtered).toStrictEqual([items[0], items[1]])
+    expect(result.current.keyword).toBe(keyword)
+  })
 })
 
 describe('Clear button functionality', () => {
