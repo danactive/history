@@ -30,9 +30,12 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const router = useRouter()
   const pathname = usePathname()
 
-  const [keyword, setKeyword] = useState<string>(searchParams?.get('keyword') ?? '')
-  const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
-  const [inputValue, setInputValue] = useState<string>('')
+  const initialKeyword = searchParams?.get('keyword') ?? ''
+  const [keyword, setKeyword] = useState<string>(initialKeyword)
+  const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(
+    initialKeyword ? { label: initialKeyword, value: initialKeyword } : null,
+  )
+  const [inputValue, setInputValue] = useState<string>(initialKeyword)
   const [filteredItems, setFilteredItems] = useState<ItemType[]>(items)
 
   // Count of currently visible thumbnails (consumer updates this)

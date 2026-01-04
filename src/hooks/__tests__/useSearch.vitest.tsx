@@ -47,6 +47,37 @@ describe('Query string', () => {
 })
 
 describe('Router ready', () => {
+  it('Initializes input value from URL keyword param', () => {
+    const keyword = 'best'
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? keyword : null),
+    } as any)
+
+    vi.mocked(useRouter).mockReturnValue({
+      push: vi.fn(),
+      replace: vi.fn(),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/dan/japan2025_taiwan')
+
+    const items = [{ corpus: 'best sunset' }, { corpus: 'good morning' }, { corpus: 'best food' }]
+
+    // Use a wrapper component to check the input value
+    function TestComponent() {
+      const search = useSearch({ items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    // Verify the input field has the URL keyword value
+    const input = container.querySelector('input') as HTMLInputElement
+    expect(input.value).toBe('best')
+
+    // Verify keyword is displayed
+    expect(container.textContent).toMatch(/for "best"/)
+  })
+
   it('First keyword partial', () => {
     const keyword = 'app'
     vi.mocked(useSearchParams).mockReturnValue({
