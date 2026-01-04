@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction,
   useCallback,
-  useEffect, useMemo, useState,
+  useEffect, useMemo, useRef, useState,
 } from 'react'
 import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
@@ -173,14 +173,18 @@ export default function useSearch<ItemType extends ServerSideItem>({
     </form>
   )
 
+  // Track previous search params value to avoid circular dependency
+  const prevSearchParamsValue = useRef<string>(initialKeyword)
+  
   useEffect(() => {
     const value = searchParams?.get('keyword') ?? ''
-    if (value !== keyword) {
+    if (value !== prevSearchParamsValue.current) {
+      prevSearchParamsValue.current = value
       setKeyword(value)
       setSelectedOption(value ? { label: value, value } : null)
       setInputValue(value)
     }
-  }, [searchParams, keyword])
+  }, [searchParams])
 
   useEffect(() => {
     setFilteredItems(filtered)
