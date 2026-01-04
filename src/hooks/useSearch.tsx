@@ -75,6 +75,13 @@ export default function useSearch<ItemType extends ServerSideItem>({
     router.push(`${pathname}?keyword=${encodeURIComponent(newKeyword)}`)
   }
 
+  const handleClear = () => {
+    setKeyword('')
+    setSelectedOption(null)
+    setMemoryIndex?.(0)
+    router.replace(pathname)
+  }
+
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
 
   const searchBox = (
@@ -97,15 +104,26 @@ export default function useSearch<ItemType extends ServerSideItem>({
         >
           Filter
         </Button>
+        {keyword && (
+          <Button
+            type="button"
+            onClick={handleClear}
+            color="primary"
+            variant="soft"
+            title="Clear search"
+          >
+            Clear
+          </Button>
+        )}
       </div>
     </form>
   )
 
   useEffect(() => {
     const value = searchParams?.get('keyword') ?? ''
-    if (value && value !== keyword) {
+    if (value !== keyword) {
       setKeyword(value)
-      setSelectedOption({ label: value, value })
+      setSelectedOption(value ? { label: value, value } : null)
     }
   }, [searchParams, keyword])
 

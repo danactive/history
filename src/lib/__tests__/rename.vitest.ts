@@ -246,7 +246,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // Check directories were created
@@ -275,7 +275,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // Only normal.mp4 should be moved
@@ -297,7 +297,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // Check files were moved with lowercase extensions
@@ -322,7 +322,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       expect(await pathExists(path.join(testDir, 'raws', 'my.photo.2024.heic'))).toBeTruthy()
@@ -337,7 +337,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: [],
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // Directories should still be created
@@ -358,7 +358,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // No files should be moved
@@ -378,7 +378,7 @@ describe('rename library', () => {
         originalPath: originalsDir,
         filesOnDisk: testFiles,
         errors,
-        formatErrorMessage
+        formatErrorMessage,
       })
 
       // Should have collected an error

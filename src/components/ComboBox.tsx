@@ -26,6 +26,7 @@ export default function ComboBox(
       <Autocomplete
         className={className}
         value={valueText}
+        disableClearable
         onChange={(_event: any, newValue: any): void => {
           if (typeof newValue === 'string') { // free text
             onChange({ label: newValue, value: newValue })
