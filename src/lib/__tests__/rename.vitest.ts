@@ -385,5 +385,66 @@ describe('rename library', () => {
       expect(errors.length).toBeGreaterThan(0)
       expect(errors[0]).toContain('Error moving raw file')
     })
+
+    test('handles file collisions with different case extensions', async () => {
+      // Test that files are moved with lowercased extensions
+      const testFiles = ['IMG_1234.HEIC', 'IMG_5678.MP4']
+      for (const file of testFiles) {
+        await writeFile(path.join(originalsDir, file), `content-${file}`)
+      }
+
+      const errors: string[] = []
+      
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: testFiles,
+        errors,
+        formatErrorMessage,
+      })
+
+      const rawsDir = path.join(testDir, 'raws')
+      const videosDir = path.join(testDir, 'videos')
+
+      // Files should be moved with lowercased extensions (basename preserved)
+      const rawFiles = await readdir(rawsDir)
+      const videoFiles = await readdir(videosDir)
+
+      expect(rawFiles).toEqual(['IMG_1234.heic'])
+      expect(videoFiles).toEqual(['IMG_5678.mp4'])
+      expect(await readdir(originalsDir)).toEqual([])
+      expect(errors).toHaveLength(0)
+    })
+
+    test('collision detection prevents duplicate destination files', async () => {
+      // Test the collision detection logic by simulating the scenario
+      // where filesOnDisk contains both uppercase and lowercase versions
+      const testFiles = ['photo.HEIC', 'photo.heic', 'video.MP4', 'video.mp4']
+      
+      // Only create files that can actually exist on case-insensitive filesystem
+      await writeFile(path.join(originalsDir, 'photo.HEIC'), 'content-photo')
+      await writeFile(path.join(originalsDir, 'video.MP4'), 'content-video')
+      
+      const errors: string[] = []
+      
+      // Pass all files to moveRaws as if they were discovered
+      // This simulates a case-sensitive filesystem scenario
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: testFiles,
+        errors,
+        formatErrorMessage,
+      })
+
+      const rawsDir = path.join(testDir, 'raws')
+      const videosDir = path.join(testDir, 'videos')
+
+      // Only one of each should be processed (first wins)
+      const rawFiles = await readdir(rawsDir)
+      const videoFiles = await readdir(videosDir)
+
+      expect(rawFiles).toHaveLength(1)
+      expect(videoFiles).toHaveLength(1)
+      expect(errors).toHaveLength(0)
+    })
   })
 })

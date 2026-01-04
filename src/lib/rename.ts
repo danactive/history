@@ -144,15 +144,26 @@ async function moveRaws(
     ].map(ext => `.${ext.toLowerCase()}`),
   )
 
+  // Track destination filenames to detect collisions
+  const seenRaws = new Set<string>()
+  const seenVideos = new Set<string>()
+
   for (const file of filesOnDisk) {
     const ext = path.extname(file).toLowerCase()
     if (rawExtensions.has(ext)) {
       const sourceFile = path.join(originalPath, file)
       const baseName = path.parse(file).name
-      const destinationFile = path.join(rawsPath, `${baseName}${ext}`)
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(rawsPath, destinationFileName)
+
+      if (seenRaws.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in raws`)
+        continue
+      }
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
+        seenRaws.add(destinationFileName)
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving raw file: ${file}`))
@@ -165,10 +176,17 @@ async function moveRaws(
     ) {
       const sourceFile = path.join(originalPath, file)
       const baseName = path.parse(file).name
-      const destinationFile = path.join(videosPath, `${baseName}${ext}`)
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(videosPath, destinationFileName)
+
+      if (seenVideos.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in videos`)
+        continue
+      }
 
       try {
         await fs.rename(sourceFile, destinationFile) // Move file
+        seenVideos.add(destinationFileName)
         console.log(`Moved: ${file} → videos`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving video file: ${file}`))

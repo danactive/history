@@ -175,7 +175,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
 
   // Track previous search params value to avoid circular dependency
   const prevSearchParamsValue = useRef<string>(initialKeyword)
-  
+
   useEffect(() => {
     const value = searchParams?.get('keyword') ?? ''
     if (value !== prevSearchParamsValue.current) {
