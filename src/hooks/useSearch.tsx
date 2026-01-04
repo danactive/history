@@ -32,6 +32,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
 
   const [keyword, setKeyword] = useState<string>(searchParams?.get('keyword') ?? '')
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(null)
+  const [inputValue, setInputValue] = useState<string>('')
   const [filteredItems, setFilteredItems] = useState<ItemType[]>(items)
 
   // Count of currently visible thumbnails (consumer updates this)
@@ -78,6 +79,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const handleClear = () => {
     setKeyword('')
     setSelectedOption(null)
+    setInputValue('')
     setMemoryIndex?.(0)
     router.replace(pathname)
   }
@@ -96,6 +98,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
           options={indexedKeywords}
           onChange={setSelectedOption}
           value={selectedOption}
+          inputValue={inputValue}
+          onInputChange={setInputValue}
         />
         <Button
           type="submit"
@@ -124,6 +128,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     if (value !== keyword) {
       setKeyword(value)
       setSelectedOption(value ? { label: value, value } : null)
+      setInputValue(value)
     }
   }, [searchParams, keyword])
 

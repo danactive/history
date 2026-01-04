@@ -13,12 +13,16 @@ export default function ComboBox(
     options: propOptions,
     onChange,
     value: valueText,
+    inputValue,
+    onInputChange,
   }:
   {
     className: string,
     options: IndexedKeywords[],
     onChange: ({ label, value }: { label: string; value: string; }) => void,
     value: IndexedKeywords | null,
+    inputValue?: string,
+    onInputChange?: (value: string) => void,
   },
 ) {
   return (
@@ -26,6 +30,10 @@ export default function ComboBox(
       <Autocomplete
         className={className}
         value={valueText ?? undefined}
+        inputValue={inputValue}
+        onInputChange={(_event, newInputValue) => {
+          onInputChange?.(newInputValue)
+        }}
         disableClearable
         onChange={(_event: any, newValue: any): void => {
           if (typeof newValue === 'string') { // free text
