@@ -163,6 +163,73 @@ describe('rename library', () => {
       expect(result.filenames.length).toBe(2)
       expect(result.filenames.some(f => f.includes('NONEXISTENT'))).toBe(false)
     })
+
+    test('lowercases uppercase extensions', async () => {
+      const fixtureFolder = '/test/fixtures/renameable-uppercase'
+      const originals = ['photo.JPG', 'video.MP4', 'doc.PDF']
+      
+      const result = await renamePaths({
+        sourceFolder: fixtureFolder, filenames: originals, prefix: 'renamed', dryRun: true, renameAssociated: false,
+      })
+      
+      expect(result.renamed).toBe(false)
+      expect(result.filenames).toHaveLength(3)
+      expect(result.filenames[0]).toMatch(/^renamed-\d+\.jpg$/)
+      expect(result.filenames[1]).toMatch(/^renamed-\d+\.mp4$/)
+      expect(result.filenames[2]).toMatch(/^renamed-\d+\.pdf$/)
+      expect(result.filenames.every(f => f === f.toLowerCase())).toBe(true)
+    })
+
+    test('lowercases mixed case extensions', async () => {
+      const fixtureFolder = '/test/fixtures/renameable-mixedcase'
+      const originals = ['image.JpG', 'script.Js', 'data.CsV']
+      
+      const result = await renamePaths({
+        sourceFolder: fixtureFolder, filenames: originals, prefix: 'renamed', dryRun: true, renameAssociated: false,
+      })
+      
+      expect(result.renamed).toBe(false)
+      expect(result.filenames).toHaveLength(3)
+      expect(result.filenames[0]).toMatch(/^renamed-\d+\.jpg$/)
+      expect(result.filenames[1]).toMatch(/^renamed-\d+\.js$/)
+      expect(result.filenames[2]).toMatch(/^renamed-\d+\.csv$/)
+      expect(result.filenames.every(f => f === f.toLowerCase())).toBe(true)
+    })
+
+    test('handles multiple extensions with same base name', async () => {
+      const fixtureFolder = '/test/fixtures/renameable-multiext'
+      const originals = ['photo.NEF', 'photo.xmp', 'photo.JPG']
+      
+      const result = await renamePaths({
+        sourceFolder: fixtureFolder, filenames: originals, prefix: 'renamed', dryRun: true, renameAssociated: false,
+      })
+      
+      expect(result.renamed).toBe(false)
+      expect(result.filenames.length).toBe(3)
+      // All should have the same base name since they come from the same photo
+      const basenames = result.filenames.map(f => f.replace(/\..*$/, ''))
+      expect(new Set(basenames).size).toBe(1) // All have same basename
+      expect(result.filenames.some(f => f.endsWith('.nef'))).toBe(true)
+      expect(result.filenames.some(f => f.endsWith('.xmp'))).toBe(true)
+      expect(result.filenames.some(f => f.endsWith('.jpg'))).toBe(true)
+    })
+
+    test('prevents collision when uppercase extension would conflict', async () => {
+      const fixtureFolder = '/test/fixtures/renameable-collision'
+      // On case-insensitive filesystems, photo.JPG is the only file
+      // But we simulate having both photo.JPG and photo.jpg in the filenames array
+      const originals = ['photo.JPG', 'photo.jpg']
+      
+      const result = await renamePaths({
+        sourceFolder: fixtureFolder, filenames: originals, prefix: 'renamed', dryRun: true, renameAssociated: true, // Use true to test both filenames
+      })
+
+      expect(result.renamed).toBe(false)
+      // Should only output one file (collision detected, second skipped)
+      expect(result.filenames.length).toBe(1)
+      expect(result.filenames[0]).toMatch(/^renamed-\d+\.jpg$/)
+      expect(result.filenames[0]).toBe(result.filenames[0].toLowerCase())
+    })
   })
 
   describe('renamePaths - actual filesystem', () => {
