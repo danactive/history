@@ -12,6 +12,7 @@ type ResponseBody = {
   renamed: boolean;
   filenames: string[];
   xml: string;
+  skipped?: string[];
 }
 
 type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
@@ -64,6 +65,7 @@ async function renamePaths({
   const seenOutput = new Set<string>()
   const renameOps: { from: string; to: string }[] = []
   const outputFilenames: string[] = []
+  const skippedFiles: string[] = []
 
   // For each base, find all files on disk sharing that base, rename all
   for (const base of orderedBases) {
@@ -90,13 +92,19 @@ async function renamePaths({
       } else if (match !== renamed) {
         // Collision detected: multiple files would rename to the same lowercase name
         console.warn(`Skipping ${match}: would collide with existing ${renamed}`)
+        skippedFiles.push(match)
       }
     }
   }
 
   if (renameOps.length === 0) {
     // Nothing to rename
-    return { filenames: [], xml: '', renamed: false }
+    return {
+      filenames: [],
+      xml: '',
+      renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
+    }
   }
 
   if (dryRun) {
@@ -105,6 +113,7 @@ async function renamePaths({
       filenames: outputFilenames,
       xml: generated.xml,
       renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
     }
   }
 
@@ -119,6 +128,7 @@ async function renamePaths({
     filenames: outputFilenames,
     xml: generated.xml,
     renamed: true,
+    ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
   }
 }
 
