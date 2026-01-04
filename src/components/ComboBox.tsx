@@ -25,7 +25,7 @@ export default function ComboBox(
     <FormControl id="free-solo-with-text-demo">
       <Autocomplete
         className={className}
-        value={valueText}
+        value={valueText ?? undefined}
         disableClearable
         onChange={(_event: any, newValue: any): void => {
           if (typeof newValue === 'string') { // free text
