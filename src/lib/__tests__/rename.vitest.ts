@@ -185,6 +185,58 @@ describe('rename library', () => {
       expect(result.filenames.some(f => f.includes('NONEXISTENT'))).toBe(false)
     })
 
+    test('renames with associated HEIC/JPG pairs using date prefix', async () => {
+      const fixtureFolder = path.join(process.cwd(), 'public/test/fixtures/renameable-heic-pairs')
+      const originals = [
+        '2024-12-07 15.56.24.jpg',
+        '2024-12-07 16.05.01.jpg',
+        '2024-12-07 16.05.07.jpg',
+        '2024-12-07 17.28.12.jpg',
+        '2024-12-07 18.48.47.jpg',
+        '2024-12-07 18.55.32.jpg',
+      ]
+      const expected = [
+        '2025-06-13-23.jpg',
+        '2025-06-13-37.heic',
+        '2025-06-13-37.jpg',
+        '2025-06-13-50.heic',
+        '2025-06-13-50.jpg',
+        '2025-06-13-64.jpg',
+        '2025-06-13-77.jpg',
+        '2025-06-13-90.heic',
+        '2025-06-13-90.jpg',
+      ]
+      const prefix = '2025-06-13'
+
+      const result = await renamePaths({
+        sourceFolder: fixtureFolder,
+        filenames: originals,
+        prefix,
+        dryRun: true,
+        renameAssociated: true,
+      })
+
+      expect(result.renamed).toBe(false)
+      expect(result.filenames).toStrictEqual(expected)
+      expect(result.xml).toBe(
+        '<item id="061300"><filename>2025-06-13-23.jpg</filename></item>' +
+        '<item id="061301"><filename>2025-06-13-37.jpg</filename></item>' +
+        '<item id="061302"><filename>2025-06-13-50.jpg</filename></item>' +
+        '<item id="061303"><filename>2025-06-13-64.jpg</filename></item>' +
+        '<item id="061304"><filename>2025-06-13-77.jpg</filename></item>' +
+        '<item id="061305"><filename>2025-06-13-90.jpg</filename></item>',
+      )
+
+      // Verify that HEIC files are properly associated
+      const heicFiles = result.filenames.filter(f => f.endsWith('.heic'))
+      expect(heicFiles.length).toBe(3)
+      // Each HEIC file should have a corresponding JPG with the same prefix
+      heicFiles.forEach(heic => {
+        const jpg = heic.replace('.heic', '.jpg')
+        expect(result.filenames).toContain(jpg)
+      })
+    })
+
     test('lowercases uppercase extensions', async () => {
       const fixtureFolder = '/test/fixtures/renameable-uppercase'
       const originals = ['photo.JPG', 'video.MP4', 'doc.PDF']

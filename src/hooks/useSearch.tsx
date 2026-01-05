@@ -60,6 +60,9 @@ export default function useSearch<ItemType extends ServerSideItem>({
     const normalizedKeyword = normalize(kword)
 
     // Handle parentheses by evaluating OR expressions first, then AND
+    // NOTE: Currently supports single-level parentheses only.
+    // Nested expressions like ((a || b) && c) or (a && (b || c)) are not fully supported.
+    // The outer parentheses will be matched, but inner nested logic won't be recursively evaluated.
     const evaluateExpression = (expr: string): boolean => {
       // If there's no AND operator, evaluate as OR expression
       if (!expr.includes(AND_OPERATOR)) {
@@ -99,6 +102,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
         const parenMatch = part.match(/^\((.*)\)$/)
         if (parenMatch) {
           // Evaluate the OR expression inside parentheses
+          // TODO: This only handles simple OR expressions, not nested AND/OR combinations
+          // For full support, recursively call evaluateExpression(parenMatch[1])
           const innerExpr = parenMatch[1]
           return innerExpr
             .split(OR_OPERATOR)
