@@ -1,4 +1,5 @@
-import * as fs from './fs' // 👈 local wrapper, not 'node:fs/promises'
+import { access, mkdir, readdir, rename } from 'node:fs/promises'
+import { constants } from 'node:fs'
 
 import path from 'node:path'
 
@@ -40,7 +41,7 @@ async function renamePaths({
   renameAssociated = false,
 }: ReturnType<typeof validateRequestBody>): Promise<ResponseBody> {
   const fullPath = await checkPathExists(sourceFolder)
-  const filesOnDisk = await fs.readdir(fullPath)
+  const filesOnDisk = await readdir(fullPath)
 
   // Filter filenames if renameAssociated is false; else take all input filenames
   const filtered = renameAssociated ? filenames : filenames.filter((f) => filesOnDisk.includes(f))
@@ -120,7 +121,7 @@ async function renamePaths({
   // Actually rename the files
   await Promise.all(
     renameOps.map(({ from, to }) =>
-      from === to ? Promise.resolve() : fs.rename(from, to),
+      from === to ? Promise.resolve() : rename(from, to),
     ),
   )
 
@@ -138,8 +139,8 @@ async function moveRaws(
 ) {
   const rawsPath = path.join(path.dirname(originalPath), 'raws')
   const videosPath = path.join(path.dirname(originalPath), 'videos')
-  await fs.mkdir(rawsPath, { recursive: true })
-  await fs.mkdir(videosPath, { recursive: true })
+  await mkdir(rawsPath, { recursive: true })
+  await mkdir(videosPath, { recursive: true })
 
   // Collect all raw extensions from config (lowercase, with dot)
   const rawExtensions = new Set(
@@ -166,13 +167,23 @@ async function moveRaws(
       const destinationFileName = `${baseName}${ext}`
       const destinationFile = path.join(rawsPath, destinationFileName)
 
+      // Check for collision with files already processed in this batch
       if (seenRaws.has(destinationFileName)) {
-        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in raws`)
+        console.warn(`Skipping ${file}: would collide with ${destinationFileName} already processed in this batch`)
         continue
       }
 
+      // Check if destination file already exists from previous operations
       try {
-        await fs.rename(sourceFile, destinationFile) // Move file
+        await access(destinationFile, constants.F_OK)
+        console.warn(`Skipping ${file}: destination ${destinationFileName} already exists in raws`)
+        continue
+      } catch {
+        // File doesn't exist, safe to proceed
+      }
+
+      try {
+        await rename(sourceFile, destinationFile) // Move file
         seenRaws.add(destinationFileName)
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
@@ -189,13 +200,23 @@ async function moveRaws(
       const destinationFileName = `${baseName}${ext}`
       const destinationFile = path.join(videosPath, destinationFileName)
 
+      // Check for collision with files already processed in this batch
       if (seenVideos.has(destinationFileName)) {
-        console.warn(`Skipping ${file}: would collide with existing ${destinationFileName} in videos`)
+        console.warn(`Skipping ${file}: would collide with ${destinationFileName} already processed in this batch`)
         continue
       }
 
+      // Check if destination file already exists from previous operations
       try {
-        await fs.rename(sourceFile, destinationFile) // Move file
+        await access(destinationFile, constants.F_OK)
+        console.warn(`Skipping ${file}: destination ${destinationFileName} already exists in videos`)
+        continue
+      } catch {
+        // File doesn't exist, safe to proceed
+      }
+
+      try {
+        await rename(sourceFile, destinationFile) // Move file
         seenVideos.add(destinationFileName)
         console.log(`Moved: ${file} → videos`)
       } catch (err) {

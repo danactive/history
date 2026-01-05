@@ -153,16 +153,16 @@ describe('rename library', () => {
     })
 
     test('returns skipped files when collision occurs', async () => {
-      // Test with bee.BAT and bee.Bat - both lowercase to bee.bat but they're treated as  
+      // Test with bee.BAT and bee.Bat - both lowercase to bee.bat but they're treated as
       // the same base "bee", so if filesOnDisk somehow had both (on case-sensitive FS),
       // one would be skipped. On macOS, they're the same file, so no collision.
       // filesOnDisk has bee.bat, bee.bin, bee.bmp (3 files with base "bee")
       const originals = ['bee.BAT', 'bee.bat']  // Both map to same base
-      
+
       const result = await renamePaths({
         sourceFolder, filenames: originals, prefix: 'changed', dryRun: true, renameAssociated: false,
       })
-      
+
       // Extracts unique base "bee", finds all 3 files on disk (bee.bat, bee.bin, bee.bmp)
       // All get renamed with lowercased extensions
       expect(result.filenames.length).toBe(3)
@@ -243,7 +243,7 @@ describe('rename library', () => {
       // But we can simulate case-sensitive scenario by passing both names with renameAssociated=true
       // However, filesOnDisk will still only show what exists, so matches will only find one file
       // The collision logic only triggers when MULTIPLE files from filesOnDisk map to same output
-      
+
       // Since we can't create the collision scenario on case-insensitive filesystem,
       // let's test that skipped is undefined when there's no collision
       const originals = ['photo.JPG']
@@ -577,6 +577,88 @@ describe('rename library', () => {
 
       expect(await readdir(originalsDir)).toEqual([])
       expect(errors).toHaveLength(0)
+    })
+
+    test('prevents overwriting existing files in destination directories', async () => {
+      // First, move a file to raws
+      const firstFile = ['photo1.heic']
+      await writeFile(path.join(originalsDir, 'photo1.heic'), 'first-content')
+
+      const errors1: string[] = []
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: firstFile,
+        errors: errors1,
+        formatErrorMessage,
+      })
+
+      const rawsDir = path.join(testDir, 'raws')
+      let rawFiles = await readdir(rawsDir)
+      expect(rawFiles).toContain('photo1.heic')
+      expect(errors1).toHaveLength(0)
+
+      // Now try to move another photo1.heic (uppercase extension)
+      // It should be skipped because photo1.heic already exists in raws
+      await writeFile(path.join(originalsDir, 'photo1.HEIC'), 'second-content')
+
+      const errors2: string[] = []
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: ['photo1.HEIC'],
+        errors: errors2,
+        formatErrorMessage,
+      })
+
+      // File should still exist in originals because it was skipped
+      const remainingFiles = await readdir(originalsDir)
+      expect(remainingFiles).toContain('photo1.HEIC')
+
+      // Raws should still only have one file
+      rawFiles = await readdir(rawsDir)
+      expect(rawFiles).toHaveLength(1)
+
+      // No errors should be generated (file was skipped, not failed)
+      expect(errors2).toHaveLength(0)
+    })
+
+    test('prevents overwriting existing videos in destination directories', async () => {
+      // First, move a video to videos folder
+      const firstFile = ['video1.mp4']
+      await writeFile(path.join(originalsDir, 'video1.mp4'), 'first-video')
+
+      const errors1: string[] = []
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: firstFile,
+        errors: errors1,
+        formatErrorMessage,
+      })
+
+      const videosDir = path.join(testDir, 'videos')
+      let videoFiles = await readdir(videosDir)
+      expect(videoFiles).toContain('video1.mp4')
+      expect(errors1).toHaveLength(0)
+
+      // Try to move another video1.mp4 (uppercase extension)
+      await writeFile(path.join(originalsDir, 'video1.MP4'), 'second-video')
+
+      const errors2: string[] = []
+      await moveRaws({
+        originalPath: originalsDir,
+        filesOnDisk: ['video1.MP4'],
+        errors: errors2,
+        formatErrorMessage,
+      })
+
+      // File should still exist in originals
+      const remainingFiles = await readdir(originalsDir)
+      expect(remainingFiles).toContain('video1.MP4')
+
+      // Videos should still only have one file
+      videoFiles = await readdir(videosDir)
+      expect(videoFiles).toHaveLength(1)
+
+      expect(errors2).toHaveLength(0)
     })
   })
 })
