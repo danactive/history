@@ -91,10 +91,13 @@ async function renamePaths({
           to: path.join(fullPath, renamed),
         })
       } else if (match !== renamed) {
-        // Collision detected: multiple files would rename to the same lowercase name
+        // Collision: another file already claimed this renamed filename
+        // Skip only if this isn't a no-op (match !== renamed means file needs renaming)
+        // If match === renamed, the file is already correctly named, so silently skip
         console.warn(`Skipping ${match}: would collide with existing ${renamed}`)
         skippedFiles.push(match)
       }
+      // else: match === renamed (no-op), silently skip without warning
     }
   }
 

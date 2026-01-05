@@ -55,14 +55,30 @@ export default function useSearch<ItemType extends ServerSideItem>({
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
 
+  /**
+   * Matches a search keyword against a corpus string using boolean operators.
+   * Supports AND (&&) and OR (||) operators with single-level parentheses.
+   *
+   * Limitation: Nested parentheses are NOT supported. Expressions like `((a || b) && c)`
+   * or `(a && (b || c))` will not be evaluated correctly. Only simple single-level
+   * parentheses work: `(a || b) && c` or `a && (b || c)`.
+   *
+   * @param {string} corpus - The text to search within
+   * @param {string} kword - The search keyword with optional boolean operators (&&, ||) and parentheses
+   * @returns {boolean} True if the keyword matches the corpus
+   *
+   * @example
+   * ```ts
+   * matchCorpus('apple banana', 'apple && banana') // true
+   * matchCorpus('orange banana', 'apple || orange') // true
+   * matchCorpus('apple banana', '(apple || orange) && banana') // true
+   * matchCorpus('text', '((a || b) && c)') // NOT SUPPORTED - will not work correctly
+   * ```
+   */
   const matchCorpus = (corpus: string, kword: string): boolean => {
     const normalizedCorpus = normalize(corpus)
     const normalizedKeyword = normalize(kword)
 
-    // Handle parentheses by evaluating OR expressions first, then AND
-    // NOTE: Currently supports single-level parentheses only.
-    // Nested expressions like ((a || b) && c) or (a && (b || c)) are not fully supported.
-    // The outer parentheses will be matched, but inner nested logic won't be recursively evaluated.
     const evaluateExpression = (expr: string): boolean => {
       // If there's no AND operator, evaluate as OR expression
       if (!expr.includes(AND_OPERATOR)) {
