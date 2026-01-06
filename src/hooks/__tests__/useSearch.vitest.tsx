@@ -137,6 +137,71 @@ describe('Router ready', () => {
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
   })
+  it('Automatically updates visible count when URL keyword changes', () => {
+    // Start with "apple banana" keyword
+    const initialKeyword = 'apple banana'
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? initialKeyword : null),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/search')
+
+    const items = [
+      { corpus: 'apple banana smoothie' },
+      { corpus: 'apple pie with cream' },
+      { corpus: 'orange juice and grapes' },
+      { corpus: 'cherry tart dessert' },
+    ]
+    
+    const { result, rerender } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+
+    // Initial state: only 1 item matches "apple banana"
+    expect(result.current.filtered).toHaveLength(1)
+    expect(result.current.keyword).toBe(initialKeyword)
+
+    // Check that searchBox contains the correct count
+    const { container } = render(<div>{result.current.searchBox}</div>)
+    expect(container.textContent).toMatch(/Search results 1 of 4/)
+    expect(container.textContent).toMatch(/for "apple banana"/)
+
+    // Simulate URL change to "orange"
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? 'orange' : null),
+    } as any)
+
+    // Trigger re-render
+    rerender()
+
+    // Should now filter to 1 item matching "orange"
+    expect(result.current.filtered).toHaveLength(1)
+    expect(result.current.filtered[0].corpus).toBe('orange juice and grapes')
+    expect(result.current.keyword).toBe('orange')
+
+    // Render again to check the updated searchBox
+    const { container: updatedContainer } = render(<div>{result.current.searchBox}</div>)
+    expect(updatedContainer.textContent).toMatch(/Search results 1 of 4/)
+    expect(updatedContainer.textContent).toMatch(/for "orange"/)
+  })
+  it('Space-separated words are treated as implicit AND', () => {
+    const keyword = 'Moose Jaw'
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => (key === 'keyword' ? keyword : null),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/search')
+
+    const items = [
+      { corpus: 'Moose Jaw, Saskatchewan' },
+      { corpus: 'Moose Lake in Wisconsin' },
+      { corpus: 'Jaw-dropping scenery' },
+      { corpus: 'Elk and deer in the mountains' },
+    ]
+    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+
+    // Should match only items containing BOTH "Moose" AND "Jaw"
+    expect(result.current.filtered).toStrictEqual([items[0]])
+    expect(result.current.keyword).toBe(keyword)
+  })
 
   it('Complex query with parentheses and caret', () => {
     const keyword = 'Apple && Banana && (best^ || highlight^)'
