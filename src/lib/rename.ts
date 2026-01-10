@@ -1,4 +1,5 @@
-import * as fs from './fs' // 👈 local wrapper, not 'node:fs/promises'
+import { access, mkdir, readdir, rename } from 'node:fs/promises'
+import { constants } from 'node:fs'
 
 import path from 'node:path'
 
@@ -12,6 +13,7 @@ type ResponseBody = {
   renamed: boolean;
   filenames: string[];
   xml: string;
+  skipped?: string[];
 }
 
 type ErrorOptionalMessage = ResponseBody & { error?: { message: string } }
@@ -39,7 +41,7 @@ async function renamePaths({
   renameAssociated = false,
 }: ReturnType<typeof validateRequestBody>): Promise<ResponseBody> {
   const fullPath = await checkPathExists(sourceFolder)
-  const filesOnDisk = await fs.readdir(fullPath)
+  const filesOnDisk = await readdir(fullPath)
 
   // Filter filenames if renameAssociated is false; else take all input filenames
   const filtered = renameAssociated ? filenames : filenames.filter((f) => filesOnDisk.includes(f))
@@ -64,6 +66,7 @@ async function renamePaths({
   const seenOutput = new Set<string>()
   const renameOps: { from: string; to: string }[] = []
   const outputFilenames: string[] = []
+  const skippedFiles: string[] = []
 
   // For each base, find all files on disk sharing that base, rename all
   for (const base of orderedBases) {
@@ -77,7 +80,7 @@ async function renamePaths({
     const matches = filesOnDisk.filter((f) => path.parse(f).name === base)
 
     for (const match of matches) {
-      const ext = path.parse(match).ext
+      const ext = path.parse(match).ext.toLowerCase()
       const renamed = `${newBase}${ext}`
 
       if (!seenOutput.has(renamed)) {
@@ -87,13 +90,25 @@ async function renamePaths({
           from: path.join(fullPath, match),
           to: path.join(fullPath, renamed),
         })
+      } else if (match !== renamed) {
+        // Collision: another file already claimed this renamed filename
+        // Skip only if this isn't a no-op (match !== renamed means file needs renaming)
+        // If match === renamed, the file is already correctly named, so silently skip
+        console.warn(`Skipping ${match}: would collide with existing ${renamed}`)
+        skippedFiles.push(match)
       }
+      // else: match === renamed (no-op), silently skip without warning
     }
   }
 
   if (renameOps.length === 0) {
     // Nothing to rename
-    return { filenames: [], xml: '', renamed: false }
+    return {
+      filenames: [],
+      xml: '',
+      renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
+    }
   }
 
   if (dryRun) {
@@ -102,13 +117,14 @@ async function renamePaths({
       filenames: outputFilenames,
       xml: generated.xml,
       renamed: false,
+      ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
     }
   }
 
   // Actually rename the files
   await Promise.all(
     renameOps.map(({ from, to }) =>
-      from === to ? Promise.resolve() : fs.rename(from, to),
+      from === to ? Promise.resolve() : rename(from, to),
     ),
   )
 
@@ -116,6 +132,7 @@ async function renamePaths({
     filenames: outputFilenames,
     xml: generated.xml,
     renamed: true,
+    ...(skippedFiles.length > 0 ? { skipped: skippedFiles } : {}),
   }
 }
 
@@ -125,8 +142,8 @@ async function moveRaws(
 ) {
   const rawsPath = path.join(path.dirname(originalPath), 'raws')
   const videosPath = path.join(path.dirname(originalPath), 'videos')
-  await fs.mkdir(rawsPath, { recursive: true })
-  await fs.mkdir(videosPath, { recursive: true })
+  await mkdir(rawsPath, { recursive: true })
+  await mkdir(videosPath, { recursive: true })
 
   // Collect all raw extensions from config (lowercase, with dot)
   const rawExtensions = new Set(
@@ -137,18 +154,40 @@ async function moveRaws(
   )
   const videoExtensions = new Set(
     [
-      ...['mp4'],
+      ...(config.supportedFileTypes?.video ?? []),
     ].map(ext => `.${ext.toLowerCase()}`),
   )
+
+  // Track destination filenames to detect collisions
+  const seenRaws = new Set<string>()
+  const seenVideos = new Set<string>()
 
   for (const file of filesOnDisk) {
     const ext = path.extname(file).toLowerCase()
     if (rawExtensions.has(ext)) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(rawsPath, file)
+      const baseName = path.parse(file).name
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(rawsPath, destinationFileName)
+
+      // Check for collision with files already processed in this batch
+      if (seenRaws.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with ${destinationFileName} already processed in this batch`)
+        continue
+      }
+
+      // Check if destination file already exists from previous operations
+      try {
+        await access(destinationFile, constants.F_OK)
+        console.warn(`Skipping ${file}: destination ${destinationFileName} already exists in raws`)
+        continue
+      } catch {
+        // File doesn't exist, safe to proceed
+      }
 
       try {
-        await fs.rename(sourceFile, destinationFile) // Move file
+        await rename(sourceFile, destinationFile) // Move file
+        seenRaws.add(destinationFileName)
         console.log(`Moved: ${file} → raws`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving raw file: ${file}`))
@@ -160,10 +199,28 @@ async function moveRaws(
       !file.toLowerCase().endsWith('.orig.mp4')
     ) {
       const sourceFile = path.join(originalPath, file)
-      const destinationFile = path.join(videosPath, file)
+      const baseName = path.parse(file).name
+      const destinationFileName = `${baseName}${ext}`
+      const destinationFile = path.join(videosPath, destinationFileName)
+
+      // Check for collision with files already processed in this batch
+      if (seenVideos.has(destinationFileName)) {
+        console.warn(`Skipping ${file}: would collide with ${destinationFileName} already processed in this batch`)
+        continue
+      }
+
+      // Check if destination file already exists from previous operations
+      try {
+        await access(destinationFile, constants.F_OK)
+        console.warn(`Skipping ${file}: destination ${destinationFileName} already exists in videos`)
+        continue
+      } catch {
+        // File doesn't exist, safe to proceed
+      }
 
       try {
-        await fs.rename(sourceFile, destinationFile) // Move file
+        await rename(sourceFile, destinationFile) // Move file
+        seenVideos.add(destinationFileName)
         console.log(`Moved: ${file} → videos`)
       } catch (err) {
         errors.push(formatErrorMessage(err, `Error moving video file: ${file}`))
