@@ -9,7 +9,9 @@ export default function AdminAlbumThumbs(
   { album, setItem }:
   { album: AlbumResponseBody['album'] | undefined, setItem: Dispatch<SetStateAction<ItemState>> },
 ) {
-  if (!album) return <div>Loading...</div>
+  if (!album || !album.items || album.items.length === 0) {
+    return <div>No items found</div>
+  }
 
   return (
     <>
