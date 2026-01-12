@@ -7,16 +7,16 @@ import Textarea from '@mui/joy/Textarea'
 import { useEffect, useState } from 'react'
 import xml2js from 'xml2js'
 
-import { type AlbumResponseBody } from '../../lib/album'
-import type { Item } from '../../types/common'
-import { type ItemState } from './AdminAlbumClient'
-import Xml from './Xml'
+import type { Gallery, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import { type XmlItemState } from './AdminAlbumClient'
+
+const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
 export default function Fields(
-  { albumEntity, item, children }:
-  { albumEntity: AlbumResponseBody['album'] | undefined, item: ItemState, children: React.ReactElement },
+  { xmlAlbum, gallery, item, children }:
+  { xmlAlbum: RawXmlAlbum | undefined, gallery: Gallery, item: XmlItemState, children: React.ReactElement },
 ) {
-  const [editedItem, setEditedItem] = useState<Item | null>(item)
+  const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
   const [xmlOutput, setXmlOutput] = useState<string>('')
 
   useEffect(() => {
@@ -24,95 +24,22 @@ export default function Fields(
     setXmlOutput('')
   }, [item])
 
-  const handleFieldChange = (field: keyof Item, value: string) => {
-    if (editedItem) {
-      setEditedItem({ ...editedItem, [field]: value })
-    }
-  }
-
   const generateXml = () => {
-    if (!editedItem || !albumEntity) return
+    if (!editedItem || !xmlAlbum) return
 
-    // Create a copy of the album with the updated item
-    const updatedAlbum = { ...albumEntity }
-    const items = [...updatedAlbum.items]
-    const itemIndex = items.findIndex(i => i?.filename === editedItem.filename)
+    // Get all items from XML
+    const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
 
+    // Update the edited item in the list
+    const itemIndex = items.findIndex(i => i?.$.id === editedItem.$.id)
     if (itemIndex !== -1) {
       items[itemIndex] = editedItem
     }
 
-    // Convert to XML - need to transform back to XML format with snake_case fields
-    const xmlItems = items.map(item => {
-      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
-      const isVideo = filename.toLowerCase().endsWith('.mp4') ||
-                      filename.toLowerCase().endsWith('.mov') ||
-                      filename.toLowerCase().endsWith('.avi')
-
-      const xmlItem: any = {
-        $: { id: item.id },
-      }
-
-      if (isVideo) xmlItem.type = 'video'
-
-      xmlItem.filename = item.filename
-      xmlItem.photo_city = item.city
-
-      if (item.location) xmlItem.photo_loc = item.location
-
-      // Strip "Video: " prefix from caption if it's a video
-      let caption = item.caption
-      if (isVideo && caption.startsWith('Video: ')) {
-        caption = caption.substring(7)
-      }
-      xmlItem.thumb_caption = caption
-
-      if (item.description) xmlItem.photo_desc = item.description
-      if (item.search) xmlItem.search = item.search
-
-      if (item.coordinates) {
-        xmlItem.geo = {
-          lat: item.coordinates[1].toString(),
-          lon: item.coordinates[0].toString(),
-        }
-        if (item.coordinateAccuracy) {
-          xmlItem.geo.accuracy = item.coordinateAccuracy.toString()
-        }
-      }
-
-      if (item.reference && item.reference[0] && item.reference[1]) {
-        // item.reference is [url, name] - need to extract source type from URL
-        const url = item.reference[0]
-        const name = item.reference[1]
-
-        let source = 'wikipedia' // default
-        if (url.includes('facebook.com')) source = 'facebook'
-        else if (url.includes('google.com')) source = 'google'
-        else if (url.includes('instagram.com')) source = 'instagram'
-        else if (url.includes('wikipedia.org')) source = 'wikipedia'
-        else if (url.includes('youtube.com')) source = 'youtube'
-
-        xmlItem.ref = {
-          name,
-          source,
-        }
-      }
-
-      return xmlItem
-    })
-
-    // Transform meta to XML format with snake_case
-    const xmlMeta = {
-      gallery: updatedAlbum.meta.gallery,
-      album_name: updatedAlbum.meta.albumName,
-      album_version: updatedAlbum.meta.albumVersion,
-      marker_zoom: updatedAlbum.meta.geo?.zoom.toString(),
-      cluster_max_zoom: updatedAlbum.meta.clusterMaxZoom,
-    }
-
-    const xmlAlbum = {
-      meta: xmlMeta,
-      item: xmlItems.length === 1 ? xmlItems[0] : xmlItems,
+    // Build XML album structure
+    const xmlOutput = {
+      meta: xmlAlbum.album.meta,
+      item: items.length === 1 ? items[0] : items,
     }
 
     // Convert to XML
@@ -122,9 +49,11 @@ export default function Fields(
       xmldec: { version: '1.0', encoding: 'UTF-8' },
     })
 
-    const xml = builder.buildObject(xmlAlbum)
+    const xml = builder.buildObject(xmlOutput)
     setXmlOutput(xml)
   }
+
+  const filename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
 
   return (
     <>
@@ -138,64 +67,71 @@ export default function Fields(
         {children}
         <Stack direction="column" spacing={2} sx={{ flex: 1 }}>
           <Input
-            value={editedItem?.filename ?? ''}
+            value={filename}
             readOnly
             placeholder="Filename"
           />
           <Input
-            value={editedItem?.city ?? ''}
-            onChange={(e) => handleFieldChange('city', e.target.value)}
+            value={editedItem?.photo_city ?? ''}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_city: e.target.value } : null)}
             placeholder="City"
           />
           <Input
-            value={editedItem?.location ?? ''}
-            onChange={(e) => handleFieldChange('location', e.target.value)}
+            value={editedItem?.photo_loc ?? ''}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_loc: e.target.value } : null)}
             placeholder="Location"
           />
           <Input
-            value={editedItem?.caption ?? ''}
-            onChange={(e) => handleFieldChange('caption', e.target.value)}
+            value={editedItem?.thumb_caption ?? ''}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, thumb_caption: e.target.value } : null)}
             placeholder="Caption"
           />
           <Textarea
-            value={editedItem?.description ?? ''}
-            onChange={(e) => handleFieldChange('description', e.target.value)}
+            value={editedItem?.photo_desc ?? ''}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_desc: e.target.value } : null)}
             placeholder="Description"
             minRows={2}
           />
           <Input
             value={editedItem?.search ?? ''}
-            onChange={(e) => handleFieldChange('search', e.target.value)}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, search: e.target.value } : null)}
             placeholder="Search keywords"
           />
           <Stack direction="row" spacing={1}>
             <Input
-              value={editedItem?.coordinates?.[0]?.toString() ?? ''}
+              value={editedItem?.geo?.lat ?? ''}
               onChange={(e) => {
-                const lat = parseFloat(e.target.value) || null
-                const lon = editedItem?.coordinates?.[1] ?? null
-                setEditedItem(prev => prev ? { ...prev, coordinates: lat !== null && lon !== null ? [lat, lon] : null } : null)
+                const lat = e.target.value
+                setEditedItem(prev => prev ? {
+                  ...prev,
+                  geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
+                } : null)
               }}
               placeholder="Latitude"
               type="number"
               sx={{ flex: 1, minWidth: 0 }}
             />
             <Input
-              value={editedItem?.coordinates?.[1]?.toString() ?? ''}
+              value={editedItem?.geo?.lon ?? ''}
               onChange={(e) => {
-                const lon = parseFloat(e.target.value) || null
-                const lat = editedItem?.coordinates?.[0] ?? null
-                setEditedItem(prev => prev ? { ...prev, coordinates: lat !== null && lon !== null ? [lat, lon] : null } : null)
+                const lon = e.target.value
+                setEditedItem(prev => prev ? {
+                  ...prev,
+                  geo: lon || prev.geo?.lat ? { lat: prev.geo?.lat || '', lon, accuracy: prev.geo?.accuracy || '' } : undefined,
+                } : null)
               }}
               placeholder="Longitude"
               type="number"
               sx={{ flex: 1, minWidth: 0 }}
             />
             <Input
-              value={editedItem?.coordinateAccuracy?.toString() ?? ''}
+              value={editedItem?.geo?.accuracy ?? ''}
               onChange={(e) => {
-                const accuracy = parseFloat(e.target.value) || null
-                setEditedItem(prev => prev ? { ...prev, coordinateAccuracy: accuracy } : null)
+                const accuracy = e.target.value
+                setEditedItem(prev => prev ? {
+                  ...prev,
+                  geo: prev.geo ? { ...prev.geo, accuracy } : undefined,
+                } : null)
               }}
               placeholder="Accuracy"
               type="number"
@@ -204,47 +140,29 @@ export default function Fields(
           </Stack>
           <Stack direction="row" spacing={2}>
             <Select
-              value={(() => {
-                const url = editedItem?.reference?.[0] ?? ''
-                if (url.includes('facebook.com')) return 'facebook'
-                if (url.includes('google.com')) return 'google'
-                if (url.includes('instagram.com')) return 'instagram'
-                if (url.includes('youtube.com')) return 'youtube'
-                if (url.includes('wikipedia.org')) return 'wikipedia'
-                return ''
-              })()}
+              value={editedItem?.ref?.source ?? ''}
               onChange={(_, value) => {
-                if (!value) {
-                  setEditedItem(prev => prev ? { ...prev, reference: null } : null)
-                  return
-                }
-                const name = editedItem?.reference?.[1] ?? ''
-                const baseUrls: Record<string, string> = {
-                  facebook: 'https://www.facebook.com/',
-                  google: 'https://www.google.com/search?q=',
-                  instagram: 'https://www.instagram.com/',
-                  wikipedia: 'https://en.wikipedia.org/wiki/',
-                  youtube: 'https://www.youtube.com/watch?v=',
-                }
-                const url = baseUrls[value] + name
-                setEditedItem(prev => prev ? { ...prev, reference: name ? [url, name] : null } : null)
+                setEditedItem(prev => prev ? {
+                  ...prev,
+                  ref: value ? { source: value as ItemReferenceSource, name: prev.ref?.name || '' } : undefined,
+                } : null)
               }}
               placeholder="Reference Source"
               sx={{ flex: 1, minWidth: 0 }}
             >
               <Option value="">None</Option>
-              <Option value="facebook">Facebook</Option>
-              <Option value="google">Google</Option>
-              <Option value="instagram">Instagram</Option>
-              <Option value="wikipedia">Wikipedia</Option>
-              <Option value="youtube">YouTube</Option>
+              {REFERENCE_SOURCES.map(source => (
+                <Option key={source} value={source}>{source.charAt(0).toUpperCase() + source.slice(1)}</Option>
+              ))}
             </Select>
             <Input
-              value={editedItem?.reference?.[1] ?? ''}
+              value={editedItem?.ref?.name ?? ''}
               onChange={(e) => {
                 const name = e.target.value
-                const url = editedItem?.reference?.[0] ?? ''
-                setEditedItem(prev => prev ? { ...prev, reference: name || url ? [url, name] : null } : null)
+                setEditedItem(prev => prev ? {
+                  ...prev,
+                  ref: prev.ref?.source ? { source: prev.ref.source, name } : undefined,
+                } : null)
               }}
               placeholder="Reference Name"
               sx={{ flex: 1, minWidth: 0 }}
@@ -262,7 +180,6 @@ export default function Fields(
               placeholder="Generated XML will appear here"
             />
           )}
-          <Xml jsonBlob={JSON.stringify(albumEntity, null, 2)} />
         </Stack>
       </Stack>
     </>

@@ -3,10 +3,11 @@ import Stack from '@mui/joy/Stack'
 import useSWRMutation from 'swr/mutation'
 
 import type { Prediction } from '../../../app/api/admin/classify/route'
+import { photoPath } from '../../lib/paths'
 import config from '../../models/config'
+import type { Gallery, RawXmlItem } from '../../types/common'
 import Img from '../Img'
 import Link from '../Link'
-import type { ItemState } from './AdminAlbumClient'
 
 const fetcher = async (url: string, { arg }: { arg: string }) =>
   fetch(url, {
@@ -15,27 +16,27 @@ const fetcher = async (url: string, { arg }: { arg: string }) =>
     body: JSON.stringify({ path: arg }),
   }).then((res) => res.json())
 
-export default function AdminAlbumPhoto({ item }: { item: ItemState }) {
+export default function AdminAlbumPhoto({ item, gallery }: { item: RawXmlItem, gallery: Gallery }) {
   const { trigger, data, error, isMutating } = useSWRMutation(
     '/api/admin/classify',
     fetcher,
   )
 
-  if (!item?.photoPath) return <div>No photo</div>
+  const path = photoPath(item.filename, gallery)
 
   return (
     <>
       <Stack direction="column">
         <Img
-          src={item.photoPath}
-          alt={item.caption}
+          src={path}
+          alt={item.thumb_caption}
           width={config.resizeDimensions.photo.width-200}
           height={config.resizeDimensions.photo.height-200}
         />
         <Button
           onClick={(e) => {
             e.preventDefault()
-            trigger(item.photoPath)
+            trigger(path)
           }}
         >
           Classify Image

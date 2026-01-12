@@ -1,31 +1,37 @@
 import { type Dispatch, type SetStateAction } from 'react'
 
-import { AlbumResponseBody } from '../../lib/album'
+import { thumbPath } from '../../lib/paths'
+import type { Gallery, RawXmlAlbum } from '../../types/common'
 import styles from '../Album/styles.module.css'
 import ThumbImg from '../ThumbImg'
-import { ItemState } from './AdminAlbumClient'
+import { XmlItemState } from './AdminAlbumClient'
 
 export default function AdminAlbumThumbs(
-  { album, setItem }:
-  { album: AlbumResponseBody['album'] | undefined, setItem: Dispatch<SetStateAction<ItemState>> },
+  { xmlAlbum, gallery, setItem }:
+  { xmlAlbum: RawXmlAlbum, gallery: Gallery, setItem: Dispatch<SetStateAction<XmlItemState>> },
 ) {
-  if (!album || !album.items || album.items.length === 0) {
+  const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
+
+  if (items.length === 0) {
     return <div>No items found</div>
   }
 
   return (
     <>
       <ul className={styles.thumbWrapper}>
-        {album.items.map((item) => (
-          <ThumbImg
-            onClick={() => setItem(item)}
-            src={item.thumbPath}
-            caption={item.caption}
-            key={item.filename.toString()}
-            id={`select${item.id}`}
-            viewed={false}
-          />
-        ))}
+        {items.map((item) => {
+          const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+          return (
+            <ThumbImg
+              onClick={() => setItem(item)}
+              src={thumbPath(item.filename, gallery)}
+              caption={item.thumb_caption}
+              key={filename}
+              id={`select${item.$.id}`}
+              viewed={false}
+            />
+          )
+        })}
       </ul>
     </>
   )

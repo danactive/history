@@ -6,15 +6,14 @@ import Stack from '@mui/joy/Stack'
 import { useState } from 'react'
 import useSWR from 'swr'
 
-import { type AlbumResponseBody } from '../../lib/album'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
-import type { GalleryAlbum, Item } from '../../types/common'
+import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
 import Thumbs from './Thumbs'
 
-export type ItemState = Item | null
+export type XmlItemState = RawXmlItem | null
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
@@ -23,8 +22,8 @@ export default function AdminAlbumClient(
   { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, gallery: Gallery },
 ) {
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
-  const [item, setItem] = useState<ItemState>(null)
-  const { data, error } = useSWR<AlbumResponseBody>(album?.name ? `/api/galleries/${gallery}/albums/${album?.name}` : null, fetcher)
+  const [item, setItem] = useState<XmlItemState>(null)
+  const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${gallery}/${album?.name}` : null, fetcher)
 
   const handleAlbumChange = (
     event: React.SyntheticEvent | null,
@@ -38,8 +37,8 @@ export default function AdminAlbumClient(
 
   return (
     <form>
-        {item && <Fields albumEntity={data?.album} item={item}>
-          <Photo item={item} />
+        {item && <Fields xmlAlbum={data} gallery={gallery} item={item}>
+          <Photo item={item} gallery={gallery} />
         </Fields>}
         <Stack
           direction="row"
@@ -80,7 +79,7 @@ export default function AdminAlbumClient(
           </Select>
         </Stack>
         {error && <div>{JSON.stringify(error)}</div>}
-        {!error && data && data.album ? <Thumbs album={data.album} setItem={setItem} /> : <div>Select an album</div>}
+        {!error && data ? <Thumbs xmlAlbum={data} gallery={gallery} setItem={setItem} /> : <div>Select an album</div>}
       </form>
   )
 }
