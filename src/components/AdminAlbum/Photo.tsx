@@ -29,7 +29,7 @@ export default function AdminAlbumPhoto({ item, gallery }: { item: RawXmlItem, g
       <Stack direction="column">
         <Img
           src={path}
-          alt={item.thumb_caption}
+          alt={item.thumb_caption || 'Photo'}
           width={config.resizeDimensions.photo.width-200}
           height={config.resizeDimensions.photo.height-200}
         />

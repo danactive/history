@@ -3,7 +3,7 @@
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
 import { type GalleryAlbumsBody } from '../../lib/albums'
@@ -23,7 +23,49 @@ export default function AdminAlbumClient(
 ) {
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
   const [item, setItem] = useState<XmlItemState>(null)
+  const [currentIndex, setCurrentIndex] = useState<number>(-1)
   const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${gallery}/${album?.name}` : null, fetcher)
+
+  const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input/textarea
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return
+      }
+
+      let delta = 0
+
+      if (e.key === 'ArrowLeft') {
+        delta = -1
+      } else if (e.key === 'ArrowUp') {
+        delta = -4
+      } else if (e.key === 'ArrowRight') {
+        delta = 1
+      } else if (e.key === 'ArrowDown') {
+        delta = 4
+      }
+
+      if (delta !== 0 && items.length > 0) {
+        e.preventDefault()
+        const newIndex = Math.max(0, Math.min(items.length - 1, currentIndex + delta))
+        if (newIndex !== currentIndex) {
+          setCurrentIndex(newIndex)
+          setItem(items[newIndex])
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentIndex, items])
+
+  const handleItemSelect = (selectedItem: RawXmlItem, index: number) => {
+    setItem(selectedItem)
+    setCurrentIndex(index)
+  }
 
   const handleAlbumChange = (
     event: React.SyntheticEvent | null,
@@ -79,7 +121,11 @@ export default function AdminAlbumClient(
           </Select>
         </Stack>
         {error && <div>{JSON.stringify(error)}</div>}
-        {!error && data ? <Thumbs xmlAlbum={data} gallery={gallery} setItem={setItem} /> : <div>Select an album</div>}
+        {!error && data ? (
+          <Thumbs xmlAlbum={data} gallery={gallery} setItem={handleItemSelect} currentIndex={currentIndex} />
+        ) : (
+          <div>Select an album</div>
+        )}
       </form>
   )
 }

@@ -65,7 +65,7 @@ export default function Fields(
         }}
       >
         {children}
-        <Stack direction="column" spacing={2} sx={{ flex: 1 }}>
+        <Stack direction="column" spacing={2} sx={{ width: '35rem', flexShrink: 0 }}>
           <Input
             value={filename}
             readOnly

@@ -91,7 +91,7 @@ type XmlCaseItem<TCamelCase extends boolean = true> = {
   photo_date: string | null,
   photo_city: string,
   photo_loc?: string,
-  thumb_caption: string,
+  thumb_caption?: string,
   photo_desc?: string,
 })
 
