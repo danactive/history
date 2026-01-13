@@ -1,11 +1,14 @@
 'use client'
 
+import Button from '@mui/joy/Button'
+import Input from '@mui/joy/Input'
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
+import type { SearchResult } from '../../../app/api/admin/search/route'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
 import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
@@ -21,10 +24,14 @@ export default function AdminAlbumClient(
   { galleries, galleryAlbum, gallery }:
   { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, gallery: Gallery },
 ) {
+  const [currentGallery, setCurrentGallery] = useState<Gallery>(gallery)
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
   const [item, setItem] = useState<XmlItemState>(null)
   const [currentIndex, setCurrentIndex] = useState<number>(-1)
-  const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${gallery}/${album?.name}` : null, fetcher)
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
   const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
 
@@ -71,17 +78,100 @@ export default function AdminAlbumClient(
     event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
-    const selectedAlbum = galleryAlbum[gallery].albums.find(a => a.name === newValue)
+    const selectedAlbum = galleryAlbum[currentGallery].albums.find(a => a.name === newValue)
     if (selectedAlbum) {
       setAlbum(selectedAlbum)
+      setCurrentIndex(-1)
+      setItem(null)
     }
   }
 
+  const handleGalleryChange = (
+    event: React.SyntheticEvent | null,
+    newValue: string | null,
+  ) => {
+    if (newValue) {
+      setCurrentGallery(newValue as Gallery)
+      setAlbum(null)
+      setItem(null)
+      setCurrentIndex(-1)
+    }
+  }
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return
+
+    setIsSearching(true)
+    try {
+      const response = await fetch(`/api/admin/search?query=${encodeURIComponent(searchQuery)}`)
+      const data: { results: SearchResult[] } = await response.json()
+
+      if (data.results && data.results.length > 0) {
+        setSearchResults(data.results)
+        // Load the first result automatically
+        const firstResult = data.results[0]
+        setCurrentGallery(firstResult.gallery)
+
+        const selectedAlbum = galleryAlbum[firstResult.gallery].albums.find(a => a.name === firstResult.album)
+        if (selectedAlbum) {
+          setAlbum(selectedAlbum)
+          // Wait for the album to load, then select the item
+          setTimeout(async () => {
+            await mutate()
+            setCurrentIndex(firstResult.index)
+          }, 100)
+        }
+      } else {
+        alert('No matching files found')
+      }
+    } catch (error) {
+      console.error('Search failed:', error)
+      alert('Search failed')
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSearch()
+    }
+  }
+
+  // Update the item when currentIndex changes and items are available
+  useEffect(() => {
+    if (items.length > 0 && currentIndex >= 0 && currentIndex < items.length) {
+      setItem(items[currentIndex])
+    }
+  }, [currentIndex, items])
+
   return (
     <form>
-        {item && <Fields xmlAlbum={data} gallery={gallery} item={item}>
-          <Photo item={item} gallery={gallery} />
+        {item && <Fields xmlAlbum={data} gallery={currentGallery} item={item}>
+          <Photo item={item} gallery={currentGallery} />
         </Fields>}
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center',
+            marginBottom: 2,
+          }}
+        >
+          <label htmlFor="search-filename">Search Filename</label>
+          <Input
+            id="search-filename"
+            placeholder="Enter filename..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            sx={{ flexGrow: 1 }}
+          />
+          <Button onClick={handleSearch} disabled={isSearching} variant="solid">
+            {isSearching ? 'Searching...' : 'Search'}
+          </Button>
+        </Stack>
         <Stack
           direction="row"
           spacing={2}
@@ -91,7 +181,8 @@ export default function AdminAlbumClient(
         >
           <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>
           <Select
-            defaultValue={gallery}
+            value={currentGallery}
+            onChange={handleGalleryChange}
             slotProps={{
               button: {
                 id: 'select-gallery-label',
@@ -106,7 +197,7 @@ export default function AdminAlbumClient(
 
           <label htmlFor="select-album-label" id="select-album">Album</label>
           <Select
-            defaultValue=""
+            value={album?.name ?? ''}
             onChange={handleAlbumChange}
             slotProps={{
               button: {
@@ -117,12 +208,12 @@ export default function AdminAlbumClient(
             variant='solid'
           >
             <Option value="">Select a Album</Option>
-            {galleryAlbum[gallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
+            {galleryAlbum[currentGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
           </Select>
         </Stack>
         {error && <div>{JSON.stringify(error)}</div>}
         {!error && data ? (
-          <Thumbs xmlAlbum={data} gallery={gallery} setItem={handleItemSelect} currentIndex={currentIndex} />
+          <Thumbs xmlAlbum={data} gallery={currentGallery} setItem={handleItemSelect} currentIndex={currentIndex} />
         ) : (
           <div>Select an album</div>
         )}
