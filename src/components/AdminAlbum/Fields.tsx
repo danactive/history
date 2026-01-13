@@ -40,10 +40,18 @@ export default function Fields(
     // Get all items from XML
     const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
 
-    // Update the edited item in the list
+    // Update the edited item in the list with proper field ordering
     const itemIndex = items.findIndex(i => i?.$.id === editedItem.$.id)
     if (itemIndex !== -1) {
-      items[itemIndex] = editedItem
+      // Reconstruct item with desired field order: search before geo
+      const { search, geo, ref, ...rest } = editedItem
+      const orderedItem: RawXmlItem = {
+        ...rest,
+        ...(search !== undefined && search !== null && { search }),
+        ...(geo && { geo }),
+        ...(ref && { ref }),
+      }
+      items[itemIndex] = orderedItem
     }
 
     // Build XML album structure
@@ -80,32 +88,38 @@ export default function Fields(
             value={filename}
             readOnly
             placeholder="Filename"
+            title="Filename (read-only)"
           />
           <Input
             value={editedItem?.photo_city ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_city: e.target.value } : null)}
             placeholder="City"
+            title="City (photo_city)"
           />
           <Input
             value={editedItem?.photo_loc ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_loc: e.target.value } : null)}
             placeholder="Location"
+            title="Location (photo_loc)"
           />
           <Input
             value={editedItem?.thumb_caption ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, thumb_caption: e.target.value } : null)}
             placeholder="Caption"
+            title="Caption (thumb_caption)"
           />
           <Textarea
             value={editedItem?.photo_desc ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, photo_desc: e.target.value } : null)}
             placeholder="Description"
+            title="Description (photo_desc)"
             minRows={2}
           />
           <Input
             value={editedItem?.search ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, search: e.target.value } : null)}
             placeholder="Search keywords"
+            title="Search keywords (comma-separated)"
           />
           <ComboBox
             className="keyword-autocomplete"
@@ -138,6 +152,7 @@ export default function Fields(
                 } : null)
               }}
               placeholder="Latitude"
+              title="Latitude (geo.lat)"
               type="number"
               sx={{ flex: 1, minWidth: 0 }}
             />
@@ -151,6 +166,7 @@ export default function Fields(
                 } : null)
               }}
               placeholder="Longitude"
+              title="Longitude (geo.lon)"
               type="number"
               sx={{ flex: 1, minWidth: 0 }}
             />
@@ -164,6 +180,7 @@ export default function Fields(
                 } : null)
               }}
               placeholder="Accuracy"
+              title="Coordinate accuracy (geo.accuracy)"
               type="number"
               sx={{ flex: 0.6, minWidth: 0 }}
             />
@@ -178,6 +195,7 @@ export default function Fields(
                 } : null)
               }}
               placeholder="Reference Source"
+              title="Reference source (ref.source)"
               sx={{ flex: 1, minWidth: 0 }}
             >
               <Option value="">None</Option>
@@ -195,6 +213,7 @@ export default function Fields(
                 } : null)
               }}
               placeholder="Reference Name"
+              title="Reference name/ID (ref.name)"
               sx={{ flex: 1, minWidth: 0 }}
             />
           </Stack>

@@ -171,14 +171,7 @@ export default function AdminAlbumClient(
           <Button onClick={handleSearch} disabled={isSearching} variant="solid">
             {isSearching ? 'Searching...' : 'Search'}
           </Button>
-        </Stack>
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{
-            alignItems: 'center',
-          }}
-        >
+
           <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>
           <Select
             value={currentGallery}
