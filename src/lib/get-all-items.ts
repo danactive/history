@@ -1,5 +1,6 @@
 import getAlbum from '../lib/album'
 import getAlbums from '../lib/albums'
+import getGalleries from '../lib/galleries'
 import indexKeywords, { addGeographyToSearch } from '../lib/search'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
@@ -16,10 +17,10 @@ type ItemMapper = (params: PrepareItemsParams) => ServerSideAllItem[]
 
 /**
  * Shared utility to get all items from albums with indexed keywords
- * @param gallery Gallery name
- * @param itemMapper Custom function to map items to ServerSideAllItem format
- * @param reverseAlbumItems Whether to reverse items within each album
- * @returns Items and indexed keywords
+ * @param {Gallery} gallery Gallery name
+ * @param {ItemMapper} itemMapper Custom function to map items to ServerSideAllItem format
+ * @param {boolean} reverseAlbumItems Whether to reverse items within each album
+ * @returns {Promise<All.ItemData>} Items and indexed keywords
  */
 export async function getAllItems(
   gallery: Gallery,
@@ -100,4 +101,34 @@ export function personsPageItemMapper({ albumName, albumCoordinateAccuracy, item
     coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
     search: addGeographyToSearch(item),
   }))
+}
+
+/**
+ * Get all keywords from all galleries and albums
+ * @returns {Promise<{ indexedKeywords: ReturnType<typeof indexKeywords>['indexedKeywords'] }>} Indexed keywords with counts
+ */
+export async function getAllKeywords(): Promise<{ indexedKeywords: ReturnType<typeof indexKeywords>['indexedKeywords'] }> {
+  const { galleries } = await getGalleries()
+  const allItems: { search: Item['search'] }[] = []
+
+  // Collect search keywords from all galleries
+  for (const gallery of galleries) {
+    const { [gallery]: { albums } } = await getAlbums(gallery)
+
+    for (const album of albums) {
+      try {
+        const { album: { items } } = await getAlbum(gallery, album.name)
+        items.forEach((item) => {
+          if (item.search) {
+            allItems.push({ search: item.search })
+          }
+        })
+      } catch (error) {
+        console.error(`Failed to read album ${album.name} in gallery ${gallery}:`, error)
+      }
+    }
+  }
+
+  const { indexedKeywords } = indexKeywords(allItems)
+  return { indexedKeywords }
 }

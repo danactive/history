@@ -5,10 +5,14 @@ import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import Textarea from '@mui/joy/Textarea'
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 import xml2js from 'xml2js'
 
-import type { Gallery, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import type { Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
@@ -18,10 +22,16 @@ export default function Fields(
 ) {
   const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
   const [xmlOutput, setXmlOutput] = useState<string>('')
+  const [autocompleteValue, setAutocompleteValue] = useState<string>('')
+
+  // Fetch all available keywords from all albums
+  const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
+  const allKeywords = keywordsData?.keywords ?? []
 
   useEffect(() => {
     setEditedItem(item)
     setXmlOutput('')
+    setAutocompleteValue('')
   }, [item])
 
   const generateXml = () => {
@@ -96,6 +106,26 @@ export default function Fields(
             value={editedItem?.search ?? ''}
             onChange={(e) => setEditedItem(prev => prev ? { ...prev, search: e.target.value } : null)}
             placeholder="Search keywords"
+          />
+          <ComboBox
+            className="keyword-autocomplete"
+            options={allKeywords}
+            value={null}
+            inputValue={autocompleteValue}
+            onInputChange={(newValue) => {
+              setAutocompleteValue(newValue)
+            }}
+            onChange={({ value }) => {
+              // Append the selected keyword to the existing search field
+              setEditedItem(prev => {
+                if (!prev) return null
+                const currentSearch = prev.search ?? ''
+                const separator = currentSearch && !currentSearch.endsWith(', ') ? ', ' : ''
+                return { ...prev, search: currentSearch + separator + value }
+              })
+              // Clear the autocomplete input
+              setAutocompleteValue('')
+            }}
           />
           <Stack direction="row" spacing={1}>
             <Input
