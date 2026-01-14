@@ -62,6 +62,22 @@ export default function Fields(
     // Get all items from XML
     const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
 
+    // Helper to remove empty/null/undefined properties recursively
+    const removeEmpty = (obj: any): any => {
+      if (obj === null || obj === undefined || obj === '') return undefined
+      if (typeof obj !== 'object') return obj
+      if (Array.isArray(obj)) return obj.map(removeEmpty).filter((v) => v !== undefined)
+
+      const cleaned: any = {}
+      for (const [key, value] of Object.entries(obj)) {
+        const cleanedValue = removeEmpty(value)
+        if (cleanedValue !== undefined) {
+          cleaned[key] = cleanedValue
+        }
+      }
+      return Object.keys(cleaned).length > 0 ? cleaned : undefined
+    }
+
     // Apply all edits from editedItems state and maintain proper field ordering
     const updatedItems = items.map((originalItem: RawXmlItem) => {
       const edited = editedItems[originalItem.$.id]
@@ -69,13 +85,16 @@ export default function Fields(
 
       // Reconstruct item with desired field order: search before geo
       const { search, geo, ref, ...rest } = edited
-      return {
+      const orderedItem = {
         ...rest,
-        ...(search !== undefined && search !== null && { search }),
+        ...(search !== undefined && search !== null && search !== '' && { search }),
         ...(geo && { geo }),
         ...(ref && { ref }),
       }
-    })
+      
+      // Remove empty properties
+      return removeEmpty(orderedItem)
+    }).filter((item) => item !== undefined)
 
     // Build XML album structure
     const albumXml = {
