@@ -72,11 +72,9 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
     if (isInvalid) return it
 
     const h3Cache: Record<number, string> = {}
-    h3Cache[BASE_H3_RESOLUTION] = getH3Index(lat, lng, BASE_H3_RESOLUTION)
-    for (const h3Res of Object.values(RESOLUTION_TO_H3)) {
-      if (!h3Cache[h3Res]) {
-        h3Cache[h3Res] = getH3Index(lat, lng, h3Res)
-      }
+    const uniqueResolutions = new Set(Object.values(RESOLUTION_TO_H3))
+    for (const h3Res of uniqueResolutions) {
+      h3Cache[h3Res] = getH3Index(lat, lng, h3Res)
     }
     return { ...it, h3Cache }
   })
