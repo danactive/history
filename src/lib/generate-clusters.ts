@@ -65,11 +65,26 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
   const labels = {} as Record<string, Record<ResolutionKey, string>>
   const itemFrequency = {} as Record<string, number>
 
-  // Pre-register base keys for all valid items
-  for (const it of items) {
+  // Cache H3 indices for all items at all resolutions (compute once, use many times)
+  type ItemWithCache = Item & { h3Cache?: Record<number, string> }
+  const itemsWithCache: ItemWithCache[] = items.map(it => {
     const { lat, lng, isInvalid } = validatePoint(it.coordinates as any)
-    if (isInvalid) continue
-    const baseKey = getH3Index(lat, lng, BASE_H3_RESOLUTION)
+    if (isInvalid) return it
+
+    const h3Cache: Record<number, string> = {}
+    h3Cache[BASE_H3_RESOLUTION] = getH3Index(lat, lng, BASE_H3_RESOLUTION)
+    for (const h3Res of Object.values(RESOLUTION_TO_H3)) {
+      if (!h3Cache[h3Res]) {
+        h3Cache[h3Res] = getH3Index(lat, lng, h3Res)
+      }
+    }
+    return { ...it, h3Cache }
+  })
+
+  // Pre-register base keys for all valid items
+  for (const it of itemsWithCache) {
+    if (!it.h3Cache) continue
+    const baseKey = it.h3Cache[BASE_H3_RESOLUTION]
     if (!labels[baseKey]) labels[baseKey] = {} as Record<ResolutionKey, string>
     if (itemFrequency[baseKey] == null) itemFrequency[baseKey] = 0
   }
@@ -77,13 +92,12 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
   // For each resolution, group and compute most common label, then map back to baseKey
   (Object.entries(RESOLUTION_TO_H3) as [ResolutionKey, number][])
     .forEach(([resKey, h3Res]) => {
-      const grouped: Record<string, Item[]> = {}
+      const grouped: Record<string, ItemWithCache[]> = {}
 
-      // Group items by H3 cell at this resolution
-      for (const it of items) {
-        const { lat, lng, isInvalid } = validatePoint(it.coordinates as any)
-        if (isInvalid) continue
-        const gridKey = getH3Index(lat, lng, h3Res)
+      // Group items by H3 cell at this resolution (use cached index)
+      for (const it of itemsWithCache) {
+        if (!it.h3Cache) continue
+        const gridKey = it.h3Cache[h3Res]
         if (!grouped[gridKey]) grouped[gridKey] = []
         grouped[gridKey].push(it)
       }
@@ -99,11 +113,11 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
           Object.entries(counts).sort(([, a], [, b]) => b - a)[0]?.[0]
           || getLabelForResolution(group[0], resKey)
 
-        // Map label to each item's baseKey and track max frequency
+        // Map label to each item's baseKey and track max frequency (use cached index)
         const frequency = group.length
         for (const it of group) {
-          const { lat, lng } = validatePoint(it.coordinates as any)
-          const baseKey = getH3Index(lat, lng, BASE_H3_RESOLUTION)
+          if (!it.h3Cache) continue
+          const baseKey = it.h3Cache[BASE_H3_RESOLUTION]
           if (!labels[baseKey]) labels[baseKey] = {} as Record<ResolutionKey, string>
           labels[baseKey][resKey] = mostCommon
           itemFrequency[baseKey] = Math.max(itemFrequency[baseKey] || 0, frequency)

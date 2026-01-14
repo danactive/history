@@ -36,6 +36,18 @@ interface SelectedFeature extends Feature {
 
 export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
 
+// Cache for H3 indices to avoid recomputing on every zoom
+const h3Cache = new WeakMap<Item, string>()
+
+function getCachedH3Index(item: Item): string | null {
+  if (!h3Cache.has(item)) {
+    const { latitude, longitude, isInvalidPoint } = validatePoint(item.coordinates)
+    if (isInvalidPoint) return null
+    h3Cache.set(item, latLngToCell(latitude, longitude, BASE_H3_RESOLUTION))
+  }
+  return h3Cache.get(item) || null
+}
+
 export function transformSourceOptions(
   { items = [], selected, zoom = 10, clusteredMarkers }:
   {
@@ -50,14 +62,12 @@ export function transformSourceOptions(
   // Use server/client precomputed if provided, else compute locally
   const computed = clusteredMarkers ?? generateClusters(items)
 
-  // Sort items by precomputed frequency (desc)
+  // Sort items by precomputed frequency (desc) using cached H3 indices
   const sortedItems = [...items].sort((a, b) => {
-    const { latitude: latA, longitude: lngA } = validatePoint(a.coordinates)
-    const { latitude: latB, longitude: lngB } = validatePoint(b.coordinates)
-    const keyA = latLngToCell(latA, lngA, BASE_H3_RESOLUTION)
-    const keyB = latLngToCell(latB, lngB, BASE_H3_RESOLUTION)
-    const freqA = computed.itemFrequency[keyA] || 0
-    const freqB = computed.itemFrequency[keyB] || 0
+    const keyA = getCachedH3Index(a)
+    const keyB = getCachedH3Index(b)
+    const freqA = keyA ? (computed.itemFrequency[keyA] || 0) : 0
+    const freqB = keyB ? (computed.itemFrequency[keyB] || 0) : 0
     return freqB - freqA
   })
 
@@ -65,8 +75,8 @@ export function transformSourceOptions(
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
-    const baseKey = latLngToCell(latitude, longitude, BASE_H3_RESOLUTION)
-    const commonLabel = computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
+    const baseKey = getCachedH3Index(item)
+    const commonLabel = baseKey && computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 
     const point: SelectedFeature = {
