@@ -4,7 +4,7 @@ import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import Textarea from '@mui/joy/Textarea'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import xml2js from 'xml2js'
 
@@ -17,12 +17,20 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
 export default function Fields(
-  { xmlAlbum, gallery, item, children }:
-  { xmlAlbum: RawXmlAlbum | undefined, gallery: Gallery, item: XmlItemState, children: React.ReactElement },
+  { xmlAlbum, gallery, item, children, onItemUpdate, editedItems }:
+  {
+    xmlAlbum: RawXmlAlbum | undefined,
+    gallery: Gallery,
+    item: XmlItemState,
+    children: React.ReactElement,
+    onItemUpdate: (item: RawXmlItem) => void,
+    editedItems: Record<string, RawXmlItem>
+  },
 ) {
   const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
   const [xmlOutput, setXmlOutput] = useState<string>('')
   const [autocompleteValue, setAutocompleteValue] = useState<string>('')
+  const updatePendingRef = useRef(false)
 
   // Fetch all available keywords from all albums
   const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
@@ -34,30 +42,45 @@ export default function Fields(
     setAutocompleteValue('')
   }, [item])
 
+  // Notify parent after editedItem updates (after render)
+  useEffect(() => {
+    if (updatePendingRef.current && editedItem) {
+      updatePendingRef.current = false
+      onItemUpdate(editedItem)
+    }
+  }, [editedItem, onItemUpdate])
+
+  // Wrapper to update local state and schedule parent notification
+  const updateItem = (updater: (prev: RawXmlItem | null) => RawXmlItem | null) => {
+    updatePendingRef.current = true
+    setEditedItem(updater)
+  }
+
   const generateXml = () => {
-    if (!editedItem || !xmlAlbum) return
+    if (!xmlAlbum) return
 
     // Get all items from XML
     const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
 
-    // Update the edited item in the list with proper field ordering
-    const itemIndex = items.findIndex((i: RawXmlItem | undefined) => i?.$.id === editedItem.$.id)
-    if (itemIndex !== -1) {
+    // Apply all edits from editedItems state and maintain proper field ordering
+    const updatedItems = items.map((originalItem: RawXmlItem) => {
+      const edited = editedItems[originalItem.$.id]
+      if (!edited) return originalItem
+
       // Reconstruct item with desired field order: search before geo
-      const { search, geo, ref, ...rest } = editedItem
-      const orderedItem: RawXmlItem = {
+      const { search, geo, ref, ...rest } = edited
+      return {
         ...rest,
         ...(search !== undefined && search !== null && { search }),
         ...(geo && { geo }),
         ...(ref && { ref }),
       }
-      items[itemIndex] = orderedItem
-    }
+    })
 
     // Build XML album structure
-    const xmlOutput = {
+    const albumXml = {
       meta: xmlAlbum.album.meta,
-      item: items.length === 1 ? items[0] : items,
+      item: updatedItems.length === 1 ? updatedItems[0] : updatedItems,
     }
 
     // Convert to XML
@@ -67,7 +90,7 @@ export default function Fields(
       xmldec: { version: '1.0', encoding: 'UTF-8' },
     })
 
-    const xml = builder.buildObject(xmlOutput)
+    const xml = builder.buildObject(albumXml)
     setXmlOutput(xml)
   }
 
@@ -92,32 +115,32 @@ export default function Fields(
           />
           <Input
             value={editedItem?.photo_city ?? ''}
-            onChange={(e) => setEditedItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_city: e.target.value } : null)}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_city: e.target.value } : null)}
             placeholder="City"
             title="City (photo_city)"
           />
           <Input
             value={editedItem?.photo_loc ?? ''}
-            onChange={(e) => setEditedItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_loc: e.target.value } : null)}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_loc: e.target.value } : null)}
             placeholder="Location"
             title="Location (photo_loc)"
           />
           <Input
             value={editedItem?.thumb_caption ?? ''}
-            onChange={(e) => setEditedItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
             placeholder="Caption"
             title="Caption (thumb_caption)"
           />
           <Textarea
             value={editedItem?.photo_desc ?? ''}
-            onChange={(e) => setEditedItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_desc: e.target.value } : null)}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_desc: e.target.value } : null)}
             placeholder="Description"
             title="Description (photo_desc)"
             minRows={2}
           />
           <Input
             value={editedItem?.search ?? ''}
-            onChange={(e) => setEditedItem((prev: RawXmlItem | null) => prev ? { ...prev, search: e.target.value } : null)}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, search: e.target.value } : null)}
             placeholder="Search keywords"
             title="Search keywords (comma-separated)"
           />
@@ -131,7 +154,7 @@ export default function Fields(
             }}
             onChange={({ value }) => {
               // Append the selected keyword to the existing search field
-              setEditedItem((prev: RawXmlItem | null) => {
+              updateItem((prev: RawXmlItem | null) => {
                 if (!prev) return null
                 const currentSearch = prev.search ?? ''
                 const separator = currentSearch && !currentSearch.endsWith(', ') ? ', ' : ''
@@ -146,7 +169,7 @@ export default function Fields(
               value={editedItem?.geo?.lat ?? ''}
               onChange={(e) => {
                 const lat = e.target.value
-                setEditedItem((prev: RawXmlItem | null) => prev ? {
+                updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
                 } : null)
@@ -160,7 +183,7 @@ export default function Fields(
               value={editedItem?.geo?.lon ?? ''}
               onChange={(e) => {
                 const lon = e.target.value
-                setEditedItem((prev: RawXmlItem | null) => prev ? {
+                updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   geo: lon || prev.geo?.lat ? { lat: prev.geo?.lat || '', lon, accuracy: prev.geo?.accuracy || '' } : undefined,
                 } : null)
@@ -174,7 +197,7 @@ export default function Fields(
               value={editedItem?.geo?.accuracy ?? ''}
               onChange={(e) => {
                 const accuracy = e.target.value
-                setEditedItem((prev: RawXmlItem | null) => prev ? {
+                updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   geo: prev.geo ? { ...prev.geo, accuracy } : undefined,
                 } : null)
@@ -189,7 +212,7 @@ export default function Fields(
             <Select
               value={editedItem?.ref?.source ?? ''}
               onChange={(_, value) => {
-                setEditedItem((prev: RawXmlItem | null) => prev ? {
+                updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   ref: value ? { source: value as ItemReferenceSource, name: prev.ref?.name || '' } : undefined,
                 } : null)
@@ -207,7 +230,7 @@ export default function Fields(
               value={editedItem?.ref?.name ?? ''}
               onChange={(e) => {
                 const name = e.target.value
-                setEditedItem((prev: RawXmlItem | null) => prev ? {
+                updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   ref: prev.ref?.source ? { source: prev.ref.source, name } : undefined,
                 } : null)

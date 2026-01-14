@@ -31,6 +31,8 @@ export default function AdminAlbumClient(
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  // Store edits for all items by ID - persist across photo switches
+  const [editedItems, setEditedItems] = useState<Record<string, RawXmlItem>>({})
   const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
   const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
@@ -81,6 +83,8 @@ export default function AdminAlbumClient(
     const selectedAlbum = galleryAlbum[currentGallery].albums.find(a => a.name === newValue)
     if (selectedAlbum) {
       setAlbum(selectedAlbum)
+      // Clear edits when album changes
+      setEditedItems({})
       setCurrentIndex(-1)
       setItem(null)
     }
@@ -93,6 +97,8 @@ export default function AdminAlbumClient(
     if (newValue) {
       setCurrentGallery(newValue as Gallery)
       setAlbum(null)
+      // Clear edits when gallery changes
+      setEditedItems({})
       setItem(null)
       setCurrentIndex(-1)
     }
@@ -146,9 +152,26 @@ export default function AdminAlbumClient(
     }
   }, [currentIndex, items])
 
+  const handleItemUpdate = (updatedItem: RawXmlItem) => {
+    setEditedItems(prev => ({
+      ...prev,
+      [updatedItem.$.id]: updatedItem,
+    }))
+  }
+
+  // Get item with edits applied if they exist
+  const getItemWithEdits = (itemToGet: RawXmlItem | null): RawXmlItem | null => {
+    if (!itemToGet) return null
+    return editedItems[itemToGet.$.id] || itemToGet
+  }
+
   return (
     <form>
-        {item && <Fields xmlAlbum={data} gallery={currentGallery} item={item}>
+        {item && <Fields
+          xmlAlbum={data}
+          gallery={currentGallery}
+          item={getItemWithEdits(item)}
+          onItemUpdate={handleItemUpdate}          editedItems={editedItems}        >
           <Photo item={item} gallery={currentGallery} />
         </Fields>}
         <Stack
