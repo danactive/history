@@ -1,4 +1,5 @@
 import Button from '@mui/joy/Button'
+import IconButton from '@mui/joy/IconButton'
 import Input from '@mui/joy/Input'
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
@@ -15,6 +16,29 @@ import { type XmlItemState } from './AdminAlbumClient'
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
+
+// Parse DMS (Degrees Minutes Seconds) format to decimal
+// Supports formats like: 50° 22' 51.51" N or 50°22'51.51"N or 50 22 51.51 N
+function parseDMS(dms: string): number | null {
+  const dmsPattern = /(\d+)[°\s]+(\d+)['\s]+(\d+(?:\.\d+)?)["\s]*([NSEW])?/i
+  const match = dms.trim().match(dmsPattern)
+
+  if (!match) return null
+
+  const degrees = parseFloat(match[1])
+  const minutes = parseFloat(match[2])
+  const seconds = parseFloat(match[3])
+  const direction = match[4]?.toUpperCase()
+
+  let decimal = degrees + minutes / 60 + seconds / 3600
+
+  // Negate if South or West
+  if (direction === 'S' || direction === 'W') {
+    decimal = -decimal
+  }
+
+  return decimal
+}
 
 export default function Fields(
   { xmlAlbum, gallery, item, children, onItemUpdate, editedItems }:
@@ -91,7 +115,7 @@ export default function Fields(
         ...(geo && { geo }),
         ...(ref && { ref }),
       }
-      
+
       // Remove empty properties
       return removeEmpty(orderedItem)
     }).filter((item) => item !== undefined)
@@ -187,31 +211,101 @@ export default function Fields(
             <Input
               value={editedItem?.geo?.lat ?? ''}
               onChange={(e) => {
-                const lat = e.target.value
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
-                } : null)
+                const value = e.target.value
+
+                // Check if value contains DMS format (degrees, minutes, seconds)
+                if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
+                  // Split by comma to check for lat,lon DMS pair
+                  const parts = value.split(',').map(s => s.trim())
+
+                  if (parts.length === 2) {
+                    // Parse both lat and lon as DMS
+                    const lat = parseDMS(parts[0])
+                    const lon = parseDMS(parts[1])
+                    if (lat !== null && lon !== null) {
+                      updateItem((prev: RawXmlItem | null) => prev ? {
+                        ...prev,
+                        geo: { lat: lat.toString(), lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
+                      } : null)
+                      return
+                    }
+                  } else {
+                    // Single DMS value for latitude only
+                    const lat = parseDMS(value)
+                    if (lat !== null) {
+                      updateItem((prev: RawXmlItem | null) => prev ? {
+                        ...prev,
+                        geo: { lat: lat.toString(), lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' },
+                      } : null)
+                      return
+                    }
+                  }
+                }
+
+                // Check if the value contains a comma (decimal lat,lon format)
+                if (value.includes(',')) {
+                  const [lat, lon] = value.split(',').map(s => s.trim())
+                  updateItem((prev: RawXmlItem | null) => prev ? {
+                    ...prev,
+                    geo: { lat: lat || '', lon: lon || '', accuracy: prev.geo?.accuracy || '' },
+                  } : null)
+                } else {
+                  // Plain value for latitude
+                  const lat = value
+                  updateItem((prev: RawXmlItem | null) => prev ? {
+                    ...prev,
+                    geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
+                  } : null)
+                }
               }}
-              placeholder="Latitude"
-              title="Latitude (geo.lat)"
-              type="number"
+              placeholder="Latitude (or lat,lon or DMS)"
+              title="Latitude (geo.lat) - paste lat,lon or DMS format to auto-split"
               sx={{ flex: 1, minWidth: 0 }}
             />
             <Input
               value={editedItem?.geo?.lon ?? ''}
               onChange={(e) => {
-                const lon = e.target.value
+                const value = e.target.value
+
+                // Check if value contains DMS format
+                if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
+                  const lon = parseDMS(value)
+                  if (lon !== null) {
+                    updateItem((prev: RawXmlItem | null) => prev ? {
+                      ...prev,
+                      geo: { lat: prev.geo?.lat || '', lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
+                    } : null)
+                    return
+                  }
+                }
+
+                // Plain value for longitude
+                const lon = value
                 updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
                   geo: lon || prev.geo?.lat ? { lat: prev.geo?.lat || '', lon, accuracy: prev.geo?.accuracy || '' } : undefined,
                 } : null)
               }}
-              placeholder="Longitude"
-              title="Longitude (geo.lon)"
-              type="number"
+              placeholder="Longitude (or DMS)"
+              title="Longitude (geo.lon) - paste DMS format to convert"
               sx={{ flex: 1, minWidth: 0 }}
             />
+            <IconButton
+              size="sm"
+              variant="outlined"
+              onClick={() => {
+                const lat = editedItem?.geo?.lat ?? ''
+                const lon = editedItem?.geo?.lon ?? ''
+                if (lat && lon) {
+                  navigator.clipboard.writeText(`${lat},${lon}`)
+                }
+              }}
+              disabled={!editedItem?.geo?.lat || !editedItem?.geo?.lon}
+              title="Copy lat,lon to clipboard"
+              sx={{ minWidth: 'auto', px: 1 }}
+            >
+              📋
+            </IconButton>
             <Input
               value={editedItem?.geo?.accuracy ?? ''}
               onChange={(e) => {
