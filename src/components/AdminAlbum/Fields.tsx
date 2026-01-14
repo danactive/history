@@ -10,6 +10,7 @@ import useSWR from 'swr'
 import xml2js from 'xml2js'
 
 import type { Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import { transformReference } from '../../utils/reference'
 import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
 
@@ -352,6 +353,21 @@ export default function Fields(
               title="Reference name/ID (ref.name)"
               sx={{ flex: 1, minWidth: 0 }}
             />
+            <IconButton
+              size="sm"
+              variant="outlined"
+              onClick={() => {
+                const reference = transformReference(editedItem?.ref)
+                if (reference) {
+                  navigator.clipboard.writeText(reference[0])
+                }
+              }}
+              disabled={!editedItem?.ref?.source || !editedItem?.ref?.name}
+              title="Copy reference URL to clipboard"
+              sx={{ minWidth: 'auto', px: 1 }}
+            >
+              📋
+            </IconButton>
           </Stack>
           <Button onClick={generateXml} variant="solid" color="primary">
             Generate XML

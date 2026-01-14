@@ -1,6 +1,7 @@
-import config from '../config'
 import type { XmlAlbum, XmlItem } from '../../types/common'
-import transformJsonSchema, { transformPersons, transformReference } from '../album'
+import { transformReference } from '../../utils/reference'
+import transformJsonSchema, { transformPersons } from '../album'
+import config from '../config'
 
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
@@ -193,7 +194,7 @@ describe('Album library', () => {
           source: 'youtube',
         },
       }
-      const actual = transformReference(mock)
+      const actual = transformReference(mock.ref)
       if (actual === null) {
         expect(actual).not.toBeNull()
       } else {
@@ -209,7 +210,7 @@ describe('Album library', () => {
           source: 'wikipedia',
         },
       }
-      const actual = transformReference(mock)
+      const actual = transformReference(mock.ref)
       if (actual === null) {
         expect(actual).not.toBeNull()
       } else {

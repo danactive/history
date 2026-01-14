@@ -1,16 +1,16 @@
-import config from './config'
 import utilsFactory from '../lib/utils'
 import type {
   Album,
   AlbumMeta,
   Item,
-  ItemReferenceSource,
   Person,
   PersonItem,
   XmlAlbum,
   XmlItem,
 } from '../types/common'
 import { isNotEmpty, removeUndefinedFields } from '../utils'
+import { transformReference } from '../utils/reference'
+import config from './config'
 
 export type ErrorOptionalMessage = { album: object[]; error?: { message: string } }
 export const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -108,34 +108,6 @@ export const transformPersons = (photoSearchValues: XmlItem['search'], definedPe
   return null
 }
 
-export const transformReference = (item: XmlItem): [string, string] | null => {
-  const baseUrl = (source: ItemReferenceSource) => {
-    switch (source) {
-      case 'facebook':
-        return 'https://www.facebook.com/'
-      case 'google':
-        return 'https://www.google.com/search?q='
-      case 'instagram':
-        return 'https://www.instagram.com/'
-      case 'wikipedia':
-        return 'https://en.wikipedia.org/wiki/'
-      case 'youtube':
-        return 'https://www.youtube.com/watch?v='
-      default:
-        return null // Return null instead of throwing for unknown sources
-    }
-  }
-  if (!('ref' in item) || !item.ref) {
-    return null
-  }
-  if ('name' in item.ref && 'source' in item.ref) {
-    const url = baseUrl(item.ref.source)
-    if (!url) return null // Return null if source is invalid
-    return [url + item.ref.name, item.ref.name]
-  }
-  return null
-}
-
 function transformMeta(dirty: XmlAlbum): AlbumMeta {
   if (!isValidMeta(dirty)) {
     return {
@@ -225,7 +197,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
       photoPath,
       mediaPath: (item.type === 'video' && videoPaths) ? videoPaths[0] : photoPath,
       videoPaths,
-      reference: transformReference(item),
+      reference: transformReference(item?.ref),
     }
 
     return removeUndefinedFields(out)
