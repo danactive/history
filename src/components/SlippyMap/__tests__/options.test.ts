@@ -42,6 +42,7 @@ describe('Options - <SlippyMap />', () => {
         { ...mockItem, coordinates: [123, 321] },
         { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
       ]
+      // Generate H3-based clusters
       const clusteredMarkers: ClusteredMarkers = generateClusters(items)
       const received = transformSourceOptions({ items, selected: items[1], clusteredMarkers })
 
@@ -80,6 +81,7 @@ describe('Options - <SlippyMap />', () => {
         { ...mockItem, coordinates: null },
         { ...mockItem, coordinates: [321, 123], coordinateAccuracy: 10 },
       ]
+      // Generate H3-based clusters
       const clusteredMarkers: ClusteredMarkers = generateClusters(items)
       const received = transformSourceOptions({
         items,
