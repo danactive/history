@@ -1,8 +1,9 @@
+import { latLngToCell } from 'h3-js'
 import type { Feature, FeatureCollection } from 'geojson'
 import type { GeoJSONSourceSpecification, LayerProps, ViewState } from 'react-map-gl/mapbox'
 
 import config from '../../../src/models/config'
-import { type ClusteredMarkers, BASE_MULTIPLIER, generateClusters, getLabelForResolution } from '../../lib/generate-clusters'
+import { type ClusteredMarkers, BASE_H3_RESOLUTION, generateClusters, getLabelForResolution } from '../../lib/generate-clusters'
 import type { Item } from '../../types/common'
 
 export const validatePoint = (
@@ -53,8 +54,8 @@ export function transformSourceOptions(
   const sortedItems = [...items].sort((a, b) => {
     const { latitude: latA, longitude: lngA } = validatePoint(a.coordinates)
     const { latitude: latB, longitude: lngB } = validatePoint(b.coordinates)
-    const keyA = `${Math.round(latA * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngA * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
-    const keyB = `${Math.round(latB * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(lngB * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const keyA = latLngToCell(latA, lngA, BASE_H3_RESOLUTION)
+    const keyB = latLngToCell(latB, lngB, BASE_H3_RESOLUTION)
     const freqA = computed.itemFrequency[keyA] || 0
     const freqB = computed.itemFrequency[keyB] || 0
     return freqB - freqA
@@ -64,7 +65,7 @@ export function transformSourceOptions(
     const { latitude, longitude } = validatePoint(item.coordinates)
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
-    const baseKey = `${Math.round(latitude * BASE_MULTIPLIER) / BASE_MULTIPLIER},${Math.round(longitude * BASE_MULTIPLIER) / BASE_MULTIPLIER}`
+    const baseKey = latLngToCell(latitude, longitude, BASE_H3_RESOLUTION)
     const commonLabel = computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 

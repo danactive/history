@@ -1,3 +1,4 @@
+import { latLngToCell } from 'h3-js'
 import type { Item } from '../types/common'
 import type { ResolutionKey } from '../components/SlippyMap/options'
 
@@ -21,20 +22,18 @@ const validatePoint = (coordinates?: [number, number] | null) => {
   return { lng, lat, isInvalid }
 }
 
-const RESOLUTION_TO_MULTIPLIER: Record<ResolutionKey, number> = {
-  '100m': 1000,
-  '300m': 300,
-  '1.5km': 67,
-  '5km': 20,
-  '10km': 10,
+const RESOLUTION_TO_H3: Record<ResolutionKey, number> = {
+  '100m': 13,
+  '300m': 11,
+  '1.5km': 8,
+  '5km': 6,
+  '10km': 5,
 }
 
-export const BASE_MULTIPLIER = RESOLUTION_TO_MULTIPLIER['100m'] // stable key space
+export const BASE_H3_RESOLUTION = RESOLUTION_TO_H3['100m'] // stable key space
 
-function roundCoord(lat: number, lng: number, mult: number): string {
-  const rLat = Math.round(lat * mult) / mult
-  const rLng = Math.round(lng * mult) / mult
-  return `${rLat},${rLng}`
+function getH3Index(lat: number, lng: number, resolution: number): string {
+  return latLngToCell(lat, lng, resolution)
 }
 
 export function getLabelForResolution(item: Item, resolution: ResolutionKey): string {
@@ -59,7 +58,7 @@ export function getLabelForResolution(item: Item, resolution: ResolutionKey): st
 }
 
 /**
- * Precompute cluster labels and item frequency per baseKey ("lat,lng") for all resolutions.
+ * Precompute cluster labels and item frequency per baseKey (H3 index) for all resolutions.
  * Returns a compact object suitable to pass to SlippyMap.transformSourceOptions as precomputedLabels.
  */
 export function generateClusters(items: Item[]): ClusteredMarkers {
@@ -70,21 +69,21 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
   for (const it of items) {
     const { lat, lng, isInvalid } = validatePoint(it.coordinates as any)
     if (isInvalid) continue
-    const baseKey = roundCoord(lat, lng, BASE_MULTIPLIER)
+    const baseKey = getH3Index(lat, lng, BASE_H3_RESOLUTION)
     if (!labels[baseKey]) labels[baseKey] = {} as Record<ResolutionKey, string>
     if (itemFrequency[baseKey] == null) itemFrequency[baseKey] = 0
   }
 
   // For each resolution, group and compute most common label, then map back to baseKey
-  (Object.entries(RESOLUTION_TO_MULTIPLIER) as [ResolutionKey, number][])
-    .forEach(([resKey, mult]) => {
+  (Object.entries(RESOLUTION_TO_H3) as [ResolutionKey, number][])
+    .forEach(([resKey, h3Res]) => {
       const grouped: Record<string, Item[]> = {}
 
-      // Group items by rounded grid at this resolution
+      // Group items by H3 cell at this resolution
       for (const it of items) {
         const { lat, lng, isInvalid } = validatePoint(it.coordinates as any)
         if (isInvalid) continue
-        const gridKey = roundCoord(lat, lng, mult)
+        const gridKey = getH3Index(lat, lng, h3Res)
         if (!grouped[gridKey]) grouped[gridKey] = []
         grouped[gridKey].push(it)
       }
@@ -104,7 +103,7 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
         const frequency = group.length
         for (const it of group) {
           const { lat, lng } = validatePoint(it.coordinates as any)
-          const baseKey = roundCoord(lat, lng, BASE_MULTIPLIER)
+          const baseKey = getH3Index(lat, lng, BASE_H3_RESOLUTION)
           if (!labels[baseKey]) labels[baseKey] = {} as Record<ResolutionKey, string>
           labels[baseKey][resKey] = mostCommon
           itemFrequency[baseKey] = Math.max(itemFrequency[baseKey] || 0, frequency)
