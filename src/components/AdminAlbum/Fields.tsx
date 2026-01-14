@@ -1,32 +1,207 @@
+import Button from '@mui/joy/Button'
 import Input from '@mui/joy/Input'
+import Option from '@mui/joy/Option'
+import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
+import Textarea from '@mui/joy/Textarea'
+import { useEffect, useState } from 'react'
+import useSWR from 'swr'
+import xml2js from 'xml2js'
 
-import { type AlbumResponseBody } from '../../lib/album'
+import type { Album, Gallery, IndexedKeywords, Item, ItemReferenceSource, XmlAlbum, XmlItem } from '../../types/common'
+import ComboBox from '../ComboBox'
 import { type ItemState } from './AdminAlbumClient'
-import Xml from './Xml'
+
+const fetcher = (url: string) => fetch(url).then(r => r.json())
+
+const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
 export default function Fields(
-  { albumEntity, item, children }:
-  { albumEntity: AlbumResponseBody['album'] | undefined, item: ItemState, children: React.ReactElement },
+  { xmlAlbum, gallery, item, children }:
+  { xmlAlbum: Album['album'] | undefined, gallery: Gallery, item: ItemState, children: React.ReactElement },
 ) {
+  const [editedItem, setEditedItem] = useState<Item | null>(item)
+  const [xmlOutput, setXmlOutput] = useState<string>('')
+  const [autocompleteValue, setAutocompleteValue] = useState<string>('')
+
+  // Fetch all available keywords from all albums
+  const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
+  const allKeywords = keywordsData?.keywords ?? []
+
+  useEffect(() => {
+    setEditedItem(item)
+    setXmlOutput('')
+    setAutocompleteValue('')
+  }, [item])
+
+  const generateXml = () => {
+    if (!editedItem || !xmlAlbum) return
+
+    // TODO: Implement XML generation for Album type
+    // The Album type is the transformed type, not the raw XML type
+    // Need to convert back to XmlAlbum structure
+    console.warn('XML generation not yet implemented for Album type')
+    setXmlOutput('<!-- XML generation temporarily disabled -->')
+  }
+
+  const filename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
+
   return (
     <>
       <Stack
         direction="row"
         spacing={2}
         sx={{
-          alignItems: 'center',
+          alignItems: 'flex-start',
         }}
       >
         {children}
-        <Stack direction="column">
-          <Input value={item?.filename} />
-          <Input value={item?.city} />
-          <Input value={item?.location ?? ''} />
-          <Input value={item?.caption} />
-          <Input value={item?.description ?? ''} />
-          <Input value={item?.search ?? ''} />
-          <Xml jsonBlob={JSON.stringify(albumEntity)} />
+        <Stack direction="column" spacing={2} sx={{ width: '35rem', flexShrink: 0 }}>
+          <Input
+            value={filename}
+            readOnly
+            placeholder="Filename"
+            title="Filename (read-only)"
+          />
+          <Input
+            value={editedItem?.city ?? ''}
+            onChange={(e) => setEditedItem((prev: Item | null) => prev ? { ...prev, city: e.target.value } : null)}
+            placeholder="City"
+            title="City (city)"
+          />
+          <Input
+            value={editedItem?.location ?? ''}
+            onChange={(e) => setEditedItem((prev: Item | null) => prev ? { ...prev, location: e.target.value } : null)}
+            placeholder="Location"
+            title="Location (location)"
+          />
+          <Input
+            value={editedItem?.caption ?? ''}
+            onChange={(e) => setEditedItem((prev: Item | null) => prev ? { ...prev, caption: e.target.value } : null)}
+            placeholder="Caption"
+            title="Caption (caption)"
+          />
+          <Textarea
+            value={editedItem?.description ?? ''}
+            onChange={(e) => setEditedItem((prev: Item | null) => prev ? { ...prev, description: e.target.value } : null)}
+            placeholder="Description"
+            title="Description (description)"
+            minRows={2}
+          />
+          <Input
+            value={editedItem?.search ?? ''}
+            onChange={(e) => setEditedItem(prev => prev ? { ...prev, search: e.target.value } : null)}
+            placeholder="Search keywords"
+            title="Search keywords (comma-separated)"
+          />
+          <ComboBox
+            className="keyword-autocomplete"
+            options={allKeywords}
+            value={null}
+            inputValue={autocompleteValue}
+            onInputChange={(newValue) => {
+              setAutocompleteValue(newValue)
+            }}
+            onChange={({ value }) => {
+              // Append the selected keyword to the existing search field
+              setEditedItem((prev: Item | null) => {
+                if (!prev) return null
+                const currentSearch = prev.search ?? ''
+                const separator = currentSearch && !currentSearch.endsWith(', ') ? ', ' : ''
+                return { ...prev, search: currentSearch + separator + value }
+              })
+              // Clear the autocomplete input
+              setAutocompleteValue('')
+            }}
+          />
+          <Stack direction="row" spacing={1}>
+            <Input
+              value={editedItem?.coordinates?.[1] ?? ''}
+              onChange={(e) => {
+                const lat = parseFloat(e.target.value) || 0
+                setEditedItem((prev: Item | null) => prev ? {
+                  ...prev,
+                  coordinates: [prev.coordinates?.[0] ?? 0, lat],
+                } : null)
+              }}
+              placeholder="Latitude"
+              title="Latitude (coordinates[1])"
+              type="number"
+              sx={{ flex: 1, minWidth: 0 }}
+            />
+            <Input
+              value={editedItem?.coordinates?.[0] ?? ''}
+              onChange={(e) => {
+                const lon = parseFloat(e.target.value) || 0
+                setEditedItem((prev: Item | null) => prev ? {
+                  ...prev,
+                  coordinates: [lon, prev.coordinates?.[1] ?? 0],
+                } : null)
+              }}
+              placeholder="Longitude"
+              title="Longitude (coordinates[0])"
+              type="number"
+              sx={{ flex: 1, minWidth: 0 }}
+            />
+            <Input
+              value={editedItem?.coordinateAccuracy ?? ''}
+              onChange={(e) => {
+                const accuracy = parseFloat(e.target.value) || null
+                setEditedItem((prev: Item | null) => prev ? {
+                  ...prev,
+                  coordinateAccuracy: accuracy,
+                } : null)
+              }}
+              placeholder="Accuracy"
+              title="Coordinate accuracy (geo.accuracy)"
+              type="number"
+              sx={{ flex: 0.6, minWidth: 0 }}
+            />
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Select
+              value={editedItem?.reference?.[0] ?? ''}
+              onChange={(_, value) => {
+                setEditedItem((prev: Item | null) => prev ? {
+                  ...prev,
+                  reference: value ? [value as ItemReferenceSource, prev.reference?.[1] || ''] : null,
+                } : null)
+              }}
+              placeholder="Reference Source"
+              title="Reference source (reference[0])"
+              sx={{ flex: 1, minWidth: 0 }}
+            >
+              <Option value="">None</Option>
+              {REFERENCE_SOURCES.map(source => (
+                <Option key={source} value={source}>{source.charAt(0).toUpperCase() + source.slice(1)}</Option>
+              ))}
+            </Select>
+            <Input
+              value={editedItem?.reference?.[1] ?? ''}
+              onChange={(e) => {
+                const name = e.target.value
+                setEditedItem((prev: Item | null) => prev ? {
+                  ...prev,
+                  reference: prev.reference?.[0] ? [prev.reference[0], name] : null,
+                } : null)
+              }}
+              placeholder="Reference Name"
+              title="Reference name/ID (ref.name)"
+              sx={{ flex: 1, minWidth: 0 }}
+            />
+          </Stack>
+          <Button onClick={generateXml} variant="solid" color="primary">
+            Generate XML
+          </Button>
+          {xmlOutput && (
+            <Textarea
+              value={xmlOutput}
+              readOnly
+              minRows={10}
+              maxRows={20}
+              placeholder="Generated XML will appear here"
+            />
+          )}
         </Stack>
       </Stack>
     </>

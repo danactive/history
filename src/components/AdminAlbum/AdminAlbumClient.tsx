@@ -38,7 +38,7 @@ export default function AdminAlbumClient(
 
   return (
     <form>
-        {item && <Fields albumEntity={data?.album} item={item}>
+        {item && <Fields xmlAlbum={data?.album} gallery={gallery} item={item}>
           <Photo item={item} />
         </Fields>}
         <Stack
