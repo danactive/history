@@ -13,6 +13,8 @@ import type { Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXml
 import { transformReference } from '../../utils/reference'
 import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
+import type { EditCountPillHook } from './useEditCountPill'
+import { useGeoCopy } from './useGeoCopy'
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
@@ -42,20 +44,23 @@ function parseDMS(dms: string): number | null {
 }
 
 export default function Fields(
-  { xmlAlbum, gallery, item, children, onItemUpdate, editedItems }:
+  { xmlAlbum, gallery, item, children, onItemUpdate, onXmlGenerated, editedItems, applyEditsToItems }:
   {
     xmlAlbum: RawXmlAlbum | undefined,
     gallery: Gallery,
     item: XmlItemState,
     children: React.ReactElement,
-    onItemUpdate: (item: RawXmlItem) => void,
-    editedItems: Record<string, RawXmlItem>
+    onItemUpdate: EditCountPillHook['handleItemUpdate'],
+    onXmlGenerated: EditCountPillHook['handleXmlGenerated'],
+    editedItems: EditCountPillHook['editedItems'],
+    applyEditsToItems: EditCountPillHook['applyEditsToItems']
   },
 ) {
   const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
   const [xmlOutput, setXmlOutput] = useState<string>('')
   const [autocompleteValue, setAutocompleteValue] = useState<string>('')
   const updatePendingRef = useRef(false)
+  const GeoCopyButton = useGeoCopy(editedItem)
 
   // Fetch all available keywords from all albums
   const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
@@ -87,39 +92,8 @@ export default function Fields(
     // Get all items from XML
     const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
 
-    // Helper to remove empty/null/undefined properties recursively
-    const removeEmpty = (obj: any): any => {
-      if (obj === null || obj === undefined || obj === '') return undefined
-      if (typeof obj !== 'object') return obj
-      if (Array.isArray(obj)) return obj.map(removeEmpty).filter((v) => v !== undefined)
-
-      const cleaned: any = {}
-      for (const [key, value] of Object.entries(obj)) {
-        const cleanedValue = removeEmpty(value)
-        if (cleanedValue !== undefined) {
-          cleaned[key] = cleanedValue
-        }
-      }
-      return Object.keys(cleaned).length > 0 ? cleaned : undefined
-    }
-
     // Apply all edits from editedItems state and maintain proper field ordering
-    const updatedItems = items.map((originalItem: RawXmlItem) => {
-      const edited = editedItems[originalItem.$.id]
-      if (!edited) return originalItem
-
-      // Reconstruct item with desired field order: search before geo
-      const { search, geo, ref, ...rest } = edited
-      const orderedItem = {
-        ...rest,
-        ...(search !== undefined && search !== null && search !== '' && { search }),
-        ...(geo && { geo }),
-        ...(ref && { ref }),
-      }
-
-      // Remove empty properties
-      return removeEmpty(orderedItem)
-    }).filter((item) => item !== undefined)
+    const updatedItems = applyEditsToItems(items)
 
     // Build XML album structure
     const albumXml = {
@@ -136,6 +110,9 @@ export default function Fields(
 
     const xml = builder.buildObject(albumXml)
     setXmlOutput(xml)
+
+    // Reset the counter of edits since generation
+    onXmlGenerated()
   }
 
   const filename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
@@ -169,18 +146,18 @@ export default function Fields(
             placeholder="Location"
             title="Location (photo_loc)"
           />
-          <Input
-            value={editedItem?.thumb_caption ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
-            placeholder="Caption"
-            title="Caption (thumb_caption)"
-          />
           <Textarea
             value={editedItem?.photo_desc ?? ''}
             onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_desc: e.target.value } : null)}
             placeholder="Description"
             title="Description (photo_desc)"
             minRows={2}
+          />
+          <Input
+            value={editedItem?.thumb_caption ?? ''}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
+            placeholder="Caption"
+            title="Caption (thumb_caption)"
           />
           <Input
             value={editedItem?.search ?? ''}
@@ -291,22 +268,8 @@ export default function Fields(
               title="Longitude (geo.lon) - paste DMS format to convert"
               sx={{ flex: 1, minWidth: 0 }}
             />
-            <IconButton
-              size="sm"
-              variant="outlined"
-              onClick={() => {
-                const lat = editedItem?.geo?.lat ?? ''
-                const lon = editedItem?.geo?.lon ?? ''
-                if (lat && lon) {
-                  navigator.clipboard.writeText(`${lat},${lon}`)
-                }
-              }}
-              disabled={!editedItem?.geo?.lat || !editedItem?.geo?.lon}
-              title="Copy lat,lon to clipboard"
-              sx={{ minWidth: 'auto', px: 1 }}
-            >
-              📋
-            </IconButton>
+            <GeoCopyButton />
+
             <Input
               value={editedItem?.geo?.accuracy ?? ''}
               onChange={(e) => {

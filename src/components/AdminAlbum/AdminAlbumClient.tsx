@@ -15,6 +15,7 @@ import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
 import Thumbs from './Thumbs'
+import { useEditCountPill } from './useEditCountPill'
 
 export type XmlItemState = RawXmlItem | null
 
@@ -31,8 +32,7 @@ export default function AdminAlbumClient(
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  // Store edits for all items by ID - persist across photo switches
-  const [editedItems, setEditedItems] = useState<Record<string, RawXmlItem>>({})
+  const { EditCountPill, editedItems, handleItemUpdate, handleXmlGenerated, getItemWithEdits, clearEdits, applyEditsToItems } = useEditCountPill()
   const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
   const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
@@ -84,7 +84,7 @@ export default function AdminAlbumClient(
     if (selectedAlbum) {
       setAlbum(selectedAlbum)
       // Clear edits when album changes
-      setEditedItems({})
+      clearEdits()
       setCurrentIndex(-1)
       setItem(null)
     }
@@ -98,7 +98,7 @@ export default function AdminAlbumClient(
       setCurrentGallery(newValue as Gallery)
       setAlbum(null)
       // Clear edits when gallery changes
-      setEditedItems({})
+      clearEdits()
       setItem(null)
       setCurrentIndex(-1)
     }
@@ -152,26 +152,18 @@ export default function AdminAlbumClient(
     }
   }, [currentIndex, items])
 
-  const handleItemUpdate = (updatedItem: RawXmlItem) => {
-    setEditedItems(prev => ({
-      ...prev,
-      [updatedItem.$.id]: updatedItem,
-    }))
-  }
-
-  // Get item with edits applied if they exist
-  const getItemWithEdits = (itemToGet: RawXmlItem | null): RawXmlItem | null => {
-    if (!itemToGet) return null
-    return editedItems[itemToGet.$.id] || itemToGet
-  }
-
   return (
     <form>
+        <EditCountPill />
         {item && <Fields
           xmlAlbum={data}
           gallery={currentGallery}
           item={getItemWithEdits(item)}
-          onItemUpdate={handleItemUpdate}          editedItems={editedItems}        >
+          onItemUpdate={handleItemUpdate}
+          onXmlGenerated={handleXmlGenerated}
+          editedItems={editedItems}
+          applyEditsToItems={applyEditsToItems}
+        >
           <Photo item={item} gallery={currentGallery} />
         </Fields>}
         <Stack
