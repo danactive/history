@@ -25,7 +25,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     keyword,
     searchBox,
     setVisibleCount,
-  } = useSearch({ items, setMemoryIndex, indexedKeywords })
+  } = useSearch({ items, setMemoryIndex, indexedKeywords, refImageGallery })
 
   const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
   const [mapBounds, setMapBounds] = useState<Bounds | null>(null)

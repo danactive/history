@@ -19,12 +19,14 @@ interface UseSearchProps<ItemType> {
   items: ItemType[];
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
+  refImageGallery?: React.RefObject<any>;
 }
 
 export default function useSearch<ItemType extends ServerSideItem>({
   items,
   setMemoryIndex,
   indexedKeywords = [],
+  refImageGallery,
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -165,6 +167,19 @@ export default function useSearch<ItemType extends ServerSideItem>({
     router.replace(pathname)
   }
 
+  const handleExpand = () => {
+    // Get current photo ID from filtered items (what's currently shown in gallery)
+    const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
+    const currentItem = filtered[currentIndex]
+    if (!currentItem) return
+
+    const photoId = (currentItem as any).id || (currentItem as any).name // album.name
+    if (!photoId) return
+
+    // Replace URL with select parameter - this removes keyword and triggers select logic
+    router.replace(`${pathname}?select=${photoId}`)
+  }
+
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
 
   const searchBox = (
@@ -190,15 +205,26 @@ export default function useSearch<ItemType extends ServerSideItem>({
           Filter
         </Button>
         {keyword && (
-          <Button
-            type="button"
-            onClick={handleClear}
-            color="primary"
-            variant="soft"
-            title="Clear search"
-          >
-            Clear
-          </Button>
+          <>
+            <Button
+              type="button"
+              onClick={handleClear}
+              color="primary"
+              variant="soft"
+              title="Clear search"
+            >
+              Clear
+            </Button>
+            <Button
+              type="button"
+              onClick={handleExpand}
+              color="primary"
+              variant="soft"
+              title="Clear search and view adjacent photos"
+            >
+              Expand
+            </Button>
+          </>
         )}
       </div>
     </form>

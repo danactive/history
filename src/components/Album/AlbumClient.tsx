@@ -39,7 +39,9 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
     const idx = itemsToShow.findIndex(i => i.id === selectId)
-    if (idx >= 0) {
+
+    // Only slide if we found the item (idx >= 0) AND the gallery isn't already at that index
+    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
       refImageGallery.current?.slideToIndex(idx)
       setMemoryIndex(idx)
     }
