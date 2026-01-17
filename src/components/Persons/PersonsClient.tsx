@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
@@ -25,12 +26,37 @@ export default function PersonsClient({
     mapFilterEnabled,
     handleToggleMapFilter,
     handleBoundsChange,
+    isExpanding,
+    expandCoordinates,
     controls,
     ageFiltered,
     itemsWithCorpus,
     memoryHtml,
     overrideAgeSummary,
   } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
+
+  const searchParams = useSearchParams()
+  const selectId = searchParams.get('select')
+
+  // Handle URL ?select= parameter
+  useEffect(() => {
+    if (!selectId || ageFiltered.length === 0) return
+    let idx = ageFiltered.findIndex(i => i.id === selectId)
+
+    // Fallback: try matching by filename
+    if (idx < 0) {
+      idx = ageFiltered.findIndex(i => {
+        const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+        return filename === selectId
+      })
+    }
+
+    // Only slide if found and not already at that index
+    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
+      refImageGallery.current?.slideToIndex(idx)
+      setMemoryIndex(idx)
+    }
+  }, [selectId, ageFiltered, refImageGallery, setMemoryIndex])
 
   // Replace controls age list if override available
   const finalControls = overrideAgeSummary ?? controls
@@ -51,6 +77,8 @@ export default function PersonsClient({
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          isExpanding={isExpanding}
+          expandCoordinates={expandCoordinates}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

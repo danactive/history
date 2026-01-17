@@ -20,11 +20,14 @@ export default function useBookmark<ItemType>({
     const currentItem = displayedItems[currentIndex]
     if (!currentItem) return
 
-    const photoId = (currentItem as any).id || (currentItem as any).name
-    if (!photoId) return
+    // Use filename as unique identifier (works across all albums)
+    const identifier = Array.isArray((currentItem as any).filename)
+      ? (currentItem as any).filename[0]
+      : (currentItem as any).filename
+    if (!identifier) return
 
     // Copy bookmark URL to clipboard
-    const bookmarkUrl = `${window.location.origin}${pathname}?select=${photoId}`
+    const bookmarkUrl = `${window.location.origin}${pathname}?select=${identifier}`
     navigator.clipboard.writeText(bookmarkUrl)
   }
 

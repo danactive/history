@@ -31,6 +31,8 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
+    isExpanding,
+    expandCoordinates,
   } = useMapFilter({ items, indexedKeywords })
 
   const searchParams = useSearchParams()
@@ -38,7 +40,15 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
 
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
-    const idx = itemsToShow.findIndex(i => i.id === selectId)
+    let idx = itemsToShow.findIndex(i => i.id === selectId)
+
+    // Fallback: try matching by filename (for All view where IDs may not be unique)
+    if (idx < 0) {
+      idx = itemsToShow.findIndex(i => {
+        const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+        return filename === selectId
+      })
+    }
 
     // Only slide if we found the item (idx >= 0) AND the gallery isn't already at that index
     if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
@@ -60,6 +70,7 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          isExpanding={isExpanding}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

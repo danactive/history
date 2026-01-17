@@ -22,7 +22,8 @@ interface UseSearchProps<ItemType> {
   indexedKeywords?: IndexedKeywords[];
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
-  onClearMapFilter?: () => void;
+  onClearMapFilter?: (coordinates?: [number, number] | null) => void;
+  selectById?: (id: string, isExpand?: boolean) => void;
 }
 
 export default function useSearch<ItemType extends ServerSideItem>({
@@ -32,6 +33,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   refImageGallery,
   mapFilterEnabled,
   onClearMapFilter,
+  selectById,
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -180,21 +182,32 @@ export default function useSearch<ItemType extends ServerSideItem>({
     const currentItem = itemsToUse[currentIndex]
     if (!currentItem) return
 
-    const photoId = (currentItem as any).id || (currentItem as any).name // album.name
-    if (!photoId) return
+    // Use filename as unique identifier (works across all albums)
+    const identifier = Array.isArray((currentItem as any).filename)
+      ? (currentItem as any).filename[0]
+      : (currentItem as any).filename
+    if (!identifier) return
+
+    // Extract coordinates from current item
+    const coordinates = (currentItem as any).coordinates as [number, number] | null
+
+    // Set selectedId with expand flag for immediate processing
+    if (selectById) {
+      selectById(identifier, true)
+    }
 
     // Clear search state
     setKeyword('')
     setSelectedOption(null)
     setInputValue('')
 
-    // Clear map filter if enabled
+    // Clear map filter - pass coordinates to preserve map position
     if (mapFilterEnabled && onClearMapFilter) {
-      onClearMapFilter()
+      onClearMapFilter(coordinates)
     }
 
-    // Replace URL with select parameter - this removes keyword and map filter state
-    router.replace(`${pathname}?select=${photoId}`)
+    // Update URL to reflect the selection (use filename for global uniqueness)
+    router.replace(`${pathname}?select=${identifier}`)
   }
 
   const { BookmarkButton } = useBookmark({
