@@ -20,17 +20,32 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     })
   }, [])
 
+  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
+  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  const handleClearMapFilter = useCallback(() => {
+    // Delay disabling map filter to prevent map jump during expand
+    setTimeout(() => {
+      setMapFilterEnabled(false)
+      setMapBounds(null)
+    }, 100)
+  }, [])
+
   const {
     filtered,
     keyword,
     searchBox,
     setVisibleCount,
     setDisplayedItems,
-  } = useSearch({ items, setMemoryIndex, indexedKeywords, refImageGallery })
-
-  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
-  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  } = useSearch({
+    items,
+    setMemoryIndex,
+    indexedKeywords,
+    refImageGallery,
+    mapFilterEnabled,
+    onClearMapFilter: handleClearMapFilter,
+  })
 
   const handleBoundsChange = useCallback((bounds: Bounds) => {
     if (!bounds) return

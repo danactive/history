@@ -21,6 +21,8 @@ interface UseSearchProps<ItemType> {
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
   refImageGallery?: React.RefObject<any>;
+  mapFilterEnabled?: boolean;
+  onClearMapFilter?: () => void;
 }
 
 export default function useSearch<ItemType extends ServerSideItem>({
@@ -28,6 +30,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
   setMemoryIndex,
   indexedKeywords = [],
   refImageGallery,
+  mapFilterEnabled,
+  onClearMapFilter,
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -179,7 +183,17 @@ export default function useSearch<ItemType extends ServerSideItem>({
     const photoId = (currentItem as any).id || (currentItem as any).name // album.name
     if (!photoId) return
 
-    // Replace URL with select parameter - this removes keyword and triggers select logic
+    // Clear search state
+    setKeyword('')
+    setSelectedOption(null)
+    setInputValue('')
+
+    // Clear map filter if enabled
+    if (mapFilterEnabled && onClearMapFilter) {
+      onClearMapFilter()
+    }
+
+    // Replace URL with select parameter - this removes keyword and map filter state
     router.replace(`${pathname}?select=${photoId}`)
   }
 
@@ -214,26 +228,26 @@ export default function useSearch<ItemType extends ServerSideItem>({
           Filter
         </Button>
         {keyword && (
-          <>
-            <Button
-              type="button"
-              onClick={handleClear}
-              color="primary"
-              variant="soft"
-              title="Clear search"
-            >
-              Clear
-            </Button>
-            <Button
-              type="button"
-              onClick={handleExpand}
-              color="primary"
-              variant="soft"
-              title="Clear search and view adjacent photos"
-            >
-              Expand
-            </Button>
-          </>
+          <Button
+            type="button"
+            onClick={handleClear}
+            color="primary"
+            variant="soft"
+            title="Clear search"
+          >
+            Clear
+          </Button>
+        )}
+        {(mapFilterEnabled || keyword) && (
+          <Button
+            type="button"
+            onClick={handleExpand}
+            color="primary"
+            variant="soft"
+            title="Clear search and view adjacent photos"
+          >
+            Expand
+          </Button>
         )}
         <BookmarkButton />
       </div>
