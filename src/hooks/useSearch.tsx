@@ -9,6 +9,7 @@ import {
 } from 'react'
 import AutoComplete from '../components/ComboBox'
 import { IndexedKeywords } from '../types/common'
+import useBookmark from './useBookmark'
 import styles from './search.module.css'
 
 interface ServerSideItem {
@@ -39,6 +40,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   )
   const [inputValue, setInputValue] = useState<string>(initialKeyword)
   const [filteredItems, setFilteredItems] = useState<ItemType[]>(items)
+  const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
 
   // Count of currently visible thumbnails (consumer can override this if needed)
   const [visibleCount, setVisibleCount] = useState<number>(items.length)
@@ -168,9 +170,10 @@ export default function useSearch<ItemType extends ServerSideItem>({
   }
 
   const handleExpand = () => {
-    // Get current photo ID from filtered items (what's currently shown in gallery)
+    // Get current photo ID from displayed items (respects map filter)
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
-    const currentItem = filtered[currentIndex]
+    const itemsToUse = displayedItems || filtered
+    const currentItem = itemsToUse[currentIndex]
     if (!currentItem) return
 
     const photoId = (currentItem as any).id || (currentItem as any).name // album.name
@@ -179,6 +182,12 @@ export default function useSearch<ItemType extends ServerSideItem>({
     // Replace URL with select parameter - this removes keyword and triggers select logic
     router.replace(`${pathname}?select=${photoId}`)
   }
+
+  const { BookmarkButton } = useBookmark({
+    refImageGallery,
+    displayedItems: displayedItems || filtered,
+    pathname,
+  })
 
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
 
@@ -226,6 +235,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
             </Button>
           </>
         )}
+        <BookmarkButton />
       </div>
     </form>
   )
@@ -256,5 +266,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
     searchBox,
     setVisibleCount: setVisibleCountStable,
     setFiltered: setFilteredItems,
+    setDisplayedItems,
   }
 }

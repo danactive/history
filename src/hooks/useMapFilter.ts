@@ -25,6 +25,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     keyword,
     searchBox,
     setVisibleCount,
+    setDisplayedItems,
   } = useSearch({ items, setMemoryIndex, indexedKeywords, refImageGallery })
 
   const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
@@ -55,6 +56,11 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
       return lng >= swLng && lng <= neLng && lat >= swLat && lat <= neLat
     })
   }, [mapFilterEnabled, mapBounds, filtered])
+
+  // Update displayed items whenever itemsToShow changes
+  useEffect(() => {
+    setDisplayedItems(itemsToShow)
+  }, [itemsToShow, setDisplayedItems])
 
   // Pass suppression flag to useMemory
   const { setViewed, memoryHtml, viewedList } = useMemory(
