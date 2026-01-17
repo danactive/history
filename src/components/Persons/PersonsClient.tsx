@@ -26,8 +26,8 @@ export default function PersonsClient({
     mapFilterEnabled,
     handleToggleMapFilter,
     handleBoundsChange,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
     controls,
     ageFiltered,
     itemsWithCorpus,
@@ -77,8 +77,8 @@ export default function PersonsClient({
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
-          isExpanding={isExpanding}
-          expandCoordinates={expandCoordinates}
+          isClearing={isClearing}
+          clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

@@ -25,8 +25,8 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
   } = useMapFilter({ items, indexedKeywords })
 
   const searchParams = useSearchParams()
@@ -65,8 +65,8 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
-          isExpanding={isExpanding}
-          expandCoordinates={expandCoordinates}
+          isClearing={isClearing}
+          clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

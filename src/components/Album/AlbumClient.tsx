@@ -31,8 +31,8 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
   } = useMapFilter({ items, indexedKeywords })
 
   const searchParams = useSearchParams()
@@ -70,7 +70,8 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
-          isExpanding={isExpanding}
+          isClearing={isClearing}
+          clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

@@ -41,8 +41,8 @@ export default function usePersonsFilter({
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
   } = useMapFilter({ items, indexedKeywords })
 
   // Age/person selection state
@@ -221,8 +221,8 @@ export default function usePersonsFilter({
     mapFilterEnabled,
     handleToggleMapFilter,
     handleBoundsChange,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
     // age/person
     selectedAge,
     setSelectedAge,

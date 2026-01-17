@@ -68,8 +68,8 @@ function SplitViewer({
   memoryIndex,
   setMemoryIndex,
   mapFilterEnabled,
-  isExpanding,
-  expandCoordinates,
+  isClearing,
+  clearCoordinates,
   onToggleMapFilter,
   onMapBoundsChange,
 }: {
@@ -80,8 +80,8 @@ function SplitViewer({
   memoryIndex: number;
   setMemoryIndex: (n: number) => void;
   mapFilterEnabled?: boolean;
-  isExpanding?: boolean;
-  expandCoordinates?: [number, number] | null;
+  isClearing?: boolean;
+  clearCoordinates?: [number, number] | null;
   onToggleMapFilter?: () => void;
   onMapBoundsChange?: (bounds: [[number, number],[number, number]]) => void;
 }) {
@@ -117,28 +117,28 @@ function SplitViewer({
   // Dynamic centroid (always reflects current selected item)
   const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
 
-  // Locked centroid used while map filter is ON or during expand
+  // Locked centroid used while map filter is ON or during clear
   const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)
 
-  // Lock centroid when expand starts with preserved coordinates
+  // Lock centroid when clear starts with preserved coordinates
   useEffect(() => {
-    if (isExpanding && expandCoordinates && dynamicCentroid) {
+    if (isClearing && clearCoordinates && dynamicCentroid) {
       setLockedCentroid({
         ...dynamicCentroid,
-        coordinates: expandCoordinates,
+        coordinates: clearCoordinates,
       } as Item)
     }
-  }, [isExpanding, expandCoordinates])
+  }, [isClearing, clearCoordinates])
 
   // Update locked centroid during normal navigation only
   useEffect(() => {
-    if (!mapFilterEnabled && !isExpanding && dynamicCentroid) {
+    if (!mapFilterEnabled && !isClearing && dynamicCentroid) {
       setLockedCentroid(dynamicCentroid)
     }
-  }, [mapFilterEnabled, isExpanding, dynamicCentroid])
+  }, [mapFilterEnabled, isClearing, dynamicCentroid])
 
-  // Always use locked centroid during filter or expand, dynamic otherwise
-  const effectiveCentroid = (mapFilterEnabled || isExpanding) ? lockedCentroid : dynamicCentroid
+  // Always use locked centroid during filter or clear, dynamic otherwise
+  const effectiveCentroid = (mapFilterEnabled || isClearing) ? lockedCentroid : dynamicCentroid
 
   // Only pass startIndex on first mount; afterward let the gallery manage its own state
   const initialIndexRef = useRef(safeIndex)

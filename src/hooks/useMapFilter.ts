@@ -12,7 +12,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
   const autoInitialViewRef = useRef(true) // controls useMemory auto mark
-  const [isExpanding, setIsExpanding] = useState(false) // flag to prevent map updates during expand
+  const [isClearing, setIsClearing] = useState(false) // flag to prevent map updates during clear
 
   const setMemoryIndex: Dispatch<SetStateAction<number>> = useCallback((value) => {
     setMemoryIndexState(prev => {
@@ -24,20 +24,20 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
   const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
   const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [expandCoordinates, setExpandCoordinates] = useState<[number, number] | null>(null)
+  const [clearCoordinates, setClearCoordinates] = useState<[number, number] | null>(null)
 
   const handleClearMapFilter = useCallback((coordinates?: [number, number] | null) => {
     // Preserve coordinates before clearing filter
     if (coordinates) {
-      setExpandCoordinates(coordinates)
+      setClearCoordinates(coordinates)
     }
-    setIsExpanding(true)
+    setIsClearing(true)
     setMapFilterEnabled(false)
     setMapBounds(null)
   }, [])
 
-  const selectById = useCallback((id: string, isExpand = false) => {
-    // Simply update selectedId for both expand and normal operations
+  const selectById = useCallback((id: string, isClear = false) => {
+    // Simply update selectedId for both clear and normal operations
     // The URL-based handling in each client will position the gallery
     setSelectedId(prev => (prev === id ? prev : id))
   }, [])
@@ -176,17 +176,17 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     return () => clearTimeout(timeout)
   }, [itemsToShow.length, setVisibleCount])
 
-  // Clear expanding flag after gallery repositions during expand
+  // Clear clearing flag after gallery repositions during clear
   useEffect(() => {
-    if (isExpanding && !mapFilterEnabled) {
+    if (isClearing && !mapFilterEnabled) {
       // Wait for gallery to reposition, then clear flag and coordinates
       const timeout = setTimeout(() => {
-        setIsExpanding(false)
-        setExpandCoordinates(null)
+        setIsClearing(false)
+        setClearCoordinates(null)
       }, 200)
       return () => clearTimeout(timeout)
     }
-  }, [mapFilterEnabled, memoryIndex, isExpanding])
+  }, [mapFilterEnabled, memoryIndex, isClearing])
 
   return {
     refImageGallery,
@@ -204,7 +204,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     itemsToShow,
     selectedId,
     selectById,
-    isExpanding,
-    expandCoordinates,
+    isClearing,
+    clearCoordinates,
   }
 }
