@@ -269,7 +269,11 @@ describe('Clear button functionality', () => {
 
     vi.mocked(usePathname).mockReturnValue('/search')
 
-    const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
+    const items = [
+      { corpus: 'apple', filename: 'apple.jpg' },
+      { corpus: 'banana', filename: 'banana.jpg' },
+      { corpus: 'cherry', filename: 'cherry.jpg' },
+    ]
 
     // Use a wrapper component to access the hook
     function TestComponent() {
@@ -283,7 +287,7 @@ describe('Clear button functionality', () => {
     expect(container.textContent).toMatch(/for "apple"/)
 
     // Find the Clear button by title attribute
-    const clearButton = container.querySelector('button[title="Clear search"]') as HTMLButtonElement
+    const clearButton = container.querySelector('button[title="Clear search and view adjacent photos"]') as HTMLButtonElement
 
     // Mock the search params to return empty after clearing
     vi.mocked(useSearchParams).mockReturnValue({
@@ -293,7 +297,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(clearButton)
 
     // Verify router.replace was called
-    expect(mockReplace).toHaveBeenCalledWith('/search')
+    expect(mockReplace).toHaveBeenCalledWith('/search?select=apple.jpg')
 
     // Check that the input field value is cleared
     await waitFor(() => {
@@ -323,21 +327,22 @@ describe('Clear button functionality', () => {
     vi.mocked(usePathname).mockReturnValue('/gallery/photos')
 
     const items = [
-      { corpus: 'apple' },
-      { corpus: 'banana' },
-      { corpus: 'cherry' },
-      { corpus: 'banana split' },
+      { corpus: 'apple', filename: 'apple.jpg' },
+      { corpus: 'banana', filename: 'banana.jpg' },
+      { corpus: 'cherry', filename: 'cherry.jpg' },
+      { corpus: 'banana split', filename: 'banana-split.jpg' },
     ]
 
     // Use a wrapper component to access the hook and set visible count
     function TestComponent() {
       const search = useSearch({ items, indexedKeywords: [] })
 
-      // Simulate setting visible count based on filtered results
-      const { filtered, setVisibleCount } = search
+      // Simulate setting visible count and displayed items based on filtered results
+      const { filtered, setVisibleCount, setDisplayedItems } = search
       React.useEffect(() => {
         setVisibleCount(filtered.length)
-      }, [filtered, setVisibleCount])
+        setDisplayedItems(filtered)
+      }, [filtered, setVisibleCount, setDisplayedItems])
 
       return <div>{search.searchBox}</div>
     }
@@ -353,7 +358,7 @@ describe('Clear button functionality', () => {
     expect(container.textContent).toMatch(/for "ban"/)
 
     // Find the Clear button
-    const clearButton = container.querySelector('button[title="Clear search"]') as HTMLButtonElement
+    const clearButton = container.querySelector('button[title="Clear search and view adjacent photos"]') as HTMLButtonElement
 
     // Mock the search params to return empty after clearing
     vi.mocked(useSearchParams).mockReturnValue({
@@ -363,7 +368,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(clearButton)
 
     // Verify URL was cleared (router.replace called with path only, no keyword)
-    expect(mockReplace).toHaveBeenCalledWith('/gallery/photos')
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/photos?select=banana.jpg')
 
     // Re-render to reflect the cleared state
     rerender(<TestComponent />)

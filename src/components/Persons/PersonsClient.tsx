@@ -55,8 +55,9 @@ export default function PersonsClient({
     if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
       refImageGallery.current?.slideToIndex(idx)
       setMemoryIndex(idx)
+      setViewed(idx)
     }
-  }, [selectId, ageFiltered, refImageGallery, setMemoryIndex])
+  }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
 
   // Replace controls age list if override available
   const finalControls = overrideAgeSummary ?? controls

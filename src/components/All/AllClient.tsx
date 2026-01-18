@@ -49,8 +49,9 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
     if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
       refImageGallery.current?.slideToIndex(idx)
       setMemoryIndex(idx)
+      setViewed(idx)
     }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex])
+  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
 
   return (
     <div>

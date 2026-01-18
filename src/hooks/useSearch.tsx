@@ -48,18 +48,18 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const [inputValue, setInputValue] = useState<string>(initialKeyword)
   const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
 
+  const filtered = useMemo(() => {
+    if (!keyword) return items
+    return items.filter((item) => matchCorpus(item.corpus, keyword))
+  }, [items, keyword])
+
   // Count of currently visible thumbnails (consumer can override this if needed)
-  const [visibleCount, setVisibleCount] = useState<number>(items.length)
+  const [visibleCount, setVisibleCount] = useState<number>(filtered.length)
 
   // Make setVisibleCount stable to prevent useEffect loops
   const setVisibleCountStable = useCallback((count: number) => {
     setVisibleCount((prev) => (prev === count ? prev : count))
   }, [])
-
-  const filtered = useMemo(() => {
-    if (!keyword) return items
-    return items.filter((item) => matchCorpus(item.corpus, keyword))
-  }, [items, keyword])
 
   // Adjust visibleCount when filtered items change during render
   // This avoids a double render caused by useEffect synchronization
