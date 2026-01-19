@@ -40,15 +40,10 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
 
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
-    let idx = itemsToShow.findIndex(i => i.id === selectId)
-
-    // Fallback: try matching by filename (for All view where IDs may not be unique)
-    if (idx < 0) {
-      idx = itemsToShow.findIndex(i => {
-        const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
-        return filename === selectId
-      })
-    }
+    const idx = itemsToShow.findIndex(i => {
+      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      return filename === selectId
+    })
 
     // Only slide if we found the item (idx >= 0) AND the gallery isn't already at that index
     if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {

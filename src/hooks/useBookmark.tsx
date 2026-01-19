@@ -1,23 +1,31 @@
 'use client'
 
 import { Button } from '@mui/joy'
+import { useRouter } from 'next/navigation'
 import type { RefObject } from 'react'
 
 interface UseBookmarkProps<ItemType> {
   refImageGallery?: RefObject<any>
   displayedItems: ItemType[]
   pathname: string
+  currentIndex?: number
+  selectById?: (id: string) => void
 }
 
 export default function useBookmark<ItemType>({
   refImageGallery,
   displayedItems,
   pathname,
+  currentIndex,
+  selectById,
 }: UseBookmarkProps<ItemType>) {
+  const router = useRouter()
+
   const handleBookmark = () => {
     // Get current photo ID from displayed items (respects map filter)
-    const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
-    const currentItem = displayedItems[currentIndex]
+    const galleryIndex = refImageGallery?.current?.getCurrentIndex?.()
+    const indexToUse = typeof galleryIndex === 'number' ? galleryIndex : (currentIndex ?? 0)
+    const currentItem = displayedItems[indexToUse]
     if (!currentItem) return
 
     // Use filename as unique identifier (works across all albums)
@@ -26,9 +34,17 @@ export default function useBookmark<ItemType>({
       : (currentItem as any).filename
     if (!identifier) return
 
+    // Notify parent to track selection (updates memoryIndex to match ID)
+    if (selectById) {
+      selectById(identifier)
+    }
+
     // Copy bookmark URL to clipboard
     const bookmarkUrl = `${window.location.origin}${pathname}?select=${identifier}`
     navigator.clipboard.writeText(bookmarkUrl)
+
+    // Update URL to reflect the selection
+    router.replace(`${pathname}?select=${identifier}`, { scroll: false })
   }
 
   const BookmarkButton = () => (

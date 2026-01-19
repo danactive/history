@@ -41,21 +41,20 @@ export default function PersonsClient({
   // Handle URL ?select= parameter
   useEffect(() => {
     if (!selectId || ageFiltered.length === 0) return
-    let idx = ageFiltered.findIndex(i => i.id === selectId)
 
-    // Fallback: try matching by filename
-    if (idx < 0) {
-      idx = ageFiltered.findIndex(i => {
-        const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
-        return filename === selectId
-      })
-    }
+    const idx = ageFiltered.findIndex(i => {
+      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      return filename === selectId
+    })
 
-    // Only slide if found and not already at that index
-    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
-      refImageGallery.current?.slideToIndex(idx)
-      setMemoryIndex(idx)
-      setViewed(idx)
+    if (idx >= 0) {
+      setTimeout(() => {
+        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
+          refImageGallery.current?.slideToIndex(idx)
+          setMemoryIndex(idx)
+          setViewed(idx)
+        }
+      }, 0)
     }
   }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
 

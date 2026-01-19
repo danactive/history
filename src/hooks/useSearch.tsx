@@ -19,6 +19,7 @@ interface ServerSideItem {
 
 interface UseSearchProps<ItemType> {
   items: ItemType[];
+  memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
   refImageGallery?: React.RefObject<any>;
@@ -29,6 +30,7 @@ interface UseSearchProps<ItemType> {
 
 export default function useSearch<ItemType extends ServerSideItem>({
   items,
+  memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
   refImageGallery,
@@ -116,6 +118,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
     refImageGallery,
     displayedItems: displayedItems || filtered,
     pathname,
+    currentIndex: memoryIndex,
+    selectById,
   })
 
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null

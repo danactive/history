@@ -50,6 +50,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     setDisplayedItems,
   } = useSearch({
     items,
+    memoryIndex,
     setMemoryIndex,
     indexedKeywords,
     refImageGallery,

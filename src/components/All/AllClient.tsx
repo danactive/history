@@ -35,21 +35,22 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
   // Handle URL ?select= parameter
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
-    let idx = itemsToShow.findIndex(i => i.id === selectId)
 
-    // Fallback: try matching by filename
-    if (idx < 0) {
-      idx = itemsToShow.findIndex(i => {
-        const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
-        return filename === selectId
-      })
-    }
+    const idx = itemsToShow.findIndex(i => {
+      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      return filename === selectId
+    })
 
-    // Only slide if found and not already at that index
-    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
-      refImageGallery.current?.slideToIndex(idx)
-      setMemoryIndex(idx)
-      setViewed(idx)
+    if (idx >= 0) {
+      // Use timeout to allow gallery to process items update (which might reset index)
+      // before enforcing the selected index
+      setTimeout(() => {
+        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
+          refImageGallery.current?.slideToIndex(idx)
+          setMemoryIndex(idx)
+          setViewed(idx)
+        }
+      }, 0)
     }
   }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
 
