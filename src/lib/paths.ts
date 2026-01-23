@@ -1,13 +1,14 @@
-import path from 'node:path'
-
 import type { Gallery, Item, XmlItem } from '../types/common'
 
 const type = (filepath: string): string => {
-  if (filepath.lastIndexOf('.') === 0) {
-    return path.parse(filepath).name.substring(1)
+  const lastDot = filepath.lastIndexOf('.')
+  if (lastDot === 0) {
+    return filepath.substring(1)
   }
-
-  return path.extname(filepath).substring(1)
+  if (lastDot === -1) {
+    return ''
+  }
+  return filepath.substring(lastDot + 1)
 }
 
 const filenameAsJpg = (filename: Item['filename'][0]) => {
