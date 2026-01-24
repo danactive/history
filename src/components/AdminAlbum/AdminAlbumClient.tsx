@@ -29,13 +29,48 @@ export default function AdminAlbumClient(
   const [album, setAlbum] = useState<GalleryAlbum | null>(null)
   const [item, setItem] = useState<XmlItemState>(null)
   const [currentIndex, setCurrentIndex] = useState<number>(-1)
+  const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set())
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  const { EditCountPill, editedItems, handleItemUpdate, handleXmlGenerated, getItemWithEdits, clearEdits, applyEditsToItems } = useEditCountPill()
+  const { EditCountPill, editedItems, handleItemUpdate: handleItemUpdateOriginal, handleXmlGenerated, getItemWithEdits, clearEdits, applyEditsToItems } = useEditCountPill()
   const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
   const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
+
+  const countFields = (item: RawXmlItem | null) => {
+    if (!item) return 0
+    let count = 0
+    for (const [key, value] of Object.entries(item)) {
+      if (key !== '$' && key !== 'filename' && value) {
+        count++
+      }
+    }
+    return count
+  }
+
+  const handleItemUpdateWrapper = (updatedItem: RawXmlItem) => {
+    // If multiple items are selected, apply the update to all of them
+    // preserving their specific ID and filename
+    if (selectedIndices.size > 0) {
+      selectedIndices.forEach(index => {
+        const targetItem = items[index]
+        if (!targetItem) return
+
+        // Create a new item that is a copy of the updated item
+        // but restores the target's ID and filename
+        const newItem = {
+          ...updatedItem,
+          $: targetItem.$,
+          filename: targetItem.filename
+        }
+        
+        handleItemUpdateOriginal(newItem)
+      })
+    } else {
+      handleItemUpdateOriginal(updatedItem)
+    }
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -61,6 +96,8 @@ export default function AdminAlbumClient(
         e.preventDefault()
         const newIndex = Math.max(0, Math.min(items.length - 1, currentIndex + delta))
         if (newIndex !== currentIndex) {
+          // Reset selection on navigation
+          setSelectedIndices(new Set([newIndex]))
           setCurrentIndex(newIndex)
           setItem(items[newIndex])
         }
@@ -71,9 +108,47 @@ export default function AdminAlbumClient(
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [currentIndex, items])
 
-  const handleItemSelect = (selectedItem: RawXmlItem, index: number) => {
-    setItem(selectedItem)
+  const handleItemSelect = (selectedItem: RawXmlItem, index: number, isShift: boolean = false) => {
+    let newSelectedIndices = new Set<number>()
+
+    if (isShift && currentIndex !== -1) {
+      // Range selection
+      const start = Math.min(currentIndex, index)
+      const end = Math.max(currentIndex, index)
+      // Keep existing selection if needed? Standard behavior usually anchors to last click.
+      // But let's assume standard shift-click behavior: select range from anchor to current.
+      // We don't track anchor separately loop, so we assume currentIndex is anchor.
+      
+      // If we want to ADD to selection with CMD/Ctrl, we'd need that too, but user asked for Shift.
+      // For simplicity, just range select.
+      for (let i = start; i <= end; i++) {
+        newSelectedIndices.add(i)
+      }
+    } else {
+      newSelectedIndices.add(index)
+    }
+
+    setSelectedIndices(newSelectedIndices)
     setCurrentIndex(index)
+
+    // Find the item with most fields among selected
+    let bestItem = items[index]
+    let maxFields = -1
+
+    newSelectedIndices.forEach(idx => {
+      const candidate = items[idx]
+      // Use the edited version if available to count fields? 
+      // User said "Select the photo's XML value which has the most fields"
+      // Likely refers to current state.
+      const itemToCheck = getItemWithEdits(candidate) || candidate
+      const fields = countFields(itemToCheck)
+      if (fields > maxFields) {
+        maxFields = fields
+        bestItem = candidate
+      }
+    })
+
+    setItem(bestItem)
   }
 
   const handleAlbumChange = (
@@ -87,6 +162,7 @@ export default function AdminAlbumClient(
       clearEdits()
       setCurrentIndex(-1)
       setItem(null)
+      setSelectedIndices(new Set())
     }
   }
 
@@ -101,6 +177,7 @@ export default function AdminAlbumClient(
       clearEdits()
       setItem(null)
       setCurrentIndex(-1)
+      setSelectedIndices(new Set())
     }
   }
 
@@ -159,7 +236,7 @@ export default function AdminAlbumClient(
           xmlAlbum={data}
           gallery={currentGallery}
           item={getItemWithEdits(item)}
-          onItemUpdate={handleItemUpdate}
+          onItemUpdate={handleItemUpdateWrapper}
           onXmlGenerated={handleXmlGenerated}
           editedItems={editedItems}
           applyEditsToItems={applyEditsToItems}
@@ -221,7 +298,13 @@ export default function AdminAlbumClient(
         </Stack>
         {error && <div>{JSON.stringify(error)}</div>}
         {!error && data ? (
-          <Thumbs xmlAlbum={data} gallery={currentGallery} setItem={handleItemSelect} currentIndex={currentIndex} />
+          <Thumbs
+            xmlAlbum={data}
+            gallery={currentGallery}
+            setItem={handleItemSelect}
+            currentIndex={currentIndex}
+            selectedIndices={selectedIndices}
+          />
         ) : (
           <div>Select an album</div>
         )}

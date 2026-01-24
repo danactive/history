@@ -19,7 +19,7 @@ function ThumbImg({
   id,
   viewed: globalViewed = false,
 }: {
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
   caption: string;
   href?: string;
   src: string;
@@ -36,7 +36,7 @@ function ThumbImg({
   const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
     event.preventDefault()
     if (!viewed) setViewed(true)
-    onClick?.()
+    onClick?.(event)
   }
 
   const { width, height } = config.resizeDimensions.thumb
