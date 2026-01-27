@@ -14,6 +14,7 @@ export default function AdminAlbumThumbs(
   },
 ) {
   const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
+  const hasMultiSelection = (selectedIndices?.size ?? 0) > 1
 
   if (items.length === 0) {
     return <div>No items found</div>
@@ -34,6 +35,7 @@ export default function AdminAlbumThumbs(
               key={filename}
               id={`select${item.$.id}`}
               viewed={isSelected}
+              multiSelected={hasMultiSelection && isSelected}
             />
           )
         })}
