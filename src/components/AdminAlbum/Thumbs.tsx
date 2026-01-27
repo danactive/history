@@ -5,10 +5,10 @@ import ThumbImg from '../ThumbImg'
 
 export default function AdminAlbumThumbs(
   { xmlAlbum, gallery, setItem, currentIndex, selectedIndices }:
-  { 
-    xmlAlbum: RawXmlAlbum, 
-    gallery: Gallery, 
-    setItem: (item: RawXmlItem, index: number, isShift?: boolean) => void, 
+  {
+    xmlAlbum: RawXmlAlbum,
+    gallery: Gallery,
+    setItem: (item: RawXmlItem, index: number, isShift?: boolean) => void,
     currentIndex: number,
     selectedIndices?: Set<number>
   },

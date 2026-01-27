@@ -152,7 +152,7 @@ describe('Router ready', () => {
       { corpus: 'orange juice and grapes' },
       { corpus: 'cherry tart dessert' },
     ]
-    
+
     const { result, rerender } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
 
     // Initial state: only 1 item matches "apple banana"

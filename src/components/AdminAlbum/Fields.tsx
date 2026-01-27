@@ -119,232 +119,224 @@ export default function Fields(
 
   return (
     <>
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          alignItems: 'flex-start',
-        }}
-      >
-        {children}
-        <Stack direction="column" spacing={2} sx={{ width: '35rem', flexShrink: 0 }}>
+      <Stack direction="column" spacing={2} sx={{ width: '35rem', flexShrink: 0 }}>
+        <Input
+          value={filename}
+          readOnly
+          placeholder="Filename"
+          title="Filename (read-only)"
+        />
+        <Input
+          value={editedItem?.photo_city ?? ''}
+          onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_city: e.target.value } : null)}
+          placeholder="City"
+          title="City (photo_city)"
+        />
+        <Input
+          value={editedItem?.photo_loc ?? ''}
+          onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_loc: e.target.value } : null)}
+          placeholder="Location"
+          title="Location (photo_loc)"
+        />
+        <Textarea
+          value={editedItem?.photo_desc ?? ''}
+          onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_desc: e.target.value } : null)}
+          placeholder="Description"
+          title="Description (photo_desc)"
+          minRows={2}
+        />
+        <Input
+          value={editedItem?.thumb_caption ?? ''}
+          onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
+          placeholder="Caption"
+          title="Caption (thumb_caption)"
+        />
+        <Input
+          value={editedItem?.search ?? ''}
+          onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, search: e.target.value } : null)}
+          placeholder="Search keywords"
+          title="Search keywords (comma-separated)"
+        />
+        <ComboBox
+          className="keyword-autocomplete"
+          options={allKeywords}
+          value={null}
+          inputValue={autocompleteValue}
+          onInputChange={(newValue) => {
+            setAutocompleteValue(newValue)
+          }}
+          onChange={({ value }) => {
+            // Append the selected keyword to the existing search field
+            updateItem((prev: RawXmlItem | null) => {
+              if (!prev) return null
+              const currentSearch = prev.search ?? ''
+              const separator = currentSearch && !currentSearch.endsWith(', ') ? ', ' : ''
+              return { ...prev, search: currentSearch + separator + value }
+            })
+            // Clear the autocomplete input
+            setAutocompleteValue('')
+          }}
+        />
+        <Stack direction="row" spacing={1}>
           <Input
-            value={filename}
-            readOnly
-            placeholder="Filename"
-            title="Filename (read-only)"
-          />
-          <Input
-            value={editedItem?.photo_city ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_city: e.target.value } : null)}
-            placeholder="City"
-            title="City (photo_city)"
-          />
-          <Input
-            value={editedItem?.photo_loc ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_loc: e.target.value } : null)}
-            placeholder="Location"
-            title="Location (photo_loc)"
-          />
-          <Textarea
-            value={editedItem?.photo_desc ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_desc: e.target.value } : null)}
-            placeholder="Description"
-            title="Description (photo_desc)"
-            minRows={2}
-          />
-          <Input
-            value={editedItem?.thumb_caption ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, thumb_caption: e.target.value } : null)}
-            placeholder="Caption"
-            title="Caption (thumb_caption)"
-          />
-          <Input
-            value={editedItem?.search ?? ''}
-            onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, search: e.target.value } : null)}
-            placeholder="Search keywords"
-            title="Search keywords (comma-separated)"
-          />
-          <ComboBox
-            className="keyword-autocomplete"
-            options={allKeywords}
-            value={null}
-            inputValue={autocompleteValue}
-            onInputChange={(newValue) => {
-              setAutocompleteValue(newValue)
-            }}
-            onChange={({ value }) => {
-              // Append the selected keyword to the existing search field
-              updateItem((prev: RawXmlItem | null) => {
-                if (!prev) return null
-                const currentSearch = prev.search ?? ''
-                const separator = currentSearch && !currentSearch.endsWith(', ') ? ', ' : ''
-                return { ...prev, search: currentSearch + separator + value }
-              })
-              // Clear the autocomplete input
-              setAutocompleteValue('')
-            }}
-          />
-          <Stack direction="row" spacing={1}>
-            <Input
-              value={editedItem?.geo?.lat ?? ''}
-              onChange={(e) => {
-                const value = e.target.value
+            value={editedItem?.geo?.lat ?? ''}
+            onChange={(e) => {
+              const value = e.target.value
 
-                // Check if value contains DMS format (degrees, minutes, seconds)
-                if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
-                  // Split by comma to check for lat,lon DMS pair
-                  const parts = value.split(',').map(s => s.trim())
+              // Check if value contains DMS format (degrees, minutes, seconds)
+              if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
+                // Split by comma to check for lat,lon DMS pair
+                const parts = value.split(',').map(s => s.trim())
 
-                  if (parts.length === 2) {
-                    // Parse both lat and lon as DMS
-                    const lat = parseDMS(parts[0])
-                    const lon = parseDMS(parts[1])
-                    if (lat !== null && lon !== null) {
-                      updateItem((prev: RawXmlItem | null) => prev ? {
-                        ...prev,
-                        geo: { lat: lat.toString(), lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
-                      } : null)
-                      return
-                    }
-                  } else {
-                    // Single DMS value for latitude only
-                    const lat = parseDMS(value)
-                    if (lat !== null) {
-                      updateItem((prev: RawXmlItem | null) => prev ? {
-                        ...prev,
-                        geo: { lat: lat.toString(), lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' },
-                      } : null)
-                      return
-                    }
-                  }
-                }
-
-                // Check if the value contains a comma (decimal lat,lon format)
-                if (value.includes(',')) {
-                  const [lat, lon] = value.split(',').map(s => s.trim())
-                  updateItem((prev: RawXmlItem | null) => prev ? {
-                    ...prev,
-                    geo: { lat: lat || '', lon: lon || '', accuracy: prev.geo?.accuracy || '' },
-                  } : null)
-                } else {
-                  // Plain value for latitude
-                  const lat = value
-                  updateItem((prev: RawXmlItem | null) => prev ? {
-                    ...prev,
-                    geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
-                  } : null)
-                }
-              }}
-              placeholder="Latitude (or lat,lon or DMS)"
-              title="Latitude (geo.lat) - paste lat,lon or DMS format to auto-split"
-              sx={{ flex: 1, minWidth: 0 }}
-            />
-            <Input
-              value={editedItem?.geo?.lon ?? ''}
-              onChange={(e) => {
-                const value = e.target.value
-
-                // Check if value contains DMS format
-                if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
-                  const lon = parseDMS(value)
-                  if (lon !== null) {
+                if (parts.length === 2) {
+                  // Parse both lat and lon as DMS
+                  const lat = parseDMS(parts[0])
+                  const lon = parseDMS(parts[1])
+                  if (lat !== null && lon !== null) {
                     updateItem((prev: RawXmlItem | null) => prev ? {
                       ...prev,
-                      geo: { lat: prev.geo?.lat || '', lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
+                      geo: { lat: lat.toString(), lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
+                    } : null)
+                    return
+                  }
+                } else {
+                  // Single DMS value for latitude only
+                  const lat = parseDMS(value)
+                  if (lat !== null) {
+                    updateItem((prev: RawXmlItem | null) => prev ? {
+                      ...prev,
+                      geo: { lat: lat.toString(), lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' },
                     } : null)
                     return
                   }
                 }
+              }
 
-                // Plain value for longitude
-                const lon = value
+              // Check if the value contains a comma (decimal lat,lon format)
+              if (value.includes(',')) {
+                const [lat, lon] = value.split(',').map(s => s.trim())
                 updateItem((prev: RawXmlItem | null) => prev ? {
                   ...prev,
-                  geo: lon || prev.geo?.lat ? { lat: prev.geo?.lat || '', lon, accuracy: prev.geo?.accuracy || '' } : undefined,
+                  geo: { lat: lat || '', lon: lon || '', accuracy: prev.geo?.accuracy || '' },
                 } : null)
-              }}
-              placeholder="Longitude (or DMS)"
-              title="Longitude (geo.lon) - paste DMS format to convert"
-              sx={{ flex: 1, minWidth: 0 }}
-            />
-            <GeoCopyButton />
+              } else {
+                // Plain value for latitude
+                const lat = value
+                updateItem((prev: RawXmlItem | null) => prev ? {
+                  ...prev,
+                  geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
+                } : null)
+              }
+            }}
+            placeholder="Latitude (or lat,lon or DMS)"
+            title="Latitude (geo.lat) - paste lat,lon or DMS format to auto-split"
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <Input
+            value={editedItem?.geo?.lon ?? ''}
+            onChange={(e) => {
+              const value = e.target.value
 
-            <Input
-              value={editedItem?.geo?.accuracy ?? ''}
-              onChange={(e) => {
-                const accuracy = e.target.value
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  geo: prev.geo ? { ...prev.geo, accuracy } : undefined,
-                } : null)
-              }}
-              placeholder="Accuracy"
-              title="Coordinate accuracy (geo.accuracy)"
-              type="number"
-              sx={{ flex: 0.6, minWidth: 0 }}
-            />
-          </Stack>
-          <Stack direction="row" spacing={2}>
-            <Select
-              value={editedItem?.ref?.source ?? ''}
-              onChange={(_, value) => {
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  ref: value ? { source: value as ItemReferenceSource, name: prev.ref?.name || '' } : undefined,
-                } : null)
-              }}
-              placeholder="Reference Source"
-              title="Reference source (ref.source)"
-              sx={{ flex: 1, minWidth: 0 }}
-            >
-              <Option value="">None</Option>
-              {REFERENCE_SOURCES.map(source => (
-                <Option key={source} value={source}>{source.charAt(0).toUpperCase() + source.slice(1)}</Option>
-              ))}
-            </Select>
-            <Input
-              value={editedItem?.ref?.name ?? ''}
-              onChange={(e) => {
-                const name = e.target.value
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  ref: prev.ref?.source ? { source: prev.ref.source, name } : undefined,
-                } : null)
-              }}
-              placeholder="Reference Name"
-              title="Reference name/ID (ref.name)"
-              sx={{ flex: 1, minWidth: 0 }}
-            />
-            <IconButton
-              size="sm"
-              variant="outlined"
-              onClick={() => {
-                const reference = transformReference(editedItem?.ref)
-                if (reference) {
-                  navigator.clipboard.writeText(reference[0])
+              // Check if value contains DMS format
+              if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
+                const lon = parseDMS(value)
+                if (lon !== null) {
+                  updateItem((prev: RawXmlItem | null) => prev ? {
+                    ...prev,
+                    geo: { lat: prev.geo?.lat || '', lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
+                  } : null)
+                  return
                 }
-              }}
-              disabled={!editedItem?.ref?.source || !editedItem?.ref?.name}
-              title="Copy reference URL to clipboard"
-              sx={{ minWidth: 'auto', px: 1 }}
-            >
-              📋
-            </IconButton>
-          </Stack>
-          <Button onClick={generateXml} variant="solid" color="primary">
-            Generate XML
-          </Button>
-          {xmlOutput && (
-            <Textarea
-              value={xmlOutput}
-              readOnly
-              minRows={10}
-              maxRows={20}
-              placeholder="Generated XML will appear here"
-            />
-          )}
+              }
+
+              // Plain value for longitude
+              const lon = value
+              updateItem((prev: RawXmlItem | null) => prev ? {
+                ...prev,
+                geo: lon || prev.geo?.lat ? { lat: prev.geo?.lat || '', lon, accuracy: prev.geo?.accuracy || '' } : undefined,
+              } : null)
+            }}
+            placeholder="Longitude (or DMS)"
+            title="Longitude (geo.lon) - paste DMS format to convert"
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <GeoCopyButton />
+
+          <Input
+            value={editedItem?.geo?.accuracy ?? ''}
+            onChange={(e) => {
+              const accuracy = e.target.value
+              updateItem((prev: RawXmlItem | null) => prev ? {
+                ...prev,
+                geo: prev.geo ? { ...prev.geo, accuracy } : undefined,
+              } : null)
+            }}
+            placeholder="Accuracy"
+            title="Coordinate accuracy (geo.accuracy)"
+            type="number"
+            sx={{ flex: 0.6, minWidth: 0 }}
+          />
         </Stack>
+        <Stack direction="row" spacing={2}>
+          <Select
+            value={editedItem?.ref?.source ?? ''}
+            onChange={(_, value) => {
+              updateItem((prev: RawXmlItem | null) => prev ? {
+                ...prev,
+                ref: value ? { source: value as ItemReferenceSource, name: prev.ref?.name || '' } : undefined,
+              } : null)
+            }}
+            placeholder="Reference Source"
+            title="Reference source (ref.source)"
+            sx={{ flex: 1, minWidth: 0 }}
+          >
+            <Option value="">None</Option>
+            {REFERENCE_SOURCES.map(source => (
+              <Option key={source} value={source}>{source.charAt(0).toUpperCase() + source.slice(1)}</Option>
+            ))}
+          </Select>
+          <Input
+            value={editedItem?.ref?.name ?? ''}
+            onChange={(e) => {
+              const name = e.target.value
+              updateItem((prev: RawXmlItem | null) => prev ? {
+                ...prev,
+                ref: prev.ref?.source ? { source: prev.ref.source, name } : undefined,
+              } : null)
+            }}
+            placeholder="Reference Name"
+            title="Reference name/ID (ref.name)"
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <IconButton
+            size="sm"
+            variant="outlined"
+            onClick={() => {
+              const reference = transformReference(editedItem?.ref)
+              if (reference) {
+                navigator.clipboard.writeText(reference[0])
+              }
+            }}
+            disabled={!editedItem?.ref?.source || !editedItem?.ref?.name}
+            title="Copy reference URL to clipboard"
+            sx={{ minWidth: 'auto', px: 1 }}
+          >
+            📋
+          </IconButton>
+        </Stack>
+        <Button onClick={generateXml} variant="solid" color="primary">
+          Generate XML
+        </Button>
+        {children}
+        {xmlOutput && (
+          <Textarea
+            value={xmlOutput}
+            readOnly
+            minRows={10}
+            maxRows={20}
+            placeholder="Generated XML will appear here"
+          />
+        )}
       </Stack>
     </>
   )

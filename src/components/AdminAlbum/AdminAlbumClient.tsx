@@ -33,7 +33,15 @@ export default function AdminAlbumClient(
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
-  const { EditCountPill, editedItems, handleItemUpdate: handleItemUpdateOriginal, handleXmlGenerated, getItemWithEdits, clearEdits, applyEditsToItems } = useEditCountPill()
+  const {
+    EditCountPill,
+    editedItems,
+    handleItemUpdate: handleItemUpdateOriginal,
+    handleXmlGenerated,
+    getItemWithEdits,
+    clearEdits,
+    applyEditsToItems,
+  } = useEditCountPill()
   const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
   const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
@@ -62,9 +70,9 @@ export default function AdminAlbumClient(
         const newItem = {
           ...updatedItem,
           $: targetItem.$,
-          filename: targetItem.filename
+          filename: targetItem.filename,
         }
-        
+
         handleItemUpdateOriginal(newItem)
       })
     } else {
@@ -118,7 +126,7 @@ export default function AdminAlbumClient(
       // Keep existing selection if needed? Standard behavior usually anchors to last click.
       // But let's assume standard shift-click behavior: select range from anchor to current.
       // We don't track anchor separately loop, so we assume currentIndex is anchor.
-      
+
       // If we want to ADD to selection with CMD/Ctrl, we'd need that too, but user asked for Shift.
       // For simplicity, just range select.
       for (let i = start; i <= end; i++) {
@@ -137,7 +145,7 @@ export default function AdminAlbumClient(
 
     newSelectedIndices.forEach(idx => {
       const candidate = items[idx]
-      // Use the edited version if available to count fields? 
+      // Use the edited version if available to count fields?
       // User said "Select the photo's XML value which has the most fields"
       // Likely refers to current state.
       const itemToCheck = getItemWithEdits(candidate) || candidate
@@ -231,83 +239,91 @@ export default function AdminAlbumClient(
 
   return (
     <form>
-        <EditCountPill />
-        {item && <Fields
-          xmlAlbum={data}
-          gallery={currentGallery}
-          item={getItemWithEdits(item)}
-          onItemUpdate={handleItemUpdateWrapper}
-          onXmlGenerated={handleXmlGenerated}
-          editedItems={editedItems}
-          applyEditsToItems={applyEditsToItems}
-        >
-          <Photo item={item} gallery={currentGallery} />
-        </Fields>}
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{
-            alignItems: 'center',
-            marginBottom: 2,
+      <EditCountPill />
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+          marginBottom: 2,
+        }}
+      >
+        <label htmlFor="search-filename">Search Filename</label>
+        <Input
+          id="search-filename"
+          placeholder="Enter filename..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
+          sx={{ flexGrow: 1 }}
+        />
+        <Button onClick={handleSearch} disabled={isSearching} variant="solid">
+          {isSearching ? 'Searching...' : 'Search'}
+        </Button>
+
+        <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>
+        <Select
+          value={currentGallery}
+          onChange={handleGalleryChange}
+          slotProps={{
+            button: {
+              id: 'select-gallery-label',
+              'aria-labelledby': 'select-gallery select-gallery-label',
+            },
           }}
+          variant='solid'
         >
-          <label htmlFor="search-filename">Search Filename</label>
-          <Input
-            id="search-filename"
-            placeholder="Enter filename..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearchKeyDown}
-            sx={{ flexGrow: 1 }}
-          />
-          <Button onClick={handleSearch} disabled={isSearching} variant="solid">
-            {isSearching ? 'Searching...' : 'Search'}
-          </Button>
+          <Option value="">Select a Gallery</Option>
+          {galleries.map(gallery => <Option key={gallery} value={gallery}>{gallery}</Option>)}
+        </Select>
 
-          <label htmlFor="select-gallery-label" id="select-gallery">Gallery</label>
-          <Select
-            value={currentGallery}
-            onChange={handleGalleryChange}
-            slotProps={{
-              button: {
-                id: 'select-gallery-label',
-                'aria-labelledby': 'select-gallery select-gallery-label',
-              },
-            }}
-            variant='solid'
-          >
-            <Option value="">Select a Gallery</Option>
-            {galleries.map(gallery => <Option key={gallery} value={gallery}>{gallery}</Option>)}
-          </Select>
-
-          <label htmlFor="select-album-label" id="select-album">Album</label>
-          <Select
-            value={album?.name ?? ''}
-            onChange={handleAlbumChange}
-            slotProps={{
-              button: {
-                id: 'select-album-label',
-                'aria-labelledby': 'select-album select-album-label',
-              },
-            }}
-            variant='solid'
-          >
-            <Option value="">Select a Album</Option>
-            {galleryAlbum[currentGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
-          </Select>
+        <label htmlFor="select-album-label" id="select-album">Album</label>
+        <Select
+          value={album?.name ?? ''}
+          onChange={handleAlbumChange}
+          slotProps={{
+            button: {
+              id: 'select-album-label',
+              'aria-labelledby': 'select-album select-album-label',
+            },
+          }}
+          variant='solid'
+        >
+          <Option value="">Select a Album</Option>
+          {galleryAlbum[currentGallery].albums.map(album => <Option key={album.name} value={album.name}>{album.name}</Option>)}
+        </Select>
+      </Stack>
+      {error && <div>{JSON.stringify(error)}</div>}
+      {!error && data ? (
+        <Stack direction="row" spacing={2} sx={{ alignItems: 'flex-start' }}>
+          <Stack sx={{ flex: 1, minWidth: 0 }}>
+            <Thumbs
+              xmlAlbum={data}
+              gallery={currentGallery}
+              setItem={handleItemSelect}
+              currentIndex={currentIndex}
+              selectedIndices={selectedIndices}
+            />
+          </Stack>
+          {item && (
+            <Stack sx={{ position: 'sticky', top: 16, alignSelf: 'flex-start' }}>
+              <Fields
+                xmlAlbum={data}
+                gallery={currentGallery}
+                item={getItemWithEdits(item)}
+                onItemUpdate={handleItemUpdateWrapper}
+                onXmlGenerated={handleXmlGenerated}
+                editedItems={editedItems}
+                applyEditsToItems={applyEditsToItems}
+              >
+                <Photo item={item} gallery={currentGallery} size="small" />
+              </Fields>
+            </Stack>
+          )}
         </Stack>
-        {error && <div>{JSON.stringify(error)}</div>}
-        {!error && data ? (
-          <Thumbs
-            xmlAlbum={data}
-            gallery={currentGallery}
-            setItem={handleItemSelect}
-            currentIndex={currentIndex}
-            selectedIndices={selectedIndices}
-          />
-        ) : (
-          <div>Select an album</div>
-        )}
-      </form>
+      ) : (
+        <div>Select an album</div>
+      )}
+    </form>
   )
 }

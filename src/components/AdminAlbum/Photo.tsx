@@ -16,13 +16,17 @@ const fetcher = async (url: string, { arg }: { arg: string }) =>
     body: JSON.stringify({ path: arg }),
   }).then((res) => res.json())
 
-export default function AdminAlbumPhoto({ item, gallery }: { item: RawXmlItem, gallery: Gallery }) {
+export default function AdminAlbumPhoto(
+  { item, gallery, size = 'default' }:
+  { item: RawXmlItem, gallery: Gallery, size?: 'default' | 'small' },
+) {
   const { trigger, data, error, isMutating } = useSWRMutation(
     '/api/admin/classify',
     fetcher,
   )
 
   const path = photoPath(item.filename, gallery)
+  const dimensions = size === 'small' ? config.resizeDimensions.preview : config.resizeDimensions.photo
 
   return (
     <>
@@ -30,8 +34,8 @@ export default function AdminAlbumPhoto({ item, gallery }: { item: RawXmlItem, g
         <Img
           src={path}
           alt={item.thumb_caption || 'Photo'}
-          width={config.resizeDimensions.photo.width-200}
-          height={config.resizeDimensions.photo.height-200}
+          width={dimensions.width - 20}
+          height={dimensions.height - 20}
         />
         <Button
           onClick={(e) => {
