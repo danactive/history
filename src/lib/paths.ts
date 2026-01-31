@@ -16,7 +16,7 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
-export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: 'photo' | 'thumb') => {
+export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: 'original' | 'photo' | 'thumb') => {
   const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
   const year = imageFilename.indexOf('-') >= 0 ? imageFilename.split('-')[0] : ''
 
@@ -29,9 +29,14 @@ export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rast
 export const thumbPath = (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'thumb')
 
 /**
- * Photo path to public folder
+ * Photo path to public folder (resized for display)
  */
 export const photoPath = (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'photo')
+
+/**
+ * Original (full-size) image path to public folder
+ */
+export const originalPath = (filename: XmlItem['filename'], gallery: Gallery) => rasterPath(filename, gallery, 'original')
 
 /**
  * Video paths to public folder on local filesystem
