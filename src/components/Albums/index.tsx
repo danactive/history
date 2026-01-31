@@ -12,7 +12,7 @@ interface InputProps {
 function Galleries({ items, gallery }: InputProps) {
   const { width, height } = config.resizeDimensions.thumb
   return items.map((album) => (
-    <div key={album.name} className={styles.albums}>
+    <div data-type="gallery" key={album.name} className={styles.albums}>
       <Link href={`/${gallery}/${album.name}`}>
         <Img src={album.thumbPath} alt={album.name} width={width} height={height} />
       </Link>
