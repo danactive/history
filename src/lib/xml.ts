@@ -16,7 +16,7 @@ async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: stri
 async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string, options: ParserOptions): Promise<RawXmlAlbum>
 async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string, options?: ParserOptions): Promise<XmlAlbum | RawXmlAlbum> {
   const fileBuffer = await fs.readFile(`public/galleries/${gallery}/${album}.xml`)
-  const selectedParser = options ? new xml2js.Parser(options) : parser
+  const selectedParser = options === rawParseOptions ? rawParser : (options ? new xml2js.Parser(options) : parser)
   return selectedParser.parseStringPromise(fileBuffer)
 }
 

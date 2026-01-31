@@ -61,7 +61,7 @@ const useMemory = (
         {Array.isArray(details.filename) ? details.filename.join(', ') : String(details.filename)}
       </h5>
       {details.reference && details.reference.length >= 2 && (
-        <Link href={details.reference[0]} target='_blank'>
+        <Link href={details.reference[0]} target='_blank' rel="noopener noreferrer">
           {decodeURI(details.reference[1]).replaceAll('_', ' ')}
         </Link>
       )}

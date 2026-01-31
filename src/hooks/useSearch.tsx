@@ -63,13 +63,10 @@ export default function useSearch<ItemType extends ServerSideItem>({
     setVisibleCount((prev) => (prev === count ? prev : count))
   }, [])
 
-  // Adjust visibleCount when filtered items change during render
-  // This avoids a double render caused by useEffect synchronization
-  const [prevFiltered, setPrevFiltered] = useState(filtered)
-  if (filtered !== prevFiltered) {
-    setPrevFiltered(filtered)
-    setVisibleCount(filtered.length)
-  }
+  // Sync visibleCount when filtered items change (avoids state-update-during-render)
+  useEffect(() => {
+    setVisibleCount((prev) => (prev === filtered.length ? prev : filtered.length))
+  }, [filtered.length])
 
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -84,19 +81,14 @@ export default function useSearch<ItemType extends ServerSideItem>({
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const itemsToUse = displayedItems || filtered
     const currentItem = itemsToUse[currentIndex]
-    if (!currentItem) return
+    const identifier = currentItem
+      ? (Array.isArray((currentItem as any).filename)
+          ? (currentItem as any).filename[0]
+          : (currentItem as any).filename)
+      : null
+    const coordinates = (currentItem as any)?.coordinates as [number, number] | null
 
-    // Use filename as unique identifier (works across all albums)
-    const identifier = Array.isArray((currentItem as any).filename)
-      ? (currentItem as any).filename[0]
-      : (currentItem as any).filename
-    if (!identifier) return
-
-    // Extract coordinates from current item
-    const coordinates = (currentItem as any).coordinates as [number, number] | null
-
-    // Set selectedId with clear flag for immediate processing
-    if (selectById) {
+    if (selectById && identifier) {
       selectById(identifier, true)
     }
 
@@ -111,7 +103,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     }
 
     // Update URL to reflect the selection (use filename for global uniqueness)
-    router.replace(`${pathname}?select=${identifier}`)
+    router.replace(identifier ? `${pathname}?select=${identifier}` : pathname)
   }, [refImageGallery, displayedItems, filtered, selectById, mapFilterEnabled, onClearMapFilter, router, pathname])
 
   const { BookmarkButton } = useBookmark({

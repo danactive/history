@@ -319,6 +319,7 @@ export default function Fields(
             }}
             disabled={!editedItem?.ref?.source || !editedItem?.ref?.name}
             title="Copy reference URL to clipboard"
+            aria-label="Copy reference URL to clipboard"
             sx={{ minWidth: 'auto', px: 1 }}
           >
             📋

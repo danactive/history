@@ -30,6 +30,7 @@ export function useGeoCopy(editedItem: RawXmlItem | null) {
       onClick={copyGeoCoordinates}
       disabled={disabled}
       title={title}
+      aria-label={title}
       sx={{ minWidth: 'auto', px: 1 }}
     >
       📋

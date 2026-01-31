@@ -31,7 +31,6 @@ export default function AdminAlbumClient(
   const [currentIndex, setCurrentIndex] = useState<number>(-1)
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set())
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const {
     EditCountPill,
@@ -198,7 +197,6 @@ export default function AdminAlbumClient(
       const data: { results: SearchResult[] } = await response.json()
 
       if (data.results && data.results.length > 0) {
-        setSearchResults(data.results)
         // Load the first result automatically
         const firstResult = data.results[0]
         setCurrentGallery(firstResult.gallery)
@@ -206,11 +204,7 @@ export default function AdminAlbumClient(
         const selectedAlbum = galleryAlbum[firstResult.gallery].albums.find(a => a.name === firstResult.album)
         if (selectedAlbum) {
           setAlbum(selectedAlbum)
-          // Wait for the album to load, then select the item
-          setTimeout(async () => {
-            await mutate()
-            setCurrentIndex(firstResult.index)
-          }, 100)
+          setCurrentIndex(firstResult.index)
         }
       } else {
         alert('No matching files found')

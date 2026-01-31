@@ -128,7 +128,7 @@ function SplitViewer({
         coordinates: clearCoordinates,
       } as Item)
     }
-  }, [isClearing, clearCoordinates])
+  }, [isClearing, clearCoordinates, dynamicCentroid])
 
   // Update locked centroid during normal navigation only
   useEffect(() => {
