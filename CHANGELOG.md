@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.3.0](https://github.com/danactive/history/compare/v12.2.0...v12.3.0) (2026-01-31)
+
+
+### Features
+
+* **Admin > Edit Album:** Add Edit count pill ([27ebcf7](https://github.com/danactive/history/commit/27ebcf71addc9cc4c0b7763047df01a1f76d7c8f))
+* **Admin > Edit Album:** Add filename filter before Gallery/Album dropdown ([937a8f2](https://github.com/danactive/history/commit/937a8f2b2f464f13834b1bb13ae69911448c3c60))
+* **Admin > Edit Album:** Add keyword autocomplete ([585ef57](https://github.com/danactive/history/commit/585ef578b22ea972f10939368cbee762d4fbff53))
+* **Admin > Edit Album:** Change layout to vertical thumbs with sticky Fields ([e03fa23](https://github.com/danactive/history/commit/e03fa23096cccff09af76543d1257a9a8689440a))
+* **Admin > Edit Album:** Clipboard for reference ([104c0d7](https://github.com/danactive/history/commit/104c0d77b6d34bf95423f964be09eb7d3b5194f6))
+* **Admin > Edit Album:** Discard empty XML elements ([1ca56d2](https://github.com/danactive/history/commit/1ca56d2dd254e430d517d725f004bf22de2b38d1))
+* **Admin > Edit Album:** Edit multiple photos ([c3f3720](https://github.com/danactive/history/commit/c3f37202bf7b99d71a4a04ff68fb57a45c44c7e3))
+* **Admin > Edit Album:** Generate XML ready for copy and paste ([456fb5e](https://github.com/danactive/history/commit/456fb5e0aafabcb94268da87d8d36e2a089d3f8c))
+* **Admin > Edit Album:** Input lat,long spilt, clipboard, allow degrees minutes format ([b30d189](https://github.com/danactive/history/commit/b30d18902ceee972e5089b8a676774b3494ab9cf))
+* **Admin > Edit Album:** Keyboard arrows next and prev image ([b29b2aa](https://github.com/danactive/history/commit/b29b2aa8cff7b8aad5d44c7eb43c97c54e0d7e56))
+* **Admin > Edit Album:** Persist album data ([9512cee](https://github.com/danactive/history/commit/9512ceec2129b725f8e8ba2b1ac5a73fb5b397c2))
+* **Admin > Edit Album:** Refactor all keyword items ([8bc1696](https://github.com/danactive/history/commit/8bc1696d4cc594ac684fb782f7eb8f9cc141fcde))
+* **Admin > Edit Album:** Yellow border to indicate multiple selected thumbs ([44f04ec](https://github.com/danactive/history/commit/44f04ec0ac6bc8ec15b66672aa1ef9485140952a))
+* **Admin > Rename:** Add test for moving videos to video folder ([df39cb1](https://github.com/danactive/history/commit/df39cb14964968eed3ad3d38f337fce2263aed8c))
+* **Admin > Rename:** When renaming force file type to be lower ([82b2319](https://github.com/danactive/history/commit/82b2319b35b50db1610fdb891ff3c6178fe40c54))
+* **Map > Cluster:** Add labels to clustered ([dee4996](https://github.com/danactive/history/commit/dee499600a5e333d7c30fdbb9dc932113cd34d69))
+* **Map > Cluster:** Change label to City above neighbourhood ([32f830d](https://github.com/danactive/history/commit/32f830d78998cc3721c182856709771540056fe8))
+* **Map > Cluster:** Generate cluster at build time not runtime ([3f6e5ac](https://github.com/danactive/history/commit/3f6e5acbcc56d1d9b26ba197e6bcf494c09c2caa))
+* **Map > Cluster:** Generate cluster labels 50km, 10, 1.5, 500m ([c443a9e](https://github.com/danactive/history/commit/c443a9ec701b860c22bc80d39119b5f65c4c4dad))
+* **Map > Cluster:** Generate cluster labels 50km, 10, 2, 500m ([51c27ea](https://github.com/danactive/history/commit/51c27eaeb1253abc97e4e7005a3c00106008edbc))
+* **package.json:** Upgrade Next.js v16 ([bd69ca9](https://github.com/danactive/history/commit/bd69ca96f3ea874fef00b42091c178c1ce2b0b76))
+* **Slippy Map:** Cache clustering and UI ([813eb48](https://github.com/danactive/history/commit/813eb484c9b0db80383f191c9d81e0b1453d550d))
+* **Slippy Map:** Use H3 for better spatial consistency of marker clusters ([4276d74](https://github.com/danactive/history/commit/4276d7402333a8716422d45a7b8bb02355643148))
+* **useSearch:** Allow complex search expression ([eaa3115](https://github.com/danactive/history/commit/eaa3115c8b6f1a9a34d8f3864926ef0f9bb5276a))
+* **View Album > useSearch:** Add Bookmark button ([75a2bf2](https://github.com/danactive/history/commit/75a2bf2c326dd3993f5dc53637dbd748c8efd6ce))
+* **View Album > useSearch:** Add Expand button ([e64099f](https://github.com/danactive/history/commit/e64099f30053b1c5c964374498a9afe18e39380f))
+* **View Album > useSearch:** Rename Expand button to Clear ([e9ebfa8](https://github.com/danactive/history/commit/e9ebfa8978ddcf18c5e0272e87b4ccfc9cfb5414))
+
+
+### Bug Fixes
+
+* **Admin > Edit Album:** Fix the XML order ([161986f](https://github.com/danactive/history/commit/161986f0df27558d83a60261795d4a314a698aa2))
+* **Admin > Rename:** Add another unit test for HEIC pairs ([12280fa](https://github.com/danactive/history/commit/12280fa84fca67a7d275a972d8a257fde11089d4))
+* **Admin > Rename:** Add test for lowercase names ([3522e95](https://github.com/danactive/history/commit/3522e959f1da39d5c92efa8c6d616bad535be29e))
+* **Admin > Rename:** Check if the destination directories ([9680f6d](https://github.com/danactive/history/commit/9680f6d5c7d8c002c252fcfd7ecc87a703dcc07c))
+* **Admin > Rename:** Return skipped count if case filename collision found ([cacdb99](https://github.com/danactive/history/commit/cacdb9992714f988bf1526fe1f67465fdb1903fe))
+* **Admin > Walk:** HEIF as ext is included with heif ([37cd62c](https://github.com/danactive/history/commit/37cd62ccc1c0591ba8e22e544b8ab5685981a9a2))
+* **All:** Restore description to appear in photo gallery ([8ea2d23](https://github.com/danactive/history/commit/8ea2d230fe80bd109534cf033ae92a9b4b002430))
+* **npm run build:** Remove Node.js from client component ([8295287](https://github.com/danactive/history/commit/8295287e2d6dfd5ca403d57fdc6e2e7636a35f09))
+* **package:** Conform to Turbopack breaking changes ([185f6cf](https://github.com/danactive/history/commit/185f6cf78b45c10ce01d09463a54fcd127e142ed))
+* **package:** Enable React compiler ([7c65161](https://github.com/danactive/history/commit/7c65161f0c4725534cc11bd234002d03371c060e))
+* **package:** More Next.js issues to resolve ([a58973c](https://github.com/danactive/history/commit/a58973c19d8e022ccbc00d2af67ab635826d80a1))
+* **Page > All:** Decrease server JSON by 4MB ([d932593](https://github.com/danactive/history/commit/d932593340ab31c3d4f97b6b12eaa98a26832f10))
+* **Slippy Map:** Tweak CSS ([0e2fa64](https://github.com/danactive/history/commit/0e2fa649f3f1bd4451b3272d80a068e15d7b37cd))
+* **useSearch:** Avoid circular dependency ([02e70b1](https://github.com/danactive/history/commit/02e70b162f7396e7052a62ed9e7ab68431359597))
+* **useSearch:** Clean button is improved right of Filter btn ([6aa4dac](https://github.com/danactive/history/commit/6aa4dacd54039af3322d0673950c4cb9c7d2a2c0))
+* **useSearch:** Clear button clears the input value too ([4a9c0c1](https://github.com/danactive/history/commit/4a9c0c1c9e651e92230fd76a4e0902b5828245e6))
+* **useSearch:** Prevent case naming collision ([249ccd7](https://github.com/danactive/history/commit/249ccd72553c5327f9cb625904421ccfe57ef1c7))
+* **UseSearch:** URL filtered galleries display the filter count ([dcd31be](https://github.com/danactive/history/commit/dcd31be63f18a5552523b8e46ac70f07bab6a451))
+* **useSearch:** URL initials keywords put value in input too ([8cec71d](https://github.com/danactive/history/commit/8cec71df6af965ccc444114a8e162774c7e02467))
+
 ## [12.2.0](https://github.com/danactive/history/compare/v12.1.0...v12.2.0) (2025-11-23)
 
 
