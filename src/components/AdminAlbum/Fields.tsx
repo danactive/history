@@ -1,4 +1,5 @@
 import Button from '@mui/joy/Button'
+import Checkbox from '@mui/joy/Checkbox'
 import IconButton from '@mui/joy/IconButton'
 import Input from '@mui/joy/Input'
 import Option from '@mui/joy/Option'
@@ -67,6 +68,7 @@ export default function Fields(
   const allKeywords = keywordsData?.keywords ?? []
 
   useEffect(() => {
+    if (updatePendingRef.current) return
     setEditedItem(item)
     setXmlOutput('')
     setAutocompleteValue('')
@@ -115,17 +117,45 @@ export default function Fields(
     onXmlGenerated()
   }
 
-  const filename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
+  const rawFilename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
+  const isVideo = editedItem?.type === 'video'
+
+  const swapFilenameExt = (fn: string, toVideo: boolean): string => {
+    const lastDot = fn.lastIndexOf('.')
+    const base = lastDot === -1 ? fn : fn.slice(0, lastDot)
+    return toVideo ? `${base}.mp4` : `${base}.jpg`
+  }
+
+  const displayFilename = rawFilename ? swapFilenameExt(rawFilename, isVideo) : ''
 
   return (
     <>
       <Stack direction="column" spacing={2} sx={{ width: '35rem', flexShrink: 0 }}>
-        <Input
-          value={filename}
-          readOnly
-          placeholder="Filename"
-          title="Filename (read-only)"
-        />
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
+          <Input
+            value={displayFilename}
+            readOnly
+            placeholder="Filename"
+            title="Filename (read-only)"
+            sx={{ flex: 1, minWidth: 0 }}
+          />
+          <Checkbox
+            checked={isVideo}
+            onChange={(e) => updateItem((prev: RawXmlItem | null) => {
+              if (!prev) return null
+              const checked = e.target.checked
+              const currentFn = Array.isArray(prev.filename) ? prev.filename[0] : prev.filename
+              const newFn = swapFilenameExt(currentFn ?? '', checked)
+              const newFilename = Array.isArray(prev.filename) ? [newFn, ...prev.filename.slice(1)] : newFn
+              if (checked) return { ...prev, type: 'video', filename: newFilename }
+              const { type: _t, ...rest } = prev
+              return { ...rest, filename: newFilename } as RawXmlItem
+            })}
+            label="Video item"
+            title="Item type: photo (unchecked) or video (checked). Toggles &lt;type&gt;video&lt;/type&gt; and filename extension (.jpg ↔ .mp4)."
+            slotProps={{ label: { sx: { color: '#E0E0E0' } } }}
+          />
+        </Stack>
         <Input
           value={editedItem?.photo_city ?? ''}
           onChange={(e) => updateItem((prev: RawXmlItem | null) => prev ? { ...prev, photo_city: e.target.value } : null)}

@@ -50,7 +50,7 @@ const useMemory = (
   }, [filtered, refImageGallery, autoInitialView])
 
   const memoryHtml = details ? (
-    <>
+    <div data-type="memory-details">
       <h3 className={styles.city}>{details.title}</h3>
       {details.persons && (
         <h4 className={styles.person}>
@@ -65,7 +65,7 @@ const useMemory = (
           {decodeURI(details.reference[1]).replaceAll('_', ' ')}
         </Link>
       )}
-    </>
+    </div>
   ) : null
 
   return { setViewed, memoryHtml, viewedList }

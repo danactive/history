@@ -58,14 +58,12 @@ export default function AdminAlbumClient(
 
   const handleItemUpdateWrapper = (updatedItem: RawXmlItem) => {
     // If multiple items are selected, apply the update to all of them
-    // preserving their specific ID and filename
-    if (selectedIndices.size > 0) {
+    // preserving their specific ID and filename (each keeps its own filename)
+    if (selectedIndices.size > 1) {
       selectedIndices.forEach(index => {
         const targetItem = items[index]
         if (!targetItem) return
 
-        // Create a new item that is a copy of the updated item
-        // but restores the target's ID and filename
         const newItem = {
           ...updatedItem,
           $: targetItem.$,

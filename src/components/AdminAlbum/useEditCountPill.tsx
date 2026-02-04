@@ -45,12 +45,13 @@ export function useEditCountPill(): EditCountPillHook {
   }
 
   // Helper to remove empty/null/undefined properties recursively
-  const removeEmpty = (obj: any): any => {
+  function removeEmpty<T>(obj: T): T | undefined
+  function removeEmpty(obj: unknown): unknown {
     if (obj === null || obj === undefined || obj === '') return undefined
     if (typeof obj !== 'object') return obj
     if (Array.isArray(obj)) return obj.map(removeEmpty).filter((v) => v !== undefined)
 
-    const cleaned: any = {}
+    const cleaned: Record<string, unknown> = {}
     for (const [key, value] of Object.entries(obj)) {
       const cleanedValue = removeEmpty(value)
       if (cleanedValue !== undefined) {
@@ -60,15 +61,39 @@ export function useEditCountPill(): EditCountPillHook {
     return Object.keys(cleaned).length > 0 ? cleaned : undefined
   }
 
-  // Apply all edits from editedItems state and maintain proper field ordering
+  // Apply all edits from editedItems state and maintain XML field order:
+  // $, type, size, filename, then photo_*, then search, geo, ref (type before filename for video)
   const applyEditsToItems = (items: RawXmlItem[]): RawXmlItem[] => {
     return items.map((originalItem: RawXmlItem) => {
       const edited = editedItems[originalItem.$.id]
       if (!edited) return originalItem
 
-      // Reconstruct item with desired field order: search before geo
-      const { search, geo, ref, ...rest } = edited
-      const orderedItem = {
+      const {
+        $,
+        type,
+        size,
+        filename,
+        search,
+        geo,
+        ref,
+        photo_date,
+        photo_city,
+        photo_loc,
+        thumb_caption,
+        photo_desc,
+        ...rest
+      } = edited
+
+      const orderedItem: RawXmlItem = {
+        $,
+        ...(type && { type }),
+        ...(size && { size }),
+        filename,
+        photo_date: photo_date ?? null,
+        photo_city: photo_city ?? '',
+        ...(photo_loc !== undefined && photo_loc !== '' && { photo_loc }),
+        ...(thumb_caption !== undefined && thumb_caption !== '' && { thumb_caption }),
+        ...(photo_desc !== undefined && photo_desc !== '' && { photo_desc }),
         ...rest,
         ...(search !== undefined && search !== null && search !== '' && { search }),
         ...(geo && { geo }),
@@ -76,8 +101,9 @@ export function useEditCountPill(): EditCountPillHook {
       }
 
       // Remove empty properties
-      return removeEmpty(orderedItem)
-    }).filter((item) => item !== undefined)
+      const cleaned = removeEmpty(orderedItem)
+      return cleaned ?? originalItem
+    }).filter((item): item is RawXmlItem => item !== undefined)
   }
 
   const EditCountPill = () => {
