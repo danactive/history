@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
@@ -25,12 +26,37 @@ export default function PersonsClient({
     mapFilterEnabled,
     handleToggleMapFilter,
     handleBoundsChange,
+    isClearing,
+    clearCoordinates,
     controls,
     ageFiltered,
     itemsWithCorpus,
     memoryHtml,
     overrideAgeSummary,
   } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
+
+  const searchParams = useSearchParams()
+  const selectId = searchParams.get('select')
+
+  // Handle URL ?select= parameter
+  useEffect(() => {
+    if (!selectId || ageFiltered.length === 0) return
+
+    const idx = ageFiltered.findIndex(i => {
+      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      return filename === selectId
+    })
+
+    if (idx >= 0) {
+      setTimeout(() => {
+        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
+          refImageGallery.current?.slideToIndex(idx)
+          setMemoryIndex(idx)
+          setViewed(idx)
+        }
+      }, 0)
+    }
+  }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
 
   // Replace controls age list if override available
   const finalControls = overrideAgeSummary ?? controls
@@ -51,6 +77,8 @@ export default function PersonsClient({
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          isClearing={isClearing}
+          clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />

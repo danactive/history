@@ -1,16 +1,16 @@
-import config from './config'
 import utilsFactory from '../lib/utils'
 import type {
   Album,
   AlbumMeta,
   Item,
-  ItemReferenceSource,
   Person,
   PersonItem,
   XmlAlbum,
   XmlItem,
 } from '../types/common'
 import { isNotEmpty, removeUndefinedFields } from '../utils'
+import { transformReference } from '../utils/reference'
+import config from './config'
 
 export type ErrorOptionalMessage = { album: object[]; error?: { message: string } }
 export const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -45,27 +45,39 @@ function isValidItem(schema: unknown): schema is Item {
 }
 
 function title(item: XmlItem): string {
-  if (isNotEmpty(item.photoLoc) && isNotEmpty(item.photoCity)) {
-    return `${item.photoLoc} (${item.photoCity})`
+  const photoCity = item.photoCity ?? ''
+  const photoLoc = item.photoLoc ?? ''
+
+  if (isNotEmpty(photoLoc) && isNotEmpty(photoCity)) {
+    return `${photoLoc} (${photoCity})`
   }
 
-  if (isNotEmpty(item.photoLoc)) {
-    return item.photoLoc
+  if (isNotEmpty(photoLoc)) {
+    return photoLoc
   }
 
-  return item.photoCity
+  if (isNotEmpty(photoCity)) {
+    return photoCity
+  }
+
+  // If both are empty, return a default
+  return 'Untitled'
 }
 
 function transformCaption(item: XmlItem, debug: DebugInfo) {
-  if (!('thumbCaption' in item) || item.thumbCaption === '') {
-    throw new ReferenceError(missingXmlMessage('thumb_caption', debug))
+  const thumbCaption = item.thumbCaption ?? ''
+
+  if (thumbCaption === '') {
+    // Use filename as fallback caption
+    const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+    return filename
   }
 
   if (item.type === 'video') {
-    return `Video: ${item.thumbCaption}`
+    return `Video: ${thumbCaption}`
   }
 
-  return item.thumbCaption
+  return thumbCaption
 }
 
 function assertCannotReach(x: never) {
@@ -92,32 +104,6 @@ export const transformPersons = (photoSearchValues: XmlItem['search'], definedPe
       return output
     }
     return null
-  }
-  return null
-}
-
-export const transformReference = (item: XmlItem): [string, string] | null => {
-  const baseUrl = (source: ItemReferenceSource) => {
-    switch (source) {
-      case 'facebook':
-        return 'https://www.facebook.com/'
-      case 'google':
-        return 'https://www.google.com/search?q='
-      case 'instagram':
-        return 'https://www.instagram.com/'
-      case 'wikipedia':
-        return 'https://en.wikipedia.org/wiki/'
-      case 'youtube':
-        return 'https://www.youtube.com/watch?v='
-      default:
-        return assertCannotReach(source)
-    }
-  }
-  if (!('ref' in item) || !item.ref) {
-    return null
-  }
-  if ('name' in item.ref && 'source' in item.ref) {
-    return [baseUrl(item.ref.source) + item.ref.name, item.ref.name]
   }
   return null
 }
@@ -183,9 +169,8 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
       filenameId: Array.isArray(filename) ? filename[0] : filename,
     }
 
-    if (!('photoCity' in item)) {
-      throw new ReferenceError(missingXmlMessage('photo_city', debugInfo))
-    }
+    // Allow photoCity to be optional, default to empty string if missing
+    const photoCity = item.photoCity ?? ''
 
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
@@ -199,7 +184,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
       id,
       filename,
       photoDate: photoDate || null,
-      city: item.photoCity,
+      city: photoCity,
       location: item.photoLoc || null,
       caption: transformCaption(item, debugInfo),
       description: item.photoDesc || null,
@@ -212,7 +197,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
       photoPath,
       mediaPath: (item.type === 'video' && videoPaths) ? videoPaths[0] : photoPath,
       videoPaths,
-      reference: transformReference(item),
+      reference: transformReference(item?.ref),
     }
 
     return removeUndefinedFields(out)

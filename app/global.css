@@ -11,3 +11,7 @@ html {
   --gridPx: 4px;
   --grid2Px: calc(2 * 4px);
 }
+
+.mapboxgl-control-container {
+  display: none;
+}

@@ -64,18 +64,13 @@ type Item = {
   reference: [string, string] | null,
 }
 
-type XmlItem = {
+type XmlCaseItem<TCamelCase extends boolean = true> = {
   $: {
     id: string,
   },
   type?: 'video' | 'photo',
   size?: { w: string, h: string },
   filename: string | string[],
-  photoDate: string | null,
-  photoCity: string,
-  photoLoc?: string,
-  thumbCaption: string,
-  photoDesc?: string,
   search?: string,
   geo?: {
     lat: string,
@@ -86,12 +81,24 @@ type XmlItem = {
     name: string,
     source: ItemReferenceSource,
   }
-}
+} & (TCamelCase extends true ? {
+  photoDate: string | null,
+  photoCity: string,
+  photoLoc?: string,
+  thumbCaption: string,
+  photoDesc?: string,
+} : {
+  photo_date: string | null,
+  photo_city: string,
+  photo_loc?: string,
+  thumb_caption?: string,
+  photo_desc?: string,
+})
 
-type XmlAlbum = {
+type XmlCaseAlbum<TCamelCase extends boolean = true> = {
   album: {
     meta?: XmlMeta,
-    item?: XmlItem | XmlItem[]
+    item?: XmlCaseItem<TCamelCase> | XmlCaseItem<TCamelCase>[]
   },
 }
 
@@ -174,6 +181,11 @@ declare global {
   }
 }
 
+type XmlItem = XmlCaseItem<true>
+type RawXmlItem = XmlCaseItem<false>
+type XmlAlbum = XmlCaseAlbum<true>
+type RawXmlAlbum = XmlCaseAlbum<false>
+
 export type {
   Gallery,
   AlbumMeta,
@@ -185,11 +197,13 @@ export type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   XmlItem,
+  RawXmlItem,
   Person,
   PersonItem,
   XmlPerson,
   XmlPersons,
   XmlAlbum,
+  RawXmlAlbum,
   Item,
   ItemReferenceSource,
   IndexedKeywords,

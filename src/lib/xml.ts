@@ -3,21 +3,21 @@ import fs from 'node:fs/promises'
 import xml2js, { type ParserOptions } from 'xml2js'
 
 import type {
-  AlbumMeta, Gallery, XmlAlbum, XmlGallery, XmlPersons,
+  AlbumMeta, Gallery, RawXmlAlbum, XmlAlbum, XmlGallery, XmlPersons,
 } from '../types/common'
 
 const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
 
-/**
-* Get Album XML from local filesystem
-* @param {string} gallery name of gallery
-* @param {string} album name of album
-* @returns {string} album XML
-*/
-async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string): Promise<XmlAlbum> {
+const rawParseOptions: ParserOptions = { explicitArray: false }
+const rawParser = new xml2js.Parser(rawParseOptions)
+
+async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string): Promise<XmlAlbum>
+async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string, options: ParserOptions): Promise<RawXmlAlbum>
+async function readAlbum(gallery: NonNullable<AlbumMeta['gallery']>, album: string, options?: ParserOptions): Promise<XmlAlbum | RawXmlAlbum> {
   const fileBuffer = await fs.readFile(`public/galleries/${gallery}/${album}.xml`)
-  return parser.parseStringPromise(fileBuffer)
+  const selectedParser = options === rawParseOptions ? rawParser : (options ? new xml2js.Parser(options) : parser)
+  return selectedParser.parseStringPromise(fileBuffer)
 }
 
 /**
@@ -41,6 +41,7 @@ async function readPersons(gallery: Gallery): Promise<XmlPersons> {
 }
 
 export {
+  rawParseOptions,
   readAlbum,
   readGallery,
   readPersons,

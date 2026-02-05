@@ -28,6 +28,7 @@ import {
   unclusterLabelLayer,
   unclusterPointLayer,
 } from './layers'
+import styles from './styles.module.css'
 import { getResolutionForZoom, transformMapOptions, transformSourceOptions } from './options'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
@@ -128,17 +129,6 @@ export default function SlippyMap({
   if (unclusterPointLayer.id) layerIds.push(unclusterPointLayer.id)
   if (unclusterLabelLayer.id) layerIds.push(unclusterLabelLayer.id)
 
-  const toggleStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 10,
-    background: 'rgba(255,255,255,0.9)',
-    borderRadius: 6,
-    padding: 6,
-    cursor: 'pointer',
-  }
-
   // Helper to read current bounds immediately
   const readBounds = (): [[number, number],[number, number]] | null => {
     try {
@@ -189,19 +179,16 @@ export default function SlippyMap({
 
   return (
     <>
-      <style global jsx>{'.mapboxgl-control-container{display:none;}'}</style>
       <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: 300 }}>
-        <div
-          style={toggleStyle}
-          role="button"
+        <button
+          type="button"
+          className={styles.toggleButton}
           onClick={handleToggleClick}
           aria-pressed={mapFilterEnabled}
           title="Toggle map filter"
         >
-          <span style={{ fontSize: 12, fontWeight: 600 }}>
-            {mapFilterEnabled ? 'Map filter: ON' : 'Map filter: OFF'}
-          </span>
-        </div>
+          {mapFilterEnabled ? 'Map filter: ON' : 'Map filter: OFF'}
+        </button>
         <Map
           {...viewport}
           ref={mapRef}

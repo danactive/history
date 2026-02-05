@@ -76,7 +76,7 @@ export function transformSourceOptions(
     const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
     const baseKey = getCachedH3Index(item)
-    const commonLabel = baseKey && computed.labels[baseKey]?.[resolution] || getLabelForResolution(item, resolution)
+    const commonLabel = (baseKey && computed.labels[baseKey]?.[resolution]) || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 
     const point: SelectedFeature = {

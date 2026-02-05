@@ -12,6 +12,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
   const autoInitialViewRef = useRef(true) // controls useMemory auto mark
+  const [isClearing, setIsClearing] = useState(false) // flag to prevent map updates during clear
 
   const setMemoryIndex: Dispatch<SetStateAction<number>> = useCallback((value) => {
     setMemoryIndexState(prev => {
@@ -20,16 +21,43 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     })
   }, [])
 
+  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
+  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [clearCoordinates, setClearCoordinates] = useState<[number, number] | null>(null)
+
+  const handleClearMapFilter = useCallback((coordinates?: [number, number] | null) => {
+    // Preserve coordinates before clearing filter
+    if (coordinates) {
+      setClearCoordinates(coordinates)
+    }
+    setIsClearing(true)
+    setMapFilterEnabled(false)
+    setMapBounds(null)
+  }, [])
+
+  const selectById = useCallback((id: string, isClear = false) => {
+    // Simply update selectedId for both clear and normal operations
+    // The URL-based handling in each client will position the gallery
+    setSelectedId(prev => (prev === id ? prev : id))
+  }, [])
+
   const {
     filtered,
     keyword,
     searchBox,
     setVisibleCount,
-  } = useSearch({ items, setMemoryIndex, indexedKeywords })
-
-  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
-  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+    setDisplayedItems,
+  } = useSearch({
+    items,
+    memoryIndex,
+    setMemoryIndex,
+    indexedKeywords,
+    refImageGallery,
+    mapFilterEnabled,
+    onClearMapFilter: handleClearMapFilter,
+    selectById,
+  })
 
   const handleBoundsChange = useCallback((bounds: Bounds) => {
     if (!bounds) return
@@ -55,6 +83,36 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
       return lng >= swLng && lng <= neLng && lat >= swLat && lat <= neLat
     })
   }, [mapFilterEnabled, mapBounds, filtered])
+
+  // Memoized ID-to-index maps for O(1) lookups (critical for large datasets)
+  const itemsToShowMap = useMemo(() => {
+    const map = new Map<string, number>()
+    itemsToShow.forEach((item: any, idx) => {
+      // Index by ID
+      if (item.id) map.set(item.id, idx)
+      // Also index by filename (globally unique)
+      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      if (filename) map.set(filename, idx)
+    })
+    return map
+  }, [itemsToShow])
+
+  const filteredMap = useMemo(() => {
+    const map = new Map<string, number>()
+    filtered.forEach((item: any, idx) => {
+      // Index by ID
+      if (item.id) map.set(item.id, idx)
+      // Also index by filename (globally unique)
+      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      if (filename) map.set(filename, idx)
+    })
+    return map
+  }, [filtered])
+
+  // Update displayed items whenever itemsToShow changes
+  useEffect(() => {
+    setDisplayedItems(itemsToShow)
+  }, [itemsToShow, setDisplayedItems])
 
   // Pass suppression flag to useMemory
   const { setViewed, memoryHtml, viewedList } = useMemory(
@@ -94,31 +152,23 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     }
   }, [mapFilterEnabled, itemsToShow, setViewed])
 
-  const selectById = useCallback((id: string) => {
-    setSelectedId(prev => (prev === id ? prev : id))
-    const idx = itemsToShow.findIndex(i => i.id === id)
-    if (idx >= 0) {
+  // Update memoryIndex when selectedId changes
+  useEffect(() => {
+    if (!selectedId) return
+
+    // Use O(1) map lookup
+    const idx = itemsToShowMap.get(selectedId)
+    if (idx !== undefined) {
       setMemoryIndex(idx)
       return
     }
-    const idx2 = filtered.findIndex(i => i.id === id)
-    if (idx2 >= 0) setMemoryIndex(idx2)
-  }, [itemsToShow, filtered, setMemoryIndex])
 
-  useEffect(() => {
-    if (selectedId) {
-      const idx = itemsToShow.findIndex(i => i.id === selectedId)
-      if (idx >= 0) {
-        setMemoryIndex(idx)
-        return
-      }
+    // Fallback to filtered
+    const idx2 = filteredMap.get(selectedId)
+    if (idx2 !== undefined) {
+      setMemoryIndex(idx2)
     }
-    if (itemsToShow.length === 0) {
-      setMemoryIndex(0)
-    } else if (memoryIndex >= itemsToShow.length) {
-      setMemoryIndex(itemsToShow.length - 1)
-    }
-  }, [itemsToShow, selectedId, memoryIndex, setMemoryIndex])
+  }, [itemsToShowMap, filteredMap, selectedId, setMemoryIndex])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -126,6 +176,18 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     }, 100)
     return () => clearTimeout(timeout)
   }, [itemsToShow.length, setVisibleCount])
+
+  // Clear clearing flag after gallery repositions during clear
+  useEffect(() => {
+    if (isClearing && !mapFilterEnabled) {
+      // Wait for gallery to reposition, then clear flag and coordinates
+      const timeout = setTimeout(() => {
+        setIsClearing(false)
+        setClearCoordinates(null)
+      }, 200)
+      return () => clearTimeout(timeout)
+    }
+  }, [mapFilterEnabled, memoryIndex, isClearing])
 
   return {
     refImageGallery,
@@ -143,5 +205,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     itemsToShow,
     selectedId,
     selectById,
+    isClearing,
+    clearCoordinates,
   }
 }

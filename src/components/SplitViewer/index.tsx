@@ -68,6 +68,8 @@ function SplitViewer({
   memoryIndex,
   setMemoryIndex,
   mapFilterEnabled,
+  isClearing,
+  clearCoordinates,
   onToggleMapFilter,
   onMapBoundsChange,
 }: {
@@ -78,6 +80,8 @@ function SplitViewer({
   memoryIndex: number;
   setMemoryIndex: (n: number) => void;
   mapFilterEnabled?: boolean;
+  isClearing?: boolean;
+  clearCoordinates?: [number, number] | null;
   onToggleMapFilter?: () => void;
   onMapBoundsChange?: (bounds: [[number, number],[number, number]]) => void;
 }) {
@@ -113,15 +117,28 @@ function SplitViewer({
   // Dynamic centroid (always reflects current selected item)
   const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
 
-  // Locked centroid used while map filter is ON (prevents panning / zooming with next/prev)
+  // Locked centroid used while map filter is ON or during clear
   const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)
 
-  // Update the locked centroid only when map filter is OFF (so user navigation recenters map)
+  // Lock centroid when clear starts with preserved coordinates
   useEffect(() => {
-    if (!mapFilterEnabled) {
+    if (isClearing && clearCoordinates && dynamicCentroid) {
+      setLockedCentroid({
+        ...dynamicCentroid,
+        coordinates: clearCoordinates,
+      } as Item)
+    }
+  }, [isClearing, clearCoordinates, dynamicCentroid])
+
+  // Update locked centroid during normal navigation only
+  useEffect(() => {
+    if (!mapFilterEnabled && !isClearing && dynamicCentroid) {
       setLockedCentroid(dynamicCentroid)
     }
-  }, [mapFilterEnabled, dynamicCentroid])
+  }, [mapFilterEnabled, isClearing, dynamicCentroid])
+
+  // Always use locked centroid during filter or clear, dynamic otherwise
+  const effectiveCentroid = (mapFilterEnabled || isClearing) ? lockedCentroid : dynamicCentroid
 
   // Only pass startIndex on first mount; afterward let the gallery manage its own state
   const initialIndexRef = useRef(safeIndex)
@@ -181,8 +198,7 @@ function SplitViewer({
             mapRef={mapRef}
             clusteredMarkers={clusteredMarkers}
             items={items}
-            // If filter ON: keep using locked centroid (no pan). If OFF: follow selection.
-            centroid={mapFilterEnabled ? lockedCentroid : dynamicCentroid}
+            centroid={effectiveCentroid}
             mapFilterEnabled={mapFilterEnabled}
             onToggleMapFilter={onToggleMapFilter}
             onBoundsChange={onMapBoundsChange}

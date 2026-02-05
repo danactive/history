@@ -10,6 +10,7 @@ jest.mock('../useSearch', () => ({
     keyword: '',
     searchBox: <div data-testid="search-box" />,
     setVisibleCount: jest.fn(),
+    setDisplayedItems: jest.fn(),
   }),
 }))
 
