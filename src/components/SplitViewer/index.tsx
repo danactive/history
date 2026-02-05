@@ -1,4 +1,4 @@
-import Color from 'color-thief-react'
+import useColorThief from 'use-color-thief'
 import {
   useContext,
   useEffect,
@@ -169,16 +169,20 @@ function SplitViewer({
     }
   }
 
+  // Extract color from background thumbnail
+  const bgThumbUrl = bgThumb ? `/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75` : null
+  const { color } = useColorThief(bgThumbUrl ?? '', { format: 'rgb' })
+  
+  // Convert RGB array to CSS rgb string
+  const colourString = color && Array.isArray(color) 
+    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})` 
+    : undefined
+
   return (
     <>
-      {bgThumb ? (
-        <Color src={`/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75`} format="rgbString">
-          {({ data: colour }: { data?: string }) => (
-            // Removed unused eslint disable for missing rule react/no-danger
-            <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colour}; }`}</style>
-          )}
-        </Color>
-      ) : null}
+      {colourString && (
+        <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colourString}; }`}</style>
+      )}
       <section className={`${styles.split} image-gallery-background`}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery
