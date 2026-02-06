@@ -5,7 +5,8 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
   if (lastDot === -1) return `${filename}.jpg`
   const base = filename.slice(0, lastDot)
   const currentExt = filename.slice(lastDot + 1)
-  const futureExt = (currentExt.toLowerCase() === 'jpg' || currentExt.toLowerCase() === 'jpeg') ? currentExt : 'jpg'
+  const normalizedExt = currentExt.toLowerCase()
+  const futureExt = (normalizedExt === 'jpg' || normalizedExt === 'jpeg') ? normalizedExt : 'jpg'
   return `${base}.${futureExt}`
 }
 

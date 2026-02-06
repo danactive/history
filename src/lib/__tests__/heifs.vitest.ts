@@ -1,22 +1,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+const mocks = vi.hoisted(() => ({
+  convert: vi.fn(),
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+}))
+
 // Mocks MUST be hoisted before any imports
-vi.mock('heic-convert')
-vi.mock('node:fs/promises')
-
-import convert from 'heic-convert'
-import { readFile, writeFile } from 'node:fs/promises'
-
-vi.mocked(convert).mockImplementation(async () => new ArrayBuffer(8))
-vi.mocked(readFile).mockImplementation(async () => Buffer.from('FAKE_HEIC'))
-vi.mocked(writeFile).mockImplementation(async () => undefined)
+vi.mock('heic-convert', () => ({
+  default: mocks.convert,
+}))
+vi.mock('node:fs/promises', () => ({
+  __esModule: true,
+  readFile: mocks.readFile,
+  writeFile: mocks.writeFile,
+  default: {
+    readFile: mocks.readFile,
+    writeFile: mocks.writeFile,
+  },
+}))
 
 import type { Filesystem } from '../filesystems'
 import post, { errorSchema } from '../heifs'
 
-const convertMock = vi.mocked(convert)
-const readFileMock = vi.mocked(readFile)
-const writeFileMock = vi.mocked(writeFile)
+const convertMock = mocks.convert
+const readFileMock = mocks.readFile
+const writeFileMock = mocks.writeFile
+
 
 const fsEntry = (full: string): Filesystem => {
   const parts = full.split('.')
@@ -36,9 +46,10 @@ const fsEntry = (full: string): Filesystem => {
 
 beforeEach(() => {
   vi.clearAllMocks()
-  vi.mocked(convert).mockImplementation(async () => new ArrayBuffer(8))
-  vi.mocked(readFile).mockImplementation(async () => Buffer.from('FAKE_HEIC'))
-  vi.mocked(writeFile).mockImplementation(async () => undefined)
+  vi.spyOn(console, 'error').mockImplementation(() => {})
+  mocks.convert.mockImplementation(async () => new ArrayBuffer(8))
+  mocks.readFile.mockImplementation(async () => Buffer.from('FAKE_HEIC'))
+  mocks.writeFile.mockImplementation(async () => undefined)
 })
 afterEach(() => {
   vi.restoreAllMocks()

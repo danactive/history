@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, test } from 'vitest'
+
 import type { Walk } from '../../types/pages'
 import { type Filesystem } from '../../lib/filesystems'
 import {
@@ -533,7 +535,7 @@ describe('Walk - util', () => {
     test('JPG', () => {
       const fileGroup = associateMedia(generateImageFilenames(2, 'jpgraw')).grouped.get('DSC03721')
       if (!fileGroup) {
-        fail('Mock data is bad')
+        throw new Error('Mock data is bad')
       }
       const received = getJpgLike(fileGroup)
       expect(received?.ext).toEqual('JPG')
@@ -543,7 +545,7 @@ describe('Walk - util', () => {
     test('JPEG', () => {
       const fileGroup = associateMedia(generateImageFilenames(1, 'jpeg')).grouped.get('DSC03721')
       if (!fileGroup) {
-        fail('Mock data is bad')
+        throw new Error('Mock data is bad')
       }
       const received = getJpgLike(fileGroup)
       expect(received?.ext).toEqual('JPEG')
@@ -553,7 +555,7 @@ describe('Walk - util', () => {
     test('check immutability', () => {
       const fileGroup = associateMedia(generateImageFilenames(1, 'jpeg')).grouped.get('DSC03721')
       if (!fileGroup) {
-        fail('Mock data is bad')
+        throw new Error('Mock data is bad')
       }
       const generated = generateImageFilenames(1, 'jpeg')
       getJpgLike(fileGroup)

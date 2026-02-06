@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import { transform } from '../person'
 
 describe('transform', () => {

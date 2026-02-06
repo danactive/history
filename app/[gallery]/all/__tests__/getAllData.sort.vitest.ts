@@ -1,8 +1,10 @@
+import { describe, expect, test, vi } from 'vitest'
+
 import { getAllData } from '../../../../src/lib/all'
 import type { Gallery } from '../../../../src/types/common'
 
 // Reduce mocks: keep only data providers (getAlbums/getAlbum). Use real config & search.
-jest.mock('../../../../src/lib/albums', () => ({
+vi.mock('../../../../src/lib/albums', () => ({
   __esModule: true,
   default: async (gallery: string) => ({
     [gallery]: {
@@ -14,7 +16,7 @@ jest.mock('../../../../src/lib/albums', () => ({
   }),
 }))
 
-jest.mock('../../../../src/lib/album', () => ({
+vi.mock('../../../../src/lib/album', () => ({
   __esModule: true,
   default: async (_gallery: string, albumName: string) => {
     if (albumName === 'Alpha') {

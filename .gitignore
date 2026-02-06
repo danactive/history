@@ -36,6 +36,7 @@ generated.ts
 
 # Python
 models
+!src/models
 weights.log
 api.log
 

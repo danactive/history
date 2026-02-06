@@ -5,5 +5,6 @@ export default defineConfig({
     include: ['**/*.vitest.ts?(x)'], // only run `.vitest.ts` files
     globals: true,
     environment: 'jsdom',
+    setupFiles: ['./vitest.setup.ts'],
   },
 })
