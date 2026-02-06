@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import config from '../../../src/models/config'
 import { getExt } from '../index'
 

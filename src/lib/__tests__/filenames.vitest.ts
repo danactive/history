@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import { futureFilenamesOutputs, uniqueFiles, videoTypeInList } from '../filenames'
 
 describe('Filenames', () => {

@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<VideoPlayerHtml5 /> > Should render and match the snapshot 1`] = `
+<span
+  class="image-gallery-description"
+>
+  Sample HTML5 video
+</span>
+`;

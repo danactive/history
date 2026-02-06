@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import getAlbums from '../../../../src/lib/albums'
 import { rawParseOptions, readAlbum } from '../../../../src/lib/xml'
-import type { AlbumMeta, Gallery, Item, RawXmlAlbum, RawXmlItem } from '../../../../src/types/common.d'
+import type { AlbumMeta, Gallery, Item, RawXmlAlbum, RawXmlItem } from '../../../../src/types/common'
 
 export type SearchResult = {
   gallery: Gallery;

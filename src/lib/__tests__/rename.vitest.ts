@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, afterEach } from 'vitest'
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
 import { rename, mkdir, rm, readdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { renamePaths, errorSchema, moveRaws } from '../rename'
@@ -357,8 +357,14 @@ describe('rename library', () => {
     let testDir: string
     let originalsDir: string
     let formatErrorMessage: (err: unknown, prefix: string) => string
+    let consoleLogSpy: ReturnType<typeof vi.spyOn> | null = null
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn> | null = null
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn> | null = null
 
     beforeEach(async () => {
+      consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
       // Create temp test directory structure
       testDir = path.join(utils.safePublicPath('/test/fixtures'), `moveRaws-test-${Date.now()}`)
       originalsDir = path.join(testDir, 'originals')
@@ -373,6 +379,9 @@ describe('rename library', () => {
     })
 
     afterEach(async () => {
+      consoleLogSpy?.mockRestore()
+      consoleErrorSpy?.mockRestore()
+      consoleWarnSpy?.mockRestore()
       // Cleanup test directory
       try {
         await rm(testDir, { recursive: true, force: true })

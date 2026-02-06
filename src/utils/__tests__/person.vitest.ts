@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import applyAge from '../person'
 
 describe('Utilities', () => {
