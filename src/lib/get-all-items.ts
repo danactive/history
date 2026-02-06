@@ -78,7 +78,7 @@ export function allPageItemMapper({ albumName, albumCoordinateAccuracy, items, g
       thumbPath: item.thumbPath,
       photoPath: item.photoPath,
       mediaPath: item.mediaPath,
-      reference: null,
+      reference: item.reference,
       videoPaths: null,
       gallery,
       album: albumName,
