@@ -13,6 +13,7 @@
     "test": "jest --watch",
     "test:vitest": "npx vitest watch",
     "test:ci": "jest --ci && npx vitest run",
+    "test:ci:vitest": "npx vitest run",
     "test:e2e": "npx playwright test",
     "typecheck": "echo 'Typecheck...' && tsc",
     "release": "standard-version"
@@ -74,7 +75,7 @@
     "ts-jest": "^29.4.6",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": "24",
