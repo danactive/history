@@ -23,8 +23,8 @@ const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagr
 
 // Parse DMS (Degrees Minutes Seconds) format to decimal
 // Supports formats like: 50° 22' 51.51" N or 50°22'51.51"N or 50 22 51.51 N
-function parseDMS(dms: string): number | null {
-  const dmsPattern = /(\d+)[°\s]+(\d+)['\s]+(\d+(?:\.\d+)?)["\s]*([NSEW])?/i
+export function parseDMS(dms: string): number | null {
+  const dmsPattern = /(\d+)[°\s]+(\d+)[\'’′\s]+(\d+(?:\.\d+)?)[\"”″\s]*([NSEW])?/i
   const match = dms.trim().match(dmsPattern)
 
   if (!match) return null
@@ -42,6 +42,50 @@ function parseDMS(dms: string): number | null {
   }
 
   return decimal
+}
+
+export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXmlItem['geo'] | undefined {
+  const trimmed = value.trim()
+  const hasDms = /\d+[°\s]+\d+[\'’′\s]+\d+/.test(trimmed)
+  const hasComma = trimmed.includes(',')
+
+  const splitDmsPair = (input: string): [string, string] | null => {
+    if (hasComma) {
+      const parts = input.split(',').map(s => s.trim()).filter(Boolean)
+      return parts.length === 2 ? [parts[0], parts[1]] : null
+    }
+    const match = input.match(/\d+[°\s]+\d+[\'’′\s]+\d+(?:\.\d+)?[\"”″\s]*[NSEW]?/ig)
+    if (match && match.length >= 2) {
+      return [match[0].trim(), match[1].trim()]
+    }
+    return null
+  }
+
+  // Check if value contains DMS format (degrees, minutes, seconds)
+  if (hasDms) {
+    const pair = splitDmsPair(trimmed)
+    if (pair) {
+      const lat = parseDMS(pair[0])
+      const lon = parseDMS(pair[1])
+      if (lat !== null && lon !== null) {
+        return { lat: lat.toString(), lon: lon.toString(), accuracy: prevGeo?.accuracy || '' }
+      }
+    }
+    const lat = parseDMS(trimmed)
+    if (lat !== null) {
+      return { lat: lat.toString(), lon: prevGeo?.lon || '', accuracy: prevGeo?.accuracy || '' }
+    }
+  }
+
+  // Check if the value contains a comma (decimal lat,lon format)
+  if (hasComma) {
+    const [lat, lon] = trimmed.split(',').map(s => s.trim())
+    return { lat: lat || '', lon: lon || '', accuracy: prevGeo?.accuracy || '' }
+  }
+
+  // Plain value for latitude
+  const lat = trimmed
+  return lat || prevGeo?.lon ? { lat, lon: prevGeo?.lon || '', accuracy: prevGeo?.accuracy || '' } : undefined
 }
 
 export default function Fields(
@@ -212,51 +256,10 @@ export default function Fields(
             value={editedItem?.geo?.lat ?? ''}
             onChange={(e) => {
               const value = e.target.value
-
-              // Check if value contains DMS format (degrees, minutes, seconds)
-              if (/\d+[°\s]+\d+['\s]+\d+/.test(value)) {
-                // Split by comma to check for lat,lon DMS pair
-                const parts = value.split(',').map(s => s.trim())
-
-                if (parts.length === 2) {
-                  // Parse both lat and lon as DMS
-                  const lat = parseDMS(parts[0])
-                  const lon = parseDMS(parts[1])
-                  if (lat !== null && lon !== null) {
-                    updateItem((prev: RawXmlItem | null) => prev ? {
-                      ...prev,
-                      geo: { lat: lat.toString(), lon: lon.toString(), accuracy: prev.geo?.accuracy || '' },
-                    } : null)
-                    return
-                  }
-                } else {
-                  // Single DMS value for latitude only
-                  const lat = parseDMS(value)
-                  if (lat !== null) {
-                    updateItem((prev: RawXmlItem | null) => prev ? {
-                      ...prev,
-                      geo: { lat: lat.toString(), lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' },
-                    } : null)
-                    return
-                  }
-                }
-              }
-
-              // Check if the value contains a comma (decimal lat,lon format)
-              if (value.includes(',')) {
-                const [lat, lon] = value.split(',').map(s => s.trim())
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  geo: { lat: lat || '', lon: lon || '', accuracy: prev.geo?.accuracy || '' },
-                } : null)
-              } else {
-                // Plain value for latitude
-                const lat = value
-                updateItem((prev: RawXmlItem | null) => prev ? {
-                  ...prev,
-                  geo: lat || prev.geo?.lon ? { lat, lon: prev.geo?.lon || '', accuracy: prev.geo?.accuracy || '' } : undefined,
-                } : null)
-              }
+              updateItem((prev: RawXmlItem | null) => prev ? {
+                ...prev,
+                geo: parseLatInput(value, prev.geo),
+              } : null)
             }}
             placeholder="Latitude (or lat,lon or DMS)"
             title="Latitude (geo.lat) - paste lat,lon or DMS format to auto-split"

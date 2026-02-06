@@ -2,7 +2,6 @@ import js from '@eslint/js'
 import next from '@next/eslint-plugin-next'
 import ts from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
-import jestDom from 'eslint-plugin-jest-dom'
 import jsdoc from 'eslint-plugin-jsdoc'
 import testingLibrary from 'eslint-plugin-testing-library'
 
@@ -17,7 +16,6 @@ export default [
       js, // ESLint core recommended rules
       '@typescript-eslint': ts, // TypeScript recommended rules
       'testing-library': testingLibrary,
-      'jest-dom': jestDom,
       '@next/next': next,
       jsdoc,
     },
