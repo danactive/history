@@ -21,11 +21,13 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
+const DMS_PATTERN = /(\d+)[°\s]+(\d+)[\'’′\s]+(\d+(?:\.\d+)?)[\"”″\s]*([NSEW])?/i
+const DMS_PAIR_PATTERN = /\d+[°\s]+\d+[\'’′\s]+\d+(?:\.\d+)?[\"”″\s]*[NSEW]?/ig
+
 // Parse DMS (Degrees Minutes Seconds) format to decimal
 // Supports formats like: 50° 22' 51.51" N or 50°22'51.51"N or 50 22 51.51 N
 export function parseDMS(dms: string): number | null {
-  const dmsPattern = /(\d+)[°\s]+(\d+)[\'’′\s]+(\d+(?:\.\d+)?)[\"”″\s]*([NSEW])?/i
-  const match = dms.trim().match(dmsPattern)
+  const match = dms.trim().match(DMS_PATTERN)
 
   if (!match) return null
 
@@ -54,7 +56,7 @@ export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXm
       const parts = input.split(',').map(s => s.trim()).filter(Boolean)
       return parts.length === 2 ? [parts[0], parts[1]] : null
     }
-    const match = input.match(/\d+[°\s]+\d+[\'’′\s]+\d+(?:\.\d+)?[\"”″\s]*[NSEW]?/ig)
+    const match = input.match(DMS_PAIR_PATTERN)
     if (match && match.length >= 2) {
       return [match[0].trim(), match[1].trim()]
     }
