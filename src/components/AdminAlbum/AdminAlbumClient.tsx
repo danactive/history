@@ -41,9 +41,11 @@ export default function AdminAlbumClient(
     clearEdits,
     applyEditsToItems,
   } = useEditCountPill()
-  const { data, error, mutate } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
+  const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
 
-  const items = data?.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
+  const items = data?.album?.item
+    ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item])
+    : []
 
   const countFields = (item: RawXmlItem | null) => {
     if (!item) return 0
@@ -60,14 +62,39 @@ export default function AdminAlbumClient(
     // If multiple items are selected, apply the update to all of them
     // preserving their specific ID and filename (each keeps its own filename)
     if (selectedIndices.size > 1) {
+      const activeOriginalFilename = item?.filename
+      const activeOriginalValue = Array.isArray(activeOriginalFilename)
+        ? activeOriginalFilename[0]
+        : activeOriginalFilename
+      const activeUpdatedValue = Array.isArray(updatedItem.filename)
+        ? updatedItem.filename[0]
+        : updatedItem.filename
+
       selectedIndices.forEach(index => {
         const targetItem = items[index]
         if (!targetItem) return
+        const targetFilename = targetItem.filename
+        let newFilename = targetFilename
+
+        if (activeOriginalValue && activeUpdatedValue && activeOriginalValue !== activeUpdatedValue) {
+          const originalLower = activeOriginalValue.toLowerCase()
+          const updatedLower = activeUpdatedValue.toLowerCase()
+          const isJpgToMp4 = originalLower.endsWith('.jpg') && updatedLower.endsWith('.mp4')
+          const isMp4ToJpg = originalLower.endsWith('.mp4') && updatedLower.endsWith('.jpg')
+
+          if (isJpgToMp4 || isMp4ToJpg) {
+            const targetValue = Array.isArray(targetFilename) ? targetFilename[0] : targetFilename
+            const swapped = isJpgToMp4
+              ? targetValue?.replace(/\.jpg$/i, '.mp4')
+              : targetValue?.replace(/\.mp4$/i, '.jpg')
+            newFilename = Array.isArray(targetFilename) ? [swapped] : swapped
+          }
+        }
 
         const newItem = {
           ...updatedItem,
           $: targetItem.$,
-          filename: targetItem.filename,
+          filename: newFilename,
         }
 
         handleItemUpdateOriginal(newItem)

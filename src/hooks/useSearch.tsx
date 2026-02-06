@@ -68,6 +68,11 @@ export default function useSearch<ItemType extends ServerSideItem>({
     setVisibleCount((prev) => (prev === filtered.length ? prev : filtered.length))
   }, [filtered.length])
 
+  const itemsToUse = useMemo(
+    () => (displayedItems.length ? displayedItems : filtered),
+    [displayedItems, filtered],
+  )
+
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const newKeyword = selectedOption?.value ?? ''
@@ -79,7 +84,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const handleClear = useCallback(() => {
     // Get current photo ID from displayed items (respects map filter)
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
-    const itemsToUse = displayedItems || filtered
     const currentItem = itemsToUse[currentIndex]
     const identifier = currentItem
       ? (Array.isArray((currentItem as any).filename)
@@ -106,9 +110,16 @@ export default function useSearch<ItemType extends ServerSideItem>({
     router.replace(identifier ? `${pathname}?select=${identifier}` : pathname)
   }, [refImageGallery, displayedItems, filtered, selectById, mapFilterEnabled, onClearMapFilter, router, pathname])
 
+  const canBookmark = Boolean(
+    refImageGallery
+    && selectById
+    && itemsToUse.length
+    && 'filename' in itemsToUse[0],
+  )
+
   const { BookmarkButton } = useBookmark({
     refImageGallery,
-    displayedItems: displayedItems || filtered,
+    displayedItems: itemsToUse,
     pathname,
     currentIndex: memoryIndex,
     selectById,
@@ -149,7 +160,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
             Clear
           </Button>
         )}
-        <BookmarkButton />
+        {canBookmark && <BookmarkButton />}
       </div>
     </form>
   )

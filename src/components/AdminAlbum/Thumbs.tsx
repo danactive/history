@@ -13,7 +13,9 @@ export default function AdminAlbumThumbs(
     selectedIndices?: Set<number>
   },
 ) {
-  const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
+  const items = xmlAlbum?.album?.item
+    ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item])
+    : []
   const hasMultiSelection = (selectedIndices?.size ?? 0) > 1
 
   if (items.length === 0) {

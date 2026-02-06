@@ -15,3 +15,14 @@ html {
 .mapboxgl-control-container {
   display: none;
 }
+
+/* Hide the large center overlay play button on HTML5 video */
+.image-gallery-image::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+}
+.image-gallery-image::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
+.image-gallery-image::-moz-media-controls-overlay-play-button {
+  display: none !important;
+}
