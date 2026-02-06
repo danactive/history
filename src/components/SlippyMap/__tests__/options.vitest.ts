@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import { type Item } from '../../../types/common'
 import { transformMapOptions, transformSourceOptions, validatePoint } from '../options'
 import { generateClusters } from '../../../lib/generate-clusters'

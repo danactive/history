@@ -1,16 +1,17 @@
 import React from 'react'
 import { renderHook, act } from '@testing-library/react'
+import { vi } from 'vitest'
 import useMapFilter from '../useMapFilter'
 
 // Mock useSearch so filtering is identity
-jest.mock('../useSearch', () => ({
+vi.mock('../useSearch', () => ({
   __esModule: true,
   default: ({ items }: any) => ({
     filtered: items,
     keyword: '',
     searchBox: <div data-testid="search-box" />,
-    setVisibleCount: jest.fn(),
-    setDisplayedItems: jest.fn(),
+    setVisibleCount: vi.fn(),
+    setDisplayedItems: vi.fn(),
   }),
 }))
 

@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import { Item } from '../../types/common'
 import indexKeywords from '../search'
 

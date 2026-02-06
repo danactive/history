@@ -1,10 +1,11 @@
 import path from 'node:path'
+import { describe, expect, test } from 'vitest'
 
 import pathExists from '../exists'
 
 describe('Exists library', () => {
   describe('Expect result', () => {
-    const successTest = async (expect: jest.Expect, testPath: string) => {
+    const successTest = async (testPath: string) => {
       expect.hasAssertions()
       try {
         const verifiedPath = await pathExists(testPath)
@@ -18,37 +19,37 @@ describe('Exists library', () => {
 
     test('* Real relative file exists', async () => {
       const testPath = 'test/fixtures/exists.txt'
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
 
     test('* Real relative folder exists', async () => {
       const testPath = 'test/fixtures'
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
 
     test('* Real absolute file exists', async () => {
       const testPath = '/test/fixtures/exists.txt'
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
 
     test('* Real absolute folder exists', async () => {
       const testPath = '/test/fixtures'
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
 
     test('* Real root absolute file exists', async () => {
       const testPath = path.join(process.cwd(), 'public/test/fixtures/exists.txt')
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
 
     test('* Real root absolute folder exists', async () => {
       const testPath = path.join(process.cwd(), 'public/test/fixtures')
-      await successTest(expect, testPath)
+      await successTest(testPath)
     })
   })
 
   describe('Expect result', () => {
-    const failureTest = async (expect: jest.Expect, testPath: string | null) => {
+    const failureTest = async (testPath: string | null) => {
       expect.hasAssertions()
       try {
         const verifiedPath = await pathExists(testPath)
@@ -60,11 +61,11 @@ describe('Exists library', () => {
 
     test('* Fake absolute path does not exists', async () => {
       const testPath = '/test/fixtures/fakeFolder'
-      await failureTest(expect, testPath)
+      await failureTest(testPath)
     })
 
     test('* Safe path throws error', async () => {
-      await failureTest(expect, null)
+      await failureTest(null)
     })
   })
 })

@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest'
+
 import type { XmlAlbum, XmlItem } from '../../types/common'
 import { transformReference } from '../../utils/reference'
 import transformJsonSchema, { transformPersons } from '../album'
