@@ -46,6 +46,7 @@ const fsEntry = (full: string): Filesystem => {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.spyOn(console, 'error').mockImplementation(() => {})
   mocks.convert.mockImplementation(async () => new ArrayBuffer(8))
   mocks.readFile.mockImplementation(async () => Buffer.from('FAKE_HEIC'))
   mocks.writeFile.mockImplementation(async () => undefined)
