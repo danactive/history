@@ -1,4 +1,4 @@
-import { MouseEvent, useState, useEffect } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 
 import config from '../../../src/models/config'
 import Img from '../Img'
@@ -16,7 +16,6 @@ function ThumbImg({
   caption,
   href,
   src,
-  id,
   viewed: globalViewed = false,
   multiSelected = false,
 }: {
@@ -24,7 +23,6 @@ function ThumbImg({
   caption: string;
   href?: string;
   src: string;
-  id: string;
   viewed: boolean;
   multiSelected?: boolean;
 }) {
@@ -45,13 +43,12 @@ function ThumbImg({
 
   return (
     <li className={styles.bullet}>
-      <a className={getViewed(globalViewed || viewed, multiSelected)} href={href} onClick={handleClick} id={id}>
+      <a className={getViewed(globalViewed || viewed, multiSelected)} href={href} onClick={handleClick}>
         <Img
           src={src}
           alt={caption}
           width={width}
           height={height}
-          priority={false}
         />
       </a>
       <span className={styles.caption}>{caption}</span>

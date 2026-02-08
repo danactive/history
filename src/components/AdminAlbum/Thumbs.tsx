@@ -35,7 +35,6 @@ export default function AdminAlbumThumbs(
               src={thumbPath(item.filename, gallery)}
               caption={caption}
               key={filename}
-              id={`select${item.$.id}`}
               viewed={isSelected}
               multiSelected={hasMultiSelection && isSelected}
             />

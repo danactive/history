@@ -72,19 +72,21 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
           onMapBoundsChange={handleBoundsChange}
         />
         <ul className={styles.thumbWrapper}>
-          {itemsToShow.map((item, index) => (
-            <ThumbImg
-              onClick={() => {
-                refImageGallery.current?.slideToIndex(index)
-                setMemoryIndex(index)
-              }}
-              src={item.thumbPath}
-              caption={item.caption}
-              key={item.id}
-              id={`select${item.id}`}
-              viewed={viewedList.has(item.id)}
-            />
-          ))}
+          {itemsToShow.map((item, index) => {
+            const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+            return (
+              <ThumbImg
+                onClick={() => {
+                  refImageGallery.current?.slideToIndex(index)
+                  setMemoryIndex(index)
+                }}
+                src={item.thumbPath}
+                caption={item.caption}
+                key={filename}
+                viewed={viewedList.has(item.id)}
+              />
+            )
+          })}
         </ul>
       </AlbumContext.Provider>
     </div>
