@@ -51,3 +51,14 @@ export function addGeographyToSearch(item: Item) {
 
   return item.search === null ? country : `${item.search}, ${country}`
 }
+
+export function getItemYearFromFilename(item: Item): string {
+  const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+  const year = filename?.toString?.().substring?.(0, 4)
+  return year && /^\d{4}$/.test(year) ? year : ''
+}
+
+export function addYearToSearch(search: string, item: Item): string {
+  const year = getItemYearFromFilename(item)
+  return year ? `${search}, ${year}` : search
+}

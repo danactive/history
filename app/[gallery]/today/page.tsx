@@ -1,12 +1,12 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
-import type { Metadata } from 'next'
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import { generateClusters } from '../../../src/lib/generate-clusters'
-import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
+import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFilename } from '../../../src/lib/search'
 import config from '../../../src/models/config'
 import type { AlbumMeta, Gallery, Item } from '../../../src/types/common'
 
@@ -35,13 +35,19 @@ async function getTodayItems(gallery: Gallery) {
       albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
       items: Item[],
     },
-  ) => items.map((item) => ({
-    ...item,
-    album: albumName,
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
-    search: addGeographyToSearch(item),
-  }))
+  ) => items.map((item) => {
+    const year = getItemYearFromFilename(item)
+    const search = addYearToSearch(addGeographyToSearch(item), item)
+    return {
+      ...item,
+      album: albumName,
+      corpus: [item.description, item.caption, item.location, item.city, search, year]
+        .join(' ')
+        .trim(),
+      coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
+      search,
+    }
+  })
 
   const MMDD = new Date().toLocaleString('en-CA').substring(5, 10)
 
