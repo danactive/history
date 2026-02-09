@@ -1,7 +1,7 @@
 import getAlbum from '../lib/album'
 import getAlbums from '../lib/albums'
 import getGalleries from '../lib/galleries'
-import indexKeywords, { addGeographyToSearch } from '../lib/search'
+import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFilename } from '../lib/search'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
@@ -55,13 +55,15 @@ export function allPageItemMapper({ albumName, albumCoordinateAccuracy, items, g
   return items.map((item) => {
     const filenameStr = Array.isArray(item.filename) ? (item.filename[0] ?? '') : (item.filename ?? '')
     const titleStr = Array.isArray(item.title) ? (item.title[0] ?? '') : (item.title ?? '')
-    const searchStr = addGeographyToSearch(item) ?? ''
+    const searchStr = addYearToSearch(addGeographyToSearch(item) ?? '', item)
+    const year = getItemYearFromFilename(item)
     const corpus = [
       item.description ?? '',
       item.caption ?? '',
       item.location ?? '',
       item.city ?? '',
       searchStr,
+      year,
     ].join(' ').trim()
 
     return {

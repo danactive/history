@@ -1,4 +1,4 @@
-import Color from 'color-thief-react'
+import useColorThief from 'use-color-thief'
 import {
   useContext,
   useEffect,
@@ -8,8 +8,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react'
-import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
-import 'react-image-gallery/styles/css/image-gallery.css'
+import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalleryRef } from 'react-image-gallery'
 import type { MapRef } from 'react-map-gl/mapbox'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
@@ -23,11 +22,10 @@ import { validatePoint } from '../SlippyMap/options'
 import Video from '../Video'
 import styles from './styles.module.css'
 
-interface ImageGalleryType extends ReactImageGalleryItem {
+interface ImageGalleryType extends GalleryItem {
   filename: string;
   mediaPath: string;
   caption: string;
-  renderItem?(item: ReactImageGalleryItem & { caption: string; mediaPath: string; }): ReactNode;
 }
 
 const toCarousel = (item: Item) => {
@@ -46,14 +44,13 @@ const toCarousel = (item: Item) => {
   const extension = getExt(item.mediaPath)
   const isVideo = extension && config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
-    imageGallery.renderItem = ({
-      original, mediaPath, description, caption,
-    }) => (
+    const { mediaPath, caption } = imageGallery
+    imageGallery.renderItem = (galleryItem) => (
       <Video
         extension={extension}
         src={mediaPath}
-        poster={original}
-        description={description ?? caption}
+        poster={galleryItem.original}
+        description={galleryItem.description ?? caption}
       />
     )
   }
@@ -75,7 +72,7 @@ function SplitViewer({
 }: {
   clusteredMarkers: ClusteredMarkers;
   items: Item[];
-  refImageGallery: Ref<ImageGallery> | null;
+  refImageGallery: Ref<ImageGalleryRef> | null;
   setViewed: Viewed;
   memoryIndex: number;
   setMemoryIndex: (n: number) => void;
@@ -150,7 +147,7 @@ function SplitViewer({
   const bgThumb = carouselItems[safeIndex]?.thumbnail
 
   // Slide handler with bounds + map flight (only when map filter OFF)
-  const handleBeforeSlide: ReactImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
+  const handleBeforeSlide: ImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
     if (carouselItems.length === 0) return
     let nextIdx = nextIdxRaw
     if (nextIdx < 0 || nextIdx >= carouselItems.length) {
@@ -169,16 +166,20 @@ function SplitViewer({
     }
   }
 
+  // Extract color from background thumbnail
+  const bgThumbUrl = bgThumb ? `/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75` : null
+  const { color } = useColorThief(bgThumbUrl ?? '', { format: 'rgb' })
+  
+  // Convert RGB array to CSS rgb string
+  const colourString = color && Array.isArray(color) 
+    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})` 
+    : undefined
+
   return (
     <>
-      {bgThumb ? (
-        <Color src={`/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75`} format="rgbString">
-          {({ data: colour }: { data?: string }) => (
-            // Removed unused eslint disable for missing rule react/no-danger
-            <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colour}; }`}</style>
-          )}
-        </Color>
-      ) : null}
+      {colourString && (
+        <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colourString}; }`}</style>
+      )}
       <section className={`${styles.split} image-gallery-background`}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery

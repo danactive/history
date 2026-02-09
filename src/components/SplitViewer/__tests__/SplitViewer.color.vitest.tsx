@@ -2,11 +2,12 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-// Mock color-thief-react to synchronously provide a color via render-prop
-vi.mock('color-thief-react', () => ({
-  default: ({ children }: { children: (arg: { data?: string }) => React.ReactNode }) => (
-    <>{children({ data: 'rgba(255, 200, 100, 1)' })}</>
-  ),
+// Mock use-color-thief to synchronously provide a color
+vi.mock('use-color-thief', () => ({
+  default: () => ({
+    color: [255, 200, 100],
+    palette: null,
+  }),
 }))
 
 // Stub next/image SSR to avoid image optimization in tests
@@ -24,7 +25,7 @@ import type { Viewed } from '../../../hooks/useMemory'
 import SplitViewer from '../index'
 
 describe('SplitViewer colour-thief background', () => {
-  it('applies background style from Color render-prop data', () => {
+  it('applies background style from useColorThief hook', () => {
     const items: Item[] = [
       {
         id: '1',
@@ -75,6 +76,6 @@ describe('SplitViewer colour-thief background', () => {
     // Assert a <style> tag was injected with the expected background color
     const styleEl = container.querySelector('style')
     expect(styleEl).toBeTruthy()
-    expect(styleEl?.textContent).toContain('background: rgba(255, 200, 100, 1)')
+    expect(styleEl?.textContent).toContain('background: rgb(255, 200, 100)')
   })
 })

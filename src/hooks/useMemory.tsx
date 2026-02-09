@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
+import type { ImageGalleryRef } from 'react-image-gallery'
 
 import Link from '../components/Link'
 import type { Item } from '../types/common'
@@ -14,7 +14,7 @@ type MemoryOptions = {
 
 const useMemory = (
   filtered: Item[],
-  refImageGallery: RefObject<ReactImageGallery | null>,
+  refImageGallery: RefObject<ImageGalleryRef | null>,
   options: MemoryOptions = { autoInitialView: true },
 ) => {
   const { autoInitialView = true } = options
