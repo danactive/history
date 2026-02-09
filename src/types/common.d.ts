@@ -155,13 +155,6 @@ type IndexedKeywords = {
   value: string;
 }
 
-// https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/54659
-declare module 'react-image-gallery' {
-  interface ReactImageGalleryProps {
-    useWindowKeyDown?: boolean;
-  }
-}
-
 // SplitViewer fullscreenMap
 // https://stackoverflow.com/questions/25993861/how-do-i-get-typescript-to-stop-complaining-about-functions-it-doesnt-know-abou
 declare global {

@@ -1,4 +1,4 @@
-import type ReactImageGallery from 'react-image-gallery'
+import type { ImageGalleryRef } from 'react-image-gallery'
 
 import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
@@ -9,7 +9,7 @@ import styles from './styles.module.css'
 interface InputProps {
   items: ServerSideAllItem[];
   keyword: string;
-  refImageGallery: React.RefObject<ReactImageGallery | null>;
+  refImageGallery: React.RefObject<ImageGalleryRef | null>;
 }
 
 function All({ items, keyword, refImageGallery }: InputProps) {

@@ -8,8 +8,7 @@ import {
   type ReactNode,
   type Ref,
 } from 'react'
-import ImageGallery, { type ReactImageGalleryItem, type ReactImageGalleryProps } from 'react-image-gallery'
-import 'react-image-gallery/styles/css/image-gallery.css'
+import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalleryRef } from 'react-image-gallery'
 import type { MapRef } from 'react-map-gl/mapbox'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
@@ -23,11 +22,10 @@ import { validatePoint } from '../SlippyMap/options'
 import Video from '../Video'
 import styles from './styles.module.css'
 
-interface ImageGalleryType extends ReactImageGalleryItem {
+interface ImageGalleryType extends GalleryItem {
   filename: string;
   mediaPath: string;
   caption: string;
-  renderItem?(item: ReactImageGalleryItem & { caption: string; mediaPath: string; }): ReactNode;
 }
 
 const toCarousel = (item: Item) => {
@@ -46,14 +44,13 @@ const toCarousel = (item: Item) => {
   const extension = getExt(item.mediaPath)
   const isVideo = extension && config.supportedFileTypes.video.includes(extension) && item.mediaPath
   if (isVideo) {
-    imageGallery.renderItem = ({
-      original, mediaPath, description, caption,
-    }) => (
+    const { mediaPath, caption } = imageGallery
+    imageGallery.renderItem = (galleryItem) => (
       <Video
         extension={extension}
         src={mediaPath}
-        poster={original}
-        description={description ?? caption}
+        poster={galleryItem.original}
+        description={galleryItem.description ?? caption}
       />
     )
   }
@@ -75,7 +72,7 @@ function SplitViewer({
 }: {
   clusteredMarkers: ClusteredMarkers;
   items: Item[];
-  refImageGallery: Ref<ImageGallery> | null;
+  refImageGallery: Ref<ImageGalleryRef> | null;
   setViewed: Viewed;
   memoryIndex: number;
   setMemoryIndex: (n: number) => void;
@@ -150,7 +147,7 @@ function SplitViewer({
   const bgThumb = carouselItems[safeIndex]?.thumbnail
 
   // Slide handler with bounds + map flight (only when map filter OFF)
-  const handleBeforeSlide: ReactImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
+  const handleBeforeSlide: ImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
     if (carouselItems.length === 0) return
     let nextIdx = nextIdxRaw
     if (nextIdx < 0 || nextIdx >= carouselItems.length) {

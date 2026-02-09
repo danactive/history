@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
-import type ReactImageGallery from 'react-image-gallery'
+import type { ImageGalleryRef } from 'react-image-gallery'
 import type { All } from '../types/pages'
 import useMemory from './useMemory'
 import useSearch from './useSearch'
@@ -8,7 +8,7 @@ import useSearch from './useSearch'
 type Bounds = [[number, number],[number, number]]
 
 export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
-  const refImageGallery = useRef<ReactImageGallery>(null)
+  const refImageGallery = useRef<ImageGalleryRef>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
   const autoInitialViewRef = useRef(true) // controls useMemory auto mark
