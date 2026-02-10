@@ -20,10 +20,27 @@ const NOT_AVAILABLE = 'N/A'
 // Module-level cache to persist across remounts
 const scoreCache: Record<string, string> = {}
 
-function formatScore(score: number | undefined): string {
-  return typeof score === 'number'
-    ? `${Math.abs(score * 100).toFixed(1)}%`
-    : NOT_AVAILABLE
+function formatScore(
+  overall: number | undefined,
+  interest: number | undefined,
+  thirds: number | undefined,
+): string {
+  const percent = (value: number) => `${Math.round(value * 10)}%`
+  if (typeof overall === 'number') {
+    return `${Math.round(overall)}%`
+  }
+  const hasInterest = typeof interest === 'number'
+  const hasThirds = typeof thirds === 'number'
+  if (hasInterest && hasThirds) {
+    return percent((interest * 0.8) + (thirds * 0.2))
+  }
+  if (hasInterest) {
+    return percent(interest)
+  }
+  if (hasThirds) {
+    return percent(thirds)
+  }
+  return NOT_AVAILABLE
 }
 
 // SWR fetcher that uses the cache
@@ -38,7 +55,11 @@ const fetchScore = async (absolutePath: string) => {
   })
   if (!res.ok) throw new Error('Failed to fetch')
   const data = await res.json()
-  const scoreStr = formatScore(data.aesthetic_score)
+  const scoreStr = formatScore(
+    data.overall_score,
+    data.visual_interest_score,
+    data.rule_of_thirds_score,
+  )
   scoreCache[absolutePath] = scoreStr
   return scoreStr
 }
@@ -58,7 +79,7 @@ function DraggableThumb({
         <Link href={absolutePath} target="_blank" title="View original in new tab">
           {filename}
         </Link>
-        &nbsp;<span title='Aesthetic score'>{displayScore}</span>
+        &nbsp;<span title="Composition scores">{displayScore}</span>
       </span>
       <Img
         key={`thumbnail-${filename}`}

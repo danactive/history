@@ -93,3 +93,16 @@ curl -X POST -H "Content-Type: image/jpeg" --data-binary @your_image.jpg http://
    [sa_0_4_vit_b_16_linear.pth](https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth)
 1. Place it in `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
 1. The OpenAI CLIP backbone weights for ViT-B/16 will be downloaded automatically on first run `make ai-api`
+
+## Aesthetic scorer (multi-attribute)
+
+To enable the newer multi-attribute aesthetic scorer (used by `/scores`):
+
+1. Download the model weights and processor files:
+   `make load-aesthetic-scorer`
+1. Download the CLIP ViT-B/32 backbone (offline):
+   `make load-clip-vit-base-patch32`
+1. Rebuild and run the API:
+   `make build-ai-api && make ai-api`
+
+The weights are stored under `models/rsinema_aesthetic-scorer` and `models/openai_clip-vit-base-patch32` for offline loading.
