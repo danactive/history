@@ -4,9 +4,10 @@ import config from '../../../src/models/config'
 import Img from '../Img'
 import styles from './styles.module.css'
 
-function getViewed(viewed: boolean, multiSelected: boolean) {
+function getViewed(viewed: boolean, multiSelected: boolean, editingThumb: boolean) {
   if (viewed) {
-    return `${multiSelected ? styles.highlightMulti : styles.highlight} ${styles.imgButton}`
+    const highlightClass = multiSelected || editingThumb ? styles.highlightMulti : styles.highlight
+    return `${highlightClass} ${styles.imgButton}`
   }
   return styles.imgButton
 }
@@ -18,6 +19,7 @@ function ThumbImg({
   src,
   viewed: globalViewed = false,
   multiSelected = false,
+  editingThumb = false,
 }: {
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
   caption: string;
@@ -25,6 +27,7 @@ function ThumbImg({
   src: string;
   viewed: boolean;
   multiSelected?: boolean;
+  editingThumb?: boolean;
 }) {
   // Keep visuals (local state for immediate feedback) but never reset globally
   const [viewed, setViewed] = useState(globalViewed)
@@ -43,7 +46,15 @@ function ThumbImg({
 
   return (
     <li className={styles.bullet}>
-      <a className={getViewed(globalViewed || viewed, multiSelected)} href={href} onClick={handleClick}>
+      <a
+        className={getViewed(
+          editingThumb ? globalViewed : (globalViewed || viewed),
+          multiSelected,
+          editingThumb,
+        )}
+        href={href}
+        onClick={handleClick}
+      >
         <Img
           src={src}
           alt={caption}

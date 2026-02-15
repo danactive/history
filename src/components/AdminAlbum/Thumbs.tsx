@@ -37,6 +37,7 @@ export default function AdminAlbumThumbs(
               key={filename}
               viewed={isSelected}
               multiSelected={hasMultiSelection && isSelected}
+              editingThumb
             />
           )
         })}

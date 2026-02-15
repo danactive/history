@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 import logging
 import sys
 import traceback
-from aesthetic import score_aesthetic
+from aesthetic import score_photo_tips
 from classify import classify_image
 
 # Setup logging once
@@ -38,6 +38,6 @@ async def classify_endpoint(req: Request):
 @main_py_app.post("/scores")
 async def score_endpoint(req: Request):
     try:
-        return {"aesthetic_score": await score_aesthetic(req)}
+        return await score_photo_tips(req)
     except Exception as e:
         return error_response(e)

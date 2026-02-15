@@ -18,12 +18,56 @@ function getDraggingStyle(isDragging: boolean) {
 const NOT_AVAILABLE = 'N/A'
 
 // Module-level cache to persist across remounts
-const scoreCache: Record<string, string> = {}
+const scoreCache: Record<string, { display: string, breakdown: string }> = {}
 
-function formatScore(score: number | undefined): string {
-  return typeof score === 'number'
-    ? `${Math.abs(score * 100).toFixed(1)}%`
-    : NOT_AVAILABLE
+function formatScore(
+  overall: number | undefined,
+  interest: number | undefined,
+  thirds: number | undefined,
+): string {
+  const percent = (value: number) => `${Math.round(value * 10)}%`
+  if (typeof overall === 'number') {
+    return `${Math.round(overall)}%`
+  }
+  const hasInterest = typeof interest === 'number'
+  const hasThirds = typeof thirds === 'number'
+  if (hasInterest && hasThirds) {
+    return percent((interest * 0.8) + (thirds * 0.2))
+  }
+  if (hasInterest) {
+    return percent(interest)
+  }
+  if (hasThirds) {
+    return percent(thirds)
+  }
+  return NOT_AVAILABLE
+}
+
+function buildBreakdown(data: Record<string, unknown>): string {
+  const lines: string[] = []
+  const interest = data.visual_interest_score as number | undefined
+  const thirds = data.rule_of_thirds_score as number | undefined
+  const sharp = data.sharpness_score as number | undefined
+  const overall = data.overall_score as number | undefined
+  const model = data.model_scores as Record<string, number> | undefined
+
+  if (typeof interest === 'number' && typeof thirds === 'number') {
+    const comp = (interest * 0.8) + (thirds * 0.2)
+    lines.push(`Composition = interest(80%) + thirds(20%) = ${comp.toFixed(2)}`)
+  }
+  if (typeof sharp === 'number') {
+    const factor = 0.9 + (sharp / 20)
+    lines.push(`Sharpness = ${sharp.toFixed(2)}, factor = ${factor.toFixed(2)}`)
+  }
+  if (model?.overall != null) {
+    const scaled = model.overall * 2
+    lines.push(`Overall aesthetic (0–5→0–10) = ${scaled.toFixed(2)}`)
+    lines.push('Blend: 70% model + 30% composition')
+  }
+  if (typeof overall === 'number') {
+    lines.push(`Overall % = ${overall.toFixed(1)}%`)
+  }
+  return lines.join('\n') || 'No breakdown available'
 }
 
 // SWR fetcher that uses the cache
@@ -38,17 +82,24 @@ const fetchScore = async (absolutePath: string) => {
   })
   if (!res.ok) throw new Error('Failed to fetch')
   const data = await res.json()
-  const scoreStr = formatScore(data.aesthetic_score)
-  scoreCache[absolutePath] = scoreStr
-  return scoreStr
+  const display = formatScore(
+    data.overall_score,
+    data.visual_interest_score,
+    data.rule_of_thirds_score,
+  )
+  const breakdown = buildBreakdown(data)
+  scoreCache[absolutePath] = { display, breakdown }
+  return { display, breakdown }
 }
 
 function DraggableThumb({
   item,
   displayScore,
+  scoreBreakdown,
 }: {
   item: Filesystem,
   displayScore: string,
+  scoreBreakdown?: string,
 }) {
   const { filename, absolutePath } = item
 
@@ -58,7 +109,7 @@ function DraggableThumb({
         <Link href={absolutePath} target="_blank" title="View original in new tab">
           {filename}
         </Link>
-        &nbsp;<span title='Aesthetic score'>{displayScore}</span>
+        &nbsp;<span title={scoreBreakdown ?? 'Composition scores'}>{displayScore}</span>
       </span>
       <Img
         key={`thumbnail-${filename}`}
@@ -98,16 +149,20 @@ function PreviewImage(
     index: number,
   },
 ) {
-  const { data: score, error, isLoading } = useSWR(
+  const { data: scoreData, error, isLoading } = useSWR(
     item.absolutePath ? ['/api/admin/scores', item.absolutePath] : null,
     ([, path]) => fetchScore(path),
     { revalidateOnFocus: false },
   )
 
   let displayScore = '…'
+  let scoreBreakdown: string | undefined
   if (isLoading) displayScore = '…'
   else if (error) displayScore = NOT_AVAILABLE
-  else if (score) displayScore = score
+  else if (scoreData) {
+    displayScore = typeof scoreData === 'string' ? scoreData : scoreData.display
+    scoreBreakdown = typeof scoreData === 'string' ? undefined : scoreData.breakdown
+  }
 
   return (
     <div
@@ -119,7 +174,7 @@ function PreviewImage(
       data-is-dragging={isDragging}
       data-index={index}
     >
-      <DraggableThumb item={item} displayScore={displayScore} />
+      <DraggableThumb item={item} displayScore={displayScore} scoreBreakdown={scoreBreakdown} />
     </div>
   )
 }

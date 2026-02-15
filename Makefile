@@ -20,12 +20,21 @@ load-weights:
 		-e MODEL_REPO="$(MODEL_REPO)" \
 		-e FILENAMES="$(FILENAMES)" \
 		weights-loader \
-		sh -c 'python /dock/hugging-offline.py --repo-id "$$MODEL_REPO" --filenames "$$FILENAMES" > /dock/build.log 2>&1'
+		sh -c 'python /dock/hugging-offline.py --repo-id "$$MODEL_REPO" --filenames $$FILENAMES > /dock/build.log 2>&1'
 	@echo "Part 3/3 Copying weights to local directory and display log"
 	docker cp extract-model:/dock/models/. ./models/
 	docker cp extract-model:/dock/build.log ./weights.log || true
 	docker rm extract-model
 	cat ./weights.log || true
+
+load-aesthetic-scorer:
+	$(MAKE) load-clip-vit-base-patch32
+	$(MAKE) load-weights MODEL_REPO="rsinema/aesthetic-scorer" \
+		FILENAMES="model.pt preprocessor_config.json tokenizer.json tokenizer_config.json special_tokens_map.json merges.txt vocab.json"
+
+load-clip-vit-base-patch32:
+	$(MAKE) load-weights MODEL_REPO="openai/clip-vit-base-patch32" \
+		FILENAMES="pytorch_model.bin config.json preprocessor_config.json tokenizer.json tokenizer_config.json special_tokens_map.json merges.txt vocab.json"
 
 build-ai-api:
 	docker build -f apps/api/Dockerfile -t ai-api .
