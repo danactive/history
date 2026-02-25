@@ -112,7 +112,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
 
   const canBookmark = Boolean(
     refImageGallery
-    && selectById
     && itemsToUse.length
     && 'filename' in itemsToUse[0],
   )
@@ -122,7 +121,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
     displayedItems: itemsToUse,
     pathname,
     currentIndex: memoryIndex,
-    selectById,
   })
 
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
