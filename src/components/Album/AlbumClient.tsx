@@ -1,7 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import useMapFilter from '../../hooks/useMapFilter'
 import type { Album } from '../../types/pages'
@@ -53,6 +53,11 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
     }
   }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
 
+  const handleThumbSelect = useCallback((index: number) => {
+    refImageGallery.current?.slideToIndex(index)
+    setMemoryIndex(index)
+  }, [refImageGallery, setMemoryIndex])
+
   return (
     <div>
       <AlbumContext.Provider value={meta}>
@@ -76,10 +81,8 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
             const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
             return (
               <ThumbImg
-                onClick={() => {
-                  refImageGallery.current?.slideToIndex(index)
-                  setMemoryIndex(index)
-                }}
+                onSelectIndex={handleThumbSelect}
+                selectIndex={index}
                 src={item.thumbPath}
                 caption={item.caption}
                 key={filename}

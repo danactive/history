@@ -2,6 +2,7 @@
 
 import List from '@mui/joy/List'
 import ListDivider from '@mui/joy/ListDivider'
+import dynamic from 'next/dynamic'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -13,8 +14,12 @@ import {
   isImage,
   organizeByMedia,
 } from '../../utils/walk'
-import OrganizePreviews from '../OrganizePreviews'
 import ListFile from './ListFile'
+
+const OrganizePreviews = dynamic(
+  () => import('../OrganizePreviews'),
+  { ssr: false },
+)
 
 async function getImages(path: string): Promise<Filesystem[]> {
   const response = await fetch(`/api/admin/filesystems?path=${path}`)

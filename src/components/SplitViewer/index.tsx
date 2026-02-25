@@ -1,5 +1,6 @@
 import useColorThief from 'use-color-thief'
 import {
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -86,7 +87,7 @@ function SplitViewer({
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
-  const fullscreenMap = () => {
+  const fullscreenMap = useCallback(() => {
     const div = refMapBox.current
     if (div?.requestFullscreen) {
       div.requestFullscreen()
@@ -99,7 +100,7 @@ function SplitViewer({
     } else {
       console.error('Failed to fullscreen')
     }
-  }
+  }, [])
 
   // Build carousel items
   const carouselItems = useMemo(

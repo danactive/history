@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useState } from 'react'
+import { memo, MouseEvent, useEffect, useState } from 'react'
 
 import config from '../../../src/models/config'
 import Img from '../Img'
@@ -14,6 +14,9 @@ function getViewed(viewed: boolean, multiSelected: boolean, editingThumb: boolea
 
 function ThumbImg({
   onClick,
+  onSelectIndex,
+  onSelectWithEvent,
+  selectIndex,
   caption,
   href,
   src,
@@ -22,6 +25,9 @@ function ThumbImg({
   editingThumb = false,
 }: {
   onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  onSelectIndex?: (index: number) => void;
+  onSelectWithEvent?: (index: number, event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  selectIndex?: number;
   caption: string;
   href?: string;
   src: string;
@@ -39,7 +45,13 @@ function ThumbImg({
   const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
     event.preventDefault()
     if (!viewed) setViewed(true)
-    onClick?.(event)
+    if (onSelectWithEvent != null && selectIndex != null) {
+      onSelectWithEvent(selectIndex, event)
+    } else if (onSelectIndex != null && selectIndex != null) {
+      onSelectIndex(selectIndex)
+    } else {
+      onClick?.(event)
+    }
   }
 
   const { width, height } = config.resizeDimensions.thumb
@@ -67,4 +79,4 @@ function ThumbImg({
   )
 }
 
-export default ThumbImg
+export default memo(ThumbImg)

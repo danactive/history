@@ -1,3 +1,5 @@
+import { useCallback } from 'react'
+
 import { thumbPath } from '../../lib/paths'
 import type { Gallery, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import styles from '../Album/styles.module.css'
@@ -18,6 +20,11 @@ export default function AdminAlbumThumbs(
     : []
   const hasMultiSelection = (selectedIndices?.size ?? 0) > 1
 
+  const handleSelect = useCallback((index: number, e: React.MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
+    const item = items[index]
+    if (item) setItem(item, index, e.shiftKey)
+  }, [items, setItem])
+
   if (items.length === 0) {
     return <div>No items found</div>
   }
@@ -31,7 +38,8 @@ export default function AdminAlbumThumbs(
           const isSelected = selectedIndices ? selectedIndices.has(index) : index === currentIndex
           return (
             <ThumbImg
-              onClick={(e) => setItem(item, index, e.shiftKey)}
+              onSelectWithEvent={handleSelect}
+              selectIndex={index}
               src={thumbPath(item.filename, gallery)}
               caption={caption}
               key={filename}
