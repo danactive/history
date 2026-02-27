@@ -16,19 +16,21 @@ export default function ActionButtons(
   const path = params.path ? `/${params.path.join('/')}` : '/'
 
   async function rename() {
+    const input = window.prompt('Date (YYYY-MM-DD)? Blank=today. YYYY-MM-DD-ID=exact.')
+    if (input === null) return
 
-    let date = window.prompt('Date of images (YYYY-MM-DD)?')
-    if (date === '') date = null
     const today = new Intl.DateTimeFormat('en-CA', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     }).format(new Date()).replace(/\//g, '-')
 
+    const prefix = input.trim() === '' ? today : input.trim()
+
     const postBody: RenameRequestBody = {
       dry_run: false,
       filenames: items.map((i) => i.filename),
-      prefix: date ?? today,
+      prefix,
       source_folder: path,
       rename_associated: true,
     }

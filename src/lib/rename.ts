@@ -5,7 +5,7 @@ import path from 'node:path'
 
 import { validateRequestBody, type RequestSchema } from '../models/rename'
 import checkPathExists from './exists'
-import { futureFilenamesOutputs } from './filenames'
+import { exactModeOutputs, futureFilenamesOutputs } from './filenames'
 import { type ErrorFormatter } from './resize'
 import config from '../models/config'
 
@@ -60,7 +60,14 @@ async function renamePaths({
     return { filenames: [], xml: '', renamed: false }
   }
 
-  const generated = futureFilenamesOutputs(orderedBases, prefix)
+  const trimmed = prefix.trim()
+  const parts = trimmed.split('-')
+  const useExact = parts.length >= 4
+  const effectivePrefix = trimmed
+
+  const generated = useExact
+    ? exactModeOutputs(orderedBases, effectivePrefix)
+    : futureFilenamesOutputs(orderedBases, effectivePrefix)
   const baseToNewBase = new Map(orderedBases.map((b, i) => [b, generated.files[i]]))
 
   const seenOutput = new Set<string>()
