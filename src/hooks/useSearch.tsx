@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@mui/joy'
+import { Button, Chip, Stack } from '@mui/joy'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction,
@@ -101,14 +101,9 @@ export default function useSearch<ItemType extends ServerSideItem>({
     setSelectedOption(null)
     setInputValue('')
 
-    // Clear map filter - pass coordinates to preserve map position
-    if (mapFilterEnabled && onClearMapFilter) {
-      onClearMapFilter(coordinates)
-    }
-
     // Update URL to reflect the selection (use filename for global uniqueness)
     router.replace(identifier ? `${pathname}?select=${identifier}` : pathname)
-  }, [refImageGallery, displayedItems, filtered, selectById, mapFilterEnabled, onClearMapFilter, router, pathname])
+  }, [refImageGallery, displayedItems, filtered, selectById, router, pathname])
 
   const canBookmark = Boolean(
     refImageGallery
@@ -132,6 +127,38 @@ export default function useSearch<ItemType extends ServerSideItem>({
           Search results {visibleCount} of {items.length}
           {keywordResultLabel}
         </h3>
+        {keyword && (
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+            <Chip size="sm" color="primary" variant="soft">
+              Search: {keyword}
+            </Chip>
+            <Button
+              type="button"
+              size="sm"
+              variant="plain"
+              onClick={handleClear}
+              title="Clear search and view adjacent photos"
+            >
+              ×
+            </Button>
+          </Stack>
+        )}
+        {mapFilterEnabled && (
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+            <Chip size="sm" color="primary" variant="soft">
+              Map filter
+            </Chip>
+            <Button
+              type="button"
+              size="sm"
+              variant="plain"
+              onClick={() => onClearMapFilter?.()}
+              title="Clear map filter"
+            >
+              ×
+            </Button>
+          </Stack>
+        )}
         <AutoComplete
           className={styles.autocomplete}
           options={indexedKeywords}
@@ -147,7 +174,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
         >
           Filter
         </Button>
-        {(mapFilterEnabled || keyword) && (
+        {keyword && (
           <Button
             type="button"
             onClick={handleClear}
