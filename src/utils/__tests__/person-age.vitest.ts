@@ -9,6 +9,14 @@ describe('person-age utilities', () => {
     expect(calcAgeAtDate('2000-06-10', '2020-06-10')).toBe(20)
   })
 
+  test('allows large ages without capping', () => {
+    expect(calcAgeAtDate('1900-01-01', '2025-01-01')).toBe(125)
+  })
+
+  test('rejects non-YYYY-MM-DD DOB parsing', () => {
+    expect(calcAgeAtDate('10-06-2000', '2020-06-10')).toBeNull()
+  })
+
   test('resolvePhotoDate prefers photoDate over filename prefix', () => {
     const item = {
       photoDate: '2020-01-01',

@@ -1,5 +1,6 @@
 'use client'
 
+import Button from '@mui/joy/Button'
 import { useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 
@@ -33,6 +34,10 @@ export default function PersonsClient({
     itemsWithCorpus,
     memoryHtml,
     overrideAgeSummary,
+    selectedAge,
+    selectedPerson,
+    setSelectedAge,
+    setSelectedPerson,
   } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
 
   const searchParams = useSearchParams()
@@ -57,6 +62,7 @@ export default function PersonsClient({
 
   // Replace controls age list if override available
   const finalControls = overrideAgeSummary ?? controls
+  const hasActivePersonsFilters = selectedAge !== null || selectedPerson !== null
 
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
 
@@ -65,6 +71,24 @@ export default function PersonsClient({
       <AlbumContext.Provider value={zooms}>
         {searchBox}
         {finalControls}
+        {ageFiltered.length === 0 && (
+          <div style={{ marginTop: '0.75rem', marginBottom: '0.75rem' }}>
+            <strong>No photos match the current filters.</strong>
+            {hasActivePersonsFilters && (
+              <Button
+                size="sm"
+                variant="outlined"
+                sx={{ ml: 1 }}
+                onClick={() => {
+                  setSelectedAge(null)
+                  setSelectedPerson(null)
+                }}
+              >
+                Reset age/person filters
+              </Button>
+            )}
+          </div>
+        )}
         {memoryHtml}
         <SplitViewer
           setViewed={setViewed}
