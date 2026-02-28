@@ -28,6 +28,43 @@ interface UseSearchProps<ItemType> {
   selectById?: (id: string, isClear?: boolean) => void;
 }
 
+type QueryMode = 'AND' | 'OR' | null
+type ParsedKeywordQuery = {
+  mode: QueryMode
+  tokens: string[]
+  isAdvanced: boolean
+}
+
+export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {
+  const keyword = rawKeyword.trim()
+  if (!keyword) return { mode: null, tokens: [], isAdvanced: false }
+
+  const hasAnd = keyword.includes('&&')
+  const hasOr = keyword.includes('||')
+  const hasGrouping = keyword.includes('(') || keyword.includes(')')
+
+  // Keep complex expressions as a single "Advanced query" chip.
+  if (hasGrouping || (hasAnd && hasOr)) {
+    return { mode: null, tokens: [keyword], isAdvanced: true }
+  }
+
+  if (hasAnd) {
+    const tokens = keyword.split('&&').map(t => t.trim()).filter(Boolean)
+    return tokens.length > 0
+      ? { mode: 'AND', tokens, isAdvanced: false }
+      : { mode: null, tokens: [keyword], isAdvanced: true }
+  }
+
+  if (hasOr) {
+    const tokens = keyword.split('||').map(t => t.trim()).filter(Boolean)
+    return tokens.length > 0
+      ? { mode: 'OR', tokens, isAdvanced: false }
+      : { mode: null, tokens: [keyword], isAdvanced: true }
+  }
+
+  return { mode: null, tokens: [keyword], isAdvanced: false }
+}
+
 export default function useSearch<ItemType extends ServerSideItem>({
   items,
   memoryIndex,
@@ -49,6 +86,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   )
   const [inputValue, setInputValue] = useState<string>(initialKeyword)
   const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
+  const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
 
   const filtered = useMemo(() => {
     if (!keyword) return items
@@ -105,6 +143,33 @@ export default function useSearch<ItemType extends ServerSideItem>({
     router.replace(identifier ? `${pathname}?select=${identifier}` : pathname)
   }, [refImageGallery, displayedItems, filtered, selectById, router, pathname])
 
+  const applyKeywordToUrl = useCallback((nextKeyword: string) => {
+    setKeyword(nextKeyword)
+    setSelectedOption(nextKeyword ? { label: nextKeyword, value: nextKeyword } : null)
+    setInputValue(nextKeyword)
+    router.replace(nextKeyword ? `${pathname}?keyword=${encodeURIComponent(nextKeyword)}` : pathname)
+  }, [router, pathname])
+
+  const handleRemoveKeywordToken = useCallback((tokenIndex: number) => {
+    if (parsedKeyword.isAdvanced) {
+      handleClear()
+      return
+    }
+
+    const remaining = parsedKeyword.tokens.filter((_, i) => i !== tokenIndex)
+    if (remaining.length === 0) {
+      handleClear()
+      return
+    }
+
+    const joiner = parsedKeyword.mode === 'AND'
+      ? ' && '
+      : parsedKeyword.mode === 'OR'
+        ? ' || '
+        : ' '
+    applyKeywordToUrl(remaining.join(joiner))
+  }, [parsedKeyword, applyKeywordToUrl, handleClear])
+
   const canBookmark = Boolean(
     refImageGallery
     && itemsToUse.length
@@ -129,18 +194,44 @@ export default function useSearch<ItemType extends ServerSideItem>({
         </h3>
         {keyword && (
           <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            <Chip size="sm" color="primary" variant="soft">
-              Search: {keyword}
-            </Chip>
-            <Button
-              type="button"
-              size="sm"
-              variant="plain"
-              onClick={handleClear}
-              title="Clear search and view adjacent photos"
-            >
-              ×
-            </Button>
+            {parsedKeyword.mode && (
+              <Chip size="sm" color="primary" variant="outlined">
+                {parsedKeyword.mode}
+              </Chip>
+            )}
+            {parsedKeyword.isAdvanced ? (
+              <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
+                <Chip size="sm" color="primary" variant="soft">
+                  Advanced query
+                </Chip>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="plain"
+                  onClick={handleClear}
+                  title="Clear search and view adjacent photos"
+                >
+                  ×
+                </Button>
+              </Stack>
+            ) : (
+              parsedKeyword.tokens.map((token, idx) => (
+                <Stack key={`${token}-${idx}`} direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
+                  <Chip size="sm" color="primary" variant="soft">
+                    {token}
+                  </Chip>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="plain"
+                    onClick={() => handleRemoveKeywordToken(idx)}
+                    title={`Remove keyword token ${token}`}
+                  >
+                    ×
+                  </Button>
+                </Stack>
+              ))
+            )}
           </Stack>
         )}
         {mapFilterEnabled && (
