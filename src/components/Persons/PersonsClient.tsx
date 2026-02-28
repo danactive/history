@@ -47,15 +47,12 @@ export default function PersonsClient({
       return filename === selectId
     })
 
-    if (idx >= 0) {
-      setTimeout(() => {
-        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
-          refImageGallery.current?.slideToIndex(idx)
-          setMemoryIndex(idx)
-          setViewed(idx)
-        }
-      }, 0)
-    }
+    if (idx < 0) return
+    if (refImageGallery.current?.getCurrentIndex?.() === idx) return
+
+    refImageGallery.current?.slideToIndex(idx)
+    setMemoryIndex(idx)
+    setViewed(idx)
   }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
 
   // Replace controls age list if override available
