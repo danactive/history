@@ -1,4 +1,3 @@
-import useColorThief from 'use-color-thief'
 import {
   useCallback,
   useContext,
@@ -6,11 +5,12 @@ import {
   useMemo,
   useRef,
   useState,
-  type ReactNode,
   type Ref,
 } from 'react'
 import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalleryRef } from 'react-image-gallery'
+import 'react-image-gallery/styles/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
+import useColorThief from 'use-color-thief'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 import config from '../../../src/models/config'
@@ -170,10 +170,10 @@ function SplitViewer({
   // Extract color from background thumbnail
   const bgThumbUrl = bgThumb ? `/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75` : null
   const { color } = useColorThief(bgThumbUrl ?? '', { format: 'rgb' })
-  
+
   // Convert RGB array to CSS rgb string
-  const colourString = color && Array.isArray(color) 
-    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})` 
+  const colourString = color && Array.isArray(color)
+    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})`
     : undefined
 
   return (
