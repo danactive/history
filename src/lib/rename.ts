@@ -66,7 +66,7 @@ async function renamePaths({
   const effectivePrefix = trimmed
 
   const generated = useExact
-    ? exactModeOutputs(orderedBases, effectivePrefix)
+    ? exactModeOutputs(orderedBases, effectivePrefix, filtered)
     : futureFilenamesOutputs(orderedBases, effectivePrefix)
   const baseToNewBase = new Map(orderedBases.map((b, i) => [b, generated.files[i]]))
 

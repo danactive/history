@@ -14,6 +14,9 @@ async function POST(req: NextRequest) {
     if (isZodError(err)) {
       return NextResponse.json(errorSchema(simplifyZodMessages(err)), { status: 400 })
     }
+    if (err instanceof ReferenceError) {
+      return NextResponse.json(errorSchema(err.message), { status: 400 })
+    }
     return NextResponse.json(errorSchema('Internal Server Error'), { status: 500 })
   }
 }

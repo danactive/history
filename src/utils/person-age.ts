@@ -60,7 +60,7 @@ export function buildAgeSummary(items: Item[]): { ages: { age: number; count: nu
     it.persons.forEach((p) => {
       if (!p.dob) return
       const age = calcAgeAtDate(p.dob, photoDate)
-      if (age !== null) counts.set(age, (counts.get(age) || 0) + 1)
+      if (age !== null && age >= 0) counts.set(age, (counts.get(age) || 0) + 1)
     })
   })
   return {

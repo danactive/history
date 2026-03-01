@@ -26,7 +26,7 @@ def log_huggingface_whoami():
     except Exception as e:
         logger.error(f"❌ Unable to verify Hugging Face authentication: {e}")
 
-def download_weights(repo_id: str, filenames: list[str]):
+def download_weights(repo_id: str, filenames: list[str], revision: str | None = None):
     log_huggingface_whoami()
     # Create destination path
     dest_dir = os.path.join("models", repo_id.replace("/", "_"))
@@ -35,7 +35,11 @@ def download_weights(repo_id: str, filenames: list[str]):
     for filename in filenames:
         logger.info(f"📥 Downloading {filename} from {repo_id} on Hugging Face Hub...")
         try:
-            path = hf_hub_download(repo_id=repo_id, filename=filename)
+            path = hf_hub_download(
+                repo_id=repo_id,
+                filename=filename,
+                revision=revision or None,
+            )
             # Move and rename
             dest_path = os.path.join(dest_dir, filename)
             shutil.copy(path, dest_path)
@@ -68,5 +72,10 @@ if __name__ == "__main__":
     default=["pytorch_model.bin", "config.json"],
     help="List of filenames to download (space-separated)"
   )
+  parser.add_argument(
+    "--revision",
+    default=None,
+    help="Optional immutable model revision/commit to pin downloads"
+  )
   args = parser.parse_args()
-  download_weights(args.repo_id, args.filenames)
+  download_weights(args.repo_id, args.filenames, args.revision)

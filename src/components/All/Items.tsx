@@ -1,3 +1,4 @@
+import type { MouseEvent, RefObject } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import { useCallback } from 'react'
 
@@ -12,18 +13,18 @@ const SHOW_THUMB_MIN_LEN = 3
 interface InputProps {
   items: ServerSideAllItem[];
   keyword: string;
-  refImageGallery: React.RefObject<ImageGalleryRef | null>;
+  refImageGallery: RefObject<ImageGalleryRef | null>;
 }
 
 function All({ items, keyword, refImageGallery }: InputProps) {
-  const showThumbnail = keyword.length > SHOW_THUMB_MIN_LEN
+  const showThumbnail = keyword.length >= SHOW_THUMB_MIN_LEN
   const { width, height } = config.resizeDimensions.thumb
 
   const selectThumb = useCallback((index: number) => {
     refImageGallery.current?.slideToIndex(index)
   }, [refImageGallery])
 
-  const handleSlideToClick = useCallback((e: React.MouseEvent<HTMLUListElement>) => {
+  const handleSlideToClick = useCallback((e: MouseEvent<HTMLUListElement>) => {
     const btn = (e.target as HTMLElement).closest('button[data-slide-index]')
     const idx = btn?.getAttribute('data-slide-index')
     if (idx != null) selectThumb(Number(idx))
@@ -38,7 +39,7 @@ function All({ items, keyword, refImageGallery }: InputProps) {
             {!showThumbnail && item.caption}
             {showThumbnail && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
           </Link>
-          <button className={styles.slideTo} type="button" data-slide-index={index}><a>Slide to</a></button>
+          <button className={styles.slideTo} type="button" data-slide-index={index}>Slide to</button>
         </li>
       ))}
     </ul>

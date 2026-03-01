@@ -128,7 +128,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
           ? (currentItem as any).filename[0]
           : (currentItem as any).filename)
       : null
-    const coordinates = (currentItem as any)?.coordinates as [number, number] | null
 
     if (selectById && identifier) {
       selectById(identifier, true)
@@ -210,6 +209,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
                   variant="plain"
                   onClick={handleClear}
                   title="Clear search and view adjacent photos"
+                  aria-label="Clear advanced query"
                 >
                   ×
                 </Button>
@@ -226,6 +226,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
                     variant="plain"
                     onClick={() => handleRemoveKeywordToken(idx)}
                     title={`Remove keyword token ${token}`}
+                    aria-label={`Remove keyword token ${token}`}
                   >
                     ×
                   </Button>
@@ -245,6 +246,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
               variant="plain"
               onClick={() => onClearMapFilter?.()}
               title="Clear map filter"
+              aria-label="Clear map filter"
             >
               ×
             </Button>

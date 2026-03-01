@@ -111,12 +111,20 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
   return outputFormats()
 }
 
-function exactModeOutputs(orderedBases: string[], exactFilenameBase: string) {
+function exactModeOutputs(
+  orderedBases: string[],
+  exactFilenameBase: string,
+  sourceFilenames: string[] = orderedBases.map((base) => `${base}.jpg`),
+) {
+  if (orderedBases.length !== 1) {
+    throw new ReferenceError('Exact filename mode requires a single selected base')
+  }
+
   const files = orderedBases.map(() => exactFilenameBase)
   const items: AlbumXmlItem[] = files.map((file) => ({
     base: file,
     filename: `${file}.jpg`,
-    isVideo: false,
+    isVideo: videoTypeInList(sourceFilenames, orderedBases[0]),
   }))
   // Exact mode starts at 101 so first item id is MMDD01.
   return { files, xml: buildAlbumXml(items, 101) }

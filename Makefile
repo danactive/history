@@ -18,9 +18,10 @@ load-weights:
 	docker run --name extract-model \
 		-v $$HOME/.cache/huggingface:/root/.cache/huggingface \
 		-e MODEL_REPO="$(MODEL_REPO)" \
+		-e MODEL_REVISION="$(MODEL_REVISION)" \
 		-e FILENAMES="$(FILENAMES)" \
 		weights-loader \
-		sh -c 'python /dock/hugging-offline.py --repo-id "$$MODEL_REPO" --filenames $$FILENAMES > /dock/build.log 2>&1'
+		sh -c 'python /dock/hugging-offline.py --repo-id "$$MODEL_REPO" --revision "$$MODEL_REVISION" --filenames $$FILENAMES > /dock/build.log 2>&1'
 	@echo "Part 3/3 Copying weights to local directory and display log"
 	docker cp extract-model:/dock/models/. ./models/
 	docker cp extract-model:/dock/build.log ./weights.log || true
@@ -28,12 +29,16 @@ load-weights:
 	cat ./weights.log || true
 
 load-aesthetic-scorer:
+	@[ -n "$(AESTHETIC_SCORER_REVISION)" ] || (echo "Set AESTHETIC_SCORER_REVISION to an immutable commit hash before download"; exit 1)
 	$(MAKE) load-clip-vit-base-patch32
 	$(MAKE) load-weights MODEL_REPO="rsinema/aesthetic-scorer" \
+		MODEL_REVISION="$(AESTHETIC_SCORER_REVISION)" \
 		FILENAMES="model.pt preprocessor_config.json tokenizer.json tokenizer_config.json special_tokens_map.json merges.txt vocab.json"
 
 load-clip-vit-base-patch32:
+	@[ -n "$(CLIP_VIT_REVISION)" ] || (echo "Set CLIP_VIT_REVISION to an immutable commit hash before download"; exit 1)
 	$(MAKE) load-weights MODEL_REPO="openai/clip-vit-base-patch32" \
+		MODEL_REVISION="$(CLIP_VIT_REVISION)" \
 		FILENAMES="pytorch_model.bin config.json preprocessor_config.json tokenizer.json tokenizer_config.json special_tokens_map.json merges.txt vocab.json"
 
 build-ai-api:
