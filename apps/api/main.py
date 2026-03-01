@@ -38,6 +38,12 @@ async def classify_endpoint(req: Request):
 @main_py_app.post("/scores")
 async def score_endpoint(req: Request):
     try:
-        return await score_photo_tips(req)
+        result = await score_photo_tips(req)
+        # Backwards compatibility for callers/tests that still expect aesthetic_score.
+        if isinstance(result, dict) and "aesthetic_score" not in result:
+            score_value = result.get("overall_score")
+            if isinstance(score_value, (int, float)):
+                result["aesthetic_score"] = float(score_value)
+        return result
     except Exception as e:
         return error_response(e)

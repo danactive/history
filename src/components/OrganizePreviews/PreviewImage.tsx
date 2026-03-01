@@ -25,9 +25,9 @@ function formatScore(
   interest: number | undefined,
   thirds: number | undefined,
 ): string {
-  const percent = (value: number) => `${Math.round(value * 10)}%`
+  const percent = (value: number) => `${(value * 10).toFixed(1)}%`
   if (typeof overall === 'number') {
-    return `${Math.round(overall)}%`
+    return `${overall.toFixed(1)}%`
   }
   const hasInterest = typeof interest === 'number'
   const hasThirds = typeof thirds === 'number'

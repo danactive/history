@@ -70,8 +70,9 @@ def load_clip_model() -> tuple[torch.nn.Module, callable]:
     return model, preprocess
 
 # One-time global setup
-_clip_model, preprocess = load_clip_model()
-regression_head = load_aesthetic_head(HEAD_PATH)
+_clip_model = None
+preprocess = None
+regression_head = None
 _aesthetic_scorer = None
 _aesthetic_processor = None
 _aesthetic_backbone = None
@@ -104,7 +105,7 @@ class AestheticScorer(nn.Module):
 def load_aesthetic_scorer():
   global _aesthetic_scorer, _aesthetic_processor, _aesthetic_backbone
   try:
-    _aesthetic_processor = CLIPProcessor.from_pretrained(SCORER_DIR, use_fast=False)
+    _aesthetic_processor = CLIPProcessor.from_pretrained(SCORER_DIR, use_fast=False, local_files_only=True)
     _aesthetic_backbone = CLIPVisionModel.from_pretrained(CLIP_BASE_DIR, local_files_only=True).to(device)
     loaded = torch.load(SCORER_MODEL_PATH, map_location=device)
     if isinstance(loaded, dict) and all(isinstance(v, torch.Tensor) for v in loaded.values()):
@@ -123,9 +124,20 @@ def load_aesthetic_scorer():
 
 load_aesthetic_scorer()
 
+def ensure_legacy_aesthetic_loaded():
+  global _clip_model, preprocess, regression_head
+  if _clip_model is None or preprocess is None:
+    _clip_model, preprocess = load_clip_model()
+  if regression_head is None:
+    regression_head = load_aesthetic_head(HEAD_PATH)
+
 async def score_aesthetic(req: Request) -> float:
-  img_bytes = await req.body()
-  img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+  ensure_legacy_aesthetic_loaded()
+  if isinstance(req, Request):
+    img_bytes = await req.body()
+    img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+  else:
+    img = req.convert("RGB")
 
   with torch.no_grad():
     image_tensor = preprocess(img).unsqueeze(0)
