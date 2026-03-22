@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.4.0](https://github.com/danactive/history/compare/v12.3.0...v12.4.0) (2026-03-22)
+
+
+### Features
+
+* **Admin > Edit Album:** Toggle photo or video ([9dfe69f](https://github.com/danactive/history/commit/9dfe69f58512d64f9ead3356650901c8ad700170))
+* **Admin > Edit Album:** View photo in new tab as original dimensions ([ff28617](https://github.com/danactive/history/commit/ff28617f64df84261a04465045c1cb09d95aed30))
+* **Admin > Walk:** Rename file with exact filename (or YYYY-MM-DD or today) ([4632014](https://github.com/danactive/history/commit/463201441e8ec08b51308015f6586b598c60a2eb))
+* **Aesthetic > Composition:** Boost visual-interest scaling, sharpen weighting, and increase model influence to raise overall score calibration. ([86f95fb](https://github.com/danactive/history/commit/86f95fb89e8926be2e75979cd31da66c9da623f3))
+* **Aesthetic > Composition:** Tool tip of the Composition breakdown ([e70cf1c](https://github.com/danactive/history/commit/e70cf1c21ee802d0b336b8ae0876c80afb056f92))
+* **Edit > Album:** Yellow highlight during editing ([6481948](https://github.com/danactive/history/commit/64819484114207199c6497a3130bc46d458af0e6))
+* **useSearch:** Display Map filter or keyword filters as chips ([14b7231](https://github.com/danactive/history/commit/14b723184f0bf84aaedaf441fc260f8510dd9124))
+* **useSearch:** Operators and or are in chips ([80d3af9](https://github.com/danactive/history/commit/80d3af929fdf9ea0664be987ffa38d0cbc86f052))
+* **View > Today:** Display year in keyword dropdown ([3601758](https://github.com/danactive/history/commit/36017583f21c9eae881fa2e001c82724b9921013))
+* **View Persons:** Clear per chip ([599a89a](https://github.com/danactive/history/commit/599a89ada498a0153a10a0422708f6837b1b24ec))
+* **vitest:** Remove jest replace with vitest ([8244e28](https://github.com/danactive/history/commit/8244e28f2817aa50eb69a98b4ce169fd4fc1bdd8))
+
+
+### Bug Fixes
+
+* **Admin > Walk:** Convert uppercase HEIC to jpg ([134ca4f](https://github.com/danactive/history/commit/134ca4f0e1e5afe6ba3b152e0544e742d6624f7a))
+* **Bookmark Button:** Add unit test ([dbd3988](https://github.com/danactive/history/commit/dbd3988d0c09fbbe5427b7f93865625a84401a44))
+* **Edit > Album:** Paste DMS geo coordinates ([f55ecba](https://github.com/danactive/history/commit/f55ecbaedf73d3181dfe0348f8e35efeab596801))
+* **View > All Albums:** Display photo reference as the map performance is good ([52e08b9](https://github.com/danactive/history/commit/52e08b9f10358acdfa119cbb4dd6a1220334d276))
+* **View Persons:** All people dropdown allows easy changing ([b4ebf7c](https://github.com/danactive/history/commit/b4ebf7c4f31fb7f2dc3d21d5403339c5f8c7d5eb))
+* **vitest:** Suppress noisy logs ([d486c53](https://github.com/danactive/history/commit/d486c530b91357b2c666f06453cee216f9ad512b))
+
 ## [12.3.0](https://github.com/danactive/history/compare/v12.2.0...v12.3.0) (2026-01-31)
 
 
