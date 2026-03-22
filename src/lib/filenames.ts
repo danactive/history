@@ -1,8 +1,8 @@
 import path from 'node:path'
 
 import config from '../models/config'
-import type { Item } from '../types/common'
 import utilsFactory from './utils'
+import { buildAlbumXml, type AlbumXmlItem } from './album-xml'
 
 const utils = utilsFactory()
 
@@ -43,35 +43,13 @@ function videoTypeInList(sourceFilenames: string[], baseName: string) {
 }
 
 
-function formatId(filename: string, xmlStartPhotoId: number, i: number) {
-  if (formatIdPrefix(filename) === '') return (xmlStartPhotoId + i).toString()
-  return formatIdPrefix(filename) + formatIdSuffix(xmlStartPhotoId + i)
-}
-/**
- * Define an XML id attr based on the filename date
- * @param {string} filename file plus extension
- * @returns {string} four digit id prefix
- */
-function formatIdPrefix(filename: Extract<Item['filename'], string>) {
-  const [year, month, day] = filename.split('-')
-  if (year.length !== 4 || Number.isNaN(year)) {
-    return ''
-  }
-  return `${month.padStart(2, '0')}${day.padStart(2, '0')}`
-}
-
-function formatIdSuffix(suffix: number): string {
-  if (suffix >= 100) return suffix.toString().slice(1)
-  return suffix.toString()
-}
-
 /*
 Generate renamed files
 
 @method futureFilenamesOutputs
 @param {string[]} sourceFilenames List of filenames to rename
-@param {string} prefix Root of filename with increment added before extension
-@param {number} [xmlStartPhotoId] initial position
+@param {string} prefix YYYY-MM-DD or YYYY-MM-DD-ID
+@param {number} [xmlStartPhotoId] Initial position for XML id (default 100)
 @return {json}
 */
 function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlStartPhotoId: number = 100) {
@@ -108,35 +86,48 @@ function futureFilenamesOutputs(sourceFilenames: string[], prefix: string, xmlSt
     return filenames
   }
 
-  function xmlSchema(filename: string, id: string, sourceFile: string, file: string) {
-    const hasVideo = videoTypeInList(sourceFilenames, sourceFile)
-
-    if (hasVideo) {
-      return `<item id="${id}"><type>video</type><filename>${file}.mp4</filename><filename>${file}.webm</filename></item>`
-    }
-
-    return `<item id="${id}"><filename>${filename}</filename></item>`
-  }
-
   function outputFormats() {
     const files: string[] = []
     const filenames: string[] = []
+    const items: AlbumXmlItem[] = []
     const spread = filenameSpread()
     let i = 0
-    let xml = ''
     uniqueFilenames.forEach((unique) => {
       const file = `${prefix}-${spread[i]}`
       files.push(file)
       const filename = `${file}.jpg`
       filenames.push(filename)
-      xml += xmlSchema(filename, formatId(filename, xmlStartPhotoId, i), unique, file)
+      items.push({
+        base: file,
+        filename,
+        isVideo: videoTypeInList(sourceFilenames, unique),
+      })
       i += 1
     })
 
-    return { filenames, files, xml }
+    return { filenames, files, xml: buildAlbumXml(items, xmlStartPhotoId) }
   }
 
   return outputFormats()
 }
 
-export { futureFilenamesOutputs, uniqueFiles, videoTypeInList }
+function exactModeOutputs(
+  orderedBases: string[],
+  exactFilenameBase: string,
+  sourceFilenames: string[] = orderedBases.map((base) => `${base}.jpg`),
+) {
+  if (orderedBases.length !== 1) {
+    throw new ReferenceError('Exact filename mode requires a single selected base')
+  }
+
+  const files = orderedBases.map(() => exactFilenameBase)
+  const items: AlbumXmlItem[] = files.map((file) => ({
+    base: file,
+    filename: `${file}.jpg`,
+    isVideo: videoTypeInList(sourceFilenames, orderedBases[0]),
+  }))
+  // Exact mode starts at 101 so first item id is MMDD01.
+  return { files, xml: buildAlbumXml(items, 101) }
+}
+
+export { exactModeOutputs, futureFilenamesOutputs, uniqueFiles, videoTypeInList }

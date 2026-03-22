@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { futureFilenamesOutputs, uniqueFiles, videoTypeInList } from '../filenames'
+import { exactModeOutputs, futureFilenamesOutputs, uniqueFiles, videoTypeInList } from '../filenames'
 
 describe('Filenames', () => {
   /*
@@ -110,6 +110,12 @@ describe('Filenames', () => {
    *
    */
   describe('Future', () => {
+    test('Exact filename mode uses provided base and MMDD01 id', () => {
+      const result = exactModeOutputs(['DSC06421'], '1979-01-17-69')
+      expect(result.files).toEqual(['1979-01-17-69'])
+      expect(result.xml).toBe('<item id="011701"><filename>1979-01-17-69.jpg</filename></item>')
+    })
+
     test('One photo per day', () => {
       const sourceFilenames = ['media1.jpg']
       const prefix = '2016-12-01'

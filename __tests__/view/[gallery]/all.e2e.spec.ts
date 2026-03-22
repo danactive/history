@@ -6,22 +6,37 @@ test('server is up and renders homepage', async ({ page }) => {
 })
 
 test.describe('All album', () => {
-  test('1 result', async ({ page }) => {
+  test('shows expected count for lowercase keyword', async ({ page }) => {
     await page.goto('/demo/all?keyword=gingerbread')
-    await expect(page.locator('text=results 1 of 6 for "gingerbread"').first()).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /search results 1 of 6 for "gingerbread"/i }),
+    ).toBeVisible()
   })
 
-  test('Mixed case', async ({ page }) => {
+  test('shows expected count for mixed-case keyword', async ({ page }) => {
     await page.goto('/demo/all?keyword=Gingerbread')
-    await expect(page.locator('text=results 1 of 6 for "Gingerbread"').first()).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: /search results 1 of 6 for "Gingerbread"/i }),
+    ).toBeVisible()
+  })
+
+  test('renders keyword chip and allows token clear', async ({ page }) => {
+    await page.goto('/demo/all?keyword=gingerbread')
+
+    await expect(page.getByText('gingerbread').first()).toBeVisible()
+    await page.getByRole('button', { name: /remove keyword token gingerbread/i }).click()
+
+    await expect(
+      page.getByRole('heading', { name: /search results 6 of 6/i }),
+    ).toBeVisible()
   })
 })
 
 test.describe('Admin > Walk', () => {
-  test('Filesystem list', async ({ page }) => {
+  test('shows key media folders', async ({ page }) => {
     await page.goto('/admin/walk/galleries/demo/media')
-    await expect(page.locator('li').filter({ hasText: 'photos' })).toBeVisible()
-    await expect(page.locator('li').filter({ hasText: 'thumbs' })).toBeVisible()
-    await expect(page.locator('li').filter({ hasText: 'videos' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'photos' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'thumbs' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'videos' })).toBeVisible()
   })
 })

@@ -1,6 +1,10 @@
+import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 
-import AdminAlbumClient from '../../../src/components/AdminAlbum/AdminAlbumClient'
+const AdminAlbumClient = dynamic(
+  () => import('../../../src/components/AdminAlbum/AdminAlbumClient'),
+  { ssr: true },
+)
 import getAlbums from '../../../src/lib/albums'
 import config from '../../../src/models/config'
 import { type Gallery } from '../../../src/types/common'

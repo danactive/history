@@ -1,6 +1,10 @@
+import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
 
-import WalkClient from '../../../src/components/Walk/WalkClient'
+const WalkClient = dynamic(
+  () => import('../../../src/components/Walk/WalkClient'),
+  { ssr: true },
+)
 import getFilesystems from '../../../src/lib/filesystems'
 
 export const metadata: Metadata = {
