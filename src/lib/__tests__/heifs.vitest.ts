@@ -21,7 +21,7 @@ vi.mock('node:fs/promises', () => ({
 }))
 
 import type { Filesystem } from '../filesystems'
-import post, { errorSchema } from '../heifs'
+import post, { errorSchema, uniqueHeifs } from '../heifs'
 
 const convertMock = mocks.convert
 const readFileMock = mocks.readFile
@@ -322,5 +322,52 @@ describe('heifs.post()', () => {
     const out = errorSchema('boom')
     expect(out.created).toEqual([])
     expect(out.error?.message).toBe('boom')
+  })
+})
+
+describe('uniqueHeifs', () => {
+  it('identifies standalone HEIC files', () => {
+    const files = [fsEntry('only.heic')]
+    const result = uniqueHeifs(files)
+    expect(result).toHaveLength(1)
+    expect(result[0].name).toBe('only.heic')
+  })
+
+  it('filters out HEIC files that have a matching JPG', () => {
+    const files = [fsEntry('pair.heic'), fsEntry('pair.jpg')]
+    const result = uniqueHeifs(files)
+    expect(result).toHaveLength(0)
+  })
+
+  it('handles mixed case extensions correctly', () => {
+    // Current implementation uses .toLocaleLowerCase() for detection but strict === for collection
+    const files = [
+      { ...fsEntry('upper.HEIC'), ext: 'HEIC' },
+      { ...fsEntry('lower.heic'), ext: 'heic' },
+    ]
+    const result = uniqueHeifs(files)
+    // Should return both
+    expect(result.map(f => f.name).sort()).toEqual(['lower.heic', 'upper.HEIC'])
+  })
+
+  it('handles multiple files with different extensions', () => {
+    const files = [
+      fsEntry('a.heic'),
+      fsEntry('b.jpg'), // unrelated
+      fsEntry('c.heic'),
+      fsEntry('c.jpg'), // pair
+    ]
+    const names = uniqueHeifs(files).map(f => f.name)
+    expect(names).toEqual(['a.heic'])
+  })
+
+  it('handles files with multiple dots', () => {
+    const files = [
+      fsEntry('my.photo.heic'),
+      fsEntry('my.photo.jpg'), // pair
+      fsEntry('other.image.heic'), // standalone
+    ]
+    const names = uniqueHeifs(files).map(f => f.name)
+    expect(names).toEqual(['other.image.heic'])
   })
 })

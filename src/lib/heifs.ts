@@ -36,7 +36,7 @@ function uniqueHeifs(files: Filesystem[]) {
       filteredFiles.some((file) => file.ext.toLocaleLowerCase() === 'heic')
       && !filteredFiles.some((file) => file.ext.toLocaleLowerCase() === 'jpg'),
     )
-    .flatMap((group) => group.filter((file) => file.ext === 'heic'))
+    .flatMap((group) => group.filter((file) => file.ext.toLowerCase() === 'heic'))
 
   return heifFilesWithoutJpg
 }
@@ -94,5 +94,5 @@ async function post(
   }
 }
 
-export { errorSchema, type ResponseBody as HeifResponseBody }
+export { errorSchema, uniqueHeifs, type ResponseBody as HeifResponseBody }
 export default post
