@@ -11,10 +11,9 @@ import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalle
 import 'react-image-gallery/styles/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
 import useColorThief from 'use-color-thief'
-import type { ClusteredMarkers } from '../../lib/generate-clusters'
-
 import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import { Item } from '../../types/common'
 import { getExt } from '../../utils'
 import AlbumContext from '../Context'
