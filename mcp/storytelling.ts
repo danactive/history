@@ -1,10 +1,9 @@
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
-
 import { McpServer, StdioServerTransport } from '@modelcontextprotocol/server'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
-
-import config from '../src/models/config'
+import getAlbums from '../src/lib/albums'
+import getGalleries from '../src/lib/galleries'
 import {
   buildAlbumStory,
   buildStorytellingOverview,
@@ -12,8 +11,8 @@ import {
   getPeopleStoryIndex,
   searchStoryMoments,
 } from '../src/lib/storytelling'
-import getAlbums from '../src/lib/albums'
-import getGalleries from '../src/lib/galleries'
+import config from '../src/models/config'
+import { generatedGallerySchema } from '../src/types/generated'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 process.chdir(projectRoot)
@@ -23,7 +22,7 @@ const server = new McpServer({
   version: '1.0.0',
 })
 
-const gallerySchema = z.string().describe('Gallery name from the local archive.')
+const gallerySchema = generatedGallerySchema.describe('Gallery name from the local archive.')
 const albumSchema = z.string().describe('Album name inside the selected gallery.')
 
 server.registerTool(
@@ -82,7 +81,9 @@ server.registerTool(
     annotations: { readOnlyHint: true },
   },
   async (input) => {
-    const output = await searchStoryMoments(input)
+    const output = await searchStoryMoments({
+      ...input,
+    })
     const topLine = output.matches[0]
       ? `Top match: ${output.matches[0].caption} (${output.matches[0].filename})`
       : output.summary

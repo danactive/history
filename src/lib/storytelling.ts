@@ -290,9 +290,10 @@ export async function searchStoryMoments(input: StorySearchInput): Promise<Story
     .sort((left, right) => right.score - left.score || compareDatesDescending(left.date, right.date))
     .slice(0, limit)
 
+  const candiCount = candidates.length
   const summary = matches.length > 0
-    ? `Found ${matches.length} story candidate${matches.length === 1 ? '' : 's'} from ${candidates.length} scanned item${candidates.length === 1 ? '' : 's'}.`
-    : `No story candidates matched across ${candidates.length} scanned item${candidates.length === 1 ? '' : 's'}.`
+    ? `Found ${matches.length} story candidate${matches.length === 1 ? '' : 's'} from ${candiCount} scanned item${candiCount === 1 ? '' : 's'}.`
+    : `No story candidates matched across ${candiCount} scanned item${candiCount === 1 ? '' : 's'}.`
 
   return {
     summary,
@@ -447,3 +448,4 @@ export type {
   StorySearchInput,
   StorySearchResult,
 }
+

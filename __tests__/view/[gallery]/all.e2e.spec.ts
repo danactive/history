@@ -32,6 +32,15 @@ test.describe('All album', () => {
   })
 })
 
+test.describe('Visited', () => {
+  test('groups demo photo cities by country and region', async ({ page }) => {
+    await page.goto('/demo/visited')
+
+    await expect(page.getByRole('heading', { name: 'Countries' })).toBeVisible()
+    await expect(page.getByText('BC 2001, 2004-2005, 2012, 2014, 2020')).toBeVisible()
+  })
+})
+
 test.describe('Admin > Walk', () => {
   test('shows key media folders', async ({ page }) => {
     await page.goto('/admin/walk/galleries/demo/media')

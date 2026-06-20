@@ -26,6 +26,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
         <li className={styles.rowItem}><Link href={`/${gallery}/all`}>All</Link></li>
         <li className={styles.rowItem}><Link href={`/${gallery}/today`}>Today</Link></li>
         <li className={styles.rowItem}><Link href={`/${gallery}/persons`}>Persons</Link></li>
+        <li className={styles.rowItem}><Link href={`/${gallery}/visited`}>Visited</Link></li>
       </ul>
       <Galleries items={filtered} gallery={gallery} />
     </>

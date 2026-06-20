@@ -8,9 +8,14 @@ async function generate() {
   const galleryAlbum = await getAlbums()
 
   const keys = Object.keys(galleryAlbum)
+  const galleryValues = keys.map((key) => `'${key}'`).join(', ')
   const galleryUnion = keys.map((key) => `'${key}'`).join(' | ')
 
   const typeDef = `// AUTO-GENERATED FILE — DO NOT EDIT
+import * as z from 'zod/v4'
+
+export const generatedGalleries = [${galleryValues}] as const
+export const generatedGallerySchema = z.enum(generatedGalleries)
 export type GeneratedGallery = ${galleryUnion}
 `
 
