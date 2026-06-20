@@ -24,6 +24,11 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. View address in browser (printed in terminal on successful load)
 1. Start the image classifier in /apps/api for the Admin > Edit Album page
 
+#### Storytelling MCP server
+1. `npm run mcp:storytelling` starts a read-only MCP server over stdio
+1. The server exposes storytelling tools for galleries, albums, people, on-this-day queries, and story-moment search
+1. For Claude Desktop or another MCP client, point the server command at the project root and use `npm run mcp:storytelling`
+
 #### How-to build for PROD
 1. `npm run build` Bundle JavaScript files, and pre-compile
 1. `npm start` Run built app
