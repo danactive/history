@@ -1,6 +1,21 @@
-import { getAllItems, allPageItemMapper } from './get-all-items'
+import type { ServerSideAllItem, VisitedPlace } from '../types/common'
 import type { All } from '../types/pages'
+import { allPageItemMapper, getAllItems } from './get-all-items'
+import indexKeywords from './search'
+import { matchesVisitedPlace } from './visited'
 
-export async function getAllData({ gallery }: All.Params): Promise<All.ItemData> {
-  return getAllItems(gallery, allPageItemMapper, true)
+export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visitedPlace: VisitedPlace) {
+  return items.filter(item => matchesVisitedPlace(item.visitedPlace, visitedPlace))
+}
+
+export async function getAllData({ gallery }: All.Params, visitedPlace?: VisitedPlace | null): Promise<All.ItemData> {
+  const data = await getAllItems(gallery, allPageItemMapper, true)
+
+  if (!visitedPlace) {
+    return data
+  }
+
+  const items = filterAllItemsByVisitedPlace(data.items, visitedPlace)
+  const { indexedKeywords } = indexKeywords(items)
+  return { items, indexedKeywords }
 }

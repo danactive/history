@@ -1,6 +1,5 @@
-import type { Filesystem } from '../lib/filesystems'
-import type { ClusteredMarkers } from '../lib/generate-clusters'
-
+import type { Filesystem } from '../lib/filesystems';
+import type { ClusteredMarkers } from '../lib/generate-clusters';
 import type {
   AlbumMeta,
   Gallery as GalleryName,
@@ -8,7 +7,8 @@ import type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   ServerSidePhotoItem,
-} from './common'
+  VisitedPlace,
+} from './common';
 
 export namespace Gallery {
   export type ComponentProps = {
@@ -50,6 +50,8 @@ export namespace All {
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
     initialAgeSummary?: { ages: { age: number; count: number }[] };
+    visitedPlace?: VisitedPlace | null;
+    visitedFilterLabel?: string | null;
   }
 
   export type ItemData = Omit<All.ComponentProps, 'clusteredMarkers'>

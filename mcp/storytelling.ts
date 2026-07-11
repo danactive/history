@@ -1,4 +1,5 @@
-import { McpServer, StdioServerTransport } from '@modelcontextprotocol/server'
+import { McpServer } from '@modelcontextprotocol/server'
+import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'

@@ -1,29 +1,35 @@
+import type { Gallery, Item, VisitedPlace } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
-
-import type { Gallery, Item } from '../types/common'
 
 type RegionVisit = {
   region: string
   years: string[]
+  count: number
+  filter: VisitedPlace
 }
 
 type CountryVisit = {
   country: string
   years: string[]
+  count: number
+  filter: VisitedPlace
   regions: RegionVisit[]
 }
 
 type VisitAccumulator = {
   years: Set<string>
-  regions: Map<string, Set<string>>
+  regions: Map<string, RegionAccumulator>
+  count: number
   firstYear: number
 }
 
-type ParsedVisitedPlace = {
-  country: string
-  region: string | null
+type RegionAccumulator = {
+  years: Set<string>
+  count: number
 }
+
+type ParsedVisitedPlace = VisitedPlace
 
 type ExplicitVisitedPlace = {
   country: string
@@ -48,6 +54,11 @@ function normalizeKey(value: string) {
 function normalizeCountry(value: string) {
   const trimmed = value.trim()
   return COUNTRY_ALIASES.get(normalizeKey(trimmed)) ?? trimmed
+}
+
+function normalizeRegion(value: string | null) {
+  const trimmed = value?.trim() ?? ''
+  return trimmed.length > 0 ? trimmed : null
 }
 
 function regionInitials(region: string) {
@@ -94,6 +105,14 @@ function buildRegionCountryIndex(places: string[][]) {
   return index
 }
 
+export function buildVisitedRegionCountryIndex(items: Pick<Item, 'city'>[]) {
+  const places = items
+    .map(item => splitPlace(item.city))
+    .filter((parts): parts is string[] => parts !== null)
+
+  return buildRegionCountryIndex(places)
+}
+
 function parseVisitedPlace(parts: string[], regionCountryIndex: Map<string, string>): ParsedVisitedPlace | null {
   if (parts.length === 1) {
     return { country: normalizeCountry(parts[0]), region: null }
@@ -108,6 +127,45 @@ function parseVisitedPlace(parts: string[], regionCountryIndex: Map<string, stri
   }
 
   return getExplicitPlace(parts)
+}
+
+export function getVisitedPlace(
+  item: Pick<Item, 'city'>,
+  regionCountryIndex: Map<string, string>,
+): VisitedPlace | null {
+  const parts = splitPlace(item.city)
+  if (!parts) return null
+
+  const place = parseVisitedPlace(parts, regionCountryIndex)
+  if (!place?.country) return null
+
+  return {
+    country: normalizeCountry(place.country),
+    region: normalizeRegion(place.region),
+  }
+}
+
+export function matchesVisitedPlace(place: VisitedPlace | null, filter: VisitedPlace) {
+  if (!place) return false
+
+  const normalizedFilter = {
+    country: normalizeCountry(filter.country),
+    region: normalizeRegion(filter.region),
+  }
+
+  if (place.country !== normalizedFilter.country) {
+    return false
+  }
+
+  if (normalizedFilter.region === null) {
+    return true
+  }
+
+  return place.region === normalizedFilter.region
+}
+
+export function formatVisitedPlace(place: VisitedPlace) {
+  return place.region ? `${place.region}, ${place.country}` : place.country
 }
 
 function itemYear(item: Pick<Item, 'filename' | 'photoDate'>) {
@@ -134,7 +192,8 @@ function addVisit(visited: Map<string, VisitAccumulator>, country: string, regio
   const numericYear = Number(year)
   const current = visited.get(country) ?? {
     years: new Set<string>(),
-    regions: new Map<string, Set<string>>(),
+    regions: new Map<string, RegionAccumulator>(),
+    count: 0,
     firstYear: numericYear,
   }
 
@@ -142,15 +201,21 @@ function addVisit(visited: Map<string, VisitAccumulator>, country: string, regio
     current.firstYear = numericYear
   }
 
+  current.count += 1
+
   if (!region) {
     current.years.add(year)
     visited.set(country, current)
     return
   }
 
-  const years = current.regions.get(region) ?? new Set<string>()
-  years.add(year)
-  current.regions.set(region, years)
+  const regionVisit = current.regions.get(region) ?? {
+    years: new Set<string>(),
+    count: 0,
+  }
+  regionVisit.years.add(year)
+  regionVisit.count += 1
+  current.regions.set(region, regionVisit)
   visited.set(country, current)
 }
 
@@ -175,16 +240,13 @@ export function formatVisitedYears(years: string[]) {
 
 export function buildVisitedDataFromItems(items: Pick<Item, 'city' | 'filename' | 'photoDate'>[]): CountryVisit[] {
   const visited = new Map<string, VisitAccumulator>()
-  const itemsWithPlaces = items
-    .map(item => ({ item, parts: item.city ? splitPlace(item.city) : null }))
-    .filter((entry): entry is { item: Pick<Item, 'city' | 'filename' | 'photoDate'>, parts: string[] } => entry.parts !== null)
-  const regionCountryIndex = buildRegionCountryIndex(itemsWithPlaces.map(entry => entry.parts))
+  const regionCountryIndex = buildVisitedRegionCountryIndex(items)
 
-  itemsWithPlaces.forEach(({ item, parts }) => {
+  items.forEach((item) => {
     const year = itemYear(item)
     if (!isValidYear(year)) return
 
-    const place = parseVisitedPlace(parts, regionCountryIndex)
+    const place = getVisitedPlace(item, regionCountryIndex)
     if (!place) return
 
     const { country, region } = place
@@ -198,11 +260,15 @@ export function buildVisitedDataFromItems(items: Pick<Item, 'city' | 'filename' 
     .map(([country, visit]) => ({
       country,
       years: [...visit.years].sort(compareYears),
+      count: visit.count,
+      filter: { country, region: null },
       regions: [...visit.regions.entries()]
         .sort(([left], [right]) => left.localeCompare(right))
-        .map(([region, years]) => ({
+        .map(([region, regionVisit]) => ({
           region,
-          years: [...years].sort(compareYears),
+          years: [...regionVisit.years].sort(compareYears),
+          count: regionVisit.count,
+          filter: { country, region },
         })),
     }))
 }
@@ -219,5 +285,7 @@ export async function getVisitedData(gallery: Gallery): Promise<CountryVisit[]> 
 
 export type {
   CountryVisit,
-  RegionVisit,
+  RegionVisit
 }
+
+export type { VisitedPlace }

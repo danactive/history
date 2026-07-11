@@ -4,10 +4,9 @@ import Chip from '@mui/joy/Chip'
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
-import { useEffect, useMemo, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-
-import type { Item, ServerSideAllItem } from '../types/common'
+import { useEffect, useMemo, useState } from 'react'
+import type { ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
 import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
 import useMapFilter from './useMapFilter'
@@ -86,7 +85,7 @@ export default function usePersonsFilter({
   }, [selectedAge, selectedPerson, searchParams, router, pathname])
 
   // Apply age filter (without person) first so person options stay stable.
-  const ageOnlyFiltered: Item[] = useMemo(() => {
+  const ageOnlyFiltered: ServerSideAllItem[] = useMemo(() => {
     if (selectedAge === null) return itemsToShow
     return itemsToShow.filter(item => {
       if (!item.persons || !item.filename) return false
@@ -99,7 +98,7 @@ export default function usePersonsFilter({
   }, [itemsToShow, selectedAge])
 
   // Apply person filter on top of age-only results.
-  const ageFiltered: Item[] = useMemo(() => {
+  const ageFiltered: ServerSideAllItem[] = useMemo(() => {
     if (!selectedPerson) return ageOnlyFiltered
     return ageOnlyFiltered.filter((item) => {
       if (!item.persons || !item.filename) return false
@@ -206,9 +205,9 @@ export default function usePersonsFilter({
   // Build items with corpus for AllItems
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
     () => ageFiltered.map(i => ({
-      corpus: (i as any).corpus ?? '',
       ...i,
       coordinateAccuracy: i.coordinateAccuracy ?? 0,
+      visitedPlace: i.visitedPlace ?? null,
     })),
     [ageFiltered],
   )

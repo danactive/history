@@ -88,6 +88,47 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
 
+  const getCurrentParams = useCallback(() => {
+    const serializedParams = typeof searchParams?.toString === 'function'
+      ? searchParams.toString()
+      : ''
+    const params = serializedParams && serializedParams !== '[object Object]'
+      ? new URLSearchParams(serializedParams)
+      : new URLSearchParams()
+
+    if (params.size > 0) {
+      return params
+    }
+
+    ['keyword', 'select', 'visitedCountry', 'visitedRegion'].forEach((key) => {
+      const value = searchParams?.get(key)
+      if (value) {
+        params.set(key, value)
+      }
+    })
+
+    return params
+  }, [searchParams])
+
+  const getNextPath = useCallback((nextKeyword: string, select?: string | null) => {
+    const params = getCurrentParams()
+
+    if (nextKeyword) {
+      params.set('keyword', nextKeyword)
+    } else {
+      params.delete('keyword')
+    }
+
+    if (select) {
+      params.set('select', select)
+    } else {
+      params.delete('select')
+    }
+
+    const query = params.toString()
+    return query ? `${pathname}?${query}` : pathname
+  }, [getCurrentParams, pathname])
+
   const filtered = useMemo(() => {
     if (!keyword) return items
     return items.filter((item) => matchCorpus(item.corpus, keyword))
@@ -116,8 +157,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
     const newKeyword = selectedOption?.value ?? ''
     setKeyword(newKeyword)
     setMemoryIndex?.(0)
-    router.push(`${pathname}?keyword=${encodeURIComponent(newKeyword)}`)
-  }, [selectedOption, setMemoryIndex, router, pathname])
+    router.push(getNextPath(newKeyword))
+  }, [selectedOption, setMemoryIndex, router, getNextPath])
 
   const handleClear = useCallback(() => {
     // Get current photo ID from displayed items (respects map filter)
@@ -139,15 +180,15 @@ export default function useSearch<ItemType extends ServerSideItem>({
     setInputValue('')
 
     // Update URL to reflect the selection (use filename for global uniqueness)
-    router.replace(identifier ? `${pathname}?select=${identifier}` : pathname)
-  }, [refImageGallery, displayedItems, filtered, selectById, router, pathname])
+    router.replace(getNextPath('', identifier))
+  }, [refImageGallery, displayedItems, filtered, selectById, router, getNextPath])
 
   const applyKeywordToUrl = useCallback((nextKeyword: string) => {
     setKeyword(nextKeyword)
     setSelectedOption(nextKeyword ? { label: nextKeyword, value: nextKeyword } : null)
     setInputValue(nextKeyword)
-    router.replace(nextKeyword ? `${pathname}?keyword=${encodeURIComponent(nextKeyword)}` : pathname)
-  }, [router, pathname])
+    router.replace(getNextPath(nextKeyword))
+  }, [router, getNextPath])
 
   const handleRemoveKeywordToken = useCallback((tokenIndex: number) => {
     if (parsedKeyword.isAdvanced) {

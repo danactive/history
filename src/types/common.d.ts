@@ -64,6 +64,11 @@ type Item = {
   reference: [string, string] | null,
 }
 
+type VisitedPlace = {
+  country: string,
+  region: string | null,
+}
+
 type XmlCaseItem<TCamelCase extends boolean = true> = {
   $: {
     id: string,
@@ -148,6 +153,7 @@ interface ServerSideAllItem extends Item {
   gallery?: Gallery;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+  visitedPlace: VisitedPlace | null;
 }
 
 type IndexedKeywords = {
@@ -200,4 +206,5 @@ export type {
   Item,
   ItemReferenceSource,
   IndexedKeywords,
+  VisitedPlace,
 }

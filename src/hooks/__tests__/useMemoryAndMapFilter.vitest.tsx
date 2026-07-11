@@ -38,6 +38,7 @@ const makeItem = (id: string, coords: [number, number] = [0, 0]): ServerSideAllI
   reference: null,
   album: 'album',
   gallery: 'demo',
+  visitedPlace: null,
 })
 
 describe('Viewed persistence across map/keyword filtering', () => {

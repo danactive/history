@@ -10,7 +10,7 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 
-export default function AllClient({ items, indexedKeywords, clusteredMarkers }: All.ComponentProps) {
+export default function AllClient({ items, indexedKeywords, clusteredMarkers, visitedFilterLabel }: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   const {
@@ -57,6 +57,9 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
+        {items.length > 0 && visitedFilterLabel && (
+          <p>Visited results for {visitedFilterLabel}</p>
+        )}
         {searchBox}
         {memoryHtml}
         <SplitViewer

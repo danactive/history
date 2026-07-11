@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest'
-
-import { buildVisitedDataFromItems, formatVisitedYears } from '../visited'
+import {
+  buildVisitedDataFromItems,
+  buildVisitedRegionCountryIndex,
+  formatVisitedPlace,
+  formatVisitedYears,
+  getVisitedPlace,
+  matchesVisitedPlace,
+} from '../visited'
 
 describe('visited location aggregation', () => {
   test('groups explicit photo_city values by country, region, and year without fixed subdivision lists', () => {
@@ -18,23 +24,29 @@ describe('visited location aggregation', () => {
       {
         country: 'Canada',
         years: [],
+        count: 3,
+        filter: { country: 'Canada', region: null },
         regions: [
-          { region: 'ON', years: ['2001', '2018'] },
-          { region: 'SK', years: ['1987'] },
+          { region: 'ON', years: ['2001', '2018'], count: 2, filter: { country: 'Canada', region: 'ON' } },
+          { region: 'SK', years: ['1987'], count: 1, filter: { country: 'Canada', region: 'SK' } },
         ],
       },
       {
         country: 'USA',
         years: [],
+        count: 3,
+        filter: { country: 'USA', region: null },
         regions: [
-          { region: 'Florida', years: ['2004'] },
-          { region: 'Hawaii', years: ['1988'] },
-          { region: 'Texas', years: ['2016'] },
+          { region: 'Florida', years: ['2004'], count: 1, filter: { country: 'USA', region: 'Florida' } },
+          { region: 'Hawaii', years: ['1988'], count: 1, filter: { country: 'USA', region: 'Hawaii' } },
+          { region: 'Texas', years: ['2016'], count: 1, filter: { country: 'USA', region: 'Texas' } },
         ],
       },
       {
         country: 'England',
         years: ['1999'],
+        count: 1,
+        filter: { country: 'England', region: null },
         regions: [],
       },
     ])
@@ -51,14 +63,18 @@ describe('visited location aggregation', () => {
       {
         country: 'USA',
         years: [],
-        regions: [{ region: 'Oregon', years: ['2017'] }],
+        count: 1,
+        filter: { country: 'USA', region: null },
+        regions: [{ region: 'Oregon', years: ['2017'], count: 1, filter: { country: 'USA', region: 'Oregon' } }],
       },
       {
         country: 'Canada',
         years: [],
+        count: 2,
+        filter: { country: 'Canada', region: null },
         regions: [
-          { region: 'BC', years: ['2024'] },
-          { region: 'British Columbia', years: ['2025'] },
+          { region: 'BC', years: ['2024'], count: 1, filter: { country: 'Canada', region: 'BC' } },
+          { region: 'British Columbia', years: ['2025'], count: 1, filter: { country: 'Canada', region: 'British Columbia' } },
         ],
       },
     ])
@@ -74,6 +90,8 @@ describe('visited location aggregation', () => {
       {
         country: 'BC',
         years: ['2001', '2004'],
+        count: 2,
+        filter: { country: 'BC', region: null },
         regions: [],
       },
     ])
@@ -90,9 +108,31 @@ describe('visited location aggregation', () => {
       {
         country: 'Canada',
         years: ['2010'],
+        count: 1,
+        filter: { country: 'Canada', region: null },
         regions: [],
       },
     ])
+  })
+
+  test('derives exact visited places and matching rules for server-side filters', () => {
+    const items = [
+      { city: 'Nagoya, Aichi, Japan', filename: '2024-01-01-01.jpg', photoDate: null },
+      { city: 'Okazaki, Aichi', filename: '2024-01-02-01.jpg', photoDate: null },
+      { city: 'Tokyo, Japan', filename: '2024-01-03-01.jpg', photoDate: null },
+    ]
+
+    const regionCountryIndex = buildVisitedRegionCountryIndex(items)
+    const aichi = getVisitedPlace(items[1], regionCountryIndex)
+    const tokyo = getVisitedPlace(items[2], regionCountryIndex)
+
+    expect(aichi).toEqual({ country: 'Japan', region: 'Aichi' })
+    expect(tokyo).toEqual({ country: 'Japan', region: null })
+    expect(matchesVisitedPlace(aichi, { country: 'Japan', region: null })).toBe(true)
+    expect(matchesVisitedPlace(aichi, { country: 'Japan', region: 'Aichi' })).toBe(true)
+    expect(matchesVisitedPlace(aichi, { country: 'Japan', region: 'Tokyo' })).toBe(false)
+    expect(formatVisitedPlace({ country: 'Japan', region: 'Aichi' })).toBe('Aichi, Japan')
+    expect(formatVisitedPlace({ country: 'Japan', region: null })).toBe('Japan')
   })
 
   test('formats consecutive years as ranges', () => {

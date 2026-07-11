@@ -58,6 +58,7 @@ function makeItem(id: string, personName: string, dob: string, photoDate: string
     mediaPath: '',
     videoPaths: null,
     reference: null,
+    visitedPlace: null,
   }
 }
 
@@ -81,6 +82,7 @@ function makeUnknownDobItem(id: string, personName: string, photoDate: string): 
     mediaPath: '',
     videoPaths: null,
     reference: null,
+    visitedPlace: null,
   }
 }
 
