@@ -5,6 +5,44 @@ import { transformReference } from '../../utils/reference'
 import transformJsonSchema, { transformPersons } from '../album'
 import config from '../config'
 
+function makeXmlItem(overrides: Partial<XmlItem> = {}): XmlItem {
+  return {
+    $: { id: '1' },
+    filename: '2023-01-02-03.jpg',
+    photoDate: '2023-01-02',
+    photoCity: 'City',
+    photoLoc: 'Location',
+    thumbCaption: 'Caption',
+    ...overrides,
+  }
+}
+
+function makeXmlAlbum(overrides: Partial<XmlAlbum['album']> = {}): XmlAlbum {
+  return {
+    album: {
+      meta: { gallery: config.defaultGallery },
+      item: makeXmlItem(),
+      ...overrides,
+    },
+  }
+}
+
+function getSingleItem(xmlAlbum: XmlAlbum) {
+  const { item } = xmlAlbum.album
+  if (!item || Array.isArray(item)) {
+    throw new Error('Expected album fixture to have a single item')
+  }
+  return item
+}
+
+function getMeta(xmlAlbum: XmlAlbum) {
+  const { meta } = xmlAlbum.album
+  if (!meta) {
+    throw new Error('Expected album fixture to have meta')
+  }
+  return meta
+}
+
 describe('Album library', () => {
   describe('transformJsonSchema', () => {
     test('Meta', () => {
@@ -107,6 +145,180 @@ describe('Album library', () => {
       expect(result.album.items[1].reference?.[0]).toEqual('https://en.wikipedia.org/wiki/Purshia_tridentata') // Wikipedia reference URL
       expect(result.album.items[1].reference?.[1]).toEqual('Purshia_tridentata') // Wikipedia reference name
     })
+
+    test('uses default zoom when markerZoom is zero or NaN', () => {
+      const zeroZoom = transformJsonSchema(makeXmlAlbum({ meta: { gallery: config.defaultGallery, markerZoom: '0' } }), [])
+      const nanZoom = transformJsonSchema(makeXmlAlbum({ meta: { gallery: config.defaultGallery, markerZoom: 'abc' } }), [])
+
+      expect(zeroZoom.album.meta.geo?.zoom).toBe(config.defaultZoom)
+      expect(nanZoom.album.meta.geo?.zoom).toBe(config.defaultZoom)
+    })
+
+    test('falls back to filename when caption is blank', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem({ thumbCaption: '' }),
+      })
+
+      const result = transformJsonSchema(mock, [])
+      expect(result.album.items[0].caption).toBe('2023-01-02-03.jpg')
+    })
+
+    test('builds title from location only, city only, or neither', () => {
+      const locationOnly = transformJsonSchema(makeXmlAlbum({ item: makeXmlItem({ photoLoc: 'Lookout', photoCity: '' }) }), [])
+      const cityOnly = transformJsonSchema(makeXmlAlbum({ item: makeXmlItem({ photoLoc: '', photoCity: 'Vancouver' }) }), [])
+      const untitled = transformJsonSchema(makeXmlAlbum({ item: makeXmlItem({ photoLoc: '', photoCity: '' }) }), [])
+
+      expect(locationOnly.album.items[0].title).toBe('Lookout')
+      expect(cityOnly.album.items[0].title).toBe('Vancouver')
+      expect(untitled.album.items[0].title).toBe('Untitled')
+    })
+
+    test('allows missing photoCity and defaults it to an empty string', () => {
+      const mock = makeXmlAlbum({ item: makeXmlItem({ photoCity: undefined, photoLoc: '' }) })
+
+      const result = transformJsonSchema(mock, [])
+      expect(result.album.items[0].city).toBe('')
+      expect(result.album.items[0].title).toBe('Untitled')
+    })
+
+    test('keeps valid zero coordinates', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem({
+          geo: {
+            lat: '0',
+            lon: '0',
+            accuracy: '12',
+          },
+        }),
+      })
+
+      const result = transformJsonSchema(mock, [])
+      expect(result.album.items[0].coordinates).toEqual([0, 0])
+      expect(result.album.items[0].coordinateAccuracy).toBe(12)
+    })
+
+    test('normalizes zero and NaN coordinate accuracy to null', () => {
+      const zeroAccuracy = transformJsonSchema(makeXmlAlbum({
+        item: makeXmlItem({
+          geo: { lat: '1', lon: '2', accuracy: '0' },
+        }),
+      }), [])
+      const nanAccuracy = transformJsonSchema(makeXmlAlbum({
+        item: makeXmlItem({
+          geo: { lat: '1', lon: '2', accuracy: 'NaN' },
+        }),
+      }), [])
+
+      expect(zeroAccuracy.album.items[0].coordinateAccuracy).toBeNull()
+      expect(nanAccuracy.album.items[0].coordinateAccuracy).toBeNull()
+    })
+
+    test('allows missing geo accuracy and defaults coordinate accuracy to null', () => {
+      const result = transformJsonSchema(makeXmlAlbum({
+        item: makeXmlItem({
+          geo: {
+            lat: '1',
+            lon: '2',
+            accuracy: '',
+          },
+        }),
+      }), [])
+
+      expect(result.album.items[0].coordinates).toEqual([2, 1])
+      expect(result.album.items[0].coordinateAccuracy).toBeNull()
+    })
+
+    test('throws when duplicate photo_desc elements are present', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem({
+          photoDesc: 'First description',
+        }),
+      })
+      Reflect.set(getSingleItem(mock), 'photoDesc', ['First description', 'Second description'])
+
+      expect(() => transformJsonSchema(mock, [])).toThrow(
+        'XML validation failed in <item id="1" filename="2023-01-02-03.jpg" /> element: photoDesc: Invalid input: expected string, received array',
+      )
+    })
+
+    test('throws when root album element is missing', () => {
+      expect(() => transformJsonSchema({}, [])).toThrow('XML is missing <album> element in parent root element')
+    })
+
+    test('throws when meta element is missing', () => {
+      expect(() => transformJsonSchema({ album: {} }, [])).toThrow('XML is missing <meta> element in parent <album> element')
+    })
+
+    test('throws when gallery is missing in meta', () => {
+      expect(() => transformJsonSchema({ album: { meta: {}, item: makeXmlItem() } }, [])).toThrow(
+        'XML is missing <gallery> element in parent <meta> element',
+      )
+    })
+
+    test('throws a specific gallery validation error when gallery is invalid', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem(),
+      })
+      Reflect.set(getMeta(mock), 'gallery', 'nope')
+
+      expect(() => transformJsonSchema(mock, [])).toThrow(
+        'XML validation failed in <meta> element: gallery: Invalid option: expected one of "dan"|"demo"',
+      )
+    })
+
+    test('throws when item id attribute is missing or blank', () => {
+      expect(() => transformJsonSchema(makeXmlAlbum({ item: makeXmlItem({ $: { id: '' } }) }), [])).toThrow(
+        'XML is missing id attribute in <item /> element',
+      )
+      const mock = makeXmlAlbum({
+        item: makeXmlItem(),
+      })
+      Reflect.set(getSingleItem(mock), '$', undefined)
+
+      expect(() => transformJsonSchema(mock, [])).toThrow(
+        'XML is missing id attribute in <item /> element',
+      )
+    })
+
+    test('throws when filename element is missing', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem(),
+      })
+      Reflect.deleteProperty(getSingleItem(mock), 'filename')
+
+      expect(() => transformJsonSchema(mock, [])).toThrow('XML is missing <filename> element in parent <item id="1" /> element')
+    })
+
+    test('throws when duplicate item ids are present', () => {
+      const duplicate = makeXmlAlbum({
+        item: [
+          makeXmlItem({ $: { id: 'dup' } }),
+          makeXmlItem({ $: { id: 'dup' }, filename: '2023-01-02-04.jpg' }),
+        ],
+      })
+
+      expect(() => transformJsonSchema(duplicate, [])).toThrow('Duplicate <item id="dup"> found in album')
+    })
+
+    test('throws a specific item validation error when reference source is invalid', () => {
+      const mock = makeXmlAlbum({
+        item: makeXmlItem({
+          ref: {
+            name: 'Purshia_tridentata',
+            source: 'wikipedia',
+          },
+        }),
+      })
+      const item = getSingleItem(mock)
+      if (!item.ref) {
+        throw new Error('Expected album fixture to have a reference')
+      }
+      Reflect.set(item.ref, 'source', 'bad-source')
+
+      expect(() => transformJsonSchema(mock, [])).toThrow(
+        'XML validation failed in <item id="1" filename="2023-01-02-03.jpg" /> element: ref.source: Invalid option',
+      )
+    })
   })
 
   describe('transformPersons', () => {
@@ -176,6 +388,24 @@ describe('Album library', () => {
       if (actuals) {
         expect(actuals.map((actual) => actual.full).join(', ')).toBe(search)
       }
+    })
+
+    test('returns null for empty or missing search values', () => {
+      expect(transformPersons('', [])).toBeNull()
+      expect(transformPersons(undefined, [])).toBeNull()
+    })
+
+    test('preserves duplicate matched names from search order', () => {
+      const person = {
+        ...mockPerson, first: 'British', last: 'Columbia', full: 'British Columbia', display: 'British Columbia',
+      }
+
+      const actual = transformPersons('British Columbia, British Columbia', [person])
+
+      expect(actual).toEqual([
+        { full: 'British Columbia', dob: '2024-11-12' },
+        { full: 'British Columbia', dob: '2024-11-12' },
+      ])
     })
   })
 

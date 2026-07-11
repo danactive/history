@@ -11,6 +11,7 @@ import type {
 import { isNotEmpty, removeUndefinedFields } from '../utils'
 import { transformReference } from '../utils/reference'
 import config from './config'
+import { parseXmlAlbumInput } from './schemas'
 
 export type ErrorOptionalMessage = { album: object[]; error?: { message: string } }
 export const errorSchema = (message: string): ErrorOptionalMessage => {
@@ -24,24 +25,6 @@ const utils = utilsFactory()
 type DebugInfo = { id: string, filenameId: string }
 function missingXmlMessage(xmlElement: string, debug: DebugInfo) {
   return `XML is missing <${xmlElement}> element in parent <item id="${debug.id}" filename="${debug.filenameId}" /> element`
-}
-
-function isValidMeta(schema: unknown): schema is { album: { meta: Album['album']['meta'], item: XmlAlbum['album']['item'] } } {
-  if (
-    'album' in (schema as any)
-    && 'meta' in ((schema as any).album)
-    && 'gallery' in ((schema as any).album.meta)
-  ) {
-    return true
-  }
-  return false
-}
-
-function isValidItem(schema: unknown): schema is Item {
-  if ('item' in ((schema as any).album)) {
-    return true
-  }
-  return false
 }
 
 function title(item: XmlItem): string {
@@ -108,16 +91,8 @@ export const transformPersons = (photoSearchValues: XmlItem['search'], definedPe
   return null
 }
 
-function transformMeta(dirty: XmlAlbum): AlbumMeta {
-  if (!isValidMeta(dirty)) {
-    return {
-      geo: {
-        zoom: config.defaultZoom,
-      },
-    }
-  }
-
-  const { markerZoom, ...cleanMeta } = dirty.album.meta
+function transformMeta(dirtyMeta: NonNullable<XmlAlbum['album']['meta']>): AlbumMeta {
+  const { markerZoom, ...cleanMeta } = dirtyMeta
   const zoom = Number(markerZoom) === 0 || Number.isNaN(Number(markerZoom)) ? config.defaultZoom : Number(markerZoom)
   return {
     ...cleanMeta,
@@ -132,19 +107,14 @@ function transformMeta(dirty: XmlAlbum): AlbumMeta {
  * @param {object} dirty raw XML before processing
  * @returns {object} clean JSON
  */
-const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
-  if (!('album' in dirty)) {
-    throw new ReferenceError('XML is missing <album> element in parent root element')
-  }
-  if (!('meta' in dirty.album)) {
-    throw new ReferenceError('XML is missing <meta> element in parent <album> element')
-  }
-  const meta = transformMeta(dirty)
+const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
+  const validated = parseXmlAlbumInput(dirty)
+  const meta = transformMeta(validated.album.meta)
   if (!('gallery' in meta) || !meta.gallery) {
     throw new ReferenceError('XML is missing <gallery> element in parent <meta> element')
   }
 
-  if (!isValidItem(dirty)) {
+  if (validated.album.item === undefined) {
     return { album: { items: [], meta } }
   }
 
@@ -191,7 +161,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
       search: item.search || null,
       persons: transformPersons(item.search, persons),
       title: title(item),
-      coordinates: longitude && latitude ? [longitude, latitude] : null,
+      coordinates: longitude !== null && latitude !== null ? [longitude, latitude] : null,
       coordinateAccuracy: (accuracy === null || accuracy === 0 || Number.isNaN(accuracy)) ? null : accuracy,
       thumbPath,
       photoPath,
@@ -203,7 +173,7 @@ const transformJsonSchema = (dirty: XmlAlbum, persons: Person[]): Album => {
     return removeUndefinedFields(out)
   }
 
-  const items = Array.isArray(dirty.album.item) ? dirty.album.item.map(updateItem) : [updateItem(dirty.album.item)]
+  const items = Array.isArray(validated.album.item) ? validated.album.item.map(updateItem) : [updateItem(validated.album.item)]
 
   // Ensure IDs are unique across the album
   const seen = new Set<string>()

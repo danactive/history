@@ -13,6 +13,7 @@ import {
   searchStoryMoments,
 } from '../src/lib/storytelling'
 import config from '../src/models/config'
+import { storySearchInputSchema } from '../src/models/schemas'
 import { generatedGallerySchema } from '../src/types/generated'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -61,26 +62,13 @@ server.registerTool(
     }
   },
 )
-
+// TODO zod for parsing XML too
 server.registerTool(
   'search_story_moments',
   {
     title: 'Search Story Moments',
     description: 'Search across archive items for moments that are strong narrative candidates.',
-    inputSchema: z.object({
-      query: z.string().optional().describe('Free-text story query such as a place, theme, or event.'),
-      gallery: gallerySchema.optional(),
-      album: albumSchema.optional(),
-      person: z.string().optional().describe('Person name to require in the result set.'),
-      city: z.string().optional().describe('City or location fragment to require in the result set.'),
-      country: z.string().optional().describe('Exact visited country to require, for example Japan or Canada.'),
-      region: z.string().optional().describe('Exact visited region to require, for example Aichi, British Columbia, or Hawaii.'),
-      year: z.string().optional().describe('Four-digit year to require in the result set.'),
-      limit: z.number().int().min(1).max(25).default(8).describe('Maximum number of story moments to return.'),
-    }).refine(
-      value => Boolean(value.query || value.album || value.person || value.city || value.country || value.region || value.year),
-      'Provide at least one of query, album, person, city, country, region, or year.',
-    ),
+    inputSchema: storySearchInputSchema,
     annotations: { readOnlyHint: true },
   },
   async (input) => {

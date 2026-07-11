@@ -1,3 +1,4 @@
+import { storySearchInputSchema, type StorySearchSchemaInput } from '../models/schemas'
 import type { AlbumMeta, Gallery, Item, Person, ServerSideAllItem, VisitedPlace } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
@@ -26,18 +27,6 @@ type StoryMoment = {
   visitedPlace: VisitedPlace | null
   score: number
   reasons: string[]
-}
-
-type StorySearchInput = {
-  query?: string
-  gallery?: Gallery
-  album?: string
-  person?: string
-  city?: string
-  country?: string
-  region?: string
-  year?: string
-  limit?: number
 }
 
 type StorySearchResult = {
@@ -201,7 +190,7 @@ const matchesRegionOnly = (place: VisitedPlace | null, region: string) => {
   return normalize(place.region) === normalize(region)
 }
 
-const getVisitedPlaceFilter = (input: StorySearchInput): VisitedPlace | null => {
+const getVisitedPlaceFilter = (input: StorySearchSchemaInput): VisitedPlace | null => {
   if (!input.country) return null
   return {
     country: input.country,
@@ -222,7 +211,7 @@ const storyRichness = (candidate: StoryCandidate) => {
   return score
 }
 
-function scoreCandidate(candidate: StoryCandidate, input: StorySearchInput) {
+function scoreCandidate(candidate: StoryCandidate, input: StorySearchSchemaInput) {
   const haystack = buildHaystack(candidate)
   const reasons: string[] = []
   let score = 0
@@ -314,7 +303,7 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
   return items.map(mapAllItemToCandidate)
 }
 
-async function getScopedCandidates(input: StorySearchInput): Promise<StoryCandidate[]> {
+async function getScopedCandidates(input: StorySearchSchemaInput): Promise<StoryCandidate[]> {
   if (input.gallery && input.album) {
     const { album: { items } } = await getAlbum(input.gallery, input.album)
     const regionCountryIndex = buildVisitedRegionCountryIndex(items)
@@ -337,11 +326,12 @@ async function getScopedCandidates(input: StorySearchInput): Promise<StoryCandid
   return groups.flat()
 }
 
-export async function searchStoryMoments(input: StorySearchInput): Promise<StorySearchResult> {
-  const limit = clampLimit(input.limit)
-  const candidates = await getScopedCandidates(input)
+export async function searchStoryMoments(input: StorySearchSchemaInput): Promise<StorySearchResult> {
+  const validatedInput = storySearchInputSchema.parse(input)
+  const limit = clampLimit(validatedInput.limit)
+  const candidates = await getScopedCandidates(validatedInput)
   const matches = candidates
-    .map(candidate => scoreCandidate(candidate, input))
+    .map(candidate => scoreCandidate(candidate, validatedInput))
     .filter((candidate): candidate is StoryMoment => candidate !== null)
     .sort((left, right) => right.score - left.score || compareDatesDescending(left.date, right.date))
     .slice(0, limit)
@@ -355,13 +345,13 @@ export async function searchStoryMoments(input: StorySearchInput): Promise<Story
     summary,
     filtersApplied: {
       query: input.query ?? null,
-      gallery: input.gallery ?? null,
-      album: input.album ?? null,
-      person: input.person ?? null,
-      city: input.city ?? null,
-      country: input.country ?? null,
-      region: input.region ?? null,
-      year: input.year ?? null,
+      gallery: validatedInput.gallery ?? null,
+      album: validatedInput.album ?? null,
+      person: validatedInput.person ?? null,
+      city: validatedInput.city ?? null,
+      country: validatedInput.country ?? null,
+      region: validatedInput.region ?? null,
+      year: validatedInput.year ?? null,
       limit,
     },
     totalCandidates: candidates.length,
@@ -503,8 +493,6 @@ export type {
   AlbumStoryResult,
   OnThisDayStoryResult,
   PersonStoryIndexResult,
-  StoryMoment,
-  StorySearchInput,
-  StorySearchResult,
+  StoryMoment, StorySearchResult, StorySearchSchemaInput
 }
 
