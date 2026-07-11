@@ -22,6 +22,7 @@ interface UseSearchProps<ItemType> {
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
+  visitedFilterLabel?: string | null;
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
@@ -70,6 +71,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
+  visitedFilterLabel,
   refImageGallery,
   mapFilterEnabled,
   onClearMapFilter,
@@ -210,6 +212,15 @@ export default function useSearch<ItemType extends ServerSideItem>({
     applyKeywordToUrl(remaining.join(joiner))
   }, [parsedKeyword, applyKeywordToUrl, handleClear])
 
+  const handleClearVisitedFilter = useCallback(() => {
+    const params = getCurrentParams()
+    params.delete('visitedCountry')
+    params.delete('visitedRegion')
+
+    const query = params.toString()
+    router.replace(query ? `${pathname}?${query}` : pathname)
+  }, [getCurrentParams, pathname, router])
+
   const canBookmark = Boolean(
     refImageGallery
     && itemsToUse.length
@@ -274,6 +285,23 @@ export default function useSearch<ItemType extends ServerSideItem>({
                 </Stack>
               ))
             )}
+          </Stack>
+        )}
+        {visitedFilterLabel && (
+          <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
+            <Chip size="sm" color="primary" variant="soft">
+              {visitedFilterLabel}
+            </Chip>
+            <Button
+              type="button"
+              size="sm"
+              variant="plain"
+              onClick={handleClearVisitedFilter}
+              title={`Clear visited filter ${visitedFilterLabel}`}
+              aria-label={`Clear visited filter ${visitedFilterLabel}`}
+            >
+              ×
+            </Button>
           </Stack>
         )}
         {mapFilterEnabled && (

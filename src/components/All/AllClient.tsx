@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useEffect, useMemo } from 'react'
 
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
@@ -27,7 +27,7 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers, vi
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ items, indexedKeywords })
+  } = useMapFilter({ items, indexedKeywords, visitedFilterLabel })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
@@ -57,9 +57,6 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers, vi
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
-        {items.length > 0 && visitedFilterLabel && (
-          <p>Visited results for {visitedFilterLabel}</p>
-        )}
         {searchBox}
         {memoryHtml}
         <SplitViewer

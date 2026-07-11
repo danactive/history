@@ -1,5 +1,5 @@
-import type { Filesystem } from '../lib/filesystems';
-import type { ClusteredMarkers } from '../lib/generate-clusters';
+import type { Filesystem } from '../lib/filesystems'
+import type { ClusteredMarkers } from '../lib/generate-clusters'
 import type {
   AlbumMeta,
   Gallery as GalleryName,
@@ -8,7 +8,7 @@ import type {
   ServerSideAllItem,
   ServerSidePhotoItem,
   VisitedPlace,
-} from './common';
+} from './common'
 
 export namespace Gallery {
   export type ComponentProps = {

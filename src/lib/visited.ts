@@ -285,7 +285,7 @@ export async function getVisitedData(gallery: Gallery): Promise<CountryVisit[]> 
 
 export type {
   CountryVisit,
-  RegionVisit
+  RegionVisit,
 }
 
 export type { VisitedPlace }
