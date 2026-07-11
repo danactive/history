@@ -1,28 +1,29 @@
+import type { AlbumMeta, Gallery, Item, Person, ServerSideAllItem, VisitedPlace } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
 import getGalleries from './galleries'
 import getPersons, { getPersonsData } from './persons'
-
-import type { Gallery, Item, Person, ServerSideAllItem } from '../types/common'
+import { buildVisitedRegionCountryIndex, getVisitedPlace, matchesVisitedPlace } from './visited'
 
 const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
 
 type StoryMoment = {
   gallery: Gallery
-  album: string | null
-  filename: string
+  album: AlbumMeta['albumName'] | null
+  filename: Item['filename']
   date: string | null
-  title: string
-  caption: string
-  description: string | null
-  city: string
-  location: string | null
+  title: Item['title']
+  caption: Item['caption']
+  description: Item['description'] | null
+  city: Item['city']
+  location: Item['location'] | null
   persons: string[]
   mediaPath: string
   thumbPath: string
   reference: Item['reference']
+  visitedPlace: VisitedPlace | null
   score: number
   reasons: string[]
 }
@@ -33,6 +34,8 @@ type StorySearchInput = {
   album?: string
   person?: string
   city?: string
+  country?: string
+  region?: string
   year?: string
   limit?: number
 }
@@ -45,6 +48,8 @@ type StorySearchResult = {
     album: string | null
     person: string | null
     city: string | null
+    country: string | null
+    region: string | null
     year: string | null
     limit: number
   }
@@ -141,6 +146,8 @@ const buildHaystack = (item: StoryCandidate) => normalize([
   item.description,
   item.city,
   item.location,
+  item.visitedPlace?.region,
+  item.visitedPlace?.country,
   item.persons.join(' '),
 ].join(' '))
 
@@ -150,7 +157,12 @@ const buildStoryMoment = (candidate: StoryCandidate, score: number, reasons: str
   reasons,
 })
 
-const mapAlbumItemToCandidate = (gallery: Gallery, album: string, item: Item): StoryCandidate => ({
+const mapAlbumItemToCandidate = (
+  gallery: Gallery,
+  album: string,
+  item: Item,
+  regionCountryIndex: Map<string, string>,
+): StoryCandidate => ({
   gallery,
   album,
   filename: getFilename(item),
@@ -164,6 +176,7 @@ const mapAlbumItemToCandidate = (gallery: Gallery, album: string, item: Item): S
   mediaPath: item.mediaPath,
   thumbPath: item.thumbPath,
   reference: item.reference,
+  visitedPlace: getVisitedPlace(item, regionCountryIndex),
 })
 
 const mapAllItemToCandidate = (item: ServerSideAllItem): StoryCandidate => ({
@@ -180,7 +193,21 @@ const mapAllItemToCandidate = (item: ServerSideAllItem): StoryCandidate => ({
   mediaPath: item.mediaPath,
   thumbPath: item.thumbPath,
   reference: item.reference,
+  visitedPlace: item.visitedPlace,
 })
+
+const matchesRegionOnly = (place: VisitedPlace | null, region: string) => {
+  if (!place?.region) return false
+  return normalize(place.region) === normalize(region)
+}
+
+const getVisitedPlaceFilter = (input: StorySearchInput): VisitedPlace | null => {
+  if (!input.country) return null
+  return {
+    country: input.country,
+    region: input.region ?? null,
+  }
+}
 
 const storyRichness = (candidate: StoryCandidate) => {
   let score = 0
@@ -234,8 +261,28 @@ function scoreCandidate(candidate: StoryCandidate, input: StorySearchInput) {
     reasons.push(`matches place: ${cityMatch}`)
   }
 
+  if (input.country || input.region) {
+    const visitedFilter = getVisitedPlaceFilter(input)
+    const locationMatch = visitedFilter
+      ? matchesVisitedPlace(candidate.visitedPlace, visitedFilter)
+      : matchesRegionOnly(candidate.visitedPlace, input.region as string)
+
+    if (!locationMatch) {
+      return null
+    }
+
+    score += input.country && input.region ? 7 : 5
+    reasons.push(
+      input.country && input.region
+        ? `matches visited place: ${input.region}, ${input.country}`
+        : input.country
+          ? `matches country: ${input.country}`
+          : `matches region: ${input.region}`,
+    )
+  }
+
   if (input.year) {
-    const date = candidate.date ?? candidate.filename
+    const date = candidate.date ?? (Array.isArray(candidate.filename) ? candidate.filename[0] : candidate.filename)
     if (!date.startsWith(input.year)) {
       return null
     }
@@ -270,14 +317,23 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
 async function getScopedCandidates(input: StorySearchInput): Promise<StoryCandidate[]> {
   if (input.gallery && input.album) {
     const { album: { items } } = await getAlbum(input.gallery, input.album)
-    return items.map(item => mapAlbumItemToCandidate(input.gallery as Gallery, input.album as string, item))
+    const regionCountryIndex = buildVisitedRegionCountryIndex(items)
+    return items.map(item => mapAlbumItemToCandidate(input.gallery as Gallery, input.album as string, item, regionCountryIndex))
   }
 
   const galleries = input.gallery
     ? [input.gallery]
     : (await getGalleries()).galleries
 
-  const groups = await Promise.all(galleries.map(gallery => getGalleryCandidates(gallery)))
+  const visitedFilter = getVisitedPlaceFilter(input)
+  const groups = await Promise.all(galleries.map(async (gallery) => {
+    if (visitedFilter) {
+      const { items } = await getAllData({ gallery }, visitedFilter)
+      return items.map(mapAllItemToCandidate)
+    }
+
+    return getGalleryCandidates(gallery)
+  }))
   return groups.flat()
 }
 
@@ -303,6 +359,8 @@ export async function searchStoryMoments(input: StorySearchInput): Promise<Story
       album: input.album ?? null,
       person: input.person ?? null,
       city: input.city ?? null,
+      country: input.country ?? null,
+      region: input.region ?? null,
       year: input.year ?? null,
       limit,
     },
@@ -319,7 +377,8 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
   ])
 
   const albumMeta = galleryAlbums[gallery].albums.find(candidate => candidate.name === album)
-  const candidates = albumData.items.map(item => mapAlbumItemToCandidate(gallery, album, item))
+  const regionCountryIndex = buildVisitedRegionCountryIndex(albumData.items)
+  const candidates = albumData.items.map(item => mapAlbumItemToCandidate(gallery, album, item, regionCountryIndex))
   const highlights = candidates
     .map(candidate => buildStoryMoment(candidate, storyRichness(candidate), ['selected for narrative richness']))
     .sort((left, right) => right.score - left.score || compareDatesDescending(left.date, right.date))
