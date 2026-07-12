@@ -13,21 +13,6 @@ type JsonRpcSuccess = {
   }
 }
 
-type InitializeResult = {
-  protocolVersion: string
-  serverInfo: { name: string, version: string }
-  capabilities?: Record<string, unknown>
-}
-
-type ListToolsResult = {
-  tools: Array<{
-    name: string
-    title?: string
-    description?: string
-    inputSchema?: unknown
-  }>
-}
-
 const jsonRpcErrorSchema = z.object({
   code: z.number(),
   message: z.string(),

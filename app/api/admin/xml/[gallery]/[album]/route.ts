@@ -4,7 +4,7 @@ import { rawParseOptions, readAlbum } from '../../../../../../src/lib/xml'
 import type { Gallery, RawXmlAlbum } from '../../../../../../src/types/common'
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ gallery: string, album: string }> },
 ) {
   const { gallery, album } = await params

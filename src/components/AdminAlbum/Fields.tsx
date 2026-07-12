@@ -9,8 +9,7 @@ import Textarea from '@mui/joy/Textarea'
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import xml2js from 'xml2js'
-
-import type { Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import type { IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import { transformReference } from '../../utils/reference'
 import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
@@ -91,15 +90,13 @@ export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXm
 }
 
 export default function Fields(
-  { xmlAlbum, gallery, item, children, onItemUpdate, onXmlGenerated, editedItems, applyEditsToItems }:
+  { xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems }:
   {
     xmlAlbum: RawXmlAlbum | undefined,
-    gallery: Gallery,
     item: XmlItemState,
     children: React.ReactElement,
     onItemUpdate: EditCountPillHook['handleItemUpdate'],
     onXmlGenerated: EditCountPillHook['handleXmlGenerated'],
-    editedItems: EditCountPillHook['editedItems'],
     applyEditsToItems: EditCountPillHook['applyEditsToItems']
   },
 ) {

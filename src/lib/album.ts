@@ -41,13 +41,6 @@ async function get(
       throw new ReferenceError(`Gallery name (${gallery}) is not expected`)
     }
     xmlAlbum = await readAlbum(gallery, album)
-
-    let relativeDate = null
-    if (xmlAlbum.album.item) {
-      const filenames = Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item[0].filename : xmlAlbum.album.item.filename
-      const filename = Array.isArray(filenames) ? filenames[0] : filenames
-      relativeDate = new Date(filename.substring(0, 10))
-    }
   } catch (err) {
     const message = `No album was found; gallery=${gallery}; album=${album};`
     return handleLibraryError(err, message, returnEnvelope, errorSchema)

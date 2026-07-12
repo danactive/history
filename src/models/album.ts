@@ -22,11 +22,6 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
 
 const utils = utilsFactory()
 
-type DebugInfo = { id: string, filenameId: string }
-function missingXmlMessage(xmlElement: string, debug: DebugInfo) {
-  return `XML is missing <${xmlElement}> element in parent <item id="${debug.id}" filename="${debug.filenameId}" /> element`
-}
-
 function title(item: XmlItem): string {
   const photoCity = item.photoCity ?? ''
   const photoLoc = item.photoLoc ?? ''
@@ -47,7 +42,7 @@ function title(item: XmlItem): string {
   return 'Untitled'
 }
 
-function transformCaption(item: XmlItem, debug: DebugInfo) {
+function transformCaption(item: XmlItem) {
   const thumbCaption = item.thumbCaption ?? ''
 
   if (thumbCaption === '') {
@@ -61,10 +56,6 @@ function transformCaption(item: XmlItem, debug: DebugInfo) {
   }
 
   return thumbCaption
-}
-
-function assertCannotReach(x: never) {
-  throw new Error(`Reference source missing: TypeScript should block this at compile time ${x}`)
 }
 
 export const transformPersons = (photoSearchValues: XmlItem['search'], definedPersonInclusionList: Person[]): PersonItem[] | null => {
@@ -134,11 +125,6 @@ const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
     }
 
     const { filename, photoDate } = item
-    const debugInfo = {
-      id,
-      filenameId: Array.isArray(filename) ? filename[0] : filename,
-    }
-
     // Allow photoCity to be optional, default to empty string if missing
     const photoCity = item.photoCity ?? ''
 
@@ -156,7 +142,7 @@ const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
       photoDate: photoDate || null,
       city: photoCity,
       location: item.photoLoc || null,
-      caption: transformCaption(item, debugInfo),
+      caption: transformCaption(item),
       description: item.photoDesc || null,
       search: item.search || null,
       persons: transformPersons(item.search, persons),

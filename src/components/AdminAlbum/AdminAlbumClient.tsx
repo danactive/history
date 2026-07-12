@@ -34,7 +34,6 @@ export default function AdminAlbumClient(
   const [isSearching, setIsSearching] = useState(false)
   const {
     EditCountPill,
-    editedItems,
     handleItemUpdate: handleItemUpdateOriginal,
     handleXmlGenerated,
     getItemWithEdits,
@@ -140,7 +139,7 @@ export default function AdminAlbumClient(
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [currentIndex, items])
 
-  const handleItemSelect = (selectedItem: RawXmlItem, index: number, isShift: boolean = false) => {
+  const handleItemSelect = (_selectedItem: RawXmlItem, index: number, isShift: boolean = false) => {
     let newSelectedIndices = new Set<number>()
 
     if (isShift && currentIndex !== -1) {
@@ -184,7 +183,7 @@ export default function AdminAlbumClient(
   }
 
   const handleAlbumChange = (
-    event: React.SyntheticEvent | null,
+    _event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
     const selectedAlbum = galleryAlbum[currentGallery].albums.find(a => a.name === newValue)
@@ -199,7 +198,7 @@ export default function AdminAlbumClient(
   }
 
   const handleGalleryChange = (
-    event: React.SyntheticEvent | null,
+    _event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
     if (newValue) {
@@ -328,11 +327,9 @@ export default function AdminAlbumClient(
             <Stack sx={{ position: 'sticky', top: 16, alignSelf: 'flex-start' }}>
               <Fields
                 xmlAlbum={data}
-                gallery={currentGallery}
                 item={getItemWithEdits(item)}
                 onItemUpdate={handleItemUpdateWrapper}
                 onXmlGenerated={handleXmlGenerated}
-                editedItems={editedItems}
                 applyEditsToItems={applyEditsToItems}
               >
                 <Photo item={item} gallery={currentGallery} size="small" />

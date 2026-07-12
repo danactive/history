@@ -5,7 +5,7 @@ import { errorSchema } from '../../../../../../src/models/album'
 import type { Gallery } from '../../../../../../src/types/common'
 
 async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   props: { params: Promise<{ gallery: Gallery, album: string }> },
 ) {
   const params = await props.params

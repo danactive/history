@@ -36,7 +36,7 @@ export default function useMapFilter({ items, indexedKeywords, visitedFilterLabe
     setMapBounds(null)
   }, [])
 
-  const selectById = useCallback((id: string, isClear = false) => {
+  const selectById = useCallback((id: string) => {
     // Simply update selectedId for both clear and normal operations
     // The URL-based handling in each client will position the gallery
     setSelectedId(prev => (prev === id ? prev : id))

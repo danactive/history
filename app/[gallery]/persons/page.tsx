@@ -8,10 +8,6 @@ import { getPersonsData } from '../../../src/lib/persons'
 import type { Gallery } from '../../../src/types/common'
 import { generateClusters } from '../../../src/lib/generate-clusters'
 
-type AgeSummary = {
-  ages: { age: number; count: number }[];
-};
-
 export const metadata: Metadata = {
   title: 'Persons - History App',
 }
