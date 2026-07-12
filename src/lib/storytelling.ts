@@ -493,6 +493,6 @@ export type {
   AlbumStoryResult,
   OnThisDayStoryResult,
   PersonStoryIndexResult,
-  StoryMoment, StorySearchResult, StorySearchSchemaInput
+  StoryMoment, StorySearchResult, StorySearchSchemaInput,
 }
 

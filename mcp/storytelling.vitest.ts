@@ -1,13 +1,71 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { InMemoryTransport } from '@modelcontextprotocol/server'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import * as z from 'zod/v4'
 
-const registry = vi.hoisted(() => ({
-  serverConfig: null as { name: string, version: string } | null,
-  tools: new Map<string, { config: any, handler: (...args: any[]) => Promise<any> }>(),
-  resources: new Map<string, { uri: string, config: any, handler: (...args: any[]) => Promise<any> }>(),
-  prompts: new Map<string, { config: any, handler: (...args: any[]) => Promise<any> }>(),
-  connect: vi.fn<(transport: unknown) => Promise<void>>(async () => undefined),
-  transportInstances: [] as unknown[],
-}))
+type JsonRpcSuccess = {
+  jsonrpc: '2.0'
+  id?: string | number | null
+  result?: unknown
+  error?: {
+    code: number
+    message: string
+    data?: unknown
+  }
+}
+
+type InitializeResult = {
+  protocolVersion: string
+  serverInfo: { name: string, version: string }
+  capabilities?: Record<string, unknown>
+}
+
+type ListToolsResult = {
+  tools: Array<{
+    name: string
+    title?: string
+    description?: string
+    inputSchema?: unknown
+  }>
+}
+
+const jsonRpcErrorSchema = z.object({
+  code: z.number(),
+  message: z.string(),
+  data: z.unknown().optional(),
+})
+
+const jsonRpcSuccessSchema = z.object({
+  jsonrpc: z.literal('2.0'),
+  id: z.union([z.string(), z.number(), z.null()]).optional(),
+  result: z.unknown().optional(),
+  error: jsonRpcErrorSchema.optional(),
+})
+
+const initializeResultSchema = z.object({
+  protocolVersion: z.string(),
+  serverInfo: z.object({
+    name: z.string(),
+    version: z.string(),
+  }),
+  capabilities: z.record(z.string(), z.unknown()).optional(),
+})
+
+const listToolsResultSchema = z.object({
+  tools: z.array(z.object({
+    name: z.string(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    inputSchema: z.unknown().optional(),
+  })),
+})
+
+const toolCallResultSchema = z.object({
+  content: z.array(z.object({
+    type: z.string(),
+    text: z.string().optional(),
+  })).optional(),
+  structuredContent: z.record(z.string(), z.unknown()).optional(),
+})
 
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
@@ -16,40 +74,6 @@ const buildAlbumStory = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
 const getOnThisDayStory = vi.hoisted(() => vi.fn())
 const buildStorytellingOverview = vi.hoisted(() => vi.fn())
-
-vi.mock('@modelcontextprotocol/server', () => {
-  class MockMcpServer {
-    constructor(config: { name: string, version: string }) {
-      registry.serverConfig = config
-    }
-
-    registerTool(name: string, config: any, handler: (...args: any[]) => Promise<any>) {
-      registry.tools.set(name, { config, handler })
-    }
-
-    registerResource(name: string, uri: string, config: any, handler: (...args: any[]) => Promise<any>) {
-      registry.resources.set(name, { uri, config, handler })
-    }
-
-    registerPrompt(name: string, config: any, handler: (...args: any[]) => Promise<any>) {
-      registry.prompts.set(name, { config, handler })
-    }
-
-    connect(transport: unknown) {
-      return registry.connect(transport)
-    }
-  }
-
-  return { McpServer: MockMcpServer }
-})
-
-vi.mock('@modelcontextprotocol/server/stdio', () => ({
-  StdioServerTransport: class MockStdioServerTransport {
-    constructor() {
-      registry.transportInstances.push(this)
-    }
-  },
-}))
 
 vi.mock('../src/lib/galleries', () => ({
   default: getGalleries,
@@ -71,17 +95,127 @@ vi.mock('../src/models/config', () => ({
   default: { defaultGallery: 'demo' },
 }))
 
-async function loadStorytellingModule() {
-  registry.serverConfig = null
-  registry.tools.clear()
-  registry.resources.clear()
-  registry.prompts.clear()
-  registry.transportInstances.length = 0
-  registry.connect.mockClear()
+class McpInMemoryClient {
+  private nextId = 1
+  private readonly pending = new Map<number, {
+    resolve: (value: JsonRpcSuccess) => void
+    reject: (reason?: unknown) => void
+  }>()
 
-  vi.resetModules()
-  await import('./storytelling')
+  constructor(private readonly transport: InMemoryTransport) {
+    transport.onmessage = (message) => {
+      const parsedMessage = jsonRpcSuccessSchema.safeParse(message)
+      if (!parsedMessage.success) {
+        return
+      }
+
+      if (typeof parsedMessage.data.id === 'number') {
+        const resolver = this.pending.get(parsedMessage.data.id)
+        if (resolver) {
+          this.pending.delete(parsedMessage.data.id)
+          resolver.resolve(parsedMessage.data)
+        }
+      }
+    }
+  }
+
+  async start() {
+    await this.transport.start()
+  }
+
+  async close() {
+    await this.transport.close()
+  }
+
+  async initialize() {
+    const response = await this.request('initialize', {
+      protocolVersion: '2025-11-05',
+      capabilities: {},
+      clientInfo: {
+        name: 'vitest-in-memory-client',
+        version: '1.0.0',
+      },
+    })
+
+    expect(response.result).toBeDefined()
+    await this.notify('notifications/initialized', {})
+    return initializeResultSchema.parse(response.result)
+  }
+
+  async listTools() {
+    const response = await this.request('tools/list', {})
+    if (response.error) {
+      throw new Error(`Tool listing failed: ${response.error.message}`)
+    }
+    return listToolsResultSchema.parse(response.result)
+  }
+
+  async callTool(name: string, args: Record<string, unknown>) {
+    const response = await this.request('tools/call', {
+      name,
+      arguments: args,
+    })
+
+    if (response.error) {
+      throw new Error(`Tool call failed: ${response.error.message}`)
+    }
+
+    return toolCallResultSchema.parse(response.result)
+  }
+
+  private async request(method: string, params: Record<string, unknown>) {
+    const id = this.nextId++
+    const result = new Promise<JsonRpcSuccess>((resolve, reject) => {
+      this.pending.set(id, { resolve, reject })
+    })
+
+    await this.transport.send({
+      jsonrpc: '2.0',
+      id,
+      method,
+      params,
+    })
+
+    return result
+  }
+
+  private async notify(method: string, params: Record<string, unknown>) {
+    await this.transport.send({
+      jsonrpc: '2.0',
+      method,
+      params,
+    })
+  }
 }
+
+const connections: Array<{ client: McpInMemoryClient, serverTransport: InMemoryTransport }> = []
+
+async function createConnection() {
+  vi.resetModules()
+  const [{ createStorytellingServer }, { InMemoryTransport: LocalInMemoryTransport }] = await Promise.all([
+    import('./storytelling'),
+    import('@modelcontextprotocol/server'),
+  ])
+
+  const [clientTransport, serverTransport] = LocalInMemoryTransport.createLinkedPair()
+  const client = new McpInMemoryClient(clientTransport)
+  const server = createStorytellingServer()
+
+  await server.connect(serverTransport)
+  await client.start()
+
+  connections.push({ client, serverTransport })
+  return client
+}
+
+afterEach(async () => {
+  while (connections.length > 0) {
+    const connection = connections.pop()
+    if (!connection) continue
+    await connection.client.close()
+    await connection.serverTransport.close()
+  }
+})
 
 beforeEach(() => {
   getGalleries.mockReset()
@@ -92,7 +226,7 @@ beforeEach(() => {
   getOnThisDayStory.mockReset()
   buildStorytellingOverview.mockReset()
 
-  getGalleries.mockResolvedValue({ galleries: ['demo', 'dan'] })
+  getGalleries.mockResolvedValue({ galleries: ['demo', 'fake'] })
   getAlbums.mockResolvedValue({
     demo: {
       albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024' }],
@@ -121,50 +255,80 @@ beforeEach(() => {
 })
 
 describe('storytelling MCP server', () => {
-  test('registers tools, resources, prompts, and connects a stdio transport', async () => {
-    await loadStorytellingModule()
+  test('completes in-memory handshake and advertises capabilities', async () => {
+    const client = await createConnection()
 
-    expect(registry.serverConfig).toEqual({
+    const result = await client.initialize()
+
+    expect(result.serverInfo).toEqual({
       name: 'history-storytelling',
       version: '1.0.0',
     })
-    expect([...registry.tools.keys()]).toEqual([
+    expect(result.protocolVersion).toBeTruthy()
+    expect(result.capabilities).toEqual(expect.objectContaining({
+      tools: expect.any(Object),
+      prompts: expect.any(Object),
+      resources: expect.any(Object),
+    }))
+  })
+
+  test('lists storytelling tools for client exploration', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const result = await client.listTools()
+
+    expect(result.tools.map(tool => tool.name)).toEqual(expect.arrayContaining([
       'list_galleries',
       'list_albums',
       'search_story_moments',
       'get_album_story',
       'get_people_story_index',
       'get_on_this_day_story',
-    ])
-    expect([...registry.resources.keys()]).toEqual([
-      'history-overview',
-      'history-storytelling-guide',
-    ])
-    expect([...registry.prompts.keys()]).toEqual(['write-history-story'])
-    expect(registry.transportInstances).toHaveLength(1)
-    expect(registry.connect).toHaveBeenCalledWith(registry.transportInstances[0])
+    ]))
+    expect(result.tools.find(tool => tool.name === 'search_story_moments')).toEqual(expect.objectContaining({
+      title: 'Search Story Moments',
+      description: expect.stringContaining('Search across archive items'),
+    }))
+  })
+
+  test('maps list_galleries results into text and structured content', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('list_galleries', {})
+
+    expect(getGalleries).toHaveBeenCalledTimes(1)
+    expect(output).toEqual({
+      content: [{ type: 'text', text: 'Available galleries: demo, fake' }],
+      structuredContent: { galleries: ['demo', 'fake'] },
+    })
+  })
+
+  test('maps list_albums results into text and structured content', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('list_albums', { gallery: 'demo' })
+
+    expect(getAlbums).toHaveBeenCalledWith('demo')
+    expect(output).toEqual({
+      content: [{ type: 'text', text: 'Found 1 album(s) in demo.' }],
+      structuredContent: {
+        albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024' }],
+      },
+    })
   })
 
   test('accepts country and region location queries in search_story_moments and forwards them', async () => {
-    await loadStorytellingModule()
+    const client = await createConnection()
 
-    const searchTool = registry.tools.get('search_story_moments')
-    expect(searchTool).toBeDefined()
-
-    const parsed = searchTool?.config.inputSchema.parse({
+    await client.initialize()
+    const output = await client.callTool('search_story_moments', {
       gallery: 'demo',
       country: 'Japan',
       region: 'Aichi',
     })
-
-    expect(parsed).toEqual({
-      gallery: 'demo',
-      country: 'Japan',
-      region: 'Aichi',
-      limit: 8,
-    })
-
-    const output = await searchTool?.handler(parsed)
 
     expect(searchStoryMoments).toHaveBeenCalledWith({
       gallery: 'demo',
@@ -181,29 +345,44 @@ describe('storytelling MCP server', () => {
   })
 
   test('accepts region-only location queries in search_story_moments', async () => {
-    await loadStorytellingModule()
+    const client = await createConnection()
 
-    const searchTool = registry.tools.get('search_story_moments')
-    expect(searchTool).toBeDefined()
-
-    const parsed = searchTool?.config.inputSchema.parse({ region: 'Aichi' })
-
-    expect(parsed).toEqual({ region: 'Aichi', limit: 8 })
-    await searchTool?.handler(parsed)
+    await client.initialize()
+    await client.callTool('search_story_moments', { region: 'Aichi' })
 
     expect(searchStoryMoments).toHaveBeenCalledWith({ region: 'Aichi', limit: 8 })
   })
 
-  test('storytelling guide advertises location-oriented queries', async () => {
-    await loadStorytellingModule()
+  test('maps get_album_story responses into text and structured content', async () => {
+    const client = await createConnection()
 
-    const guide = registry.resources.get('history-storytelling-guide')
-    expect(guide).toBeDefined()
+    await client.initialize()
+    const output = await client.callTool('get_album_story', { gallery: 'demo', album: 'trip' })
 
-    const output = await guide?.handler(new URL('history://storytelling-guide'))
-    const text = output?.contents[0]?.text ?? ''
+    expect(buildAlbumStory).toHaveBeenCalledWith('demo', 'trip', 8)
+    expect(output).toEqual({
+      content: [{ type: 'text', text: 'Album summary' }],
+      structuredContent: { summary: 'Album summary' },
+    })
+  })
 
-    expect(text).toContain('Show me story moments from Japan.')
-    expect(text).toContain('Find narrative moments in Aichi, Japan.')
+  test('maps get_people_story_index and get_on_this_day_story responses', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+
+    const peopleOutput = await client.callTool('get_people_story_index', {})
+    expect(getPeopleStoryIndex).toHaveBeenCalledWith('demo')
+    expect(peopleOutput).toEqual({
+      content: [{ type: 'text', text: 'People summary' }],
+      structuredContent: { summary: 'People summary' },
+    })
+
+    const onThisDayOutput = await client.callTool('get_on_this_day_story', { monthDay: '01-02' })
+    expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
+    expect(onThisDayOutput).toEqual({
+      content: [{ type: 'text', text: 'On this day summary' }],
+      structuredContent: { summary: 'On this day summary' },
+    })
   })
 })
