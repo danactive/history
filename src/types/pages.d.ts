@@ -50,6 +50,8 @@ export namespace All {
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
     initialAgeSummary?: { ages: { age: number; count: number }[] };
+    initialSelectedAge?: number | 'unknown' | null;
+    initialSelectedPerson?: string | null;
     visitedPlace?: VisitedPlace | null;
     visitedFilterLabel?: string | null;
   }

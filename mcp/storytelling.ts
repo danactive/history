@@ -11,6 +11,7 @@ import {
   getOnThisDayStory,
   getPeopleStoryIndex,
 } from '../src/lib/storytelling'
+import { buildPersonGuiHref, buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import config from '../src/models/config'
 import { generatedGallerySchema } from '../src/types/generated'
 
@@ -23,18 +24,12 @@ const gallerySchema = generatedGallerySchema.describe(
 )
 const gallerySchemaWithDefault = gallerySchema.default(config.defaultGallery)
 const albumSchema = z.string().describe('Album name inside the selected gallery.')
-const monthDaySchema = z.string().regex(/^\d{2}-\d{2}$/).describe('Month-day in MM-DD format. Defaults to today.')
-
 function stringifyLines(lines: Array<string | null | undefined>) {
   return lines.filter((line): line is string => Boolean(line)).join('\n')
 }
 
 function parseGallery(value: unknown) {
   return generatedGallerySchema.parse(value ?? config.defaultGallery)
-}
-
-function parseMonthDay(value: unknown) {
-  return monthDaySchema.parse(value)
 }
 
 function decodeTemplateValue(value: unknown) {
@@ -116,6 +111,8 @@ async function buildPersonResource(gallery: z.infer<typeof generatedGallerySchem
     throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
   }
 
+  const guiHref = buildPersonGuiHref(gallery, person.name)
+
   return stringifyLines([
     `Person ${person.name}`,
     `Gallery: ${gallery}`,
@@ -124,6 +121,7 @@ async function buildPersonResource(gallery: z.infer<typeof generatedGallerySchem
     `Last seen: ${person.lastSeen ?? 'unknown'}`,
     `Date of birth: ${person.dateOfBirth ?? 'unknown'}`,
     `Albums: ${person.albums.join(', ') || 'none'}`,
+    `GUI: ${guiHref}`,
   ])
 }
 
@@ -292,7 +290,7 @@ function createStorytellingServer() {
     new ResourceTemplate(DAY_TEMPLATE, {
       list: async () => {
         const { galleries } = await getGalleries()
-        const today = new Date().toLocaleString('en-CA').substring(5, 10)
+        const today = getDefaultMonthDay()
         return {
           resources: galleries.map((gallery) => ({
             uri: `history://day/${encodeURIComponent(gallery)}/${today}`,
@@ -310,11 +308,13 @@ function createStorytellingServer() {
       const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
       const monthDay = parseMonthDay(getStringFromTemplate(uri, variables.monthDay, 1))
       const output = await getOnThisDayStory(gallery, monthDay, 8)
+      const guiHref = buildTodayGuiHref(gallery, monthDay)
       return {
         contents: [{
           uri: uri.href,
           text: stringifyLines([
             output.summary,
+            `GUI: ${guiHref}`,
             ...output.matches.map((match) => `${match.date ?? 'unknown'}: ${match.caption} (${match.filename})`),
           ]),
         }],

@@ -350,6 +350,7 @@ describe('storytelling MCP server integration', () => {
 
     expect(album.contents[0]?.text).toContain('Album')
     expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
+    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons?person=Mister+Gingerbread')
   }, 20000)
 
   test('maps album and on-this-day storytelling tools into content and structured payloads', async () => {
@@ -376,5 +377,6 @@ describe('storytelling MCP server integration', () => {
     const output = await client.readResource('history://day/demo/01-02')
 
     expect(output.contents[0]?.text).toContain('01-02')
+    expect(output.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/today?day=01-02')
   }, 20000)
 })

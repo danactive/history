@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { render, renderHook, act, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 vi.mock('next/navigation', () => ({
@@ -135,6 +135,58 @@ describe('usePersonsFilter URL sync', () => {
     const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
     expect(result.current.selectedAge).toBe('unknown')
     expect(result.current.ageFiltered).toHaveLength(1)
+  })
+
+  test('scopes all ages counts to the selected person', () => {
+    query = new URLSearchParams('person=Alice')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      items,
+      indexedKeywords: [],
+      initialSelectedPerson: 'Alice',
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (1 photo)'
+    ))).toBeInTheDocument()
+  })
+
+  test('keeps selected person when selecting an age', () => {
+    query = new URLSearchParams('person=Alice')
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({
+      items,
+      indexedKeywords: [],
+      initialSelectedPerson: 'Alice',
+    }))
+
+    act(() => {
+      result.current.setSelectedAge(21)
+    })
+
+    expect(result.current.selectedPerson).toBe('Alice')
+  })
+
+  test('hides the people dropdown when a person is already selected', () => {
+    query = new URLSearchParams('person=Alice&age=21')
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialSelectedPerson: 'Alice',
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.queryByText('All people at 21 (1 person)')).not.toBeInTheDocument()
+    expect(screen.getByText('Person: Alice')).toBeInTheDocument()
   })
 })
 

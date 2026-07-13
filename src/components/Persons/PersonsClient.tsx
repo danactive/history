@@ -16,6 +16,8 @@ export default function PersonsClient({
   indexedKeywords,
   clusteredMarkers,
   initialAgeSummary,
+  initialSelectedAge,
+  initialSelectedPerson,
 }: All.ComponentProps) {
   const {
     refImageGallery,
@@ -38,7 +40,7 @@ export default function PersonsClient({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
-  } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
+  } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

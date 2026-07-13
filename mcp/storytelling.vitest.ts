@@ -103,7 +103,7 @@ vi.mock('../src/lib/storytelling', () => ({
 }))
 
 vi.mock('../src/models/config', () => ({
-  default: { defaultGallery: 'demo' },
+  default: { defaultGallery: 'demo', nextPort: 3030 },
 }))
 
 vi.mock('../src/types/generated', () => {
@@ -397,6 +397,7 @@ describe('storytelling MCP server', () => {
     expect(album.contents[0]?.text).toContain('Places: Nagoya')
     expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
     expect(person.contents[0]?.text).toContain('Appearances: 3')
+    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons?person=Mister+Gingerbread')
   })
 
   test('maps get_album_story responses into text and structured content', async () => {
@@ -438,6 +439,7 @@ describe('storytelling MCP server', () => {
 
     expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
     expect(output.contents[0]?.text).toContain('On this day summary')
+    expect(output.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/today?day=01-02')
     expect(output.contents[0]?.text).toContain('2024-01-02: On this day memory')
   })
 

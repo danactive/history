@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
-
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import getAlbum from '../../../src/lib/album'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import { generateClusters } from '../../../src/lib/generate-clusters'
+import type { TodaySearchParams } from '../../../src/lib/monthDay'
+import { getMonthDayFromSearchParams } from '../../../src/lib/monthDay'
 import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFilename } from '../../../src/lib/search'
 import config from '../../../src/models/config'
 import type { AlbumMeta, Gallery, Item } from '../../../src/types/common'
@@ -25,7 +26,7 @@ export async function generateStaticParams() {
   return galleries.map((gallery) => ({ gallery }))
 }
 
-async function getTodayItems(gallery: Gallery) {
+async function getTodayItems(gallery: Gallery, monthDay: string) {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
@@ -49,12 +50,10 @@ async function getTodayItems(gallery: Gallery) {
     }
   })
 
-  const MMDD = new Date().toLocaleString('en-CA').substring(5, 10)
-
   const allItems = (await albums.reduce(async (previousPromise, album) => {
     const prevItems = await previousPromise
     const { album: { items, meta } } = await getAlbum(gallery, album.name)
-    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === MMDD)
+    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
     const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
     const preparedItems = prepareItems({
       albumName: album.name,
@@ -69,9 +68,19 @@ async function getTodayItems(gallery: Gallery) {
   return { items: allItems, indexedKeywords }
 }
 
-export default async function TodayServer(props: { params: Promise<{ gallery: Gallery }> }) {
-  const params = await props.params
-  const { items, indexedKeywords } = await getTodayItems(params.gallery)
+export default async function TodayServer({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ gallery: Gallery }>,
+  searchParams?: Promise<TodaySearchParams>,
+}) {
+  const [{ gallery }, resolvedSearchParams] = await Promise.all([
+    params,
+    searchParams ?? Promise.resolve({}),
+  ])
+  const monthDay = getMonthDayFromSearchParams(resolvedSearchParams)
+  const { items, indexedKeywords } = await getTodayItems(gallery, monthDay)
   const clusteredMarkers = generateClusters(items)
   return (
     <Suspense fallback={<div>Loading Today...</div>}>
