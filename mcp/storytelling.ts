@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/server'
+import { McpServer, ResourceTemplate } from '@modelcontextprotocol/server'
 import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -10,18 +10,122 @@ import {
   buildStorytellingOverview,
   getOnThisDayStory,
   getPeopleStoryIndex,
-  searchStoryMoments,
 } from '../src/lib/storytelling'
 import config from '../src/models/config'
-import { storySearchInputSchema } from '../src/models/schemas'
 import { generatedGallerySchema } from '../src/types/generated'
 
 const modulePath = fileURLToPath(import.meta.url)
 const projectRoot = path.resolve(path.dirname(modulePath), '..')
 process.chdir(projectRoot)
 
-const gallerySchema = generatedGallerySchema.describe('Gallery name from the local archive.')
+const gallerySchema = generatedGallerySchema.describe(
+  'Select a gallery collection of albums to query for stories. If not provided, the default gallery will be used.',
+)
+const gallerySchemaWithDefault = gallerySchema.default(config.defaultGallery)
 const albumSchema = z.string().describe('Album name inside the selected gallery.')
+const monthDaySchema = z.string().regex(/^\d{2}-\d{2}$/).describe('Month-day in MM-DD format. Defaults to today.')
+
+function stringifyLines(lines: Array<string | null | undefined>) {
+  return lines.filter((line): line is string => Boolean(line)).join('\n')
+}
+
+function parseGallery(value: unknown) {
+  return generatedGallerySchema.parse(value ?? config.defaultGallery)
+}
+
+function parseMonthDay(value: unknown) {
+  return monthDaySchema.parse(value)
+}
+
+function decodeTemplateValue(value: unknown) {
+  return typeof value === 'string' ? decodeURIComponent(value) : ''
+}
+
+function getTemplatePathSegments(uri: URL) {
+  return uri.pathname.split('/').filter(Boolean).map(segment => decodeURIComponent(segment))
+}
+
+function getGalleryFromTemplate(uri: URL, value: unknown, segmentIndex = 0) {
+  const pathSegments = getTemplatePathSegments(uri)
+  return parseGallery(value ?? pathSegments[segmentIndex])
+}
+
+function getStringFromTemplate(uri: URL, value: unknown, segmentIndex: number) {
+  if (typeof value === 'string' && value.length > 0) {
+    return decodeTemplateValue(value)
+  }
+
+  const pathSegments = getTemplatePathSegments(uri)
+  return pathSegments[segmentIndex] ?? ''
+}
+
+const GUIDE_URI = 'history://guide'
+const GALLERIES_URI = 'history://galleries'
+const GALLERY_TEMPLATE = 'history://gallery/{gallery}'
+const ALBUM_TEMPLATE = 'history://album/{gallery}/{album}'
+const PERSON_TEMPLATE = 'history://person/{gallery}/{name}'
+const DAY_TEMPLATE = 'history://day/{gallery}/{monthDay}'
+
+async function buildStorytellingGuide() {
+  const overview = await buildStorytellingOverview()
+  return stringifyLines([
+    overview,
+    '',
+    'Browse resources like:',
+    `- ${GALLERIES_URI}`,
+    '- history://gallery/demo',
+    '- history://album/demo/sample',
+    '- history://person/demo/Mister%20Gingerbread',
+    '- history://day/demo/01-02',
+    '',
+    'Recommended workflow:',
+    `1. Read ${GALLERIES_URI} to discover galleries.`,
+    '2. Read a gallery or album resource for grounded archive context.',
+    '3. Optionally call get_album_story or get_on_this_day_story for curated summaries.',
+    '4. Use the write-history-story prompt to turn the evidence into prose.',
+  ])
+}
+
+async function buildGalleriesResource() {
+  const { galleries } = await getGalleries()
+  const counts = await Promise.all(galleries.map(async (gallery) => {
+    const albums = await getAlbums(gallery)
+    return `${gallery}: ${albums[gallery].albums.length} album(s)`
+  }))
+
+  return stringifyLines([
+    'Available galleries',
+    ...counts,
+  ])
+}
+
+async function buildGalleryResource(gallery: z.infer<typeof generatedGallerySchema>) {
+  const albums = await getAlbums(gallery)
+  const output = albums[gallery]
+  return stringifyLines([
+    `Gallery ${gallery}`,
+    `Albums: ${output.albums.length}`,
+    ...output.albums.map((album) => `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`),
+  ])
+}
+
+async function buildPersonResource(gallery: z.infer<typeof generatedGallerySchema>, name: string) {
+  const output = await getPeopleStoryIndex(gallery)
+  const person = output.people.find((candidate) => candidate.name === name)
+  if (!person) {
+    throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
+  }
+
+  return stringifyLines([
+    `Person ${person.name}`,
+    `Gallery: ${gallery}`,
+    `Appearances: ${person.appearances}`,
+    `First seen: ${person.firstSeen ?? 'unknown'}`,
+    `Last seen: ${person.lastSeen ?? 'unknown'}`,
+    `Date of birth: ${person.dateOfBirth ?? 'unknown'}`,
+    `Albums: ${person.albums.join(', ') || 'none'}`,
+  ])
+}
 
 function createStorytellingServer() {
   const server = new McpServer({
@@ -30,71 +134,12 @@ function createStorytellingServer() {
   })
 
   server.registerTool(
-    'list_galleries',
-    {
-      title: 'List Galleries',
-      description: 'List available local galleries that can be queried for stories.',
-      annotations: { readOnlyHint: true },
-    },
-    async () => {
-      const result = await getGalleries()
-      return {
-        content: [{ type: 'text', text: `Available galleries: ${result.galleries.join(', ')}` }],
-        structuredContent: result,
-      }
-    },
-  )
-
-  server.registerTool(
-    'list_albums',
-    {
-      title: 'List Albums',
-      description: 'List albums in a gallery with their title, subtitle, and year span.',
-      inputSchema: z.object({
-        gallery: gallerySchema,
-      }),
-      annotations: { readOnlyHint: true },
-    },
-    async ({ gallery }) => {
-      const albums = await getAlbums(gallery)
-      const output = albums[gallery]
-      return {
-        content: [{ type: 'text', text: `Found ${output.albums.length} album(s) in ${gallery}.` }],
-        structuredContent: output,
-      }
-    },
-  )
-  // TODO zod for parsing XML too
-  server.registerTool(
-    'search_story_moments',
-    {
-      title: 'Search Story Moments',
-      description: 'Search across archive items for moments that are strong narrative candidates.',
-      inputSchema: storySearchInputSchema,
-      annotations: { readOnlyHint: true },
-    },
-    async (input) => {
-      const output = await searchStoryMoments({
-        ...input,
-      })
-      const topLine = output.matches[0]
-        ? `Top match: ${output.matches[0].caption} (${output.matches[0].filename})`
-        : output.summary
-
-      return {
-        content: [{ type: 'text', text: `${output.summary}\n${topLine}` }],
-        structuredContent: output,
-      }
-    },
-  )
-
-  server.registerTool(
     'get_album_story',
     {
       title: 'Get Album Story',
       description: 'Return the narrative context and strongest highlights for a single album.',
       inputSchema: z.object({
-        gallery: gallerySchema,
+        gallery: gallerySchemaWithDefault,
         album: albumSchema,
         limit: z.number().int().min(1).max(25).default(8).describe('Maximum number of highlights to return.'),
       }),
@@ -110,32 +155,13 @@ function createStorytellingServer() {
   )
 
   server.registerTool(
-    'get_people_story_index',
-    {
-      title: 'Get People Story Index',
-      description: 'List people in a gallery with appearance counts and date spans.',
-      inputSchema: z.object({
-        gallery: gallerySchema.default(config.defaultGallery),
-      }),
-      annotations: { readOnlyHint: true },
-    },
-    async ({ gallery }) => {
-      const output = await getPeopleStoryIndex(gallery)
-      return {
-        content: [{ type: 'text', text: output.summary }],
-        structuredContent: output,
-      }
-    },
-  )
-
-  server.registerTool(
     'get_on_this_day_story',
     {
       title: 'Get On This Day Story',
       description: 'Find moments from the same month and day across years for a gallery.',
       inputSchema: z.object({
-        gallery: gallerySchema.default(config.defaultGallery),
-        monthDay: z.string().regex(/^\d{2}-\d{2}$/).optional().describe('Month-day in MM-DD format. Defaults to today.'),
+        gallery: gallerySchemaWithDefault,
+        monthDay: monthDaySchema.optional(),
         limit: z.number().int().min(1).max(25).default(8).describe('Maximum number of matches to return.'),
       }),
       annotations: { readOnlyHint: true },
@@ -150,48 +176,164 @@ function createStorytellingServer() {
   )
 
   server.registerResource(
-    'history-overview',
-    'history://overview',
+    'history-galleries',
+    GALLERIES_URI,
     {
-      title: 'History Storytelling Overview',
-      description: 'Overview of the local history archive and recommended storytelling workflow.',
+      title: 'History Galleries',
+      description: 'List all available gallery collections in the local archive.',
       mimeType: 'text/plain',
     },
     async (uri) => ({
       contents: [{
         uri: uri.href,
-        text: await buildStorytellingOverview(),
+        text: await buildGalleriesResource(),
       }],
     }),
   )
 
   server.registerResource(
-    'history-storytelling-guide',
-    'history://storytelling-guide',
+    'history-gallery',
+    new ResourceTemplate(GALLERY_TEMPLATE, {
+      list: async () => {
+        const { galleries } = await getGalleries()
+        return {
+          resources: galleries.map((gallery) => ({
+            uri: `history://gallery/${encodeURIComponent(gallery)}`,
+            name: gallery,
+          })),
+        }
+      },
+    }),
     {
-      title: 'Storytelling Query Guide',
-      description: 'Examples of strong storytelling queries for the archive.',
+      title: 'History Gallery',
+      description: 'Album inventory and summary for a specific gallery.',
+      mimeType: 'text/plain',
+    },
+    async (uri, variables) => ({
+      contents: [{
+        uri: uri.href,
+        text: await buildGalleryResource(getGalleryFromTemplate(uri, variables.gallery, 0)),
+      }],
+    }),
+  )
+
+  server.registerResource(
+    'history-album',
+    new ResourceTemplate(ALBUM_TEMPLATE, {
+      list: async () => {
+        const { galleries } = await getGalleries()
+        const resources = await Promise.all(galleries.map(async (gallery) => {
+          const albums = await getAlbums(gallery)
+          return albums[gallery].albums.map((album) => ({
+            uri: `history://album/${encodeURIComponent(gallery)}/${encodeURIComponent(album.name)}`,
+            name: `${gallery}/${album.name}`,
+          }))
+        }))
+
+        return { resources: resources.flat() }
+      },
+    }),
+    {
+      title: 'History Album',
+      description: 'Narrative summary and highlights for a specific album.',
+      mimeType: 'text/plain',
+    },
+    async (uri, variables) => {
+      const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
+      const album = getStringFromTemplate(uri, variables.album, 1)
+      const output = await buildAlbumStory(gallery, album, 8)
+      return {
+        contents: [{
+          uri: uri.href,
+          text: stringifyLines([
+            output.summary,
+            `Places: ${output.places.join(', ') || 'none'}`,
+            `People: ${output.people.join(', ') || 'none'}`,
+          ]),
+        }],
+      }
+    },
+  )
+
+  server.registerResource(
+    'history-person',
+    new ResourceTemplate(PERSON_TEMPLATE, {
+      list: async () => {
+        const { galleries } = await getGalleries()
+        const resources = await Promise.all(galleries.map(async (gallery) => {
+          const people = await getPeopleStoryIndex(gallery)
+          return people.people.map((person) => ({
+            uri: `history://person/${encodeURIComponent(gallery)}/${encodeURIComponent(person.name)}`,
+            name: `${gallery}/${person.name}`,
+          }))
+        }))
+
+        return { resources: resources.flat() }
+      },
+    }),
+    {
+      title: 'History Person',
+      description: 'Appearance counts and date span for a specific person within a gallery.',
+      mimeType: 'text/plain',
+    },
+    async (uri, variables) => ({
+      contents: [{
+        uri: uri.href,
+        text: await buildPersonResource(
+          getGalleryFromTemplate(uri, variables.gallery, 0),
+          getStringFromTemplate(uri, variables.name, 1),
+        ),
+      }],
+    }),
+  )
+
+  server.registerResource(
+    'history-day',
+    new ResourceTemplate(DAY_TEMPLATE, {
+      list: async () => {
+        const { galleries } = await getGalleries()
+        const today = new Date().toLocaleString('en-CA').substring(5, 10)
+        return {
+          resources: galleries.map((gallery) => ({
+            uri: `history://day/${encodeURIComponent(gallery)}/${today}`,
+            name: `${gallery}/${today}`,
+          })),
+        }
+      },
+    }),
+    {
+      title: 'History On This Day',
+      description: 'On-this-day matches for a gallery and month-day.',
+      mimeType: 'text/plain',
+    },
+    async (uri, variables) => {
+      const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
+      const monthDay = parseMonthDay(getStringFromTemplate(uri, variables.monthDay, 1))
+      const output = await getOnThisDayStory(gallery, monthDay, 8)
+      return {
+        contents: [{
+          uri: uri.href,
+          text: stringifyLines([
+            output.summary,
+            ...output.matches.map((match) => `${match.date ?? 'unknown'}: ${match.caption} (${match.filename})`),
+          ]),
+        }],
+      }
+    },
+  )
+
+  server.registerResource(
+    'history-guide',
+    GUIDE_URI,
+    {
+      title: 'History Storytelling Guide',
+      description: 'Overview of the local history archive, example story queries, and a recommended workflow.',
       mimeType: 'text/plain',
     },
     async (uri) => ({
       contents: [{
         uri: uri.href,
-        text: [
-          'Try questions like:',
-          '- Find a story about Vancouver food memories.',
-          '- Show me story moments from Japan.',
-          '- Find narrative moments in Aichi, Japan.',
-          '- Show me the strongest narrative moments involving Mister Gingerbread.',
-          '- Build a short travel story from the sample album.',
-          '- What happened on this day across years?',
-          '',
-          'Recommended tool order:',
-          '1. list_galleries',
-          '2. list_albums',
-          '3. search_story_moments or get_on_this_day_story',
-          '4. get_album_story',
-          '5. write-history-story prompt',
-        ].join('\n'),
+        text: await buildStorytellingGuide(),
       }],
     }),
   )
@@ -215,7 +357,7 @@ function createStorytellingServer() {
           text: [
             `Write a ${tone} story for this archive request: ${query}.`,
             gallery ? `Focus on gallery: ${gallery}.` : 'Use any relevant gallery.',
-            'Before writing, call the storytelling tools to gather factual evidence.',
+            'Before writing, read the relevant history resources and call remaining storytelling tools when needed.',
             'Cite concrete albums, dates, places, and people from the tool results.',
             'If the archive evidence is thin, say so instead of inventing details.',
           ].join(' '),

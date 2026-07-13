@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
-
 import type { XmlAlbum, XmlItem } from '../../types/common'
+import { generatedGalleries } from '../../types/generated'
 import { transformReference } from '../../utils/reference'
 import transformJsonSchema, { transformPersons } from '../album'
 import config from '../config'
@@ -260,9 +260,10 @@ describe('Album library', () => {
         item: makeXmlItem(),
       })
       Reflect.set(getMeta(mock), 'gallery', 'nope')
+      const expectedOptions = generatedGalleries.map((gallery) => JSON.stringify(gallery)).join('|')
 
       expect(() => transformJsonSchema(mock, [])).toThrow(
-        'XML validation failed in <meta> element: gallery: Invalid option: expected one of "dan"|"demo"',
+        `XML validation failed in <meta> element: gallery: Invalid option: expected one of ${expectedOptions}`,
       )
     })
 

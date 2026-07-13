@@ -1,5 +1,4 @@
 import * as z from 'zod/v4'
-
 import type { XmlAlbum, XmlItem } from '../types/common'
 import { generatedGallerySchema } from '../types/generated'
 
@@ -202,3 +201,4 @@ export {
   xmlMetaInputSchema,
   xmlReferenceInputSchema,
 }
+

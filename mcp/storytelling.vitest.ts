@@ -44,6 +44,34 @@ const listToolsResultSchema = z.object({
   })),
 })
 
+const listResourcesResultSchema = z.object({
+  resources: z.array(z.object({
+    uri: z.string(),
+    name: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    mimeType: z.string().optional(),
+  })),
+})
+
+const listResourceTemplatesResultSchema = z.object({
+  resourceTemplates: z.array(z.object({
+    uriTemplate: z.string(),
+    name: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    mimeType: z.string().optional(),
+  })),
+})
+
+const readResourceResultSchema = z.object({
+  contents: z.array(z.object({
+    uri: z.string(),
+    text: z.string().optional(),
+    mimeType: z.string().optional(),
+  })),
+})
+
 const toolCallResultSchema = z.object({
   content: z.array(z.object({
     type: z.string(),
@@ -54,7 +82,6 @@ const toolCallResultSchema = z.object({
 
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
-const searchStoryMoments = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
 const getOnThisDayStory = vi.hoisted(() => vi.fn())
@@ -69,7 +96,6 @@ vi.mock('../src/lib/albums', () => ({
 }))
 
 vi.mock('../src/lib/storytelling', () => ({
-  searchStoryMoments,
   buildAlbumStory,
   getPeopleStoryIndex,
   getOnThisDayStory,
@@ -79,6 +105,14 @@ vi.mock('../src/lib/storytelling', () => ({
 vi.mock('../src/models/config', () => ({
   default: { defaultGallery: 'demo' },
 }))
+
+vi.mock('../src/types/generated', () => {
+  const generatedGalleries = ['demo', 'public'] as const
+  return {
+    generatedGalleries,
+    generatedGallerySchema: z.enum(generatedGalleries),
+  }
+})
 
 class McpInMemoryClient {
   private nextId = 1
@@ -133,6 +167,30 @@ class McpInMemoryClient {
       throw new Error(`Tool listing failed: ${response.error.message}`)
     }
     return listToolsResultSchema.parse(response.result)
+  }
+
+  async listResources() {
+    const response = await this.request('resources/list', {})
+    if (response.error) {
+      throw new Error(`Resource listing failed: ${response.error.message}`)
+    }
+    return listResourcesResultSchema.parse(response.result)
+  }
+
+  async listResourceTemplates() {
+    const response = await this.request('resources/templates/list', {})
+    if (response.error) {
+      throw new Error(`Resource template listing failed: ${response.error.message}`)
+    }
+    return listResourceTemplatesResultSchema.parse(response.result)
+  }
+
+  async readResource(uri: string) {
+    const response = await this.request('resources/read', { uri })
+    if (response.error) {
+      throw new Error(`Resource read failed: ${response.error.message}`)
+    }
+    return readResourceResultSchema.parse(response.result)
   }
 
   async callTool(name: string, args: Record<string, unknown>) {
@@ -205,37 +263,37 @@ afterEach(async () => {
 beforeEach(() => {
   getGalleries.mockReset()
   getAlbums.mockReset()
-  searchStoryMoments.mockReset()
   buildAlbumStory.mockReset()
   getPeopleStoryIndex.mockReset()
   getOnThisDayStory.mockReset()
   buildStorytellingOverview.mockReset()
 
-  getGalleries.mockResolvedValue({ galleries: ['demo', 'fake'] })
+  getGalleries.mockResolvedValue({ galleries: ['demo', 'public'] })
   getAlbums.mockResolvedValue({
     demo: {
       albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024' }],
     },
-  })
-  searchStoryMoments.mockResolvedValue({
-    summary: 'Found 1 story candidate from 3 scanned items.',
-    filtersApplied: {
-      query: null,
-      gallery: 'demo',
-      album: null,
-      person: null,
-      city: null,
-      country: 'Japan',
-      region: 'Aichi',
-      year: null,
-      limit: 8,
+    public: {
+      albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025' }],
     },
-    totalCandidates: 3,
-    matches: [{ caption: 'Nagoya Castle', filename: '2024-05-01-01.jpg' }],
   })
-  buildAlbumStory.mockResolvedValue({ summary: 'Album summary' })
-  getPeopleStoryIndex.mockResolvedValue({ summary: 'People summary' })
-  getOnThisDayStory.mockResolvedValue({ summary: 'On this day summary' })
+  buildAlbumStory.mockResolvedValue({ summary: 'Album summary', places: ['Nagoya'], people: ['Mister Gingerbread'] })
+  getPeopleStoryIndex.mockResolvedValue({
+    summary: 'People summary',
+    people: [{
+      name: 'Mister Gingerbread',
+      appearances: 3,
+      firstSeen: '2024-01-02',
+      lastSeen: '2024-02-03',
+      dateOfBirth: null,
+      albums: ['trip'],
+    }],
+  })
+  getOnThisDayStory.mockResolvedValue({
+    summary: 'On this day summary',
+    monthDay: '01-02',
+    matches: [{ date: '2024-01-02', caption: 'On this day memory', filename: '2024-01-02-01.jpg' }],
+  })
   buildStorytellingOverview.mockResolvedValue('Overview text')
 })
 
@@ -263,79 +321,82 @@ describe('storytelling MCP server', () => {
     await client.initialize()
     const result = await client.listTools()
 
-    expect(result.tools.map(tool => tool.name)).toEqual(expect.arrayContaining([
-      'list_galleries',
-      'list_albums',
-      'search_story_moments',
+    expect(result.tools.map(tool => tool.name)).toEqual([
       'get_album_story',
-      'get_people_story_index',
       'get_on_this_day_story',
-    ]))
-    expect(result.tools.find(tool => tool.name === 'search_story_moments')).toEqual(expect.objectContaining({
-      title: 'Search Story Moments',
-      description: expect.stringContaining('Search across archive items'),
+    ])
+    expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
+      title: 'Get Album Story',
+      description: expect.stringContaining('single album'),
     }))
   })
 
-  test('maps list_galleries results into text and structured content', async () => {
+  test('lists resource templates for galleries, albums, people, and days', async () => {
     const client = await createConnection()
 
     await client.initialize()
-    const output = await client.callTool('list_galleries', {})
+    const result = await client.listResourceTemplates()
+
+    expect(result.resourceTemplates.map(template => template.uriTemplate)).toEqual(expect.arrayContaining([
+      'history://gallery/{gallery}',
+      'history://album/{gallery}/{album}',
+      'history://person/{gallery}/{name}',
+      'history://day/{gallery}/{monthDay}',
+    ]))
+  })
+
+  test('lists and reads the consolidated storytelling guide resource', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const resources = await client.listResources()
+
+    expect(resources.resources).toEqual(expect.arrayContaining([
+      expect.objectContaining({ uri: 'history://galleries', title: 'History Galleries' }),
+      expect.objectContaining({ uri: 'history://guide', title: 'History Storytelling Guide' }),
+      expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
+      expect.objectContaining({ uri: 'history://album/demo/trip', title: 'History Album' }),
+      expect.objectContaining({ uri: 'history://person/demo/Mister%20Gingerbread', title: 'History Person' }),
+    ]))
+
+    const guide = await client.readResource('history://guide')
+
+    expect(guide.contents[0]).toEqual(expect.objectContaining({
+      uri: 'history://guide',
+      text: expect.stringContaining('Overview text'),
+    }))
+    expect(guide.contents[0]?.text).toContain('history://galleries')
+    expect(guide.contents[0]?.text).toContain('Recommended workflow:')
+  })
+
+  test('reads gallery inventory resources', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const galleries = await client.readResource('history://galleries')
+    const gallery = await client.readResource('history://gallery/demo')
+    const otherGallery = await client.readResource('history://gallery/public')
 
     expect(getGalleries).toHaveBeenCalledTimes(1)
-    expect(output).toEqual({
-      content: [{ type: 'text', text: 'Available galleries: demo, fake' }],
-      structuredContent: { galleries: ['demo', 'fake'] },
-    })
+    expect(galleries.contents[0]?.text).toContain('Available galleries')
+    expect(galleries.contents[0]?.text).toContain('demo: 1 album(s)')
+    expect(gallery.contents[0]?.text).toContain('Gallery demo')
+    expect(gallery.contents[0]?.text).toContain('trip: Trip')
+    expect(otherGallery.contents[0]?.text).toContain('Gallery public')
+    expect(otherGallery.contents[0]?.text).toContain('other-trip: Other Trip')
   })
 
-  test('maps list_albums results into text and structured content', async () => {
+  test('reads album and person resources', async () => {
     const client = await createConnection()
 
     await client.initialize()
-    const output = await client.callTool('list_albums', { gallery: 'demo' })
+    const album = await client.readResource('history://album/demo/trip')
+    const person = await client.readResource('history://person/demo/Mister%20Gingerbread')
 
-    expect(getAlbums).toHaveBeenCalledWith('demo')
-    expect(output).toEqual({
-      content: [{ type: 'text', text: 'Found 1 album(s) in demo.' }],
-      structuredContent: {
-        albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024' }],
-      },
-    })
-  })
-
-  test('accepts country and region location queries in search_story_moments and forwards them', async () => {
-    const client = await createConnection()
-
-    await client.initialize()
-    const output = await client.callTool('search_story_moments', {
-      gallery: 'demo',
-      country: 'Japan',
-      region: 'Aichi',
-    })
-
-    expect(searchStoryMoments).toHaveBeenCalledWith({
-      gallery: 'demo',
-      country: 'Japan',
-      region: 'Aichi',
-      limit: 8,
-    })
-    expect(output).toEqual({
-      content: [{ type: 'text', text: 'Found 1 story candidate from 3 scanned items.\nTop match: Nagoya Castle (2024-05-01-01.jpg)' }],
-      structuredContent: expect.objectContaining({
-        filtersApplied: expect.objectContaining({ country: 'Japan', region: 'Aichi' }),
-      }),
-    })
-  })
-
-  test('accepts region-only location queries in search_story_moments', async () => {
-    const client = await createConnection()
-
-    await client.initialize()
-    await client.callTool('search_story_moments', { region: 'Aichi' })
-
-    expect(searchStoryMoments).toHaveBeenCalledWith({ region: 'Aichi', limit: 8 })
+    expect(album.contents[0]?.text).toContain('Album summary')
+    expect(album.contents[0]?.text).toContain('Places: Nagoya')
+    expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
+    expect(person.contents[0]?.text).toContain('Appearances: 3')
   })
 
   test('maps get_album_story responses into text and structured content', async () => {
@@ -345,10 +406,17 @@ describe('storytelling MCP server', () => {
     const output = await client.callTool('get_album_story', { gallery: 'demo', album: 'trip' })
 
     expect(buildAlbumStory).toHaveBeenCalledWith('demo', 'trip', 8)
-    expect(output).toEqual({
-      content: [{ type: 'text', text: 'Album summary' }],
-      structuredContent: { summary: 'Album summary' },
-    })
+    expect(output.content).toEqual([{ type: 'text', text: 'Album summary' }])
+    expect(output.structuredContent).toEqual(expect.objectContaining({ summary: 'Album summary' }))
+  })
+
+  test('defaults gallery to config.defaultGallery when get_album_story omits it', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    await client.callTool('get_album_story', { album: 'trip' })
+
+    expect(buildAlbumStory).toHaveBeenCalledWith('demo', 'trip', 8)
   })
 
   test('maps get_people_story_index and get_on_this_day_story responses', async () => {
@@ -356,18 +424,30 @@ describe('storytelling MCP server', () => {
 
     await client.initialize()
 
-    const peopleOutput = await client.callTool('get_people_story_index', {})
-    expect(getPeopleStoryIndex).toHaveBeenCalledWith('demo')
-    expect(peopleOutput).toEqual({
-      content: [{ type: 'text', text: 'People summary' }],
-      structuredContent: { summary: 'People summary' },
-    })
-
     const onThisDayOutput = await client.callTool('get_on_this_day_story', { monthDay: '01-02' })
     expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
-    expect(onThisDayOutput).toEqual({
-      content: [{ type: 'text', text: 'On this day summary' }],
-      structuredContent: { summary: 'On this day summary' },
-    })
+    expect(onThisDayOutput.content).toEqual([{ type: 'text', text: 'On this day summary' }])
+    expect(onThisDayOutput.structuredContent).toEqual(expect.objectContaining({ summary: 'On this day summary' }))
+  })
+
+  test('reads on-this-day resources', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.readResource('history://day/demo/01-02')
+
+    expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
+    expect(output.contents[0]?.text).toContain('On this day summary')
+    expect(output.contents[0]?.text).toContain('2024-01-02: On this day memory')
+  })
+
+  test('rejects invalid on-this-day resource monthDay values', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+
+    await expect(client.readResource('history://day/demo/2016-07')).rejects.toThrow(
+      'Invalid string: must match pattern',
+    )
   })
 })
