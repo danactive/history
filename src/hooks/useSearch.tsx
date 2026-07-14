@@ -5,16 +5,27 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction,
   useCallback,
-  useEffect, useMemo, useRef, useState,
+  useEffect, useMemo, useState,
 } from 'react'
 import AutoComplete from '../components/ComboBox'
-import { IndexedKeywords } from '../types/common'
-import useBookmark from './useBookmark'
+import {
+  buildVisitedKeywordOptions,
+  buildVisitedRegionCountryIndex,
+  formatVisitedPlace,
+  getVisitedPlace,
+  matchesVisitedPlace,
+} from '../lib/visited-core'
+import { IndexedKeywords, VisitedPlace } from '../types/common'
 import { matchCorpus } from '../utils/search'
 import styles from './search.module.css'
+import useBookmark from './useBookmark'
 
 interface ServerSideItem {
   corpus: string;
+  city?: string;
+  filename?: string | string[];
+  photoDate?: string | null;
+  visitedPlace?: VisitedPlace | null;
 }
 
 interface UseSearchProps<ItemType> {
@@ -82,13 +93,69 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const pathname = usePathname()
 
   const initialKeyword = searchParams?.get('keyword') ?? ''
+  const initialVisitedCountry = searchParams?.get('visitedCountry') ?? ''
+  const initialVisitedRegion = searchParams?.get('visitedRegion') ?? ''
   const [keyword, setKeyword] = useState<string>(initialKeyword)
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(
     initialKeyword ? { label: initialKeyword, value: initialKeyword } : null,
   )
-  const [inputValue, setInputValue] = useState<string>(initialKeyword)
+  const [inputValue, setInputValue] = useState<string>(initialKeyword || initialVisitedRegion || initialVisitedCountry)
   const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
+
+  const currentVisitedFilter = useMemo<VisitedPlace | null>(() => {
+    if (!initialVisitedCountry) {
+      return null
+    }
+
+    return {
+      country: initialVisitedCountry,
+      region: initialVisitedRegion || null,
+    }
+  }, [initialVisitedCountry, initialVisitedRegion])
+
+  const visitedOptions = useMemo(
+    () => buildVisitedKeywordOptions(
+      items
+        .filter((item): item is ItemType & Required<Pick<ServerSideItem, 'city' | 'filename'>> => (
+          typeof item.city === 'string' && Boolean(item.filename)
+        ))
+        .map((item) => ({
+          city: item.city,
+          filename: item.filename,
+          photoDate: item.photoDate ?? null,
+        })),
+    ),
+    [items],
+  )
+
+  const searchOptions = useMemo(() => {
+    const options = new Map<string, IndexedKeywords>()
+
+    indexedKeywords.forEach((option) => {
+      options.set(option.value, option)
+    })
+
+    visitedOptions.forEach((option) => {
+      options.set(option.value, option)
+    })
+
+    return [...options.values()].sort((left, right) => left.value.localeCompare(right.value))
+  }, [indexedKeywords, visitedOptions])
+
+  const activeVisitedOption = useMemo(() => {
+    if (!currentVisitedFilter) return null
+
+    return searchOptions.find((option) => {
+      if (!option.visitedPlace) return false
+      return matchesVisitedPlace(option.visitedPlace, currentVisitedFilter)
+        && formatVisitedPlace(option.visitedPlace) === formatVisitedPlace(currentVisitedFilter)
+    }) ?? {
+      label: formatVisitedPlace(currentVisitedFilter),
+      value: formatVisitedPlace(currentVisitedFilter),
+      visitedPlace: currentVisitedFilter,
+    }
+  }, [currentVisitedFilter, searchOptions])
 
   const getCurrentParams = useCallback(() => {
     const serializedParams = typeof searchParams?.toString === 'function'
@@ -112,7 +179,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     return params
   }, [searchParams])
 
-  const getNextPath = useCallback((nextKeyword: string, select?: string | null) => {
+  const getNextPath = useCallback((nextKeyword: string, select?: string | null, nextVisitedPlace?: VisitedPlace | null) => {
     const params = getCurrentParams()
 
     if (nextKeyword) {
@@ -127,14 +194,42 @@ export default function useSearch<ItemType extends ServerSideItem>({
       params.delete('select')
     }
 
+    if (nextVisitedPlace === null) {
+      params.delete('visitedCountry')
+      params.delete('visitedRegion')
+    } else if (nextVisitedPlace) {
+      params.set('visitedCountry', nextVisitedPlace.country)
+      if (nextVisitedPlace.region) {
+        params.set('visitedRegion', nextVisitedPlace.region)
+      } else {
+        params.delete('visitedRegion')
+      }
+    }
+
     const query = params.toString()
     return query ? `${pathname}?${query}` : pathname
   }, [getCurrentParams, pathname])
 
+  const visitedFiltered = useMemo(() => {
+    if (!currentVisitedFilter) return items
+
+    const regionCountryIndex = buildVisitedRegionCountryIndex(
+      items.filter((item): item is ItemType & Required<Pick<ServerSideItem, 'city'>> => typeof item.city === 'string'),
+    )
+
+    return items.filter((item) => {
+      const itemVisitedPlace = item.visitedPlace ?? (typeof item.city === 'string'
+        ? getVisitedPlace({ city: item.city }, regionCountryIndex)
+        : null)
+
+      return matchesVisitedPlace(itemVisitedPlace, currentVisitedFilter)
+    })
+  }, [currentVisitedFilter, items])
+
   const filtered = useMemo(() => {
-    if (!keyword) return items
-    return items.filter((item) => matchCorpus(item.corpus, keyword))
-  }, [items, keyword])
+    if (!keyword) return visitedFiltered
+    return visitedFiltered.filter((item) => matchCorpus(item.corpus, keyword))
+  }, [visitedFiltered, keyword])
 
   // Count of currently visible thumbnails (consumer can override this if needed)
   const [visibleCount, setVisibleCount] = useState<number>(filtered.length)
@@ -156,6 +251,13 @@ export default function useSearch<ItemType extends ServerSideItem>({
 
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (selectedOption?.visitedPlace) {
+      setKeyword('')
+      setMemoryIndex?.(0)
+      router.push(getNextPath('', null, selectedOption.visitedPlace))
+      return
+    }
+
     const newKeyword = selectedOption?.value ?? ''
     setKeyword(newKeyword)
     setMemoryIndex?.(0)
@@ -213,13 +315,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
   }, [parsedKeyword, applyKeywordToUrl, handleClear])
 
   const handleClearVisitedFilter = useCallback(() => {
-    const params = getCurrentParams()
-    params.delete('visitedCountry')
-    params.delete('visitedRegion')
-
-    const query = params.toString()
-    router.replace(query ? `${pathname}?${query}` : pathname)
-  }, [getCurrentParams, pathname, router])
+    router.replace(getNextPath(keyword, null, null))
+  }, [getNextPath, keyword, router])
 
   const canBookmark = Boolean(
     refImageGallery
@@ -235,6 +332,9 @@ export default function useSearch<ItemType extends ServerSideItem>({
   })
 
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
+  const activeVisitedFilterLabel = currentVisitedFilter
+    ? formatVisitedPlace(currentVisitedFilter)
+    : visitedFilterLabel
 
   const searchBox = (
     <form onSubmit={handleSubmit}>
@@ -287,18 +387,18 @@ export default function useSearch<ItemType extends ServerSideItem>({
             )}
           </Stack>
         )}
-        {visitedFilterLabel && (
+        {activeVisitedFilterLabel && (
           <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
             <Chip size="sm" color="primary" variant="soft">
-              {visitedFilterLabel}
+              {activeVisitedFilterLabel}
             </Chip>
             <Button
               type="button"
               size="sm"
               variant="plain"
               onClick={handleClearVisitedFilter}
-              title={`Clear visited filter ${visitedFilterLabel}`}
-              aria-label={`Clear visited filter ${visitedFilterLabel}`}
+              title={`Clear visited filter ${activeVisitedFilterLabel}`}
+              aria-label={`Clear visited filter ${activeVisitedFilterLabel}`}
             >
               ×
             </Button>
@@ -323,7 +423,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
         )}
         <AutoComplete
           className={styles.autocomplete}
-          options={indexedKeywords}
+          options={searchOptions}
           onChange={setSelectedOption}
           value={selectedOption}
           inputValue={inputValue}
@@ -352,18 +452,25 @@ export default function useSearch<ItemType extends ServerSideItem>({
     </form>
   )
 
-  // Track previous search params value to avoid circular dependency
-  const prevSearchParamsValue = useRef<string>(initialKeyword)
-
   useEffect(() => {
-    const value = searchParams?.get('keyword') ?? ''
-    if (value !== prevSearchParamsValue.current) {
-      prevSearchParamsValue.current = value
-      setKeyword(value)
-      setSelectedOption(value ? { label: value, value } : null)
-      setInputValue(value)
+    const nextKeyword = searchParams?.get('keyword') ?? ''
+    setKeyword(nextKeyword)
+
+    if (nextKeyword) {
+      setSelectedOption({ label: nextKeyword, value: nextKeyword })
+      setInputValue(nextKeyword)
+      return
     }
-  }, [searchParams])
+
+    if (activeVisitedOption) {
+      setSelectedOption(activeVisitedOption)
+      setInputValue(activeVisitedOption.value)
+      return
+    }
+
+    setSelectedOption(null)
+    setInputValue('')
+  }, [activeVisitedOption, searchParams])
 
   return {
     filtered,

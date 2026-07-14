@@ -159,6 +159,7 @@ interface ServerSideAllItem extends Item {
 type IndexedKeywords = {
   label: string;
   value: string;
+  visitedPlace?: VisitedPlace;
 }
 
 // SplitViewer fullscreenMap

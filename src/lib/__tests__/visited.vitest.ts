@@ -127,12 +127,24 @@ describe('visited location aggregation', () => {
     const tokyo = getVisitedPlace(items[2], regionCountryIndex)
 
     expect(aichi).toEqual({ country: 'Japan', region: 'Aichi' })
-    expect(tokyo).toEqual({ country: 'Japan', region: null })
+    expect(tokyo).toEqual({ country: 'Japan', region: 'Tokyo' })
     expect(matchesVisitedPlace(aichi, { country: 'Japan', region: null })).toBe(true)
     expect(matchesVisitedPlace(aichi, { country: 'Japan', region: 'Aichi' })).toBe(true)
     expect(matchesVisitedPlace(aichi, { country: 'Japan', region: 'Tokyo' })).toBe(false)
     expect(formatVisitedPlace({ country: 'Japan', region: 'Aichi' })).toBe('Aichi, Japan')
     expect(formatVisitedPlace({ country: 'Japan', region: null })).toBe('Japan')
+  })
+
+  test('treats two-part city-country values as region plus country', () => {
+    const items = [
+      { city: 'Lisbon, Portugal', filename: '2024-01-03-01.jpg', photoDate: null },
+    ]
+
+    const regionCountryIndex = buildVisitedRegionCountryIndex(items)
+    const lisbon = getVisitedPlace(items[0], regionCountryIndex)
+
+    expect(lisbon).toEqual({ country: 'Portugal', region: 'Lisbon' })
+    expect(formatVisitedPlace(lisbon!)).toBe('Lisbon, Portugal')
   })
 
   test('formats consecutive years as ranges', () => {

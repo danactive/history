@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-
+import { isZodError, simplifyZodMessages } from '../../../../src/lib/errors'
 import { errorSchema, renamePaths } from '../../../../src/lib/rename'
-import { isZodError, simplifyZodMessages } from '../../../../src/lib/utils'
 import { validateRequestBody } from '../../../../src/models/rename'
 
 async function POST(req: NextRequest) {

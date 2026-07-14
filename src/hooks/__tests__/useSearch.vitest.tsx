@@ -9,6 +9,20 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
+vi.mock('../../components/ComboBox', () => ({
+  __esModule: true,
+  default: ({ options, onChange, inputValue, onInputChange }: any) => (
+    <div>
+      <input value={inputValue ?? ''} onChange={(event) => onInputChange?.(event.target.value)} />
+      {options.map((option: any) => (
+        <button key={option.label} type="button" onClick={() => onChange(option)}>
+          {option.label}
+        </button>
+      ))}
+    </div>
+  ),
+}))
+
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import useSearch from '../useSearch'
 
@@ -384,5 +398,62 @@ describe('Clear button functionality', () => {
     // Verify input field is cleared
     const input = container.querySelector('input') as HTMLInputElement
     expect(input.value).toBe('')
+  })
+
+  it('filters items from visited query params without using a keyword', () => {
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: (key: string) => {
+        if (key === 'visitedCountry') return 'Portugal'
+        if (key === 'visitedRegion') return 'Lisbon'
+        return null
+      },
+      toString: () => 'visitedCountry=Portugal&visitedRegion=Lisbon',
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/search')
+
+    const items = [
+      { corpus: 'city walk', city: 'Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { corpus: 'other city', city: 'Porto, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+    ]
+
+    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+
+    expect(result.current.keyword).toBe('')
+    expect(result.current.filtered).toEqual([items[0]])
+  })
+
+  it('writes visited query params when a geography option is selected', () => {
+    const mockPush = vi.fn()
+
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: () => null,
+      toString: () => '',
+    } as any)
+
+    vi.mocked(useRouter).mockReturnValue({
+      push: mockPush,
+      replace: vi.fn(),
+    } as any)
+
+    vi.mocked(usePathname).mockReturnValue('/gallery/all')
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        items,
+        indexedKeywords: [{ label: 'Portugal (1)', value: 'Portugal' }],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+    fireEvent.click(getByText('Lisbon, Portugal (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/gallery/all?visitedCountry=Portugal&visitedRegion=Lisbon')
   })
 })

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from '../../../src/components/Link'
 import getGalleries from '../../../src/lib/galleries'
+import type { RegionVisit } from '../../../src/lib/visited'
 import { formatVisitedYears, getVisitedData } from '../../../src/lib/visited'
 import type { VisitedPlace } from '../../../src/types/common'
 import type { Gallery } from '../../../src/types/pages'
@@ -53,7 +54,7 @@ export default async function VisitedServer(props: { params: Promise<Gallery.Par
             </span>
             {country.regions.length > 0 && (
               <ol className={styles.regions}>
-                {country.regions.map(region => (
+                {country.regions.map((region: RegionVisit) => (
                   <li key={region.region}>
                     <span>{region.region}{formatYears(region.years)}</span>
                     {' '}

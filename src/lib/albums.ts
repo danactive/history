@@ -6,8 +6,9 @@ import type {
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
+import { handleLibraryError, isValidStringArray } from './errors'
 import getGalleries from './galleries'
-import utilsFactory, { handleLibraryError, isValidStringArray } from './utils'
+import utilsFactory from './utils'
 import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }

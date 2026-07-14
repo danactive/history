@@ -1,8 +1,8 @@
 import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
 import type { Album, AlbumMeta, XmlAlbum } from '../types/common'
+import { handleLibraryError } from './errors'
 import getGalleries from './galleries'
 import getPersons from './persons'
-import { handleLibraryError } from './utils'
 import { readAlbum } from './xml'
 
 type Envelope = { body: Album, status: number }
