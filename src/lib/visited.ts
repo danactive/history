@@ -13,7 +13,7 @@ export {
   getVisitedPlace,
   matchesVisitedPlace,
 } from './visited-core'
-export type { CountryVisit, RegionVisit, VisitedPlace } from './visited-core'
+export type { CountryVisit, RegionVisit, VisitedPlace, VisitedRegionCountryIndex } from './visited-core'
 
 export async function getVisitedData(gallery: Gallery): Promise<CountryVisit[]> {
   const { [gallery]: { albums } } = await getAlbums(gallery)

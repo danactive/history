@@ -6,6 +6,7 @@ import { getAllData } from './all'
 import getGalleries from './galleries'
 import getPersons, { getPersonsData } from './persons'
 import { buildVisitedRegionCountryIndex, getVisitedPlace, matchesVisitedPlace } from './visited'
+import type { VisitedRegionCountryIndex } from './visited'
 
 const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
@@ -150,7 +151,7 @@ const mapAlbumItemToCandidate = (
   gallery: Gallery,
   album: string,
   item: Item,
-  regionCountryIndex: Map<string, string>,
+  regionCountryIndex: VisitedRegionCountryIndex,
 ): StoryCandidate => ({
   gallery,
   album,

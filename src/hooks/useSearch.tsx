@@ -454,22 +454,52 @@ export default function useSearch<ItemType extends ServerSideItem>({
 
   useEffect(() => {
     const nextKeyword = searchParams?.get('keyword') ?? ''
-    setKeyword(nextKeyword)
+    setKeyword((previousKeyword) => (previousKeyword === nextKeyword ? previousKeyword : nextKeyword))
 
     if (nextKeyword) {
-      setSelectedOption({ label: nextKeyword, value: nextKeyword })
-      setInputValue(nextKeyword)
+      setSelectedOption((previousOption) => {
+        if (
+          previousOption
+          && previousOption.value === nextKeyword
+          && !previousOption.visitedPlace
+        ) {
+          return previousOption
+        }
+
+        return { label: nextKeyword, value: nextKeyword }
+      })
+      setInputValue((previousInputValue) => (previousInputValue === nextKeyword ? previousInputValue : nextKeyword))
       return
     }
 
     if (activeVisitedOption) {
-      setSelectedOption(activeVisitedOption)
-      setInputValue(activeVisitedOption.value)
+      setSelectedOption((previousOption) => {
+        const nextVisitedPlace = activeVisitedOption.visitedPlace
+
+        if (
+          nextVisitedPlace
+          &&
+          previousOption
+          && previousOption.value === activeVisitedOption.value
+          && previousOption.visitedPlace
+          && matchesVisitedPlace(previousOption.visitedPlace, nextVisitedPlace)
+          && matchesVisitedPlace(nextVisitedPlace, previousOption.visitedPlace)
+        ) {
+          return previousOption
+        }
+
+        return activeVisitedOption
+      })
+      setInputValue((previousInputValue) => (
+        previousInputValue === activeVisitedOption.value
+          ? previousInputValue
+          : activeVisitedOption.value
+      ))
       return
     }
 
-    setSelectedOption(null)
-    setInputValue('')
+    setSelectedOption((previousOption) => (previousOption === null ? previousOption : null))
+    setInputValue((previousInputValue) => (previousInputValue === '' ? previousInputValue : ''))
   }, [activeVisitedOption, searchParams])
 
   return {

@@ -5,6 +5,7 @@ import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFi
 import { buildVisitedRegionCountryIndex, getVisitedPlace } from '../lib/visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
+import type { VisitedRegionCountryIndex } from './visited'
 import type { All } from '../types/pages'
 
 type PrepareItemsParams = {
@@ -12,7 +13,7 @@ type PrepareItemsParams = {
   albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom']
   items: Item[]
   gallery: Gallery
-  regionCountryIndex: Map<string, string>
+  regionCountryIndex: VisitedRegionCountryIndex
 }
 
 type ItemMapper = (params: PrepareItemsParams) => ServerSideAllItem[]

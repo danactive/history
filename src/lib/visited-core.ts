@@ -1,4 +1,5 @@
 import type { IndexedKeywords, Item, VisitedPlace } from '../types/common'
+import config from '../models/config'
 
 type RegionVisit = {
   region: string
@@ -34,6 +35,13 @@ type ExplicitVisitedPlace = {
   region: string
 }
 
+type VisitedRegionCountryIndex = {
+  regionToCountry: Map<string, string>
+  countries: Set<string>
+  regionCounts: Map<string, number>
+  secondPartCounts: Map<string, number>
+}
+
 const COUNTRY_ALIASES = new Map([
   ['ca', 'Canada'],
   ['canada', 'Canada'],
@@ -52,6 +60,10 @@ function normalizeKey(value: string) {
 function normalizeCountry(value: string) {
   const trimmed = value.trim()
   return COUNTRY_ALIASES.get(normalizeKey(trimmed)) ?? trimmed
+}
+
+function isKnownCountryAlias(value: string) {
+  return COUNTRY_ALIASES.has(normalizeKey(value))
 }
 
 function normalizeRegion(value: string | null) {
@@ -92,22 +104,38 @@ function getExplicitPlace(parts: string[]): ExplicitVisitedPlace | null {
   }
 }
 
-function buildRegionCountryIndex(places: string[][]) {
-  const index = new Map<string, string>()
+function incrementCount(counts: Map<string, number>, key: string) {
+  counts.set(key, (counts.get(key) ?? 0) + 1)
+}
+
+function buildRegionCountryIndex(places: string[][]): VisitedRegionCountryIndex {
+  const regionToCountry = new Map<string, string>()
+  const countries = new Set<string>()
+  const regionCounts = new Map<string, number>()
+  const secondPartCounts = new Map<string, number>()
 
   places.forEach((parts) => {
+    if (parts.length === 2) {
+      incrementCount(secondPartCounts, normalizeKey(parts[1]))
+    }
+
     const explicit = getExplicitPlace(parts)
     if (!explicit) return
 
-    index.set(normalizeKey(explicit.region), explicit.country)
+    countries.add(normalizeKey(explicit.country))
+    const regionKey = normalizeKey(explicit.region)
+    regionToCountry.set(regionKey, explicit.country)
+    incrementCount(regionCounts, regionKey)
 
     const initials = regionInitials(explicit.region)
     if (initials) {
-      index.set(normalizeKey(initials), explicit.country)
+      const initialsKey = normalizeKey(initials)
+      regionToCountry.set(initialsKey, explicit.country)
+      incrementCount(regionCounts, initialsKey)
     }
   })
 
-  return index
+  return { regionToCountry, countries, regionCounts, secondPartCounts }
 }
 
 export function buildVisitedRegionCountryIndex(items: Pick<Item, 'city'>[]) {
@@ -118,7 +146,7 @@ export function buildVisitedRegionCountryIndex(items: Pick<Item, 'city'>[]) {
   return buildRegionCountryIndex(places)
 }
 
-function parseVisitedPlace(parts: string[], regionCountryIndex: Map<string, string>): ParsedVisitedPlace | null {
+function parseVisitedPlace(parts: string[], regionCountryIndex: VisitedRegionCountryIndex): ParsedVisitedPlace | null {
   if (parts.length === 1) {
     return { country: normalizeCountry(parts[0]), region: null }
   }
@@ -126,7 +154,20 @@ function parseVisitedPlace(parts: string[], regionCountryIndex: Map<string, stri
   if (parts.length === 2) {
     const city = parts[0]
     const secondPart = parts[1]
-    const country = regionCountryIndex.get(normalizeKey(secondPart))
+    const secondPartKey = normalizeKey(secondPart)
+
+    if (isKnownCountryAlias(secondPart) || regionCountryIndex.countries.has(secondPartKey)) {
+      return { country: normalizeCountry(secondPart), region: city }
+    }
+
+    const secondPartCount = regionCountryIndex.secondPartCounts.get(secondPartKey) ?? 0
+    const regionCount = regionCountryIndex.regionCounts.get(secondPartKey) ?? 0
+
+    if (secondPartCount > regionCount && secondPartCount > 0 && isLikelyCountryName(secondPart)) {
+      return { country: normalizeCountry(secondPart), region: city }
+    }
+
+    const country = regionCountryIndex.regionToCountry.get(secondPartKey)
     if (country) return { country, region: secondPart }
 
     if (isLikelyCountryName(secondPart)) {
@@ -141,7 +182,7 @@ function parseVisitedPlace(parts: string[], regionCountryIndex: Map<string, stri
 
 export function getVisitedPlace(
   item: Pick<Item, 'city'>,
-  regionCountryIndex: Map<string, string>,
+  regionCountryIndex: VisitedRegionCountryIndex,
 ): VisitedPlace | null {
   const parts = splitPlace(item.city)
   if (!parts) return null
@@ -296,6 +337,10 @@ export function buildVisitedKeywordOptions(items: Pick<Item, 'city' | 'filename'
     })
 
     country.regions.forEach((region) => {
+      if (region.count < config.visitedRegionSearchMinCount) {
+        return
+      }
+
       const value = formatVisitedPlace(region.filter)
       options.set(value, {
         label: `${value} (${region.count})`,
@@ -308,4 +353,4 @@ export function buildVisitedKeywordOptions(items: Pick<Item, 'city' | 'filename'
   return [...options.values()].sort((left, right) => left.value.localeCompare(right.value))
 }
 
-export type { CountryVisit, RegionVisit, VisitedPlace }
+export type { CountryVisit, RegionVisit, VisitedPlace, VisitedRegionCountryIndex }

@@ -11,6 +11,7 @@ export type Config = {
   defaultAlbum: string
   defaultGallery: Gallery
   defaultZoom: number
+  visitedRegionSearchMinCount: number
   defaultDimensions: {
     video: Dimension
   }

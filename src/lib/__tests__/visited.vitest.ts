@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import {
+  buildVisitedKeywordOptions,
   buildVisitedDataFromItems,
   buildVisitedRegionCountryIndex,
   formatVisitedPlace,
@@ -145,6 +146,56 @@ describe('visited location aggregation', () => {
 
     expect(lisbon).toEqual({ country: 'Portugal', region: 'Lisbon' })
     expect(formatVisitedPlace(lisbon!)).toBe('Lisbon, Portugal')
+  })
+
+  test('does not let learned region mappings override a real country in two-part places', () => {
+    const items = [
+      { city: 'Cockpit, USA, Aeroplane', filename: '2016-03-25-01.jpg', photoDate: null },
+      { city: 'Washington, USA', filename: '2016-03-26-90.jpg', photoDate: null },
+    ]
+
+    const regionCountryIndex = buildVisitedRegionCountryIndex(items)
+    const washington = getVisitedPlace(items[1], regionCountryIndex)
+
+    expect(washington).toEqual({ country: 'USA', region: 'Washington' })
+    expect(matchesVisitedPlace(washington, { country: 'Aeroplane', region: 'USA' })).toBe(false)
+    expect(matchesVisitedPlace(washington, { country: 'USA', region: 'Washington' })).toBe(true)
+  })
+
+  test('prefers repeated two-part city-country evidence over poisoned region mappings', () => {
+    const items = [
+      { city: 'Cockpit, Switzerland, Aeroplane', filename: '1999-05-05-01.jpg', photoDate: null },
+      { city: 'Zürich, Switzerland', filename: '1999-05-06-01.jpg', photoDate: null },
+      { city: 'Lausanne, Switzerland', filename: '1999-05-06-02.jpg', photoDate: null },
+    ]
+
+    const regionCountryIndex = buildVisitedRegionCountryIndex(items)
+    const zurich = getVisitedPlace(items[1], regionCountryIndex)
+
+    expect(zurich).toEqual({ country: 'Switzerland', region: 'Zürich' })
+    expect(matchesVisitedPlace(zurich, { country: 'Aeroplane', region: 'Switzerland' })).toBe(false)
+    expect(matchesVisitedPlace(zurich, { country: 'Switzerland', region: 'Zürich' })).toBe(true)
+  })
+
+  test('always includes countries but only includes regions meeting the configured minimum count', () => {
+    const options = buildVisitedKeywordOptions([
+      { city: 'Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { city: 'Lisbon, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+      { city: 'Lisbon, Portugal', filename: '2024-01-03-01.jpg', photoDate: null },
+      { city: 'Lisbon, Portugal', filename: '2024-01-04-01.jpg', photoDate: null },
+      { city: 'Porto, Portugal', filename: '2024-01-05-01.jpg', photoDate: null },
+      { city: 'Tokyo, Japan', filename: '2024-01-06-01.jpg', photoDate: null },
+    ])
+
+    expect(options).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'Portugal' }),
+      expect.objectContaining({ value: 'Japan' }),
+      expect.objectContaining({ value: 'Lisbon, Portugal' }),
+    ]))
+    expect(options).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'Porto, Portugal' }),
+      expect.objectContaining({ value: 'Tokyo, Japan' }),
+    ]))
   })
 
   test('formats consecutive years as ranges', () => {
