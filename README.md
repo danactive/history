@@ -27,20 +27,10 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 #### MCP server
 1. `npm run mcp` starts a read-only MCP server over stdio transport
 1. The server exposes history resources plus album-story and on-this-day storytelling tools
-1. For MCP clients, keep the command simple and run `tsx` through `npx`
-```
-{
-  "mcpServers": {
-    "history": {
-      "command": "npx",
-      "args": [
-        "tsx",
-        "./mcp/storytelling.ts"
-      ],
-    }
-  }
-}
-```
+1. For MCP clients connect with the mcp.json manifest
+
+- For VS Code workspace configuration, use /.vscode-mcp.json and `Install Server from Manifest`
+
 
 #### How-to build for PROD
 1. `npm run build` Bundle JavaScript files, and pre-compile

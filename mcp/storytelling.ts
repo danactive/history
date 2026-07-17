@@ -5,13 +5,13 @@ import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
 import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
+import { buildPersonGuiHref, buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import {
   buildAlbumStory,
   buildStorytellingOverview,
   getOnThisDayStory,
   getPeopleStoryIndex,
 } from '../src/lib/storytelling'
-import { buildPersonGuiHref, buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import config from '../src/models/config'
 import { generatedGallerySchema } from '../src/types/generated'
 
@@ -60,6 +60,52 @@ const GALLERY_TEMPLATE = 'history://gallery/{gallery}'
 const ALBUM_TEMPLATE = 'history://album/{gallery}/{album}'
 const PERSON_TEMPLATE = 'history://person/{gallery}/{name}'
 const DAY_TEMPLATE = 'history://day/{gallery}/{monthDay}'
+const SERVER_INSTRUCTIONS = stringifyLines([
+  'Use this MCP server to explore the history photo/video archive',
+  'Recommended order: read history://galleries, then a gallery or album resource, then call get_on_this_day_story or get_album_story as needed.',
+  'Keep stories grounded in returned albums, dates, places, and people.',
+])
+
+function formatToolError(error: unknown) {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return String(error)
+}
+
+function toolResult<TStructuredContent extends Record<string, unknown>>({
+  text,
+  structured,
+}: {
+  text: string
+  structured: TStructuredContent
+}) {
+  return {
+    content: [{ type: 'text' as const, text }],
+    structuredContent: structured,
+  }
+}
+
+function toolErrorResult(error: unknown) {
+  return {
+    isError: true,
+    content: [{ type: 'text' as const, text: `Error: ${formatToolError(error)}` }],
+  }
+}
+
+function withToolErrorHandling<TArgs extends Record<string, unknown>, TResult extends Record<string, unknown>>(
+  handler: (args: TArgs) => Promise<{ text: string, structured: TResult }>,
+) {
+  return async (args: TArgs) => {
+    try {
+      const result = await handler(args)
+      return toolResult({ text: result.text, structured: result.structured })
+    } catch (error: unknown) {
+      return toolErrorResult(error)
+    }
+  }
+}
 
 async function buildStorytellingGuide() {
   const overview = await buildStorytellingOverview()
@@ -95,12 +141,15 @@ async function buildGalleriesResource() {
 }
 
 async function buildGalleryResource(gallery: z.infer<typeof generatedGallerySchema>) {
-  const albums = await getAlbums(gallery)
-  const output = albums[gallery]
+  const albumNames = await getAlbums(gallery)
+  const { albums } = albumNames[gallery]
   return stringifyLines([
-    `Gallery ${gallery}`,
-    `Albums: ${output.albums.length}`,
-    ...output.albums.map((album) => `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`),
+    `Gallery is ${gallery}`,
+    `Albums: ${albums.length}`,
+    ...albums.map((album) => stringifyLines([
+      `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`,
+      album.search ? `with keywords ${album.search}` : null,
+    ])),
   ])
 }
 
@@ -129,6 +178,8 @@ function createStorytellingServer() {
   const server = new McpServer({
     name: 'history-storytelling',
     version: '1.0.0',
+  }, {
+    instructions: SERVER_INSTRUCTIONS,
   })
 
   server.registerTool(
@@ -143,13 +194,13 @@ function createStorytellingServer() {
       }),
       annotations: { readOnlyHint: true },
     },
-    async ({ gallery, album, limit }) => {
+    withToolErrorHandling(async ({ gallery, album, limit }) => {
       const output = await buildAlbumStory(gallery, album, limit)
       return {
-        content: [{ type: 'text', text: output.summary }],
-        structuredContent: output,
+        text: output.summary,
+        structured: output,
       }
-    },
+    }),
   )
 
   server.registerTool(
@@ -164,13 +215,13 @@ function createStorytellingServer() {
       }),
       annotations: { readOnlyHint: true },
     },
-    async ({ gallery, monthDay, limit }) => {
+    withToolErrorHandling(async ({ gallery, monthDay, limit }) => {
       const output = await getOnThisDayStory(gallery, monthDay, limit)
       return {
-        content: [{ type: 'text', text: output.summary }],
-        structuredContent: output,
+        text: output.summary,
+        structured: output,
       }
-    },
+    }),
   )
 
   server.registerResource(

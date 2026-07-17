@@ -1,0 +1,20 @@
+{
+  "name": "history",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "tsx",
+      "version": "4.23.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "${workspaceFolder}/mcp/storytelling.ts",
+          "isRepeated": false
+        }
+      ]
+    }
+  ]
+}

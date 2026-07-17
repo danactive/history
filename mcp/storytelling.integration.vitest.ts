@@ -40,6 +40,7 @@ const initializeResultSchema = z.object({
     version: z.string(),
   }),
   capabilities: z.record(z.string(), z.unknown()).optional(),
+  instructions: z.string().optional(),
 })
 
 const listToolsResultSchema = z.object({
@@ -80,6 +81,7 @@ const readResourceResultSchema = z.object({
 })
 
 const toolCallResultSchema = z.object({
+  isError: z.boolean().optional(),
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
@@ -273,6 +275,7 @@ describe('storytelling MCP server integration', () => {
       prompts: expect.any(Object),
       resources: expect.any(Object),
     }))
+    expect(result.instructions).toContain('history://galleries')
   }, 20000)
 
   test('lists storytelling tools for client exploration', async () => {
@@ -337,7 +340,7 @@ describe('storytelling MCP server integration', () => {
 
     expect(galleries.contents[0]?.text).toContain('Available galleries')
     expect(galleries.contents[0]?.text).toContain('demo:')
-    expect(gallery.contents[0]?.text).toContain('Gallery demo')
+    expect(gallery.contents[0]?.text).toContain('Gallery is demo')
   }, 20000)
 
   test('reads album and person resources', async () => {
@@ -368,6 +371,21 @@ describe('storytelling MCP server integration', () => {
     const onThisDay = await client.callTool('get_on_this_day_story', { monthDay: '01-02' })
     expect(onThisDay.content?.[0]?.text).toBeTruthy()
     expect(summaryStructuredSchema.parse(onThisDay.structuredContent).summary).toBeTruthy()
+  }, 20000)
+
+  test('returns tool errors as recoverable MCP results', async () => {
+    const client = startStorytellingServer()
+
+    await client.initialize()
+
+    const output = await client.callTool('get_album_story', {
+      gallery: 'demo',
+      album: 'missing-album',
+    })
+
+    expect(output.isError).toBe(true)
+    expect(output.content?.[0]?.text).toContain('Error:')
+    expect(output.structuredContent).toBeUndefined()
   }, 20000)
 
   test('reads on-this-day resources', async () => {

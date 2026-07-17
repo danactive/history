@@ -33,6 +33,7 @@ const initializeResultSchema = z.object({
     version: z.string(),
   }),
   capabilities: z.record(z.string(), z.unknown()).optional(),
+  instructions: z.string().optional(),
 })
 
 const listToolsResultSchema = z.object({
@@ -73,6 +74,7 @@ const readResourceResultSchema = z.object({
 })
 
 const toolCallResultSchema = z.object({
+  isError: z.boolean().optional(),
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
@@ -271,10 +273,10 @@ beforeEach(() => {
   getGalleries.mockResolvedValue({ galleries: ['demo', 'public'] })
   getAlbums.mockResolvedValue({
     demo: {
-      albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024' }],
+      albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024', search: 'Nagoya Castle, Atsuta Shrine' }],
     },
     public: {
-      albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025' }],
+      albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025', search: null }],
     },
   })
   buildAlbumStory.mockResolvedValue({ summary: 'Album summary', places: ['Nagoya'], people: ['Mister Gingerbread'] })
@@ -313,6 +315,8 @@ describe('storytelling MCP server', () => {
       prompts: expect.any(Object),
       resources: expect.any(Object),
     }))
+    expect(result.instructions).toContain('history://galleries')
+    expect(result.instructions).toContain('get_on_this_day_story')
   })
 
   test('lists storytelling tools for client exploration', async () => {
@@ -380,9 +384,10 @@ describe('storytelling MCP server', () => {
     expect(getGalleries).toHaveBeenCalledTimes(1)
     expect(galleries.contents[0]?.text).toContain('Available galleries')
     expect(galleries.contents[0]?.text).toContain('demo: 1 album(s)')
-    expect(gallery.contents[0]?.text).toContain('Gallery demo')
+    expect(gallery.contents[0]?.text).toContain('Gallery is demo')
     expect(gallery.contents[0]?.text).toContain('trip: Trip')
-    expect(otherGallery.contents[0]?.text).toContain('Gallery public')
+    expect(gallery.contents[0]?.text).toContain('with keywords Nagoya Castle, Atsuta Shrine')
+    expect(otherGallery.contents[0]?.text).toContain('Gallery is public')
     expect(otherGallery.contents[0]?.text).toContain('other-trip: Other Trip')
   })
 
@@ -429,6 +434,19 @@ describe('storytelling MCP server', () => {
     expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
     expect(onThisDayOutput.content).toEqual([{ type: 'text', text: 'On this day summary' }])
     expect(onThisDayOutput.structuredContent).toEqual(expect.objectContaining({ summary: 'On this day summary' }))
+  })
+
+  test('returns recoverable tool errors instead of raw protocol failures', async () => {
+    const client = await createConnection()
+    buildAlbumStory.mockRejectedValueOnce(new ReferenceError('No album was found'))
+
+    await client.initialize()
+
+    const output = await client.callTool('get_album_story', { gallery: 'demo', album: 'missing' })
+
+    expect(output.isError).toBe(true)
+    expect(output.content).toEqual([{ type: 'text', text: 'Error: No album was found' }])
+    expect(output.structuredContent).toBeUndefined()
   })
 
   test('reads on-this-day resources', async () => {
