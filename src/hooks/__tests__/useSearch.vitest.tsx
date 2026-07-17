@@ -410,4 +410,39 @@ describe('Clear button functionality', () => {
 
     expect(mockPush).toHaveBeenCalledWith('/gallery/all?visitedCountry=Portugal&visitedRegion=Lisbon')
   })
+
+  it('shows Clear for a visited filter and clears visited params while keeping the selected media in place', async () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/gallery/all',
+      params: { visitedCountry: 'Portugal', visitedRegion: 'Lisbon' },
+    })
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: 'lisbon.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Porto, Portugal', filename: 'porto.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toContain('Lisbon, Portugal')
+
+    const clearButton = Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Clear') as HTMLButtonElement
+    expect(clearButton).toBeTruthy()
+
+    mockNavigation({ pathname: '/gallery/all', params: {}, replace: mockReplace })
+
+    fireEvent.click(clearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?select=lisbon.jpg')
+
+    await waitFor(() => {
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.value).toBe('')
+    })
+  })
 })

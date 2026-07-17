@@ -284,7 +284,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     setInputValue('')
 
     // Update URL to reflect the selection (use filename for global uniqueness)
-    router.replace(getNextPath('', identifier))
+    router.replace(getNextPath('', identifier, null))
   }, [refImageGallery, displayedItems, filtered, selectById, router, getNextPath])
 
   const applyKeywordToUrl = useCallback((nextKeyword: string) => {
@@ -313,10 +313,6 @@ export default function useSearch<ItemType extends ServerSideItem>({
         : ' '
     applyKeywordToUrl(remaining.join(joiner))
   }, [parsedKeyword, applyKeywordToUrl, handleClear])
-
-  const handleClearVisitedFilter = useCallback(() => {
-    router.replace(getNextPath(keyword, null, null))
-  }, [getNextPath, keyword, router])
 
   const canBookmark = Boolean(
     refImageGallery
@@ -396,7 +392,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
               type="button"
               size="sm"
               variant="plain"
-              onClick={handleClearVisitedFilter}
+              onClick={handleClear}
               title={`Clear visited filter ${activeVisitedFilterLabel}`}
               aria-label={`Clear visited filter ${activeVisitedFilterLabel}`}
             >
@@ -436,7 +432,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
         >
           Filter
         </Button>
-        {keyword && (
+        {(keyword || activeVisitedFilterLabel) && (
           <Button
             type="button"
             onClick={handleClear}
