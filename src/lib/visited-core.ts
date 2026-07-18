@@ -254,9 +254,9 @@ function addVisit(visited: Map<string, VisitAccumulator>, country: string, regio
   }
 
   current.count += 1
+  current.years.add(year)
 
   if (!region) {
-    current.years.add(year)
     visited.set(country, current)
     return
   }

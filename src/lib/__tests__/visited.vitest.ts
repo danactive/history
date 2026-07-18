@@ -24,7 +24,7 @@ describe('visited location aggregation', () => {
     expect(result).toEqual([
       {
         country: 'Canada',
-        years: [],
+        years: ['1987', '2001', '2018'],
         count: 3,
         filter: { country: 'Canada', region: null },
         regions: [
@@ -34,7 +34,7 @@ describe('visited location aggregation', () => {
       },
       {
         country: 'USA',
-        years: [],
+        years: ['1988', '2004', '2016'],
         count: 3,
         filter: { country: 'USA', region: null },
         regions: [
@@ -63,14 +63,14 @@ describe('visited location aggregation', () => {
     expect(result).toEqual([
       {
         country: 'USA',
-        years: [],
+        years: ['2017'],
         count: 1,
         filter: { country: 'USA', region: null },
         regions: [{ region: 'Oregon', years: ['2017'], count: 1, filter: { country: 'USA', region: 'Oregon' } }],
       },
       {
         country: 'Canada',
-        years: [],
+        years: ['2024', '2025'],
         count: 2,
         filter: { country: 'Canada', region: null },
         regions: [
@@ -78,6 +78,22 @@ describe('visited location aggregation', () => {
           { region: 'British Columbia', years: ['2025'], count: 1, filter: { country: 'Canada', region: 'British Columbia' } },
         ],
       },
+    ])
+  })
+
+  test('orders countries by oldest visit and carries country years from region visits', () => {
+    const result = buildVisitedDataFromItems([
+      { city: 'Austin, Texas, USA', filename: '2016-01-01-01.jpg', photoDate: null },
+      { city: 'Toronto, ON, Canada', filename: '2001-01-01-01.jpg', photoDate: null },
+      { city: 'Tokyo, Japan', filename: '2024-01-01-01.jpg', photoDate: null },
+      { city: 'Miami, Florida, USA', filename: '2004-01-01-01.jpg', photoDate: null },
+    ])
+
+    expect(result.map(country => country.country)).toEqual(['Canada', 'USA', 'Japan'])
+    expect(result.map(country => country.years)).toEqual([
+      ['2001'],
+      ['2004', '2016'],
+      ['2024'],
     ])
   })
 
