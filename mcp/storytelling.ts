@@ -5,10 +5,11 @@ import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
 import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
-import { buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
+import { getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import {
   buildAlbumResourceText,
   buildAlbumStory,
+  buildOnThisDayResourceText,
   buildPersonResourceText,
   buildStorytellingOverview,
   getOnThisDayStory,
@@ -334,16 +335,10 @@ function createStorytellingServer() {
     async (uri, variables) => {
       const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
       const monthDay = parseMonthDay(getStringFromTemplate(uri, variables.monthDay, 1))
-      const output = await getOnThisDayStory(gallery, monthDay, 8)
-      const guiHref = buildTodayGuiHref(gallery, monthDay)
       return {
         contents: [{
           uri: uri.href,
-          text: stringifyLines([
-            output.summary,
-            `GUI: ${guiHref}`,
-            ...output.matches.map((match) => `${match.date ?? 'unknown'}: ${match.caption} (${match.filename})`),
-          ]),
+          text: await buildOnThisDayResourceText(gallery, monthDay, 8),
         }],
       }
     },

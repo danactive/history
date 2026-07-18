@@ -84,7 +84,13 @@ export default async function TodayServer({
   const clusteredMarkers = generateClusters(items)
   return (
     <Suspense fallback={<div>Loading Today...</div>}>
-      <AlbumPageComponent items={items} indexedKeywords={indexedKeywords} clusteredMarkers={clusteredMarkers} />
+      <AlbumPageComponent
+        gallery={gallery}
+        monthDay={monthDay}
+        items={items}
+        indexedKeywords={indexedKeywords}
+        clusteredMarkers={clusteredMarkers}
+      />
     </Suspense>
   )
 }

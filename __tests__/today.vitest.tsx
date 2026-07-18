@@ -6,8 +6,9 @@ import { getPrimaryFilename } from '../src/utils'
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
-  default: ({ items }: { items: Array<{ filename: string | string[] }> }) => (
+  default: ({ items, gallery, monthDay }: { items: Array<{ filename: string | string[] }>; gallery?: string; monthDay?: string }) => (
     <div>
+      {gallery && monthDay ? <div>{`/${gallery}/today/details?day=${monthDay}`}</div> : null}
       {items.map((item) => {
         const filename = getPrimaryFilename(item.filename)
         return <div key={filename}>{filename}</div>
@@ -93,6 +94,7 @@ describe('Today page', () => {
 
     render(component)
 
+    expect(screen.getByText('/demo/today/details?day=07-12')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.queryByText('2025-01-02-01.jpg')).not.toBeInTheDocument()
   })

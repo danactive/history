@@ -1,5 +1,6 @@
 import {
   formatAlbumResourceText,
+  formatOnThisDayResourceText,
   formatPersonResourceText,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,
@@ -15,7 +16,7 @@ import {
   type StorySearchSchemaInput,
 } from '../models/storytelling'
 import type { Gallery, Person } from '../types/common'
-import { buildPersonGuiHref } from './monthDay'
+import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
@@ -162,6 +163,11 @@ export async function buildPersonResourceText(gallery: Gallery, name: string) {
   }
 
   return formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name))
+}
+
+export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: string, limit = DEFAULT_LIMIT) {
+  const output = await getOnThisDayStory(gallery, monthDay, limit)
+  return formatOnThisDayResourceText(output, buildTodayGuiHref(gallery, output.monthDay))
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {

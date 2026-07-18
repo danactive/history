@@ -26,6 +26,11 @@ export function getMonthDayFromSearchParams(searchParams?: TodaySearchParams) {
 
 export function buildTodayGuiHref(gallery: Gallery, monthDay: string) {
   const searchParams = new URLSearchParams({ day: parseMonthDay(monthDay) })
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/today/details?${searchParams.toString()}`
+}
+
+export function buildTodayPageHref(gallery: Gallery, monthDay: string) {
+  const searchParams = new URLSearchParams({ day: parseMonthDay(monthDay) })
   return `${guiOrigin}/${encodeURIComponent(gallery)}/today?${searchParams.toString()}`
 }
 

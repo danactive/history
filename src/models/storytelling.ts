@@ -129,6 +129,17 @@ function formatPersonResourceText(
   ].join('\n')
 }
 
+function formatOnThisDayResourceText(
+  output: Pick<OnThisDayStoryResult, 'summary' | 'matches'>,
+  guiHref: string,
+) {
+  return [
+    output.summary,
+    `GUI: ${guiHref}`,
+    ...output.matches.map((match) => `${match.date ?? 'unknown'}: ${match.caption} (${match.filename})`),
+  ].join('\n')
+}
+
 function validateStorySearchInput(input: unknown) {
   return storySearchInputSchema.parse(input)
 }
@@ -162,6 +173,7 @@ type OnThisDayStoryResult = z.infer<typeof onThisDayStoryResultSchema>
 export {
   formatAlbumResourceText,
   formatCountedPeople,
+  formatOnThisDayResourceText,
   formatPersonResourceText,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,

@@ -20,8 +20,9 @@ import styles from './styles.module.css'
  * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gallery, album }: Album.ComponentProps) {
+function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gallery, album, monthDay }: Album.ComponentProps) {
   const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
+  const dateDetailsHref = gallery && monthDay ? `/${gallery}/today/details?${new URLSearchParams({ day: monthDay }).toString()}` : null
   const {
     refImageGallery,
     memoryIndex,
@@ -41,7 +42,9 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
     indexedKeywords,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>
-      : null,
+      : dateDetailsHref
+        ? <Link href={dateDetailsHref}>Date details</Link>
+        : null,
   })
 
   const searchParams = useSearchParams()

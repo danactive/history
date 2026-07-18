@@ -25,6 +25,7 @@ export namespace Album {
   export type ComponentProps = {
     gallery?: GalleryName;
     album?: NonNullable<AlbumMeta['albumName']>;
+    monthDay?: string;
     items: ServerSidePhotoItem[];
     meta?: object;
     indexedKeywords: IndexedKeywords[];
