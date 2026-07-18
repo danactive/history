@@ -1,4 +1,5 @@
 import type { Item } from '../types/common'
+import { getPrimaryFilename } from '.'
 
 function parseDate(value: string): Date | null {
   const trimmed = value.trim().substring(0, 10)
@@ -17,9 +18,7 @@ function parseDate(value: string): Date | null {
 }
 
 export function resolvePhotoDate(item: Pick<Item, 'filename' | 'photoDate'>): string {
-  const filenameDate = Array.isArray(item.filename)
-    ? (item.filename[0] ?? '').substring(0, 10)
-    : String(item.filename ?? '').substring(0, 10)
+  const filenameDate = getPrimaryFilename(item.filename).substring(0, 10)
   return item.photoDate || filenameDate
 }
 

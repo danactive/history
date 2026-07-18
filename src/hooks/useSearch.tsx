@@ -16,6 +16,7 @@ import {
   matchesVisitedPlace,
 } from '../lib/visited-core'
 import { IndexedKeywords, VisitedPlace } from '../types/common'
+import { getPrimaryFilename } from '../utils'
 import { matchCorpus } from '../utils/search'
 import styles from './search.module.css'
 import useBookmark from './useBookmark'
@@ -23,7 +24,7 @@ import useBookmark from './useBookmark'
 interface ServerSideItem {
   corpus: string;
   city?: string;
-  filename?: string | string[];
+  filename: string | string[];
   photoDate?: string | null;
   visitedPlace?: VisitedPlace | null;
 }
@@ -268,11 +269,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     // Get current photo ID from displayed items (respects map filter)
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const currentItem = itemsToUse[currentIndex]
-    const identifier = currentItem
-      ? (Array.isArray((currentItem as any).filename)
-          ? (currentItem as any).filename[0]
-          : (currentItem as any).filename)
-      : null
+    const identifier = getPrimaryFilename(currentItem.filename)
 
     if (selectById && identifier) {
       selectById(identifier, true)
@@ -286,6 +283,20 @@ export default function useSearch<ItemType extends ServerSideItem>({
     // Update URL to reflect the selection (use filename for global uniqueness)
     router.replace(getNextPath('', identifier, null))
   }, [refImageGallery, displayedItems, filtered, selectById, router, getNextPath])
+
+  const handleClearVisitedFilter = useCallback(() => {
+    const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
+    const currentItem = itemsToUse[currentIndex]
+    const identifier = getPrimaryFilename(currentItem.filename)
+
+    if (selectById && identifier) {
+      selectById(identifier, true)
+    }
+
+    setSelectedOption(keyword ? { label: keyword, value: keyword } : null)
+    setInputValue(keyword)
+    router.replace(getNextPath(keyword, identifier, null))
+  }, [refImageGallery, itemsToUse, selectById, keyword, router, getNextPath])
 
   const applyKeywordToUrl = useCallback((nextKeyword: string) => {
     setKeyword(nextKeyword)
@@ -392,7 +403,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
               type="button"
               size="sm"
               variant="plain"
-              onClick={handleClear}
+              onClick={handleClearVisitedFilter}
               title={`Clear visited filter ${activeVisitedFilterLabel}`}
               aria-label={`Clear visited filter ${activeVisitedFilterLabel}`}
             >

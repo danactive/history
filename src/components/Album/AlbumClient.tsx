@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react'
 
 import useMapFilter from '../../hooks/useMapFilter'
 import type { Album } from '../../types/pages'
+import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
@@ -41,7 +42,7 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
   useEffect(() => {
     if (!selectId || itemsToShow.length === 0) return
     const idx = itemsToShow.findIndex(i => {
-      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      const filename = getPrimaryFilename(i.filename)
       return filename === selectId
     })
 
@@ -78,7 +79,7 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
         />
         <ul className={styles.thumbWrapper}>
           {itemsToShow.map((item, index) => {
-            const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+            const filename = getPrimaryFilename(item.filename)
             return (
               <ThumbImg
                 onSelectIndex={handleThumbSelect}

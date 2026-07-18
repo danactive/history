@@ -5,6 +5,7 @@ import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFi
 import { buildVisitedRegionCountryIndex, getVisitedPlace } from '../lib/visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
+import { getPrimaryFilename } from '../utils'
 import type { VisitedRegionCountryIndex } from './visited'
 import type { All } from '../types/pages'
 
@@ -67,7 +68,7 @@ export function allPageItemMapper({
   albumName, albumCoordinateAccuracy, items, gallery, regionCountryIndex,
 }: PrepareItemsParams): ServerSideAllItem[] {
   return items.map((item) => {
-    const filenameStr = Array.isArray(item.filename) ? (item.filename[0] ?? '') : (item.filename ?? '')
+    const filenameStr = getPrimaryFilename(item.filename)
     const titleStr = Array.isArray(item.title) ? (item.title[0] ?? '') : (item.title ?? '')
     const searchStr = addYearToSearch(addGeographyToSearch(item) ?? '', item)
     const year = getItemYearFromFilename(item)

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import type { All } from '../types/pages'
+import { getPrimaryFilename } from '../utils'
 import useMemory from './useMemory'
 import useSearch from './useSearch'
 
@@ -92,7 +93,7 @@ export default function useMapFilter({ items, indexedKeywords, visitedFilterLabe
       // Index by ID
       if (item.id) map.set(item.id, idx)
       // Also index by filename (globally unique)
-      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      const filename = getPrimaryFilename(item.filename)
       if (filename) map.set(filename, idx)
     })
     return map
@@ -104,7 +105,7 @@ export default function useMapFilter({ items, indexedKeywords, visitedFilterLabe
       // Index by ID
       if (item.id) map.set(item.id, idx)
       // Also index by filename (globally unique)
-      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      const filename = getPrimaryFilename(item.filename)
       if (filename) map.set(filename, idx)
     })
     return map

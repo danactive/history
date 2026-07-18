@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
 import PersonsServer from '../app/[gallery]/persons/page'
+import { getPrimaryFilename } from '../src/utils'
 
 vi.mock('../src/components/Persons/PersonsClient', () => ({
   __esModule: true,
@@ -18,7 +19,7 @@ vi.mock('../src/components/Persons/PersonsClient', () => ({
       <div>{initialSelectedAge === null || initialSelectedAge === undefined ? 'no-age' : String(initialSelectedAge)}</div>
       <div>{initialSelectedPerson ?? 'no-person'}</div>
       {items.map((item) => {
-        const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+        const filename = getPrimaryFilename(item.filename)
         return <div key={filename}>{filename}</div>
       })}
     </div>

@@ -1,4 +1,5 @@
 import type { GalleryAlbum, IndexedKeywords, Item } from '../types/common'
+import { getPrimaryFilename } from '../utils'
 
 /**
  * Index search keywords from search xml element and dedupe
@@ -53,7 +54,7 @@ export function addGeographyToSearch(item: Item) {
 }
 
 export function getItemYearFromFilename(item: Item): string {
-  const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+  const filename = getPrimaryFilename(item.filename)
   const year = filename?.toString?.().substring?.(0, 4)
   return year && /^\d{4}$/.test(year) ? year : ''
 }

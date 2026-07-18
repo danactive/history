@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
+import { getPrimaryFilename } from '../../utils'
 import type { All } from '../../types/pages'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
@@ -50,7 +51,7 @@ export default function PersonsClient({
     if (!selectId || ageFiltered.length === 0) return
 
     const idx = ageFiltered.findIndex(i => {
-      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      const filename = getPrimaryFilename(i.filename)
       return filename === selectId
     })
 

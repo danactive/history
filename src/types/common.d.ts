@@ -114,6 +114,10 @@ type Album = {
   }
 }
 
+type AlbumsBody = {
+  albums: GalleryAlbum[]
+}
+
 type XmlGalleryAlbum = {
   albumName: string;
   albumH1: string;
@@ -135,11 +139,10 @@ type GalleryAlbum = {
   h1: string;
   h2: string;
   version: string;
-  thumbPath: string;
+  filename: string;
   year: string;
   search: string | null;
 }
-
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
@@ -191,6 +194,7 @@ export type {
   AlbumMeta,
   XmlMeta,
   Album,
+  AlbumsBody,
   XmlGallery,
   XmlGalleryAlbum,
   GalleryAlbum,

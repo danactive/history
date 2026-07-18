@@ -5,6 +5,7 @@ import getAlbums from './albums'
 import { getAllData } from './all'
 import getGalleries from './galleries'
 import getPersons, { getPersonsData } from './persons'
+import { getPrimaryFilename } from '../utils'
 import { buildVisitedRegionCountryIndex, getVisitedPlace, matchesVisitedPlace } from './visited'
 import type { VisitedRegionCountryIndex } from './visited'
 
@@ -99,7 +100,7 @@ const tokenize = (value: string | null | undefined) => normalize(value)
 
 const unique = <T>(values: T[]) => [...new Set(values)]
 
-const getFilename = (item: Pick<Item, 'filename'> | Pick<ServerSideAllItem, 'filename'>) => asArray(item.filename)[0] ?? ''
+const getFilename = (item: Pick<Item, 'filename'> | Pick<ServerSideAllItem, 'filename'>) => getPrimaryFilename(item.filename)
 
 const getTitle = (item: Pick<Item, 'title'> | Pick<ServerSideAllItem, 'title'>) => asArray(item.title)[0] ?? ''
 
@@ -272,7 +273,7 @@ function scoreCandidate(candidate: StoryCandidate, input: StorySearchSchemaInput
   }
 
   if (input.year) {
-    const date = candidate.date ?? (Array.isArray(candidate.filename) ? candidate.filename[0] : candidate.filename)
+    const date = candidate.date ?? getPrimaryFilename(candidate.filename)
     if (!date.startsWith(input.year)) {
       return null
     }

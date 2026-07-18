@@ -5,6 +5,7 @@ import { useEffect, useMemo } from 'react'
 
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
+import { getPrimaryFilename } from '../../utils'
 import { All } from '../../types/pages'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
@@ -37,7 +38,7 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers, vi
     if (!selectId || itemsToShow.length === 0) return
 
     const idx = itemsToShow.findIndex(i => {
-      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      const filename = getPrimaryFilename(i.filename)
       return filename === selectId
     })
 

@@ -1,8 +1,8 @@
 import config from '../models/config'
 import type {
   AlbumMeta,
+  AlbumsBody,
   Gallery,
-  GalleryAlbum,
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
@@ -19,10 +19,6 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
 }
 
 const utils = utilsFactory()
-
-type AlbumsBody = {
-  albums: GalleryAlbum[]
-}
 
 export type GalleryAlbumsBody = Record<Gallery, AlbumsBody>
 
@@ -46,7 +42,7 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
     h1: album.albumH1,
     h2: album.albumH2,
     version: album.albumVersion,
-    thumbPath: utils.thumbPath(album.filename, gallery),
+    filename: utils.thumbPath(album.filename, gallery),
     year: album.year,
     search: album.search || null,
   })

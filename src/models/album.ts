@@ -8,7 +8,7 @@ import type {
   XmlAlbum,
   XmlItem,
 } from '../types/common'
-import { isNotEmpty, removeUndefinedFields } from '../utils'
+import { getPrimaryFilename, isNotEmpty, removeUndefinedFields } from '../utils'
 import { transformReference } from '../utils/reference'
 import config from './config'
 import { parseXmlAlbumInput } from './schemas'
@@ -47,7 +47,7 @@ function transformCaption(item: XmlItem) {
 
   if (thumbCaption === '') {
     // Use filename as fallback caption
-    const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+    const filename = getPrimaryFilename(item.filename)
     return filename
   }
 

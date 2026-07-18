@@ -1,5 +1,6 @@
 import type { IndexedKeywords, Item, VisitedPlace } from '../types/common'
 import config from '../models/config'
+import { getPrimaryFilename } from '../utils'
 
 type RegionVisit = {
   region: string
@@ -223,7 +224,7 @@ function itemYear(item: Pick<Item, 'filename' | 'photoDate'>) {
   const dateYear = item.photoDate?.match(/^\d{4}/)?.[0]
   if (dateYear) return dateYear
 
-  const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+  const filename = getPrimaryFilename(item.filename)
   return filename?.match(/^\d{4}/)?.[0] ?? null
 }
 

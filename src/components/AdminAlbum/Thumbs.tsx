@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 
 import { thumbPath } from '../../lib/paths'
 import type { Gallery, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import { getPrimaryFilename } from '../../utils'
 import styles from '../Album/styles.module.css'
 import ThumbImg from '../ThumbImg'
 
@@ -33,7 +34,7 @@ export default function AdminAlbumThumbs(
     <>
       <ul className={styles.thumbWrapper}>
         {items.map((item, index) => {
-          const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+          const filename = getPrimaryFilename(item.filename)
           const caption = item.thumb_caption || filename
           const isSelected = selectedIndices ? selectedIndices.has(index) : index === currentIndex
           return (

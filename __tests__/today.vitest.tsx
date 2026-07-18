@@ -2,13 +2,14 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
 import TodayServer from '../app/[gallery]/today/page'
+import { getPrimaryFilename } from '../src/utils'
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
   default: ({ items }: { items: Array<{ filename: string | string[] }> }) => (
     <div>
       {items.map((item) => {
-        const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+        const filename = getPrimaryFilename(item.filename)
         return <div key={filename}>{filename}</div>
       })}
     </div>
