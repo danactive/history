@@ -21,6 +21,34 @@ type PersonMatch = {
 
 type AgeFilterValue = number | 'unknown' | null
 
+function resolveUniquePersonName(items: ServerSideAllItem[], rawKeyword: string) {
+  const normalizedKeyword = rawKeyword.trim().toLowerCase()
+  if (!normalizedKeyword) return null
+
+  const personNames = [...new Set(items
+    .flatMap(item => item.persons?.map(person => person.full) ?? []))]
+
+  const exactPersonMatch = personNames.find(name => name.toLowerCase() === normalizedKeyword)
+  if (exactPersonMatch) return exactPersonMatch
+
+  const partialPersonMatches = personNames.filter(name => name.toLowerCase().includes(normalizedKeyword))
+  if (partialPersonMatches.length === 1) {
+    return partialPersonMatches[0] ?? null
+  }
+
+  const searchTokenMatches = [...new Set(items
+    .flatMap(item => item.search?.split(', ').map(token => token.trim()) ?? []))]
+  const exactSearchMatch = searchTokenMatches.find(token => token.toLowerCase() === normalizedKeyword)
+  if (exactSearchMatch) return exactSearchMatch
+
+  const partialSearchMatches = searchTokenMatches.filter(token => token.toLowerCase().includes(normalizedKeyword))
+  if (partialSearchMatches.length === 1) {
+    return partialSearchMatches[0] ?? null
+  }
+
+  return null
+}
+
 export default function usePersonsFilter({
   gallery,
   items,
@@ -47,21 +75,7 @@ export default function usePersonsFilter({
   const personDetailsName = useMemo(() => {
     if (selectedPerson) return selectedPerson
 
-    const normalizedKeyword = keywordFromUrl.trim().toLowerCase()
-    if (!normalizedKeyword) return null
-
-    const matchedNames = [...new Set(items
-      .flatMap(item => item.persons?.map(person => person.full) ?? [])
-      .filter(name => name.toLowerCase().includes(normalizedKeyword)))]
-
-    const exactMatch = matchedNames.find(name => name.toLowerCase() === normalizedKeyword)
-    if (exactMatch) return exactMatch
-
-    if (matchedNames.length === 1) {
-      return matchedNames[0] ?? null
-    }
-
-    return null
+    return resolveUniquePersonName(items, keywordFromUrl)
   }, [items, keywordFromUrl, selectedPerson])
 
   const personDetailsHref = gallery && personDetailsName

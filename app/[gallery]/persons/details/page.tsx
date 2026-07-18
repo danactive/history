@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { buildPersonResourceText } from '../../../../src/lib/storytelling'
+import { redirect } from 'next/navigation'
+import { resolvePersonResource } from '../../../../src/lib/storytelling'
 import type { Gallery } from '../../../../src/types/common'
 
 type SearchParams = {
@@ -41,7 +42,26 @@ export default async function PersonDetailsPage({
     )
   }
 
-  const text = await buildPersonResourceText(gallery, person)
+  let text: string
+  try {
+    const resolved = await resolvePersonResource(gallery, person)
+    if (resolved.person.name !== person) {
+      redirect(`/${gallery}/persons/details?${new URLSearchParams({ person: resolved.person.name }).toString()}`)
+    }
+
+    text = resolved.text
+  } catch (error) {
+    if (error instanceof ReferenceError) {
+      return (
+        <main style={{ padding: '1rem' }}>
+          <h1>Person details</h1>
+          <p>{error.message}</p>
+        </main>
+      )
+    }
+
+    throw error
+  }
 
   return (
     <main style={{ padding: '1rem' }}>

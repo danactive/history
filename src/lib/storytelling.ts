@@ -156,15 +156,106 @@ export async function buildAlbumResourceText(gallery: Gallery, album: string, li
   return formatAlbumResourceText(output)
 }
 
-export async function buildPersonResourceText(gallery: Gallery, name: string) {
+function resolvePersonEntry(output: PersonStoryIndexResult, name: string) {
+  const normalizedName = name.trim().toLowerCase()
+  const exactMatch = output.people.find((candidate) => candidate.name === name)
+  if (exactMatch) {
+    return exactMatch
+  }
+
+  const caseInsensitiveMatch = output.people.find((candidate) => candidate.name.toLowerCase() === normalizedName)
+  if (caseInsensitiveMatch) {
+    return caseInsensitiveMatch
+  }
+
+  const partialMatches = output.people.filter((candidate) => candidate.name.toLowerCase().includes(normalizedName))
+  if (partialMatches.length === 1) {
+    return partialMatches[0] ?? null
+  }
+
+  return null
+}
+
+function getSearchTokenMatches(search: string | null | undefined, name: string) {
+  if (!search) return [] as string[]
+
+  const normalizedName = name.trim().toLowerCase()
+  return search
+    .split(', ')
+    .map(token => token.trim())
+    .filter(token => token.length > 0 && token.toLowerCase() === normalizedName)
+}
+
+type SearchOnlyPersonInput = Pick<StoryMoment, 'search' | 'date' | 'album'>
+
+function resolveSearchOnlyPersonEntryFromItems(items: SearchOnlyPersonInput[], name: string): PersonStoryIndexEntry | null {
+  const aggregate = new Map<string, PersonStoryIndexEntry>()
+
+  items.forEach((item) => {
+    const date = item.date
+    const album = item.album ?? null
+    getSearchTokenMatches(item.search, name).forEach((matchedName) => {
+      const current = aggregate.get(matchedName)
+      if (!current) {
+        aggregate.set(matchedName, {
+          name: matchedName,
+          dateOfBirth: null,
+          appearances: 1,
+          firstSeen: date,
+          lastSeen: date,
+          albums: album ? [album] : [],
+        })
+        return
+      }
+
+      current.appearances += 1
+      current.firstSeen = current.firstSeen === null || (date !== null && date < current.firstSeen)
+        ? date
+        : current.firstSeen
+      current.lastSeen = current.lastSeen === null || (date !== null && date > current.lastSeen)
+        ? date
+        : current.lastSeen
+      if (album && !current.albums.includes(album)) {
+        current.albums.push(album)
+      }
+    })
+  })
+
+  return aggregate.get(name) ?? [...aggregate.values()][0] ?? null
+}
+
+async function resolveSearchOnlyPersonEntry(gallery: Gallery, name: string): Promise<PersonStoryIndexEntry | null> {
+  const { items } = await getAllData({ gallery })
+  return resolveSearchOnlyPersonEntryFromItems(items.map((item) => ({
+    search: item.search,
+    date: getItemDate(item),
+    album: item.album ?? null,
+  })), name)
+}
+
+async function getResolvedPersonResource(gallery: Gallery, name: string) {
   const output = await getPeopleStoryIndex(gallery)
-  const person = output.people.find((candidate) => candidate.name === name)
+  const person = resolvePersonEntry(output, name) ?? await resolveSearchOnlyPersonEntry(gallery, name)
   if (!person) {
     throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
   }
 
-  return formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name))
+  return {
+    person,
+    text: formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name)),
+  }
 }
+
+export async function buildPersonResourceText(gallery: Gallery, name: string) {
+  const { text } = await getResolvedPersonResource(gallery, name)
+  return text
+}
+
+export async function resolvePersonResource(gallery: Gallery, name: string) {
+  return getResolvedPersonResource(gallery, name)
+}
+
+export { resolveSearchOnlyPersonEntryFromItems }
 
 export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: string, maxDisplayEntries = DEFAULT_LIMIT) {
   const output = await getOnThisDayStory(gallery, monthDay)

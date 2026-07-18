@@ -5,8 +5,10 @@ import getAlbum from '../album'
 import {
   buildAlbumStory,
   buildOnThisDayResourceText,
+  buildPersonResourceText,
   getOnThisDayStory,
   getPeopleStoryIndex,
+  resolveSearchOnlyPersonEntryFromItems,
   searchStoryMoments,
 } from '../storytelling'
 
@@ -60,6 +62,36 @@ describe('Storytelling library', () => {
     expect(gingerbread).toBeDefined()
     expect(gingerbread?.appearances).toBe(1)
     expect(gingerbread?.albums).toContain(config.defaultAlbum)
+  })
+
+  test('resolves person resource text from a case-insensitive person name', async () => {
+    const text = await buildPersonResourceText(config.defaultGallery, 'mister gingerbread')
+
+    expect(text).toContain('Person Mister Gingerbread')
+  })
+
+  test('resolves a search-only person entry from synthetic metadata', async () => {
+    const person = resolveSearchOnlyPersonEntryFromItems([
+      {
+        search: 'Taylor Example, Jordan Sample',
+        date: '2021-02-01',
+        album: 'sample-album',
+      },
+      {
+        search: 'Taylor Example',
+        date: '2022-03-04',
+        album: 'other-album',
+      },
+    ], 'Taylor Example')
+
+    expect(person).toEqual({
+      name: 'Taylor Example',
+      dateOfBirth: null,
+      appearances: 2,
+      firstSeen: '2021-02-01',
+      lastSeen: '2022-03-04',
+      albums: ['sample-album', 'other-album'],
+    })
   })
 
   test('finds on-this-day story matches for a supplied month-day', async () => {

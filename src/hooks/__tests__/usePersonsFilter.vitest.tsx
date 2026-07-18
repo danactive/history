@@ -88,6 +88,30 @@ function makeUnknownDobItem(id: string, personName: string, photoDate: string): 
   }
 }
 
+function makeSearchOnlyItem(id: string, search: string, photoDate: string): ServerSideAllItem {
+  return {
+    corpus: 'test-corpus',
+    id,
+    filename: `${photoDate}-50.jpg`,
+    photoDate,
+    city: '',
+    location: null,
+    caption: '',
+    description: null,
+    search,
+    persons: null,
+    title: '',
+    coordinates: null,
+    coordinateAccuracy: 0,
+    thumbPath: '',
+    photoPath: '',
+    mediaPath: '',
+    videoPaths: null,
+    reference: null,
+    visitedPlace: null,
+  }
+}
+
 describe('usePersonsFilter URL sync', () => {
   let query = new URLSearchParams()
   const searchParamsMock = {
@@ -204,6 +228,19 @@ describe('usePersonsFilter URL sync', () => {
     render(<>{result.current.searchBox}</>)
 
     expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Alice')
+  })
+
+  test('shows person details link for an exact search-only person token', () => {
+    query = new URLSearchParams('keyword=Taylor+Example')
+    const items = [
+      makeSearchOnlyItem('1', 'Taylor Example, Jordan Sample', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    render(<>{result.current.searchBox}</>)
+
+    expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Taylor+Example')
   })
 })
 
