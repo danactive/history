@@ -23,6 +23,8 @@ export namespace Gallery {
 
 export namespace Album {
   export type ComponentProps = {
+    gallery?: GalleryName;
+    album?: NonNullable<AlbumMeta['albumName']>;
     items: ServerSidePhotoItem[];
     meta?: object;
     indexedKeywords: IndexedKeywords[];
@@ -54,6 +56,7 @@ export namespace All {
     initialSelectedPerson?: string | null;
     visitedPlace?: VisitedPlace | null;
     visitedFilterLabel?: string | null;
+    trailingAction?: React.ReactNode;
   }
 
   export type ItemData = Omit<All.ComponentProps, 'clusteredMarkers'>

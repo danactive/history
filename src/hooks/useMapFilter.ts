@@ -8,7 +8,9 @@ import useSearch from './useSearch'
 
 type Bounds = [[number, number],[number, number]]
 
-export default function useMapFilter({ items, indexedKeywords, visitedFilterLabel }: All.ItemData) {
+type UseMapFilterProps = Pick<All.ItemData, 'items' | 'indexedKeywords' | 'visitedFilterLabel' | 'trailingAction'>
+
+export default function useMapFilter({ items, indexedKeywords, visitedFilterLabel, trailingAction }: UseMapFilterProps) {
   const refImageGallery = useRef<ImageGalleryRef>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
@@ -59,6 +61,7 @@ export default function useMapFilter({ items, indexedKeywords, visitedFilterLabe
     mapFilterEnabled,
     onClearMapFilter: handleClearMapFilter,
     selectById,
+    trailingAction,
   })
 
   const handleBoundsChange = useCallback((bounds: Bounds) => {

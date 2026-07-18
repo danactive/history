@@ -1,4 +1,5 @@
 import {
+  formatAlbumResourceText,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,
   validatePersonStoryIndexResult,
@@ -144,6 +145,11 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     personCounts,
     highlights,
   })
+}
+
+export async function buildAlbumResourceText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
+  const output = await buildAlbumStory(gallery, album, limit)
+  return formatAlbumResourceText(output)
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {

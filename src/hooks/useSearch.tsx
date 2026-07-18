@@ -39,6 +39,7 @@ interface UseSearchProps<ItemType> {
   mapFilterEnabled?: boolean;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
   selectById?: (id: string, isClear?: boolean) => void;
+  trailingAction?: React.ReactNode;
 }
 
 type QueryMode = 'AND' | 'OR' | null
@@ -88,6 +89,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   mapFilterEnabled,
   onClearMapFilter,
   selectById,
+  trailingAction,
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -455,6 +457,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
           </Button>
         )}
         {canBookmark && <BookmarkButton />}
+        {trailingAction}
       </div>
     </form>
   )

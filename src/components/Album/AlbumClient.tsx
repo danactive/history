@@ -7,6 +7,7 @@ import useMapFilter from '../../hooks/useMapFilter'
 import type { Album } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
+import Link from '../Link'
 import SplitViewer from '../SplitViewer'
 import ThumbImg from '../ThumbImg'
 import styles from './styles.module.css'
@@ -19,7 +20,8 @@ import styles from './styles.module.css'
  * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Album.ComponentProps) {
+function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gallery, album }: Album.ComponentProps) {
+  const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
   const {
     refImageGallery,
     memoryIndex,
@@ -34,7 +36,13 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers }: Al
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ items, indexedKeywords })
+  } = useMapFilter({
+    items,
+    indexedKeywords,
+    trailingAction: albumDetailsHref
+      ? <Link href={albumDetailsHref}>Album details</Link>
+      : null,
+  })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

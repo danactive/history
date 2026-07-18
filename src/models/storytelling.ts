@@ -104,6 +104,14 @@ function formatCountedPeople(people: PersonCount[]) {
   return people.map(person => `${person.name} (${person.count})`).join(', ') || 'none'
 }
 
+function formatAlbumResourceText(album: Pick<AlbumStoryResult, 'summary' | 'places' | 'personCounts'>) {
+  return [
+    album.summary,
+    `Places: ${album.places.join(', ') || 'none'}`,
+    `Persons: ${formatCountedPeople(album.personCounts)}`,
+  ].join('\n')
+}
+
 function validateStorySearchInput(input: unknown) {
   return storySearchInputSchema.parse(input)
 }
@@ -135,6 +143,7 @@ type PersonStoryIndexResult = z.infer<typeof personStoryIndexResultSchema>
 type OnThisDayStoryResult = z.infer<typeof onThisDayStoryResultSchema>
 
 export {
+  formatAlbumResourceText,
   formatCountedPeople,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,

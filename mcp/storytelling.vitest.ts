@@ -85,6 +85,7 @@ const toolCallResultSchema = z.object({
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
+const buildAlbumResourceText = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
 const getOnThisDayStory = vi.hoisted(() => vi.fn())
 const buildStorytellingOverview = vi.hoisted(() => vi.fn())
@@ -98,6 +99,7 @@ vi.mock('../src/lib/albums', () => ({
 }))
 
 vi.mock('../src/lib/storytelling', () => ({
+  buildAlbumResourceText,
   buildAlbumStory,
   getPeopleStoryIndex,
   getOnThisDayStory,
@@ -266,6 +268,7 @@ beforeEach(() => {
   getGalleries.mockReset()
   getAlbums.mockReset()
   buildAlbumStory.mockReset()
+  buildAlbumResourceText.mockReset()
   getPeopleStoryIndex.mockReset()
   getOnThisDayStory.mockReset()
   buildStorytellingOverview.mockReset()
@@ -285,6 +288,11 @@ beforeEach(() => {
     people: ['Mister Gingerbread'],
     personCounts: [{ name: 'Mister Gingerbread', count: 23 }],
   })
+  buildAlbumResourceText.mockResolvedValue([
+    'Album summary',
+    'Places: Nagoya',
+    'Persons: Mister Gingerbread (23)',
+  ].join('\n'))
   getPeopleStoryIndex.mockResolvedValue({
     summary: 'People summary',
     people: [{

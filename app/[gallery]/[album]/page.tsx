@@ -36,7 +36,7 @@ async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.It
     search: addGeographyToSearch(item),
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
-  return { items: preparedItems, meta, ...indexKeywords(preparedItems) }
+  return { gallery, album, items: preparedItems, meta, ...indexKeywords(preparedItems) }
 }
 
 export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
@@ -48,6 +48,8 @@ export default async function AlbumServer(props: { params: Promise<Album.Params>
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AlbumPageComponent
+        gallery={gallery}
+        album={album}
         items={items}
         meta={meta}
         indexedKeywords={indexedKeywords}

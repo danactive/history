@@ -7,12 +7,12 @@ import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import { buildPersonGuiHref, buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import {
+  buildAlbumResourceText,
   buildAlbumStory,
   buildStorytellingOverview,
   getOnThisDayStory,
   getPeopleStoryIndex,
 } from '../src/lib/storytelling'
-import { formatCountedPeople } from '../src/models/storytelling'
 import config from '../src/models/config'
 import { generatedGallerySchema } from '../src/types/generated'
 
@@ -291,15 +291,10 @@ function createStorytellingServer() {
     async (uri, variables) => {
       const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
       const album = getStringFromTemplate(uri, variables.album, 1)
-      const output = await buildAlbumStory(gallery, album, 8)
       return {
         contents: [{
           uri: uri.href,
-          text: stringifyLines([
-            output.summary,
-            `Places: ${output.places.join(', ') || 'none'}`,
-            `Persons: ${formatCountedPeople(output.personCounts)}`,
-          ]),
+          text: await buildAlbumResourceText(gallery, album, 8),
         }],
       }
     },
