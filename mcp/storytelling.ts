@@ -12,6 +12,7 @@ import {
   getOnThisDayStory,
   getPeopleStoryIndex,
 } from '../src/lib/storytelling'
+import { formatCountedPeople } from '../src/models/storytelling'
 import config from '../src/models/config'
 import { generatedGallerySchema } from '../src/types/generated'
 
@@ -55,10 +56,6 @@ function getStringFromTemplate(uri: URL, value: unknown, segmentIndex: number) {
 }
 
 const GUIDE_URI = 'history://guide'
-
-function formatCountedPeople(people: { name: string, count: number }[]) {
-  return people.map(person => `${person.name} (${person.count})`).join(', ') || 'none'
-}
 const GALLERIES_URI = 'history://galleries'
 const GALLERY_TEMPLATE = 'history://gallery/{gallery}'
 const ALBUM_TEMPLATE = 'history://album/{gallery}/{album}'

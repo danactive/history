@@ -58,24 +58,6 @@ const xmlAlbumEnvelopeSchema = z.object({
   }).strip(),
 }).strip()
 
-export const storySearchInputSchema = z.object({
-  query: z.string().optional().describe('Free-text story query such as a place, theme, or event.'),
-  gallery: generatedGallerySchema.optional().describe('Gallery name from the local archive.'),
-  album: z.string().optional().describe('Album name inside the selected gallery.'),
-  person: z.string().optional().describe('Person name to require in the result set.'),
-  city: z.string().optional().describe('City or location fragment to require in the result set.'),
-  country: z.string().optional().describe('Exact visited country to require, for example Japan or Canada.'),
-  region: z.string().optional().describe('Exact visited region to require, for example Aichi, British Columbia, or Hawaii.'),
-  year: z.string().optional().describe('Four-digit year to require in the result set.'),
-  limit: z.number().int().min(1).max(25).default(8).describe('Maximum number of story moments to return.'),
-}).refine(
-  value => Boolean(value.query || value.album || value.person || value.city || value.country || value.region || value.year),
-  'Provide at least one of query, album, person, city, country, region, or year.',
-)
-
-export type StorySearchSchemaInput = z.input<typeof storySearchInputSchema>
-export type StorySearchSchemaOutput = z.output<typeof storySearchInputSchema>
-
 function getFilenameId(filename: unknown) {
   if (Array.isArray(filename)) {
     return typeof filename[0] === 'string' ? filename[0] : ''
