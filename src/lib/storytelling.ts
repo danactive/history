@@ -16,11 +16,11 @@ import {
   type StorySearchSchemaInput,
 } from '../models/storytelling'
 import type { Gallery, Person } from '../types/common'
-import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
 import getGalleries from './galleries'
+import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
 import {
   buildStoryMoment,
@@ -39,7 +39,8 @@ import {
   sortValuesByFrequency,
   storyRichness,
 } from './storytelling-ranking'
-import { buildVisitedRegionCountryIndex } from './visited'
+import { buildVisitedRegionCountryIndex, formatVisitedYears } from './visited'
+import { getTodayItems } from './today'
 
 const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
@@ -165,9 +166,28 @@ export async function buildPersonResourceText(gallery: Gallery, name: string) {
   return formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name))
 }
 
-export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: string, limit = DEFAULT_LIMIT) {
-  const output = await getOnThisDayStory(gallery, monthDay, limit)
-  return formatOnThisDayResourceText(output, buildTodayGuiHref(gallery, output.monthDay))
+export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: string, maxDisplayEntries = DEFAULT_LIMIT) {
+  const output = await getOnThisDayStory(gallery, monthDay)
+  const displayLimit = clampLimit(maxDisplayEntries)
+  const resourceSummary = output.totalMatches > 0
+    ? `Found ${output.totalMatches} on-this-day match${output.totalMatches === 1 ? '' : 'es'} for ${output.monthDay}.`
+    : `No on-this-day matches for ${output.monthDay}.`
+
+  const { locationOptions, personOptions, yearOptions, tagOptions } = await getTodayItems(gallery, output.monthDay)
+  const years = formatVisitedYears(yearOptions
+    .map(option => option.value)
+    .filter(value => /^\d{4}$/.test(value))
+    .slice(0, displayLimit))
+  const keywordTags = tagOptions
+    .slice(0, displayLimit)
+    .map(option => option.label)
+
+  return formatOnThisDayResourceText({ summary: resourceSummary }, buildTodayGuiHref(gallery, output.monthDay), {
+    years,
+    locations: locationOptions.slice(0, displayLimit).map(option => option.label),
+    persons: personOptions.slice(0, displayLimit).map(option => option.label),
+    keywordTags,
+  })
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {
@@ -224,21 +244,29 @@ export async function getOnThisDayStory(gallery: Gallery, monthDay?: string, lim
   const maxItems = clampLimit(limit)
   const { items } = await getAllData({ gallery })
 
-  const matches = items
+  const allMatches = items
     .filter(item => getMonthDay(item) === targetMonthDay)
     .map(item => {
       const candidate = mapAllItemToCandidate(item)
       return buildStoryMoment(candidate, storyRichness(candidate), [`matches month-day: ${targetMonthDay}`])
     })
     .sort((left, right) => compareDatesDescending(left.date, right.date))
+  const totalMatches = allMatches.length
+  const matches = allMatches
     .slice(0, maxItems)
+  const limitSuffix = totalMatches > maxItems
+    ? ` Limited to ${matches.length}.`
+    : ''
+
+  const summary = totalMatches > 0
+    ? `Found ${totalMatches} on-this-day match${totalMatches === 1 ? '' : 'es'} for ${targetMonthDay}.${limitSuffix}`
+    : `No on-this-day matches for ${targetMonthDay}.`
 
   return validateOnThisDayStoryResult({
-    summary: matches.length > 0
-      ? `Found ${matches.length} on-this-day match${matches.length === 1 ? '' : 'es'} for ${targetMonthDay}.`
-      : `No on-this-day matches for ${targetMonthDay}.`,
+    summary,
     gallery,
     monthDay: targetMonthDay,
+    totalMatches,
     matches,
   })
 }

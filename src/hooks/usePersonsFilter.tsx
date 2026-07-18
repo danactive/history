@@ -50,11 +50,18 @@ export default function usePersonsFilter({
     const normalizedKeyword = keywordFromUrl.trim().toLowerCase()
     if (!normalizedKeyword) return null
 
-    const matchedName = items
+    const matchedNames = [...new Set(items
       .flatMap(item => item.persons?.map(person => person.full) ?? [])
-      .find(name => name.toLowerCase() === normalizedKeyword)
+      .filter(name => name.toLowerCase().includes(normalizedKeyword)))]
 
-    return matchedName ?? null
+    const exactMatch = matchedNames.find(name => name.toLowerCase() === normalizedKeyword)
+    if (exactMatch) return exactMatch
+
+    if (matchedNames.length === 1) {
+      return matchedNames[0] ?? null
+    }
+
+    return null
   }, [items, keywordFromUrl, selectedPerson])
 
   const personDetailsHref = gallery && personDetailsName

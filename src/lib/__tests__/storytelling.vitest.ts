@@ -4,6 +4,7 @@ import config from '../../models/config'
 import getAlbum from '../album'
 import {
   buildAlbumStory,
+  buildOnThisDayResourceText,
   getOnThisDayStory,
   getPeopleStoryIndex,
   searchStoryMoments,
@@ -65,5 +66,32 @@ describe('Storytelling library', () => {
     const result = await getOnThisDayStory(config.defaultGallery, '01-04', 3)
 
     expect(result.matches.some(item => item.filename === '2004-01-04-01.jpg')).toBe(true)
+  })
+
+  test('reports total on-this-day matches and explicit limit wording when truncated', async () => {
+    const result = await getOnThisDayStory('dan', '07-18', 3)
+
+    expect(result.matches).toHaveLength(3)
+    expect(result.summary).toContain('Found ')
+    expect(result.summary).toContain('07-18')
+    expect(result.summary).toContain('Limited to 3.')
+    expect(result.summary).not.toContain('Found 3 on-this-day matches for 07-18.')
+  })
+
+  test('builds on-this-day resource text with years, locations, and keyword tags', async () => {
+    const text = await buildOnThisDayResourceText(config.defaultGallery, '01-04', 3)
+
+    expect(text).toContain('Years: ')
+    expect(text).toContain('Locations: ')
+    expect(text).toContain('Persons: ')
+    expect(text).toContain('Keyword tags: ')
+    expect(text).toContain('GUI: http://localhost:3030/')
+    expect(text).not.toContain('.jpg')
+  })
+
+  test('omits limit wording from on-this-day resource text', async () => {
+    const text = await buildOnThisDayResourceText('dan', '07-18', 3)
+
+    expect(text).not.toContain('Limited to 3.')
   })
 })

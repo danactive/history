@@ -7,23 +7,25 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
+const useMapFilter = vi.hoisted(() => vi.fn(({ items, trailingAction }: { items: any[]; trailingAction?: React.ReactNode }) => ({
+  refImageGallery: { current: null },
+  memoryIndex: 0,
+  setMemoryIndex: vi.fn(),
+  memoryHtml: null,
+  viewedList: new Set<string>(),
+  keyword: '',
+  searchBox: trailingAction ?? null,
+  mapFilterEnabled: false,
+  handleToggleMapFilter: vi.fn(),
+  handleBoundsChange: vi.fn(),
+  itemsToShow: items,
+  isClearing: false,
+  clearCoordinates: vi.fn(),
+})))
+
 vi.mock('../useMapFilter', () => ({
   __esModule: true,
-  default: ({ items }: { items: any[] }) => ({
-    refImageGallery: { current: null },
-    memoryIndex: 0,
-    setMemoryIndex: vi.fn(),
-    memoryHtml: null,
-    viewedList: new Set<string>(),
-    keyword: '',
-    searchBox: null,
-    mapFilterEnabled: false,
-    handleToggleMapFilter: vi.fn(),
-    handleBoundsChange: vi.fn(),
-    itemsToShow: items,
-    isClearing: false,
-    clearCoordinates: vi.fn(),
-  }),
+  default: useMapFilter,
 }))
 
 vi.mock('../useMemory', () => ({
@@ -100,6 +102,7 @@ describe('usePersonsFilter URL sync', () => {
   beforeEach(() => {
     query = new URLSearchParams()
     replace.mockClear()
+    useMapFilter.mockClear()
     vi.mocked(usePathname).mockReturnValue('/demo/persons')
     vi.mocked(useRouter).mockReturnValue({ replace } as any)
     vi.mocked(useSearchParams).mockImplementation(() => searchParamsMock as any)
@@ -187,6 +190,20 @@ describe('usePersonsFilter URL sync', () => {
 
     expect(screen.queryByText('All people at 21 (1 person)')).not.toBeInTheDocument()
     expect(screen.getByText('Person: Alice')).toBeInTheDocument()
+  })
+
+  test('shows person details link for a unique partial keyword match', () => {
+    query = new URLSearchParams('keyword=ali')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    render(<>{result.current.searchBox}</>)
+
+    expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Alice')
   })
 })
 

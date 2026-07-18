@@ -14,6 +14,7 @@ const storyMomentSchema = z.object({
   title: z.string(),
   caption: z.string(),
   description: z.string().nullable(),
+  search: z.string().nullable(),
   city: z.string(),
   location: z.string().nullable(),
   persons: z.array(z.string().trim().min(1)),
@@ -97,6 +98,7 @@ export const onThisDayStoryResultSchema = z.object({
   summary: z.string().trim().min(1),
   gallery: generatedGallerySchema,
   monthDay: z.string().regex(/^\d{2}-\d{2}$/),
+  totalMatches: z.number().int().min(0),
   matches: z.array(storyMomentSchema),
 }).strip()
 
@@ -130,13 +132,22 @@ function formatPersonResourceText(
 }
 
 function formatOnThisDayResourceText(
-  output: Pick<OnThisDayStoryResult, 'summary' | 'matches'>,
+  output: Pick<OnThisDayStoryResult, 'summary'>,
   guiHref: string,
+  details: {
+    years: string
+    locations: string[]
+    persons: string[]
+    keywordTags: string[]
+  },
 ) {
   return [
     output.summary,
+    `Years: ${details.years || 'none'}`,
+    `Locations: ${details.locations.join(', ') || 'none'}`,
+    `Persons: ${details.persons.join(', ') || 'none'}`,
+    `Keyword tags: ${details.keywordTags.join(', ') || 'none'}`,
     `GUI: ${guiHref}`,
-    ...output.matches.map((match) => `${match.date ?? 'unknown'}: ${match.caption} (${match.filename})`),
   ].join('\n')
 }
 
