@@ -55,6 +55,10 @@ function getStringFromTemplate(uri: URL, value: unknown, segmentIndex: number) {
 }
 
 const GUIDE_URI = 'history://guide'
+
+function formatCountedPeople(people: { name: string, count: number }[]) {
+  return people.map(person => `${person.name} (${person.count})`).join(', ') || 'none'
+}
 const GALLERIES_URI = 'history://galleries'
 const GALLERY_TEMPLATE = 'history://gallery/{gallery}'
 const ALBUM_TEMPLATE = 'history://album/{gallery}/{album}'
@@ -164,7 +168,7 @@ async function buildPersonResource(gallery: z.infer<typeof generatedGallerySchem
 
   return stringifyLines([
     `Person ${person.name}`,
-    `Gallery: ${gallery}`,
+    `Gallery is ${gallery}`,
     `Appearances: ${person.appearances}`,
     `First seen: ${person.firstSeen ?? 'unknown'}`,
     `Last seen: ${person.lastSeen ?? 'unknown'}`,
@@ -228,8 +232,8 @@ function createStorytellingServer() {
     'history-galleries',
     GALLERIES_URI,
     {
-      title: 'History Galleries',
-      description: 'List all available gallery collections in the local archive.',
+      title: 'History Photo Galleries',
+      description: 'List all available photo gallery collections in the local archive.',
       mimeType: 'text/plain',
     },
     async (uri) => ({
@@ -255,7 +259,7 @@ function createStorytellingServer() {
     }),
     {
       title: 'History Gallery',
-      description: 'Album inventory and summary for a specific gallery.',
+      description: 'Album inventory and summary for a specific photo gallery.',
       mimeType: 'text/plain',
     },
     async (uri, variables) => ({
@@ -297,7 +301,7 @@ function createStorytellingServer() {
           text: stringifyLines([
             output.summary,
             `Places: ${output.places.join(', ') || 'none'}`,
-            `People: ${output.people.join(', ') || 'none'}`,
+            `Persons: ${formatCountedPeople(output.personCounts)}`,
           ]),
         }],
       }

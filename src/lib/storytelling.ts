@@ -58,6 +58,7 @@ type AlbumStoryResult = {
   itemCount: number
   places: string[]
   people: string[]
+  personCounts: { name: string, count: number }[]
   highlights: StoryMoment[]
 }
 
@@ -99,6 +100,36 @@ const tokenize = (value: string | null | undefined) => normalize(value)
   .filter(Boolean)
 
 const unique = <T>(values: T[]) => [...new Set(values)]
+
+const sortValuesByFrequency = (values: string[], limit: number) => {
+  const counts = new Map<string, number>()
+
+  values
+    .filter(Boolean)
+    .forEach((value) => {
+      counts.set(value, (counts.get(value) ?? 0) + 1)
+    })
+
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, limit)
+    .map(([value]) => value)
+}
+
+const countValuesByFrequency = (values: string[], limit: number) => {
+  const counts = new Map<string, number>()
+
+  values
+    .filter(Boolean)
+    .forEach((value) => {
+      counts.set(value, (counts.get(value) ?? 0) + 1)
+    })
+
+  return [...counts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, limit)
+    .map(([name, count]) => ({ name, count }))
+}
 
 const getFilename = (item: Pick<Item, 'filename'> | Pick<ServerSideAllItem, 'filename'>) => getPrimaryFilename(item.filename)
 
@@ -376,8 +407,9 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     .sort((left, right) => right.score - left.score || compareDatesDescending(left.date, right.date))
     .slice(0, maxItems)
 
-  const places = unique(candidates.map(item => item.city).filter(Boolean)).slice(0, maxItems)
-  const people = unique(candidates.flatMap(item => item.persons)).slice(0, maxItems)
+  const places = sortValuesByFrequency(candidates.map(item => item.city).filter(Boolean), maxItems)
+  const personCounts = countValuesByFrequency(candidates.flatMap(item => item.persons), maxItems)
+  const people = personCounts.map(person => person.name)
   const title = albumMeta?.h1 ?? album
   const subtitle = albumMeta?.h2 ?? ''
   const year = albumMeta?.year ?? null
@@ -398,6 +430,7 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     itemCount: albumData.items.length,
     places,
     people,
+    personCounts,
     highlights,
   }
 }
@@ -495,6 +528,8 @@ export type {
   AlbumStoryResult,
   OnThisDayStoryResult,
   PersonStoryIndexResult,
-  StoryMoment, StorySearchResult, StorySearchSchemaInput,
+  StoryMoment,
+  StorySearchResult,
+  StorySearchSchemaInput,
 }
 

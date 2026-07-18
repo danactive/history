@@ -315,7 +315,7 @@ describe('storytelling MCP server integration', () => {
     const resources = await client.listResources()
 
     expect(resources.resources).toEqual(expect.arrayContaining([
-      expect.objectContaining({ uri: 'history://galleries', title: 'History Galleries' }),
+      expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
       expect.objectContaining({ uri: 'history://guide', title: 'History Storytelling Guide' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
     ]))

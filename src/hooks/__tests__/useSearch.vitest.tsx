@@ -109,7 +109,7 @@ describe('Query string', () => {
 describe('Router ready', () => {
   it('Initializes input value from URL keyword param', () => {
     const keyword = 'best'
-    mockNavigation({ pathname: '/dan/japan2025_taiwan', params: { keyword } })
+    mockNavigation({ pathname: '/demo/vancouver2025', params: { keyword } })
 
     const items = [{ ...mockItem, corpus: 'best sunset' }, { ...mockItem, corpus: 'good morning' }, { ...mockItem, corpus: 'best food' }]
 
@@ -449,7 +449,7 @@ describe('Clear button functionality', () => {
 
   it('clearing the visited chip preserves the keyword query and selected media', async () => {
     const { replace: mockReplace } = mockNavigation({
-      pathname: '/dan/all',
+      pathname: '/demo/all',
       params: {
         visitedCountry: 'Uzbekistan',
         visitedRegion: 'Tashkent to Andijan',
@@ -473,14 +473,14 @@ describe('Clear button functionality', () => {
     expect(visitedClearButton).toBeTruthy()
 
     mockNavigation({
-      pathname: '/dan/all',
+      pathname: '/demo/all',
       params: { keyword: 'Harpy eagle' },
       replace: mockReplace,
     })
 
     fireEvent.click(visitedClearButton)
 
-    expect(mockReplace).toHaveBeenCalledWith('/dan/all?keyword=Harpy+eagle&select=harpy-eagle.jpg')
+    expect(mockReplace).toHaveBeenCalledWith('/demo/all?keyword=Harpy+eagle&select=harpy-eagle.jpg')
 
     await waitFor(() => {
       const input = container.querySelector('input') as HTMLInputElement

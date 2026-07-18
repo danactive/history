@@ -279,7 +279,12 @@ beforeEach(() => {
       albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025', search: null }],
     },
   })
-  buildAlbumStory.mockResolvedValue({ summary: 'Album summary', places: ['Nagoya'], people: ['Mister Gingerbread'] })
+  buildAlbumStory.mockResolvedValue({
+    summary: 'Album summary',
+    places: ['Nagoya'],
+    people: ['Mister Gingerbread'],
+    personCounts: [{ name: 'Mister Gingerbread', count: 23 }],
+  })
   getPeopleStoryIndex.mockResolvedValue({
     summary: 'People summary',
     people: [{
@@ -356,7 +361,7 @@ describe('storytelling MCP server', () => {
     const resources = await client.listResources()
 
     expect(resources.resources).toEqual(expect.arrayContaining([
-      expect.objectContaining({ uri: 'history://galleries', title: 'History Galleries' }),
+      expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
       expect.objectContaining({ uri: 'history://guide', title: 'History Storytelling Guide' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
       expect.objectContaining({ uri: 'history://album/demo/trip', title: 'History Album' }),
@@ -400,6 +405,7 @@ describe('storytelling MCP server', () => {
 
     expect(album.contents[0]?.text).toContain('Album summary')
     expect(album.contents[0]?.text).toContain('Places: Nagoya')
+    expect(album.contents[0]?.text).toContain('Persons: Mister Gingerbread (23)')
     expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
     expect(person.contents[0]?.text).toContain('Appearances: 3')
     expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons?person=Mister+Gingerbread')
