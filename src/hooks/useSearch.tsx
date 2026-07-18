@@ -269,7 +269,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     // Get current photo ID from displayed items (respects map filter)
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const currentItem = itemsToUse[currentIndex]
-    const identifier = getPrimaryFilename(currentItem.filename)
+    const identifier = currentItem ? getPrimaryFilename(currentItem.filename) : ''
 
     if (selectById && identifier) {
       selectById(identifier, true)
@@ -287,7 +287,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const handleClearVisitedFilter = useCallback(() => {
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const currentItem = itemsToUse[currentIndex]
-    const identifier = getPrimaryFilename(currentItem.filename)
+    const identifier = currentItem ? getPrimaryFilename(currentItem.filename) : ''
 
     if (selectById && identifier) {
       selectById(identifier, true)

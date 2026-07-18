@@ -489,4 +489,42 @@ describe('Clear button functionality', () => {
 
     expect(container.textContent).toMatch(/for "Harpy eagle"/)
   })
+
+  it('clearing the visited chip with zero search results does not crash and clears visited params', () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/gallery/all',
+      params: {
+        visitedCountry: 'Portugal',
+        visitedRegion: 'Lisbon',
+        keyword: 'nomatch',
+      },
+    })
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: 'lisbon.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Porto, Portugal', filename: 'porto.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 0 of 2/)
+
+    const visitedClearButton = container.querySelector('button[title="Clear visited filter Lisbon, Portugal"]') as HTMLButtonElement
+    expect(visitedClearButton).toBeTruthy()
+
+    mockNavigation({
+      pathname: '/gallery/all',
+      params: { keyword: 'nomatch' },
+      replace: mockReplace,
+    })
+
+    fireEvent.click(visitedClearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?keyword=nomatch&select=lisbon.jpg')
+  })
 })
