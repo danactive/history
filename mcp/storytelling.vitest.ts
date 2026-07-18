@@ -86,6 +86,7 @@ const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
 const buildAlbumResourceText = vi.hoisted(() => vi.fn())
+const buildPersonResourceText = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
 const getOnThisDayStory = vi.hoisted(() => vi.fn())
 const buildStorytellingOverview = vi.hoisted(() => vi.fn())
@@ -101,6 +102,7 @@ vi.mock('../src/lib/albums', () => ({
 vi.mock('../src/lib/storytelling', () => ({
   buildAlbumResourceText,
   buildAlbumStory,
+  buildPersonResourceText,
   getPeopleStoryIndex,
   getOnThisDayStory,
   buildStorytellingOverview,
@@ -269,6 +271,7 @@ beforeEach(() => {
   getAlbums.mockReset()
   buildAlbumStory.mockReset()
   buildAlbumResourceText.mockReset()
+  buildPersonResourceText.mockReset()
   getPeopleStoryIndex.mockReset()
   getOnThisDayStory.mockReset()
   buildStorytellingOverview.mockReset()
@@ -292,6 +295,16 @@ beforeEach(() => {
     'Album summary',
     'Places: Nagoya',
     'Persons: Mister Gingerbread (23)',
+  ].join('\n'))
+  buildPersonResourceText.mockResolvedValue([
+    'Person Mister Gingerbread',
+    'Gallery is demo',
+    'Appearances: 3',
+    'First seen: 2024-01-02',
+    'Last seen: 2024-02-03',
+    'Date of birth: unknown',
+    'Albums: trip',
+    'GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread',
   ].join('\n'))
   getPeopleStoryIndex.mockResolvedValue({
     summary: 'People summary',
@@ -416,7 +429,7 @@ describe('storytelling MCP server', () => {
     expect(album.contents[0]?.text).toContain('Persons: Mister Gingerbread (23)')
     expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
     expect(person.contents[0]?.text).toContain('Appearances: 3')
-    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons?person=Mister+Gingerbread')
+    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread')
   })
 
   test('maps get_album_story responses into text and structured content', async () => {

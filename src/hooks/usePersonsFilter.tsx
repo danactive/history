@@ -6,6 +6,7 @@ import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import Link from '../components/Link'
 import type { ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
 import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
@@ -21,12 +22,14 @@ type PersonMatch = {
 type AgeFilterValue = number | 'unknown' | null
 
 export default function usePersonsFilter({
+  gallery,
   items,
   indexedKeywords,
   initialAgeSummary,
   initialSelectedAge,
   initialSelectedPerson,
 }: All.ItemData & {
+  gallery?: string
   initialAgeSummary?: { ages: { age: number; count: number }[] }
   initialSelectedAge?: AgeFilterValue
   initialSelectedPerson?: string | null
@@ -34,6 +37,29 @@ export default function usePersonsFilter({
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  // Age/person selection state
+  const [selectedAge, setSelectedAge] = useState<AgeFilterValue>(initialSelectedAge ?? null)
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(initialSelectedPerson ?? null)
+  const [mounted, setMounted] = useState(false)
+
+  const keywordFromUrl = searchParams.get('keyword') ?? ''
+  const personDetailsName = useMemo(() => {
+    if (selectedPerson) return selectedPerson
+
+    const normalizedKeyword = keywordFromUrl.trim().toLowerCase()
+    if (!normalizedKeyword) return null
+
+    const matchedName = items
+      .flatMap(item => item.persons?.map(person => person.full) ?? [])
+      .find(name => name.toLowerCase() === normalizedKeyword)
+
+    return matchedName ?? null
+  }, [items, keywordFromUrl, selectedPerson])
+
+  const personDetailsHref = gallery && personDetailsName
+    ? `/${gallery}/persons/details?${new URLSearchParams({ person: personDetailsName }).toString()}`
+    : null
 
   const {
     refImageGallery,
@@ -49,12 +75,12 @@ export default function usePersonsFilter({
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ items, indexedKeywords })
+  } = useMapFilter({
+    items,
+    indexedKeywords,
+    trailingAction: personDetailsHref ? <Link href={personDetailsHref}>Person details</Link> : null,
+  })
 
-  // Age/person selection state
-  const [selectedAge, setSelectedAge] = useState<AgeFilterValue>(initialSelectedAge ?? null)
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(initialSelectedPerson ?? null)
-  const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
 
   // Keep local state in sync when URL changes externally (navigation/back/forward/share links).

@@ -13,13 +13,14 @@ import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 
 export default function PersonsClient({
+  gallery,
   items,
   indexedKeywords,
   clusteredMarkers,
   initialAgeSummary,
   initialSelectedAge,
   initialSelectedPerson,
-}: All.ComponentProps) {
+}: All.ComponentProps & { gallery: string }) {
   const {
     refImageGallery,
     memoryIndex,
@@ -41,7 +42,7 @@ export default function PersonsClient({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
-  } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
+  } = usePersonsFilter({ gallery, items, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

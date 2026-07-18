@@ -5,10 +5,11 @@ import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
 import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
-import { buildPersonGuiHref, buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
+import { buildTodayGuiHref, getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import {
   buildAlbumResourceText,
   buildAlbumStory,
+  buildPersonResourceText,
   buildStorytellingOverview,
   getOnThisDayStory,
   getPeopleStoryIndex,
@@ -151,27 +152,6 @@ async function buildGalleryResource(gallery: z.infer<typeof generatedGallerySche
       `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`,
       album.search ? `with keywords ${album.search}` : null,
     ])),
-  ])
-}
-
-async function buildPersonResource(gallery: z.infer<typeof generatedGallerySchema>, name: string) {
-  const output = await getPeopleStoryIndex(gallery)
-  const person = output.people.find((candidate) => candidate.name === name)
-  if (!person) {
-    throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
-  }
-
-  const guiHref = buildPersonGuiHref(gallery, person.name)
-
-  return stringifyLines([
-    `Person ${person.name}`,
-    `Gallery is ${gallery}`,
-    `Appearances: ${person.appearances}`,
-    `First seen: ${person.firstSeen ?? 'unknown'}`,
-    `Last seen: ${person.lastSeen ?? 'unknown'}`,
-    `Date of birth: ${person.dateOfBirth ?? 'unknown'}`,
-    `Albums: ${person.albums.join(', ') || 'none'}`,
-    `GUI: ${guiHref}`,
   ])
 }
 
@@ -324,7 +304,7 @@ function createStorytellingServer() {
     async (uri, variables) => ({
       contents: [{
         uri: uri.href,
-        text: await buildPersonResource(
+        text: await buildPersonResourceText(
           getGalleryFromTemplate(uri, variables.gallery, 0),
           getStringFromTemplate(uri, variables.name, 1),
         ),

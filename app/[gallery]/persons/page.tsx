@@ -87,6 +87,7 @@ export default async function PersonsServer({
   return (
     <Suspense fallback={<div>Loading Persons...</div>}>
       <PersonsClient
+        gallery={gallery}
         items={items}
         indexedKeywords={indexedKeywords}
         clusteredMarkers={clusterMarkers}

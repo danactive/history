@@ -1,5 +1,6 @@
 import {
   formatAlbumResourceText,
+  formatPersonResourceText,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,
   validatePersonStoryIndexResult,
@@ -14,6 +15,7 @@ import {
   type StorySearchSchemaInput,
 } from '../models/storytelling'
 import type { Gallery, Person } from '../types/common'
+import { buildPersonGuiHref } from './monthDay'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
@@ -150,6 +152,16 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
 export async function buildAlbumResourceText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
   const output = await buildAlbumStory(gallery, album, limit)
   return formatAlbumResourceText(output)
+}
+
+export async function buildPersonResourceText(gallery: Gallery, name: string) {
+  const output = await getPeopleStoryIndex(gallery)
+  const person = output.people.find((candidate) => candidate.name === name)
+  if (!person) {
+    throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
+  }
+
+  return formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name))
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {

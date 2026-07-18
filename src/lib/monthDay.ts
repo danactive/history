@@ -31,5 +31,5 @@ export function buildTodayGuiHref(gallery: Gallery, monthDay: string) {
 
 export function buildPersonGuiHref(gallery: Gallery, name: string) {
   const searchParams = new URLSearchParams({ person: name })
-  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons?${searchParams.toString()}`
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons/details?${searchParams.toString()}`
 }

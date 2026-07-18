@@ -112,6 +112,23 @@ function formatAlbumResourceText(album: Pick<AlbumStoryResult, 'summary' | 'plac
   ].join('\n')
 }
 
+function formatPersonResourceText(
+  person: Pick<PersonStoryIndexEntry, 'name' | 'appearances' | 'firstSeen' | 'lastSeen' | 'dateOfBirth' | 'albums'>,
+  gallery: PersonStoryIndexResult['gallery'],
+  guiHref: string,
+) {
+  return [
+    `Person ${person.name}`,
+    `Gallery is ${gallery}`,
+    `Appearances: ${person.appearances}`,
+    `First seen: ${person.firstSeen ?? 'unknown'}`,
+    `Last seen: ${person.lastSeen ?? 'unknown'}`,
+    `Date of birth: ${person.dateOfBirth ?? 'unknown'}`,
+    `Albums: ${person.albums.join(', ') || 'none'}`,
+    `GUI: ${guiHref}`,
+  ].join('\n')
+}
+
 function validateStorySearchInput(input: unknown) {
   return storySearchInputSchema.parse(input)
 }
@@ -145,6 +162,7 @@ type OnThisDayStoryResult = z.infer<typeof onThisDayStoryResultSchema>
 export {
   formatAlbumResourceText,
   formatCountedPeople,
+  formatPersonResourceText,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,
   validatePersonStoryIndexResult,
