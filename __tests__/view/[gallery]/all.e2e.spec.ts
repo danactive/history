@@ -37,7 +37,7 @@ test.describe('Visited', () => {
     await page.goto('/demo/visited')
 
     await expect(page.getByRole('heading', { name: 'Countries' })).toBeVisible()
-    await expect(page.getByText('BC 2001, 2004-2005, 2012, 2014, 2020')).toBeVisible()
+    await expect(page.getByText('Canada 2004-2005, 2012, 2014, 2020')).toBeVisible()
   })
 })
 

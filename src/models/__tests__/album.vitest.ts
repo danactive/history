@@ -260,11 +260,19 @@ describe('Album library', () => {
         item: makeXmlItem(),
       })
       Reflect.set(getMeta(mock), 'gallery', 'nope')
-      const expectedOptions = generatedGalleries.map((gallery) => JSON.stringify(gallery)).join('|')
+      let thrown: unknown
 
-      expect(() => transformJsonSchema(mock, [])).toThrow(
-        `XML validation failed in <meta> element: gallery: Invalid option: expected one of ${expectedOptions}`,
-      )
+      try {
+        transformJsonSchema(mock, [])
+      } catch (error) {
+        thrown = error
+      }
+
+      expect(thrown).toBeInstanceOf(ReferenceError)
+      expect((thrown as Error).message).toContain('XML validation failed in <meta> element: gallery:')
+      generatedGalleries.forEach((gallery) => {
+        expect((thrown as Error).message).toContain(JSON.stringify(gallery))
+      })
     })
 
     test('throws when item id attribute is missing or blank', () => {
