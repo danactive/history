@@ -23,14 +23,17 @@ import { matchCorpus } from '../utils/search'
 import styles from './search.module.css'
 import useBookmark from './useBookmark'
 
-interface ServerSideItem {
+interface SearchableItem {
   corpus: string;
   city?: string;
-  filename: string | string[];
   photoDate?: string | null;
   persons?: { full: string }[] | null;
   search?: string | null;
   visitedPlace?: VisitedPlace | null;
+}
+
+type FilenameItem = SearchableItem & {
+  filename: string | string[];
 }
 
 interface UseSearchProps<ItemType> {
@@ -85,7 +88,11 @@ export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {
   return { mode: null, tokens: [keyword], isAdvanced: false }
 }
 
-export default function useSearch<ItemType extends ServerSideItem>({
+function hasFilename(item: SearchableItem): item is FilenameItem {
+  return 'filename' in item && Boolean(item.filename)
+}
+
+export default function useSearch<ItemType extends SearchableItem>({
   gallery,
   items,
   memoryIndex,
@@ -136,8 +143,8 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const visitedOptions = useMemo(
     () => buildVisitedKeywordOptions(
       items
-        .filter((item): item is ItemType & Required<Pick<ServerSideItem, 'city' | 'filename'>> => (
-          typeof item.city === 'string' && Boolean(item.filename)
+        .filter((item): item is ItemType & FilenameItem & Required<Pick<FilenameItem, 'city'>> => (
+          typeof item.city === 'string' && hasFilename(item)
         ))
         .map((item) => ({
           city: item.city,
@@ -233,7 +240,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     if (!currentVisitedFilter) return items
 
     const regionCountryIndex = buildVisitedRegionCountryIndex(
-      items.filter((item): item is ItemType & Required<Pick<ServerSideItem, 'city'>> => typeof item.city === 'string'),
+      items.filter((item): item is ItemType & Required<Pick<SearchableItem, 'city'>> => typeof item.city === 'string'),
     )
 
     return items.filter((item) => {
@@ -287,7 +294,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
     // Get current photo ID from displayed items (respects map filter)
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const currentItem = itemsToUse[currentIndex]
-    const identifier = currentItem ? getPrimaryFilename(currentItem.filename) : ''
+    const identifier = currentItem && hasFilename(currentItem) ? getPrimaryFilename(currentItem.filename) : ''
 
     if (selectById && identifier) {
       selectById(identifier, true)
@@ -305,7 +312,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const handleClearVisitedFilter = useCallback(() => {
     const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
     const currentItem = itemsToUse[currentIndex]
-    const identifier = currentItem ? getPrimaryFilename(currentItem.filename) : ''
+    const identifier = currentItem && hasFilename(currentItem) ? getPrimaryFilename(currentItem.filename) : ''
 
     if (selectById && identifier) {
       selectById(identifier, true)
@@ -346,7 +353,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const canBookmark = Boolean(
     refImageGallery
     && itemsToUse.length
-    && 'filename' in itemsToUse[0],
+    && hasFilename(itemsToUse[0]),
   )
 
   const { BookmarkButton } = useBookmark({

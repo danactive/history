@@ -29,7 +29,7 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. The server exposes history resources plus album-story and on-this-day storytelling tools
 1. For MCP clients connect with the mcp.json manifest
 
-- For VS Code workspace configuration, use /.vscode-mcp.json and `Install Server from Manifest`
+- For VS Code workspace configuration, use /vscode-mcp.json and `Install Server from Manifest`
 
 
 #### How-to build for PROD

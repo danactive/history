@@ -22,7 +22,12 @@ import { generatedGallerySchema } from '../src/types/generated'
 
 const modulePath = fileURLToPath(import.meta.url)
 const projectRoot = path.resolve(path.dirname(modulePath), '..')
-process.chdir(projectRoot)
+
+function ensureProjectRoot() {
+  if (process.cwd() !== projectRoot) {
+    process.chdir(projectRoot)
+  }
+}
 
 const gallerySchema = generatedGallerySchema.describe(
   'Select a gallery collection of albums to query for stories. If not provided, the default gallery will be used.',
@@ -133,6 +138,8 @@ async function buildStorytellingGuide() {
 }
 
 function createStorytellingServer() {
+  ensureProjectRoot()
+
   const server = new McpServer({
     name: 'history-storytelling',
     version: '1.0.0',

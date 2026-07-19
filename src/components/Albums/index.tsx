@@ -14,7 +14,7 @@ function Galleries({ items, gallery }: InputProps) {
   return items.map((album) => (
     <div data-type="gallery" key={album.name} className={styles.albums}>
       <Link href={`/${gallery}/${album.name}`}>
-        <Img src={album.filename} alt={album.name} width={width} height={height} />
+        <Img src={album.thumbPath} alt={album.name} width={width} height={height} />
       </Link>
       <h1 className={styles.h1}>{album.h1}</h1>
       <h2 className={styles.h2}>{album.h2}</h2>

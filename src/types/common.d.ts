@@ -139,7 +139,7 @@ type GalleryAlbum = {
   h1: string;
   h2: string;
   version: string;
-  filename: string;
+  thumbPath: string;
   year: string;
   search: string | null;
 }

@@ -42,7 +42,7 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
     h1: album.albumH1,
     h2: album.albumH2,
     version: album.albumVersion,
-    filename: utils.thumbPath(album.filename, gallery),
+    thumbPath: utils.thumbPath(album.filename, gallery),
     year: album.year,
     search: album.search || null,
   })

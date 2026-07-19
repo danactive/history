@@ -16,7 +16,7 @@ describe('Albums library', () => {
             h1: 'Sample',
             h2: 'British Columbia',
             version: '2.2',
-            filename: '/galleries/demo/media/thumbs/2004/2004-01-04-01.jpg',
+            thumbPath: '/galleries/demo/media/thumbs/2004/2004-01-04-01.jpg',
             year: '2001-2005',
             search: '2001, 2004, British Columbia, Cook Islands',
           },
