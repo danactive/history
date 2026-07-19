@@ -1,16 +1,22 @@
 'use client'
 
-import { useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-
+import { useEffect, useMemo } from 'react'
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
 import { All } from '../../types/pages'
+import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 
-export default function AllClient({ items, indexedKeywords, clusteredMarkers }: All.ComponentProps) {
+export default function AllClient({
+  gallery,
+  items,
+  indexedKeywords,
+  clusteredMarkers,
+  visitedFilterLabel,
+}: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   const {
@@ -27,7 +33,7 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ items, indexedKeywords })
+  } = useMapFilter({ gallery, items, indexedKeywords, visitedFilterLabel })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
@@ -37,7 +43,7 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers }: 
     if (!selectId || itemsToShow.length === 0) return
 
     const idx = itemsToShow.findIndex(i => {
-      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      const filename = getPrimaryFilename(i.filename)
       return filename === selectId
     })
 

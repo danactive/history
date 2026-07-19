@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-
+import { isZodError, simplifyZodMessages } from '../../../../src/lib/errors'
 import { errorSchema, resize } from '../../../../src/lib/resize'
-import { isZodError, simplifyZodMessages } from '../../../../src/lib/utils'
 import { validateRequestBody } from '../../../../src/models/resize'
 
 async function POST(req: NextRequest) {

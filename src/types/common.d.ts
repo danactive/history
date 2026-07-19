@@ -64,6 +64,11 @@ type Item = {
   reference: [string, string] | null,
 }
 
+type VisitedPlace = {
+  country: string,
+  region: string | null,
+}
+
 type XmlCaseItem<TCamelCase extends boolean = true> = {
   $: {
     id: string,
@@ -109,6 +114,10 @@ type Album = {
   }
 }
 
+type AlbumsBody = {
+  albums: GalleryAlbum[]
+}
+
 type XmlGalleryAlbum = {
   albumName: string;
   albumH1: string;
@@ -134,7 +143,6 @@ type GalleryAlbum = {
   year: string;
   search: string | null;
 }
-
 interface ServerSideAlbumItem extends GalleryAlbum {
   corpus: string;
 }
@@ -145,14 +153,16 @@ interface ServerSidePhotoItem extends Item {
 
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
-  gallery?: Gallery;
+  gallery: Gallery;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+  visitedPlace: VisitedPlace | null;
 }
 
 type IndexedKeywords = {
   label: string;
   value: string;
+  visitedPlace?: VisitedPlace;
 }
 
 // SplitViewer fullscreenMap
@@ -184,6 +194,7 @@ export type {
   AlbumMeta,
   XmlMeta,
   Album,
+  AlbumsBody,
   XmlGallery,
   XmlGalleryAlbum,
   GalleryAlbum,
@@ -200,4 +211,5 @@ export type {
   Item,
   ItemReferenceSource,
   IndexedKeywords,
+  VisitedPlace,
 }

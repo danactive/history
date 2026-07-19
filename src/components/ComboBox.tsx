@@ -19,7 +19,7 @@ export default function ComboBox(
   {
     className: string,
     options: IndexedKeywords[],
-    onChange: ({ label, value }: { label: string; value: string; }) => void,
+    onChange: (option: IndexedKeywords) => void,
     value: IndexedKeywords | null,
     inputValue?: string,
     onInputChange?: (value: string) => void,
@@ -39,7 +39,7 @@ export default function ComboBox(
           if (typeof newValue === 'string') { // free text
             onChange({ label: newValue, value: newValue })
           } else if (newValue?.label && newValue?.value) { // selected keyword
-            onChange({ label: newValue.label, value: newValue.value })
+            onChange(newValue)
           } else if (newValue === null) { // clear
             onChange({ label: '', value: '' })
           }

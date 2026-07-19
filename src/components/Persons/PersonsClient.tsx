@@ -1,21 +1,24 @@
 'use client'
 
 import Button from '@mui/joy/Button'
-import { useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-
+import { useEffect, useMemo } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
 import type { All } from '../../types/pages'
+import { getPrimaryFilename } from '../../utils'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 
 export default function PersonsClient({
+  gallery,
   items,
   indexedKeywords,
   clusteredMarkers,
   initialAgeSummary,
+  initialSelectedAge,
+  initialSelectedPerson,
 }: All.ComponentProps) {
   const {
     refImageGallery,
@@ -38,7 +41,7 @@ export default function PersonsClient({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
-  } = usePersonsFilter({ items, indexedKeywords, initialAgeSummary })
+  } = usePersonsFilter({ gallery, items, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
@@ -48,7 +51,7 @@ export default function PersonsClient({
     if (!selectId || ageFiltered.length === 0) return
 
     const idx = ageFiltered.findIndex(i => {
-      const filename = Array.isArray(i.filename) ? i.filename[0] : i.filename
+      const filename = getPrimaryFilename(i.filename)
       return filename === selectId
     })
 

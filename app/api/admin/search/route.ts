@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import getAlbums from '../../../../src/lib/albums'
+import { getPrimaryFilename } from '../../../../src/utils'
 import { rawParseOptions, readAlbum } from '../../../../src/lib/xml'
 import type { AlbumMeta, Gallery, Item, RawXmlAlbum, RawXmlItem } from '../../../../src/types/common'
 
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
               results.push({
                 gallery,
                 album: album.name,
-                filename: Array.isArray(item.filename) ? item.filename[0] : item.filename,
+                filename: getPrimaryFilename(item.filename),
                 index,
               })
             }

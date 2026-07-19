@@ -4,6 +4,7 @@
   "defaultAlbum": "sample",
   "defaultGallery": "demo",
   "defaultZoom": 10,
+  "visitedRegionSearchMinCount": 4,
   "defaultDimensions": {
     "video": { "width": 1024, "height": 768 }
   },

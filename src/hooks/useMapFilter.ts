@@ -2,12 +2,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import type { All } from '../types/pages'
+import { getPrimaryFilename } from '../utils'
 import useMemory from './useMemory'
 import useSearch from './useSearch'
 
 type Bounds = [[number, number],[number, number]]
 
-export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
+type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'visitedFilterLabel' | 'trailingAction'> & {
+  personDetailsName?: string | null
+}
+
+export default function useMapFilter({ items, indexedKeywords, visitedFilterLabel, trailingAction, gallery, personDetailsName }: UseMapFilterProps) {
   const refImageGallery = useRef<ImageGalleryRef>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
   const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
@@ -36,7 +41,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     setMapBounds(null)
   }, [])
 
-  const selectById = useCallback((id: string, isClear = false) => {
+  const selectById = useCallback((id: string) => {
     // Simply update selectedId for both clear and normal operations
     // The URL-based handling in each client will position the gallery
     setSelectedId(prev => (prev === id ? prev : id))
@@ -49,14 +54,18 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
     setVisibleCount,
     setDisplayedItems,
   } = useSearch({
+    gallery,
     items,
     memoryIndex,
     setMemoryIndex,
     indexedKeywords,
+    visitedFilterLabel,
     refImageGallery,
     mapFilterEnabled,
     onClearMapFilter: handleClearMapFilter,
+    personDetailsName,
     selectById,
+    trailingAction,
   })
 
   const handleBoundsChange = useCallback((bounds: Bounds) => {
@@ -91,7 +100,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
       // Index by ID
       if (item.id) map.set(item.id, idx)
       // Also index by filename (globally unique)
-      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      const filename = getPrimaryFilename(item.filename)
       if (filename) map.set(filename, idx)
     })
     return map
@@ -103,7 +112,7 @@ export default function useMapFilter({ items, indexedKeywords }: All.ItemData) {
       // Index by ID
       if (item.id) map.set(item.id, idx)
       // Also index by filename (globally unique)
-      const filename = Array.isArray(item.filename) ? item.filename[0] : item.filename
+      const filename = getPrimaryFilename(item.filename)
       if (filename) map.set(filename, idx)
     })
     return map

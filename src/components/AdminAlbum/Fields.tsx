@@ -9,8 +9,8 @@ import Textarea from '@mui/joy/Textarea'
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 import xml2js from 'xml2js'
-
-import type { Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import type { IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import { getPrimaryFilename } from '../../utils'
 import { transformReference } from '../../utils/reference'
 import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
@@ -91,15 +91,13 @@ export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXm
 }
 
 export default function Fields(
-  { xmlAlbum, gallery, item, children, onItemUpdate, onXmlGenerated, editedItems, applyEditsToItems }:
+  { xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems }:
   {
     xmlAlbum: RawXmlAlbum | undefined,
-    gallery: Gallery,
     item: XmlItemState,
     children: React.ReactElement,
     onItemUpdate: EditCountPillHook['handleItemUpdate'],
     onXmlGenerated: EditCountPillHook['handleXmlGenerated'],
-    editedItems: EditCountPillHook['editedItems'],
     applyEditsToItems: EditCountPillHook['applyEditsToItems']
   },
 ) {
@@ -163,7 +161,7 @@ export default function Fields(
     onXmlGenerated()
   }
 
-  const rawFilename = editedItem?.filename ? (Array.isArray(editedItem.filename) ? editedItem.filename[0] : editedItem.filename) : ''
+  const rawFilename = editedItem?.filename ? getPrimaryFilename(editedItem.filename) : ''
   const isVideo = editedItem?.type === 'video'
 
   const swapFilenameExt = (fn: string, toVideo: boolean): string => {
@@ -190,7 +188,7 @@ export default function Fields(
             onChange={(e) => updateItem((prev: RawXmlItem | null) => {
               if (!prev) return null
               const checked = e.target.checked
-              const currentFn = Array.isArray(prev.filename) ? prev.filename[0] : prev.filename
+              const currentFn = getPrimaryFilename(prev.filename)
               const newFn = swapFilenameExt(currentFn ?? '', checked)
               const newFilename = Array.isArray(prev.filename) ? [newFn, ...prev.filename.slice(1)] : newFn
               if (checked) return { ...prev, type: 'video', filename: newFilename }

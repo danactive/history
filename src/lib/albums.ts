@@ -1,13 +1,14 @@
 import config from '../models/config'
 import type {
   AlbumMeta,
+  AlbumsBody,
   Gallery,
-  GalleryAlbum,
   XmlGallery,
   XmlGalleryAlbum,
 } from '../types/common'
+import { handleLibraryError, isValidStringArray } from './errors'
 import getGalleries from './galleries'
-import utilsFactory, { handleLibraryError, isValidStringArray } from './utils'
+import utilsFactory from './utils'
 import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
@@ -18,10 +19,6 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
 }
 
 const utils = utilsFactory()
-
-type AlbumsBody = {
-  albums: GalleryAlbum[]
-}
 
 export type GalleryAlbumsBody = Record<Gallery, AlbumsBody>
 

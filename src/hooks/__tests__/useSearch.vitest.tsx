@@ -1,6 +1,8 @@
 import React from 'react'
 import { renderHook, render, fireEvent, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+type SearchParamValues = Record<string, string | null | undefined>
 
 // Mocks MUST be hoisted before imports
 vi.mock('next/navigation', () => ({
@@ -9,20 +11,88 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
+vi.mock('@mui/joy', () => ({
+  Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => <button {...props}>{children}</button>,
+  Chip: ({ children }: React.HTMLAttributes<HTMLSpanElement>) => <span>{children}</span>,
+  Stack: ({ children }: React.HTMLAttributes<HTMLDivElement>) => <div>{children}</div>,
+}))
+
+vi.mock('../../components/ComboBox', () => ({
+  __esModule: true,
+  default: ({ options, onChange, inputValue, onInputChange }: any) => (
+    <div>
+      <input value={inputValue ?? ''} onChange={(event) => onInputChange?.(event.target.value)} />
+      {options.map((option: any) => (
+        <button key={option.label} type="button" onClick={() => onChange(option)}>
+          {option.label}
+        </button>
+      ))}
+    </div>
+  ),
+}))
+
+vi.mock('../useBookmark', () => ({
+  __esModule: true,
+  default: () => ({
+    BookmarkButton: () => null,
+  }),
+}))
+
+vi.mock('../../components/Link', () => ({
+  __esModule: true,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
+}))
+
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import Link from '../../components/Link'
 import useSearch from '../useSearch'
 
+function createSearchParams(values: SearchParamValues = {}) {
+  return {
+    get: (key: string) => values[key] ?? null,
+    toString: () => {
+      const params = new URLSearchParams()
+      Object.entries(values).forEach(([key, value]) => {
+        if (value) {
+          params.set(key, value)
+        }
+      })
+      return params.toString()
+    },
+  }
+}
+
+function mockNavigation({
+  pathname = '/search',
+  params = {},
+  push = vi.fn(),
+  replace = vi.fn(),
+}: {
+  pathname?: string
+  params?: SearchParamValues
+  push?: ReturnType<typeof vi.fn>
+  replace?: ReturnType<typeof vi.fn>
+} = {}) {
+  vi.mocked(useSearchParams).mockReturnValue(createSearchParams(params) as any)
+  vi.mocked(useRouter).mockReturnValue({ push, replace } as any)
+  vi.mocked(usePathname).mockReturnValue(pathname)
+
+  return { push, replace }
+}
+
+beforeEach(() => {
+  vi.resetAllMocks()
+  mockNavigation()
+})
+
+const mockItem = { filename: 'test.jpg' }
 describe('Query string', () => {
   describe('Router not ready', () => {
     it('Blank', () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: (key: string) => (key === 'keyword' ? '' : null),
-      } as any)
+      mockNavigation({ params: { keyword: '' } })
 
-      vi.mocked(usePathname).mockReturnValue('/search')
-
-      const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+      const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
+      const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
       expect(result.current.filtered).toBe(items)
       expect(result.current.keyword).toBe('')
@@ -31,16 +101,12 @@ describe('Query string', () => {
 
   describe('Keyword filtering', () => {
     it('First keyword partial', () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: (key: string) => (key === 'keyword' ? 'app' : null),
-      } as any)
+      mockNavigation({ params: { keyword: 'app' } })
 
-      vi.mocked(usePathname).mockReturnValue('/search')
+      const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
+      const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
-      const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
-
-      expect(result.current.filtered).toEqual([{ corpus: 'apple' }]) // Only "apple" matches "app"
+      expect(result.current.filtered).toEqual([{ ...mockItem, corpus: 'apple' }]) // Only "apple" matches "app"
       expect(result.current.keyword).toBe('app')
     })
   })
@@ -49,22 +115,13 @@ describe('Query string', () => {
 describe('Router ready', () => {
   it('Initializes input value from URL keyword param', () => {
     const keyword = 'best'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
+    mockNavigation({ pathname: '/demo/vancouver2025', params: { keyword } })
 
-    vi.mocked(useRouter).mockReturnValue({
-      push: vi.fn(),
-      replace: vi.fn(),
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/dan/japan2025_taiwan')
-
-    const items = [{ corpus: 'best sunset' }, { corpus: 'good morning' }, { corpus: 'best food' }]
+    const items = [{ ...mockItem, corpus: 'best sunset' }, { ...mockItem, corpus: 'good morning' }, { ...mockItem, corpus: 'best food' }]
 
     // Use a wrapper component to check the input value
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -80,14 +137,10 @@ describe('Router ready', () => {
 
   it('First keyword partial', () => {
     const keyword = 'app'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
+    mockNavigation({ params: { keyword } })
 
-    vi.mocked(usePathname).mockReturnValue('/search')
-
-    const items = [{ corpus: 'apple' }, { corpus: 'banana' }, { corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[0]])
     expect(result.current.keyword).toBe(keyword)
@@ -95,14 +148,10 @@ describe('Router ready', () => {
 
   it('International', () => {
     const keyword = 'ban'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
+    mockNavigation({ params: { keyword } })
 
-    vi.mocked(usePathname).mockReturnValue('/search')
-
-    const items = [{ corpus: 'apple' }, { corpus: 'bañana' }, { corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'bañana' }, { ...mockItem, corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
@@ -110,14 +159,10 @@ describe('Router ready', () => {
 
   it('Or operator', () => {
     const keyword = 'ban||che'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
+    mockNavigation({ params: { keyword } })
 
-    vi.mocked(usePathname).mockReturnValue('/search')
-
-    const items = [{ corpus: 'apple' }, { corpus: 'bañana' }, { corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'bañana' }, { ...mockItem, corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1], items[2]])
     expect(result.current.keyword).toBe(keyword)
@@ -125,14 +170,10 @@ describe('Router ready', () => {
 
   it('And operator', () => {
     const keyword = 'ban&&che'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
+    mockNavigation({ params: { keyword } })
 
-    vi.mocked(usePathname).mockReturnValue('/search')
-
-    const items = [{ corpus: 'ban' }, { corpus: 'cherished bañana' }, { corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const items = [{ ...mockItem, corpus: 'ban' }, { ...mockItem, corpus: 'cherished bañana' }, { ...mockItem, corpus: 'cherry' }]
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
@@ -140,20 +181,16 @@ describe('Router ready', () => {
   it('Automatically updates visible count when URL keyword changes', () => {
     // Start with "apple banana" keyword
     const initialKeyword = 'apple banana'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? initialKeyword : null),
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/search')
+    mockNavigation({ params: { keyword: initialKeyword } })
 
     const items = [
-      { corpus: 'apple banana smoothie' },
-      { corpus: 'apple pie with cream' },
-      { corpus: 'orange juice and grapes' },
-      { corpus: 'cherry tart dessert' },
+      { ...mockItem, corpus: 'apple banana smoothie' },
+      { ...mockItem, corpus: 'apple pie with cream' },
+      { ...mockItem, corpus: 'orange juice and grapes' },
+      { ...mockItem, corpus: 'cherry tart dessert' },
     ]
 
-    const { result, rerender } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result, rerender } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Initial state: only 1 item matches "apple banana"
     expect(result.current.filtered).toHaveLength(1)
@@ -165,9 +202,7 @@ describe('Router ready', () => {
     expect(container.textContent).toMatch(/for "apple banana"/)
 
     // Simulate URL change to "orange"
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? 'orange' : null),
-    } as any)
+    mockNavigation({ params: { keyword: 'orange' } })
 
     // Trigger re-render
     rerender()
@@ -184,19 +219,15 @@ describe('Router ready', () => {
   })
   it('Space-separated words are treated as implicit AND', () => {
     const keyword = 'Moose Jaw'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/search')
+    mockNavigation({ params: { keyword } })
 
     const items = [
-      { corpus: 'Moose Jaw, Saskatchewan' },
-      { corpus: 'Moose Lake in Wisconsin' },
-      { corpus: 'Jaw-dropping scenery' },
-      { corpus: 'Elk and deer in the mountains' },
+      { ...mockItem, corpus: 'Moose Jaw, Saskatchewan' },
+      { ...mockItem, corpus: 'Moose Lake in Wisconsin' },
+      { ...mockItem, corpus: 'Jaw-dropping scenery' },
+      { ...mockItem, corpus: 'Elk and deer in the mountains' },
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match only items containing BOTH "Moose" AND "Jaw"
     expect(result.current.filtered).toStrictEqual([items[0]])
@@ -205,21 +236,17 @@ describe('Router ready', () => {
 
   it('Complex query with parentheses and caret', () => {
     const keyword = 'Apple && Banana && (best^ || highlight^)'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/search')
+    mockNavigation({ params: { keyword } })
 
     const items = [
-      { corpus: 'Apple and Banana at the best^ party' },
-      { corpus: 'Apple and Bañana highlight^ reel' },
-      { corpus: 'Apple only' },
-      { corpus: 'Banana only' },
-      { corpus: 'best party' },
-      { corpus: 'Apple and Banana best party' }, // no caret, shouldn't match
+      { ...mockItem, corpus: 'Apple and Banana at the best^ party' },
+      { ...mockItem, corpus: 'Apple and Bañana highlight^ reel' },
+      { ...mockItem, corpus: 'Apple only' },
+      { ...mockItem, corpus: 'Banana only' },
+      { ...mockItem, corpus: 'best party' },
+      { ...mockItem, corpus: 'Apple and Banana best party' }, // no caret, shouldn't match
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match items that have "Apple" AND "Banana" AND ("best^" OR "highlight^")
     // Note: caret is significant, so "best" won't match "best^"
@@ -229,19 +256,15 @@ describe('Router ready', () => {
 
   it('Multiple AND with parentheses OR', () => {
     const keyword = 'photo && (sunset || sunrise)'
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/search')
+    mockNavigation({ params: { keyword } })
 
     const items = [
-      { corpus: 'photo of sunset at beach' },
-      { corpus: 'photo of sunrise in mountains' },
-      { corpus: 'photo of landscape' },
-      { corpus: 'beautiful sunset view' },
+      { ...mockItem, corpus: 'photo of sunset at beach' },
+      { ...mockItem, corpus: 'photo of sunrise in mountains' },
+      { ...mockItem, corpus: 'photo of landscape' },
+      { ...mockItem, corpus: 'beautiful sunset view' },
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match items that have "photo" AND ("sunset" OR "sunrise")
     expect(result.current.filtered).toStrictEqual([items[0], items[1]])
@@ -250,34 +273,19 @@ describe('Router ready', () => {
 })
 
 describe('Clear button functionality', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('Clear button clears input value and keyword', async () => {
-    const mockReplace = vi.fn()
     const keyword = 'apple'
-
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
-
-    vi.mocked(useRouter).mockReturnValue({
-      push: vi.fn(),
-      replace: mockReplace,
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/search')
+    const { replace: mockReplace } = mockNavigation({ params: { keyword } })
 
     const items = [
-      { corpus: 'apple', filename: 'apple.jpg' },
-      { corpus: 'banana', filename: 'banana.jpg' },
-      { corpus: 'cherry', filename: 'cherry.jpg' },
+      { ...mockItem, corpus: 'apple', filename: 'apple.jpg' },
+      { ...mockItem, corpus: 'banana', filename: 'banana.jpg' },
+      { ...mockItem, corpus: 'cherry', filename: 'cherry.jpg' },
     ]
 
     // Use a wrapper component to access the hook
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -290,9 +298,7 @@ describe('Clear button functionality', () => {
     const clearButton = container.querySelector('button[title="Clear search and view adjacent photos"]') as HTMLButtonElement
 
     // Mock the search params to return empty after clearing
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? '' : null),
-    } as any)
+    mockNavigation({ params: {}, replace: mockReplace })
 
     fireEvent.click(clearButton)
 
@@ -312,19 +318,8 @@ describe('Clear button functionality', () => {
   })
 
   it('Clear button clears URL, updates search count, and clears input', async () => {
-    const mockReplace = vi.fn()
     const keyword = 'ban'
-
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? keyword : null),
-    } as any)
-
-    vi.mocked(useRouter).mockReturnValue({
-      push: vi.fn(),
-      replace: mockReplace,
-    } as any)
-
-    vi.mocked(usePathname).mockReturnValue('/gallery/photos')
+    const { replace: mockReplace } = mockNavigation({ pathname: '/gallery/photos', params: { keyword } })
 
     const items = [
       { corpus: 'apple', filename: 'apple.jpg' },
@@ -335,7 +330,7 @@ describe('Clear button functionality', () => {
 
     // Use a wrapper component to access the hook and set visible count
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
 
       // Simulate setting visible count and displayed items based on filtered results
       const { filtered, setVisibleCount, setDisplayedItems } = search
@@ -361,9 +356,7 @@ describe('Clear button functionality', () => {
     const clearButton = container.querySelector('button[title="Clear search and view adjacent photos"]') as HTMLButtonElement
 
     // Mock the search params to return empty after clearing
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: (key: string) => (key === 'keyword' ? '' : null),
-    } as any)
+    mockNavigation({ pathname: '/gallery/photos', params: {}, replace: mockReplace })
 
     fireEvent.click(clearButton)
 
@@ -384,5 +377,189 @@ describe('Clear button functionality', () => {
     // Verify input field is cleared
     const input = container.querySelector('input') as HTMLInputElement
     expect(input.value).toBe('')
+  })
+
+  it('filters items from visited query params without using a keyword', () => {
+    mockNavigation({ params: { visitedCountry: 'Portugal', visitedRegion: 'Lisbon' } })
+
+    const items = [
+      { corpus: 'city walk', city: 'Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { corpus: 'other city', city: 'Porto, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+    ]
+
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    expect(result.current.keyword).toBe('')
+    expect(result.current.filtered).toEqual([items[0]])
+  })
+
+  it('writes visited query params when a geography option is selected', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/gallery/all', params: {} })
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: '2024-01-03-01.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: '2024-01-04-01.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Portugal (1)', value: 'Portugal' }],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+    fireEvent.click(getByText('Lisbon, Portugal (4)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/gallery/all?visitedCountry=Portugal&visitedRegion=Lisbon')
+  })
+
+  it('shows Clear for a visited filter and clears visited params while keeping the selected media in place', async () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/gallery/all',
+      params: { visitedCountry: 'Portugal', visitedRegion: 'Lisbon' },
+    })
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: 'lisbon.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Porto, Portugal', filename: 'porto.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toContain('Lisbon, Portugal')
+
+    const clearButton = Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Clear') as HTMLButtonElement
+    expect(clearButton).toBeTruthy()
+
+    mockNavigation({ pathname: '/gallery/all', params: {}, replace: mockReplace })
+
+    fireEvent.click(clearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?select=lisbon.jpg')
+
+    await waitFor(() => {
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.value).toBe('')
+    })
+  })
+
+  it('clearing the visited chip preserves the keyword query and selected media', async () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/demo/all',
+      params: {
+        visitedCountry: 'Uzbekistan',
+        visitedRegion: 'Tashkent to Andijan',
+        keyword: 'Harpy eagle',
+      },
+    })
+
+    const items = [
+      { corpus: 'Harpy eagle in Uzbekistan', city: 'Tashkent to Andijan, Uzbekistan', filename: 'harpy-eagle.jpg', photoDate: null },
+      { corpus: 'Harpy eagle elsewhere', city: 'Lima, Peru', filename: 'other.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    const visitedClearButton = container.querySelector('button[title="Clear visited filter Tashkent to Andijan, Uzbekistan"]') as HTMLButtonElement
+    expect(visitedClearButton).toBeTruthy()
+
+    mockNavigation({
+      pathname: '/demo/all',
+      params: { keyword: 'Harpy eagle' },
+      replace: mockReplace,
+    })
+
+    fireEvent.click(visitedClearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/demo/all?keyword=Harpy+eagle&select=harpy-eagle.jpg')
+
+    await waitFor(() => {
+      const input = container.querySelector('input') as HTMLInputElement
+      expect(input.value).toBe('Harpy eagle')
+    })
+
+    expect(container.textContent).toMatch(/for "Harpy eagle"/)
+  })
+
+  it('clearing the visited chip with zero search results does not crash and clears visited params', () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/gallery/all',
+      params: {
+        visitedCountry: 'Portugal',
+        visitedRegion: 'Lisbon',
+        keyword: 'nomatch',
+      },
+    })
+
+    const items = [
+      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: 'lisbon.jpg', photoDate: null },
+      { corpus: 'Portugal', city: 'Porto, Portugal', filename: 'porto.jpg', photoDate: null },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 0 of 2/)
+
+    const visitedClearButton = container.querySelector('button[title="Clear visited filter Lisbon, Portugal"]') as HTMLButtonElement
+    expect(visitedClearButton).toBeTruthy()
+
+    mockNavigation({
+      pathname: '/gallery/all',
+      params: { keyword: 'nomatch' },
+      replace: mockReplace,
+    })
+
+    fireEvent.click(visitedClearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?keyword=nomatch&select=lisbon.jpg')
+  })
+
+  it('shows person details alongside trailing details action when a keyword resolves to a person', () => {
+    mockNavigation({ pathname: '/demo/sample', params: { keyword: 'missus' } })
+
+    const items = [
+      {
+        corpus: 'Missus Gingerbread at breakfast',
+        filename: '2004-01-04-01.jpg',
+        persons: [{ full: 'Missus Gingerbread' }],
+        search: 'Missus Gingerbread, breakfast^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        trailingAction: <Link href="/demo/sample/details">Album details</Link>,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    render(<TestComponent />)
+
+    expect(document.querySelector('a[href="/demo/persons/details?person=Missus+Gingerbread"]')?.textContent).toBe('Person details')
+    expect(document.querySelector('a[href="/demo/sample/details"]')?.textContent).toBe('Album details')
   })
 })

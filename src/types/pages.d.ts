@@ -1,6 +1,5 @@
 import type { Filesystem } from '../lib/filesystems'
 import type { ClusteredMarkers } from '../lib/generate-clusters'
-
 import type {
   AlbumMeta,
   Gallery as GalleryName,
@@ -8,6 +7,7 @@ import type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   ServerSidePhotoItem,
+  VisitedPlace,
 } from './common'
 
 export namespace Gallery {
@@ -23,6 +23,9 @@ export namespace Gallery {
 
 export namespace Album {
   export type ComponentProps = {
+    gallery: GalleryName;
+    album?: NonNullable<AlbumMeta['albumName']>;
+    monthDay?: string;
     items: ServerSidePhotoItem[];
     meta?: object;
     indexedKeywords: IndexedKeywords[];
@@ -46,15 +49,22 @@ export namespace Walk {
 
 export namespace All {
   export type ComponentProps = {
+    gallery: Gallery,
     items: ServerSideAllItem[];
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
     initialAgeSummary?: { ages: { age: number; count: number }[] };
+    initialSelectedAge?: number | 'unknown' | null;
+    initialSelectedPerson?: string | null;
+    visitedPlace?: VisitedPlace | null;
+    visitedFilterLabel?: string | null;
+    trailingAction?: React.ReactNode;
   }
 
   export type ItemData = Omit<All.ComponentProps, 'clusteredMarkers'>
 
   export interface Params {
-    gallery: GalleryName
+    gallery: GalleryName,
+    visitedPlace?: VisitedPlace | null
   }
 }

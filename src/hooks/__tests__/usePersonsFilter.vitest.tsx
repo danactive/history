@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { render, renderHook, act, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 vi.mock('next/navigation', () => ({
@@ -7,23 +7,35 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
+const useMapFilter = vi.hoisted(() => vi.fn(({
+  items,
+  gallery,
+  personDetailsName,
+}: {
+  items: any[]
+  gallery: Gallery
+  personDetailsName?: string | null
+}) => ({
+  refImageGallery: { current: null },
+  memoryIndex: 0,
+  setMemoryIndex: vi.fn(),
+  memoryHtml: null,
+  viewedList: new Set<string>(),
+  keyword: '',
+  searchBox: gallery && personDetailsName
+    ? <a href={`/${gallery}/persons/details?${new URLSearchParams({ person: personDetailsName }).toString()}`}>Person details</a>
+    : null,
+  mapFilterEnabled: false,
+  handleToggleMapFilter: vi.fn(),
+  handleBoundsChange: vi.fn(),
+  itemsToShow: items,
+  isClearing: false,
+  clearCoordinates: vi.fn(),
+})))
+
 vi.mock('../useMapFilter', () => ({
   __esModule: true,
-  default: ({ items }: { items: any[] }) => ({
-    refImageGallery: { current: null },
-    memoryIndex: 0,
-    setMemoryIndex: vi.fn(),
-    memoryHtml: null,
-    viewedList: new Set<string>(),
-    keyword: '',
-    searchBox: null,
-    mapFilterEnabled: false,
-    handleToggleMapFilter: vi.fn(),
-    handleBoundsChange: vi.fn(),
-    itemsToShow: items,
-    isClearing: false,
-    clearCoordinates: vi.fn(),
-  }),
+  default: useMapFilter,
 }))
 
 vi.mock('../useMemory', () => ({
@@ -35,11 +47,12 @@ vi.mock('../useMemory', () => ({
 }))
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import type { ServerSideAllItem } from '../../types/common'
+import type { Gallery, ServerSideAllItem } from '../../types/common'
 import usePersonsFilter from '../usePersonsFilter'
 
 function makeItem(id: string, personName: string, dob: string, photoDate: string): ServerSideAllItem {
   return {
+    gallery: 'demo',
     corpus: 'test-corpus',
     id,
     filename: `${photoDate}-50.jpg`,
@@ -58,11 +71,13 @@ function makeItem(id: string, personName: string, dob: string, photoDate: string
     mediaPath: '',
     videoPaths: null,
     reference: null,
+    visitedPlace: null,
   }
 }
 
 function makeUnknownDobItem(id: string, personName: string, photoDate: string): ServerSideAllItem {
   return {
+    gallery: 'demo',
     corpus: 'test-corpus',
     id,
     filename: `${photoDate}-50.jpg`,
@@ -81,6 +96,32 @@ function makeUnknownDobItem(id: string, personName: string, photoDate: string): 
     mediaPath: '',
     videoPaths: null,
     reference: null,
+    visitedPlace: null,
+  }
+}
+
+function makeSearchOnlyItem(id: string, search: string, photoDate: string): ServerSideAllItem {
+  return {
+    gallery: 'demo',
+    corpus: 'test-corpus',
+    id,
+    filename: `${photoDate}-50.jpg`,
+    photoDate,
+    city: '',
+    location: null,
+    caption: '',
+    description: null,
+    search,
+    persons: null,
+    title: '',
+    coordinates: null,
+    coordinateAccuracy: 0,
+    thumbPath: '',
+    photoPath: '',
+    mediaPath: '',
+    videoPaths: null,
+    reference: null,
+    visitedPlace: null,
   }
 }
 
@@ -98,6 +139,7 @@ describe('usePersonsFilter URL sync', () => {
   beforeEach(() => {
     query = new URLSearchParams()
     replace.mockClear()
+    useMapFilter.mockClear()
     vi.mocked(usePathname).mockReturnValue('/demo/persons')
     vi.mocked(useRouter).mockReturnValue({ replace } as any)
     vi.mocked(useSearchParams).mockImplementation(() => searchParamsMock as any)
@@ -107,7 +149,7 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('age=21&person=Alice')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
 
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
     expect(result.current.selectedAge).toBe(21)
     expect(result.current.selectedPerson).toBe('Alice')
   })
@@ -115,7 +157,7 @@ describe('usePersonsFilter URL sync', () => {
   test('keeps person when age is cleared', () => {
     query = new URLSearchParams('age=21&person=Alice')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
 
     act(() => {
       result.current.setSelectedAge(null)
@@ -130,9 +172,91 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('age=unknown')
     const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
 
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
     expect(result.current.selectedAge).toBe('unknown')
     expect(result.current.ageFiltered).toHaveLength(1)
+  })
+
+  test('scopes all ages counts to the selected person', () => {
+    query = new URLSearchParams('person=Alice')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedPerson: 'Alice',
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (1 photo)'
+    ))).toBeInTheDocument()
+  })
+
+  test('keeps selected person when selecting an age', () => {
+    query = new URLSearchParams('person=Alice')
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedPerson: 'Alice',
+    }))
+
+    act(() => {
+      result.current.setSelectedAge(21)
+    })
+
+    expect(result.current.selectedPerson).toBe('Alice')
+  })
+
+  test('hides the people dropdown when a person is already selected', () => {
+    query = new URLSearchParams('person=Alice&age=21')
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialSelectedPerson: 'Alice',
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.queryByText('All people at 21 (1 person)')).not.toBeInTheDocument()
+    expect(screen.getByText('Person: Alice')).toBeInTheDocument()
+  })
+
+  test('shows person details link for a unique partial keyword match', () => {
+    query = new URLSearchParams('keyword=ali')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    render(<>{result.current.searchBox}</>)
+
+    expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Alice')
+  })
+
+  test('shows person details link for an exact search-only person token', () => {
+    query = new URLSearchParams('keyword=Taylor+Example')
+    const items = [
+      makeSearchOnlyItem('1', 'Taylor Example, Jordan Sample', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    render(<>{result.current.searchBox}</>)
+
+    expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Taylor+Example')
   })
 })
 

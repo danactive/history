@@ -1,8 +1,8 @@
 import { glob } from 'glob'
 import path from 'node:path'
-
-import utilsFactory, { handleLibraryError } from './utils'
 import transform, { type Filesystem } from '../models/filesystems'
+import { handleLibraryError } from './errors'
+import utilsFactory from './utils'
 
 type ResponseBody = {
   files: Filesystem[];

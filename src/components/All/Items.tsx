@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 
 import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
+import { getPrimaryFilename } from '../../utils'
 import Img from '../Img'
 import Link from '../Link'
 import styles from './styles.module.css'
@@ -35,7 +36,7 @@ function All({ items, keyword, refImageGallery }: InputProps) {
       {items.map((item, index) => (
         <li key={item.filename.toString()}>
           <b className={styles.albumName}>{item.album}</b>
-          <Link href={`/${item.gallery}/${item.album}?select=${Array.isArray(item.filename) ? item.filename[0] : item.filename}`} title={item.corpus}>
+          <Link href={`/${item.gallery}/${item.album}?select=${getPrimaryFilename(item.filename)}`} title={item.corpus}>
             {!showThumbnail && item.caption}
             {showThumbnail && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
           </Link>

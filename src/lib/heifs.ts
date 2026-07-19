@@ -1,8 +1,9 @@
 import convert from 'heic-convert'
 import { readFile, writeFile } from 'node:fs/promises'
 import { basename } from 'node:path'
+import { handleLibraryError } from './errors'
 import type { Filesystem } from './filesystems'
-import utilsFactory, { handleLibraryError, isStandardError } from './utils'
+import utilsFactory from './utils'
 
 type ResponseBody = {
   created: string[];

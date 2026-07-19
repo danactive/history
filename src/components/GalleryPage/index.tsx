@@ -16,7 +16,12 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
   const {
     filtered,
     searchBox,
-  } = useSearch({ items: albums, indexedKeywords })
+  } = useSearch({
+    gallery,
+    items: albums,
+    indexedKeywords,
+    trailingAction: <Link href={`/${gallery}/details`}>Gallery details</Link>,
+  })
 
   return (
     <>
@@ -26,6 +31,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
         <li className={styles.rowItem}><Link href={`/${gallery}/all`}>All</Link></li>
         <li className={styles.rowItem}><Link href={`/${gallery}/today`}>Today</Link></li>
         <li className={styles.rowItem}><Link href={`/${gallery}/persons`}>Persons</Link></li>
+        <li className={styles.rowItem}><Link href={`/${gallery}/visited`}>Visited</Link></li>
       </ul>
       <Galleries items={filtered} gallery={gallery} />
     </>

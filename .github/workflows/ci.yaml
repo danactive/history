@@ -47,6 +47,9 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
 
+      - name: Generate types
+        run: npm run generate-types --if-present
+
       - name: 🔎 Type check
         run: npm run typecheck --if-present
 
@@ -65,6 +68,9 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
 
+      - name: Generate types
+        run: npm run generate-types --if-present
+
       - name: Unit Test runner
         run: npm run test:ci
   e2etest:
@@ -82,6 +88,9 @@ jobs:
 
     - name: 📥 Download deps
       uses: bahmutov/npm-install@v1
+
+    - name: Generate types
+      run: npm run generate-types --if-present
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps

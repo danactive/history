@@ -1,8 +1,13 @@
 import type { Item } from '../types/common'
 
+export function getPrimaryFilename(filenames: Item['filename'] | null | undefined) {
+  if (!filenames) return ''
+  return Array.isArray(filenames) ? filenames[0] ?? '' : filenames
+}
+
 export function getExt(filenames: Item['filename']) {
   if (!filenames) return null
-  const filename = Array.isArray(filenames) ? filenames[0] : filenames
+  const filename = getPrimaryFilename(filenames)
   const extDot = filename.lastIndexOf('.') + 1
   const extension = filename.substring(extDot)
   return extension.toLowerCase()

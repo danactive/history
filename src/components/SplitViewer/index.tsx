@@ -15,7 +15,7 @@ import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import { Item } from '../../types/common'
-import { getExt } from '../../utils'
+import { getExt, getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import SlippyMap from '../SlippyMap'
 import { validatePoint } from '../SlippyMap/options'
@@ -34,7 +34,7 @@ const toCarousel = (item: Item) => {
     // Provide stable fallbacks so items array length/order does NOT change after first render
     original: item.photoPath || item.thumbPath || item.mediaPath,
     thumbnail: item.thumbPath || item.photoPath || item.mediaPath,
-    filename: Array.isArray(item.filename) ? item.filename[0] : item.filename,
+    filename: getPrimaryFilename(item.filename),
     mediaPath: item.mediaPath,
   }
   if (item.description) {

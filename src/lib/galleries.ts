@@ -1,8 +1,7 @@
 import type { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
-
 import { type Gallery } from '../types/common'
-import { handleLibraryError } from './utils'
+import { handleLibraryError } from './errors'
 
 type ErrorOptionalMessage = { galleries: object[]; error?: { message: string } }
 const errorSchema = (message?: string) => {

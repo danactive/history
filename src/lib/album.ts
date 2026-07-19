@@ -1,8 +1,8 @@
 import transformAlbumSchema, { errorSchema, type ErrorOptionalMessage } from '../models/album'
-import type { Album, AlbumMeta } from '../types/common'
+import type { Album, AlbumMeta, XmlAlbum } from '../types/common'
+import { handleLibraryError } from './errors'
 import getGalleries from './galleries'
 import getPersons from './persons'
-import { handleLibraryError } from './utils'
 import { readAlbum } from './xml'
 
 type Envelope = { body: Album, status: number }
@@ -27,6 +27,8 @@ async function get(
   album: AlbumMeta['albumName'] | AlbumMeta['albumName'][],
   returnEnvelope: boolean,
 ): ReturnAlbumOrErrors {
+  let xmlAlbum: XmlAlbum
+
   try {
     if (gallery === null || gallery === undefined || Array.isArray(gallery)) {
       throw new ReferenceError('Gallery name is missing')
@@ -38,26 +40,19 @@ async function get(
     if (!galleries.includes(gallery)) {
       throw new ReferenceError(`Gallery name (${gallery}) is not expected`)
     }
-    const xmlAlbum = await readAlbum(gallery, album)
-
-    let relativeDate = null
-    if (xmlAlbum.album.item) {
-      const filenames = Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item[0].filename : xmlAlbum.album.item.filename
-      const filename = Array.isArray(filenames) ? filenames[0] : filenames
-      relativeDate = new Date(filename.substring(0, 10))
-    }
-
-    const body = transformAlbumSchema(xmlAlbum, await getPersons(gallery))
-
-    if (returnEnvelope) {
-      return { body, status: 200 }
-    }
-
-    return body
+    xmlAlbum = await readAlbum(gallery, album)
   } catch (err) {
     const message = `No album was found; gallery=${gallery}; album=${album};`
     return handleLibraryError(err, message, returnEnvelope, errorSchema)
   }
+
+  const body = transformAlbumSchema(xmlAlbum, await getPersons(gallery))
+
+  if (returnEnvelope) {
+    return { body, status: 200 }
+  }
+
+  return body
 }
 
 export {

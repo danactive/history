@@ -1,0 +1,36 @@
+.page {
+  max-width: 48rem;
+  padding: 1rem 0 3rem;
+}
+
+.countries {
+  line-height: 1.7;
+  padding-left: 1.6rem;
+}
+
+.country {
+  margin-bottom: 0.65rem;
+}
+
+.countryLine {
+  align-items: baseline;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.country::marker {
+  font-weight: 700;
+}
+
+.count {
+  white-space: nowrap;
+}
+
+.countLink {
+  font-weight: 600;
+}
+
+.regions {
+  padding-left: 1.4rem;
+}
