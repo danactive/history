@@ -45,6 +45,19 @@ const listToolsResultSchema = z.object({
   })),
 })
 
+const listPromptsResultSchema = z.object({
+  prompts: z.array(z.object({
+    name: z.string(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    arguments: z.array(z.object({
+      name: z.string(),
+      description: z.string().optional(),
+      required: z.boolean().optional(),
+    })).optional(),
+  })),
+})
+
 const listResourcesResultSchema = z.object({
   resources: z.array(z.object({
     uri: z.string(),
@@ -80,6 +93,16 @@ const toolCallResultSchema = z.object({
     text: z.string().optional(),
   })).optional(),
   structuredContent: z.record(z.string(), z.unknown()).optional(),
+})
+
+const getPromptResultSchema = z.object({
+  messages: z.array(z.object({
+    role: z.string(),
+    content: z.object({
+      type: z.string(),
+      text: z.string().optional(),
+    }),
+  })),
 })
 
 const getGalleries = vi.hoisted(() => vi.fn())
@@ -195,6 +218,27 @@ class McpInMemoryClient {
       throw new Error(`Resource template listing failed: ${response.error.message}`)
     }
     return listResourceTemplatesResultSchema.parse(response.result)
+  }
+
+  async listPrompts() {
+    const response = await this.request('prompts/list', {})
+    if (response.error) {
+      throw new Error(`Prompt listing failed: ${response.error.message}`)
+    }
+    return listPromptsResultSchema.parse(response.result)
+  }
+
+  async getPrompt(name: string, args: Record<string, unknown>) {
+    const response = await this.request('prompts/get', {
+      name,
+      arguments: args,
+    })
+
+    if (response.error) {
+      throw new Error(`Prompt get failed: ${response.error.message}`)
+    }
+
+    return getPromptResultSchema.parse(response.result)
   }
 
   async readResource(uri: string) {
@@ -396,6 +440,21 @@ describe('storytelling MCP server', () => {
     }))
   })
 
+  test('lists the evidence-based storytelling prompt for client workflows', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const result = await client.listPrompts()
+
+    expect(result.prompts).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        name: 'story-from-history',
+        title: 'Story From History',
+        description: expect.stringContaining('grounded narrative'),
+      }),
+    ]))
+  })
+
   test('lists resource templates for galleries, albums, people, and days', async () => {
     const client = await createConnection()
 
@@ -432,6 +491,38 @@ describe('storytelling MCP server', () => {
     }))
     expect(guide.contents[0]?.text).toContain('history://galleries')
     expect(guide.contents[0]?.text).toContain('Recommended workflow:')
+    expect(guide.contents[0]?.text).toContain('story-from-history prompt')
+  })
+
+  test('returns evidence-first prompt instructions', async () => {
+    const client = await createConnection()
+    const requestText = [
+      'Generate a warm story for this archive request:',
+      'Tell me about recurring winter travel.',
+    ].join(' ')
+    const resourceText = [
+      'Read history://galleries and at least one relevant history resource',
+      'before composing the response.',
+    ].join(' ')
+    const toolText = [
+      'Call get_album_story or get_on_this_day_story',
+      'when either tool is relevant to the request.',
+    ].join(' ')
+
+    await client.initialize()
+    const prompt = await client.getPrompt('story-from-history', {
+      query: 'Tell me about recurring winter travel',
+      gallery: 'demo',
+      tone: 'warm',
+    })
+
+    expect(prompt.messages).toHaveLength(1)
+    expect(prompt.messages[0]?.content.text).toContain(requestText)
+    expect(prompt.messages[0]?.content.text).toContain('Focus on gallery: demo.')
+    expect(prompt.messages[0]?.content.text).toContain(resourceText)
+    expect(prompt.messages[0]?.content.text).toContain(toolText)
+    expect(prompt.messages[0]?.content.text).toContain('Use only archive evidence returned by the resources and tools.')
+    expect(prompt.messages[0]?.content.text).toContain('say so instead of inventing details')
   })
 
   test('reads gallery inventory resources', async () => {

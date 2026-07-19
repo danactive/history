@@ -445,7 +445,7 @@ export async function buildStorytellingOverview() {
     'Read-only tools for finding people, places, albums, and narrative moments in a local photo/video archive.',
     `Available galleries: ${galleries.join(', ') || 'none'}`,
     ...counts,
-    'Recommended flow: search_story_moments -> get_album_story -> write-history-story prompt.',
+    'Recommended flow: search_story_moments -> get_album_story -> story-from-history prompt.',
   ].join('\n')
 }
 

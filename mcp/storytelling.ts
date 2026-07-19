@@ -128,7 +128,7 @@ async function buildStorytellingGuide() {
     `1. Read ${GALLERIES_URI} to discover galleries.`,
     '2. Read a gallery or album resource for grounded archive context.',
     '3. Optionally call get_album_story or get_on_this_day_story for curated summaries.',
-    '4. Use the write-history-story prompt to turn the evidence into prose.',
+    '4. Use the story-from-history prompt to turn the evidence into prose.',
   ])
 }
 
@@ -337,10 +337,10 @@ function createStorytellingServer() {
   )
 
   server.registerPrompt(
-    'write-history-story',
+    'story-from-history',
     {
-      title: 'Write History Story',
-      description: 'Prompt template for turning tool output into a grounded personal-history story.',
+      title: 'Story From History',
+      description: 'Generate a grounded narrative from archive resources and storytelling tools.',
       argsSchema: z.object({
         query: z.string().describe('The story request to answer.'),
         gallery: gallerySchema.optional(),
@@ -353,11 +353,13 @@ function createStorytellingServer() {
         content: {
           type: 'text',
           text: [
-            `Write a ${tone} story for this archive request: ${query}.`,
+            `Generate a ${tone} story for this archive request: ${query}.`,
             gallery ? `Focus on gallery: ${gallery}.` : 'Use any relevant gallery.',
-            'Before writing, read the relevant history resources and call remaining storytelling tools when needed.',
+            `Read ${GALLERIES_URI} and at least one relevant history resource before composing the response.`,
+            'Call get_album_story or get_on_this_day_story when either tool is relevant to the request.',
+            'Use only archive evidence returned by the resources and tools.',
             'Cite concrete albums, dates, places, and people from the tool results.',
-            'If the archive evidence is thin, say so instead of inventing details.',
+            'If the archive evidence is thin or incomplete, say so instead of inventing details.',
           ].join(' '),
         },
       }],
