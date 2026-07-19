@@ -10,6 +10,7 @@ import {
   buildAlbumDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildGalleryDetailsText,
   buildPersonDetailsText,
   buildStorytellingOverview,
   getOnThisDayStory,
@@ -143,19 +144,6 @@ async function buildGalleriesResource() {
   ])
 }
 
-async function buildGalleryResource(gallery: z.infer<typeof generatedGallerySchema>) {
-  const albumNames = await getAlbums(gallery)
-  const { albums } = albumNames[gallery]
-  return stringifyLines([
-    `Gallery is ${gallery}`,
-    `Albums: ${albums.length}`,
-    ...albums.map((album) => stringifyLines([
-      `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`,
-      album.search ? `with keywords ${album.search}` : null,
-    ])),
-  ])
-}
-
 function createStorytellingServer() {
   const server = new McpServer({
     name: 'history-storytelling',
@@ -243,7 +231,7 @@ function createStorytellingServer() {
     async (uri, variables) => ({
       contents: [{
         uri: uri.href,
-        text: await buildGalleryResource(getGalleryFromTemplate(uri, variables.gallery, 0)),
+        text: await buildGalleryDetailsText(getGalleryFromTemplate(uri, variables.gallery, 0)),
       }],
     }),
   )

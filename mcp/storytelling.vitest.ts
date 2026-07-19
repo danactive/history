@@ -86,6 +86,7 @@ const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
 const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
+const buildGalleryDetailsText = vi.hoisted(() => vi.fn())
 const buildDateDetailsText = vi.hoisted(() => vi.fn())
 const buildPersonDetailsText = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
@@ -104,6 +105,7 @@ vi.mock('../src/lib/storytelling', () => ({
   buildAlbumDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildGalleryDetailsText,
   buildPersonDetailsText,
   getPeopleStoryIndex,
   getOnThisDayStory,
@@ -273,6 +275,7 @@ beforeEach(() => {
   getAlbums.mockReset()
   buildAlbumStory.mockReset()
   buildAlbumDetailsText.mockReset()
+  buildGalleryDetailsText.mockReset()
   buildPersonDetailsText.mockReset()
   getPeopleStoryIndex.mockReset()
   getOnThisDayStory.mockReset()
@@ -293,6 +296,22 @@ beforeEach(() => {
     places: ['Nagoya'],
     people: ['Mister Gingerbread'],
     personCounts: [{ name: 'Mister Gingerbread', count: 23 }],
+  })
+  buildGalleryDetailsText.mockImplementation(async (gallery: string) => {
+    if (gallery === 'public') {
+      return [
+        'Gallery is public',
+        'Albums: 1',
+        'other-trip: Other Trip',
+      ].join('\n')
+    }
+
+    return [
+      'Gallery is demo',
+      'Albums: 1',
+      'trip: Trip',
+      'with keywords Nagoya Castle, Atsuta Shrine',
+    ].join('\n')
   })
   buildAlbumDetailsText.mockResolvedValue([
     'Album summary',
@@ -416,6 +435,8 @@ describe('storytelling MCP server', () => {
     const otherGallery = await client.readResource('history://gallery/public')
 
     expect(getGalleries).toHaveBeenCalledTimes(1)
+    expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
+    expect(buildGalleryDetailsText).toHaveBeenCalledWith('public')
     expect(galleries.contents[0]?.text).toContain('Available galleries')
     expect(galleries.contents[0]?.text).toContain('demo: 1 album(s)')
     expect(gallery.contents[0]?.text).toContain('Gallery is demo')

@@ -7,6 +7,7 @@ import * as allLib from '../all'
 import * as todayLib from '../today'
 import {
   buildAlbumPeopleAndKeywordTags,
+  buildGalleryDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
   buildPersonDetailsText,
@@ -107,6 +108,14 @@ describe('Storytelling library', () => {
     expect(text).toContain('Places: Example City (3), Sample Town (1)')
     expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
     expect(text).toContain('Keyword tags: architecture (2), memory (1)')
+  })
+
+  test('builds gallery details text from the shared builder', async () => {
+    const text = await buildGalleryDetailsText(config.defaultGallery)
+
+    expect(text).toContain(`Gallery is ${config.defaultGallery}`)
+    expect(text).toContain('Albums: ')
+    expect(text).toContain('sample: Sample')
   })
 
   test('promotes repeated search-only names into album person counts before keyword tags', () => {

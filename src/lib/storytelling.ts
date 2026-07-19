@@ -91,6 +91,19 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
   return items.map(mapAllItemToCandidate)
 }
 
+export async function buildGalleryDetailsText(gallery: Gallery) {
+  const albumNames = await getAlbums(gallery)
+  const { albums } = albumNames[gallery]
+  return [
+    `Gallery is ${gallery}`,
+    `Albums: ${albums.length}`,
+    ...albums.map((album) => [
+      `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`,
+      album.search ? `with keywords ${album.search}` : null,
+    ].filter((line): line is string => Boolean(line)).join('\n')),
+  ].join('\n')
+}
+
 async function getScopedCandidates(input: StorySearchSchemaInput): Promise<StoryCandidate[]> {
   if (input.gallery && input.album) {
     const { album: { items } } = await getAlbum(input.gallery, input.album)
