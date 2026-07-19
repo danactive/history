@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.5.0](https://github.com/danactive/history/compare/v12.4.0...v12.5.0) (2026-07-19)
+
+
+### Features
+
+* **Album Details:** Add new page to display MCP resource per album ([208cb11](https://github.com/danactive/history/commit/208cb116197fa5d905b8fdff94bdaa3d18cc1ee2))
+* **All:** Change Country keyword to visitedCountry ([dee7a7c](https://github.com/danactive/history/commit/dee7a7cf9d769dadebd364a3b07b75e18636d8ba))
+* **All:** Display visited chip ([3d413bf](https://github.com/danactive/history/commit/3d413bf533593737e33716fd16bed760ff6dbcf7))
+* **Galleries Details:** Add new page for MCP resource ([bc44e7f](https://github.com/danactive/history/commit/bc44e7f9c851658dc2ec2f733f5ff77a7d10fcbf))
+* **Gallery Details:** Add new page for MCP resource ([ff2d485](https://github.com/danactive/history/commit/ff2d485133e343c4553c68c5a5ce8d22150dcaf3))
+* **MCP:** Add Basic MCP server with storytelling ([43ab517](https://github.com/danactive/history/commit/43ab517874e57fc8f3e755c03d8318c72d35bc79))
+* **MCP:** Add MCP manifest (and vscode) ([848ad7b](https://github.com/danactive/history/commit/848ad7bc28b848f3b3e9534eb60b971e474d8b45))
+* **MCP:** Add visited country & region to storytelling ([e3a36fa](https://github.com/danactive/history/commit/e3a36fa652ee09a47fb2eb6658902dee2e63ec08))
+* **MCP:** Resources w persons display count and order by most numerous ([029776f](https://github.com/danactive/history/commit/029776f1ef77877e80e17ad48e13dda670343178))
+* **MCP:** Share the input validation with XML to JSON ([d128a30](https://github.com/danactive/history/commit/d128a306934e388221659e8b0475c943ff558b4c))
+* **Person Details:** Add new page to display MCP resource per person ([95bc4ab](https://github.com/danactive/history/commit/95bc4abf6617582aabce5a5ed3547eeeaf918e40))
+* **Persons:** MCP sends query string to person GUI display ([7d41000](https://github.com/danactive/history/commit/7d41000db73565302ed178c0c9c7f2ee81a71e62))
+* **Today Details:** Add new page to display MCP resource per on-this-day ([29d87fc](https://github.com/danactive/history/commit/29d87fcb8f4fd6b2023cbd121d204ad64989a3af))
+* **Today Details:** Improve the text output for MCP resource ([a91a3ae](https://github.com/danactive/history/commit/a91a3aefbc11a50382baa791b01e4682d9403821))
+* **Visited:** Add count and link to all page ([2d0da4d](https://github.com/danactive/history/commit/2d0da4df88a46eac4ef40d928d8eb3ad071fe5c0))
+* **Visited:** Add Visited page for gathering countries ([1c89027](https://github.com/danactive/history/commit/1c890274836472f3f756c772126e3411ce3aa66d))
+* **Visited:** Display years for the country ([1877483](https://github.com/danactive/history/commit/1877483921a228b9a94563dba45e34a6edbf3d0d))
+
+
+### Bug Fixes
+
+* **All:** Visited country was poisoned ([abd4fd4](https://github.com/danactive/history/commit/abd4fd4bfc06009a2126642ae33cc64db5232536))
+* **Lint:** Remove unused variables ([6e5e918](https://github.com/danactive/history/commit/6e5e918ec9a4df146ad6f6aa5890d1bc9ac8fdd4))
+* **package.json:** Bump minor deps ([998e73f](https://github.com/danactive/history/commit/998e73fd6cd691d042818ab59692b2b357fa180e))
+* **Person Details:** Allow meta person not in the persons XML ([ab17b62](https://github.com/danactive/history/commit/ab17b629ff754b4fc14359d3e348ecf86bd482b2))
+* **Search hook:** Clear button now clears keyword and visited queries ([4fb7ad7](https://github.com/danactive/history/commit/4fb7ad7bbb385550690ef39c1a95f5331a7add82))
+
 ## [12.4.0](https://github.com/danactive/history/compare/v12.3.0...v12.4.0) (2026-03-22)
 
 
