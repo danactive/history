@@ -91,6 +91,19 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
   return items.map(mapAllItemToCandidate)
 }
 
+export async function buildGalleriesDetailsText() {
+  const { galleries } = await getGalleries()
+  const counts = await Promise.all(galleries.map(async (gallery) => {
+    const albums = await getAlbums(gallery)
+    return `${gallery}: ${albums[gallery].albums.length} album(s)`
+  }))
+
+  return [
+    'Available galleries',
+    ...counts,
+  ].join('\n')
+}
+
 export async function buildGalleryDetailsText(gallery: Gallery) {
   const albumNames = await getAlbums(gallery)
   const { albums } = albumNames[gallery]

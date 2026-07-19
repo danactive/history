@@ -86,6 +86,7 @@ const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
 const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
+const buildGalleriesDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleryDetailsText = vi.hoisted(() => vi.fn())
 const buildDateDetailsText = vi.hoisted(() => vi.fn())
 const buildPersonDetailsText = vi.hoisted(() => vi.fn())
@@ -105,6 +106,7 @@ vi.mock('../src/lib/storytelling', () => ({
   buildAlbumDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildGalleriesDetailsText,
   buildGalleryDetailsText,
   buildPersonDetailsText,
   getPeopleStoryIndex,
@@ -275,6 +277,7 @@ beforeEach(() => {
   getAlbums.mockReset()
   buildAlbumStory.mockReset()
   buildAlbumDetailsText.mockReset()
+  buildGalleriesDetailsText.mockReset()
   buildGalleryDetailsText.mockReset()
   buildPersonDetailsText.mockReset()
   getPeopleStoryIndex.mockReset()
@@ -291,6 +294,11 @@ beforeEach(() => {
       albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025', search: null }],
     },
   })
+  buildGalleriesDetailsText.mockResolvedValue([
+    'Available galleries',
+    'demo: 1 album(s)',
+    'public: 1 album(s)',
+  ].join('\n'))
   buildAlbumStory.mockResolvedValue({
     summary: 'Album summary',
     places: ['Nagoya'],
@@ -434,7 +442,7 @@ describe('storytelling MCP server', () => {
     const gallery = await client.readResource('history://gallery/demo')
     const otherGallery = await client.readResource('history://gallery/public')
 
-    expect(getGalleries).toHaveBeenCalledTimes(1)
+    expect(buildGalleriesDetailsText).toHaveBeenCalledTimes(1)
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('public')
     expect(galleries.contents[0]?.text).toContain('Available galleries')

@@ -10,6 +10,7 @@ import {
   buildAlbumDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildGalleriesDetailsText,
   buildGalleryDetailsText,
   buildPersonDetailsText,
   buildStorytellingOverview,
@@ -131,19 +132,6 @@ async function buildStorytellingGuide() {
   ])
 }
 
-async function buildGalleriesResource() {
-  const { galleries } = await getGalleries()
-  const counts = await Promise.all(galleries.map(async (gallery) => {
-    const albums = await getAlbums(gallery)
-    return `${gallery}: ${albums[gallery].albums.length} album(s)`
-  }))
-
-  return stringifyLines([
-    'Available galleries',
-    ...counts,
-  ])
-}
-
 function createStorytellingServer() {
   const server = new McpServer({
     name: 'history-storytelling',
@@ -205,7 +193,7 @@ function createStorytellingServer() {
     async (uri) => ({
       contents: [{
         uri: uri.href,
-        text: await buildGalleriesResource(),
+        text: await buildGalleriesDetailsText(),
       }],
     }),
   )

@@ -15,6 +15,9 @@ export default async function Home() {
   return (
     <main>
       <h1>List of Galleries</h1>
+      <p>
+        <Link href="/details">Galleries details</Link>
+      </p>
       <List>
         {galleries && galleries.map((gallery, i) => (
           <Fragment key={`frag${gallery}`}>
