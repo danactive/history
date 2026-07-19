@@ -6,7 +6,7 @@ import type { Gallery } from '../../../../src/types/common'
 // Reduce mocks: keep only data providers (getAlbums/getAlbum). Use real config & search.
 vi.mock('../../../../src/lib/albums', () => ({
   __esModule: true,
-  default: async (gallery: string) => ({
+  default: async (gallery: Gallery) => ({
     [gallery]: {
       albums: [
         { name: 'Alpha' },
@@ -18,7 +18,7 @@ vi.mock('../../../../src/lib/albums', () => ({
 
 vi.mock('../../../../src/lib/album', () => ({
   __esModule: true,
-  default: async (_gallery: string, albumName: string) => {
+  default: async (_gallery: Gallery, albumName: string) => {
     if (albumName === 'Alpha') {
       return {
         album: {

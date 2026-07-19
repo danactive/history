@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { TodaySearchParams } from '../../../../src/lib/monthDay'
 import { getMonthDayFromSearchParams } from '../../../../src/lib/monthDay'
-import { buildOnThisDayResourceText } from '../../../../src/lib/storytelling'
+import { buildDateDetailsText } from '../../../../src/lib/storytelling'
 import type { Gallery } from '../../../../src/types/common'
 
 export async function generateMetadata(
@@ -24,7 +24,7 @@ export default async function TodayDetailsPage({
     searchParams ?? Promise.resolve({}),
   ])
   const monthDay = getMonthDayFromSearchParams(resolvedSearchParams)
-  const text = await buildOnThisDayResourceText(gallery, monthDay, 8)
+  const text = await buildDateDetailsText(gallery, monthDay, 8)
 
   return (
     <main style={{ padding: '1rem' }}>

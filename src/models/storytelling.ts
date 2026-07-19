@@ -83,8 +83,10 @@ export const albumStoryResultSchema = z.object({
   year: z.string().trim().min(1).nullable(),
   itemCount: z.number().int().min(0),
   places: z.array(z.string().trim().min(1)),
+  placeCounts: z.array(personCountSchema),
   people: z.array(z.string().trim().min(1)),
   personCounts: z.array(personCountSchema),
+  keywordTags: z.array(z.string().trim().min(1)),
   highlights: z.array(storyMomentSchema),
 }).strip()
 
@@ -102,15 +104,20 @@ export const onThisDayStoryResultSchema = z.object({
   matches: z.array(storyMomentSchema),
 }).strip()
 
-function formatCountedPeople(people: PersonCount[]) {
-  return people.map(person => `${person.name} (${person.count})`).join(', ') || 'none'
+function formatCountedValues(values: PersonCount[]) {
+  return values
+    .slice()
+    .sort((left, right) => right.count - left.count)
+    .map(value => `${value.name} (${value.count})`)
+    .join(', ') || 'none'
 }
 
-function formatAlbumResourceText(album: Pick<AlbumStoryResult, 'summary' | 'places' | 'personCounts'>) {
+function formatAlbumResourceText(album: Pick<AlbumStoryResult, 'summary' | 'placeCounts' | 'personCounts' | 'keywordTags'>) {
   return [
     album.summary,
-    `Places: ${album.places.join(', ') || 'none'}`,
-    `Persons: ${formatCountedPeople(album.personCounts)}`,
+    `Places: ${formatCountedValues(album.placeCounts)}`,
+    `Persons: ${formatCountedValues(album.personCounts)}`,
+    `Keyword tags: ${album.keywordTags.join(', ') || 'none'}`,
   ].join('\n')
 }
 
@@ -137,7 +144,7 @@ function formatOnThisDayResourceText(
   details: {
     years: string
     locations: string[]
-    persons: string[]
+    persons: PersonCount[]
     keywordTags: string[]
   },
 ) {
@@ -145,7 +152,7 @@ function formatOnThisDayResourceText(
     output.summary,
     `Years: ${details.years || 'none'}`,
     `Locations: ${details.locations.join(', ') || 'none'}`,
-    `Persons: ${details.persons.join(', ') || 'none'}`,
+    `Persons: ${formatCountedValues(details.persons)}`,
     `Keyword tags: ${details.keywordTags.join(', ') || 'none'}`,
     `GUI: ${guiHref}`,
   ].join('\n')
@@ -183,7 +190,7 @@ type OnThisDayStoryResult = z.infer<typeof onThisDayStoryResultSchema>
 
 export {
   formatAlbumResourceText,
-  formatCountedPeople,
+  formatCountedValues,
   formatOnThisDayResourceText,
   formatPersonResourceText,
   validateAlbumStoryResult,

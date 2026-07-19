@@ -16,7 +16,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
   const {
     filtered,
     searchBox,
-  } = useSearch({ items: albums, indexedKeywords })
+  } = useSearch({ gallery, items: albums, indexedKeywords })
 
   return (
     <>

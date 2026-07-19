@@ -44,7 +44,7 @@ const countValuesByFrequency = (values: string[], limit: number): PersonCount[] 
     })
 
   return [...counts.entries()]
-    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .sort((left, right) => right[1] - left[1])
     .slice(0, limit)
     .map(([name, count]) => ({ name, count }))
 }

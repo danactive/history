@@ -8,6 +8,7 @@ import {
   useEffect, useMemo, useState,
 } from 'react'
 import AutoComplete from '../components/ComboBox'
+import Link from '../components/Link'
 import {
   buildVisitedKeywordOptions,
   buildVisitedRegionCountryIndex,
@@ -15,8 +16,9 @@ import {
   getVisitedPlace,
   matchesVisitedPlace,
 } from '../lib/visited-core'
-import { IndexedKeywords, VisitedPlace } from '../types/common'
+import { Gallery, IndexedKeywords, VisitedPlace } from '../types/common'
 import { getPrimaryFilename } from '../utils'
+import { resolveUniquePersonName } from '../utils/person-search'
 import { matchCorpus } from '../utils/search'
 import styles from './search.module.css'
 import useBookmark from './useBookmark'
@@ -26,10 +28,13 @@ interface ServerSideItem {
   city?: string;
   filename: string | string[];
   photoDate?: string | null;
+  persons?: { full: string }[] | null;
+  search?: string | null;
   visitedPlace?: VisitedPlace | null;
 }
 
 interface UseSearchProps<ItemType> {
+  gallery: Gallery;
   items: ItemType[];
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
@@ -38,6 +43,7 @@ interface UseSearchProps<ItemType> {
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
+  personDetailsName?: string | null;
   selectById?: (id: string, isClear?: boolean) => void;
   trailingAction?: React.ReactNode;
 }
@@ -80,6 +86,7 @@ export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {
 }
 
 export default function useSearch<ItemType extends ServerSideItem>({
+  gallery,
   items,
   memoryIndex,
   setMemoryIndex,
@@ -88,6 +95,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
   refImageGallery,
   mapFilterEnabled,
   onClearMapFilter,
+  personDetailsName,
   selectById,
   trailingAction,
 }: UseSearchProps<ItemType>) {
@@ -105,6 +113,14 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const [inputValue, setInputValue] = useState<string>(initialKeyword || initialVisitedRegion || initialVisitedCountry)
   const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
+  const resolvedPersonDetailsName = useMemo(() => {
+    if (personDetailsName) return personDetailsName
+    if (!gallery || !keyword) return null
+    return resolveUniquePersonName(items, keyword)
+  }, [gallery, items, keyword, personDetailsName])
+  const personDetailsHref = gallery && resolvedPersonDetailsName
+    ? `/${gallery}/persons/details?${new URLSearchParams({ person: resolvedPersonDetailsName }).toString()}`
+    : null
 
   const currentVisitedFilter = useMemo<VisitedPlace | null>(() => {
     if (!initialVisitedCountry) {
@@ -344,6 +360,14 @@ export default function useSearch<ItemType extends ServerSideItem>({
   const activeVisitedFilterLabel = currentVisitedFilter
     ? formatVisitedPlace(currentVisitedFilter)
     : visitedFilterLabel
+  const detailActions = personDetailsHref || trailingAction
+    ? (
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          {personDetailsHref ? <Link href={personDetailsHref}>Person details</Link> : null}
+          {trailingAction}
+        </Stack>
+      )
+    : null
 
   const searchBox = (
     <form onSubmit={handleSubmit}>
@@ -457,7 +481,7 @@ export default function useSearch<ItemType extends ServerSideItem>({
           </Button>
         )}
         {canBookmark && <BookmarkButton />}
-        {trailingAction}
+        {detailActions}
       </div>
     </form>
   )

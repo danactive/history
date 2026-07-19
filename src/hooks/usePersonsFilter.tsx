@@ -6,9 +6,9 @@ import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import Link from '../components/Link'
-import type { ServerSideAllItem } from '../types/common'
+import type { Gallery, ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
+import { resolveUniquePersonName } from '../utils/person-search'
 import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
 import useMapFilter from './useMapFilter'
 import useMemory from './useMemory'
@@ -21,34 +21,6 @@ type PersonMatch = {
 
 type AgeFilterValue = number | 'unknown' | null
 
-function resolveUniquePersonName(items: ServerSideAllItem[], rawKeyword: string) {
-  const normalizedKeyword = rawKeyword.trim().toLowerCase()
-  if (!normalizedKeyword) return null
-
-  const personNames = [...new Set(items
-    .flatMap(item => item.persons?.map(person => person.full) ?? []))]
-
-  const exactPersonMatch = personNames.find(name => name.toLowerCase() === normalizedKeyword)
-  if (exactPersonMatch) return exactPersonMatch
-
-  const partialPersonMatches = personNames.filter(name => name.toLowerCase().includes(normalizedKeyword))
-  if (partialPersonMatches.length === 1) {
-    return partialPersonMatches[0] ?? null
-  }
-
-  const searchTokenMatches = [...new Set(items
-    .flatMap(item => item.search?.split(', ').map(token => token.trim()) ?? []))]
-  const exactSearchMatch = searchTokenMatches.find(token => token.toLowerCase() === normalizedKeyword)
-  if (exactSearchMatch) return exactSearchMatch
-
-  const partialSearchMatches = searchTokenMatches.filter(token => token.toLowerCase().includes(normalizedKeyword))
-  if (partialSearchMatches.length === 1) {
-    return partialSearchMatches[0] ?? null
-  }
-
-  return null
-}
-
 export default function usePersonsFilter({
   gallery,
   items,
@@ -57,7 +29,7 @@ export default function usePersonsFilter({
   initialSelectedAge,
   initialSelectedPerson,
 }: All.ItemData & {
-  gallery?: string
+  gallery: Gallery
   initialAgeSummary?: { ages: { age: number; count: number }[] }
   initialSelectedAge?: AgeFilterValue
   initialSelectedPerson?: string | null
@@ -78,10 +50,6 @@ export default function usePersonsFilter({
     return resolveUniquePersonName(items, keywordFromUrl)
   }, [items, keywordFromUrl, selectedPerson])
 
-  const personDetailsHref = gallery && personDetailsName
-    ? `/${gallery}/persons/details?${new URLSearchParams({ person: personDetailsName }).toString()}`
-    : null
-
   const {
     refImageGallery,
     memoryIndex,
@@ -97,9 +65,10 @@ export default function usePersonsFilter({
     isClearing,
     clearCoordinates,
   } = useMapFilter({
+    gallery,
     items,
     indexedKeywords,
-    trailingAction: personDetailsHref ? <Link href={personDetailsHref}>Person details</Link> : null,
+    personDetailsName,
   })
 
   useEffect(() => { setMounted(true) }, [])

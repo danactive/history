@@ -7,14 +7,24 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
-const useMapFilter = vi.hoisted(() => vi.fn(({ items, trailingAction }: { items: any[]; trailingAction?: React.ReactNode }) => ({
+const useMapFilter = vi.hoisted(() => vi.fn(({
+  items,
+  gallery,
+  personDetailsName,
+}: {
+  items: any[]
+  gallery: Gallery
+  personDetailsName?: string | null
+}) => ({
   refImageGallery: { current: null },
   memoryIndex: 0,
   setMemoryIndex: vi.fn(),
   memoryHtml: null,
   viewedList: new Set<string>(),
   keyword: '',
-  searchBox: trailingAction ?? null,
+  searchBox: gallery && personDetailsName
+    ? <a href={`/${gallery}/persons/details?${new URLSearchParams({ person: personDetailsName }).toString()}`}>Person details</a>
+    : null,
   mapFilterEnabled: false,
   handleToggleMapFilter: vi.fn(),
   handleBoundsChange: vi.fn(),
@@ -37,11 +47,12 @@ vi.mock('../useMemory', () => ({
 }))
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import type { ServerSideAllItem } from '../../types/common'
+import type { Gallery, ServerSideAllItem } from '../../types/common'
 import usePersonsFilter from '../usePersonsFilter'
 
 function makeItem(id: string, personName: string, dob: string, photoDate: string): ServerSideAllItem {
   return {
+    gallery: 'demo',
     corpus: 'test-corpus',
     id,
     filename: `${photoDate}-50.jpg`,
@@ -66,6 +77,7 @@ function makeItem(id: string, personName: string, dob: string, photoDate: string
 
 function makeUnknownDobItem(id: string, personName: string, photoDate: string): ServerSideAllItem {
   return {
+    gallery: 'demo',
     corpus: 'test-corpus',
     id,
     filename: `${photoDate}-50.jpg`,
@@ -90,6 +102,7 @@ function makeUnknownDobItem(id: string, personName: string, photoDate: string): 
 
 function makeSearchOnlyItem(id: string, search: string, photoDate: string): ServerSideAllItem {
   return {
+    gallery: 'demo',
     corpus: 'test-corpus',
     id,
     filename: `${photoDate}-50.jpg`,
@@ -136,7 +149,7 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('age=21&person=Alice')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
 
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
     expect(result.current.selectedAge).toBe(21)
     expect(result.current.selectedPerson).toBe('Alice')
   })
@@ -144,7 +157,7 @@ describe('usePersonsFilter URL sync', () => {
   test('keeps person when age is cleared', () => {
     query = new URLSearchParams('age=21&person=Alice')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
 
     act(() => {
       result.current.setSelectedAge(null)
@@ -159,7 +172,7 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('age=unknown')
     const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
 
-    const { result } = renderHook(() => usePersonsFilter({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
     expect(result.current.selectedAge).toBe('unknown')
     expect(result.current.ageFiltered).toHaveLength(1)
   })
@@ -172,6 +185,7 @@ describe('usePersonsFilter URL sync', () => {
     ]
 
     const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
       items,
       indexedKeywords: [],
       initialSelectedPerson: 'Alice',
@@ -188,6 +202,7 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('person=Alice')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
     const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
       items,
       indexedKeywords: [],
       initialSelectedPerson: 'Alice',
@@ -204,6 +219,7 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('person=Alice&age=21')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
     const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
       items,
       indexedKeywords: [],
       initialSelectedAge: 21,

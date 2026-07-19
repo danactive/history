@@ -3,7 +3,7 @@ import Link from '../../../src/components/Link'
 import getGalleries from '../../../src/lib/galleries'
 import type { RegionVisit } from '../../../src/lib/visited'
 import { formatVisitedYears, getVisitedData } from '../../../src/lib/visited'
-import type { VisitedPlace } from '../../../src/types/common'
+import type { Gallery as GalleryName, VisitedPlace } from '../../../src/types/common'
 import type { Gallery } from '../../../src/types/pages'
 import styles from './styles.module.css'
 
@@ -21,7 +21,7 @@ function formatYears(years: string[]) {
   return formattedYears ? ` ${formattedYears}` : ''
 }
 
-function buildVisitedHref(gallery: string, filter: VisitedPlace) {
+function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
   const searchParams = new URLSearchParams({ visitedCountry: filter.country })
 
   if (filter.region) {

@@ -2,16 +2,21 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
-
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
-import { getPrimaryFilename } from '../../utils'
 import { All } from '../../types/pages'
+import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 
-export default function AllClient({ items, indexedKeywords, clusteredMarkers, visitedFilterLabel }: All.ComponentProps) {
+export default function AllClient({
+  gallery,
+  items,
+  indexedKeywords,
+  clusteredMarkers,
+  visitedFilterLabel,
+}: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
   const {
@@ -28,7 +33,7 @@ export default function AllClient({ items, indexedKeywords, clusteredMarkers, vi
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ items, indexedKeywords, visitedFilterLabel })
+  } = useMapFilter({ gallery, items, indexedKeywords, visitedFilterLabel })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

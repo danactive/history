@@ -1,12 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
-
 import TodayServer from '../app/[gallery]/today/page'
+import { Gallery } from '../src/types/common'
 import { getPrimaryFilename } from '../src/utils'
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
-  default: ({ items, gallery, monthDay }: { items: Array<{ filename: string | string[] }>; gallery?: string; monthDay?: string }) => (
+  default: ({ items, gallery, monthDay }: { items: Array<{ filename: string | string[] }>; gallery: Gallery; monthDay?: string }) => (
     <div>
       {gallery && monthDay ? <div>{`/${gallery}/today/details?day=${monthDay}`}</div> : null}
       {items.map((item) => {

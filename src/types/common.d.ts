@@ -153,7 +153,7 @@ interface ServerSidePhotoItem extends Item {
 
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
-  gallery?: Gallery;
+  gallery: Gallery;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
   visitedPlace: VisitedPlace | null;

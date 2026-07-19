@@ -38,7 +38,13 @@ vi.mock('../useBookmark', () => ({
   }),
 }))
 
+vi.mock('../../components/Link', () => ({
+  __esModule: true,
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
+}))
+
 import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import Link from '../../components/Link'
 import useSearch from '../useSearch'
 
 function createSearchParams(values: SearchParamValues = {}) {
@@ -86,7 +92,7 @@ describe('Query string', () => {
       mockNavigation({ params: { keyword: '' } })
 
       const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+      const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
       expect(result.current.filtered).toBe(items)
       expect(result.current.keyword).toBe('')
@@ -98,7 +104,7 @@ describe('Query string', () => {
       mockNavigation({ params: { keyword: 'app' } })
 
       const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
-      const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+      const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
       expect(result.current.filtered).toEqual([{ ...mockItem, corpus: 'apple' }]) // Only "apple" matches "app"
       expect(result.current.keyword).toBe('app')
@@ -115,7 +121,7 @@ describe('Router ready', () => {
 
     // Use a wrapper component to check the input value
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -134,7 +140,7 @@ describe('Router ready', () => {
     mockNavigation({ params: { keyword } })
 
     const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'banana' }, { ...mockItem, corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[0]])
     expect(result.current.keyword).toBe(keyword)
@@ -145,7 +151,7 @@ describe('Router ready', () => {
     mockNavigation({ params: { keyword } })
 
     const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'bañana' }, { ...mockItem, corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
@@ -156,7 +162,7 @@ describe('Router ready', () => {
     mockNavigation({ params: { keyword } })
 
     const items = [{ ...mockItem, corpus: 'apple' }, { ...mockItem, corpus: 'bañana' }, { ...mockItem, corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1], items[2]])
     expect(result.current.keyword).toBe(keyword)
@@ -167,7 +173,7 @@ describe('Router ready', () => {
     mockNavigation({ params: { keyword } })
 
     const items = [{ ...mockItem, corpus: 'ban' }, { ...mockItem, corpus: 'cherished bañana' }, { ...mockItem, corpus: 'cherry' }]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
@@ -184,7 +190,7 @@ describe('Router ready', () => {
       { ...mockItem, corpus: 'cherry tart dessert' },
     ]
 
-    const { result, rerender } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result, rerender } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Initial state: only 1 item matches "apple banana"
     expect(result.current.filtered).toHaveLength(1)
@@ -221,7 +227,7 @@ describe('Router ready', () => {
       { ...mockItem, corpus: 'Jaw-dropping scenery' },
       { ...mockItem, corpus: 'Elk and deer in the mountains' },
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match only items containing BOTH "Moose" AND "Jaw"
     expect(result.current.filtered).toStrictEqual([items[0]])
@@ -240,7 +246,7 @@ describe('Router ready', () => {
       { ...mockItem, corpus: 'best party' },
       { ...mockItem, corpus: 'Apple and Banana best party' }, // no caret, shouldn't match
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match items that have "Apple" AND "Banana" AND ("best^" OR "highlight^")
     // Note: caret is significant, so "best" won't match "best^"
@@ -258,7 +264,7 @@ describe('Router ready', () => {
       { ...mockItem, corpus: 'photo of landscape' },
       { ...mockItem, corpus: 'beautiful sunset view' },
     ]
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     // Should match items that have "photo" AND ("sunset" OR "sunrise")
     expect(result.current.filtered).toStrictEqual([items[0], items[1]])
@@ -279,7 +285,7 @@ describe('Clear button functionality', () => {
 
     // Use a wrapper component to access the hook
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -324,7 +330,7 @@ describe('Clear button functionality', () => {
 
     // Use a wrapper component to access the hook and set visible count
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
 
       // Simulate setting visible count and displayed items based on filtered results
       const { filtered, setVisibleCount, setDisplayedItems } = search
@@ -381,7 +387,7 @@ describe('Clear button functionality', () => {
       { corpus: 'other city', city: 'Porto, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
     ]
 
-    const { result } = renderHook(() => useSearch({ items, indexedKeywords: [] }))
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(result.current.keyword).toBe('')
     expect(result.current.filtered).toEqual([items[0]])
@@ -399,6 +405,7 @@ describe('Clear button functionality', () => {
 
     function TestComponent() {
       const search = useSearch({
+        gallery: 'demo',
         items,
         indexedKeywords: [{ label: 'Portugal (1)', value: 'Portugal' }],
       })
@@ -424,7 +431,7 @@ describe('Clear button functionality', () => {
     ]
 
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -463,7 +470,7 @@ describe('Clear button functionality', () => {
     ]
 
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -506,7 +513,7 @@ describe('Clear button functionality', () => {
     ]
 
     function TestComponent() {
-      const search = useSearch({ items, indexedKeywords: [] })
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
       return <div>{search.searchBox}</div>
     }
 
@@ -526,5 +533,33 @@ describe('Clear button functionality', () => {
     fireEvent.click(visitedClearButton)
 
     expect(mockReplace).toHaveBeenCalledWith('/gallery/all?keyword=nomatch&select=lisbon.jpg')
+  })
+
+  it('shows person details alongside trailing details action when a keyword resolves to a person', () => {
+    mockNavigation({ pathname: '/demo/sample', params: { keyword: 'missus' } })
+
+    const items = [
+      {
+        corpus: 'Missus Gingerbread at breakfast',
+        filename: '2004-01-04-01.jpg',
+        persons: [{ full: 'Missus Gingerbread' }],
+        search: 'Missus Gingerbread, breakfast^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        trailingAction: <Link href="/demo/sample/details">Album details</Link>,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    render(<TestComponent />)
+
+    expect(document.querySelector('a[href="/demo/persons/details?person=Missus+Gingerbread"]')?.textContent).toBe('Person details')
+    expect(document.querySelector('a[href="/demo/sample/details"]')?.textContent).toBe('Album details')
   })
 })

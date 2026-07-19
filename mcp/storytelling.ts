@@ -7,10 +7,10 @@ import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import { getDefaultMonthDay, monthDaySchema, parseMonthDay } from '../src/lib/monthDay'
 import {
-  buildAlbumResourceText,
+  buildAlbumDetailsText,
   buildAlbumStory,
-  buildOnThisDayResourceText,
-  buildPersonResourceText,
+  buildDateDetailsText,
+  buildPersonDetailsText,
   buildStorytellingOverview,
   getOnThisDayStory,
   getPeopleStoryIndex,
@@ -275,7 +275,7 @@ function createStorytellingServer() {
       return {
         contents: [{
           uri: uri.href,
-          text: await buildAlbumResourceText(gallery, album, 8),
+          text: await buildAlbumDetailsText(gallery, album, 8),
         }],
       }
     },
@@ -305,7 +305,7 @@ function createStorytellingServer() {
     async (uri, variables) => ({
       contents: [{
         uri: uri.href,
-        text: await buildPersonResourceText(
+        text: await buildPersonDetailsText(
           getGalleryFromTemplate(uri, variables.gallery, 0),
           getStringFromTemplate(uri, variables.name, 1),
         ),
@@ -338,7 +338,7 @@ function createStorytellingServer() {
       return {
         contents: [{
           uri: uri.href,
-          text: await buildOnThisDayResourceText(gallery, monthDay, 8),
+          text: await buildDateDetailsText(gallery, monthDay, 8),
         }],
       }
     },

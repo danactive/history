@@ -23,7 +23,7 @@ export namespace Gallery {
 
 export namespace Album {
   export type ComponentProps = {
-    gallery?: GalleryName;
+    gallery: GalleryName;
     album?: NonNullable<AlbumMeta['albumName']>;
     monthDay?: string;
     items: ServerSidePhotoItem[];
@@ -49,6 +49,7 @@ export namespace Walk {
 
 export namespace All {
   export type ComponentProps = {
+    gallery: Gallery,
     items: ServerSideAllItem[];
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
@@ -63,6 +64,7 @@ export namespace All {
   export type ItemData = Omit<All.ComponentProps, 'clusteredMarkers'>
 
   export interface Params {
-    gallery: GalleryName
+    gallery: GalleryName,
+    visitedPlace?: VisitedPlace | null
   }
 }

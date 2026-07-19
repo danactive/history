@@ -5,7 +5,7 @@ import type { Gallery, Item } from '../../../../src/types/common'
 
 vi.mock('../../../../src/lib/albums', () => ({
   __esModule: true,
-  default: async (gallery: string) => ({
+  default: async (gallery: Gallery) => ({
     [gallery]: {
       albums: [
         { name: 'Flights' },
@@ -81,7 +81,7 @@ describe('getAllData visited filtering', () => {
   test('does not include two-part Switzerland entries in Aeroplane/Switzerland results', async () => {
     const gallery: Gallery = 'demo'
 
-    const { items } = await getAllData({ gallery }, { country: 'Aeroplane', region: 'Switzerland' })
+    const { items } = await getAllData({ gallery, visitedPlace: { country: 'Aeroplane', region: 'Switzerland' } })
 
     expect(items.map((item) => item.filename)).toEqual(['2018-01-01-01.jpg'])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'Switzerland' })
@@ -90,7 +90,7 @@ describe('getAllData visited filtering', () => {
   test('does not include two-part USA entries in Aeroplane/USA results', async () => {
     const gallery: Gallery = 'demo'
 
-    const { items } = await getAllData({ gallery }, { country: 'Aeroplane', region: 'USA' })
+    const { items } = await getAllData({ gallery, visitedPlace: { country: 'Aeroplane', region: 'USA' } })
 
     expect(items.map((item) => item.filename)).toEqual(['2016-03-25-01.jpg'])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'USA' })

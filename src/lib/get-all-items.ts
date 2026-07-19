@@ -58,7 +58,7 @@ export async function getAllItems(
 
   const { indexedKeywords } = indexKeywords(allItems)
 
-  return { items: allItems, indexedKeywords }
+  return { gallery, items: allItems, indexedKeywords }
 }
 
 /**

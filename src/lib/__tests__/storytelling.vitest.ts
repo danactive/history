@@ -1,16 +1,50 @@
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import config from '../../models/config'
+import { formatAlbumResourceText } from '../../models/storytelling'
 import getAlbum from '../album'
+import * as allLib from '../all'
+import * as todayLib from '../today'
 import {
+  buildAlbumPeopleAndKeywordTags,
   buildAlbumStory,
-  buildOnThisDayResourceText,
-  buildPersonResourceText,
+  buildDateDetailsText,
+  buildPersonDetailsText,
   getOnThisDayStory,
   getPeopleStoryIndex,
   resolveSearchOnlyPersonEntryFromItems,
   searchStoryMoments,
 } from '../storytelling'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
+function createSyntheticAllItem(id: string, filename: string) {
+  return {
+    id,
+    filename,
+    photoDate: filename.substring(0, 10),
+    city: 'Example City',
+    location: 'Example Place',
+    caption: `Caption ${id}`,
+    description: null,
+    search: 'Taylor Example, Jordan Sample',
+    persons: [{ full: 'Taylor Example', dob: null }],
+    title: `Title ${id}`,
+    coordinates: null,
+    coordinateAccuracy: 9,
+    thumbPath: '',
+    photoPath: '',
+    mediaPath: '',
+    videoPaths: null,
+    reference: null,
+    album: 'sample-album',
+    gallery: config.defaultGallery,
+    corpus: `Title ${id} Caption ${id}`,
+    visitedPlace: { country: 'Exampleland', region: 'North Example' },
+  }
+}
 
 describe('Storytelling library', () => {
   test('finds a story moment by query token', async () => {
@@ -33,9 +67,9 @@ describe('Storytelling library', () => {
         .filter((city): city is string => Boolean(city))
         .map(city => [city, album.items.filter(item => item.city === city).length]),
     ).entries()]
-      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .sort((left, right) => right[1] - left[1])
       .slice(0, 3)
-      .map(([city]) => city)
+    const expectedPlaceCounts = expectedPlaces.map(([name, count]) => ({ name, count }))
     const personCounts = new Map<string, number>()
     album.items.forEach((item) => {
       item.persons?.forEach((person) => {
@@ -43,16 +77,86 @@ describe('Storytelling library', () => {
       })
     })
     const expectedPeople = [...personCounts.entries()]
-      .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+      .sort((left, right) => right[1] - left[1])
       .slice(0, 3)
     const expectedPersonCounts = expectedPeople.map(([name, count]) => ({ name, count }))
 
     expect(result.title).toBe('Sample')
     expect(result.year).toBe('2001-2005')
     expect(result.highlights.length).toBeGreaterThan(0)
-    expect(result.places).toEqual(expectedPlaces)
+    expect(result.places).toEqual(expectedPlaceCounts.map(place => place.name))
+    expect(result.placeCounts).toEqual(expectedPlaceCounts)
     expect(result.people).toEqual(expectedPersonCounts.map(person => person.name))
     expect(result.personCounts).toEqual(expectedPersonCounts)
+  })
+
+  test('formats album details with descending persons and keyword tags', () => {
+    const text = formatAlbumResourceText({
+      summary: 'Album Sample contains 4 items.',
+      placeCounts: [
+        { name: 'Sample Town', count: 1 },
+        { name: 'Example City', count: 3 },
+      ],
+      personCounts: [
+        { name: 'Jordan Sample', count: 1 },
+        { name: 'Taylor Example', count: 3 },
+      ],
+      keywordTags: ['architecture (2)', 'memory (1)'],
+    })
+
+    expect(text).toContain('Places: Example City (3), Sample Town (1)')
+    expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
+    expect(text).toContain('Keyword tags: architecture (2), memory (1)')
+  })
+
+  test('promotes repeated search-only names into album person counts before keyword tags', () => {
+    const result = buildAlbumPeopleAndKeywordTags([
+      {
+        id: '1',
+        filename: '2021-01-01-01.jpg',
+        photoDate: '2021-01-01',
+        city: 'Example City',
+        location: 'Arena',
+        caption: 'One',
+        description: null,
+        search: 'concert^, Mark Sample, Lina Example',
+        persons: [{ full: 'Known Person', dob: null }],
+        title: 'One',
+        coordinates: null,
+        coordinateAccuracy: null,
+        thumbPath: '',
+        photoPath: '',
+        mediaPath: '',
+        videoPaths: null,
+        reference: null,
+      },
+      {
+        id: '2',
+        filename: '2021-01-02-01.jpg',
+        photoDate: '2021-01-02',
+        city: 'Example City',
+        location: 'Arena',
+        caption: 'Two',
+        description: null,
+        search: 'concert^, Mark Sample, Lina Example',
+        persons: null,
+        title: 'Two',
+        coordinates: null,
+        coordinateAccuracy: null,
+        thumbPath: '',
+        photoPath: '',
+        mediaPath: '',
+        videoPaths: null,
+        reference: null,
+      },
+    ], ['Example City'], 8)
+
+    expect(result.personCounts).toEqual([
+      { name: 'Mark Sample', count: 2 },
+      { name: 'Lina Example', count: 2 },
+      { name: 'Known Person', count: 1 },
+    ])
+    expect(result.keywordTags).toEqual(['concert^ (2)'])
   })
 
   test('indexes people for storytelling queries', async () => {
@@ -65,7 +169,7 @@ describe('Storytelling library', () => {
   })
 
   test('resolves person resource text from a case-insensitive person name', async () => {
-    const text = await buildPersonResourceText(config.defaultGallery, 'mister gingerbread')
+    const text = await buildPersonDetailsText(config.defaultGallery, 'mister gingerbread')
 
     expect(text).toContain('Person Mister Gingerbread')
   })
@@ -101,7 +205,18 @@ describe('Storytelling library', () => {
   })
 
   test('reports total on-this-day matches and explicit limit wording when truncated', async () => {
-    const result = await getOnThisDayStory('dan', '07-18', 3)
+    vi.spyOn(allLib, 'getAllData').mockResolvedValue({
+      gallery: 'demo',
+      items: [
+        createSyntheticAllItem('1', '2021-07-18-01.jpg'),
+        createSyntheticAllItem('2', '2022-07-18-01.jpg'),
+        createSyntheticAllItem('3', '2023-07-18-01.jpg'),
+        createSyntheticAllItem('4', '2024-07-18-01.jpg'),
+      ],
+      indexedKeywords: [],
+    })
+
+    const result = await getOnThisDayStory(config.defaultGallery, '07-18', 3)
 
     expect(result.matches).toHaveLength(3)
     expect(result.summary).toContain('Found ')
@@ -111,7 +226,7 @@ describe('Storytelling library', () => {
   })
 
   test('builds on-this-day resource text with years, locations, and keyword tags', async () => {
-    const text = await buildOnThisDayResourceText(config.defaultGallery, '01-04', 3)
+    const text = await buildDateDetailsText(config.defaultGallery, '01-04', 3)
 
     expect(text).toContain('Years: ')
     expect(text).toContain('Locations: ')
@@ -122,8 +237,40 @@ describe('Storytelling library', () => {
   })
 
   test('omits limit wording from on-this-day resource text', async () => {
-    const text = await buildOnThisDayResourceText('dan', '07-18', 3)
+    vi.spyOn(allLib, 'getAllData').mockResolvedValue({
+      gallery: 'demo',
+      items: [
+        createSyntheticAllItem('1', '2021-07-18-01.jpg'),
+        createSyntheticAllItem('2', '2022-07-18-01.jpg'),
+      ],
+      indexedKeywords: [],
+    })
+    vi.spyOn(todayLib, 'getTodayItems').mockResolvedValue({
+      items: [],
+      indexedKeywords: [],
+      locationOptions: [
+        {
+          label: 'Exampleland (2)',
+          value: 'Exampleland',
+          count: 2,
+          visitedPlace: { country: 'Exampleland', region: null },
+        },
+      ],
+      personCounts: [
+        { name: 'Jordan Sample', count: 1 },
+        { name: 'Taylor Example', count: 3 },
+      ],
+      personOptions: [
+        { label: 'Jordan Sample (1)', value: 'Jordan Sample', count: 1 },
+        { label: 'Taylor Example (3)', value: 'Taylor Example', count: 3 },
+      ],
+      yearOptions: [{ label: '2021', value: '2021' }],
+      tagOptions: [{ label: 'memory', value: 'memory' }],
+    })
+
+    const text = await buildDateDetailsText(config.defaultGallery, '07-18', 3)
 
     expect(text).not.toContain('Limited to 3.')
+    expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
   })
 })

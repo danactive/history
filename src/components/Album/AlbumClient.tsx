@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect } from 'react'
-
 import useMapFilter from '../../hooks/useMapFilter'
 import type { Album } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
@@ -38,6 +37,7 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
     isClearing,
     clearCoordinates,
   } = useMapFilter({
+    gallery,
     items,
     indexedKeywords,
     trailingAction: albumDetailsHref

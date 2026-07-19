@@ -12,6 +12,12 @@ interface ServerSideTodayItem extends Item {
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
 }
 
+type CountedOption = {
+  label: string
+  value: string
+  count: number
+}
+
 function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: IndexedKeywords[]) {
   const visitedData = buildVisitedDataFromItems(items.map((item) => ({
     city: item.city,
@@ -24,6 +30,7 @@ function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: Index
         label: `${country.country} (${country.count})`,
         value: country.filter.country,
         visitedPlace: country.filter,
+        count: country.count,
       }
       const regionOptions = country.regions
         .filter(region => region.count >= config.visitedRegionSearchMinCount)
@@ -31,23 +38,22 @@ function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: Index
           label: `${formatVisitedPlace(region.filter)} (${region.count})`,
           value: formatVisitedPlace(region.filter),
           visitedPlace: region.filter,
+          count: region.count,
         }))
 
       return [countryOption, ...regionOptions]
     })
-    .sort((left, right) => {
-      const leftCount = Number(left.label.match(/\((\d+)\)$/)?.[1] ?? 0)
-      const rightCount = Number(right.label.match(/\((\d+)\)$/)?.[1] ?? 0)
-      return rightCount - leftCount || left.value.localeCompare(right.value)
-    })
+    .sort((left, right) => right.count - left.count || left.value.localeCompare(right.value))
 
   const locationValues = new Set(locationOptions.map(option => option.value))
-  const personOptions = countValuesByFrequency(
+  const personCounts = countValuesByFrequency(
     items.flatMap(item => item.persons?.map(person => person.full) ?? []),
     items.length,
-  ).map(({ name, count }) => ({
+  )
+  const personOptions: CountedOption[] = personCounts.map(({ name, count }) => ({
     label: `${name} (${count})`,
     value: name,
+    count,
   }))
   const personValues = new Set(personOptions.map(option => option.value))
   const yearOptions = indexedKeywords.filter(option => /^\d{4}$/.test(option.value))
@@ -57,6 +63,7 @@ function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: Index
 
   return {
     locationOptions,
+    personCounts,
     personOptions,
     yearOptions,
     tagOptions,
@@ -101,7 +108,7 @@ export async function getTodayItems(gallery: Gallery, monthDay: string) {
   }, Promise.resolve([] as ServerSideTodayItem[]))).reverse()
 
   const { indexedKeywords } = indexKeywords(items)
-  const { locationOptions, personOptions, yearOptions, tagOptions } = splitTodayKeywords(items, indexedKeywords)
+  const { locationOptions, personCounts, personOptions, yearOptions, tagOptions } = splitTodayKeywords(items, indexedKeywords)
 
-  return { items, indexedKeywords, locationOptions, personOptions, yearOptions, tagOptions }
+  return { items, indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions }
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { buildAlbumResourceText } from '../../../../src/lib/storytelling'
+import { buildAlbumDetailsText } from '../../../../src/lib/storytelling'
 import type { Album } from '../../../../src/types/pages'
 
 export async function generateMetadata(
@@ -11,7 +11,7 @@ export async function generateMetadata(
 
 export default async function AlbumDetailsPage(props: { params: Promise<Album.Params> }) {
   const { gallery, album } = await props.params
-  const text = await buildAlbumResourceText(gallery, album, 8)
+  const text = await buildAlbumDetailsText(gallery, album, 8)
 
   return (
     <main style={{ padding: '1rem' }}>

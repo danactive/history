@@ -49,12 +49,13 @@ export default async function AllServer({
   ])
   const visitedPlace = getVisitedPlaceFromSearchParams(resolvedSearchParams)
 
-  const { items = [], indexedKeywords } = await getAllData({ gallery }, visitedPlace)
+  const { items = [], indexedKeywords } = await getAllData({ gallery, visitedPlace })
   const clusterMarkers = generateClusters(items)
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AllClient
+        gallery={gallery}
         items={items}
         indexedKeywords={indexedKeywords}
         clusteredMarkers={clusterMarkers}

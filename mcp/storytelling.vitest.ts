@@ -85,9 +85,9 @@ const toolCallResultSchema = z.object({
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
 const buildAlbumStory = vi.hoisted(() => vi.fn())
-const buildAlbumResourceText = vi.hoisted(() => vi.fn())
-const buildOnThisDayResourceText = vi.hoisted(() => vi.fn())
-const buildPersonResourceText = vi.hoisted(() => vi.fn())
+const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
+const buildDateDetailsText = vi.hoisted(() => vi.fn())
+const buildPersonDetailsText = vi.hoisted(() => vi.fn())
 const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
 const getOnThisDayStory = vi.hoisted(() => vi.fn())
 const buildStorytellingOverview = vi.hoisted(() => vi.fn())
@@ -101,10 +101,10 @@ vi.mock('../src/lib/albums', () => ({
 }))
 
 vi.mock('../src/lib/storytelling', () => ({
-  buildAlbumResourceText,
+  buildAlbumDetailsText,
   buildAlbumStory,
-  buildOnThisDayResourceText,
-  buildPersonResourceText,
+  buildDateDetailsText,
+  buildPersonDetailsText,
   getPeopleStoryIndex,
   getOnThisDayStory,
   buildStorytellingOverview,
@@ -272,10 +272,11 @@ beforeEach(() => {
   getGalleries.mockReset()
   getAlbums.mockReset()
   buildAlbumStory.mockReset()
-  buildAlbumResourceText.mockReset()
-  buildPersonResourceText.mockReset()
+  buildAlbumDetailsText.mockReset()
+  buildPersonDetailsText.mockReset()
   getPeopleStoryIndex.mockReset()
   getOnThisDayStory.mockReset()
+  buildDateDetailsText.mockReset()
   buildStorytellingOverview.mockReset()
 
   getGalleries.mockResolvedValue({ galleries: ['demo', 'public'] })
@@ -293,12 +294,12 @@ beforeEach(() => {
     people: ['Mister Gingerbread'],
     personCounts: [{ name: 'Mister Gingerbread', count: 23 }],
   })
-  buildAlbumResourceText.mockResolvedValue([
+  buildAlbumDetailsText.mockResolvedValue([
     'Album summary',
     'Places: Nagoya',
     'Persons: Mister Gingerbread (23)',
   ].join('\n'))
-  buildPersonResourceText.mockResolvedValue([
+  buildPersonDetailsText.mockResolvedValue([
     'Person Mister Gingerbread',
     'Gallery is demo',
     'Appearances: 3',
@@ -308,7 +309,7 @@ beforeEach(() => {
     'Albums: trip',
     'GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread',
   ].join('\n'))
-  buildOnThisDayResourceText.mockResolvedValue([
+  buildDateDetailsText.mockResolvedValue([
     'On this day summary',
     'GUI: http://localhost:3030/demo/today/details?day=01-02',
     '2024-01-02: On this day memory (2024-01-02-01.jpg)',
@@ -489,7 +490,7 @@ describe('storytelling MCP server', () => {
     await client.initialize()
     const output = await client.readResource('history://day/demo/01-02')
 
-    expect(buildOnThisDayResourceText).toHaveBeenCalledWith('demo', '01-02', 8)
+    expect(buildDateDetailsText).toHaveBeenCalledWith('demo', '01-02', 8)
     expect(output.contents[0]?.text).toContain('On this day summary')
     expect(output.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/today/details?day=01-02')
     expect(output.contents[0]?.text).toContain('2024-01-02: On this day memory')

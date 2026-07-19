@@ -8,7 +8,7 @@ export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visited
   return items.filter(item => matchesVisitedPlace(item.visitedPlace, visitedPlace))
 }
 
-export async function getAllData({ gallery }: All.Params, visitedPlace?: VisitedPlace | null): Promise<All.ItemData> {
+export async function getAllData({ gallery, visitedPlace }: All.Params): Promise<All.ItemData> {
   const data = await getAllItems(gallery, allPageItemMapper, true)
 
   if (!visitedPlace) {
@@ -17,5 +17,5 @@ export async function getAllData({ gallery }: All.Params, visitedPlace?: Visited
 
   const items = filterAllItemsByVisitedPlace(data.items, visitedPlace)
   const { indexedKeywords } = indexKeywords(items)
-  return { items, indexedKeywords }
+  return { gallery, items, indexedKeywords }
 }

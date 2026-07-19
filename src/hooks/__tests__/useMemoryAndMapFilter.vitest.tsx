@@ -44,7 +44,7 @@ describe('Viewed persistence across map/keyword filtering', () => {
   test('viewedList persists when items change', () => {
     const itemsA = [makeItem('1'), makeItem('2')]
     const { result, rerender } = renderHook(
-      ({ items }) => useMapFilter({ items, indexedKeywords: [] }),
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
       { initialProps: { items: itemsA } },
     )
     expect(result.current.viewedList.has('1')).toBe(true)
@@ -62,7 +62,7 @@ describe('Viewed persistence across map/keyword filtering', () => {
   test('viewedList unaffected by map filter toggles and bounds changes', () => {
     const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
     const { result } = renderHook(
-      ({ items }) => useMapFilter({ items, indexedKeywords: [] }),
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
       { initialProps: { items } },
     )
     expect(result.current.viewedList.has('1')).toBe(true)
@@ -85,7 +85,7 @@ describe('Viewed persistence across map/keyword filtering', () => {
   test('repeated setViewed calls do not duplicate entries', () => {
     const items = [makeItem('A'), makeItem('B')]
     const { result } = renderHook(
-      ({ items }) => useMapFilter({ items, indexedKeywords: [] }),
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
       { initialProps: { items } },
     )
     expect(result.current.viewedList.size).toBe(1)

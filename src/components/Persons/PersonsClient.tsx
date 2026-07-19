@@ -1,13 +1,12 @@
 'use client'
 
 import Button from '@mui/joy/Button'
-import { useMemo, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-
+import { useEffect, useMemo } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
-import { getPrimaryFilename } from '../../utils'
 import type { All } from '../../types/pages'
+import { getPrimaryFilename } from '../../utils'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
 import SplitViewer from '../SplitViewer'
@@ -20,7 +19,7 @@ export default function PersonsClient({
   initialAgeSummary,
   initialSelectedAge,
   initialSelectedPerson,
-}: All.ComponentProps & { gallery: string }) {
+}: All.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,

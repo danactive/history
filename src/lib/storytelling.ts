@@ -15,13 +15,14 @@ import {
   type StorySearchResult,
   type StorySearchSchemaInput,
 } from '../models/storytelling'
-import type { Gallery, Person } from '../types/common'
+import type { Gallery, Item, Person } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
 import getGalleries from './galleries'
 import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
+import indexKeywords from './search'
 import {
   buildStoryMoment,
   getItemDate,
@@ -36,7 +37,6 @@ import {
   countValuesByFrequency,
   getVisitedPlaceFilter,
   scoreCandidate,
-  sortValuesByFrequency,
   storyRichness,
 } from './storytelling-ranking'
 import { buildVisitedRegionCountryIndex, formatVisitedYears } from './visited'
@@ -46,6 +46,45 @@ const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
 
 const clampLimit = (limit = DEFAULT_LIMIT) => Math.max(1, Math.min(limit, MAX_LIMIT))
+
+const hasPersonLikeCasing = (value: string) => /^[A-Z][A-Za-z'-]+(?: [A-Z][A-Za-z'-]+)+$/.test(value)
+
+function buildAlbumPeopleAndKeywordTags(
+  items: Item[],
+  places: string[],
+  limit: number,
+) {
+  const indexedKeywords = indexKeywords(items).indexedKeywords
+  const itemPersonCounts = countValuesByFrequency(
+    items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
+    items.length,
+  )
+  const itemPersonNames = new Set(itemPersonCounts.map(person => person.name))
+  const searchOnlyPersonCounts = countValuesByFrequency(
+    items.flatMap((item) => item.search?.split(', ').map((token) => token.trim()).filter(Boolean) ?? []),
+    items.length * 10,
+  ).filter(({ name, count }) => !itemPersonNames.has(name)
+    && !name.endsWith('^')
+    && !places.includes(name)
+    && !/^\d{4}$/.test(name)
+    && hasPersonLikeCasing(name)
+    && count > 0)
+
+  const personCounts = [...itemPersonCounts, ...searchOnlyPersonCounts]
+    .sort((left, right) => right.count - left.count)
+    .slice(0, limit)
+  const people = personCounts.map(person => person.name)
+  const keywordTags = indexedKeywords
+    .filter(option => option.value.endsWith('^'))
+    .map(option => option.label)
+    .slice(0, limit)
+
+  return {
+    people,
+    personCounts,
+    keywordTags,
+  }
+}
 
 async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]> {
   const { items } = await getAllData({ gallery })
@@ -66,7 +105,7 @@ async function getScopedCandidates(input: StorySearchSchemaInput): Promise<Story
   const visitedFilter = getVisitedPlaceFilter(input)
   const groups = await Promise.all(galleries.map(async (gallery) => {
     if (visitedFilter) {
-      const { items } = await getAllData({ gallery }, visitedFilter)
+      const { items } = await getAllData({ gallery, visitedPlace: visitedFilter })
       return items.map(mapAllItemToCandidate)
     }
 
@@ -123,9 +162,13 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     .sort((left, right) => right.score - left.score || compareDatesDescending(left.date, right.date))
     .slice(0, maxItems)
 
-  const places = sortValuesByFrequency(candidates.map(item => item.city).filter(Boolean), maxItems)
-  const personCounts = countValuesByFrequency(candidates.flatMap(item => item.persons), maxItems)
-  const people = personCounts.map(person => person.name)
+  const placeCounts = countValuesByFrequency(candidates.map(item => item.city).filter(Boolean), maxItems)
+  const places = placeCounts.map(place => place.name)
+  const { people, personCounts, keywordTags } = buildAlbumPeopleAndKeywordTags(
+    albumData.items,
+    places,
+    maxItems,
+  )
   const title = albumMeta?.h1 ?? album
   const subtitle = albumMeta?.h2 ?? ''
   const year = albumMeta?.year ?? null
@@ -137,7 +180,7 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
   ].filter(Boolean)
 
   return validateAlbumStoryResult({
-    summary: `${summaryParts.join(', ')}. Returned ${highlights.length} highlight${highlights.length === 1 ? '' : 's'} for storytelling.`,
+    summary: `${summaryParts.join(', ')}.`,
     gallery,
     album,
     title,
@@ -145,13 +188,15 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     year,
     itemCount: albumData.items.length,
     places,
+    placeCounts,
     people,
     personCounts,
+    keywordTags,
     highlights,
   })
 }
 
-export async function buildAlbumResourceText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
+export async function buildAlbumDetailsText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
   const output = await buildAlbumStory(gallery, album, limit)
   return formatAlbumResourceText(output)
 }
@@ -246,7 +291,7 @@ async function getResolvedPersonResource(gallery: Gallery, name: string) {
   }
 }
 
-export async function buildPersonResourceText(gallery: Gallery, name: string) {
+export async function buildPersonDetailsText(gallery: Gallery, name: string) {
   const { text } = await getResolvedPersonResource(gallery, name)
   return text
 }
@@ -255,16 +300,16 @@ export async function resolvePersonResource(gallery: Gallery, name: string) {
   return getResolvedPersonResource(gallery, name)
 }
 
-export { resolveSearchOnlyPersonEntryFromItems }
+export { buildAlbumPeopleAndKeywordTags, resolveSearchOnlyPersonEntryFromItems }
 
-export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: string, maxDisplayEntries = DEFAULT_LIMIT) {
+export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, maxDisplayEntries = DEFAULT_LIMIT) {
   const output = await getOnThisDayStory(gallery, monthDay)
   const displayLimit = clampLimit(maxDisplayEntries)
   const resourceSummary = output.totalMatches > 0
     ? `Found ${output.totalMatches} on-this-day match${output.totalMatches === 1 ? '' : 'es'} for ${output.monthDay}.`
     : `No on-this-day matches for ${output.monthDay}.`
 
-  const { locationOptions, personOptions, yearOptions, tagOptions } = await getTodayItems(gallery, output.monthDay)
+  const { locationOptions, personCounts, yearOptions, tagOptions } = await getTodayItems(gallery, output.monthDay)
   const years = formatVisitedYears(yearOptions
     .map(option => option.value)
     .filter(value => /^\d{4}$/.test(value))
@@ -276,7 +321,7 @@ export async function buildOnThisDayResourceText(gallery: Gallery, monthDay?: st
   return formatOnThisDayResourceText({ summary: resourceSummary }, buildTodayGuiHref(gallery, output.monthDay), {
     years,
     locations: locationOptions.slice(0, displayLimit).map(option => option.label),
-    persons: personOptions.slice(0, displayLimit).map(option => option.label),
+    persons: personCounts.slice(0, displayLimit),
     keywordTags,
   })
 }
