@@ -13,6 +13,25 @@ export function getExt(filenames: Item['filename']) {
   return extension.toLowerCase()
 }
 
+type NewestSortable = {
+  filename: Item['filename'];
+  id: string;
+}
+
+export function compareNewestFirst<T extends NewestSortable>(left: T, right: T) {
+  const filenameOrder = getPrimaryFilename(right.filename).localeCompare(
+    getPrimaryFilename(left.filename),
+    undefined,
+    { numeric: true, sensitivity: 'base' },
+  )
+
+  if (filenameOrder !== 0) {
+    return filenameOrder
+  }
+
+  return right.id.localeCompare(left.id, undefined, { numeric: true, sensitivity: 'base' })
+}
+
 export const removeUndefinedFields = <T>(obj: T): T => Object.keys(obj as object | {}).reduce(
   (acc, key) => (obj[key as keyof T] === undefined
     ? { ...acc }

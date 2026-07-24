@@ -17,5 +17,5 @@ export async function getAllData({ gallery, visitedPlace }: All.Params): Promise
 
   const items = filterAllItemsByVisitedPlace(data.items, visitedPlace)
   const { indexedKeywords } = indexKeywords(items)
-  return { gallery, items, indexedKeywords }
+  return { gallery, items, indexedKeywords, totalItemCount: data.items.length }
 }

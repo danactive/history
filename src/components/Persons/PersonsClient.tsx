@@ -14,6 +14,7 @@ import SplitViewer from '../SplitViewer'
 export default function PersonsClient({
   gallery,
   items,
+  totalItemCount,
   indexedKeywords,
   clusteredMarkers,
   initialAgeSummary,
@@ -41,7 +42,7 @@ export default function PersonsClient({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
-  } = usePersonsFilter({ gallery, items, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
+  } = usePersonsFilter({ gallery, items, totalItemCount, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

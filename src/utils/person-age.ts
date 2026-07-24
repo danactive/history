@@ -1,6 +1,8 @@
 import type { Item } from '../types/common'
 import { getPrimaryFilename } from '.'
 
+export type AgeSummaryValue = number | 'unknown'
+
 function parseDate(value: string): Date | null {
   const trimmed = value.trim().substring(0, 10)
 
@@ -51,13 +53,16 @@ export function calcAgeNow(dob: string, now: Date = new Date()): number | null {
   }
 }
 
-export function buildAgeSummary(items: Item[]): { ages: { age: number; count: number }[] } {
-  const counts = new Map<number, number>()
+export function buildAgeSummary(items: Item[]): { ages: { age: AgeSummaryValue; count: number }[] } {
+  const counts = new Map<AgeSummaryValue, number>()
   items.forEach((it) => {
     if (!it.persons || !it.filename) return
     const photoDate = resolvePhotoDate(it)
     it.persons.forEach((p) => {
-      if (!p.dob) return
+      if (!p.dob) {
+        counts.set('unknown', (counts.get('unknown') || 0) + 1)
+        return
+      }
       const age = calcAgeAtDate(p.dob, photoDate)
       if (age !== null && age >= 0) counts.set(age, (counts.get(age) || 0) + 1)
     })
@@ -65,7 +70,11 @@ export function buildAgeSummary(items: Item[]): { ages: { age: number; count: nu
   return {
     ages: Array.from(counts.entries())
       .map(([age, count]) => ({ age, count }))
-      .sort((a, b) => a.age - b.age),
+      .sort((left, right) => {
+        if (left.age === 'unknown') return -1
+        if (right.age === 'unknown') return 1
+        return left.age - right.age
+      }),
   }
 }
 

@@ -151,6 +151,13 @@ beforeEach(() => {
 })
 
 describe('today library', () => {
+  test('orders matching items newest first and breaks ties by id', async () => {
+    const result = await getTodayItems('demo', '07-18')
+    const ids = result.items.map(item => item.id)
+
+    expect(ids).toEqual(['4', '3', '2', '1'])
+  })
+
   test('orders location options by highest count first', async () => {
     const result = await getTodayItems('demo', '07-18')
     const counts = result.locationOptions.map((option) => option.count)

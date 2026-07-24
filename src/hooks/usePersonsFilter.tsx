@@ -8,8 +8,9 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import type { Gallery, ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
+import type { PersonAgeFilterValue } from '../lib/persons'
 import { resolveUniquePersonName } from '../utils/person-search'
-import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
+import { type AgeSummaryValue, calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
 import useMapFilter from './useMapFilter'
 import useMemory from './useMemory'
 
@@ -19,29 +20,57 @@ type PersonMatch = {
   photoDate: string
 }
 
-type AgeFilterValue = number | 'unknown' | null
+function matchesSelectedPersonAge(
+  item: ServerSideAllItem,
+  selectedAge: PersonAgeFilterValue,
+  selectedPerson: string | null,
+) {
+  if (!item.persons || !item.filename) {
+    return false
+  }
+
+  const photoDate = resolvePhotoDate(item)
+  return item.persons.some((person) => {
+    if (selectedPerson && person.full !== selectedPerson) {
+      return false
+    }
+
+    if (selectedAge === null) {
+      return true
+    }
+
+    const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
+    return age === selectedAge
+  })
+}
 
 export default function usePersonsFilter({
   gallery,
   items,
+  totalItemCount,
   indexedKeywords,
   initialAgeSummary,
   initialSelectedAge,
   initialSelectedPerson,
 }: All.ItemData & {
   gallery: Gallery
-  initialAgeSummary?: { ages: { age: number; count: number }[] }
-  initialSelectedAge?: AgeFilterValue
+  totalItemCount?: number
+  initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] }
+  initialSelectedAge?: PersonAgeFilterValue
   initialSelectedPerson?: string | null
 }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const resolvedInitialAge = initialSelectedAge ?? null
+  const resolvedInitialPerson = initialSelectedPerson ?? null
 
   // Age/person selection state
-  const [selectedAge, setSelectedAge] = useState<AgeFilterValue>(initialSelectedAge ?? null)
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(initialSelectedPerson ?? null)
+  const [selectedAge, setSelectedAge] = useState<PersonAgeFilterValue>(resolvedInitialAge)
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(resolvedInitialPerson)
   const [mounted, setMounted] = useState(false)
+  const isServerScopeCurrent = selectedAge === resolvedInitialAge && selectedPerson === resolvedInitialPerson
+  const hasVisitedFilter = Boolean(searchParams.get('visitedCountry'))
 
   const keywordFromUrl = searchParams.get('keyword') ?? ''
   const personDetailsName = useMemo(() => {
@@ -49,6 +78,7 @@ export default function usePersonsFilter({
 
     return resolveUniquePersonName(items, keywordFromUrl)
   }, [items, keywordFromUrl, selectedPerson])
+  const effectiveSelectedPerson = selectedPerson ?? personDetailsName
 
   const {
     refImageGallery,
@@ -67,9 +97,26 @@ export default function usePersonsFilter({
   } = useMapFilter({
     gallery,
     items,
+    totalCount: totalItemCount,
     indexedKeywords,
     personDetailsName,
   })
+
+  const currentServerScopedItems = useMemo(() => {
+    if (!isServerScopeCurrent) {
+      return null
+    }
+
+    return itemsToShow.filter((item) => matchesSelectedPersonAge(item, selectedAge, effectiveSelectedPerson))
+  }, [effectiveSelectedPerson, isServerScopeCurrent, itemsToShow, selectedAge])
+
+  const canReuseServerScope = isServerScopeCurrent
+    && currentServerScopedItems !== null
+    && currentServerScopedItems.length === itemsToShow.length
+  const canReuseServerSummary = canReuseServerScope
+    && !hasVisitedFilter
+    && !keyword
+    && !mapFilterEnabled
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -77,7 +124,7 @@ export default function usePersonsFilter({
   useEffect(() => {
     const ageParam = searchParams.get('age')
     const parsedAge = ageParam ? Number.parseInt(ageParam, 10) : null
-    const ageFromUrl: AgeFilterValue = ageParam === 'unknown'
+    const ageFromUrl: PersonAgeFilterValue = ageParam === 'unknown'
       ? 'unknown'
       : (Number.isNaN(parsedAge) ? null : parsedAge)
     const personFromUrl = searchParams.get('person')
@@ -107,12 +154,14 @@ export default function usePersonsFilter({
   }, [selectedAge, selectedPerson, searchParams, router, pathname])
 
   const personScopedItems: ServerSideAllItem[] = useMemo(() => {
-    if (!selectedPerson) return itemsToShow
-    return itemsToShow.filter((item) => item.persons?.some((person) => person.full === selectedPerson))
-  }, [itemsToShow, selectedPerson])
+    if (canReuseServerScope) return itemsToShow
+    if (!effectiveSelectedPerson) return itemsToShow
+    return itemsToShow.filter((item) => item.persons?.some((person) => person.full === effectiveSelectedPerson))
+  }, [canReuseServerScope, effectiveSelectedPerson, itemsToShow])
 
   // Apply age filter (without person) first so person options stay stable.
   const ageOnlyFiltered: ServerSideAllItem[] = useMemo(() => {
+    if (canReuseServerScope) return itemsToShow
     if (selectedAge === null) return personScopedItems
     return personScopedItems.filter(item => {
       if (!item.persons || !item.filename) return false
@@ -122,29 +171,25 @@ export default function usePersonsFilter({
         return age === selectedAge
       })
     })
-  }, [personScopedItems, selectedAge])
+  }, [canReuseServerScope, itemsToShow, personScopedItems, selectedAge])
 
   // Apply person filter on top of age-only results.
   const ageFiltered: ServerSideAllItem[] = useMemo(() => {
-    if (!selectedPerson) return ageOnlyFiltered
+    if (canReuseServerScope) return itemsToShow
+    if (!effectiveSelectedPerson) return ageOnlyFiltered
     return ageOnlyFiltered.filter((item) => {
-      if (!item.persons || !item.filename) return false
-      const photoDate = resolvePhotoDate(item)
-      return item.persons.some((person) => {
-        if (person.full !== selectedPerson) return false
-        if (selectedAge === null) return true
-        const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
-        return age === selectedAge
-      })
+      return matchesSelectedPersonAge(item, selectedAge, effectiveSelectedPerson)
     })
-  }, [ageOnlyFiltered, selectedPerson, selectedAge])
+  }, [ageOnlyFiltered, canReuseServerScope, effectiveSelectedPerson, itemsToShow, selectedAge])
 
   // Unique ages (client recompute only after mount)
   const uniqueAges = useMemo(() => {
-    if (!mounted && initialAgeSummary) {
+    if (canReuseServerSummary && initialAgeSummary) {
       return {
-        numeric: initialAgeSummary.ages.map(a => a.age),
-        hasUnknown: false,
+        numeric: initialAgeSummary.ages
+          .filter((entry): entry is { age: number; count: number } => entry.age !== 'unknown')
+          .map(entry => entry.age),
+        hasUnknown: initialAgeSummary.ages.some(entry => entry.age === 'unknown'),
       }
     }
     const set = new Set<number>()
@@ -153,7 +198,7 @@ export default function usePersonsFilter({
       if (!item.persons || !item.filename) return
       const photoDate = resolvePhotoDate(item)
       item.persons.forEach(person => {
-        if (selectedPerson && person.full !== selectedPerson) {
+        if (effectiveSelectedPerson && person.full !== effectiveSelectedPerson) {
           return
         }
         if (!person.dob) {
@@ -173,11 +218,11 @@ export default function usePersonsFilter({
       numeric: Array.from(set).sort((a, b) => a - b),
       hasUnknown,
     }
-  }, [personScopedItems, selectedAge, selectedPerson, mounted, initialAgeSummary])
+  }, [canReuseServerSummary, effectiveSelectedPerson, personScopedItems, selectedAge, initialAgeSummary])
 
   const agesWithCounts = useMemo(() => {
-    if (!mounted && initialAgeSummary) {
-      return initialAgeSummary.ages.map(({ age, count }) => ({ age: age as number | 'unknown', count }))
+    if (canReuseServerSummary && initialAgeSummary) {
+      return initialAgeSummary.ages.map(({ age, count }) => ({ age, count }))
     }
     const countMap = new Map<number | 'unknown', number>()
     personScopedItems.forEach(item => {
@@ -185,7 +230,7 @@ export default function usePersonsFilter({
       const photoDate = resolvePhotoDate(item)
       const seen = new Set<number | 'unknown'>()
       item.persons.forEach(person => {
-        if (selectedPerson && person.full !== selectedPerson) {
+        if (effectiveSelectedPerson && person.full !== effectiveSelectedPerson) {
           return
         }
         const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
@@ -198,7 +243,7 @@ export default function usePersonsFilter({
     const numeric = uniqueAges.numeric.map(age => ({ age: age as number | 'unknown', count: countMap.get(age) || 0 }))
     const unknown = uniqueAges.hasUnknown ? [{ age: 'unknown' as const, count: countMap.get('unknown') || 0 }] : []
     return [...unknown, ...numeric].filter(a => a.count > 0)
-  }, [personScopedItems, selectedPerson, uniqueAges, mounted, initialAgeSummary])
+  }, [canReuseServerSummary, effectiveSelectedPerson, personScopedItems, uniqueAges, initialAgeSummary])
 
   const { peopleAtSelectedAge, peopleWithCounts } = useMemo(() => {
     if (selectedAge === null) return { peopleAtSelectedAge: [], peopleWithCounts: [] }
@@ -229,10 +274,13 @@ export default function usePersonsFilter({
     }
   }, [ageOnlyFiltered, selectedAge])
 
-  const totalPhotoCount = useMemo(
-    () => personScopedItems.filter(item => item.persons?.some(p => !selectedPerson || p.full === selectedPerson ? p.dob : false)).length,
-    [personScopedItems, selectedPerson],
-  )
+  const totalPhotoCount = useMemo(() => {
+    if (canReuseServerSummary && initialAgeSummary) {
+      return initialAgeSummary.ages.reduce((sum, { count }) => sum + count, 0)
+    }
+
+    return personScopedItems.length
+  }, [canReuseServerSummary, initialAgeSummary, personScopedItems])
 
   // Build items with corpus for AllItems
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
@@ -272,7 +320,7 @@ export default function usePersonsFilter({
         ))}
       </Select>
 
-      {selectedAge !== null && !selectedPerson && peopleAtSelectedAge.length > 0 && (
+      {selectedAge !== null && !effectiveSelectedPerson && peopleAtSelectedAge.length > 0 && (
         <Select
           value={selectedPerson ?? ''}
           onChange={(_, value) => setSelectedPerson(value || null)}
@@ -364,7 +412,7 @@ export default function usePersonsFilter({
     selectedPerson,
     setSelectedPerson,
     controls: baseControls,
-    overrideAgeSummary: !mounted && initialAgeSummary ? baseControls : null,
+    overrideAgeSummary: !mounted && canReuseServerSummary && initialAgeSummary ? baseControls : null,
     // items
     ageFiltered,
     itemsWithCorpus,

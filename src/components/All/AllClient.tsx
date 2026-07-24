@@ -13,6 +13,7 @@ import AllItems from './Items'
 export default function AllClient({
   gallery,
   items,
+  totalItemCount,
   indexedKeywords,
   clusteredMarkers,
   visitedFilterLabel,
@@ -33,7 +34,7 @@ export default function AllClient({
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ gallery, items, indexedKeywords, visitedFilterLabel })
+  } = useMapFilter({ gallery, items, totalCount: totalItemCount, indexedKeywords, visitedFilterLabel })
 
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')

@@ -49,7 +49,7 @@ export default async function AllServer({
   ])
   const visitedPlace = getVisitedPlaceFromSearchParams(resolvedSearchParams)
 
-  const { items = [], indexedKeywords } = await getAllData({ gallery, visitedPlace })
+  const { items = [], indexedKeywords, totalItemCount } = await getAllData({ gallery, visitedPlace })
   const clusterMarkers = generateClusters(items)
 
   return (
@@ -57,6 +57,7 @@ export default async function AllServer({
       <AllClient
         gallery={gallery}
         items={items}
+        totalItemCount={totalItemCount}
         indexedKeywords={indexedKeywords}
         clusteredMarkers={clusterMarkers}
         visitedPlace={visitedPlace}

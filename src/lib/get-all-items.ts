@@ -5,7 +5,7 @@ import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFi
 import { buildVisitedRegionCountryIndex, getVisitedPlace } from '../lib/visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
-import { getPrimaryFilename } from '../utils'
+import { compareNewestFirst, getPrimaryFilename } from '../utils'
 import type { VisitedRegionCountryIndex } from './visited'
 import type { All } from '../types/pages'
 
@@ -25,7 +25,7 @@ type LoadedAlbumItems = Omit<PrepareItemsParams, 'regionCountryIndex'>
  * Shared utility to get all items from albums with indexed keywords
  * @param {Gallery} gallery Gallery name
  * @param {ItemMapper} itemMapper Custom function to map items to ServerSideAllItem format
- * @param {boolean} reverseAlbumItems Whether to reverse items within each album
+ * @param {boolean} reverseAlbumItems Legacy pre-sort album reversal hint
  * @returns {Promise<All.ItemData>} Items and indexed keywords
  */
 export async function getAllItems(
@@ -54,7 +54,7 @@ export async function getAllItems(
     })
     const itemsToConcat = reverseAlbumItems ? preparedItems.reverse() : preparedItems
     return itemsToConcat
-  }).reverse()
+  }).sort(compareNewestFirst)
 
   const { indexedKeywords } = indexKeywords(allItems)
 

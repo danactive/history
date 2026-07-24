@@ -39,6 +39,7 @@ type FilenameItem = SearchableItem & {
 interface UseSearchProps<ItemType> {
   gallery: Gallery;
   items: ItemType[];
+  totalCount?: number;
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
@@ -95,6 +96,7 @@ function hasFilename(item: SearchableItem): item is FilenameItem {
 export default function useSearch<ItemType extends SearchableItem>({
   gallery,
   items,
+  totalCount,
   memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
@@ -380,7 +382,7 @@ export default function useSearch<ItemType extends SearchableItem>({
     <form onSubmit={handleSubmit}>
       <div className={styles.row}>
         <h3 className={styles.searchCount}>
-          Search results {visibleCount} of {items.length}
+          Search results {visibleCount} of {totalCount ?? items.length}
           {keywordResultLabel}
         </h3>
         {keyword && (

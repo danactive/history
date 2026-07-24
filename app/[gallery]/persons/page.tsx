@@ -2,13 +2,13 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 import PersonsClient from '../../../src/components/Persons/PersonsClient'
+import { filterAllItemsByVisitedPlace } from '../../../src/lib/all'
 import { buildAgeSummary } from '../../../src/utils/person-age'
 import getGalleries from '../../../src/lib/galleries'
-import { getPersonsData } from '../../../src/lib/persons'
+import { filterPersonsItems, getPersonsData } from '../../../src/lib/persons'
 import indexKeywords from '../../../src/lib/search'
-import type { Gallery } from '../../../src/types/common'
+import type { Gallery, VisitedPlace } from '../../../src/types/common'
 import { generateClusters } from '../../../src/lib/generate-clusters'
-import { calcAgeAtDate, resolvePhotoDate } from '../../../src/utils/person-age'
 
 export const metadata: Metadata = {
   title: 'Persons - History App',
@@ -17,6 +17,8 @@ export const metadata: Metadata = {
 type SearchParams = {
   age?: string | string[]
   person?: string | string[]
+  visitedCountry?: string | string[]
+  visitedRegion?: string | string[]
 }
 
 type AgeFilterValue = number | 'unknown' | null
@@ -40,6 +42,20 @@ function getAgeFromSearchParams(searchParams?: SearchParams): AgeFilterValue {
   return Number.isNaN(age) ? null : age
 }
 
+function getVisitedPlaceFromSearchParams(searchParams?: SearchParams): VisitedPlace | null {
+  const country = typeof searchParams?.visitedCountry === 'string' ? searchParams.visitedCountry.trim() : ''
+  const region = typeof searchParams?.visitedRegion === 'string' ? searchParams.visitedRegion.trim() : ''
+
+  if (!country) {
+    return null
+  }
+
+  return {
+    country,
+    region: region || null,
+  }
+}
+
 export async function generateStaticParams() {
   const { galleries } = await getGalleries()
   return galleries.map((gallery) => ({ gallery }))
@@ -58,37 +74,28 @@ export default async function PersonsServer({
   ])
   const initialSelectedAge = getAgeFromSearchParams(resolvedSearchParams)
   const initialSelectedPerson = getPersonFromSearchParams(resolvedSearchParams)
+  const visitedPlace = getVisitedPlaceFromSearchParams(resolvedSearchParams)
 
   const personsData = await getPersonsData({ gallery })
-  const personFilteredItems = initialSelectedPerson
-    ? personsData.items.filter((item) => item.persons?.some((person) => person.full === initialSelectedPerson))
+  const visitedScopedItems = visitedPlace
+    ? filterAllItemsByVisitedPlace(personsData.items, visitedPlace)
     : personsData.items
-  const items = initialSelectedAge === null
-    ? personFilteredItems
-    : personFilteredItems.filter((item) => {
-      if (!item.persons || !item.filename) {
-        return false
-      }
-
-      const photoDate = resolvePhotoDate(item)
-      return item.persons.some((person) => {
-        if (initialSelectedPerson && person.full !== initialSelectedPerson) {
-          return false
-        }
-        const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
-        return age === initialSelectedAge
-      })
-    })
-  const indexedKeywords = initialSelectedPerson ? indexKeywords(items).indexedKeywords : personsData.indexedKeywords
+  const summaryItems = filterPersonsItems(visitedScopedItems, null, initialSelectedPerson)
+  const items = visitedPlace
+    ? summaryItems
+    : filterPersonsItems(summaryItems, initialSelectedAge, initialSelectedPerson)
+  const hasServerScope = visitedPlace !== null || initialSelectedAge !== null || initialSelectedPerson !== null
+  const indexedKeywords = hasServerScope ? indexKeywords(items).indexedKeywords : personsData.indexedKeywords
 
   const clusterMarkers = generateClusters(items)
-  const initialAgeSummary = buildAgeSummary(items)
+  const initialAgeSummary = buildAgeSummary(summaryItems)
 
   return (
     <Suspense fallback={<div>Loading Persons...</div>}>
       <PersonsClient
         gallery={gallery}
         items={items}
+        totalItemCount={personsData.items.length}
         indexedKeywords={indexedKeywords}
         clusteredMarkers={clusterMarkers}
         initialAgeSummary={initialAgeSummary}

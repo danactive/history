@@ -1,17 +1,15 @@
-import { renderHook, act } from '@testing-library/react'
-import { vi } from 'vitest'
+import { renderHook, act, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import useMapFilter from '../useMapFilter'
 
-// Mock useSearch so filtering is identity
+const useSearchMock = vi.hoisted(() => vi.fn())
+const setVisibleCountMock = vi.hoisted(() => vi.fn())
+const setDisplayedItemsMock = vi.hoisted(() => vi.fn())
+
+// Mock useSearch so tests can control filtered results and inspect callbacks.
 vi.mock('../useSearch', () => ({
   __esModule: true,
-  default: ({ items }: any) => ({
-    filtered: items,
-    keyword: '',
-    searchBox: <div data-testid="search-box" />,
-    setVisibleCount: vi.fn(),
-    setDisplayedItems: vi.fn(),
-  }),
+  default: useSearchMock,
 }))
 
 import type { ServerSideAllItem } from '../../types/common'
@@ -41,6 +39,18 @@ const makeItem = (id: string, coords: [number, number] = [0, 0]): ServerSideAllI
 })
 
 describe('Viewed persistence across map/keyword filtering', () => {
+  beforeEach(() => {
+    setVisibleCountMock.mockReset()
+    setDisplayedItemsMock.mockReset()
+    useSearchMock.mockImplementation(({ items }: any) => ({
+      filtered: items,
+      keyword: '',
+      searchBox: <div data-testid="search-box" />,
+      setVisibleCount: setVisibleCountMock,
+      setDisplayedItems: setDisplayedItemsMock,
+    }))
+  })
+
   test('viewedList persists when items change', () => {
     const itemsA = [makeItem('1'), makeItem('2')]
     const { result, rerender } = renderHook(
@@ -98,5 +108,88 @@ describe('Viewed persistence across map/keyword filtering', () => {
     expect(result.current.viewedList.size).toBe(2)
     expect(result.current.viewedList.has('A')).toBe(true)
     expect(result.current.viewedList.has('B')).toBe(true)
+  })
+
+  test('selectById uses the visible map-filtered list when possible', () => {
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
+    const { result } = renderHook(
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
+      { initialProps: { items } },
+    )
+
+    act(() => { result.current.handleToggleMapFilter() })
+    act(() => { result.current.handleBoundsChange([[25, 25], [35, 35]]) })
+    act(() => { result.current.selectById('3') })
+
+    expect(result.current.memoryIndex).toBe(0)
+    expect(result.current.itemsToShow.map(i => i.id)).toEqual(['3'])
+  })
+
+  test('selectById falls back to the filtered list when the item is outside map bounds', () => {
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
+    const { result } = renderHook(
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
+      { initialProps: { items } },
+    )
+
+    act(() => { result.current.handleToggleMapFilter() })
+    act(() => { result.current.handleBoundsChange([[25, 25], [35, 35]]) })
+    act(() => { result.current.selectById('2') })
+
+    expect(result.current.memoryIndex).toBe(1)
+    expect(result.current.itemsToShow.map(i => i.id)).toEqual(['3'])
+  })
+
+  test('onClearMapFilter disables map filtering and preserves clear coordinates', async () => {
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20])]
+    let latestArgs: any
+    useSearchMock.mockImplementation((args: any) => {
+      latestArgs = args
+      return {
+        filtered: args.items,
+        keyword: '',
+        searchBox: <div data-testid="search-box" />,
+        setVisibleCount: setVisibleCountMock,
+        setDisplayedItems: setDisplayedItemsMock,
+      }
+    })
+
+    const { result } = renderHook(
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
+      { initialProps: { items } },
+    )
+
+    act(() => { result.current.handleToggleMapFilter() })
+    act(() => { latestArgs.onClearMapFilter?.([123, 45]) })
+
+    expect(result.current.mapFilterEnabled).toBe(false)
+    expect(result.current.clearCoordinates).toEqual([123, 45])
+    expect(result.current.isClearing).toBe(true)
+
+    await waitFor(() => {
+      expect(result.current.isClearing).toBe(false)
+      expect(result.current.clearCoordinates).toBeNull()
+    })
+  })
+
+  test('updates visible counts and displayed items for the current itemsToShow', async () => {
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
+    const { result } = renderHook(
+      ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
+      { initialProps: { items } },
+    )
+
+    await waitFor(() => {
+      expect(setDisplayedItemsMock).toHaveBeenLastCalledWith(items)
+      expect(setVisibleCountMock).toHaveBeenLastCalledWith(3)
+    })
+
+    act(() => { result.current.handleToggleMapFilter() })
+    act(() => { result.current.handleBoundsChange([[15, 15], [25, 25]]) })
+
+    await waitFor(() => {
+      expect(setDisplayedItemsMock).toHaveBeenLastCalledWith([items[1]])
+      expect(setVisibleCountMock).toHaveBeenLastCalledWith(1)
+    })
   })
 })

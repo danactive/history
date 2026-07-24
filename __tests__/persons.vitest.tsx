@@ -8,14 +8,17 @@ vi.mock('../src/components/Persons/PersonsClient', () => ({
   __esModule: true,
   default: ({
     items,
+    totalItemCount,
     initialSelectedAge,
     initialSelectedPerson,
   }: {
     items: Array<{ filename: string | string[] }>
+    totalItemCount?: number
     initialSelectedAge?: number | 'unknown' | null
     initialSelectedPerson?: string | null
   }) => (
     <div>
+      <div>{totalItemCount ?? 'no-total'}</div>
       <div>{initialSelectedAge === null || initialSelectedAge === undefined ? 'no-age' : String(initialSelectedAge)}</div>
       <div>{initialSelectedPerson ?? 'no-person'}</div>
       {items.map((item) => {
@@ -26,58 +29,85 @@ vi.mock('../src/components/Persons/PersonsClient', () => ({
   ),
 }))
 
-vi.mock('../src/lib/persons', () => ({
-  __esModule: true,
-  getPersonsData: async () => ({
-    items: [
-      {
-        id: '1',
-        filename: '2025-07-12-01.jpg',
-        photoDate: '2025-07-12',
-        city: 'Sample City, Country',
-        location: 'House',
-        caption: 'Primary',
-        description: null,
-        search: 'family',
-        persons: [{ full: 'Sample Person', dob: '1929-09-22' }],
-        title: 'Primary',
-        coordinates: null,
-        coordinateAccuracy: null,
-        thumbPath: '',
-        photoPath: '',
-        mediaPath: '',
-        videoPaths: null,
-        reference: null,
-        corpus: 'primary',
-        visitedPlace: null,
-        album: 'sample',
-      },
-      {
-        id: '2',
-        filename: '2025-07-12-02.jpg',
-        photoDate: '2025-07-12',
-        city: 'Sample City, Country',
-        location: 'Yard',
-        caption: 'Other',
-        description: null,
-        search: 'family',
-        persons: [{ full: 'Secondary Person', dob: '1950-01-01' }],
-        title: 'Other',
-        coordinates: null,
-        coordinateAccuracy: null,
-        thumbPath: '',
-        photoPath: '',
-        mediaPath: '',
-        videoPaths: null,
-        reference: null,
-        corpus: 'other',
-        visitedPlace: null,
-        album: 'sample',
-      },
-    ],
-    indexedKeywords: [{ label: 'family (2)', value: 'family' }],
-  }),
-}))
+vi.mock('../src/lib/persons', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../src/lib/persons')>()
+
+  return {
+    __esModule: true,
+    ...actual,
+    getPersonsData: async () => ({
+      items: [
+        {
+          id: '1',
+          filename: '2025-07-12-01.jpg',
+          photoDate: '2025-07-12',
+          city: 'Sample City, Country',
+          location: 'House',
+          caption: 'Primary',
+          description: null,
+          search: 'family',
+          persons: [{ full: 'Sample Person', dob: '1929-09-22' }],
+          title: 'Primary',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '',
+          photoPath: '',
+          mediaPath: '',
+          videoPaths: null,
+          reference: null,
+          corpus: 'primary',
+          visitedPlace: { country: 'Canada', region: 'BC' },
+          album: 'sample',
+        },
+        {
+          id: '2',
+          filename: '2025-07-12-02.jpg',
+          photoDate: '2025-07-12',
+          city: 'Sample City, Country',
+          location: 'Yard',
+          caption: 'Other',
+          description: null,
+          search: 'family',
+          persons: [{ full: 'Secondary Person', dob: null }],
+          title: 'Other',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '',
+          photoPath: '',
+          mediaPath: '',
+          videoPaths: null,
+          reference: null,
+          corpus: 'other',
+          visitedPlace: { country: 'Canada', region: 'BC' },
+          album: 'sample',
+        },
+        {
+          id: '3',
+          filename: '2025-07-12-03.jpg',
+          photoDate: '2025-07-12',
+          city: 'Another City, Country',
+          location: 'Park',
+          caption: 'Elsewhere',
+          description: null,
+          search: 'family',
+          persons: [{ full: 'Far Person', dob: null }],
+          title: 'Elsewhere',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '',
+          photoPath: '',
+          mediaPath: '',
+          videoPaths: null,
+          reference: null,
+          corpus: 'away',
+          visitedPlace: { country: 'Canada', region: 'ON' },
+          album: 'sample',
+        },
+      ],
+      indexedKeywords: [{ label: 'family (3)', value: 'family' }],
+    }),
+  }
+})
 
 vi.mock('../src/lib/generate-clusters', () => ({
   __esModule: true,
@@ -104,6 +134,7 @@ describe('Persons page', () => {
 
     render(component)
 
+  expect(screen.getByText('3')).toBeInTheDocument()
     expect(screen.getByText('Sample Person')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
@@ -117,9 +148,29 @@ describe('Persons page', () => {
 
     render(component)
 
+  expect(screen.getByText('3')).toBeInTheDocument()
     expect(screen.getByText('96')).toBeInTheDocument()
     expect(screen.getByText('Sample Person')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+  })
+
+  test('keeps the visited base scope on the server when age=unknown is selected', async () => {
+    const component = await PersonsServer({
+      params: Promise.resolve({ gallery: 'demo' }),
+      searchParams: Promise.resolve({
+        visitedCountry: 'Canada',
+        visitedRegion: 'BC',
+        age: 'unknown',
+      }),
+    })
+
+    render(component)
+
+    expect(screen.getByText('3')).toBeInTheDocument()
+    expect(screen.getByText('unknown')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-03.jpg')).not.toBeInTheDocument()
   })
 })

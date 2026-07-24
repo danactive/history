@@ -177,6 +177,77 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.ageFiltered).toHaveLength(1)
   })
 
+  test('keeps unknown age visible when reusing a server-scoped summary', () => {
+    query = new URLSearchParams('visitedCountry=Canada&visitedRegion=BC&age=unknown')
+    const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 'unknown',
+      initialAgeSummary: { ages: [{ age: 'unknown', count: 1 }] },
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(result.current.selectedAge).toBe('unknown')
+    expect(result.current.ageFiltered).toHaveLength(1)
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'Unknown age (1 photo)'
+    ))).toBeInTheDocument()
+  })
+
+  test('anchors all ages count to the base scope when initial items are age-filtered', () => {
+    query = new URLSearchParams('age=unknown')
+    const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 'unknown',
+      initialAgeSummary: {
+        ages: [
+          { age: 'unknown', count: 1 },
+          { age: 21, count: 2 },
+        ],
+      },
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (3 photos)'
+    ))).toBeInTheDocument()
+  })
+
+  test('keeps all ages anchored to the visited scope while unknown remains narrowed', () => {
+    query = new URLSearchParams('visitedCountry=Canada&visitedRegion=BC&age=unknown')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeUnknownDobItem('2', 'Mystery', '2021-02-01'),
+      makeItem('3', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 'unknown',
+    }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(result.current.ageFiltered).toHaveLength(1)
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (3 photos)'
+    ))).toBeInTheDocument()
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'Unknown age (1 photo)'
+    ))).toBeInTheDocument()
+  })
+
   test('scopes all ages counts to the selected person', () => {
     query = new URLSearchParams('person=Alice')
     const items = [
@@ -244,6 +315,27 @@ describe('usePersonsFilter URL sync', () => {
     render(<>{result.current.searchBox}</>)
 
     expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Alice')
+  })
+
+  test('scopes the first age dropdown to a unique person inferred from the keyword query', () => {
+    query = new URLSearchParams('keyword=ali')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+      makeUnknownDobItem('3', 'Alice', '2021-02-02'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    render(<>{result.current.controls}</>)
+
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (2 photos)'
+    ))).toBeInTheDocument()
+    expect(screen.getByText((_, node) => (
+      node?.textContent?.replace(/\s+/g, ' ').trim() === 'Unknown age (1 photo)'
+    ))).toBeInTheDocument()
+    expect(screen.queryByText('All people at unknown (1 person)')).not.toBeInTheDocument()
   })
 
   test('shows person details link for an exact search-only person token', () => {

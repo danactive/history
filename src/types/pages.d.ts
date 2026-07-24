@@ -1,5 +1,6 @@
 import type { Filesystem } from '../lib/filesystems'
 import type { ClusteredMarkers } from '../lib/generate-clusters'
+import type { AgeSummaryValue } from '../utils/person-age'
 import type {
   AlbumMeta,
   Gallery as GalleryName,
@@ -51,9 +52,10 @@ export namespace All {
   export type ComponentProps = {
     gallery: Gallery,
     items: ServerSideAllItem[];
+    totalItemCount?: number;
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
-    initialAgeSummary?: { ages: { age: number; count: number }[] };
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
     initialSelectedAge?: number | 'unknown' | null;
     initialSelectedPerson?: string | null;
     visitedPlace?: VisitedPlace | null;

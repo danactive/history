@@ -5,6 +5,7 @@ import { countValuesByFrequency } from './storytelling-ranking'
 import { buildVisitedDataFromItems, formatVisitedPlace } from './visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, IndexedKeywords, Item } from '../types/common'
+import { compareNewestFirst } from '../utils'
 
 interface ServerSideTodayItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
@@ -94,8 +95,9 @@ export async function getTodayItems(gallery: Gallery, monthDay: string) {
     }
   })
 
-  const items = (await albums.reduce(async (previousPromise, album) => {
-    const previousItems = await previousPromise
+  const items: ServerSideTodayItem[] = []
+
+  for (const album of albums) {
     const { album: { items: albumItems, meta } } = await getAlbum(gallery, album.name)
     const itemsMatchDate = albumItems.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
     const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
@@ -104,8 +106,10 @@ export async function getTodayItems(gallery: Gallery, monthDay: string) {
       albumCoordinateAccuracy,
       items: itemsMatchDate,
     })
-    return previousItems.concat(preparedItems.reverse())
-  }, Promise.resolve([] as ServerSideTodayItem[]))).reverse()
+    items.push(...preparedItems.reverse())
+  }
+
+  items.sort(compareNewestFirst)
 
   const { indexedKeywords } = indexKeywords(items)
   const { locationOptions, personCounts, personOptions, yearOptions, tagOptions } = splitTodayKeywords(items, indexedKeywords)
