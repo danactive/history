@@ -1,49 +1,57 @@
-import type { MouseEvent, RefObject } from 'react'
+import type { RefObject } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import { useCallback } from 'react'
 
-import config from '../../../src/models/config'
 import type { ServerSideAllItem } from '../../types/common'
 import { getPrimaryFilename } from '../../utils'
-import Img from '../Img'
 import Link from '../Link'
+import { ThumbImgList, type ThumbImgProps } from '../ThumbImg'
 import styles from './styles.module.css'
-
-const SHOW_THUMB_MIN_LEN = 3
 
 interface InputProps {
   items: ServerSideAllItem[];
-  keyword: string;
   refImageGallery: RefObject<ImageGalleryRef | null>;
+  viewedList: Set<string>;
 }
 
-function All({ items, keyword, refImageGallery }: InputProps) {
-  const showThumbnail = keyword.length >= SHOW_THUMB_MIN_LEN
-  const { width, height } = config.resizeDimensions.thumb
+export function renderAlbumCaptionAction(
+  gallery: ServerSideAllItem['gallery'],
+  album: ServerSideAllItem['album'] | undefined,
+  filename: ServerSideAllItem['filename'],
+  corpus: ServerSideAllItem['corpus'],
+) {
+  if (!album) {
+    return null
+  }
 
+  return (
+    <Link href={`/${gallery}/${album}?select=${getPrimaryFilename(filename)}`} title={corpus}>
+      {album}
+    </Link>
+  )
+}
+
+function All({ items, refImageGallery, viewedList }: InputProps) {
   const selectThumb = useCallback((index: number) => {
     refImageGallery.current?.slideToIndex(index)
   }, [refImageGallery])
 
-  const handleSlideToClick = useCallback((e: MouseEvent<HTMLUListElement>) => {
-    const btn = (e.target as HTMLElement).closest('button[data-slide-index]')
-    const idx = btn?.getAttribute('data-slide-index')
-    if (idx != null) selectThumb(Number(idx))
-  }, [selectThumb])
+  const getThumbProps = useCallback((item: ServerSideAllItem, index: number): ThumbImgProps => ({
+    onSelectIndex: selectThumb,
+    selectIndex: index,
+    src: item.thumbPath,
+    caption: item.caption,
+    viewed: viewedList.has(item.id),
+    captionAction: renderAlbumCaptionAction(item.gallery, item.album, item.filename, item.corpus),
+  }), [selectThumb, viewedList])
 
   return (
-    <ul onClick={handleSlideToClick}>
-      {items.map((item, index) => (
-        <li key={item.filename.toString()}>
-          <b className={styles.albumName}>{item.album}</b>
-          <Link href={`/${item.gallery}/${item.album}?select=${getPrimaryFilename(item.filename)}`} title={item.corpus}>
-            {!showThumbnail && item.caption}
-            {showThumbnail && <Img src={item.thumbPath} alt={item.caption} title={item.corpus} width={width} height={height} />}
-          </Link>
-          <button className={styles.slideTo} type="button" data-slide-index={index}>Slide to</button>
-        </li>
-      ))}
-    </ul>
+    <ThumbImgList
+      items={items}
+      className={styles.thumbWrapper}
+      getKey={(item) => item.filename.toString()}
+      getThumbProps={getThumbProps}
+    />
   )
 }
 

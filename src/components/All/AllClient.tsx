@@ -25,7 +25,7 @@ export default function AllClient({
     setMemoryIndex,
     setViewed,
     memoryHtml,
-    keyword,
+    viewedList,
     searchBox,
     mapFilterEnabled,
     handleToggleMapFilter,
@@ -80,8 +80,8 @@ export default function AllClient({
         />
         <AllItems
           items={itemsToShow}
-          keyword={keyword}
           refImageGallery={refImageGallery}
+          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

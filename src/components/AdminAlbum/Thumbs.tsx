@@ -4,7 +4,7 @@ import { thumbPath } from '../../lib/paths'
 import type { Gallery, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import { getPrimaryFilename } from '../../utils'
 import styles from '../Album/styles.module.css'
-import ThumbImg from '../ThumbImg'
+import { ThumbImgList, type ThumbImgProps } from '../ThumbImg'
 
 export default function AdminAlbumThumbs(
   { xmlAlbum, gallery, setItem, currentIndex, selectedIndices }:
@@ -26,31 +26,32 @@ export default function AdminAlbumThumbs(
     if (item) setItem(item, index, e.shiftKey)
   }, [items, setItem])
 
+  const getThumbProps = useCallback((item: RawXmlItem, index: number): ThumbImgProps => {
+    const filename = getPrimaryFilename(item.filename)
+    const caption = item.thumb_caption || filename
+    const isSelected = selectedIndices ? selectedIndices.has(index) : index === currentIndex
+
+    return {
+      onSelectWithEvent: handleSelect,
+      selectIndex: index,
+      src: thumbPath(item.filename, gallery),
+      caption,
+      viewed: isSelected,
+      multiSelected: hasMultiSelection && isSelected,
+      editingThumb: true,
+    }
+  }, [currentIndex, gallery, handleSelect, hasMultiSelection, selectedIndices])
+
   if (items.length === 0) {
     return <div>No items found</div>
   }
 
   return (
-    <>
-      <ul className={styles.thumbWrapper}>
-        {items.map((item, index) => {
-          const filename = getPrimaryFilename(item.filename)
-          const caption = item.thumb_caption || filename
-          const isSelected = selectedIndices ? selectedIndices.has(index) : index === currentIndex
-          return (
-            <ThumbImg
-              onSelectWithEvent={handleSelect}
-              selectIndex={index}
-              src={thumbPath(item.filename, gallery)}
-              caption={caption}
-              key={filename}
-              viewed={isSelected}
-              multiSelected={hasMultiSelection && isSelected}
-              editingThumb
-            />
-          )
-        })}
-      </ul>
-    </>
+    <ThumbImgList
+      items={items}
+      className={styles.thumbWrapper}
+      getKey={(item) => getPrimaryFilename(item.filename)}
+      getThumbProps={getThumbProps}
+    />
   )
 }

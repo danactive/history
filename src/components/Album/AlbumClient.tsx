@@ -8,7 +8,8 @@ import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import Link from '../Link'
 import SplitViewer from '../SplitViewer'
-import ThumbImg from '../ThumbImg'
+import { renderAlbumCaptionAction } from '../All/Items'
+import { ThumbImgList, type ThumbImgProps } from '../ThumbImg'
 import styles from './styles.module.css'
 
 /**
@@ -70,6 +71,17 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
     setMemoryIndex(index)
   }, [refImageGallery, setMemoryIndex])
 
+  const getThumbProps = useCallback((item: Album.ComponentProps['items'][number], index: number): ThumbImgProps => ({
+    onSelectIndex: handleThumbSelect,
+    selectIndex: index,
+    src: item.thumbPath,
+    caption: item.caption,
+    viewed: viewedList.has(item.id),
+    captionAction: monthDay && !album
+      ? renderAlbumCaptionAction(gallery, item.album, item.filename, item.corpus)
+      : null,
+  }), [album, gallery, handleThumbSelect, monthDay, viewedList])
+
   return (
     <div>
       <AlbumContext.Provider value={meta}>
@@ -88,21 +100,12 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
-        <ul className={styles.thumbWrapper}>
-          {itemsToShow.map((item, index) => {
-            const filename = getPrimaryFilename(item.filename)
-            return (
-              <ThumbImg
-                onSelectIndex={handleThumbSelect}
-                selectIndex={index}
-                src={item.thumbPath}
-                caption={item.caption}
-                key={filename}
-                viewed={viewedList.has(item.id)}
-              />
-            )
-          })}
-        </ul>
+        <ThumbImgList
+          items={itemsToShow}
+          className={styles.thumbWrapper}
+          getKey={(item) => getPrimaryFilename(item.filename)}
+          getThumbProps={getThumbProps}
+        />
       </AlbumContext.Provider>
     </div>
   )

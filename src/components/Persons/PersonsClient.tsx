@@ -25,7 +25,6 @@ export default function PersonsClient({
     memoryIndex,
     setMemoryIndex,
     setViewed,
-    keyword,
     searchBox,
     mapFilterEnabled,
     handleToggleMapFilter,
@@ -35,6 +34,7 @@ export default function PersonsClient({
     controls,
     ageFiltered,
     itemsWithCorpus,
+    viewedList,
     memoryHtml,
     overrideAgeSummary,
     selectedAge,
@@ -108,8 +108,8 @@ export default function PersonsClient({
         />
         <AllItems
           items={itemsWithCorpus}
-          keyword={keyword}
           refImageGallery={refImageGallery}
+          viewedList={viewedList}
         />
       </AlbumContext.Provider>
     </div>

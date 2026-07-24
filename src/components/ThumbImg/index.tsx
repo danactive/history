@@ -1,8 +1,29 @@
-import { memo, MouseEvent, useEffect, useState } from 'react'
+import { memo, MouseEvent, ReactNode, useEffect, useState } from 'react'
 
 import config from '../../../src/models/config'
 import Img from '../Img'
 import styles from './styles.module.css'
+
+export type ThumbImgProps = {
+  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  onSelectIndex?: (index: number) => void;
+  onSelectWithEvent?: (index: number, event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  selectIndex?: number;
+  caption: string;
+  href?: string;
+  src: string;
+  viewed: boolean;
+  multiSelected?: boolean;
+  editingThumb?: boolean;
+  captionAction?: ReactNode;
+}
+
+type ThumbImgListProps<T> = {
+  items: T[];
+  className?: string;
+  getKey: (item: T, index: number) => string;
+  getThumbProps: (item: T, index: number) => ThumbImgProps;
+}
 
 function getViewed(viewed: boolean, multiSelected: boolean, editingThumb: boolean) {
   if (viewed) {
@@ -23,18 +44,8 @@ function ThumbImg({
   viewed: globalViewed = false,
   multiSelected = false,
   editingThumb = false,
-}: {
-  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
-  onSelectIndex?: (index: number) => void;
-  onSelectWithEvent?: (index: number, event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
-  selectIndex?: number;
-  caption: string;
-  href?: string;
-  src: string;
-  viewed: boolean;
-  multiSelected?: boolean;
-  editingThumb?: boolean;
-}) {
+  captionAction,
+}: ThumbImgProps) {
   // Keep visuals (local state for immediate feedback) but never reset globally
   const [viewed, setViewed] = useState(globalViewed)
 
@@ -57,7 +68,7 @@ function ThumbImg({
   const { width, height } = config.resizeDimensions.thumb
 
   return (
-    <li className={styles.bullet}>
+    <li className={`${styles.bullet} ${captionAction ? styles.bulletWithAction : ''}`}>
       <a
         className={getViewed(
           editingThumb ? globalViewed : (globalViewed || viewed),
@@ -75,7 +86,18 @@ function ThumbImg({
         />
       </a>
       <span className={styles.caption}>{caption}</span>
+      {captionAction ? <span className={styles.captionAction}>{captionAction}</span> : null}
     </li>
+  )
+}
+
+export function ThumbImgList<T>({ items, className, getKey, getThumbProps }: ThumbImgListProps<T>) {
+  return (
+    <ul className={className}>
+      {items.map((item, index) => (
+        <ThumbImg key={getKey(item, index)} {...getThumbProps(item, index)} />
+      ))}
+    </ul>
   )
 }
 

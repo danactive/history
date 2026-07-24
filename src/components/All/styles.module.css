@@ -1,6 +1,4 @@
-.albumName {
-  margin-right: 1rem;
-}
-.slideTo {
-  margin-left: 1rem;
+.thumbWrapper {
+  list-style: none;
+  padding-left: 2px;
 }
