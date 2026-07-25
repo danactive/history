@@ -1,0 +1,169 @@
+import { Button, Chip, Stack } from '@mui/joy'
+
+import AutoComplete from '../ComboBox'
+import { filterChipSx, pillActionButtonSx } from './control-styles'
+import RemovableFilterChip from './RemovableFilterChip'
+import type { IndexedKeywords } from '../../types/common'
+import styles from '../../hooks/search.module.css'
+
+type QueryMode = 'AND' | 'OR' | null
+
+type ParsedKeywordQuery = {
+  mode: QueryMode
+  tokens: string[]
+  isAdvanced: boolean
+}
+
+type Props = {
+  summaryLabel?: string
+  visibleCount: number
+  totalCount: number
+  keyword: string
+  parsedKeyword: ParsedKeywordQuery
+  activeVisitedFilterLabel: string | null | undefined
+  mapFilterEnabled?: boolean
+  searchOptions: IndexedKeywords[]
+  selectedOption: IndexedKeywords | null
+  inputValue: string
+  canBookmark: boolean
+  detailActions: React.ReactNode
+  BookmarkButton: React.ComponentType
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
+  onSelectedOptionChange: (value: IndexedKeywords | null) => void
+  onInputValueChange: (value: string) => void
+  onRemoveKeywordToken: (tokenIndex: number) => void
+  onClear: () => void
+  onClearVisitedFilter: () => void
+  onClearMapFilter?: (coordinates?: [number, number] | null) => void
+}
+
+export default function Controls({
+  summaryLabel = 'Search results',
+  visibleCount,
+  totalCount,
+  keyword,
+  parsedKeyword,
+  activeVisitedFilterLabel,
+  mapFilterEnabled,
+  searchOptions,
+  selectedOption,
+  inputValue,
+  canBookmark,
+  detailActions,
+  BookmarkButton,
+  onSubmit,
+  onSelectedOptionChange,
+  onInputValueChange,
+  onRemoveKeywordToken,
+  onClear,
+  onClearVisitedFilter,
+  onClearMapFilter,
+}: Props) {
+  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
+  const hasActiveFilters = Boolean(keyword || activeVisitedFilterLabel || mapFilterEnabled)
+
+  return (
+    <form onSubmit={onSubmit}>
+      <div className={styles.root}>
+        <div className={styles.summaryRow}>
+          <div className={styles.summaryCard}>
+            <h3 className={styles.searchCount}>
+              <span className={styles.summaryLabel}>{summaryLabel}</span>{' '}
+              <span className={styles.searchCountValue}>{visibleCount}</span> of {totalCount}
+              {keywordResultLabel}
+            </h3>
+          </div>
+          {detailActions ? <div className={styles.detailActions}>{detailActions}</div> : null}
+        </div>
+
+        {hasActiveFilters ? (
+          <div className={styles.chipsSection}>
+            <div className={styles.chipsLabel}>Active filters</div>
+            <div className={styles.chipsRow}>
+              {keyword && (
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                  {parsedKeyword.mode && (
+                    <Chip size="sm" color="primary" variant="outlined" sx={filterChipSx}>
+                      {parsedKeyword.mode}
+                    </Chip>
+                  )}
+                  {parsedKeyword.isAdvanced ? (
+                    <RemovableFilterChip
+                      className={styles.filterToken}
+                      label="Advanced query"
+                      onRemove={onClear}
+                      removeTitle="Clear search and view adjacent photos"
+                      removeAriaLabel="Clear advanced query"
+                    />
+                  ) : (
+                    parsedKeyword.tokens.map((token, idx) => (
+                      <RemovableFilterChip
+                        key={`${token}-${idx}`}
+                        className={styles.filterToken}
+                        label={token}
+                        onRemove={() => onRemoveKeywordToken(idx)}
+                        removeTitle={`Remove keyword token ${token}`}
+                      />
+                    ))
+                  )}
+                </Stack>
+              )}
+              {activeVisitedFilterLabel && (
+                <RemovableFilterChip
+                  className={styles.filterToken}
+                  label={activeVisitedFilterLabel}
+                  onRemove={onClearVisitedFilter}
+                  removeTitle={`Clear visited filter ${activeVisitedFilterLabel}`}
+                />
+              )}
+              {mapFilterEnabled && (
+                <RemovableFilterChip
+                  className={styles.filterToken}
+                  label="Map filter"
+                  onRemove={() => onClearMapFilter?.()}
+                  removeTitle="Clear map filter"
+                />
+              )}
+            </div>
+          </div>
+        ) : null}
+
+        <div className={styles.inputRow}>
+          <div className={styles.inputWrap}>
+            <AutoComplete
+              className={styles.autocomplete}
+              options={searchOptions}
+              onChange={onSelectedOptionChange}
+              value={selectedOption}
+              inputValue={inputValue}
+              onInputChange={onInputValueChange}
+            />
+          </div>
+          <div className={styles.actionsRow}>
+            <Button
+              type="submit"
+              title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
+              color="neutral"
+              sx={pillActionButtonSx}
+            >
+              Filter
+            </Button>
+            {(keyword || activeVisitedFilterLabel) && (
+              <Button
+                type="button"
+                onClick={onClear}
+                color="primary"
+                variant="soft"
+                title="Clear search and view adjacent photos"
+                sx={pillActionButtonSx}
+              >
+                Clear
+              </Button>
+            )}
+            {canBookmark && <BookmarkButton />}
+          </div>
+        </div>
+      </div>
+    </form>
+  )
+}

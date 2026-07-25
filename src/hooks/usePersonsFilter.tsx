@@ -1,11 +1,7 @@
 'use client'
-import Button from '@mui/joy/Button'
-import Chip from '@mui/joy/Chip'
-import Option from '@mui/joy/Option'
-import Select from '@mui/joy/Select'
-import Stack from '@mui/joy/Stack'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import type { FilterControlsProps } from '../components/Persons/FilterControls'
 import type { Gallery, ServerSideAllItem } from '../types/common'
 import type { All } from '../types/pages'
 import type { PersonAgeFilterValue } from '../lib/persons'
@@ -68,17 +64,14 @@ export default function usePersonsFilter({
   // Age/person selection state
   const [selectedAge, setSelectedAge] = useState<PersonAgeFilterValue>(resolvedInitialAge)
   const [selectedPerson, setSelectedPerson] = useState<string | null>(resolvedInitialPerson)
-  const [mounted, setMounted] = useState(false)
   const isServerScopeCurrent = selectedAge === resolvedInitialAge && selectedPerson === resolvedInitialPerson
   const hasVisitedFilter = Boolean(searchParams.get('visitedCountry'))
 
   const keywordFromUrl = searchParams.get('keyword') ?? ''
-  const personDetailsName = useMemo(() => {
-    if (selectedPerson) return selectedPerson
-
+  const inferredPersonDetailsName = useMemo(() => {
     return resolveUniquePersonName(items, keywordFromUrl)
-  }, [items, keywordFromUrl, selectedPerson])
-  const effectiveSelectedPerson = selectedPerson ?? personDetailsName
+  }, [items, keywordFromUrl])
+  const effectiveSelectedPerson = selectedPerson ?? inferredPersonDetailsName
 
   const {
     refImageGallery,
@@ -99,7 +92,7 @@ export default function usePersonsFilter({
     items,
     totalCount: totalItemCount,
     indexedKeywords,
-    personDetailsName,
+    personDetailsName: effectiveSelectedPerson,
   })
 
   const currentServerScopedItems = useMemo(() => {
@@ -117,8 +110,6 @@ export default function usePersonsFilter({
     && !hasVisitedFilter
     && !keyword
     && !mapFilterEnabled
-
-  useEffect(() => { setMounted(true) }, [])
 
   // Keep local state in sync when URL changes externally (navigation/back/forward/share links).
   useEffect(() => {
@@ -153,17 +144,19 @@ export default function usePersonsFilter({
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }, [selectedAge, selectedPerson, searchParams, router, pathname])
 
-  const personScopedItems: ServerSideAllItem[] = useMemo(() => {
-    if (canReuseServerScope) return itemsToShow
-    if (!effectiveSelectedPerson) return itemsToShow
-    return itemsToShow.filter((item) => item.persons?.some((person) => person.full === effectiveSelectedPerson))
-  }, [canReuseServerScope, effectiveSelectedPerson, itemsToShow])
+  const ageSummaryPerson = inferredPersonDetailsName
 
-  // Apply age filter (without person) first so person options stay stable.
-  const ageOnlyFiltered: ServerSideAllItem[] = useMemo(() => {
+  const ageSummaryItems: ServerSideAllItem[] = useMemo(() => {
     if (canReuseServerScope) return itemsToShow
-    if (selectedAge === null) return personScopedItems
-    return personScopedItems.filter(item => {
+    if (!ageSummaryPerson) return itemsToShow
+    return itemsToShow.filter((item) => item.persons?.some((person) => person.full === ageSummaryPerson))
+  }, [ageSummaryPerson, canReuseServerScope, itemsToShow])
+
+  // Apply age filter without person scoping so the people dropdown can still switch people.
+  const ageBaseFiltered: ServerSideAllItem[] = useMemo(() => {
+    if (canReuseServerScope) return itemsToShow
+    if (selectedAge === null) return itemsToShow
+    return itemsToShow.filter(item => {
       if (!item.persons || !item.filename) return false
       const photoDate = resolvePhotoDate(item)
       return item.persons.some(person => {
@@ -171,16 +164,16 @@ export default function usePersonsFilter({
         return age === selectedAge
       })
     })
-  }, [canReuseServerScope, itemsToShow, personScopedItems, selectedAge])
+  }, [canReuseServerScope, itemsToShow, selectedAge])
 
   // Apply person filter on top of age-only results.
   const ageFiltered: ServerSideAllItem[] = useMemo(() => {
     if (canReuseServerScope) return itemsToShow
-    if (!effectiveSelectedPerson) return ageOnlyFiltered
-    return ageOnlyFiltered.filter((item) => {
+    if (!effectiveSelectedPerson) return ageBaseFiltered
+    return ageBaseFiltered.filter((item) => {
       return matchesSelectedPersonAge(item, selectedAge, effectiveSelectedPerson)
     })
-  }, [ageOnlyFiltered, canReuseServerScope, effectiveSelectedPerson, itemsToShow, selectedAge])
+  }, [ageBaseFiltered, canReuseServerScope, effectiveSelectedPerson, itemsToShow, selectedAge])
 
   // Unique ages (client recompute only after mount)
   const uniqueAges = useMemo(() => {
@@ -194,11 +187,11 @@ export default function usePersonsFilter({
     }
     const set = new Set<number>()
     let hasUnknown = false
-    personScopedItems.forEach(item => {
+    ageSummaryItems.forEach(item => {
       if (!item.persons || !item.filename) return
       const photoDate = resolvePhotoDate(item)
       item.persons.forEach(person => {
-        if (effectiveSelectedPerson && person.full !== effectiveSelectedPerson) {
+        if (ageSummaryPerson && person.full !== ageSummaryPerson) {
           return
         }
         if (!person.dob) {
@@ -218,19 +211,19 @@ export default function usePersonsFilter({
       numeric: Array.from(set).sort((a, b) => a - b),
       hasUnknown,
     }
-  }, [canReuseServerSummary, effectiveSelectedPerson, personScopedItems, selectedAge, initialAgeSummary])
+  }, [ageSummaryItems, ageSummaryPerson, canReuseServerSummary, selectedAge, initialAgeSummary])
 
   const agesWithCounts = useMemo(() => {
     if (canReuseServerSummary && initialAgeSummary) {
       return initialAgeSummary.ages.map(({ age, count }) => ({ age, count }))
     }
     const countMap = new Map<number | 'unknown', number>()
-    personScopedItems.forEach(item => {
+    ageSummaryItems.forEach(item => {
       if (!item.persons || !item.filename) return
       const photoDate = resolvePhotoDate(item)
       const seen = new Set<number | 'unknown'>()
       item.persons.forEach(person => {
-        if (effectiveSelectedPerson && person.full !== effectiveSelectedPerson) {
+        if (ageSummaryPerson && person.full !== ageSummaryPerson) {
           return
         }
         const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
@@ -243,13 +236,13 @@ export default function usePersonsFilter({
     const numeric = uniqueAges.numeric.map(age => ({ age: age as number | 'unknown', count: countMap.get(age) || 0 }))
     const unknown = uniqueAges.hasUnknown ? [{ age: 'unknown' as const, count: countMap.get('unknown') || 0 }] : []
     return [...unknown, ...numeric].filter(a => a.count > 0)
-  }, [canReuseServerSummary, effectiveSelectedPerson, personScopedItems, uniqueAges, initialAgeSummary])
+  }, [ageSummaryItems, ageSummaryPerson, canReuseServerSummary, uniqueAges, initialAgeSummary])
 
   const { peopleAtSelectedAge, peopleWithCounts } = useMemo(() => {
     if (selectedAge === null) return { peopleAtSelectedAge: [], peopleWithCounts: [] }
     const matches: PersonMatch[] = []
     const counts = new Map<string, number>()
-    ageOnlyFiltered.forEach(item => {
+    ageBaseFiltered.forEach(item => {
       if (!item.persons || !item.filename) return
       const photoDate = resolvePhotoDate(item)
       item.persons.forEach(person => {
@@ -272,15 +265,15 @@ export default function usePersonsFilter({
         .map(name => ({ name, count: counts.get(name) || 0 }))
         .sort((a, b) => (b.count - a.count) || a.name.localeCompare(b.name)),
     }
-  }, [ageOnlyFiltered, selectedAge])
+  }, [ageBaseFiltered, selectedAge])
 
   const totalPhotoCount = useMemo(() => {
     if (canReuseServerSummary && initialAgeSummary) {
       return initialAgeSummary.ages.reduce((sum, { count }) => sum + count, 0)
     }
 
-    return personScopedItems.length
-  }, [canReuseServerSummary, initialAgeSummary, personScopedItems])
+    return ageSummaryItems.length
+  }, [ageSummaryItems, canReuseServerSummary, initialAgeSummary])
 
   // Build items with corpus for AllItems
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
@@ -297,100 +290,16 @@ export default function usePersonsFilter({
   const finalMemoryHtml = personsMemoryHtml ?? memoryHtml
 
   // Controls component (ready to render)
-  const baseControls = (
-    <Stack direction="row" spacing={1} sx={{ mt: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Select
-        value={selectedAge === null ? '' : String(selectedAge)}
-        onChange={(_, value) => {
-          const nextAge = value === 'unknown'
-            ? 'unknown'
-            : (value ? Number.parseInt(value, 10) : null)
-          setSelectedAge(nextAge === 'unknown' || !Number.isNaN(nextAge as number) ? nextAge : null)
-        }}
-        variant="soft"
-        size="sm"
-      >
-        <Option value="">
-          All ages ({totalPhotoCount} {totalPhotoCount === 1 ? 'photo' : 'photos'})
-        </Option>
-        {agesWithCounts.map(({ age, count }) => (
-          <Option key={String(age)} value={String(age)}>
-            {age === 'unknown' ? 'Unknown age' : age} ({count} {count === 1 ? 'photo' : 'photos'})
-          </Option>
-        ))}
-      </Select>
-
-      {selectedAge !== null && !effectiveSelectedPerson && peopleAtSelectedAge.length > 0 && (
-        <Select
-          value={selectedPerson ?? ''}
-          onChange={(_, value) => setSelectedPerson(value || null)}
-          variant="soft"
-          size="sm"
-        >
-          <Option value="">
-            All people at {selectedAge} ({peopleAtSelectedAge.length} {peopleAtSelectedAge.length === 1 ? 'person' : 'people'})
-          </Option>
-          {peopleWithCounts.map(({ name, count }) => (
-            <Option key={name} value={name}>
-              {name} ({count} {count === 1 ? 'photo' : 'photos'})
-            </Option>
-          ))}
-        </Select>
-      )}
-
-      {selectedAge !== null && (
-        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-          <Chip
-            size="sm"
-            color="primary"
-            variant="soft"
-          >
-            Age: {selectedAge === 'unknown' ? 'Unknown' : selectedAge}
-          </Chip>
-          <Button
-            size="sm"
-            variant="plain"
-            onClick={() => {
-              setSelectedAge(null)
-            }}
-          >
-            ×
-          </Button>
-        </Stack>
-      )}
-
-      {selectedPerson && (
-        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-          <Chip
-            size="sm"
-            color="primary"
-            variant="soft"
-          >
-            Person: {selectedPerson}
-          </Chip>
-          <Button
-            size="sm"
-            variant="plain"
-            onClick={() => setSelectedPerson(null)}
-          >
-            ×
-          </Button>
-        </Stack>
-      )}
-
-      <Button
-        size="sm"
-        variant="outlined"
-        onClick={() => {
-          setSelectedAge(null)
-          setSelectedPerson(null)
-        }}
-        disabled={selectedAge === null && selectedPerson === null}
-      >
-        Clear
-      </Button>
-    </Stack>
-  )
+  const filterControlsProps: FilterControlsProps = {
+    agesWithCounts,
+    peopleAtSelectedAge,
+    peopleWithCounts,
+    selectedAge,
+    selectedPerson,
+    totalPhotoCount,
+    setSelectedAge,
+    setSelectedPerson,
+  }
 
   return {
     // from map/search
@@ -411,8 +320,7 @@ export default function usePersonsFilter({
     setSelectedAge,
     selectedPerson,
     setSelectedPerson,
-    controls: baseControls,
-    overrideAgeSummary: !mounted && canReuseServerSummary && initialAgeSummary ? baseControls : null,
+    filterControlsProps,
     // items
     ageFiltered,
     itemsWithCorpus,

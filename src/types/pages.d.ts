@@ -8,8 +8,17 @@ import type {
   ServerSideAlbumItem,
   ServerSideAllItem,
   ServerSidePhotoItem,
+  ServerSideTodayItem,
   VisitedPlace,
 } from './common'
+
+export type ServerPageDataBase<TItem> = {
+  items: TItem[];
+  indexedKeywords: IndexedKeywords[];
+  totalItemCount?: number;
+  visitedPlace?: VisitedPlace | null;
+  visitedFilterLabel?: string | null;
+}
 
 export namespace Gallery {
   export type ComponentProps = {
@@ -28,16 +37,37 @@ export namespace Album {
     album?: NonNullable<AlbumMeta['albumName']>;
     monthDay?: string;
     items: ServerSidePhotoItem[];
+    totalItemCount?: number;
     meta?: object;
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
+    visitedPlace?: VisitedPlace | null;
+    visitedFilterLabel?: string | null;
   }
 
-  export type ItemData = Omit<Album.ComponentProps, 'clusteredMarkers'>
+  export type ItemData = ServerPageDataBase<ServerSidePhotoItem> & {
+    gallery: GalleryName;
+    album?: NonNullable<AlbumMeta['albumName']>;
+    monthDay?: string;
+    meta?: object;
+  }
 
   export interface Params {
     gallery: GalleryName;
     album: NonNullable<AlbumMeta['albumName']>
+  }
+}
+
+export namespace Today {
+  export type ItemData = ServerPageDataBase<ServerSideTodayItem>
+}
+
+export namespace Persons {
+  export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
+    gallery: GalleryName,
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
+    initialSelectedAge?: number | 'unknown' | null;
+    initialSelectedPerson?: string | null;
   }
 }
 
@@ -63,7 +93,13 @@ export namespace All {
     trailingAction?: React.ReactNode;
   }
 
-  export type ItemData = Omit<All.ComponentProps, 'clusteredMarkers'>
+  export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
+    gallery: GalleryName,
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
+    initialSelectedAge?: number | 'unknown' | null;
+    initialSelectedPerson?: string | null;
+    trailingAction?: React.ReactNode;
+  }
 
   export interface Params {
     gallery: GalleryName,

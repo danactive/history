@@ -9,6 +9,9 @@ import type { All } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
+import FilterControls from './FilterControls'
+import EmptyResults from '../Search/EmptyResults'
+import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
 
 export default function PersonsClient({
@@ -32,12 +35,11 @@ export default function PersonsClient({
     handleBoundsChange,
     isClearing,
     clearCoordinates,
-    controls,
+    filterControlsProps,
     ageFiltered,
     itemsWithCorpus,
     viewedList,
     memoryHtml,
-    overrideAgeSummary,
     selectedAge,
     selectedPerson,
     setSelectedAge,
@@ -64,8 +66,6 @@ export default function PersonsClient({
     setViewed(idx)
   }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
 
-  // Replace controls age list if override available
-  const finalControls = overrideAgeSummary ?? controls
   const hasActivePersonsFilters = selectedAge !== null || selectedPerson !== null
 
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
@@ -73,27 +73,28 @@ export default function PersonsClient({
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
-        {searchBox}
-        {finalControls}
-        {ageFiltered.length === 0 && (
-          <div style={{ marginTop: '0.75rem', marginBottom: '0.75rem' }}>
-            <strong>No photos match the current filters.</strong>
-            {hasActivePersonsFilters && (
-              <Button
-                size="sm"
-                variant="outlined"
-                sx={{ ml: 1 }}
-                onClick={() => {
-                  setSelectedAge(null)
-                  setSelectedPerson(null)
-                }}
-              >
-                Reset age/person filters
-              </Button>
-            )}
-          </div>
-        )}
-        {memoryHtml}
+        <FilterArea
+          searchControls={searchBox}
+          contextualControls={<FilterControls {...filterControlsProps} />}
+          emptyResults={ageFiltered.length === 0 ? (
+            <EmptyResults
+              message="No photos match the current filters."
+              action={hasActivePersonsFilters ? (
+                <Button
+                  size="sm"
+                  variant="outlined"
+                  onClick={() => {
+                    setSelectedAge(null)
+                    setSelectedPerson(null)
+                  }}
+                >
+                  Reset age/person filters
+                </Button>
+              ) : null}
+            />
+          ) : null}
+          memoryContent={memoryHtml}
+        />
         <SplitViewer
           setViewed={setViewed}
           clusteredMarkers={clusteredMarkers}

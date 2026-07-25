@@ -47,6 +47,7 @@ vi.mock('../useMemory', () => ({
 }))
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import FilterControls from '../../components/Persons/FilterControls'
 import type { Gallery, ServerSideAllItem } from '../../types/common'
 import usePersonsFilter from '../usePersonsFilter'
 
@@ -189,7 +190,7 @@ describe('usePersonsFilter URL sync', () => {
       initialAgeSummary: { ages: [{ age: 'unknown', count: 1 }] },
     }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
     expect(result.current.selectedAge).toBe('unknown')
     expect(result.current.ageFiltered).toHaveLength(1)
@@ -215,7 +216,7 @@ describe('usePersonsFilter URL sync', () => {
       },
     }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
     expect(screen.getByText((_, node) => (
       node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (3 photos)'
@@ -237,7 +238,7 @@ describe('usePersonsFilter URL sync', () => {
       initialSelectedAge: 'unknown',
     }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
     expect(result.current.ageFiltered).toHaveLength(1)
     expect(screen.getByText((_, node) => (
@@ -252,7 +253,6 @@ describe('usePersonsFilter URL sync', () => {
     query = new URLSearchParams('person=Alice')
     const items = [
       makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
-      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
     ]
 
     const { result } = renderHook(() => usePersonsFilter({
@@ -262,7 +262,7 @@ describe('usePersonsFilter URL sync', () => {
       initialSelectedPerson: 'Alice',
     }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
     expect(screen.getByText((_, node) => (
       node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (1 photo)'
@@ -286,7 +286,54 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.selectedPerson).toBe('Alice')
   })
 
-  test('hides the people dropdown when a person is already selected', () => {
+  test('keeps other people available in the people dropdown after selecting a person', () => {
+    query = new URLSearchParams('person=Alice&age=21')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '2000-05-01', '2021-06-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialSelectedPerson: 'Alice',
+    }))
+
+    expect(result.current.filterControlsProps.peopleAtSelectedAge).toEqual(['Alice', 'Bob'])
+    expect(result.current.filterControlsProps.peopleWithCounts).toEqual([
+      { name: 'Alice', count: 1 },
+      { name: 'Bob', count: 1 },
+    ])
+  })
+
+  test('keeps first dropdown counts anchored to the age scope after selecting a person client-side', () => {
+    query = new URLSearchParams('age=21')
+    const items = [
+      makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '2000-05-01', '2021-06-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+    }))
+
+    act(() => {
+      result.current.setSelectedPerson('Alice')
+    })
+
+    expect(result.current.filterControlsProps.totalPhotoCount).toBe(2)
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 2 },
+    ])
+    expect(result.current.ageFiltered).toHaveLength(1)
+  })
+
+  test('keeps the people dropdown visible when a person is already selected', () => {
     query = new URLSearchParams('person=Alice&age=21')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
     const { result } = renderHook(() => usePersonsFilter({
@@ -297,9 +344,9 @@ describe('usePersonsFilter URL sync', () => {
       initialSelectedPerson: 'Alice',
     }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
-    expect(screen.queryByText('All people at 21 (1 person)')).not.toBeInTheDocument()
+    expect(screen.getByText('All people at 21 (1 person)')).toBeInTheDocument()
     expect(screen.getByText('Person: Alice')).toBeInTheDocument()
   })
 
@@ -327,7 +374,7 @@ describe('usePersonsFilter URL sync', () => {
 
     const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
 
-    render(<>{result.current.controls}</>)
+    render(<FilterControls {...result.current.filterControlsProps} />)
 
     expect(screen.getByText((_, node) => (
       node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (2 photos)'

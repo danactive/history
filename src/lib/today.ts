@@ -1,77 +1,17 @@
 import getAlbum from './album'
 import getAlbums from './albums'
-import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFilename } from './search'
-import { countValuesByFrequency } from './storytelling-ranking'
-import { buildVisitedDataFromItems, formatVisitedPlace } from './visited'
+import { filterItemsByVisitedPlaceFromCities, formatVisitedPlace } from './domains/visited'
+import { addYearToSearch, getItemYearFromFilename } from './domains/years'
+import { buildFilterMetadata, type ServerPageFilterMetadata } from './server/filter-metadata'
+import { addGeographyToSearch } from './search'
 import config from '../models/config'
-import type { AlbumMeta, Gallery, IndexedKeywords, Item } from '../types/common'
+import type { AlbumMeta, Gallery, Item, ServerSideTodayItem, VisitedPlace } from '../types/common'
+import type { Today } from '../types/pages'
 import { compareNewestFirst } from '../utils'
 
-interface ServerSideTodayItem extends Item {
-  album?: NonNullable<AlbumMeta['albumName']>;
-  corpus: string;
-  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
-}
+type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 
-type CountedOption = {
-  label: string
-  value: string
-  count: number
-}
-
-function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: IndexedKeywords[]) {
-  const visitedData = buildVisitedDataFromItems(items.map((item) => ({
-    city: item.city,
-    filename: item.filename,
-    photoDate: item.photoDate ?? null,
-  })))
-  const locationOptions = visitedData
-    .flatMap((country) => {
-      const countryOption = {
-        label: `${country.country} (${country.count})`,
-        value: country.filter.country,
-        visitedPlace: country.filter,
-        count: country.count,
-      }
-      const regionOptions = country.regions
-        .filter(region => region.count >= config.visitedRegionSearchMinCount)
-        .map((region) => ({
-          label: `${formatVisitedPlace(region.filter)} (${region.count})`,
-          value: formatVisitedPlace(region.filter),
-          visitedPlace: region.filter,
-          count: region.count,
-        }))
-
-      return [countryOption, ...regionOptions]
-    })
-    .sort((left, right) => right.count - left.count || left.value.localeCompare(right.value))
-
-  const locationValues = new Set(locationOptions.map(option => option.value))
-  const personCounts = countValuesByFrequency(
-    items.flatMap(item => item.persons?.map(person => person.full) ?? []),
-    items.length,
-  )
-  const personOptions: CountedOption[] = personCounts.map(({ name, count }) => ({
-    label: `${name} (${count})`,
-    value: name,
-    count,
-  }))
-  const personValues = new Set(personOptions.map(option => option.value))
-  const yearOptions = indexedKeywords.filter(option => /^\d{4}$/.test(option.value))
-  const tagOptions = indexedKeywords.filter(
-    option => !/^\d{4}$/.test(option.value) && !locationValues.has(option.value) && !personValues.has(option.value),
-  )
-
-  return {
-    locationOptions,
-    personCounts,
-    personOptions,
-    yearOptions,
-    tagOptions,
-  }
-}
-
-export async function getTodayItems(gallery: Gallery, monthDay: string) {
+export async function getTodayItems(gallery: Gallery, monthDay: string, visitedPlace?: VisitedPlace | null): Promise<TodayItemsResult> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
@@ -111,8 +51,23 @@ export async function getTodayItems(gallery: Gallery, monthDay: string) {
 
   items.sort(compareNewestFirst)
 
-  const { indexedKeywords } = indexKeywords(items)
-  const { locationOptions, personCounts, personOptions, yearOptions, tagOptions } = splitTodayKeywords(items, indexedKeywords)
+  const totalItemCount = items.length
+  const scopedItems = visitedPlace
+    ? filterItemsByVisitedPlaceFromCities(items, visitedPlace)
+    : items
 
-  return { items, indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions }
+  const { indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions } = buildFilterMetadata(scopedItems)
+
+  return {
+    items: scopedItems,
+    indexedKeywords,
+    locationOptions,
+    personCounts,
+    personOptions,
+    yearOptions,
+    tagOptions,
+    totalItemCount: visitedPlace ? totalItemCount : undefined,
+    visitedPlace: visitedPlace ?? null,
+    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
+  }
 }

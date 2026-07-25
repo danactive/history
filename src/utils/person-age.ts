@@ -58,13 +58,20 @@ export function buildAgeSummary(items: Item[]): { ages: { age: AgeSummaryValue; 
   items.forEach((it) => {
     if (!it.persons || !it.filename) return
     const photoDate = resolvePhotoDate(it)
+    const seenAges = new Set<AgeSummaryValue>()
     it.persons.forEach((p) => {
       if (!p.dob) {
-        counts.set('unknown', (counts.get('unknown') || 0) + 1)
+        if (!seenAges.has('unknown')) {
+          counts.set('unknown', (counts.get('unknown') || 0) + 1)
+          seenAges.add('unknown')
+        }
         return
       }
       const age = calcAgeAtDate(p.dob, photoDate)
-      if (age !== null && age >= 0) counts.set(age, (counts.get(age) || 0) + 1)
+      if (age !== null && age >= 0 && !seenAges.has(age)) {
+        counts.set(age, (counts.get(age) || 0) + 1)
+        seenAges.add(age)
+      }
     })
   })
   return {

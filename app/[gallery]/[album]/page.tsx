@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
-import getAlbum from '../../../src/lib/album'
+import { getAlbumData } from '../../../src/lib/album-page'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
-import { generateClusters } from '../../../src/lib/generate-clusters'
-import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
+import { buildClusteredPageData, resolveRouteInputs, type RouteProps } from '../../../src/lib/server/page-route'
+import { parseVisitedSearchParams, type VisitedSearchParams } from '../../../src/lib/server/search-params'
 import type { Album } from '../../../src/types/pages'
 
 export async function generateMetadata(
@@ -29,31 +29,29 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.ItemData> {
-  const { album: { items, meta } } = await getAlbum(gallery, album)
-  const preparedItems = items.map((item) => ({
-    ...item,
-    search: addGeographyToSearch(item),
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-  }))
-  return { gallery, album, items: preparedItems, meta, ...indexKeywords(preparedItems) }
-}
+export default async function AlbumServer(props: RouteProps<Album.Params, VisitedSearchParams>) {
+  const {
+    params: { album, gallery },
+    searchParams,
+  } = await resolveRouteInputs(props.params, props.searchParams)
+  const { visitedPlace } = parseVisitedSearchParams(searchParams)
 
-export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
-  const params = await props.params
-  const { album, gallery } = params
-
-  const { items, meta, indexedKeywords } = await getAlbumItems({ album, gallery })
-  const clusterMarkers = generateClusters(items)
+  const {
+    items, meta, indexedKeywords, totalItemCount, visitedPlace: scopedVisitedPlace, visitedFilterLabel,
+    clusteredMarkers,
+  } = buildClusteredPageData(await getAlbumData({ album, gallery, visitedPlace }))
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AlbumPageComponent
         gallery={gallery}
         album={album}
         items={items}
+        totalItemCount={totalItemCount}
         meta={meta}
         indexedKeywords={indexedKeywords}
-        clusteredMarkers={clusterMarkers}
+        clusteredMarkers={clusteredMarkers}
+        visitedPlace={scopedVisitedPlace}
+        visitedFilterLabel={visitedFilterLabel}
       />
     </Suspense>
   )

@@ -7,6 +7,7 @@ import type { Album } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import Link from '../Link'
+import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
 import { renderAlbumCaptionAction } from '../All/Items'
 import { ThumbImgList, type ThumbImgProps } from '../ThumbImg'
@@ -20,7 +21,17 @@ import styles from './styles.module.css'
  * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gallery, album, monthDay }: Album.ComponentProps) {
+function AlbumClient({
+  items = [],
+  totalItemCount,
+  meta,
+  indexedKeywords,
+  clusteredMarkers,
+  gallery,
+  album,
+  monthDay,
+  visitedFilterLabel,
+}: Album.ComponentProps) {
   const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
   const dateDetailsHref = gallery && monthDay ? `/${gallery}/today/details?${new URLSearchParams({ day: monthDay }).toString()}` : null
   const {
@@ -40,7 +51,9 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
   } = useMapFilter({
     gallery,
     items,
+    totalCount: totalItemCount,
     indexedKeywords,
+    visitedFilterLabel,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>
       : dateDetailsHref
@@ -85,8 +98,10 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
   return (
     <div>
       <AlbumContext.Provider value={meta}>
-        {searchBox}
-        {memoryHtml}
+        <FilterArea
+          searchControls={searchBox}
+          memoryContent={memoryHtml}
+        />
         <SplitViewer
           setViewed={setViewed}
           clusteredMarkers={clusteredMarkers}

@@ -1,0 +1,24 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.message {
+  display: inline-block;
+}
+
+.action {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .root {
+    align-items: stretch;
+  }
+
+  .action {
+    width: fit-content;
+  }
+}

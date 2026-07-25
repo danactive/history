@@ -3,6 +3,7 @@ import Autocomplete, { createFilterOptions } from '@mui/joy/Autocomplete'
 import AutocompleteOption from '@mui/joy/AutocompleteOption'
 import FormControl from '@mui/joy/FormControl'
 import ListItemDecorator from '@mui/joy/ListItemDecorator'
+import { fieldSurfaceSx, popupListSx } from './Search/control-styles'
 import { IndexedKeywords } from '../types/common'
 
 const filter = createFilterOptions<IndexedKeywords>()
@@ -26,7 +27,7 @@ export default function ComboBox(
   },
 ) {
   return (
-    <FormControl id="free-solo-with-text-demo">
+    <FormControl id="free-solo-with-text-demo" sx={{ width: '100%' }}>
       <Autocomplete
         className={className}
         value={(valueText ?? null) as IndexedKeywords | undefined}
@@ -86,7 +87,29 @@ export default function ComboBox(
             {option.label}
           </AutocompleteOption>
         )}
-        sx={{ width: 300 }}
+        slotProps={{
+          listbox: {
+            sx: popupListSx,
+          },
+        }}
+        sx={{
+          width: '100%',
+          '--Input-radius': '0.7rem',
+          '--Input-minHeight': '2.5rem',
+          '--Input-placeholderColor': 'rgba(255, 255, 255, 0.48)',
+          '--Icon-color': 'rgba(255, 255, 255, 0.7)',
+          '--Input-focusedThickness': '2px',
+          ...fieldSurfaceSx,
+          '& input': {
+            color: 'rgba(255, 255, 255, 0.92)',
+          },
+          '& button': {
+            color: 'rgba(255, 255, 255, 0.7)',
+          },
+          '&::before': {
+            borderColor: 'rgba(255, 255, 255, 0.14)',
+          },
+        }}
       />
     </FormControl>
   )

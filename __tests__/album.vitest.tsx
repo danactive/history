@@ -1,26 +1,24 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
-import TodayServer from '../app/[gallery]/today/page'
-import { Gallery } from '../src/types/common'
+
+import AlbumServer from '../app/[gallery]/[album]/page'
 import { getPrimaryFilename } from '../src/utils'
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
   default: ({
     items,
-    gallery,
-    monthDay,
+    album,
     totalItemCount,
     visitedFilterLabel,
   }: {
     items: Array<{ filename: string | string[] }>
-    gallery: Gallery
-    monthDay?: string
+    album?: string
     totalItemCount?: number
     visitedFilterLabel?: string | null
   }) => (
     <div>
-      {gallery && monthDay ? <div>{`/${gallery}/today/details?day=${monthDay}`}</div> : null}
+      <div>{album ?? 'no-album'}</div>
       <div>{totalItemCount ?? 'no-total'}</div>
       <div>{visitedFilterLabel ?? 'no-visited'}</div>
       {items.map((item) => {
@@ -57,7 +55,7 @@ vi.mock('../src/lib/album', () => ({
           photoDate: '2025-07-12',
           city: 'Vancouver, BC, Canada',
           location: 'Cemetery',
-          caption: 'Wanted day',
+          caption: 'BC photo',
           description: 'Wanted description',
           search: null,
           persons: null,
@@ -72,11 +70,11 @@ vi.mock('../src/lib/album', () => ({
         },
         {
           id: '2',
-          filename: '2025-01-02-01.jpg',
-          photoDate: '2025-01-02',
+          filename: '2025-07-12-02.jpg',
+          photoDate: '2025-07-12',
           city: 'Toronto, ON, Canada',
           location: 'Temple',
-          caption: 'Other day',
+          caption: 'ON photo',
           description: 'Other description',
           search: null,
           persons: null,
@@ -99,33 +97,19 @@ vi.mock('../src/lib/generate-clusters', () => ({
   generateClusters: () => [],
 }))
 
-describe('Today page', () => {
-  test('uses the day query string to filter items', async () => {
-    const component = await TodayServer({
-      params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ day: '07-12' }),
+describe('Album page', () => {
+  test('applies visited filters on the server for album routes', async () => {
+    const component = await AlbumServer({
+      params: Promise.resolve({ gallery: 'demo', album: 'sample' }),
+      searchParams: Promise.resolve({ visitedCountry: 'Canada', visitedRegion: 'BC' }),
     })
 
     render(component)
 
-    expect(screen.getByText('/demo/today/details?day=07-12')).toBeInTheDocument()
-    expect(screen.getByText('no-total')).toBeInTheDocument()
-    expect(screen.getByText('no-visited')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.queryByText('2025-01-02-01.jpg')).not.toBeInTheDocument()
-  })
-
-  test('applies visited filters on the server for today routes', async () => {
-    const component = await TodayServer({
-      params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ day: '07-12', visitedCountry: 'Canada', visitedRegion: 'BC' }),
-    })
-
-    render(component)
-
-    expect(screen.getByText('1')).toBeInTheDocument()
+    expect(screen.getByText('sample')).toBeInTheDocument()
+    expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('BC, Canada')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.queryByText('2025-01-02-01.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
   })
 })

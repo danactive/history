@@ -151,6 +151,12 @@ interface ServerSidePhotoItem extends Item {
   corpus: string;
 }
 
+interface ServerSideTodayItem extends Item {
+  album?: NonNullable<AlbumMeta['albumName']>;
+  corpus: string;
+  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+}
+
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
   gallery: Gallery;
@@ -199,6 +205,7 @@ export type {
   XmlGalleryAlbum,
   GalleryAlbum,
   ServerSideAlbumItem,
+  ServerSideTodayItem,
   ServerSideAllItem,
   XmlItem,
   RawXmlItem,

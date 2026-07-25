@@ -135,6 +135,51 @@ describe('Router ready', () => {
     expect(container.textContent).toMatch(/for "best"/)
   })
 
+  it('allows overriding the summary label', () => {
+    mockNavigation({ pathname: '/demo', params: {} })
+
+    const items = [
+      { ...mockItem, corpus: 'summer', filename: 'a.jpg' },
+      { ...mockItem, corpus: 'winter', filename: 'b.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [], summaryLabel: 'Albums' })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Albums 2 of 2/)
+  })
+
+  it('preserves frequency-first keyword ordering in the search options', () => {
+    mockNavigation({ pathname: '/demo', params: {} })
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items: [],
+        indexedKeywords: [
+          { label: 'Zulu (10)', value: 'Zulu' },
+          { label: 'Alpha (3)', value: 'Alpha' },
+          { label: 'Beta (1)', value: 'Beta' },
+        ],
+      })
+
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const optionLabels = Array.from(container.querySelectorAll('button[type="button"]')).map((button) => button.textContent)
+
+    expect(optionLabels.slice(0, 3)).toEqual([
+      'Zulu (10)',
+      'Alpha (3)',
+      'Beta (1)',
+    ])
+  })
+
   it('First keyword partial', () => {
     const keyword = 'app'
     mockNavigation({ params: { keyword } })

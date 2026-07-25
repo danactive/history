@@ -7,6 +7,7 @@ import useMapFilter from '../../hooks/useMapFilter'
 import { All } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
+import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 
@@ -64,8 +65,10 @@ export default function AllClient({
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
-        {searchBox}
-        {memoryHtml}
+        <FilterArea
+          searchControls={searchBox}
+          memoryContent={memoryHtml}
+        />
         <SplitViewer
           setViewed={setViewed}
           items={itemsToShow}

@@ -192,4 +192,14 @@ describe('Viewed persistence across map/keyword filtering', () => {
       expect(setVisibleCountMock).toHaveBeenLastCalledWith(1)
     })
   })
+
+  test('passes the photo summary label into useSearch by default', () => {
+    const items = [makeItem('1')]
+
+    renderHook(() => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    expect(useSearchMock).toHaveBeenCalledWith(expect.objectContaining({
+      summaryLabel: 'Photos',
+    }))
+  })
 })

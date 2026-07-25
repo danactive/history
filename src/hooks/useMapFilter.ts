@@ -9,12 +9,13 @@ import useSearch from './useSearch'
 type Bounds = [[number, number],[number, number]]
 
 type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'visitedFilterLabel' | 'trailingAction'> & {
+  summaryLabel?: string
   totalCount?: number
   personDetailsName?: string | null
 }
 
 export default function useMapFilter({
-  items, indexedKeywords, visitedFilterLabel, trailingAction, gallery, personDetailsName, totalCount,
+  items, indexedKeywords, visitedFilterLabel, trailingAction, gallery, personDetailsName, totalCount, summaryLabel = 'Photos',
 }: UseMapFilterProps) {
   const refImageGallery = useRef<ImageGalleryRef>(null)
   const [memoryIndex, setMemoryIndexState] = useState(0)
@@ -59,6 +60,7 @@ export default function useMapFilter({
   } = useSearch({
     gallery,
     items,
+    summaryLabel,
     totalCount,
     memoryIndex,
     setMemoryIndex,

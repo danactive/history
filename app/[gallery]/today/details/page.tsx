@@ -1,29 +1,25 @@
 import type { Metadata } from 'next'
-import type { TodaySearchParams } from '../../../../src/lib/monthDay'
-import { getMonthDayFromSearchParams } from '../../../../src/lib/monthDay'
+import { resolveRouteInputs, resolveSearchParams, type GalleryRouteProps, type RouteProps } from '../../../../src/lib/server/page-route'
+import { parseTodayRouteSearchParams, type TodaySearchParams } from '../../../../src/lib/server/search-params'
 import { buildDateDetailsText } from '../../../../src/lib/storytelling'
-import type { Gallery } from '../../../../src/types/common'
 
 export async function generateMetadata(
-  { searchParams }: { searchParams?: Promise<TodaySearchParams> },
+  { searchParams }: Pick<RouteProps<never, TodaySearchParams>, 'searchParams'>,
 ): Promise<Metadata> {
-  const resolvedSearchParams = await (searchParams ?? Promise.resolve({}))
-  const monthDay = getMonthDayFromSearchParams(resolvedSearchParams)
+  const resolvedSearchParams = await resolveSearchParams(searchParams)
+  const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   return { title: `Date details ${monthDay} - History App` }
 }
 
 export default async function TodayDetailsPage({
   params,
   searchParams,
-}: {
-  params: Promise<{ gallery: Gallery }>
-  searchParams?: Promise<TodaySearchParams>
-}) {
-  const [{ gallery }, resolvedSearchParams] = await Promise.all([
-    params,
-    searchParams ?? Promise.resolve({}),
-  ])
-  const monthDay = getMonthDayFromSearchParams(resolvedSearchParams)
+}: GalleryRouteProps<TodaySearchParams>) {
+  const {
+    params: { gallery },
+    searchParams: resolvedSearchParams,
+  } = await resolveRouteInputs(params, searchParams)
+  const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   const text = await buildDateDetailsText(gallery, monthDay, 8)
 
   return (

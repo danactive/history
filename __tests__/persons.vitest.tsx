@@ -103,6 +103,28 @@ vi.mock('../src/lib/persons', async (importOriginal) => {
           visitedPlace: { country: 'Canada', region: 'ON' },
           album: 'sample',
         },
+        {
+          id: '4',
+          filename: '2025-07-12-04.jpg',
+          photoDate: '2025-07-12',
+          city: 'Another City, Country',
+          location: 'Lake',
+          caption: 'Peer',
+          description: null,
+          search: 'family',
+          persons: [{ full: 'Peer Person', dob: '1929-08-10' }],
+          title: 'Peer',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '',
+          photoPath: '',
+          mediaPath: '',
+          videoPaths: null,
+          reference: null,
+          corpus: 'peer',
+          visitedPlace: { country: 'Canada', region: 'ON' },
+          album: 'sample',
+        },
       ],
       indexedKeywords: [{ label: 'family (3)', value: 'family' }],
     }),
@@ -134,13 +156,14 @@ describe('Persons page', () => {
 
     render(component)
 
-  expect(screen.getByText('3')).toBeInTheDocument()
+  expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('Sample Person')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-04.jpg')).not.toBeInTheDocument()
   })
 
-  test('anchors the age query string on the server', async () => {
+  test('keeps the age scope on the server when age and person are both selected', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ age: '96', person: 'Sample Person' }),
@@ -148,11 +171,29 @@ describe('Persons page', () => {
 
     render(component)
 
-  expect(screen.getByText('3')).toBeInTheDocument()
+  expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('96')).toBeInTheDocument()
     expect(screen.getByText('Sample Person')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-03.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-04.jpg')).toBeInTheDocument()
+  })
+
+  test('keeps the broader age scope on the server when only age is selected', async () => {
+    const component = await PersonsServer({
+      params: Promise.resolve({ gallery: 'demo' }),
+      searchParams: Promise.resolve({ age: '96' }),
+    })
+
+    render(component)
+
+    expect(screen.getByText('4')).toBeInTheDocument()
+    expect(screen.getByText('96')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-03.jpg')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-04.jpg')).toBeInTheDocument()
   })
 
   test('keeps the visited base scope on the server when age=unknown is selected', async () => {
@@ -167,10 +208,11 @@ describe('Persons page', () => {
 
     render(component)
 
-    expect(screen.getByText('3')).toBeInTheDocument()
+    expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-03.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-04.jpg')).not.toBeInTheDocument()
   })
 })

@@ -74,5 +74,41 @@ describe('person-age utilities', () => {
       ],
     })
   })
+
+  test('buildAgeSummary counts each age once per photo', () => {
+    const items: Item[] = [
+      {
+        id: '1',
+        filename: '2021-06-10-50.jpg',
+        photoDate: '2021-06-10',
+        city: '',
+        location: null,
+        caption: '',
+        description: null,
+        search: null,
+        persons: [
+          { full: 'Alice', dob: '2000-06-10' },
+          { full: 'Bob', dob: '2000-01-01' },
+          { full: 'Mystery', dob: null },
+          { full: 'Unknown Twin', dob: null },
+        ],
+        title: '',
+        coordinates: null,
+        coordinateAccuracy: null,
+        thumbPath: '',
+        photoPath: '',
+        mediaPath: '',
+        videoPaths: null,
+        reference: null,
+      },
+    ]
+
+    expect(buildAgeSummary(items)).toEqual({
+      ages: [
+        { age: 'unknown', count: 1 },
+        { age: 21, count: 1 },
+      ],
+    })
+  })
 })
 

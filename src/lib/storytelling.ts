@@ -19,6 +19,8 @@ import type { Gallery, Item, Person } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
+import { filterSearchOnlyPersonCounts, isTagKeyword } from './domains/keywords'
+import { buildPersonCountsFromItems } from './domains/persons'
 import getGalleries from './galleries'
 import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
@@ -47,35 +49,28 @@ const MAX_LIMIT = 25
 
 const clampLimit = (limit = DEFAULT_LIMIT) => Math.max(1, Math.min(limit, MAX_LIMIT))
 
-const hasPersonLikeCasing = (value: string) => /^[A-Z][A-Za-z'-]+(?: [A-Z][A-Za-z'-]+)+$/.test(value)
-
 function buildAlbumPeopleAndKeywordTags(
   items: Item[],
   places: string[],
   limit: number,
 ) {
   const indexedKeywords = indexKeywords(items).indexedKeywords
-  const itemPersonCounts = countValuesByFrequency(
-    items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
-    items.length,
-  )
+  const itemPersonCounts = buildPersonCountsFromItems(items, items.length)
   const itemPersonNames = new Set(itemPersonCounts.map(person => person.name))
-  const searchOnlyPersonCounts = countValuesByFrequency(
+  const searchOnlyPersonCounts = filterSearchOnlyPersonCounts(countValuesByFrequency(
     items.flatMap((item) => item.search?.split(', ').map((token) => token.trim()).filter(Boolean) ?? []),
     items.length * 10,
-  ).filter(({ name, count }) => !itemPersonNames.has(name)
-    && !name.endsWith('^')
-    && !places.includes(name)
-    && !/^\d{4}$/.test(name)
-    && hasPersonLikeCasing(name)
-    && count > 0)
+  ), {
+    knownPeople: itemPersonNames,
+    reservedValues: places,
+  })
 
   const personCounts = [...itemPersonCounts, ...searchOnlyPersonCounts]
     .sort((left, right) => right.count - left.count)
     .slice(0, limit)
   const people = personCounts.map(person => person.name)
   const keywordTags = indexedKeywords
-    .filter(option => option.value.endsWith('^'))
+    .filter(option => isTagKeyword(option.value))
     .map(option => option.label)
     .slice(0, limit)
 

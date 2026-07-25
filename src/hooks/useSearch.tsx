@@ -1,13 +1,13 @@
 'use client'
 
-import { Button, Chip, Stack } from '@mui/joy'
+import { Stack } from '@mui/joy'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction,
   useCallback,
   useEffect, useMemo, useState,
 } from 'react'
-import AutoComplete from '../components/ComboBox'
+import Controls from '../components/Search/Controls'
 import Link from '../components/Link'
 import {
   buildVisitedKeywordOptions,
@@ -20,7 +20,6 @@ import { Gallery, IndexedKeywords, VisitedPlace } from '../types/common'
 import { getPrimaryFilename } from '../utils'
 import { resolveUniquePersonName } from '../utils/person-search'
 import { matchCorpus } from '../utils/search'
-import styles from './search.module.css'
 import useBookmark from './useBookmark'
 
 interface SearchableItem {
@@ -39,6 +38,7 @@ type FilenameItem = SearchableItem & {
 interface UseSearchProps<ItemType> {
   gallery: Gallery;
   items: ItemType[];
+  summaryLabel?: string;
   totalCount?: number;
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
@@ -96,6 +96,7 @@ function hasFilename(item: SearchableItem): item is FilenameItem {
 export default function useSearch<ItemType extends SearchableItem>({
   gallery,
   items,
+  summaryLabel,
   totalCount,
   memoryIndex,
   setMemoryIndex,
@@ -168,7 +169,7 @@ export default function useSearch<ItemType extends SearchableItem>({
       options.set(option.value, option)
     })
 
-    return [...options.values()].sort((left, right) => left.value.localeCompare(right.value))
+    return [...options.values()]
   }, [indexedKeywords, visitedOptions])
 
   const activeVisitedOption = useMemo(() => {
@@ -365,7 +366,6 @@ export default function useSearch<ItemType extends SearchableItem>({
     currentIndex: memoryIndex,
   })
 
-  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
   const activeVisitedFilterLabel = currentVisitedFilter
     ? formatVisitedPlace(currentVisitedFilter)
     : visitedFilterLabel
@@ -379,120 +379,28 @@ export default function useSearch<ItemType extends SearchableItem>({
     : null
 
   const searchBox = (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.row}>
-        <h3 className={styles.searchCount}>
-          Search results {visibleCount} of {totalCount ?? items.length}
-          {keywordResultLabel}
-        </h3>
-        {keyword && (
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            {parsedKeyword.mode && (
-              <Chip size="sm" color="primary" variant="outlined">
-                {parsedKeyword.mode}
-              </Chip>
-            )}
-            {parsedKeyword.isAdvanced ? (
-              <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-                <Chip size="sm" color="primary" variant="soft">
-                  Advanced query
-                </Chip>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="plain"
-                  onClick={handleClear}
-                  title="Clear search and view adjacent photos"
-                  aria-label="Clear advanced query"
-                >
-                  ×
-                </Button>
-              </Stack>
-            ) : (
-              parsedKeyword.tokens.map((token, idx) => (
-                <Stack key={`${token}-${idx}`} direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-                  <Chip size="sm" color="primary" variant="soft">
-                    {token}
-                  </Chip>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="plain"
-                    onClick={() => handleRemoveKeywordToken(idx)}
-                    title={`Remove keyword token ${token}`}
-                    aria-label={`Remove keyword token ${token}`}
-                  >
-                    ×
-                  </Button>
-                </Stack>
-              ))
-            )}
-          </Stack>
-        )}
-        {activeVisitedFilterLabel && (
-          <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-            <Chip size="sm" color="primary" variant="soft">
-              {activeVisitedFilterLabel}
-            </Chip>
-            <Button
-              type="button"
-              size="sm"
-              variant="plain"
-              onClick={handleClearVisitedFilter}
-              title={`Clear visited filter ${activeVisitedFilterLabel}`}
-              aria-label={`Clear visited filter ${activeVisitedFilterLabel}`}
-            >
-              ×
-            </Button>
-          </Stack>
-        )}
-        {mapFilterEnabled && (
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            <Chip size="sm" color="primary" variant="soft">
-              Map filter
-            </Chip>
-            <Button
-              type="button"
-              size="sm"
-              variant="plain"
-              onClick={() => onClearMapFilter?.()}
-              title="Clear map filter"
-              aria-label="Clear map filter"
-            >
-              ×
-            </Button>
-          </Stack>
-        )}
-        <AutoComplete
-          className={styles.autocomplete}
-          options={searchOptions}
-          onChange={setSelectedOption}
-          value={selectedOption}
-          inputValue={inputValue}
-          onInputChange={setInputValue}
-        />
-        <Button
-          type="submit"
-          title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
-          color="neutral"
-        >
-          Filter
-        </Button>
-        {(keyword || activeVisitedFilterLabel) && (
-          <Button
-            type="button"
-            onClick={handleClear}
-            color="primary"
-            variant="soft"
-            title="Clear search and view adjacent photos"
-          >
-            Clear
-          </Button>
-        )}
-        {canBookmark && <BookmarkButton />}
-        {detailActions}
-      </div>
-    </form>
+    <Controls
+      summaryLabel={summaryLabel}
+      visibleCount={visibleCount}
+      totalCount={totalCount ?? items.length}
+      keyword={keyword}
+      parsedKeyword={parsedKeyword}
+      activeVisitedFilterLabel={activeVisitedFilterLabel}
+      mapFilterEnabled={mapFilterEnabled}
+      searchOptions={searchOptions}
+      selectedOption={selectedOption}
+      inputValue={inputValue}
+      canBookmark={canBookmark}
+      detailActions={detailActions}
+      BookmarkButton={BookmarkButton}
+      onSubmit={handleSubmit}
+      onSelectedOptionChange={setSelectedOption}
+      onInputValueChange={setInputValue}
+      onRemoveKeywordToken={handleRemoveKeywordToken}
+      onClear={handleClear}
+      onClearVisitedFilter={handleClearVisitedFilter}
+      onClearMapFilter={onClearMapFilter}
+    />
   )
 
   useEffect(() => {

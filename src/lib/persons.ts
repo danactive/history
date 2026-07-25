@@ -1,12 +1,10 @@
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/person'
-import type { Gallery, Person, ServerSideAllItem } from '../types/common'
+import type { Gallery, Person } from '../types/common'
 import type { All } from '../types/pages'
+import { filterPersonsItems, type PersonAgeFilterValue } from './domains/persons'
 import { handleLibraryError } from './errors'
 import { getAllItems, personsPageItemMapper } from './get-all-items'
 import { readPersons } from './xml'
-import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
-
-export type PersonAgeFilterValue = number | 'unknown' | null
 
 type Envelope = { body: Person[], status: number }
 type ErrorOptionalMessageBody = {
@@ -49,33 +47,7 @@ export async function getPersonsData({ gallery }: All.Params): Promise<All.ItemD
   return getAllItems(gallery, personsPageItemMapper, false)
 }
 
-export function filterPersonsItems(
-  items: ServerSideAllItem[],
-  selectedAge: PersonAgeFilterValue,
-  selectedPerson: string | null,
-) {
-  const personFilteredItems = selectedPerson
-    ? items.filter((item) => item.persons?.some((person) => person.full === selectedPerson))
-    : items
-
-  if (selectedAge === null) {
-    return personFilteredItems
-  }
-
-  return personFilteredItems.filter((item) => {
-    if (!item.persons || !item.filename) {
-      return false
-    }
-
-    const photoDate = resolvePhotoDate(item)
-    return item.persons.some((person) => {
-      if (selectedPerson && person.full !== selectedPerson) {
-        return false
-      }
-      const age = person.dob ? calcAgeAtDate(person.dob, photoDate) : 'unknown'
-      return age === selectedAge
-    })
-  })
-}
+export type { PersonAgeFilterValue }
+export { filterPersonsItems }
 
 export default get

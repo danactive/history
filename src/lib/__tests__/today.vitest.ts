@@ -173,4 +173,13 @@ describe('today library', () => {
     expect(counts.length).toBeGreaterThan(1)
     expect(counts).toEqual([...counts].sort((left, right) => right - left))
   })
+
+  test('filters today items by visited place before rebuilding derived metadata', async () => {
+    const result = await getTodayItems('demo', '07-18', { country: 'Exampleland', region: 'North Example' })
+
+    expect(result.totalItemCount).toBe(4)
+    expect(result.items).toHaveLength(0)
+    expect(result.indexedKeywords).toEqual([])
+    expect(result.personOptions).toEqual([])
+  })
 })
