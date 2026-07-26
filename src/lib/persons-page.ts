@@ -1,5 +1,11 @@
 import { filterAllItemsByVisitedPlace } from './all'
-import { formatVisitedPlace, getVisitedPlaceFromSearchParams, type VisitedSearchParams } from './domains/visited'
+import { getAgeSummaryPerson } from './persons-filter-scopes'
+import { formatVisitedPlace, getVisitedPlaceFromSearchParams } from './domains/visited'
+import {
+  getAgeFromPersonsRouteSearchParams,
+  getPersonFromPersonsRouteSearchParams,
+  type PersonsRouteSearchParams,
+} from './persons-route-filters'
 import { filterPersonsItems, getPersonsData } from './persons'
 import indexKeywords from './search'
 import type { Persons } from '../types/pages'
@@ -8,28 +14,14 @@ import type { Gallery } from '../types/common'
 
 export type AgeFilterValue = number | 'unknown' | null
 
-export type PersonsSearchParams = {
-  age?: string | string[]
-  person?: string | string[]
-} & VisitedSearchParams
+export type PersonsSearchParams = PersonsRouteSearchParams
 
 export function getPersonFromSearchParams(searchParams?: PersonsSearchParams) {
-  const person = typeof searchParams?.person === 'string' ? searchParams.person.trim() : ''
-  return person || null
+  return getPersonFromPersonsRouteSearchParams(searchParams)
 }
 
 export function getAgeFromSearchParams(searchParams?: PersonsSearchParams): AgeFilterValue {
-  const ageValue = typeof searchParams?.age === 'string' ? searchParams.age.trim() : ''
-  if (!ageValue) {
-    return null
-  }
-
-  if (ageValue === 'unknown') {
-    return 'unknown'
-  }
-
-  const age = Number.parseInt(ageValue, 10)
-  return Number.isNaN(age) ? null : age
+  return getAgeFromPersonsRouteSearchParams(searchParams)
 }
 
 export async function getPersonsPageData({
@@ -48,19 +40,28 @@ export async function getPersonsPageData({
   const visitedScopedItems = visitedPlace
     ? filterAllItemsByVisitedPlace(personsData.items, visitedPlace)
     : personsData.items
-  const serverScopedPerson = selectedAge === null ? selectedPerson : null
-  const summaryItems = filterPersonsItems(visitedScopedItems, null, serverScopedPerson)
-  const items = summaryItems
+  const ageSummaryPerson = getAgeSummaryPerson(selectedAge, selectedPerson)
+  const summaryItems = filterPersonsItems(visitedScopedItems, null, ageSummaryPerson)
+  const personScopeItems = selectedAge !== null && selectedPerson
+    ? filterPersonsItems(visitedScopedItems, null, selectedPerson)
+    : undefined
+  const ageScopeItems = selectedAge !== null
+    ? filterPersonsItems(visitedScopedItems, selectedAge, null)
+    : undefined
+  const visibleItems = filterPersonsItems(visitedScopedItems, selectedAge, selectedPerson)
   const hasServerScope = visitedPlace !== null || selectedAge !== null || selectedPerson !== null
-  const indexedKeywords = hasServerScope ? indexKeywords(items).indexedKeywords : personsData.indexedKeywords
-  const initialAgeSummary = buildAgeSummary(summaryItems)
+  const indexedKeywords = hasServerScope ? indexKeywords(visibleItems).indexedKeywords : personsData.indexedKeywords
+  const initialAgeSummary = buildAgeSummary(summaryItems, ageSummaryPerson)
 
   return {
     gallery,
-    items,
+    items: visibleItems,
     totalItemCount: personsData.items.length,
     indexedKeywords,
     initialAgeSummary,
+    initialBaseScopeItems: selectedAge === null && selectedPerson ? visitedScopedItems : undefined,
+    initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
+    initialPersonScopeItems: personScopeItems,
     visitedPlace: visitedPlace ?? null,
     visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }

@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 
 import Link from '../components/Link'
@@ -20,11 +20,13 @@ const useMemory = (
   const { autoInitialView = true } = options
   const [viewedList, setViewedList] = useState<Set<string>>(new Set())
   const [details, setDetails] = useState<Item | null>(filtered[0] ?? null)
+  const lastViewedIdRef = useRef<string | null>(null)
 
   const setViewed: Viewed = (index: number) => {
     if (index < 0 || index >= filtered.length) return
     const item = filtered[index]
-    setDetails(item)
+    setDetails((previousDetails) => (previousDetails?.id === item?.id ? previousDetails : item))
+    lastViewedIdRef.current = item?.id ?? null
     if (!item?.id) return
     setViewedList(prev => {
       if (prev.has(item.id)) return prev
@@ -36,17 +38,41 @@ const useMemory = (
 
   useEffect(() => {
     if (!autoInitialView || filtered.length === 0) {
-      if (filtered.length === 0) setDetails(null)
+      if (filtered.length === 0) {
+        lastViewedIdRef.current = null
+        setDetails((previousDetails) => (previousDetails === null ? previousDetails : null))
+        return
+      }
+
+      if (!autoInitialView) {
+        const currentId = details?.id ?? null
+        const currentStillVisible = currentId ? filtered.some((item) => item.id === currentId) : false
+
+        if (currentStillVisible) {
+          return
+        }
+
+        const galleryIndex = refImageGallery.current?.getCurrentIndex?.() ?? 0
+        const nextIndex = galleryIndex >= 0 && galleryIndex < filtered.length ? galleryIndex : 0
+        const nextItem = filtered[nextIndex] ?? filtered[0] ?? null
+
+        lastViewedIdRef.current = nextItem?.id ?? null
+        setDetails((previousDetails) => (previousDetails?.id === nextItem?.id ? previousDetails : nextItem))
+      }
+
       return
     }
     // Do NOT mark viewed if gallery will immediately trigger onSlide (AlbumClient select flow).
     // Leave initial mark for gallery except fallback to index 0 when no ref/index yet.
     const galleryIndex = refImageGallery.current?.getCurrentIndex?.() ?? 0
-    if (galleryIndex >= 0 && galleryIndex < filtered.length) {
-      setViewed(galleryIndex)
-    } else {
-      setViewed(0)
+    const nextIndex = galleryIndex >= 0 && galleryIndex < filtered.length ? galleryIndex : 0
+    const nextItem = filtered[nextIndex]
+
+    if (!nextItem?.id || lastViewedIdRef.current === nextItem.id) {
+      return
     }
+
+    setViewed(nextIndex)
   }, [filtered, refImageGallery, autoInitialView])
 
   const memoryHtml = details ? (

@@ -72,6 +72,7 @@ describe('person-age utilities', () => {
         { age: 20, count: 1 },
         { age: 21, count: 1 },
       ],
+      totalPhotoCount: 2,
     })
   })
 
@@ -108,6 +109,41 @@ describe('person-age utilities', () => {
         { age: 'unknown', count: 1 },
         { age: 21, count: 1 },
       ],
+      totalPhotoCount: 1,
+    })
+  })
+
+  test('buildAgeSummary can scope counts to a selected person within shared photos', () => {
+    const items: Item[] = [
+      {
+        id: '1',
+        filename: '2021-06-10-50.jpg',
+        photoDate: '2021-06-10',
+        city: '',
+        location: null,
+        caption: '',
+        description: null,
+        search: null,
+        persons: [
+          { full: 'Alice', dob: '2000-06-10' },
+          { full: 'Bob', dob: '1990-01-01' },
+        ],
+        title: '',
+        coordinates: null,
+        coordinateAccuracy: null,
+        thumbPath: '',
+        photoPath: '',
+        mediaPath: '',
+        videoPaths: null,
+        reference: null,
+      },
+    ]
+
+    expect(buildAgeSummary(items, 'Alice')).toEqual({
+      ages: [
+        { age: 21, count: 1 },
+      ],
+      totalPhotoCount: 1,
     })
   })
 })

@@ -1,11 +1,10 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
+import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
 import { All } from '../../types/pages'
-import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
@@ -35,32 +34,22 @@ export default function AllClient({
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ gallery, items, totalCount: totalItemCount, indexedKeywords, visitedFilterLabel })
+  } = useMapFilter({
+    gallery,
+    items,
+    totalCount: totalItemCount,
+    indexedKeywords,
+    visitedFilterLabel,
+    ownedPersonFilter: true,
+  })
 
-  const searchParams = useSearchParams()
-  const selectId = searchParams.get('select')
-
-  // Handle URL ?select= parameter
-  useEffect(() => {
-    if (!selectId || itemsToShow.length === 0) return
-
-    const idx = itemsToShow.findIndex(i => {
-      const filename = getPrimaryFilename(i.filename)
-      return filename === selectId
-    })
-
-    if (idx >= 0) {
-      // Use timeout to allow gallery to process items update (which might reset index)
-      // before enforcing the selected index
-      setTimeout(() => {
-        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
-          refImageGallery.current?.slideToIndex(idx)
-          setMemoryIndex(idx)
-          setViewed(idx)
-        }
-      }, 0)
-    }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
+  useSelectGalleryItemFromUrl({
+    items: itemsToShow,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+    defer: true,
+  })
 
   return (
     <div>

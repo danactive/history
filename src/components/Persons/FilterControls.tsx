@@ -1,10 +1,8 @@
-import Button from '@mui/joy/Button'
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 
 import type { PersonAgeFilterValue } from '../../lib/persons'
-import { pillActionButtonSx, pillSelectSx, popupListSx, selectButtonSx } from '../Search/control-styles'
-import RemovableFilterChip from '../Search/RemovableFilterChip'
+import { pillSelectSx, popupListSx, selectButtonSx } from '../Search/control-styles'
 import styles from './filter-controls.module.css'
 
 export type AgeCount = {
@@ -38,8 +36,23 @@ export default function FilterControls({
   setSelectedAge,
   setSelectedPerson,
 }: FilterControlsProps) {
-  const hasAgeFilter = selectedAge !== null
-  const hasPersonFilter = Boolean(selectedPerson)
+  const selectedAgeCount = selectedAge === null
+    ? totalPhotoCount
+    : agesWithCounts.find(({ age }) => age === selectedAge)?.count ?? 0
+  const ageButtonLabel = selectedAge === null
+    ? `All ages (${totalPhotoCount} ${totalPhotoCount === 1 ? 'photo' : 'photos'})`
+    : `${selectedAge === 'unknown' ? 'Unknown age' : selectedAge} (${selectedAgeCount} ${selectedAgeCount === 1 ? 'photo' : 'photos'})`
+
+  const selectedPersonCount = selectedPerson
+    ? peopleWithCounts.find(({ name }) => name === selectedPerson)?.count ?? 0
+    : peopleAtSelectedAge.length
+  const peopleAtSelectedAgeLabel = `${peopleAtSelectedAge.length} ${peopleAtSelectedAge.length === 1 ? 'person' : 'persons'}`
+  const allPersonsLabel = selectedAge === null
+    ? `All persons (${peopleAtSelectedAgeLabel})`
+    : `All persons at ${selectedAge} (${peopleAtSelectedAgeLabel})`
+  const personButtonLabel = selectedPerson
+    ? `${selectedPerson} (${selectedPersonCount} ${selectedPersonCount === 1 ? 'photo' : 'photos'})`
+    : allPersonsLabel
 
   return (
     <div className={styles.root}>
@@ -47,6 +60,7 @@ export default function FilterControls({
         <div className={styles.selectWrap}>
           <Select
             value={selectedAge === null ? '' : String(selectedAge)}
+            renderValue={() => ageButtonLabel}
             onChange={(_, value) => {
               const nextAge = value === 'unknown'
                 ? 'unknown'
@@ -76,10 +90,11 @@ export default function FilterControls({
           </Select>
         </div>
 
-        {selectedAge !== null && peopleAtSelectedAge.length > 0 && (
+        {peopleAtSelectedAge.length > 0 && (
           <div className={styles.selectWrap}>
             <Select
               value={selectedPerson ?? ''}
+              renderValue={() => personButtonLabel}
               onChange={(_, value) => setSelectedPerson(value || null)}
               variant="soft"
               size="sm"
@@ -94,7 +109,7 @@ export default function FilterControls({
               }}
             >
               <Option value="">
-                All people at {selectedAge} ({peopleAtSelectedAge.length} {peopleAtSelectedAge.length === 1 ? 'person' : 'people'})
+                {allPersonsLabel}
               </Option>
               {peopleWithCounts.map(({ name, count }) => (
                 <Option key={name} value={name}>
@@ -104,45 +119,7 @@ export default function FilterControls({
             </Select>
           </div>
         )}
-
-        <div className={styles.actionsRow}>
-          <Button
-            size="sm"
-            variant="soft"
-            color="primary"
-            onClick={() => {
-              setSelectedAge(null)
-              setSelectedPerson(null)
-            }}
-            disabled={!hasAgeFilter && !hasPersonFilter}
-            sx={pillActionButtonSx}
-          >
-            Clear
-          </Button>
-        </div>
       </div>
-
-      {(hasAgeFilter || hasPersonFilter) && (
-        <div className={styles.chipsRow}>
-          {hasAgeFilter && (
-            <RemovableFilterChip
-              label={`Age: ${selectedAge === 'unknown' ? 'Unknown' : selectedAge}`}
-              onRemove={() => {
-                setSelectedAge(null)
-              }}
-              removeTitle="Clear age filter"
-            />
-          )}
-
-          {hasPersonFilter && (
-            <RemovableFilterChip
-              label={`Person: ${selectedPerson}`}
-              onRemove={() => setSelectedPerson(null)}
-              removeTitle="Clear person filter"
-            />
-          )}
-        </div>
-      )}
     </div>
   )
 }

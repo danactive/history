@@ -2,14 +2,6 @@ import React from 'react'
 import { render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
-// Mock use-color-thief to synchronously provide a color
-vi.mock('use-color-thief', () => ({
-  default: () => ({
-    color: [255, 200, 100],
-    palette: null,
-  }),
-}))
-
 // Stub next/image SSR to avoid image optimization in tests
 vi.mock('next/image', () => ({
   default: (props: Record<string, unknown>) => {
@@ -24,8 +16,8 @@ import type { ClusteredMarkers } from '../../../lib/generate-clusters'
 import type { Viewed } from '../../../hooks/useMemory'
 import SplitViewer from '../index'
 
-describe('SplitViewer colour-thief background', () => {
-  it('applies background style from useColorThief hook', () => {
+describe('SplitViewer rendering', () => {
+  it('renders without injecting a dynamic background style tag', () => {
     const items: Item[] = [
       {
         id: '1',
@@ -73,9 +65,7 @@ describe('SplitViewer colour-thief background', () => {
       />,
     )
 
-    // Assert a <style> tag was injected with the expected background color
-    const styleEl = container.querySelector('style')
-    expect(styleEl).toBeTruthy()
-    expect(styleEl?.textContent).toContain('background: rgb(255, 200, 100)')
+    expect(container.querySelector('.image-gallery')).toBeTruthy()
+    expect(container.querySelector('style')).toBeNull()
   })
 })

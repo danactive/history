@@ -7,20 +7,24 @@ import {
   useState,
   type Ref,
 } from 'react'
+import dynamic from 'next/dynamic'
 import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalleryRef } from 'react-image-gallery'
 import 'react-image-gallery/styles/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
-import useColorThief from 'use-color-thief'
 import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import { Item } from '../../types/common'
 import { getExt, getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
-import SlippyMap from '../SlippyMap'
 import { validatePoint } from '../SlippyMap/options'
 import Video from '../Video'
 import styles from './styles.module.css'
+
+const SlippyMap = dynamic(() => import('../SlippyMap'), {
+  ssr: false,
+  loading: () => <div className={styles.mapPlaceholder} />,
+})
 
 interface ImageGalleryType extends GalleryItem {
   filename: string;
@@ -137,14 +141,8 @@ function SplitViewer({
   // Always use locked centroid during filter or clear, dynamic otherwise
   const effectiveCentroid = (mapFilterEnabled || isClearing) ? lockedCentroid : dynamicCentroid
 
-  // Only pass startIndex on first mount; afterward let the gallery manage its own state
   const initialIndexRef = useRef(safeIndex)
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
-  const startIndexProp = mounted ? undefined : initialIndexRef.current
-
-  // Background thumbnail (may be undefined initially)
-  const bgThumb = carouselItems[safeIndex]?.thumbnail
+  const startIndexProp = initialIndexRef.current >= 0 ? initialIndexRef.current : undefined
 
   // Slide handler with bounds + map flight (only when map filter OFF)
   const handleBeforeSlide: ImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
@@ -166,21 +164,9 @@ function SplitViewer({
     }
   }
 
-  // Extract color from background thumbnail
-  const bgThumbUrl = bgThumb ? `/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75` : null
-  const { color } = useColorThief(bgThumbUrl ?? '', { format: 'rgb' })
-
-  // Convert RGB array to CSS rgb string
-  const colourString = color && Array.isArray(color)
-    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-    : undefined
-
   return (
     <>
-      {colourString && (
-        <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colourString}; }`}</style>
-      )}
-      <section className={`${styles.split} image-gallery-background`}>
+      <section className={styles.split}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery
             ref={refImageGallery}

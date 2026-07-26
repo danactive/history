@@ -63,13 +63,13 @@ export const selectButtonSx = {
   pr: 1.75,
   '--Icon-color': 'rgba(255, 255, 255, 0.7)',
   '--variant-softBg': 'rgba(26, 30, 36, 0.92)',
-  '--variant-softHoverBg': 'rgba(38, 43, 50, 0.96)',
-  '--variant-softActiveBg': 'rgba(44, 49, 57, 0.98)',
+  '--variant-softHoverBg': 'rgba(48, 54, 63, 0.98)',
+  '--variant-softActiveBg': 'rgba(54, 60, 70, 0.98)',
   '&:hover': {
-    backgroundColor: 'rgba(38, 43, 50, 0.96)',
+    backgroundColor: 'rgba(48, 54, 63, 0.98)',
   },
   '&:focus-visible, &[aria-expanded="true"]': {
-    backgroundColor: 'rgba(38, 43, 50, 0.96)',
+    backgroundColor: 'rgba(48, 54, 63, 0.98)',
   },
   '& .MuiSelect-indicator': {
     color: 'rgba(255, 255, 255, 0.7)',
@@ -91,21 +91,30 @@ export const popupListSx = {
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: '0 12px 30px rgba(0, 0, 0, 0.35)',
   '--ListItemDecorator-color': 'rgba(108, 192, 229, 0.9)',
+  '--variant-plainColor': 'rgba(255, 255, 255, 0.92)',
+  '--variant-plainHoverColor': 'rgba(255, 255, 255, 0.96)',
+  '--variant-plainHoverBg': 'rgba(52, 58, 68, 0.98)',
+  '--variant-plainActiveColor': 'rgba(255, 255, 255, 0.98)',
+  '--variant-plainActiveBg': 'rgba(71, 113, 129, 0.62)',
   '& [role="option"]': {
     color: 'rgba(255, 255, 255, 0.92)',
     borderRadius: '0.55rem',
     backgroundColor: 'transparent',
   },
+  '& .MuiOption-root.MuiOption-highlighted:not([aria-selected="true"])': {
+    backgroundColor: 'rgba(52, 58, 68, 0.98)',
+    color: 'rgba(255, 255, 255, 0.96)',
+  },
   '& [role="option"][aria-selected="true"]': {
-    backgroundColor: 'rgba(108, 192, 229, 0.18)',
+    backgroundColor: 'rgba(71, 113, 129, 0.5)',
     color: 'rgba(255, 255, 255, 0.96)',
   },
   '& [role="option"]:hover, & [role="option"].Mui-focused': {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'rgba(52, 58, 68, 0.98)',
     color: 'rgba(255, 255, 255, 0.96)',
   },
   '& [role="option"][aria-selected="true"]:hover, & [role="option"][aria-selected="true"].Mui-focused': {
-    backgroundColor: 'rgba(108, 192, 229, 0.24)',
+    backgroundColor: 'rgba(71, 113, 129, 0.68)',
     color: 'rgba(255, 255, 255, 0.98)',
   },
 } as const

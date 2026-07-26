@@ -1,10 +1,9 @@
 import { getVisitedPlaceFromSearchParams, type VisitedSearchParams } from '../domains/visited'
 import { getMonthDayFromSearchParams, type TodaySearchParams } from '../monthDay'
 import {
-  getAgeFromSearchParams,
-  getPersonFromSearchParams,
-  type PersonsSearchParams,
-} from '../persons-page'
+  parsePersonsRouteFilters,
+  type PersonsRouteSearchParams,
+} from '../persons-route-filters'
 
 export type TodayRouteSearchParams = TodaySearchParams & VisitedSearchParams
 
@@ -21,22 +20,24 @@ export function parseTodayRouteSearchParams(searchParams?: TodayRouteSearchParam
   }
 }
 
-export function parsePersonsRouteSearchParams(searchParams?: PersonsSearchParams) {
+export function parsePersonsRouteSearchParams(searchParams?: PersonsRouteSearchParams) {
+  const filters = parsePersonsRouteFilters(searchParams)
   return {
-    selectedAge: getAgeFromSearchParams(searchParams),
-    selectedPerson: getPersonFromSearchParams(searchParams),
-    visitedPlace: getVisitedPlaceFromSearchParams(searchParams),
+    selectedAge: filters.selectedAge,
+    selectedPerson: filters.selectedPerson,
+    visitedPlace: filters.visitedPlace,
   }
 }
 
-export function parsePersonSearchParams(searchParams?: PersonsSearchParams) {
+export function parsePersonSearchParams(searchParams?: PersonsRouteSearchParams) {
+  const filters = parsePersonsRouteFilters(searchParams)
   return {
-    person: getPersonFromSearchParams(searchParams),
+    person: filters.selectedPerson,
   }
 }
 
 export type {
-  PersonsSearchParams,
+  PersonsRouteSearchParams as PersonsSearchParams,
   TodaySearchParams,
   VisitedSearchParams,
 }

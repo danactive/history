@@ -16,7 +16,7 @@ vi.mock('../../../../src/lib/albums', () => ({
   }),
 }))
 
-function buildItem(id: string, filename: string, city: string): Item {
+function buildItem(id: string, filename: string, city: string, persons: Item['persons'] = null): Item {
   return {
     id,
     filename,
@@ -26,7 +26,7 @@ function buildItem(id: string, filename: string, city: string): Item {
     caption: '',
     description: null,
     search: null,
-    persons: null,
+    persons,
     title: '',
     coordinates: null,
     coordinateAccuracy: null,
@@ -58,7 +58,7 @@ vi.mock('../../../../src/lib/album', () => ({
         album: {
           meta: { geo: { zoom: 7 } },
           items: [
-            buildItem('zurich-1', '1999-05-06-01.jpg', 'Zürich, Switzerland'),
+            buildItem('alice-only', '1999-05-06-01.jpg', 'Zürich, Switzerland', [{ full: 'Alice Example', dob: null }]),
             buildItem('lausanne-1', '1999-05-06-02.jpg', 'Lausanne, Switzerland'),
           ],
         },
@@ -96,5 +96,19 @@ describe('getAllData visited filtering', () => {
     expect(items.map((item) => item.filename)).toEqual(['2016-03-25-01.jpg'])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'USA' })
     expect(totalItemCount).toBe(6)
+  })
+
+  test('supports person-only scoping without requiring a visited filter', async () => {
+    const gallery: Gallery = 'demo'
+
+    const { items, totalItemCount, visitedPlace, visitedFilterLabel } = await getAllData({
+      gallery,
+      selectedPerson: 'Alice Example',
+    })
+
+    expect(items.map((item) => item.id)).toEqual(['alice-only'])
+    expect(totalItemCount).toBe(6)
+    expect(visitedPlace).toBeNull()
+    expect(visitedFilterLabel).toBeNull()
   })
 })

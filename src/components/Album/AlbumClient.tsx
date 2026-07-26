@@ -1,8 +1,8 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import useMapFilter from '../../hooks/useMapFilter'
+import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
 import type { Album } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
@@ -54,6 +54,7 @@ function AlbumClient({
     totalCount: totalItemCount,
     indexedKeywords,
     visitedFilterLabel,
+    ownedPersonFilter: true,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>
       : dateDetailsHref
@@ -61,23 +62,12 @@ function AlbumClient({
         : null,
   })
 
-  const searchParams = useSearchParams()
-  const selectId = searchParams.get('select')
-
-  useEffect(() => {
-    if (!selectId || itemsToShow.length === 0) return
-    const idx = itemsToShow.findIndex(i => {
-      const filename = getPrimaryFilename(i.filename)
-      return filename === selectId
-    })
-
-    // Only slide if we found the item (idx >= 0) AND the gallery isn't already at that index
-    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
-      refImageGallery.current?.slideToIndex(idx)
-      setMemoryIndex(idx)
-      setViewed(idx)
-    }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
+  useSelectGalleryItemFromUrl({
+    items: itemsToShow,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+  })
 
   const handleThumbSelect = useCallback((index: number) => {
     refImageGallery.current?.slideToIndex(index)

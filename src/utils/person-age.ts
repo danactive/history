@@ -53,13 +53,20 @@ export function calcAgeNow(dob: string, now: Date = new Date()): number | null {
   }
 }
 
-export function buildAgeSummary(items: Item[]): { ages: { age: AgeSummaryValue; count: number }[] } {
+export function buildAgeSummary(
+  items: Item[],
+  selectedPerson: string | null = null,
+): { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount: number } {
   const counts = new Map<AgeSummaryValue, number>()
   items.forEach((it) => {
     if (!it.persons || !it.filename) return
     const photoDate = resolvePhotoDate(it)
     const seenAges = new Set<AgeSummaryValue>()
     it.persons.forEach((p) => {
+      if (selectedPerson && p.full !== selectedPerson) {
+        return
+      }
+
       if (!p.dob) {
         if (!seenAges.has('unknown')) {
           counts.set('unknown', (counts.get('unknown') || 0) + 1)
@@ -82,6 +89,7 @@ export function buildAgeSummary(items: Item[]): { ages: { age: AgeSummaryValue; 
         if (right.age === 'unknown') return 1
         return left.age - right.age
       }),
+    totalPhotoCount: items.length,
   }
 }
 

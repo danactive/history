@@ -213,6 +213,36 @@ describe('Router ready', () => {
     expect(result.current.keyword).toBe(keyword)
   })
 
+  it('matches gallery albums for a plain year token via the album year field', () => {
+    const keyword = '2024'
+    mockNavigation({ params: { keyword } })
+
+    const items = [
+      { corpus: 'Birds, 2024', year: '2024', search: 'Birds, 2024' },
+      { corpus: 'Trips, 2023', year: '2023', search: 'Trips, 2023' },
+    ]
+
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [], summaryLabel: 'Albums' }))
+
+    expect(result.current.filtered).toStrictEqual([items[0]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+
+  it('falls back to corpus matching for year tokens when an item does not expose an exact year field', () => {
+    const keyword = '2001'
+    mockNavigation({ params: { keyword } })
+
+    const items = [
+      { corpus: 'Expeditions, 2001-2005', year: '2001-2005', search: 'Expeditions, 2001-2005' },
+      { corpus: 'Trips, 1999', year: '1999', search: 'Trips, 1999' },
+    ]
+
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [], summaryLabel: 'Albums' }))
+
+    expect(result.current.filtered).toStrictEqual([items[0]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+
   it('And operator', () => {
     const keyword = 'ban&&che'
     mockNavigation({ params: { keyword } })
@@ -223,6 +253,50 @@ describe('Router ready', () => {
     expect(result.current.filtered).toStrictEqual([items[1]])
     expect(result.current.keyword).toBe(keyword)
   })
+
+  it('matches a plain year keyword against the derived item year instead of incidental corpus text', () => {
+    const keyword = '2021'
+    mockNavigation({ params: { keyword } })
+
+    const items = [
+      { ...mockItem, filename: '2021-05-01-01.jpg', photoDate: null, corpus: 'lake trip memories' },
+      { ...mockItem, filename: '2020-05-01-01.jpg', photoDate: null, corpus: 'caption mentions 2021 reunion' },
+      { ...mockItem, filename: '2022-05-01-01.jpg', photoDate: '2021-08-10', corpus: 'photoDate year should win' },
+    ]
+
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    expect(result.current.filtered).toStrictEqual([items[0], items[2]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+
+  it('matches an exact indexed person keyword against exact search tokens instead of broad corpus text', () => {
+    const keyword = 'First Last'
+    mockNavigation({ params: { keyword } })
+
+    const items = [
+      {
+        ...mockItem,
+        corpus: 'First Last portrait in Kyoto',
+        search: 'First Last, Kyoto, Japan',
+      },
+      {
+        ...mockItem,
+        corpus: 'Caption by First Last during a reunion',
+        search: 'Reunion, Kyoto, Japan',
+      },
+    ]
+
+    const { result } = renderHook(() => useSearch({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [{ label: 'First Last (1)', value: 'First Last' }],
+    }))
+
+    expect(result.current.filtered).toStrictEqual([items[0]])
+    expect(result.current.keyword).toBe(keyword)
+  })
+
   it('Automatically updates visible count when URL keyword changes', () => {
     // Start with "apple banana" keyword
     const initialKeyword = 'apple banana'
@@ -373,16 +447,19 @@ describe('Clear button functionality', () => {
       { corpus: 'banana split', filename: 'banana-split.jpg' },
     ]
 
-    // Use a wrapper component to access the hook and set visible count
+    // Use a wrapper component to access the hook directly.
     function TestComponent() {
       const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
-
-      // Simulate setting visible count and displayed items based on filtered results
       const { filtered, setVisibleCount, setDisplayedItems } = search
+      const initialFiltered = React.useRef(filtered)
+
       React.useEffect(() => {
         setVisibleCount(filtered.length)
-        setDisplayedItems(filtered)
-      }, [filtered, setVisibleCount, setDisplayedItems])
+      }, [filtered.length, setVisibleCount])
+
+      React.useEffect(() => {
+        setDisplayedItems(initialFiltered.current)
+      }, [setDisplayedItems])
 
       return <div>{search.searchBox}</div>
     }
@@ -464,6 +541,111 @@ describe('Clear button functionality', () => {
     expect(mockPush).toHaveBeenCalledWith('/gallery/all?visitedCountry=Portugal&visitedRegion=Lisbon')
   })
 
+  it('does not turn an existing dropdown suggestion into a keyword filter', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/persons', params: {} })
+
+    const items = [
+      { corpus: 'Alice at the park', filename: 'alice.jpg' },
+      { corpus: 'Bob at the beach', filename: 'bob.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Alice (1)', value: 'Alice' }],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+
+    fireEvent.click(getByText('Alice (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).not.toHaveBeenCalledWith('/demo/persons?keyword=Alice')
+    expect(mockPush).not.toHaveBeenCalled()
+  })
+
+  it('shows the active person in the search input when the persons route is canonicalized without a keyword', () => {
+    mockNavigation({ pathname: '/demo/persons', params: {} })
+
+    const items = [
+      { corpus: 'Alice at the park', filename: 'alice.jpg' },
+      { corpus: 'Bob at the beach', filename: 'bob.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Alice (1)', value: 'Alice' }],
+        personDetailsName: 'Alice',
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    expect(input.value).toBe('Alice')
+    expect(container.textContent).not.toMatch(/for "Alice"/)
+  })
+
+  it('submits the fallback person option as a structured selection instead of recreating a keyword query', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/persons', params: {} })
+    const handleStructuredOptionSubmit = vi.fn(() => true)
+
+    const items = [
+      { corpus: 'Alice at the park', filename: 'alice.jpg' },
+      { corpus: 'Bob at the beach', filename: 'bob.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Alice (1)', value: 'Alice' }],
+        personDetailsName: 'Alice',
+        onStructuredOptionSubmit: handleStructuredOptionSubmit,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(handleStructuredOptionSubmit).toHaveBeenCalledWith({ label: 'Alice (1)', value: 'Alice' })
+    expect(mockPush).not.toHaveBeenCalledWith('/demo/persons?keyword=Alice')
+  })
+
+  it('keeps manual text entry available for keyword filtering', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/persons', params: {} })
+
+    const items = [
+      { corpus: 'Alice at the park', filename: 'alice.jpg' },
+      { corpus: 'Bob at the beach', filename: 'bob.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Alice (1)', value: 'Alice' }],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'Alice' } })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/persons?keyword=Alice')
+  })
+
   it('shows Clear for a visited filter and clears visited params while keeping the selected media in place', async () => {
     const { replace: mockReplace } = mockNavigation({
       pathname: '/gallery/all',
@@ -497,6 +679,42 @@ describe('Clear button functionality', () => {
       const input = container.querySelector('input') as HTMLInputElement
       expect(input.value).toBe('')
     })
+  })
+
+  it('Clear all removes contextual query params owned by the caller', () => {
+    const { replace: mockReplace } = mockNavigation({
+      pathname: '/demo/persons',
+      params: {
+        keyword: 'Alice',
+        age: '21',
+        person: 'Alice',
+      },
+    })
+
+    const items = [
+      { corpus: 'Alice', filename: 'alice.jpg' },
+      { corpus: 'Bob', filename: 'bob.jpg' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        extraFiltersActive: true,
+        extraQueryParamsToClear: ['age', 'person'],
+        extraFilterChips: <span>Age: 21</span>,
+        onClearExtraFilters: vi.fn(),
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const clearButton = Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Clear all') as HTMLButtonElement
+
+    fireEvent.click(clearButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/demo/persons?select=alice.jpg')
   })
 
   it('clearing the visited chip preserves the keyword query and selected media', async () => {
@@ -606,5 +824,195 @@ describe('Clear button functionality', () => {
 
     expect(document.querySelector('a[href="/demo/persons/details?person=Missus+Gingerbread"]')?.textContent).toBe('Person details')
     expect(document.querySelector('a[href="/demo/sample/details"]')?.textContent).toBe('Album details')
+  })
+
+  it('owns a person route filter on generic pages and exposes it as an active chip', () => {
+    mockNavigation({ pathname: '/demo/all', params: { person: 'Alice' } })
+
+    const items = [
+      {
+        corpus: 'Alice portrait',
+        filename: 'alice.jpg',
+        persons: [{ full: 'Alice' }],
+        search: 'Alice, portrait',
+      },
+      {
+        corpus: 'Bob portrait',
+        filename: 'bob.jpg',
+        persons: [{ full: 'Bob' }],
+        search: 'Bob, portrait',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [], ownedPersonFilter: true })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [], ownedPersonFilter: true }))
+    render(<TestComponent />)
+
+    expect(result.current.filtered).toEqual([items[0]])
+    expect(document.body.textContent).toContain('Person: Alice')
+    expect(document.querySelector('a[href="/demo/persons/details?person=Alice"]')?.textContent).toBe('Person details')
+  })
+
+  it('clears a generic page person chip without dropping the current selection anchor', () => {
+    const { replace: mockReplace } = mockNavigation({ pathname: '/demo/all', params: { person: 'Alice' } })
+
+    const items = [
+      {
+        corpus: 'Alice portrait',
+        filename: 'alice.jpg',
+        persons: [{ full: 'Alice' }],
+        search: 'Alice, portrait',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [], ownedPersonFilter: true })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const clearPersonButton = container.querySelector('button[title="Clear person filter Alice"]') as HTMLButtonElement
+
+    fireEvent.click(clearPersonButton)
+
+    expect(mockReplace).toHaveBeenCalledWith('/demo/all?select=alice.jpg')
+  })
+
+  it('submits an exact typed person name as a person route on generic pages', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/today', params: {} })
+
+    const items = [
+      {
+        corpus: 'Alice portrait',
+        filename: 'alice.jpg',
+        persons: [{ full: 'Alice Example' }],
+        search: 'Alice Example, portrait',
+      },
+      {
+        corpus: 'Bob portrait',
+        filename: 'bob.jpg',
+        persons: [{ full: 'Bob Example' }],
+        search: 'Bob Example, portrait',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [], ownedPersonFilter: true })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'Alice Example' } })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?person=Alice+Example')
+  })
+
+  it('submits a selected person suggestion as a person route on generic pages', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/today', params: {} })
+
+    const items = [
+      {
+        corpus: 'Alice portrait',
+        filename: 'alice.jpg',
+        persons: [{ full: 'Alice Example' }],
+        search: 'Alice Example, portrait',
+      },
+      {
+        corpus: 'Bob portrait',
+        filename: 'bob.jpg',
+        persons: [{ full: 'Bob Example' }],
+        search: 'Bob Example, portrait',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Alice Example (1)', value: 'Alice Example' }],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+
+    fireEvent.click(getByText('Alice Example (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?person=Alice+Example')
+  })
+
+  it('submits a selected non-person suggestion as a keyword route on generic pages', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo', params: {} })
+
+    const items = [
+      {
+        corpus: 'Birds retrospective album',
+        filename: 'album-a.jpg',
+        search: 'Birds, retrospective',
+        year: '2024',
+      },
+      {
+        corpus: 'Travel retrospective album',
+        filename: 'album-b.jpg',
+        search: 'Travel, retrospective',
+        year: '2023',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'Birds (1)', value: 'Birds' }],
+        summaryLabel: 'Albums',
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+
+    fireEvent.click(getByText('Birds (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo?keyword=Birds')
+  })
+
+  it('filters generic pages by owned person route using corpus/search fallback when items have no persons array', () => {
+    mockNavigation({ pathname: '/demo', params: { person: 'Taylor Example' } })
+
+    const items = [
+      {
+        corpus: 'Taylor Example retrospective album',
+        filename: 'album-a.jpg',
+        search: 'Taylor Example, retrospective',
+        year: '2024',
+      },
+      {
+        corpus: 'Jordan Sample retrospective album',
+        filename: 'album-b.jpg',
+        search: 'Jordan Sample, retrospective',
+        year: '2023',
+      },
+    ]
+
+    const { result } = renderHook(() => useSearch({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [],
+      summaryLabel: 'Albums',
+      ownedPersonFilter: true,
+    }))
+
+    expect(result.current.filtered).toEqual([items[0]])
   })
 })

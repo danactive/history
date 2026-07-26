@@ -60,24 +60,23 @@ export default function SlippyMap({
   const activeCentroid = centroid ?? (items.length > 0 ? items[0] : null)
   const coordinates: [number, number] = (activeCentroid?.coordinates as [number, number]) ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
+  const initialViewport = useMemo(
+    () => transformMapOptions({ coordinates, zoom }),
+    [coordinates, zoom],
+  )
 
   // Track previous coordinates/zoom to avoid unnecessary updates
-  const prevCoordsRef = useRef<[number, number]>([0, 0])
-  const prevZoomRef = useRef<number>(metaZoom)
+  const prevCoordsRef = useRef<[number, number]>(coordinates)
+  const prevZoomRef = useRef<number>(zoom)
 
   const [currentResolution, setCurrentResolution] = useState(() =>
     getResolutionForZoom(zoom),
   )
   const [currentZoom, setCurrentZoom] = useState(zoom)
 
-  const [viewport, setViewport] = useState(() => {
-    if (typeof window === 'undefined') return {} as any
-    return transformMapOptions({ coordinates, zoom })
-  })
+  const [viewport, setViewport] = useState(() => initialViewport)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-
     // Only update if coordinates or zoom actually changed
     const [prevLng, prevLat] = prevCoordsRef.current
     const [lng, lat] = coordinates
@@ -85,10 +84,10 @@ export default function SlippyMap({
     if (prevLng === lng && prevLat === lat && prevZoom === zoom) return
     prevCoordsRef.current = coordinates
     prevZoomRef.current = zoom
-    setViewport(transformMapOptions({ coordinates, zoom }))
+    setViewport(initialViewport)
     setCurrentZoom(zoom)
     setCurrentResolution(getResolutionForZoom(zoom))
-  }, [coordinates, zoom])
+  }, [coordinates, initialViewport, zoom])
 
   const onClick = (event: MapMouseEvent) => {
     const feature = event.features && event.features[0]

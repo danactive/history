@@ -1,5 +1,6 @@
 import type { ServerSideAllItem, VisitedPlace } from '../types/common'
 import type { All } from '../types/pages'
+import { filterItemsBySelectedPerson } from './filter-selected-person'
 import { filterItemsByVisitedPlace, formatVisitedPlace } from './domains/visited'
 import { allPageItemMapper, getAllItems } from './get-all-items'
 import { buildFilterMetadata } from './server/filter-metadata'
@@ -8,10 +9,15 @@ export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visited
   return filterItemsByVisitedPlace(items, visitedPlace)
 }
 
-export async function getAllData({ gallery, visitedPlace }: All.Params): Promise<All.ItemData> {
+export async function getAllData({ gallery, visitedPlace, selectedPerson }: All.Params & { selectedPerson?: string | null }): Promise<All.ItemData> {
   const data = await getAllItems(gallery, allPageItemMapper, true)
 
-  if (!visitedPlace) {
+  const visitedScopedItems = visitedPlace
+    ? filterAllItemsByVisitedPlace(data.items, visitedPlace)
+    : data.items
+  const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
+
+  if (!visitedPlace && !selectedPerson) {
     return {
       ...data,
       visitedPlace: null,
@@ -19,14 +25,13 @@ export async function getAllData({ gallery, visitedPlace }: All.Params): Promise
     }
   }
 
-  const items = filterAllItemsByVisitedPlace(data.items, visitedPlace)
-  const { indexedKeywords } = buildFilterMetadata(items)
+  const { indexedKeywords } = buildFilterMetadata(scopedItems)
   return {
     gallery,
-    items,
+    items: scopedItems,
     indexedKeywords,
     totalItemCount: data.items.length,
-    visitedPlace,
-    visitedFilterLabel: formatVisitedPlace(visitedPlace),
+    visitedPlace: visitedPlace ?? null,
+    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }
 }

@@ -1,39 +1,23 @@
 .root {
   display: grid;
-  gap: 0.625rem;
-  padding: 0.125rem 0;
+  gap: 0.5rem;
 }
 
 .selectRow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
 .selectWrap {
-  flex: 1 1 14rem;
-  min-width: 13rem;
-}
-
-.actionsRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-
-.chipsRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  flex: 1 1 13rem;
+  min-width: 12rem;
 }
 
 @media (max-width: 640px) {
-  .actionsRow {
-    margin-left: 0;
+  .selectRow {
+    align-items: stretch;
   }
 
   .selectWrap {

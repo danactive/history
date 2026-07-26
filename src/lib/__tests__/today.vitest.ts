@@ -182,4 +182,16 @@ describe('today library', () => {
     expect(result.indexedKeywords).toEqual([])
     expect(result.personOptions).toEqual([])
   })
+
+  test('filters today items by selected person before rebuilding derived metadata', async () => {
+    const result = await getTodayItems('demo', '07-18', undefined, 'Taylor Example')
+
+    expect(result.totalItemCount).toBe(4)
+    expect(result.items.map((item) => item.id)).toEqual(['4', '2', '1'])
+    expect(result.personOptions).toEqual([
+      { label: 'Taylor Example (3)', value: 'Taylor Example', count: 3 },
+    ])
+    expect(result.indexedKeywords.map((option) => option.value)).toContain('Taylor Example')
+    expect(result.indexedKeywords.map((option) => option.value)).not.toContain('Jordan Sample')
+  })
 })

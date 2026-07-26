@@ -175,12 +175,12 @@ describe('Persons page', () => {
     expect(screen.getByText('96')).toBeInTheDocument()
     expect(screen.getByText('Sample Person')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-03.jpg')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-04.jpg')).toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-03.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-04.jpg')).not.toBeInTheDocument()
   })
 
-  test('keeps the broader age scope on the server when only age is selected', async () => {
+  test('keeps the final age-filtered slice on the server when only age is selected', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ age: '96' }),
@@ -191,8 +191,8 @@ describe('Persons page', () => {
     expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('96')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-03.jpg')).toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-03.jpg')).not.toBeInTheDocument()
     expect(screen.getByText('2025-07-12-04.jpg')).toBeInTheDocument()
   })
 
@@ -210,8 +210,8 @@ describe('Persons page', () => {
 
     expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
-    expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-01.jpg')).not.toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-03.jpg')).not.toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-04.jpg')).not.toBeInTheDocument()
   })

@@ -38,7 +38,7 @@ export default function ComboBox(
         disableClearable
         onChange={(_event: any, newValue: any): void => {
           if (typeof newValue === 'string') { // free text
-            onChange({ label: newValue, value: newValue })
+            onChange({ label: newValue, value: newValue, isCreateOption: true })
           } else if (newValue?.label && newValue?.value) { // selected keyword
             onChange(newValue)
           } else if (newValue === null) { // clear
@@ -50,11 +50,12 @@ export default function ComboBox(
 
           const { inputValue } = params
           // Suggest the creation of a new value
-          const isExisting = options.some((option) => inputValue === option.label)
+          const isExisting = options.some((option) => inputValue === option.value)
           if (inputValue !== '' && !isExisting) {
             filtered.push({
               value: inputValue,
               label: `Add "${inputValue}"`,
+              isCreateOption: true,
             })
           }
 
@@ -79,7 +80,7 @@ export default function ComboBox(
         }}
         renderOption={(props, option) => (
           <AutocompleteOption {...props} key={option.label}>
-            {option.label?.startsWith('Add "') && (
+            {option.isCreateOption && (
               <ListItemDecorator key={`${option.label}deco`}>
                 &gt; {/* TODO Insert Add icon */}
               </ListItemDecorator>

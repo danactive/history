@@ -8,7 +8,7 @@ import {
   resolveRouteInputs,
   type GalleryRouteProps,
 } from '../../../src/lib/server/page-route'
-import { parseVisitedSearchParams, type VisitedSearchParams } from '../../../src/lib/server/search-params'
+import { parsePersonSearchParams, parseVisitedSearchParams, type PersonsSearchParams } from '../../../src/lib/server/search-params'
 
 export async function generateStaticParams() {
   return generateGalleryStaticParams()
@@ -21,12 +21,13 @@ export const metadata: Metadata = {
 export default async function AllServer({
   params,
   searchParams,
-}: GalleryRouteProps<VisitedSearchParams>) {
+}: GalleryRouteProps<PersonsSearchParams>) {
   const {
     params: { gallery },
     searchParams: resolvedSearchParams,
   } = await resolveRouteInputs(params, searchParams)
   const { visitedPlace } = parseVisitedSearchParams(resolvedSearchParams)
+  const { person } = parsePersonSearchParams(resolvedSearchParams)
 
   const {
     items = [],
@@ -35,7 +36,7 @@ export default async function AllServer({
     visitedPlace: scopedVisitedPlace,
     visitedFilterLabel,
     clusteredMarkers,
-  } = buildClusteredPageData(await getAllData({ gallery, visitedPlace }))
+  } = buildClusteredPageData(await getAllData({ gallery, visitedPlace, selectedPerson: person }))
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

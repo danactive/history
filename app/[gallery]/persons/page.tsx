@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 import PersonsClient from '../../../src/components/Persons/PersonsClient'
+import PersonsFallback from '../../../src/components/Persons/PersonsFallback'
 import { getPersonsPageData } from '../../../src/lib/persons-page'
 import {
   buildClusteredPageData,
@@ -40,6 +41,9 @@ export default async function PersonsServer({
     items,
     indexedKeywords,
     initialAgeSummary,
+    initialBaseScopeItems,
+    initialAgeScopeItems,
+    initialPersonScopeItems,
     totalItemCount,
     visitedPlace,
     visitedFilterLabel,
@@ -52,7 +56,7 @@ export default async function PersonsServer({
   }))
 
   return (
-    <Suspense fallback={<div>Loading Persons...</div>}>
+    <Suspense fallback={<PersonsFallback />}>
       <PersonsClient
         gallery={gallery}
         items={items}
@@ -60,6 +64,9 @@ export default async function PersonsServer({
         indexedKeywords={indexedKeywords}
         clusteredMarkers={clusteredMarkers}
         initialAgeSummary={initialAgeSummary}
+        initialBaseScopeItems={initialBaseScopeItems}
+        initialAgeScopeItems={initialAgeScopeItems}
+        initialPersonScopeItems={initialPersonScopeItems}
         initialSelectedAge={initialSelectedAge}
         initialSelectedPerson={initialSelectedPerson}
         visitedPlace={visitedPlace}

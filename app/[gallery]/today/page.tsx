@@ -7,7 +7,12 @@ import {
   resolveRouteInputs,
   type GalleryRouteProps,
 } from '../../../src/lib/server/page-route'
-import { parseTodayRouteSearchParams, type TodayRouteSearchParams } from '../../../src/lib/server/search-params'
+import {
+  parsePersonSearchParams,
+  parseTodayRouteSearchParams,
+  type PersonsSearchParams,
+  type TodayRouteSearchParams,
+} from '../../../src/lib/server/search-params'
 import { getTodayItems } from '../../../src/lib/today'
 
 export const metadata: Metadata = {
@@ -21,12 +26,17 @@ export async function generateStaticParams() {
 export default async function TodayServer({
   params,
   searchParams,
-}: GalleryRouteProps<TodayRouteSearchParams>) {
+}: GalleryRouteProps<
+  TodayRouteSearchParams & PersonsSearchParams
+>) {
   const {
     params: { gallery },
     searchParams: resolvedSearchParams,
-  } = await resolveRouteInputs(params, searchParams)
-  const { monthDay, visitedPlace } = parseTodayRouteSearchParams(resolvedSearchParams)
+  } = await resolveRouteInputs(params,
+    searchParams)
+  const { monthDay,
+    visitedPlace } = parseTodayRouteSearchParams(resolvedSearchParams)
+  const { person } = parsePersonSearchParams(resolvedSearchParams)
   const {
     items,
     indexedKeywords,
@@ -34,7 +44,9 @@ export default async function TodayServer({
     visitedPlace: scopedVisitedPlace,
     visitedFilterLabel,
     clusteredMarkers,
-  } = buildClusteredPageData(await getTodayItems(gallery, monthDay, visitedPlace))
+  } = buildClusteredPageData(
+    await getTodayItems(gallery, monthDay, visitedPlace, person),
+  )
   return (
     <Suspense fallback={<div>Loading Today...</div>}>
       <AlbumPageComponent

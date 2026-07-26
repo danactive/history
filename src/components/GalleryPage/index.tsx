@@ -22,6 +22,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
     items: albums,
     summaryLabel: 'Albums',
     indexedKeywords,
+    ownedPersonFilter: true,
     trailingAction: <Link href={`/${gallery}/details`}>Gallery details</Link>,
   })
 

@@ -1,12 +1,11 @@
 'use client'
 
 import Button from '@mui/joy/Button'
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
+import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
 import type { All } from '../../types/pages'
-import { getPrimaryFilename } from '../../utils'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
 import FilterControls from './FilterControls'
@@ -21,6 +20,9 @@ export default function PersonsClient({
   indexedKeywords,
   clusteredMarkers,
   initialAgeSummary,
+  initialBaseScopeItems,
+  initialAgeScopeItems,
+  initialPersonScopeItems,
   initialSelectedAge,
   initialSelectedPerson,
 }: All.ComponentProps) {
@@ -44,27 +46,25 @@ export default function PersonsClient({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
-  } = usePersonsFilter({ gallery, items, totalItemCount, indexedKeywords, initialAgeSummary, initialSelectedAge, initialSelectedPerson })
+  } = usePersonsFilter({
+    gallery,
+    items,
+    totalItemCount,
+    indexedKeywords,
+    initialAgeSummary,
+    initialBaseScopeItems,
+    initialAgeScopeItems,
+    initialPersonScopeItems,
+    initialSelectedAge,
+    initialSelectedPerson,
+  })
 
-  const searchParams = useSearchParams()
-  const selectId = searchParams.get('select')
-
-  // Handle URL ?select= parameter
-  useEffect(() => {
-    if (!selectId || ageFiltered.length === 0) return
-
-    const idx = ageFiltered.findIndex(i => {
-      const filename = getPrimaryFilename(i.filename)
-      return filename === selectId
-    })
-
-    if (idx < 0) return
-    if (refImageGallery.current?.getCurrentIndex?.() === idx) return
-
-    refImageGallery.current?.slideToIndex(idx)
-    setMemoryIndex(idx)
-    setViewed(idx)
-  }, [selectId, ageFiltered, refImageGallery, setMemoryIndex, setViewed])
+  useSelectGalleryItemFromUrl({
+    items: ageFiltered,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+  })
 
   const hasActivePersonsFilters = selectedAge !== null || selectedPerson !== null
 

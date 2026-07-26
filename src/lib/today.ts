@@ -1,5 +1,6 @@
 import getAlbum from './album'
 import getAlbums from './albums'
+import { filterItemsBySelectedPerson } from './filter-selected-person'
 import { filterItemsByVisitedPlaceFromCities, formatVisitedPlace } from './domains/visited'
 import { addYearToSearch, getItemYearFromFilename } from './domains/years'
 import { buildFilterMetadata, type ServerPageFilterMetadata } from './server/filter-metadata'
@@ -11,7 +12,12 @@ import { compareNewestFirst } from '../utils'
 
 type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 
-export async function getTodayItems(gallery: Gallery, monthDay: string, visitedPlace?: VisitedPlace | null): Promise<TodayItemsResult> {
+export async function getTodayItems(
+  gallery: Gallery,
+  monthDay: string,
+  visitedPlace?: VisitedPlace | null,
+  selectedPerson?: string | null,
+): Promise<TodayItemsResult> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
   const prepareItems = (
@@ -52,9 +58,10 @@ export async function getTodayItems(gallery: Gallery, monthDay: string, visitedP
   items.sort(compareNewestFirst)
 
   const totalItemCount = items.length
-  const scopedItems = visitedPlace
+  const visitedScopedItems = visitedPlace
     ? filterItemsByVisitedPlaceFromCities(items, visitedPlace)
     : items
+  const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
 
   const { indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
@@ -66,7 +73,7 @@ export async function getTodayItems(gallery: Gallery, monthDay: string, visitedP
     personOptions,
     yearOptions,
     tagOptions,
-    totalItemCount: visitedPlace ? totalItemCount : undefined,
+    totalItemCount: visitedPlace || selectedPerson ? totalItemCount : undefined,
     visitedPlace: visitedPlace ?? null,
     visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }

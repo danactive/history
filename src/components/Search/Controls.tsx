@@ -35,6 +35,11 @@ type Props = {
   onClear: () => void
   onClearVisitedFilter: () => void
   onClearMapFilter?: (coordinates?: [number, number] | null) => void
+  extraFilterChips?: React.ReactNode
+  extraFiltersActive?: boolean
+  onClearAll?: () => void
+  clearActionLabel?: string
+  clearActionTitle?: string
 }
 
 export default function Controls({
@@ -58,9 +63,14 @@ export default function Controls({
   onClear,
   onClearVisitedFilter,
   onClearMapFilter,
+  extraFilterChips,
+  extraFiltersActive = false,
+  onClearAll,
+  clearActionLabel = 'Clear',
+  clearActionTitle = 'Clear search and view adjacent photos',
 }: Props) {
   const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
-  const hasActiveFilters = Boolean(keyword || activeVisitedFilterLabel || mapFilterEnabled)
+  const hasActiveFilters = Boolean(keyword || activeVisitedFilterLabel || mapFilterEnabled || extraFiltersActive)
 
   return (
     <form onSubmit={onSubmit}>
@@ -124,6 +134,7 @@ export default function Controls({
                   removeTitle="Clear map filter"
                 />
               )}
+              {extraFilterChips}
             </div>
           </div>
         ) : null}
@@ -148,16 +159,16 @@ export default function Controls({
             >
               Filter
             </Button>
-            {(keyword || activeVisitedFilterLabel) && (
+            {hasActiveFilters && (
               <Button
                 type="button"
-                onClick={onClear}
+                onClick={onClearAll ?? onClear}
                 color="primary"
                 variant="soft"
-                title="Clear search and view adjacent photos"
+                title={clearActionTitle}
                 sx={pillActionButtonSx}
               >
-                Clear
+                {clearActionLabel}
               </Button>
             )}
             {canBookmark && <BookmarkButton />}

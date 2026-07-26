@@ -65,7 +65,10 @@ export namespace Today {
 export namespace Persons {
   export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
     gallery: GalleryName,
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
+    initialBaseScopeItems?: ServerSideAllItem[];
+    initialAgeScopeItems?: ServerSideAllItem[];
+    initialPersonScopeItems?: ServerSideAllItem[];
     initialSelectedAge?: number | 'unknown' | null;
     initialSelectedPerson?: string | null;
   }
@@ -85,7 +88,10 @@ export namespace All {
     totalItemCount?: number;
     indexedKeywords: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
+    initialBaseScopeItems?: ServerSideAllItem[];
+    initialAgeScopeItems?: ServerSideAllItem[];
+    initialPersonScopeItems?: ServerSideAllItem[];
     initialSelectedAge?: number | 'unknown' | null;
     initialSelectedPerson?: string | null;
     visitedPlace?: VisitedPlace | null;
@@ -95,7 +101,10 @@ export namespace All {
 
   export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
     gallery: GalleryName,
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[] };
+    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
+    initialBaseScopeItems?: ServerSideAllItem[];
+    initialAgeScopeItems?: ServerSideAllItem[];
+    initialPersonScopeItems?: ServerSideAllItem[];
     initialSelectedAge?: number | 'unknown' | null;
     initialSelectedPerson?: string | null;
     trailingAction?: React.ReactNode;

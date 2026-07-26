@@ -12,6 +12,7 @@ import {
   buildPersonOptions,
   filterPersonsItems,
 } from '../domains/persons'
+import { buildSearchOptions } from '../domains/search'
 import {
   filterItemsByVisitedPlace,
   filterItemsByVisitedPlaceFromCities,
@@ -53,6 +54,47 @@ describe('visited domain', () => {
 
     expect(filterItemsByVisitedPlaceFromCities(items, { country: 'Canada', region: 'BC' }).map(item => item.id)).toEqual(['1', '2'])
     expect(filterItemsByVisitedPlaceFromCities(items, { country: 'Canada', region: null }).map(item => item.id)).toEqual(['1', '2', '3'])
+  })
+})
+
+describe('search domain', () => {
+  test('merges indexed and visited options while preserving visited metadata', () => {
+    const options = buildSearchOptions([
+      { city: 'Almada, Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { city: 'Sintra, Lisbon, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+      { city: 'Cascais, Lisbon, Portugal', filename: '2024-01-03-01.jpg', photoDate: null },
+      { city: 'Oeiras, Lisbon, Portugal', filename: '2024-01-04-01.jpg', photoDate: null },
+    ], [
+      { label: 'Taylor Example (2)', value: 'Taylor Example' },
+    ])
+
+    expect(options).toEqual(expect.arrayContaining([
+      { label: 'Taylor Example (2)', value: 'Taylor Example' },
+      expect.objectContaining({
+        value: 'Portugal',
+        visitedPlace: { country: 'Portugal', region: null },
+      }),
+      expect.objectContaining({
+        value: 'Lisbon, Portugal',
+        visitedPlace: { country: 'Portugal', region: 'Lisbon' },
+      }),
+    ]))
+  })
+
+  test('dedupes identical option values in favor of visited options', () => {
+    const options = buildSearchOptions([
+      { city: 'Almada, Lisbon, Portugal', filename: '2024-01-01-01.jpg', photoDate: null },
+      { city: 'Sintra, Lisbon, Portugal', filename: '2024-01-02-01.jpg', photoDate: null },
+      { city: 'Cascais, Lisbon, Portugal', filename: '2024-01-03-01.jpg', photoDate: null },
+      { city: 'Oeiras, Lisbon, Portugal', filename: '2024-01-04-01.jpg', photoDate: null },
+    ], [
+      { label: 'Lisbon, Portugal (search)', value: 'Lisbon, Portugal' },
+    ])
+
+    expect(options.filter((option) => option.value === 'Lisbon, Portugal')).toHaveLength(1)
+    expect(options.find((option) => option.value === 'Lisbon, Portugal')).toEqual(expect.objectContaining({
+      visitedPlace: { country: 'Portugal', region: 'Lisbon' },
+    }))
   })
 })
 

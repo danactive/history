@@ -169,6 +169,7 @@ type IndexedKeywords = {
   label: string;
   value: string;
   visitedPlace?: VisitedPlace;
+  isCreateOption?: boolean;
 }
 
 // SplitViewer fullscreenMap

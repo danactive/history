@@ -1,6 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import useMapFilter from '../useMapFilter'
+import useMemory from '../useMemory'
 
 const useSearchMock = vi.hoisted(() => vi.fn())
 const setVisibleCountMock = vi.hoisted(() => vi.fn())
@@ -201,5 +202,25 @@ describe('Viewed persistence across map/keyword filtering', () => {
     expect(useSearchMock).toHaveBeenCalledWith(expect.objectContaining({
       summaryLabel: 'Photos',
     }))
+  })
+
+  test('replaces stale memory details when autoInitialView is disabled and the current item is filtered out', () => {
+    const itemsA = [makeItem('1'), makeItem('2')]
+    const itemsB = [makeItem('2')]
+    const refImageGallery = { current: { getCurrentIndex: () => 0 } }
+
+    const { result, rerender } = renderHook(
+      ({ items }) => useMemory(items, refImageGallery as any, { autoInitialView: false }),
+      { initialProps: { items: itemsA } },
+    )
+
+    act(() => {
+      result.current.setViewed(0)
+    })
+
+    rerender({ items: itemsB })
+
+    expect(result.current.memoryHtml?.props.children[0].props.children).toBe('Title 2')
+    expect(result.current.memoryHtml?.props.children[2].props.children).toBe('2.jpg')
   })
 })
