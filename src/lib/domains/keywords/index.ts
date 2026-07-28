@@ -14,18 +14,25 @@ export function hasPersonLikeCasing(value: string) {
   return /^[A-Z][A-Za-z'-]+(?: [A-Z][A-Za-z'-]+)+$/.test(value.trim())
 }
 
+function wordCount(value: string) {
+  return value.trim().split(/\s+/).filter(Boolean).length
+}
+
 export function isSearchOnlyPersonCandidate(
   value: string,
   options: {
     knownPeople?: Iterable<string>
+    minWordCount?: number
     reservedValues?: Iterable<string>
   } = {},
 ) {
   const trimmed = value.trim()
   const knownPeople = new Set(options.knownPeople ?? [])
+  const minWordCount = options.minWordCount ?? 2
   const reservedValues = new Set(options.reservedValues ?? [])
 
   return trimmed.length > 0
+    && wordCount(trimmed) >= minWordCount
     && !knownPeople.has(trimmed)
     && !reservedValues.has(trimmed)
     && !isTagKeyword(trimmed)
@@ -70,6 +77,7 @@ export function filterSearchOnlyPersonCounts(
   counts: CountEntry[],
   options: {
     knownPeople?: Iterable<string>
+    minWordCount?: number
     reservedValues?: Iterable<string>
   } = {},
 ) {

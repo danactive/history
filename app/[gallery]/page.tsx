@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import GalleryPageComponent from '../../src/components/GalleryPage'
 import getAlbums from '../../src/lib/albums'
 import getGalleries from '../../src/lib/galleries'
-import indexKeywords from '../../src/lib/search'
+import { buildFilterMetadata } from '../../src/lib/server/filter-metadata'
 import type { Gallery as GalleryName, ServerSideAlbumItem } from '../../src/types/common'
 import type { Gallery } from '../../src/types/pages'
 
@@ -27,7 +27,7 @@ async function getAlbumsData(gallery: GalleryName): Promise<Gallery.ComponentPro
   }))
 
   return {
-    gallery, albums: preparedAlbums, ...indexKeywords(preparedAlbums),
+    gallery, albums: preparedAlbums, indexedKeywords: buildFilterMetadata(preparedAlbums).indexedKeywords,
   }
 }
 

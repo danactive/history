@@ -106,8 +106,13 @@ export default function useSearch<ItemType extends SearchableItem>({
   )
 
   const knownPeople = useMemo(
-    () => Array.from(new Set(items.flatMap((item) => item.persons?.map((person) => person.full) ?? []))),
-    [items],
+    () => Array.from(new Set([
+      ...indexedKeywords
+        .filter((option) => option.filterKind === 'person')
+        .map((option) => option.value),
+      ...items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
+    ])),
+    [indexedKeywords, items],
   )
 
   const fallbackSelectedOption = useMemo(() => {

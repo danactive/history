@@ -13,6 +13,7 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
   personDetailsName,
   extraFilterChips,
   extraFiltersActive,
+  indexedKeywords = [],
   onClearExtraFilters,
   onStructuredOptionSubmit,
 }: {
@@ -21,6 +22,7 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
   personDetailsName?: string | null
   extraFilterChips?: React.ReactNode
   extraFiltersActive?: boolean
+  indexedKeywords?: Array<{ label: string; value: string; filterKind?: 'keyword' | 'year' | 'tag' | 'person' }>
   onClearExtraFilters?: () => void
   onStructuredOptionSubmit?: (option: { value: string }) => boolean
 }) => ({
@@ -42,7 +44,14 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
         </div>
       ) : null}
       {onStructuredOptionSubmit ? (
-        <button type="button" onClick={() => onStructuredOptionSubmit({ value: 'Alice' })}>Select structured option</button>
+        <>
+          <button type="button" onClick={() => onStructuredOptionSubmit({ value: 'Alice' })}>Select structured option</button>
+          {indexedKeywords.map(option => (
+            <button key={option.value} type="button" onClick={() => onStructuredOptionSubmit(option)}>
+              Select {option.value}
+            </button>
+          ))}
+        </>
       ) : null}
     </>
   ),
@@ -720,6 +729,29 @@ describe('usePersonsFilter URL sync', () => {
     expect(replace).toHaveBeenCalledWith('/demo/persons?person=Alice', { scroll: false })
   })
 
+  test('does not map a tag search option to the person filter', async () => {
+    query = new URLSearchParams()
+    const items = [
+      makeSearchOnlyItem('1', 'tag^, Alice', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [{ label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' }],
+    }))
+
+    render(<>{result.current.searchBox}</>)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Select tag^' }))
+
+    await waitFor(() => {
+      expect(result.current.selectedPerson).toBeNull()
+    })
+
+    expect(replace).not.toHaveBeenCalledWith('/demo/persons?person=tag%5E', { scroll: false })
+  })
+
   test('scopes all ages to the selected person after choosing a pre-existing structured option', async () => {
     query = new URLSearchParams()
     const items = [
@@ -807,4 +839,3 @@ describe('usePersonsFilter URL sync', () => {
     expect(screen.getByRole('link', { name: 'Person details' })).toHaveAttribute('href', '/demo/persons/details?person=Taylor+Example')
   })
 })
-

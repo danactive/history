@@ -38,4 +38,27 @@ describe('filter metadata composer', () => {
     expect(metadata.yearOptions.map(option => option.value)).toEqual(expect.arrayContaining(['2024', '2023']))
     expect(metadata.tagOptions.map(option => option.value)).toEqual(expect.arrayContaining(['concert^', 'memory^']))
   })
+
+  test('classifies search-only tags and people from server metadata', () => {
+    const metadata = buildFilterMetadata([
+      {
+        city: '',
+        filename: '2026-01-01-01.jpg',
+        photoDate: '2026-01-01',
+        persons: null,
+        search: 'tag^, First Middle Last, 2026',
+      },
+    ])
+
+    expect(metadata.indexedKeywords).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'tag^', filterKind: 'tag' }),
+      expect.objectContaining({ value: 'First Middle Last', filterKind: 'person' }),
+    ]))
+    expect(metadata.tagOptions).toEqual([
+      expect.objectContaining({ value: 'tag^', filterKind: 'tag' }),
+    ])
+    expect(metadata.personOptions).toEqual([
+      { label: 'First Middle Last (1)', value: 'First Middle Last', count: 1 },
+    ])
+  })
 })

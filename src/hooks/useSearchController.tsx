@@ -74,11 +74,6 @@ export default function useSearchController<ItemType>({
     initialKeyword || initialVisitedRegion || initialVisitedCountry || fallbackSelectedOption?.value || '',
   )
 
-  const resolveKnownPerson = useCallback((value: string) => {
-    const trimmed = value.trim().toLowerCase()
-    return knownPeople.find((person) => person.trim().toLowerCase() === trimmed) ?? null
-  }, [knownPeople])
-
   const activeVisitedOption = useMemo(() => {
     if (!currentVisitedFilter) return null
 
@@ -134,6 +129,7 @@ export default function useSearchController<ItemType>({
     const intent = resolveSearchSubmitIntent({
       selectedOption,
       inputValue,
+      knownPeople,
     })
 
     if (intent.type === 'visited') {
@@ -143,18 +139,25 @@ export default function useSearchController<ItemType>({
       return
     }
 
-    if (intent.type === 'structured') {
-      const knownPerson = ownedPersonFilter ? resolveKnownPerson(intent.option.value) : null
-
-      if (knownPerson) {
+    if (intent.type === 'person') {
+      if (ownedPersonFilter) {
         setKeyword('')
-        setSelectedOption(intent.option)
-        setInputValue(knownPerson)
+        setSelectedOption(intent.option ?? { label: intent.person, value: intent.person, filterKind: 'person' })
+        setInputValue(intent.person)
         setMemoryIndex?.(0)
-        router.push(getNextPath('', null, currentVisitedFilter, knownPerson))
+        router.push(getNextPath('', null, currentVisitedFilter, intent.person))
         return
       }
 
+      if (intent.option && onStructuredOptionSubmit?.(intent.option)) {
+        setMemoryIndex?.(0)
+        return
+      }
+
+      return
+    }
+
+    if (intent.type === 'structured') {
       if (onStructuredOptionSubmit?.(intent.option)) {
         setMemoryIndex?.(0)
         return
@@ -176,17 +179,6 @@ export default function useSearchController<ItemType>({
       return
     }
 
-    const knownPerson = ownedPersonFilter ? resolveKnownPerson(intent.keyword) : null
-
-    if (knownPerson) {
-      setKeyword('')
-      setSelectedOption({ label: knownPerson, value: knownPerson })
-      setInputValue(knownPerson)
-      setMemoryIndex?.(0)
-      router.push(getNextPath('', null, currentVisitedFilter, knownPerson))
-      return
-    }
-
     setKeyword(intent.keyword)
     setSelectedOption(createKeywordOption(intent.keyword))
     setInputValue(intent.keyword)
@@ -200,8 +192,8 @@ export default function useSearchController<ItemType>({
     getNextPath,
     onStructuredOptionSubmit,
     ownedPersonFilter,
-    resolveKnownPerson,
     currentVisitedFilter,
+    knownPeople,
   ])
 
   const handleClear = useCallback(() => {

@@ -2,13 +2,14 @@ import getAlbum from '../lib/album'
 import getAlbums from '../lib/albums'
 import getGalleries from '../lib/galleries'
 import { addYearToSearch, getItemYearFromFilename } from '../lib/domains/years'
-import indexKeywords, { addGeographyToSearch } from '../lib/search'
+import { addGeographyToSearch } from '../lib/search'
 import { buildVisitedRegionCountryIndex, getVisitedPlace } from '../lib/visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
 import { compareNewestFirst, getPrimaryFilename } from '../utils'
 import type { VisitedRegionCountryIndex } from './visited'
 import type { All } from '../types/pages'
+import { buildFilterMetadata } from './server/filter-metadata'
 
 type PrepareItemsParams = {
   albumName: AlbumMeta['albumName']
@@ -57,7 +58,7 @@ export async function getAllItems(
     return itemsToConcat
   }).sort(compareNewestFirst)
 
-  const { indexedKeywords } = indexKeywords(allItems)
+  const { indexedKeywords } = buildFilterMetadata(allItems)
 
   return { gallery, items: allItems, indexedKeywords }
 }
@@ -129,7 +130,7 @@ export function personsPageItemMapper({
  * Get all keywords from all galleries and albums
  * @returns {Promise<{ indexedKeywords: ReturnType<typeof indexKeywords>['indexedKeywords'] }>} Indexed keywords with counts
  */
-export async function getAllKeywords(): Promise<{ indexedKeywords: ReturnType<typeof indexKeywords>['indexedKeywords'] }> {
+export async function getAllKeywords(): Promise<{ indexedKeywords: All.ItemData['indexedKeywords'] }> {
   const { galleries } = await getGalleries()
   const allItems: { search: Item['search'] }[] = []
 
@@ -151,6 +152,6 @@ export async function getAllKeywords(): Promise<{ indexedKeywords: ReturnType<ty
     }
   }
 
-  const { indexedKeywords } = indexKeywords(allItems)
+  const { indexedKeywords } = buildFilterMetadata(allItems)
   return { indexedKeywords }
 }

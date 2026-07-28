@@ -168,6 +168,7 @@ interface ServerSideAllItem extends Item {
 type IndexedKeywords = {
   label: string;
   value: string;
+  filterKind?: 'keyword' | 'year' | 'tag' | 'person';
   visitedPlace?: VisitedPlace;
   isCreateOption?: boolean;
 }

@@ -950,6 +950,41 @@ describe('Clear button functionality', () => {
     expect(mockPush).toHaveBeenCalledWith('/demo/today?person=Alice+Example')
   })
 
+  it('uses server-provided classification when submitting selected suggestions on generic pages', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/today', params: {} })
+
+    const items = [
+      {
+        corpus: 'First Middle Last portrait tagged tag^',
+        filename: 'classified.jpg',
+        search: 'First Middle Last, tag^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [
+          { label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' },
+          { label: 'First Middle Last (1)', value: 'First Middle Last', filterKind: 'person' },
+        ],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+
+    fireEvent.click(getByText('tag^ (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?keyword=tag%5E')
+
+    fireEvent.click(getByText('First Middle Last (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?person=First+Middle+Last')
+  })
+
   it('submits a selected non-person suggestion as a keyword route on generic pages', () => {
     const { push: mockPush } = mockNavigation({ pathname: '/demo', params: {} })
 
