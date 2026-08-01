@@ -38,7 +38,7 @@ export default async function AlbumServer(props: RouteProps<Album.Params, Person
   const { person } = parsePersonSearchParams(searchParams)
 
   const {
-    items, meta, indexedKeywords, totalItemCount, visitedPlace: scopedVisitedPlace, visitedFilterLabel,
+    items, meta, indexedKeywords, personOptions, tagOptions, totalItemCount, visitedPlace: scopedVisitedPlace, visitedFilterLabel,
     clusteredMarkers,
   } = buildClusteredPageData(await getAlbumData({ album, gallery, visitedPlace, selectedPerson: person }))
   return (
@@ -50,6 +50,8 @@ export default async function AlbumServer(props: RouteProps<Album.Params, Person
         totalItemCount={totalItemCount}
         meta={meta}
         indexedKeywords={indexedKeywords}
+        personOptions={personOptions}
+        tagOptions={tagOptions}
         clusteredMarkers={clusteredMarkers}
         visitedPlace={scopedVisitedPlace}
         visitedFilterLabel={visitedFilterLabel}

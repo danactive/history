@@ -8,6 +8,7 @@ import {
 } from 'react'
 import Controls from '../components/Search/Controls'
 import RemovableFilterChip from '../components/Search/RemovableFilterChip'
+import type { PersonOption } from '../lib/domains/persons'
 import { filterItemsBySelectedPerson } from '../lib/filter-selected-person'
 import { buildSearchOptions } from '../lib/domains/search'
 import { getVisitedPlaceFromSearchParams } from '../lib/domains/visited'
@@ -48,6 +49,7 @@ interface UseSearchProps<ItemType> {
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   indexedKeywords?: IndexedKeywords[];
+  personOptions?: PersonOption[];
   visitedFilterLabel?: string | null;
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
@@ -75,6 +77,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
+  personOptions = [],
   visitedFilterLabel,
   refImageGallery,
   mapFilterEnabled,
@@ -107,12 +110,10 @@ export default function useSearch<ItemType extends SearchableItem>({
 
   const knownPeople = useMemo(
     () => Array.from(new Set([
-      ...indexedKeywords
-        .filter((option) => option.filterKind === 'person')
-        .map((option) => option.value),
+      ...personOptions.map((option) => option.value),
       ...items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
     ])),
-    [indexedKeywords, items],
+    [items, personOptions],
   )
 
   const fallbackSelectedOption = useMemo(() => {

@@ -25,11 +25,13 @@ export async function getAllData({ gallery, visitedPlace, selectedPerson }: All.
     }
   }
 
-  const { indexedKeywords } = buildFilterMetadata(scopedItems)
+  const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
   return {
     gallery,
     items: scopedItems,
     indexedKeywords,
+    personOptions,
+    tagOptions,
     totalItemCount: data.items.length,
     visitedPlace: visitedPlace ?? null,
     visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,

@@ -58,9 +58,9 @@ export async function getAllItems(
     return itemsToConcat
   }).sort(compareNewestFirst)
 
-  const { indexedKeywords } = buildFilterMetadata(allItems)
+  const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(allItems)
 
-  return { gallery, items: allItems, indexedKeywords }
+  return { gallery, items: allItems, indexedKeywords, personOptions, tagOptions }
 }
 
 /**

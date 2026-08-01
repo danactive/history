@@ -25,9 +25,14 @@ async function getAlbumsData(gallery: GalleryName): Promise<Gallery.ComponentPro
     ...album,
     corpus: [album.h1, album.h2, album.year, album.search].join(' '),
   }))
+  const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(preparedAlbums)
 
   return {
-    gallery, albums: preparedAlbums, indexedKeywords: buildFilterMetadata(preparedAlbums).indexedKeywords,
+    gallery,
+    albums: preparedAlbums,
+    indexedKeywords,
+    personOptions,
+    tagOptions,
   }
 }
 
@@ -36,11 +41,17 @@ export default async function GalleryServer({ params }: { params: Promise<Galler
     gallery,
   } = await params
 
-  const { albums, indexedKeywords } = await getAlbumsData(gallery)
+  const { albums, indexedKeywords, personOptions, tagOptions } = await getAlbumsData(gallery)
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <GalleryPageComponent albums={albums} gallery={gallery} indexedKeywords={indexedKeywords} />
+      <GalleryPageComponent
+        albums={albums}
+        gallery={gallery}
+        indexedKeywords={indexedKeywords}
+        personOptions={personOptions}
+        tagOptions={tagOptions}
+      />
     </Suspense>
   )
 }

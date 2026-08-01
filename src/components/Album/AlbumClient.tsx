@@ -26,6 +26,7 @@ function AlbumClient({
   totalItemCount,
   meta,
   indexedKeywords,
+  personOptions,
   clusteredMarkers,
   gallery,
   album,
@@ -53,6 +54,7 @@ function AlbumClient({
     items,
     totalCount: totalItemCount,
     indexedKeywords,
+    personOptions,
     visitedFilterLabel,
     ownedPersonFilter: true,
     trailingAction: albumDetailsHref

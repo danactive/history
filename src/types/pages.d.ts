@@ -1,4 +1,5 @@
 import type { Filesystem } from '../lib/filesystems'
+import type { PersonOption } from '../lib/domains/persons'
 import type { ClusteredMarkers } from '../lib/generate-clusters'
 import type { AgeSummaryValue } from '../utils/person-age'
 import type {
@@ -15,6 +16,8 @@ import type {
 export type ServerPageDataBase<TItem> = {
   items: TItem[];
   indexedKeywords: IndexedKeywords[];
+  personOptions?: PersonOption[];
+  tagOptions?: IndexedKeywords[];
   totalItemCount?: number;
   visitedPlace?: VisitedPlace | null;
   visitedFilterLabel?: string | null;
@@ -25,6 +28,8 @@ export namespace Gallery {
     gallery: GalleryName;
     albums: ServerSideAlbumItem[];
     indexedKeywords: IndexedKeywords[];
+    personOptions?: PersonOption[];
+    tagOptions?: IndexedKeywords[];
   }
   export interface Params {
     gallery: GalleryName
@@ -40,6 +45,8 @@ export namespace Album {
     totalItemCount?: number;
     meta?: object;
     indexedKeywords: IndexedKeywords[];
+    personOptions?: PersonOption[];
+    tagOptions?: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
     visitedPlace?: VisitedPlace | null;
     visitedFilterLabel?: string | null;
@@ -87,6 +94,8 @@ export namespace All {
     items: ServerSideAllItem[];
     totalItemCount?: number;
     indexedKeywords: IndexedKeywords[];
+    personOptions?: PersonOption[];
+    tagOptions?: IndexedKeywords[];
     clusteredMarkers: ClusteredMarkers;
     initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
     initialBaseScopeItems?: ServerSideAllItem[];

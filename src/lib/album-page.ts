@@ -23,6 +23,8 @@ export async function getAlbumData(
     : preparedItems
   const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
 
+  const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
+
   return {
     gallery,
     album,
@@ -31,6 +33,8 @@ export async function getAlbumData(
     visitedPlace: visitedPlace ?? null,
     visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
     meta,
-    indexedKeywords: buildFilterMetadata(scopedItems).indexedKeywords,
+    indexedKeywords,
+    personOptions,
+    tagOptions,
   }
 }

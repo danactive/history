@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'List Albums - History App',
 }
 
-export default function GalleryClient({ gallery, albums, indexedKeywords }: Gallery.ComponentProps) {
+export default function GalleryClient({ gallery, albums, indexedKeywords, personOptions }: Gallery.ComponentProps) {
   const {
     filtered,
     searchBox,
@@ -22,6 +22,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords }: Gall
     items: albums,
     summaryLabel: 'Albums',
     indexedKeywords,
+    personOptions,
     ownedPersonFilter: true,
     trailingAction: <Link href={`/${gallery}/details`}>Gallery details</Link>,
   })

@@ -40,6 +40,8 @@ export default async function TodayServer({
   const {
     items,
     indexedKeywords,
+    personOptions,
+    tagOptions,
     totalItemCount,
     visitedPlace: scopedVisitedPlace,
     visitedFilterLabel,
@@ -55,6 +57,8 @@ export default async function TodayServer({
         items={items}
         totalItemCount={totalItemCount}
         indexedKeywords={indexedKeywords}
+        personOptions={personOptions}
+        tagOptions={tagOptions}
         clusteredMarkers={clusteredMarkers}
         visitedPlace={scopedVisitedPlace}
         visitedFilterLabel={visitedFilterLabel}

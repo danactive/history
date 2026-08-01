@@ -40,6 +40,8 @@ export default async function PersonsServer({
   const {
     items,
     indexedKeywords,
+    personOptions,
+    tagOptions,
     initialAgeSummary,
     initialBaseScopeItems,
     initialAgeScopeItems,
@@ -62,6 +64,8 @@ export default async function PersonsServer({
         items={items}
         totalItemCount={totalItemCount}
         indexedKeywords={indexedKeywords}
+        personOptions={personOptions}
+        tagOptions={tagOptions}
         clusteredMarkers={clusteredMarkers}
         initialAgeSummary={initialAgeSummary}
         initialBaseScopeItems={initialBaseScopeItems}

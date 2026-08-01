@@ -9,7 +9,7 @@ import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
 import useSearch from './useSearch'
 
-type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'visitedFilterLabel' | 'trailingAction'> & {
+type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'personOptions' | 'visitedFilterLabel' | 'trailingAction'> & {
   summaryLabel?: string
   totalCount?: number
   syncSearchState?: boolean
@@ -25,6 +25,7 @@ type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywor
 export default function useMapFilter({
   items,
   indexedKeywords,
+  personOptions,
   visitedFilterLabel,
   trailingAction,
   gallery,
@@ -74,6 +75,7 @@ export default function useMapFilter({
     memoryIndex,
     setMemoryIndex,
     indexedKeywords,
+    personOptions,
     visitedFilterLabel,
     refImageGallery,
     mapFilterEnabled,

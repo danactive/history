@@ -7,7 +7,7 @@ import {
   type PersonsRouteSearchParams,
 } from './persons-route-filters'
 import { filterPersonsItems, getPersonsData } from './persons'
-import indexKeywords from './search'
+import { buildFilterMetadata } from './server/filter-metadata'
 import type { Persons } from '../types/pages'
 import { buildAgeSummary } from '../utils/person-age'
 import type { Gallery } from '../types/common'
@@ -50,7 +50,10 @@ export async function getPersonsPageData({
     : undefined
   const visibleItems = filterPersonsItems(visitedScopedItems, selectedAge, selectedPerson)
   const hasServerScope = visitedPlace !== null || selectedAge !== null || selectedPerson !== null
-  const indexedKeywords = hasServerScope ? indexKeywords(visibleItems).indexedKeywords : personsData.indexedKeywords
+  const scopedFilterMetadata = hasServerScope ? buildFilterMetadata(visibleItems) : null
+  const indexedKeywords = scopedFilterMetadata?.indexedKeywords ?? personsData.indexedKeywords
+  const personOptions = scopedFilterMetadata?.personOptions ?? personsData.personOptions
+  const tagOptions = scopedFilterMetadata?.tagOptions ?? personsData.tagOptions
   const initialAgeSummary = buildAgeSummary(summaryItems, ageSummaryPerson)
 
   return {
@@ -58,6 +61,8 @@ export async function getPersonsPageData({
     items: visibleItems,
     totalItemCount: personsData.items.length,
     indexedKeywords,
+    personOptions,
+    tagOptions,
     initialAgeSummary,
     initialBaseScopeItems: selectedAge === null && selectedPerson ? visitedScopedItems : undefined,
     initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
