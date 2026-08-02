@@ -340,8 +340,11 @@ beforeEach(() => {
   })
   buildGalleriesDetailsText.mockResolvedValue([
     'Available galleries',
-    'demo: 1 album(s)',
-    'public: 1 album(s)',
+    'Default gallery: demo',
+    'Non-default galleries: public',
+    'Gallery album counts:',
+    '- demo (default): 1 album(s)',
+    '- public: 1 album(s)',
   ].join('\n'))
   buildAlbumStory.mockResolvedValue({
     summary: 'Album summary',
@@ -540,7 +543,9 @@ describe('storytelling MCP server', () => {
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('public')
     expect(galleries.contents[0]?.text).toContain('Available galleries')
-    expect(galleries.contents[0]?.text).toContain('demo: 1 album(s)')
+    expect(galleries.contents[0]?.text).toContain('Default gallery: demo')
+    expect(galleries.contents[0]?.text).toContain('Non-default galleries: public')
+    expect(galleries.contents[0]?.text).toContain('- demo (default): 1 album(s)')
     expect(gallery.contents[0]?.text).toContain('Gallery is demo')
     expect(gallery.contents[0]?.text).toContain('trip: Trip')
     expect(gallery.contents[0]?.text).toContain('with keywords Nagoya Castle, Atsuta Shrine')

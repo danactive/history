@@ -16,6 +16,7 @@ import {
   type StorySearchSchemaInput,
 } from '../models/storytelling'
 import type { Gallery, Item, Person } from '../types/common'
+import config from '../models/config'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
@@ -87,16 +88,43 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
   return items.map(mapAllItemToCandidate)
 }
 
-export async function buildGalleriesDetailsText() {
+type GalleryInventory = {
+  galleries: Gallery[]
+  summaries: Array<{ gallery: Gallery; albumCount: number }>
+}
+
+async function getGalleryInventory(): Promise<GalleryInventory> {
   const { galleries } = await getGalleries()
-  const counts = await Promise.all(galleries.map(async (gallery) => {
-    const albums = await getAlbums(gallery)
-    return `${gallery}: ${albums[gallery].albums.length} album(s)`
+  const summaries = await Promise.all(galleries.map(async (gallery) => {
+    const { albums } = (await getAlbums(gallery))[gallery]
+    return { gallery, albumCount: albums.length }
   }))
+
+  return { galleries, summaries }
+}
+
+function buildGalleryInventoryLines({ galleries, summaries }: GalleryInventory) {
+  const nonDefaultGalleries = galleries.filter(gallery => gallery !== config.defaultGallery)
+  const defaultGallery = galleries.includes(config.defaultGallery)
+    ? config.defaultGallery
+    : `${config.defaultGallery} (not currently available)`
+
+  return [
+    `Default gallery: ${defaultGallery}`,
+    `Non-default galleries: ${nonDefaultGalleries.join(', ') || 'none'}`,
+    'Gallery album counts:',
+    ...summaries.map(({ gallery, albumCount }) => (
+      `- ${gallery}${gallery === config.defaultGallery ? ' (default)' : ''}: ${albumCount} album(s)`
+    )),
+  ]
+}
+
+export async function buildGalleriesDetailsText() {
+  const galleryInventory = await getGalleryInventory()
 
   return [
     'Available galleries',
-    ...counts,
+    ...buildGalleryInventoryLines(galleryInventory),
   ].join('\n')
 }
 
@@ -439,17 +467,13 @@ export async function getOnThisDayStory(gallery: Gallery, monthDay?: string, lim
 }
 
 export async function buildStorytellingOverview() {
-  const { galleries } = await getGalleries()
-  const counts = await Promise.all(galleries.map(async (gallery) => {
-    const albumData = await getAlbums(gallery)
-    return `${gallery}: ${albumData[gallery].albums.length} album(s)`
-  }))
+  const galleryInventory = await getGalleryInventory()
 
   return [
     'History storytelling MCP server',
     'Read-only tools for finding people, places, albums, and narrative moments in a local photo/video archive.',
-    `Available galleries: ${galleries.join(', ') || 'none'}`,
-    ...counts,
+    'Gallery inventory:',
+    ...buildGalleryInventoryLines(galleryInventory),
     'Recommended flow: search_story_moments -> get_album_story -> story-from-history prompt.',
   ].join('\n')
 }

@@ -339,7 +339,8 @@ describe('storytelling MCP server integration', () => {
     const gallery = await client.readResource('history://gallery/demo')
 
     expect(galleries.contents[0]?.text).toContain('Available galleries')
-    expect(galleries.contents[0]?.text).toContain('demo:')
+    expect(galleries.contents[0]?.text).toContain('Default gallery: demo')
+    expect(galleries.contents[0]?.text).toContain('- demo (default):')
     expect(gallery.contents[0]?.text).toContain('Gallery is demo')
   }, 20000)
 

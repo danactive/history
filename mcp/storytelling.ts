@@ -311,8 +311,8 @@ function createStorytellingServer() {
       },
     }),
     {
-      title: 'History On This Day',
-      description: 'On-this-day matches for a gallery and month-day.',
+      title: 'History Today: On This Day',
+      description: 'On-this-day photo memories for today by default or a requested month-day.',
       mimeType: 'text/plain',
     },
     async (uri, variables) => {

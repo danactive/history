@@ -4,10 +4,12 @@ import config from '../../models/config'
 import { formatAlbumResourceText } from '../../models/storytelling'
 import getAlbum from '../album'
 import * as allLib from '../all'
+import getGalleries from '../galleries'
 import * as todayLib from '../today'
 import {
   buildAlbumPeopleAndKeywordTags,
   buildGalleryDetailsText,
+  buildGalleriesDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
   buildPersonDetailsText,
@@ -116,6 +118,19 @@ describe('Storytelling library', () => {
     expect(text).toContain(`Gallery is ${config.defaultGallery}`)
     expect(text).toContain('Albums: ')
     expect(text).toContain('sample: Sample')
+  })
+
+  test('identifies the default and non-default galleries in the gallery inventory', async () => {
+    const { galleries } = await getGalleries()
+    const nonDefaultGalleries = galleries.filter(gallery => gallery !== config.defaultGallery)
+    const text = await buildGalleriesDetailsText()
+
+    expect(text).toContain(`Default gallery: ${config.defaultGallery}`)
+    expect(text).toContain(`Non-default galleries: ${nonDefaultGalleries.join(', ') || 'none'}`)
+    expect(text).toContain(`- ${config.defaultGallery} (default): `)
+    nonDefaultGalleries.forEach((gallery) => {
+      expect(text).toContain(`- ${gallery}: `)
+    })
   })
 
   test('promotes repeated search-only names into album person counts before keyword tags', () => {
