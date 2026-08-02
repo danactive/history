@@ -10,7 +10,6 @@ import type {
   ServerSideAllItem,
   ServerSidePhotoItem,
   ServerSideTodayItem,
-  VisitedPlace,
 } from './common'
 
 export type ServerPageDataBase<TItem> = {
@@ -19,15 +18,9 @@ export type ServerPageDataBase<TItem> = {
   personOptions?: PersonOption[];
   tagOptions?: IndexedKeywords[];
   totalItemCount?: number;
-  visitedPlace?: VisitedPlace | null;
-  visitedFilterLabel?: string | null;
 }
 
 export type SearchMetadata = Pick<ServerPageDataBase<never>, 'indexedKeywords' | 'personOptions' | 'tagOptions'>
-
-export type SearchMetadataWithVisitedLabel = SearchMetadata & Pick<ServerPageDataBase<never>, 'visitedFilterLabel'>
-
-export type SearchMetadataWithVisited = SearchMetadataWithVisitedLabel & Pick<ServerPageDataBase<never>, 'visitedPlace'>
 
 export type SearchUiConfig = {
   summaryLabel?: string;
@@ -76,7 +69,7 @@ export type PhotoPageComponentProps<TItem> = PhotoPageData<TItem> & {
 }
 
 export namespace Gallery {
-  export type ComponentProps = SearchMetadataWithVisited & {
+  export type ComponentProps = SearchMetadata & {
     gallery: GalleryName;
     albums: ServerSideAlbumItem[];
   }

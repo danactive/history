@@ -1,12 +1,11 @@
 import getAlbum from './album'
 import getAlbums from './albums'
-import { filterItemsBySelectedPerson } from './filter-selected-person'
-import { filterItemsByVisitedPlaceFromCities, formatVisitedPlace } from './domains/visited'
+import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
 import { addYearToSearch, getItemYearFromFilename } from './domains/years'
 import { buildFilterMetadata, type ServerPageFilterMetadata } from './server/filter-metadata'
 import { addGeographyToSearch } from './search'
 import config from '../models/config'
-import type { AlbumMeta, Gallery, Item, ServerSideTodayItem, VisitedPlace } from '../types/common'
+import type { AlbumMeta, Gallery, Item, ServerSideTodayItem } from '../types/common'
 import type { Today } from '../types/pages'
 import { compareNewestFirst } from '../utils'
 
@@ -15,8 +14,7 @@ type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 export async function getTodayItems(
   gallery: Gallery,
   monthDay: string,
-  visitedPlace?: VisitedPlace | null,
-  selectedPerson?: string | null,
+  query?: string,
 ): Promise<TodayItemsResult> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
@@ -58,10 +56,12 @@ export async function getTodayItems(
   items.sort(compareNewestFirst)
 
   const totalItemCount = items.length
-  const visitedScopedItems = visitedPlace
-    ? filterItemsByVisitedPlaceFromCities(items, visitedPlace)
+  const baseMetadata = buildFilterMetadata(items)
+  const hasQuery = Boolean(query)
+  const parsedQuery = query ? parseFilterQuery(query, getFilterQueryContext(baseMetadata)) : null
+  const scopedItems = parsedQuery
+    ? filterItemsByQuery(items, parsedQuery)
     : items
-  const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
 
   const { indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
@@ -73,8 +73,6 @@ export async function getTodayItems(
     personOptions,
     yearOptions,
     tagOptions,
-    totalItemCount: visitedPlace || selectedPerson ? totalItemCount : undefined,
-    visitedPlace: visitedPlace ?? null,
-    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
+    totalItemCount: hasQuery ? totalItemCount : undefined,
   }
 }

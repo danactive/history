@@ -1,12 +1,18 @@
-import { filterAllItemsByVisitedPlace } from './all'
 import { getAgeSummaryPerson } from './persons-filter-scopes'
-import { formatVisitedPlace, getVisitedPlaceFromSearchParams } from './domains/visited'
 import {
   getAgeFromPersonsRouteSearchParams,
   getPersonFromPersonsRouteSearchParams,
   type PersonsRouteSearchParams,
 } from './persons-route-filters'
 import { filterPersonsItems, getPersonsData } from './persons'
+import {
+  filterItemsByQuery,
+  getConjunctiveFilterTerms,
+  getFilterQueryContext,
+  parseFilterQuery,
+  replaceConjunctiveFilterTerms,
+  type FilterQueryContext,
+} from './filter-query'
 import { buildFilterMetadata } from './server/filter-metadata'
 import type { Persons } from '../types/pages'
 import { buildAgeSummary } from '../utils/person-age'
@@ -24,6 +30,15 @@ export function getAgeFromSearchParams(searchParams?: PersonsSearchParams): AgeF
   return getAgeFromPersonsRouteSearchParams(searchParams)
 }
 
+export function getPersonsMenuBaseQuery(query: string, context: FilterQueryContext) {
+  const terms = getConjunctiveFilterTerms(query, context)
+  if (!terms.has('age') && !terms.has('person')) {
+    return query
+  }
+
+  return replaceConjunctiveFilterTerms(query, { age: null, person: null }, context)
+}
+
 export async function getPersonsPageData({
   gallery,
   selectedAge,
@@ -35,21 +50,24 @@ export async function getPersonsPageData({
   selectedPerson: string | null
   searchParams?: PersonsSearchParams
 }): Promise<Persons.ItemData> {
-  const visitedPlace = getVisitedPlaceFromSearchParams(searchParams)
   const personsData = await getPersonsData({ gallery })
-  const visitedScopedItems = visitedPlace
-    ? filterAllItemsByVisitedPlace(personsData.items, visitedPlace)
+  const query = typeof searchParams?.query === 'string' ? searchParams.query : ''
+  const baseMetadata = buildFilterMetadata(personsData.items)
+  const queryContext = getFilterQueryContext(baseMetadata)
+  const menuBaseQuery = getPersonsMenuBaseQuery(query, queryContext)
+  const menuBaseItems = menuBaseQuery
+    ? filterItemsByQuery(personsData.items, parseFilterQuery(menuBaseQuery, queryContext))
     : personsData.items
   const ageSummaryPerson = getAgeSummaryPerson(selectedAge, selectedPerson)
-  const summaryItems = filterPersonsItems(visitedScopedItems, null, ageSummaryPerson)
+  const summaryItems = filterPersonsItems(menuBaseItems, null, ageSummaryPerson)
   const personScopeItems = selectedAge !== null && selectedPerson
-    ? filterPersonsItems(visitedScopedItems, null, selectedPerson)
+    ? filterPersonsItems(menuBaseItems, null, selectedPerson)
     : undefined
   const ageScopeItems = selectedAge !== null
-    ? filterPersonsItems(visitedScopedItems, selectedAge, null)
+    ? filterPersonsItems(menuBaseItems, selectedAge, null)
     : undefined
-  const visibleItems = filterPersonsItems(visitedScopedItems, selectedAge, selectedPerson)
-  const hasServerScope = visitedPlace !== null || selectedAge !== null || selectedPerson !== null
+  const visibleItems = filterPersonsItems(menuBaseItems, selectedAge, selectedPerson)
+  const hasServerScope = Boolean(query) || selectedAge !== null || selectedPerson !== null
   const scopedFilterMetadata = hasServerScope ? buildFilterMetadata(visibleItems) : null
   const indexedKeywords = scopedFilterMetadata?.indexedKeywords ?? personsData.indexedKeywords
   const personOptions = scopedFilterMetadata?.personOptions ?? personsData.personOptions
@@ -64,10 +82,8 @@ export async function getPersonsPageData({
     personOptions,
     tagOptions,
     initialAgeSummary,
-    initialBaseScopeItems: selectedAge === null && selectedPerson ? visitedScopedItems : undefined,
+    initialBaseScopeItems: selectedAge === null && selectedPerson ? menuBaseItems : undefined,
     initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
     initialPersonScopeItems: personScopeItems,
-    visitedPlace: visitedPlace ?? null,
-    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }
 }

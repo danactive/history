@@ -24,11 +24,10 @@ function formatYears(years: string[]) {
 }
 
 function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
-  const searchParams = new URLSearchParams({ visitedCountry: filter.country })
-
-  if (filter.region) {
-    searchParams.set('visitedRegion', filter.region)
-  }
+  const query = filter.region
+    ? `country:${filter.country} && region:${filter.region}`
+    : `country:${filter.country}`
+  const searchParams = new URLSearchParams({ query })
 
   return `/${gallery}/all?${searchParams.toString()}`
 }

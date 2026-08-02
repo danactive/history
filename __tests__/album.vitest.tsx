@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
 import AlbumServer from '../app/[gallery]/[album]/page'
+import type { Album } from '../src/types/pages'
 import { getPrimaryFilename } from '../src/utils'
+
+type AlbumClientMockProps = Pick<Album.ComponentProps, 'items' | 'album' | 'totalItemCount'>
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
@@ -10,20 +13,18 @@ vi.mock('../src/components/Album/AlbumClient', () => ({
     items,
     album,
     totalItemCount,
-    visitedFilterLabel,
-  }: {
-    items: Array<{ filename: string | string[] }>
-    album?: string
-    totalItemCount?: number
-    visitedFilterLabel?: string | null
-  }) => (
+  }: AlbumClientMockProps) => (
     <div>
       <div>{album ?? 'no-album'}</div>
       <div>{totalItemCount ?? 'no-total'}</div>
-      <div>{visitedFilterLabel ?? 'no-visited'}</div>
       {items.map((item) => {
         const filename = getPrimaryFilename(item.filename)
-        return <div key={filename}>{filename}</div>
+        return (
+          <div key={filename}>
+            <div>{filename}</div>
+            <div>{item.city}</div>
+          </div>
+        )
       })}
     </div>
   ),
@@ -98,18 +99,19 @@ vi.mock('../src/lib/generate-clusters', () => ({
 }))
 
 describe('Album page', () => {
-  test('applies visited filters on the server for album routes', async () => {
+  test('applies typed country and region filters on the server for album routes', async () => {
     const component = await AlbumServer({
       params: Promise.resolve({ gallery: 'demo', album: 'sample' }),
-      searchParams: Promise.resolve({ visitedCountry: 'Canada', visitedRegion: 'BC' }),
+      searchParams: Promise.resolve({ query: 'country:Canada && region:BC' }),
     })
 
     render(component)
 
     expect(screen.getByText('sample')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
-    expect(screen.getByText('BC, Canada')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
+    expect(screen.getByText('Vancouver, BC, Canada')).toBeInTheDocument()
     expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('Toronto, ON, Canada')).not.toBeInTheDocument()
   })
 })

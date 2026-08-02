@@ -73,7 +73,19 @@ function mockNavigation({
   push?: ReturnType<typeof vi.fn>
   replace?: ReturnType<typeof vi.fn>
 } = {}) {
-  vi.mocked(useSearchParams).mockReturnValue(createSearchParams(params) as any)
+  const queryTerms = [
+    params.visitedCountry ? `country:${params.visitedCountry}` : '',
+    params.visitedRegion ? `region:${params.visitedRegion}` : '',
+    params.person ? `person:"${params.person}"` : '',
+    params.tag ? `tag:${params.tag}` : '',
+    params.year ? `year:${params.year}` : '',
+    params.keyword ?? '',
+  ].filter(Boolean)
+  const canonicalParams = params.query ? params : {
+    ...params,
+    query: queryTerms.length ? queryTerms.join(' && ') : undefined,
+  }
+  vi.mocked(useSearchParams).mockReturnValue(createSearchParams(canonicalParams) as any)
   vi.mocked(useRouter).mockReturnValue({ push, replace } as any)
   vi.mocked(usePathname).mockReturnValue(pathname)
 
@@ -511,7 +523,7 @@ describe('Clear button functionality', () => {
 
     const { result } = renderHook(() => useSearch({ gallery: 'demo', items, indexedKeywords: [] }))
 
-    expect(result.current.keyword).toBe('')
+    expect(result.current.keyword).toBe('country:Portugal && region:Lisbon')
     expect(result.current.filtered).toEqual([items[0]])
   })
 
@@ -538,7 +550,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(getByText('Lisbon, Portugal (4)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/gallery/all?visitedCountry=Portugal&visitedRegion=Lisbon')
+    expect(mockPush).toHaveBeenCalledWith('/gallery/all?query=country%3APortugal+%26%26+region%3ALisbon')
   })
 
   it('does not turn an existing dropdown suggestion into a keyword filter', () => {
@@ -643,7 +655,7 @@ describe('Clear button functionality', () => {
     fireEvent.change(input, { target: { value: 'Alice' } })
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo/persons?keyword=Alice')
+    expect(mockPush).toHaveBeenCalledWith('/demo/persons?query=Alice')
   })
 
   it('shows Clear for a visited filter and clears visited params while keeping the selected media in place', async () => {
@@ -664,7 +676,8 @@ describe('Clear button functionality', () => {
 
     const { container } = render(<TestComponent />)
 
-    expect(container.textContent).toContain('Lisbon, Portugal')
+    expect(container.textContent).toContain('Country: Portugal')
+    expect(container.textContent).toContain('Region: Lisbon')
 
     const clearButton = Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Clear') as HTMLButtonElement
     expect(clearButton).toBeTruthy()
@@ -717,85 +730,38 @@ describe('Clear button functionality', () => {
     expect(mockReplace).toHaveBeenCalledWith('/demo/persons?select=alice.jpg')
   })
 
-  it('clearing the visited chip preserves the keyword query and selected media', async () => {
+  it('clears a typed compound query without leaving stale route filters', () => {
     const { replace: mockReplace } = mockNavigation({
-      pathname: '/demo/all',
-      params: {
-        visitedCountry: 'Uzbekistan',
-        visitedRegion: 'Tashkent to Andijan',
-        keyword: 'Harpy eagle',
-      },
+      pathname: '/gallery/all',
+      params: { query: 'country:Portugal && (tag:best^ || tag:highlight^)' },
     })
-
     const items = [
-      { corpus: 'Harpy eagle in Uzbekistan', city: 'Tashkent to Andijan, Uzbekistan', filename: 'harpy-eagle.jpg', photoDate: null },
-      { corpus: 'Harpy eagle elsewhere', city: 'Lima, Peru', filename: 'other.jpg', photoDate: null },
+      { corpus: 'Portugal best', city: 'Lisbon, Portugal', search: 'best^', filename: 'lisbon.jpg', photoDate: null },
+      { corpus: 'Portugal highlight', city: 'Porto, Portugal', search: 'highlight^', filename: 'porto.jpg', photoDate: null },
     ]
 
     function TestComponent() {
-      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [
+          { label: 'best^ (1)', value: 'best^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+        ],
+        tagOptions: [
+          { label: 'best^ (1)', value: 'best^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+        ],
+      })
       return <div>{search.searchBox}</div>
     }
 
     const { container } = render(<TestComponent />)
+    const clearButton = Array.from(container.querySelectorAll('button')).find((button) => button.textContent === 'Clear') as HTMLButtonElement
 
-    const visitedClearButton = container.querySelector('button[title="Clear visited filter Tashkent to Andijan, Uzbekistan"]') as HTMLButtonElement
-    expect(visitedClearButton).toBeTruthy()
+    fireEvent.click(clearButton)
 
-    mockNavigation({
-      pathname: '/demo/all',
-      params: { keyword: 'Harpy eagle' },
-      replace: mockReplace,
-    })
-
-    fireEvent.click(visitedClearButton)
-
-    expect(mockReplace).toHaveBeenCalledWith('/demo/all?keyword=Harpy+eagle&select=harpy-eagle.jpg')
-
-    await waitFor(() => {
-      const input = container.querySelector('input') as HTMLInputElement
-      expect(input.value).toBe('Harpy eagle')
-    })
-
-    expect(container.textContent).toMatch(/for "Harpy eagle"/)
-  })
-
-  it('clearing the visited chip with zero search results does not crash and clears visited params', () => {
-    const { replace: mockReplace } = mockNavigation({
-      pathname: '/gallery/all',
-      params: {
-        visitedCountry: 'Portugal',
-        visitedRegion: 'Lisbon',
-        keyword: 'nomatch',
-      },
-    })
-
-    const items = [
-      { corpus: 'Portugal', city: 'Lisbon, Portugal', filename: 'lisbon.jpg', photoDate: null },
-      { corpus: 'Portugal', city: 'Porto, Portugal', filename: 'porto.jpg', photoDate: null },
-    ]
-
-    function TestComponent() {
-      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
-      return <div>{search.searchBox}</div>
-    }
-
-    const { container } = render(<TestComponent />)
-
-    expect(container.textContent).toMatch(/Search results 0 of 2/)
-
-    const visitedClearButton = container.querySelector('button[title="Clear visited filter Lisbon, Portugal"]') as HTMLButtonElement
-    expect(visitedClearButton).toBeTruthy()
-
-    mockNavigation({
-      pathname: '/gallery/all',
-      params: { keyword: 'nomatch' },
-      replace: mockReplace,
-    })
-
-    fireEvent.click(visitedClearButton)
-
-    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?keyword=nomatch&select=lisbon.jpg')
+    expect(mockReplace).toHaveBeenCalledWith('/gallery/all?select=lisbon.jpg')
   })
 
   it('shows person details alongside trailing details action when a keyword resolves to a person', () => {
@@ -911,7 +877,7 @@ describe('Clear button functionality', () => {
     fireEvent.change(input, { target: { value: 'Alice Example' } })
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo/today?person=Alice+Example')
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?query=person%3A%22Alice+Example%22')
   })
 
   it('submits a selected person suggestion as a person route on generic pages', () => {
@@ -947,7 +913,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(getByText('Alice Example (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo/today?person=Alice+Example')
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?query=person%3A%22Alice+Example%22')
   })
 
   it('uses server-provided classification when submitting selected suggestions on generic pages', () => {
@@ -979,15 +945,15 @@ describe('Clear button functionality', () => {
 
     fireEvent.click(getByText('tag^ (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
-    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?tag=tag%5E')
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?query=tag%3Atag%5E')
 
     fireEvent.click(getByText('2026 (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
-    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?year=2026')
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?query=tag%3Atag%5E+%26%26+year%3A2026')
 
     fireEvent.click(getByText('First Middle Last (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
-    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?person=First+Middle+Last')
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?query=tag%3Atag%5E+%26%26+year%3A2026+%26%26+person%3A%22First+Middle+Last%22')
   })
 
   it('uses server person options as the source of truth for person routing on generic pages', () => {
@@ -1022,7 +988,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(getByText('First Middle Last (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo/today?person=First+Middle+Last')
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?query=person%3A%22First+Middle+Last%22')
   })
 
   it('uses server tag options as the source of truth for tag routing on generic pages', () => {
@@ -1057,7 +1023,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(getByText('tag^ (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo/today?tag=tag%5E')
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?query=tag%3Atag%5E')
   })
 
   it('owns a tag route filter on generic pages and exposes it as an active chip', () => {
@@ -1174,7 +1140,7 @@ describe('Clear button functionality', () => {
     fireEvent.click(getByText('Birds (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo?keyword=Birds')
+    expect(mockPush).toHaveBeenCalledWith('/demo?query=Birds')
   })
 
   it('keeps ad-hoc compound tag expressions on the keyword route', () => {
@@ -1207,7 +1173,49 @@ describe('Clear button functionality', () => {
     fireEvent.change(input, { target: { value: 'best^ && highlight^' } })
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
-    expect(mockPush).toHaveBeenCalledWith('/demo?keyword=best%5E+%26%26+highlight%5E')
+    expect(mockPush).toHaveBeenCalledWith('/demo?query=tag%3Abest%5E+%26%26+highlight%5E')
+  })
+
+  it('stacks a selected person with an existing country and tag OR expression', () => {
+    const { push: mockPush } = mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'country:Canada && (tag:best^ || tag:highlight^)' },
+    })
+    const items = [
+      {
+        corpus: 'Canada best Alice',
+        city: 'Toronto, Canada',
+        filename: 'alice.jpg',
+        search: 'best^, Alice Example',
+        persons: [{ full: 'Alice Example' }],
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [
+          { label: 'best^ (1)', value: 'best^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+          { label: 'Alice Example (1)', value: 'Alice Example', filterKind: 'person' },
+        ],
+        tagOptions: [
+          { label: 'best^ (1)', value: 'best^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+        ],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+    fireEvent.click(getByText('Alice Example (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith(
+      '/demo/all?query=country%3ACanada+%26%26+%28tag%3Abest%5E+%7C%7C+tag%3Ahighlight%5E%29+%26%26+person%3A%22Alice+Example%22',
+    )
   })
 
   it('filters generic pages by owned person route using corpus/search fallback when items have no persons array', () => {

@@ -39,8 +39,6 @@ export default function usePersonsFilter({
   const resolvedInitialPerson = initialSelectedPerson ?? null
 
   const {
-    clearPersonFiltersWithoutUrlSync,
-    hasActivePersonFilters,
     isServerScopeCurrent,
     selectedAge,
     selectedPerson,
@@ -55,17 +53,14 @@ export default function usePersonsFilter({
     searchParamsSnapshot,
   })
 
-  const keywordFromUrl = routeFilters.keyword
+  const keywordFromUrl = routeFilters.query ?? ''
   const {
     effectiveSelectedPerson,
-    extraFilterChips,
     handleStructuredOptionSubmit,
   } = usePersonsFilterControls({
     items,
     keywordFromUrl,
-    selectedAge,
     selectedPerson,
-    setSelectedAge,
     setSelectedPerson,
   })
 
@@ -93,11 +88,8 @@ export default function usePersonsFilter({
     indexedKeywords,
     tagOptions,
     personDetailsName: effectiveSelectedPerson,
-    extraFilterChips,
-    extraFiltersActive: hasActivePersonFilters,
-    onClearExtraFilters: clearPersonFiltersWithoutUrlSync,
-    extraQueryParamsToClear: ['age', 'person'],
     onStructuredOptionSubmit: handleStructuredOptionSubmit,
+    ownedPersonFilter: true,
   })
 
   const {
@@ -117,7 +109,6 @@ export default function usePersonsFilter({
     initialAgeScopeItems,
     initialPersonScopeItems,
     isServerScopeCurrent,
-    keyword,
     mapFilterEnabled,
     initialAgeSummary,
     setSelectedAge,

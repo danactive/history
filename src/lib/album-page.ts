@@ -1,17 +1,12 @@
 import getAlbum from './album'
-import { filterItemsBySelectedPerson } from './filter-selected-person'
-import { filterItemsByVisitedPlaceFromCities, formatVisitedPlace } from './domains/visited'
+import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
 import { buildFilterMetadata } from './server/filter-metadata'
 import { addGeographyToSearch } from './search'
-import type { VisitedPlace } from '../types/common'
 import type { AlbumRouteParams } from './server/page-route'
 import type { Album } from '../types/pages'
 
 export async function getAlbumData(
-  { album, gallery, visitedPlace, selectedPerson }: AlbumRouteParams & {
-    visitedPlace?: VisitedPlace | null
-    selectedPerson?: string | null
-  },
+  { album, gallery, query }: AlbumRouteParams & { query?: string },
 ): Promise<Album.ItemData> {
   const { album: { items, meta } } = await getAlbum(gallery, album)
   const preparedItems = items.map((item) => ({
@@ -19,10 +14,10 @@ export async function getAlbumData(
     search: addGeographyToSearch(item),
     corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
   }))
-  const visitedScopedItems = visitedPlace
-    ? filterItemsByVisitedPlaceFromCities(preparedItems, visitedPlace)
+  const baseMetadata = buildFilterMetadata(preparedItems)
+  const scopedItems = query
+    ? filterItemsByQuery(preparedItems, parseFilterQuery(query, getFilterQueryContext(baseMetadata)))
     : preparedItems
-  const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
 
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
@@ -30,9 +25,7 @@ export async function getAlbumData(
     gallery,
     album,
     items: scopedItems,
-    totalItemCount: visitedPlace || selectedPerson ? preparedItems.length : undefined,
-    visitedPlace: visitedPlace ?? null,
-    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
+    totalItemCount: query ? preparedItems.length : undefined,
     meta,
     indexedKeywords,
     personOptions,

@@ -1,22 +1,28 @@
-import { getVisitedPlaceFromSearchParams, type VisitedSearchParams } from '../domains/visited'
 import { getMonthDayFromSearchParams, type TodaySearchParams } from '../monthDay'
 import {
   parsePersonsRouteFilters,
   type PersonsRouteSearchParams,
 } from '../persons-route-filters'
 
-export type TodayRouteSearchParams = TodaySearchParams & VisitedSearchParams
+export type TodayRouteSearchParams = TodaySearchParams
+/**
+ * Routes may receive arbitrary query-string keys. Only `query` is consumed by
+ * the canonical search system; other keys are intentionally ignored.
+ */
+export type QuerySearchParams = Record<string, string | string[] | undefined> & {
+  query?: string | string[]
+}
+export type PersonDetailsSearchParams = {
+  person?: string | string[]
+}
 
-export function parseVisitedSearchParams(searchParams?: VisitedSearchParams) {
-  return {
-    visitedPlace: getVisitedPlaceFromSearchParams(searchParams),
-  }
+export function getQueryFromSearchParams(searchParams?: QuerySearchParams) {
+  return typeof searchParams?.query === 'string' ? searchParams.query.trim() : ''
 }
 
 export function parseTodayRouteSearchParams(searchParams?: TodayRouteSearchParams) {
   return {
     monthDay: getMonthDayFromSearchParams(searchParams),
-    visitedPlace: getVisitedPlaceFromSearchParams(searchParams),
   }
 }
 
@@ -25,19 +31,16 @@ export function parsePersonsRouteSearchParams(searchParams?: PersonsRouteSearchP
   return {
     selectedAge: filters.selectedAge,
     selectedPerson: filters.selectedPerson,
-    visitedPlace: filters.visitedPlace,
   }
 }
 
-export function parsePersonSearchParams(searchParams?: PersonsRouteSearchParams) {
-  const filters = parsePersonsRouteFilters(searchParams)
+export function parsePersonSearchParams(searchParams?: PersonDetailsSearchParams) {
   return {
-    person: filters.selectedPerson,
+    person: typeof searchParams?.person === 'string' ? searchParams.person.trim() || null : null,
   }
 }
 
 export type {
   PersonsRouteSearchParams as PersonsSearchParams,
   TodaySearchParams,
-  VisitedSearchParams,
 }

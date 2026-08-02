@@ -6,11 +6,11 @@ import {
   type GalleryRouteProps,
   type RouteSearchParamsProps,
 } from '../../../../src/lib/server/page-route'
-import { parsePersonSearchParams, type PersonsSearchParams } from '../../../../src/lib/server/search-params'
+import { parsePersonSearchParams, type PersonDetailsSearchParams } from '../../../../src/lib/server/search-params'
 import { resolvePersonResource } from '../../../../src/lib/storytelling'
 
 export async function generateMetadata(
-  { searchParams }: RouteSearchParamsProps<PersonsSearchParams>,
+  { searchParams }: RouteSearchParamsProps<PersonDetailsSearchParams>,
 ): Promise<Metadata> {
   const resolvedSearchParams = await resolveSearchParams(searchParams)
   const { person } = parsePersonSearchParams(resolvedSearchParams)
@@ -20,7 +20,7 @@ export async function generateMetadata(
 export default async function PersonDetailsPage({
   params,
   searchParams,
-}: GalleryRouteProps<PersonsSearchParams>) {
+}: GalleryRouteProps<PersonDetailsSearchParams>) {
   const {
     params: { gallery },
     searchParams: resolvedSearchParams,

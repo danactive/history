@@ -2,13 +2,13 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import { buildSelectableItemIndex, filterItemsByMapBounds, resolveSelectedItemIndex } from '../lib/map-filtering'
-import type { All, SearchMetadataWithVisitedLabel, SearchUiConfig } from '../types/pages'
+import type { All, SearchMetadata, SearchUiConfig } from '../types/pages'
 import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
 import useSearch from './useSearch'
 
-type UseMapFilterProps = SearchMetadataWithVisitedLabel & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'> & {
+type UseMapFilterProps = SearchMetadata & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'> & {
   syncSearchState?: boolean
 }
 
@@ -17,7 +17,6 @@ export default function useMapFilter({
   indexedKeywords,
   personOptions,
   tagOptions,
-  visitedFilterLabel,
   trailingAction,
   gallery,
   personDetailsName,
@@ -68,7 +67,6 @@ export default function useMapFilter({
     indexedKeywords,
     personOptions,
     tagOptions,
-    visitedFilterLabel,
     refImageGallery,
     mapFilterEnabled,
     onClearMapFilter: handleClearMapFilter,

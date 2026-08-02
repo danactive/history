@@ -2,7 +2,13 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
 import PersonsServer from '../app/[gallery]/persons/page'
+import type { Persons } from '../src/types/pages'
 import { getPrimaryFilename } from '../src/utils'
+
+type PersonsClientMockProps = Pick<
+  Persons.ComponentProps,
+  'items' | 'totalItemCount' | 'initialSelectedAge' | 'initialSelectedPerson'
+>
 
 vi.mock('../src/components/Persons/PersonsClient', () => ({
   __esModule: true,
@@ -11,12 +17,7 @@ vi.mock('../src/components/Persons/PersonsClient', () => ({
     totalItemCount,
     initialSelectedAge,
     initialSelectedPerson,
-  }: {
-    items: Array<{ filename: string | string[] }>
-    totalItemCount?: number
-    initialSelectedAge?: number | 'unknown' | null
-    initialSelectedPerson?: string | null
-  }) => (
+  }: PersonsClientMockProps) => (
     <div>
       <div>{totalItemCount ?? 'no-total'}</div>
       <div>{initialSelectedAge === null || initialSelectedAge === undefined ? 'no-age' : String(initialSelectedAge)}</div>
@@ -148,10 +149,10 @@ vi.mock('../src/utils/person-age', () => ({
 }))
 
 describe('Persons page', () => {
-  test('prefilters items from the person query string on the server', async () => {
+  test('prefilters items from a canonical person query on the server', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ person: 'Sample Person' }),
+      searchParams: Promise.resolve({ query: 'person:"Sample Person"' }),
     })
 
     render(component)
@@ -166,7 +167,7 @@ describe('Persons page', () => {
   test('keeps the age scope on the server when age and person are both selected', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ age: '96', person: 'Sample Person' }),
+      searchParams: Promise.resolve({ query: 'person:"Sample Person" && age:96' }),
     })
 
     render(component)
@@ -183,7 +184,7 @@ describe('Persons page', () => {
   test('keeps the final age-filtered slice on the server when only age is selected', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ age: '96' }),
+      searchParams: Promise.resolve({ query: 'age:96' }),
     })
 
     render(component)
@@ -196,14 +197,10 @@ describe('Persons page', () => {
     expect(screen.getByText('2025-07-12-04.jpg')).toBeInTheDocument()
   })
 
-  test('keeps the visited base scope on the server when age=unknown is selected', async () => {
+  test('applies typed country, region, and age predicates on the server', async () => {
     const component = await PersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({
-        visitedCountry: 'Canada',
-        visitedRegion: 'BC',
-        age: 'unknown',
-      }),
+      searchParams: Promise.resolve({ query: 'country:Canada && region:BC && age:unknown' }),
     })
 
     render(component)

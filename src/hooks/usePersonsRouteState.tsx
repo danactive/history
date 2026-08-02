@@ -65,12 +65,6 @@ export default function usePersonsRouteState({
     syncUrlImmediately(selectedAge, value)
   }, [selectedAge, selectedPerson, syncUrlImmediately])
 
-  const clearPersonFiltersWithoutUrlSync = useCallback(() => {
-    shouldSyncUrlRef.current = false
-    setSelectedAgeState(null)
-    setSelectedPersonState(null)
-  }, [])
-
   useEffect(() => {
     if (shouldSyncUrlRef.current) {
       return
@@ -111,8 +105,6 @@ export default function usePersonsRouteState({
   }, [pathname, replace, routeFilters, searchParamsSnapshot, selectedAge, selectedPerson])
 
   return {
-    clearPersonFiltersWithoutUrlSync,
-    hasActivePersonFilters: selectedAge !== null || selectedPerson !== null,
     isServerScopeCurrent: selectedAge === initialSelectedAge && selectedPerson === initialSelectedPerson,
     selectedAge,
     selectedPerson,

@@ -104,17 +104,15 @@ describe('album page data', () => {
     ]))
   })
 
-  test('filters album items by selected person before rebuilding metadata', async () => {
+  test('filters album items by a canonical person query before rebuilding metadata', async () => {
     const result = await getAlbumData({
       gallery: 'demo',
       album: 'sample',
-      selectedPerson: 'Taylor Example',
+      query: 'person:"Taylor Example"',
     })
 
     expect(result.items.map((item) => item.id)).toEqual(['1'])
     expect(result.totalItemCount).toBe(2)
-    expect(result.visitedPlace).toBeNull()
-    expect(result.visitedFilterLabel).toBeNull()
     expect(result.indexedKeywords.map((option) => option.value)).toContain('Taylor Example')
     expect(result.indexedKeywords.map((option) => option.value)).not.toContain('Jordan Sample')
   })

@@ -7,23 +7,17 @@ import {
   useMemo, useRef,
 } from 'react'
 import Controls from '../components/Search/Controls'
-import RemovableFilterChip from '../components/Search/RemovableFilterChip'
-import { filterItemsBySelectedPerson } from '../lib/filter-selected-person'
 import { buildSearchOptions } from '../lib/domains/search'
-import { getVisitedPlaceFromSearchParams } from '../lib/domains/visited'
 import {
-  filterByKeyword,
-  filterByVisitedPlace,
   parseKeywordQuery,
 } from '../lib/search-filtering'
-import { formatVisitedPlace } from '../lib/visited-core'
+import { filterItemsByQuery, getConjunctiveFilterTerms, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
 import { Gallery, VisitedPlace } from '../types/common'
-import type { SearchMetadataWithVisitedLabel, SearchUiConfig } from '../types/pages'
+import type { SearchMetadata, SearchUiConfig } from '../types/pages'
 import useBookmark from './useBookmark'
 import useSearchController from './useSearchController'
 import useSearchDetailActions from './useSearchDetailActions'
 import useVisibleSearchState from './useVisibleSearchState'
-import styles from './search.module.css'
 
 export { parseKeywordQuery } from '../lib/search-filtering'
 
@@ -41,7 +35,7 @@ type FilenameItem = SearchableItem & {
   filename: string | string[];
 }
 
-interface UseSearchProps<ItemType> extends SearchMetadataWithVisitedLabel, SearchUiConfig {
+interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {
   gallery: Gallery;
   items: ItemType[];
   memoryIndex?: number;
@@ -67,7 +61,6 @@ export default function useSearch<ItemType extends SearchableItem>({
   indexedKeywords = [],
   personOptions = [],
   tagOptions = [],
-  visitedFilterLabel,
   refImageGallery,
   mapFilterEnabled,
   onClearMapFilter,
@@ -83,17 +76,6 @@ export default function useSearch<ItemType extends SearchableItem>({
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
-  const activeTag = searchParams?.get('tag')?.trim() || ''
-  const activeYear = searchParams?.get('year')?.trim() || ''
-  const selectedPerson = ownedPersonFilter
-    ? searchParams?.get('person')?.trim() || null
-    : null
-
-  const currentVisitedFilter = useMemo<VisitedPlace | null>(() => getVisitedPlaceFromSearchParams({
-    visitedCountry: searchParams?.get('visitedCountry') ?? '',
-    visitedRegion: searchParams?.get('visitedRegion') ?? '',
-  }), [searchParams])
-
   const searchOptions = useMemo(
     () => buildSearchOptions(items, indexedKeywords),
     [items, indexedKeywords],
@@ -113,9 +95,9 @@ export default function useSearch<ItemType extends SearchableItem>({
   )
 
   const fallbackSelectedOption = useMemo(() => {
-    const preferredPersonDetailsName = selectedPerson ?? personDetailsName
+    const preferredPersonDetailsName = personDetailsName
 
-    if (!preferredPersonDetailsName || searchParams?.get('keyword') || activeTag || activeYear || currentVisitedFilter) {
+    if (!preferredPersonDetailsName || searchParams?.get('query')) {
       return null
     }
 
@@ -125,29 +107,24 @@ export default function useSearch<ItemType extends SearchableItem>({
       label: preferredPersonDetailsName,
       value: preferredPersonDetailsName,
     }
-  }, [currentVisitedFilter, personDetailsName, searchOptions, searchParams, selectedPerson])
+  }, [personDetailsName, searchOptions, searchParams])
 
   const visibleItemsRef = useRef<ItemType[]>(items)
 
   const {
     inputValue,
     keyword,
-    tag,
-    year,
     selectedOption,
     setKeyword,
     applyKeywordToUrl,
     handleClear,
     handleClearAll,
-    handleClearSelectedPerson,
-    handleClearVisitedFilter,
     handleInputValueChange,
     handleSelectedOptionChange,
     handleSubmit,
   } = useSearchController<ItemType>({
     itemsRef: visibleItemsRef,
     searchOptions,
-    currentVisitedFilter,
     fallbackSelectedOption,
     refImageGallery,
     setMemoryIndex,
@@ -159,25 +136,24 @@ export default function useSearch<ItemType extends SearchableItem>({
       ? ['person', ...extraQueryParamsToClear.filter((key) => key !== 'person')]
       : extraQueryParamsToClear,
     onStructuredOptionSubmit,
-    selectedPerson,
     ownedPersonFilter,
     knownPeople,
     knownTags,
   })
 
-  const visitedFiltered = useMemo(
-    () => filterByVisitedPlace(items, currentVisitedFilter),
-    [currentVisitedFilter, items],
-  )
-
-  const personFiltered = useMemo(
-    () => filterItemsBySelectedPerson(visitedFiltered, selectedPerson),
-    [selectedPerson, visitedFiltered],
-  )
+  const queryContext = useMemo<FilterQueryContext>(() => ({
+    countries: Array.from(new Set(searchOptions.flatMap(option => option.visitedPlace ? [option.visitedPlace.country] : []))),
+    regions: Array.from(new Set(searchOptions.flatMap(option => option.visitedPlace?.region ? [option.visitedPlace.region] : []))),
+    people: knownPeople,
+    tags: knownTags,
+    keywords: indexedKeywords
+      .filter(option => !option.filterKind || option.filterKind === 'keyword')
+      .map(option => option.value),
+  }), [indexedKeywords, knownPeople, knownTags, searchOptions])
 
   const filtered = useMemo(
-    () => filterByKeyword({ items: personFiltered, keyword: year || tag || keyword, indexedKeywords }),
-    [personFiltered, year, tag, keyword, indexedKeywords],
+    () => filterItemsByQuery(items, parseFilterQuery(keyword, queryContext)),
+    [items, keyword, queryContext],
   )
 
   const {
@@ -188,11 +164,15 @@ export default function useSearch<ItemType extends SearchableItem>({
   } = useVisibleSearchState(filtered, items, visibleItemsRef)
 
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
+  const selectedQueryPerson = useMemo(
+    () => getConjunctiveFilterTerms(keyword, queryContext).get('person') ?? null,
+    [keyword, queryContext],
+  )
   const { detailActions } = useSearchDetailActions({
     gallery,
     items,
-    keyword: year || tag || keyword,
-    personDetailsName: selectedPerson ?? personDetailsName,
+    keyword,
+    personDetailsName: selectedQueryPerson ?? personDetailsName,
     trailingAction,
   })
 
@@ -229,32 +209,7 @@ export default function useSearch<ItemType extends SearchableItem>({
     currentIndex: memoryIndex,
   })
 
-  const activeVisitedFilterLabel = currentVisitedFilter
-    ? formatVisitedPlace(currentVisitedFilter)
-    : visitedFilterLabel
-
-  const activeTagValue = tag || activeTag
-  const activeYearValue = year || activeYear
-
-  const ownedPersonChip = selectedPerson ? (
-    <RemovableFilterChip
-      className={styles.filterToken}
-      label={`Person: ${selectedPerson}`}
-      onRemove={handleClearSelectedPerson}
-      removeTitle={`Clear person filter ${selectedPerson}`}
-    />
-  ) : null
-
-  const combinedExtraFilterChips = ownedPersonChip || extraFilterChips
-    ? (
-        <>
-          {ownedPersonChip}
-          {extraFilterChips}
-        </>
-      )
-    : null
-
-  const hasExtraFilters = Boolean(selectedPerson || extraFiltersActive)
+  const hasExtraFilters = Boolean(extraFiltersActive)
 
   const searchBox = (
     <Controls
@@ -262,10 +217,7 @@ export default function useSearch<ItemType extends SearchableItem>({
       visibleCount={visibleCount}
       totalCount={totalCount ?? items.length}
       keyword={keyword}
-      activeTag={activeTagValue || null}
-      activeYear={activeYearValue || null}
       parsedKeyword={parsedKeyword}
-      activeVisitedFilterLabel={activeVisitedFilterLabel}
       mapFilterEnabled={mapFilterEnabled}
       searchOptions={searchOptions}
       selectedOption={selectedOption}
@@ -278,11 +230,8 @@ export default function useSearch<ItemType extends SearchableItem>({
       onInputValueChange={handleInputValueChange}
       onRemoveKeywordToken={handleRemoveKeywordToken}
       onClear={handleClear}
-      onClearTag={handleClear}
-      onClearYear={handleClear}
-      onClearVisitedFilter={handleClearVisitedFilter}
       onClearMapFilter={onClearMapFilter}
-      extraFilterChips={combinedExtraFilterChips}
+      extraFilterChips={extraFilterChips}
       extraFiltersActive={hasExtraFilters}
       onClearAll={handleClearAll}
       clearActionLabel={mapFilterEnabled || hasExtraFilters ? 'Clear all' : 'Clear'}
@@ -294,7 +243,7 @@ export default function useSearch<ItemType extends SearchableItem>({
 
   return {
     filtered,
-    keyword: year || tag || keyword,
+    keyword,
     setKeyword,
     searchBox,
     setVisibleCount,

@@ -3,55 +3,58 @@ import { describe, expect, test } from 'vitest'
 import {
   buildPersonsRouteSearchParams,
   getAgeFromPersonsRouteSearchParams,
-  getKeywordFromPersonsRouteSearchParams,
+  getQueryFromPersonsRouteSearchParams,
   getPersonFromPersonsRouteSearchParams,
   parsePersonsRouteFilters,
 } from '../persons-route-filters'
 
 describe('persons route filters', () => {
-  test('parses keyword, person, age, and visited filters together', () => {
+  test('parses person and age from a canonical conjunctive query', () => {
     expect(parsePersonsRouteFilters({
-      keyword: '  Alice  ',
-      person: ' Alice ',
-      age: '21',
-      visitedCountry: 'Canada',
-      visitedRegion: 'BC',
+      query: 'country:Canada && region:BC && person:"Alice Example" && age:21',
     })).toEqual({
-      keyword: 'Alice',
+      query: 'country:Canada && region:BC && person:"Alice Example" && age:21',
       selectedAge: 21,
-      selectedPerson: 'Alice',
-      visitedPlace: { country: 'Canada', region: 'BC' },
+      selectedPerson: 'Alice Example',
     })
   })
 
-  test('normalizes empty and invalid values', () => {
-    expect(getKeywordFromPersonsRouteSearchParams({ keyword: '  ' })).toBe('')
-    expect(getPersonFromPersonsRouteSearchParams({ person: ['Alice'] })).toBeNull()
-    expect(getAgeFromPersonsRouteSearchParams({ age: 'nope' })).toBeNull()
+  test('returns no selected person or age for an OR expression', () => {
+    expect(getQueryFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBe('person:Alice || person:Bob')
+    expect(getPersonFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBeNull()
+    expect(getAgeFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBeNull()
   })
 
-  test('serializes canonical persons route filters while preserving unrelated params', () => {
+  test('serializes age and person controls into the canonical query while preserving unrelated params', () => {
     const params = buildPersonsRouteSearchParams('select=alice.jpg&foo=bar', {
-      keyword: 'Alice',
+      query: 'country:Canada',
       selectedAge: 'unknown',
       selectedPerson: 'Alice',
-      visitedPlace: { country: 'Canada', region: null },
     })
 
-    expect(params.toString()).toBe('select=alice.jpg&foo=bar&age=unknown&person=Alice&visitedCountry=Canada')
+    expect(params.toString()).toBe('select=alice.jpg&foo=bar&query=country%3ACanada+%26%26+person%3AAlice+%26%26+age%3Aunknown')
   })
 
-  test('removes cleared canonical params', () => {
+  test('removes cleared person and age terms', () => {
     const params = buildPersonsRouteSearchParams(
-      'keyword=Alice&age=21&person=Alice&visitedCountry=Canada&visitedRegion=BC&select=alice.jpg',
+      'query=country%3ACanada+%26%26+person%3AAlice+%26%26+age%3A21&select=alice.jpg',
       {
-        keyword: '',
+        query: 'country:Canada && person:Alice && age:21',
         selectedAge: null,
         selectedPerson: null,
-        visitedPlace: null,
       },
     )
 
-    expect(params.toString()).toBe('select=alice.jpg')
+    expect(params.toString()).toBe('query=country%3ACanada&select=alice.jpg')
+  })
+
+  test('replaces a single person term when adding an age control', () => {
+    const params = buildPersonsRouteSearchParams('query=person%3AAlice', {
+      query: 'person:Alice',
+      selectedAge: 21,
+      selectedPerson: 'Alice',
+    })
+
+    expect(params.toString()).toBe('query=person%3AAlice+%26%26+age%3A21')
   })
 })

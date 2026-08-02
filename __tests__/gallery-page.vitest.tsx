@@ -2,24 +2,21 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 
 import GalleryServer from '../app/[gallery]/page'
+import type { Gallery } from '../src/types/pages'
+
+type GalleryClientMockProps = Pick<Gallery.ComponentProps, 'albums' | 'indexedKeywords'>
 
 vi.mock('../src/components/GalleryPage', () => ({
   __esModule: true,
   default: ({
+    albums,
     indexedKeywords,
-    visitedFilterLabel,
-    visitedPlace,
-  }: {
-    indexedKeywords: Array<{ value: string; filterKind?: string }>
-    visitedFilterLabel?: string | null
-    visitedPlace?: { country: string; region: string | null } | null
-  }) => (
+  }: GalleryClientMockProps) => (
     <div>
+      {albums.map((album) => <div key={album.name}>{album.name}</div>)}
       {indexedKeywords.map((option) => (
         <div key={option.value}>{`${option.value}:${option.filterKind ?? 'none'}`}</div>
       ))}
-      <div>{`visitedFilterLabel:${visitedFilterLabel ?? 'none'}`}</div>
-      <div>{`visitedPlace:${visitedPlace ? `${visitedPlace.country}/${visitedPlace.region ?? 'none'}` : 'none'}`}</div>
     </div>
   ),
 }))
@@ -39,6 +36,16 @@ vi.mock('../src/lib/albums', () => ({
           image: 'cover.jpg',
           video: false,
         },
+        {
+          name: 'album-two',
+          h1: 'Second album',
+          h2: 'Other subtitle',
+          year: '2025',
+          search: 'other^, Other Person, 2025',
+          count: 1,
+          image: 'other-cover.jpg',
+          video: false,
+        },
       ],
     },
   })),
@@ -50,10 +57,10 @@ vi.mock('../src/lib/galleries', () => ({
 }))
 
 describe('Gallery page', () => {
-  test('passes backend-classified search options and first-class visited metadata to the gallery client', async () => {
+  test('passes backend-classified search options to the gallery client', async () => {
     const component = await GalleryServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ visitedCountry: 'Mexico', visitedRegion: 'Guanajuato' }),
+      searchParams: Promise.resolve({}),
     })
 
     render(component)
@@ -61,7 +68,17 @@ describe('Gallery page', () => {
     expect(screen.getByText('tag^:tag')).toBeInTheDocument()
     expect(screen.getByText('First Middle Last:person')).toBeInTheDocument()
     expect(screen.getByText('2026:year')).toBeInTheDocument()
-    expect(screen.getByText('visitedFilterLabel:Guanajuato, Mexico')).toBeInTheDocument()
-    expect(screen.getByText('visitedPlace:Mexico/Guanajuato')).toBeInTheDocument()
+  })
+
+  test('filters albums from the canonical query before rendering the client', async () => {
+    const component = await GalleryServer({
+      params: Promise.resolve({ gallery: 'demo' }),
+      searchParams: Promise.resolve({ query: 'tag:tag^' }),
+    })
+
+    render(component)
+
+    expect(screen.getByText('album-one')).toBeInTheDocument()
+    expect(screen.queryByText('album-two')).not.toBeInTheDocument()
   })
 })

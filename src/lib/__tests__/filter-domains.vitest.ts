@@ -16,24 +16,10 @@ import { buildSearchOptions } from '../domains/search'
 import {
   filterItemsByVisitedPlace,
   filterItemsByVisitedPlaceFromCities,
-  getVisitedPlaceFromSearchParams,
 } from '../domains/visited'
 import { addYearToSearch, getItemYearFromFilename, isYearToken } from '../domains/years'
 
 describe('visited domain', () => {
-  test('parses country and region from search params', () => {
-    expect(getVisitedPlaceFromSearchParams({ visitedCountry: 'Canada', visitedRegion: 'BC' })).toEqual({
-      country: 'Canada',
-      region: 'BC',
-    })
-    expect(getVisitedPlaceFromSearchParams({ visitedCountry: 'Canada' })).toEqual({
-      country: 'Canada',
-      region: null,
-    })
-    expect(getVisitedPlaceFromSearchParams({ visitedCountry: '' })).toBeNull()
-    expect(getVisitedPlaceFromSearchParams({ visitedCountry: ['Canada'] })).toBeNull()
-  })
-
   test('filters items by exact visited scope', () => {
     const items = [
       { id: '1', visitedPlace: { country: 'Canada', region: 'BC' } },

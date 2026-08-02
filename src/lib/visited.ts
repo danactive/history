@@ -3,7 +3,6 @@ import getAlbum from './album'
 import getAlbums from './albums'
 export {
   filterItemsByVisitedPlace,
-  getVisitedPlaceFromSearchParams,
 } from './domains/visited'
 import type { CountryVisit } from './visited-core'
 import { buildVisitedDataFromItems } from './visited-core'

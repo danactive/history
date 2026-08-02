@@ -32,7 +32,6 @@ function AlbumClient({
   gallery,
   album,
   monthDay,
-  visitedFilterLabel,
 }: Album.ComponentProps) {
   const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
   const dateDetailsHref = gallery && monthDay ? `/${gallery}/today/details?${new URLSearchParams({ day: monthDay }).toString()}` : null
@@ -57,7 +56,6 @@ function AlbumClient({
     indexedKeywords,
     personOptions,
     tagOptions,
-    visitedFilterLabel,
     ownedPersonFilter: true,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>

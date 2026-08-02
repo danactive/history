@@ -1,33 +1,22 @@
-import type { ServerSideAllItem, VisitedPlace } from '../types/common'
 import type { All } from '../types/pages'
 import type { GalleryParams } from './server/page-route'
-import { filterItemsBySelectedPerson } from './filter-selected-person'
-import { filterItemsByVisitedPlace, formatVisitedPlace } from './domains/visited'
+import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
 import { allPageItemMapper, getAllItems } from './get-all-items'
 import { buildFilterMetadata } from './server/filter-metadata'
 
-export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visitedPlace: VisitedPlace) {
-  return filterItemsByVisitedPlace(items, visitedPlace)
-}
-
-export async function getAllData({ gallery, visitedPlace, selectedPerson }: GalleryParams & {
-  visitedPlace?: VisitedPlace | null
-  selectedPerson?: string | null
+export async function getAllData({ gallery, query }: GalleryParams & {
+  query?: string
 }): Promise<All.ItemData> {
   const data = await getAllItems(gallery, allPageItemMapper, true)
 
-  const visitedScopedItems = visitedPlace
-    ? filterAllItemsByVisitedPlace(data.items, visitedPlace)
-    : data.items
-  const scopedItems = filterItemsBySelectedPerson(visitedScopedItems, selectedPerson ?? null)
-
-  if (!visitedPlace && !selectedPerson) {
+  if (!query) {
     return {
       ...data,
-      visitedPlace: null,
-      visitedFilterLabel: null,
     }
   }
+
+  const baseMetadata = buildFilterMetadata(data.items)
+  const scopedItems = filterItemsByQuery(data.items, parseFilterQuery(query, getFilterQueryContext(baseMetadata)))
 
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
   return {
@@ -37,7 +26,5 @@ export async function getAllData({ gallery, visitedPlace, selectedPerson }: Gall
     personOptions,
     tagOptions,
     totalItemCount: data.items.length,
-    visitedPlace: visitedPlace ?? null,
-    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }
 }

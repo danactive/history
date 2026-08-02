@@ -8,74 +8,37 @@ import {
 
 describe('search route params', () => {
   test('creates params from serialized search params', () => {
-    const params = createSearchRouteParams({
-      toString: () => 'keyword=Alice&visitedCountry=Canada',
-    })
+    const params = createSearchRouteParams({ toString: () => 'query=country%3ACanada' })
 
-    expect(params.toString()).toBe('keyword=Alice&visitedCountry=Canada')
+    expect(params.toString()).toBe('query=country%3ACanada')
   })
 
   test('falls back to get() when toString is not usable', () => {
     const params = createSearchRouteParams({
       toString: () => '[object Object]',
-      get: (key) => (key === 'keyword' ? 'Alice' : null),
+      get: (key) => (key === 'query' ? 'country:Canada' : null),
     })
 
-    expect(params.toString()).toBe('keyword=Alice')
+    expect(params.toString()).toBe('query=country%3ACanada')
   })
 
-  test('builds search route paths with keyword, select, and visited state', () => {
+  test('builds canonical query paths and clears retired filter params', () => {
     const path = buildSearchRoutePath({
       pathname: '/demo/all',
-      baseSearchParams: { toString: () => 'foo=bar' },
-      keyword: 'Alice',
+      baseSearchParams: { toString: () => 'keyword=Alice&tag=best%5E&visitedCountry=Canada&foo=bar' },
+      query: 'country:Canada && tag:best^',
       select: 'alice.jpg',
-      visitedPlace: { country: 'Canada', region: 'BC' },
     })
 
-    expect(path).toBe('/demo/all?foo=bar&keyword=Alice&select=alice.jpg&visitedCountry=Canada&visitedRegion=BC')
-  })
-
-  test('builds search route paths with a first-class tag param', () => {
-    const path = buildSearchRoutePath({
-      pathname: '/demo/all',
-      baseSearchParams: { toString: () => 'foo=bar&keyword=Alice' },
-      keyword: '',
-      tag: 'tag^',
-    })
-
-    expect(path).toBe('/demo/all?foo=bar&tag=tag%5E')
-  })
-
-  test('builds search route paths with a first-class year param', () => {
-    const path = buildSearchRoutePath({
-      pathname: '/demo/all',
-      baseSearchParams: { toString: () => 'foo=bar&keyword=Alice' },
-      keyword: '',
-      year: '2026',
-    })
-
-    expect(path).toBe('/demo/all?foo=bar&year=2026')
-  })
-
-  test('clears visited filters while preserving keyword when requested', () => {
-    const path = buildSearchRoutePath({
-      pathname: '/demo/all',
-      baseSearchParams: { toString: () => 'keyword=Alice&visitedCountry=Canada&visitedRegion=BC' },
-      keyword: 'Alice',
-      select: 'alice.jpg',
-      visitedPlace: null,
-    })
-
-    expect(path).toBe('/demo/all?keyword=Alice&select=alice.jpg')
+    expect(path).toBe('/demo/all?foo=bar&query=country%3ACanada+%26%26+tag%3Abest%5E&select=alice.jpg')
   })
 
   test('builds clear-all paths while preserving unrelated params', () => {
     const path = buildClearedSearchRoutePath({
       pathname: '/demo/persons',
-      baseSearchParams: { toString: () => 'keyword=Alice&tag=tag%5E&year=2026&age=21&person=Alice&foo=bar' },
+      baseSearchParams: { toString: () => 'query=country%3ACanada&age=21&foo=bar' },
       select: 'alice.jpg',
-      extraQueryParamsToClear: ['age', 'person'],
+      extraQueryParamsToClear: ['age'],
     })
 
     expect(path).toBe('/demo/persons?foo=bar&select=alice.jpg')

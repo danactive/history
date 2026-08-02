@@ -19,10 +19,7 @@ type Props = {
   visibleCount: number
   totalCount: number
   keyword: string
-  activeTag?: string | null
-  activeYear?: string | null
   parsedKeyword: ParsedKeywordQuery
-  activeVisitedFilterLabel: string | null | undefined
   mapFilterEnabled?: boolean
   searchOptions: IndexedKeywords[]
   selectedOption: IndexedKeywords | null
@@ -35,9 +32,6 @@ type Props = {
   onInputValueChange: (value: string) => void
   onRemoveKeywordToken: (tokenIndex: number) => void
   onClear: () => void
-  onClearTag: () => void
-  onClearYear: () => void
-  onClearVisitedFilter: () => void
   onClearMapFilter?: (coordinates?: [number, number] | null) => void
   extraFilterChips?: React.ReactNode
   extraFiltersActive?: boolean
@@ -46,15 +40,35 @@ type Props = {
   clearActionTitle?: string
 }
 
+function formatQueryToken(token: string) {
+  const match = token.match(/^(country|region|person|tag|year|age|keyword):(.+)$/i)
+  if (!match) return token
+  const labels: Record<string, string> = {
+    country: 'Country',
+    region: 'Region',
+    person: 'Person',
+    tag: 'Tag',
+    year: 'Year',
+    age: 'Age',
+    keyword: 'Keyword',
+  }
+  const value = match[2].replace(/^"(.*)"$/, '$1')
+  return `${labels[match[1].toLowerCase()]}: ${value}`
+}
+
+function getQueryRemoveTitle(token: string) {
+  const match = token.match(/^(person|tag|year|age):(.+)$/i)
+  if (!match) return `Remove query term ${token}`
+  const value = match[2].replace(/^"(.*)"$/, '$1')
+  return `Clear ${match[1].toLowerCase()} filter ${value}`
+}
+
 export default function Controls({
   summaryLabel = 'Search results',
   visibleCount,
   totalCount,
   keyword,
-  activeTag,
-  activeYear,
   parsedKeyword,
-  activeVisitedFilterLabel,
   mapFilterEnabled,
   searchOptions,
   selectedOption,
@@ -67,9 +81,6 @@ export default function Controls({
   onInputValueChange,
   onRemoveKeywordToken,
   onClear,
-  onClearTag,
-  onClearYear,
-  onClearVisitedFilter,
   onClearMapFilter,
   extraFilterChips,
   extraFiltersActive = false,
@@ -77,12 +88,8 @@ export default function Controls({
   clearActionLabel = 'Clear',
   clearActionTitle = 'Clear search and view adjacent photos',
 }: Props) {
-  const keywordResultLabel = activeYear
-    ? <> for year &quot;{activeYear}&quot;</>
-    : activeTag
-    ? <> for tag &quot;{activeTag}&quot;</>
-    : keyword ? <> for &quot;{keyword}&quot;</> : null
-  const hasActiveFilters = Boolean(keyword || activeTag || activeYear || activeVisitedFilterLabel || mapFilterEnabled || extraFiltersActive)
+  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
+  const hasActiveFilters = Boolean(keyword || mapFilterEnabled || extraFiltersActive)
 
   return (
     <form onSubmit={onSubmit}>
@@ -102,21 +109,7 @@ export default function Controls({
           <div className={styles.chipsSection}>
             <div className={styles.chipsLabel}>Active filters</div>
             <div className={styles.chipsRow}>
-              {activeYear ? (
-                <RemovableFilterChip
-                  className={styles.filterToken}
-                  label={`Year: ${activeYear}`}
-                  onRemove={onClearYear}
-                  removeTitle={`Clear year filter ${activeYear}`}
-                />
-              ) : activeTag ? (
-                <RemovableFilterChip
-                  className={styles.filterToken}
-                  label={`Tag: ${activeTag}`}
-                  onRemove={onClearTag}
-                  removeTitle={`Clear tag filter ${activeTag}`}
-                />
-              ) : keyword && (
+              {keyword && (
                 <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
                   {parsedKeyword.mode && (
                     <Chip size="sm" color="primary" variant="outlined" sx={filterChipSx}>
@@ -136,21 +129,13 @@ export default function Controls({
                       <RemovableFilterChip
                         key={`${token}-${idx}`}
                         className={styles.filterToken}
-                        label={token}
+                        label={formatQueryToken(token)}
                         onRemove={() => onRemoveKeywordToken(idx)}
-                        removeTitle={`Remove keyword token ${token}`}
+                        removeTitle={getQueryRemoveTitle(token)}
                       />
                     ))
                   )}
                 </Stack>
-              )}
-              {activeVisitedFilterLabel && (
-                <RemovableFilterChip
-                  className={styles.filterToken}
-                  label={activeVisitedFilterLabel}
-                  onRemove={onClearVisitedFilter}
-                  removeTitle={`Clear visited filter ${activeVisitedFilterLabel}`}
-                />
               )}
               {mapFilterEnabled && (
                 <RemovableFilterChip
@@ -179,7 +164,7 @@ export default function Controls({
           <div className={styles.actionsRow}>
             <Button
               type="submit"
-              title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
+              title="Use `&&`, `||`, and parentheses; known places, people, tags, years, and ages are detected automatically."
               color="neutral"
               sx={pillActionButtonSx}
             >

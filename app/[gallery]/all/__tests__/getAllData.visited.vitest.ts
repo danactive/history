@@ -81,7 +81,10 @@ describe('getAllData visited filtering', () => {
   test('does not include two-part Switzerland entries in Aeroplane/Switzerland results', async () => {
     const gallery: Gallery = 'demo'
 
-    const { items, totalItemCount } = await getAllData({ gallery, visitedPlace: { country: 'Aeroplane', region: 'Switzerland' } })
+    const { items, totalItemCount } = await getAllData({
+      gallery,
+      query: 'country:Aeroplane && region:Switzerland',
+    })
 
     expect(items.map((item) => item.filename)).toEqual(['2018-01-01-01.jpg'])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'Switzerland' })
@@ -91,24 +94,25 @@ describe('getAllData visited filtering', () => {
   test('does not include two-part USA entries in Aeroplane/USA results', async () => {
     const gallery: Gallery = 'demo'
 
-    const { items, totalItemCount } = await getAllData({ gallery, visitedPlace: { country: 'Aeroplane', region: 'USA' } })
+    const { items, totalItemCount } = await getAllData({
+      gallery,
+      query: 'country:Aeroplane && region:USA',
+    })
 
     expect(items.map((item) => item.filename)).toEqual(['2016-03-25-01.jpg'])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'USA' })
     expect(totalItemCount).toBe(6)
   })
 
-  test('supports person-only scoping without requiring a visited filter', async () => {
+  test('supports a canonical person query', async () => {
     const gallery: Gallery = 'demo'
 
-    const { items, totalItemCount, visitedPlace, visitedFilterLabel } = await getAllData({
+    const { items, totalItemCount } = await getAllData({
       gallery,
-      selectedPerson: 'Alice Example',
+      query: 'person:"Alice Example"',
     })
 
     expect(items.map((item) => item.id)).toEqual(['alice-only'])
     expect(totalItemCount).toBe(6)
-    expect(visitedPlace).toBeNull()
-    expect(visitedFilterLabel).toBeNull()
   })
 })

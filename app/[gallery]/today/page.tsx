@@ -8,9 +8,9 @@ import {
   type GalleryRouteProps,
 } from '../../../src/lib/server/page-route'
 import {
-  parsePersonSearchParams,
+  getQueryFromSearchParams,
   parseTodayRouteSearchParams,
-  type PersonsSearchParams,
+  type QuerySearchParams,
   type TodayRouteSearchParams,
 } from '../../../src/lib/server/search-params'
 import { getTodayItems } from '../../../src/lib/today'
@@ -27,27 +27,24 @@ export default async function TodayServer({
   params,
   searchParams,
 }: GalleryRouteProps<
-  TodayRouteSearchParams & PersonsSearchParams
+  TodayRouteSearchParams & QuerySearchParams
 >) {
   const {
     params: { gallery },
     searchParams: resolvedSearchParams,
   } = await resolveRouteInputs(params,
     searchParams)
-  const { monthDay,
-    visitedPlace } = parseTodayRouteSearchParams(resolvedSearchParams)
-  const { person } = parsePersonSearchParams(resolvedSearchParams)
+  const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
+  const query = getQueryFromSearchParams(resolvedSearchParams)
   const {
     items,
     indexedKeywords,
     personOptions,
     tagOptions,
     totalItemCount,
-    visitedPlace: scopedVisitedPlace,
-    visitedFilterLabel,
     clusteredMarkers,
   } = buildClusteredPageData(
-    await getTodayItems(gallery, monthDay, visitedPlace, person),
+    await getTodayItems(gallery, monthDay, query),
   )
   return (
     <Suspense fallback={<div>Loading Today...</div>}>
@@ -60,8 +57,6 @@ export default async function TodayServer({
         personOptions={personOptions}
         tagOptions={tagOptions}
         clusteredMarkers={clusteredMarkers}
-        visitedPlace={scopedVisitedPlace}
-        visitedFilterLabel={visitedFilterLabel}
       />
     </Suspense>
   )

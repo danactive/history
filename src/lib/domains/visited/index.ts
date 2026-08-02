@@ -9,25 +9,6 @@ import {
   matchesVisitedPlace,
 } from '../../visited-core'
 
-export type VisitedSearchParams = {
-  visitedCountry?: string | string[]
-  visitedRegion?: string | string[]
-}
-
-export function getVisitedPlaceFromSearchParams(searchParams?: VisitedSearchParams): VisitedPlace | null {
-  const country = typeof searchParams?.visitedCountry === 'string' ? searchParams.visitedCountry.trim() : ''
-  const region = typeof searchParams?.visitedRegion === 'string' ? searchParams.visitedRegion.trim() : ''
-
-  if (!country) {
-    return null
-  }
-
-  return {
-    country,
-    region: region || null,
-  }
-}
-
 export function filterItemsByVisitedPlace<ItemType extends { visitedPlace?: VisitedPlace | null }>(
   items: ItemType[],
   visitedPlace: VisitedPlace,

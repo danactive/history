@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAlbumData } from '../../../../../src/lib/album-page'
 import { getAllData } from '../../../../../src/lib/all'
-import { getVisitedPlaceFromSearchParams, type VisitedSearchParams } from '../../../../../src/lib/domains/visited'
 import { getItemYearFromFilename, isYearToken } from '../../../../../src/lib/domains/years'
-import { filterPersonsItems } from '../../../../../src/lib/persons'
 import { getAgeFromSearchParams, getPersonFromSearchParams, getPersonsPageData } from '../../../../../src/lib/persons-page'
 import { buildFilterMetadata } from '../../../../../src/lib/server/filter-metadata'
 import { getTodayItems } from '../../../../../src/lib/today'
@@ -124,19 +122,11 @@ function getView(value: string | null): DomainsView {
   }
 }
 
-function getVisitedParams(searchParams: URLSearchParams): VisitedSearchParams {
-  return {
-    visitedCountry: searchParams.get('visitedCountry') ?? undefined,
-    visitedRegion: searchParams.get('visitedRegion') ?? undefined,
-  }
-}
-
 export async function GET(request: NextRequest, props: { params: Promise<{ gallery: Gallery }> }) {
   const { gallery } = await props.params
   const { searchParams } = request.nextUrl
   const view = getView(searchParams.get('view'))
-  const keyword = searchParams.get('keyword')
-  const visitedPlace = getVisitedPlaceFromSearchParams(getVisitedParams(searchParams))
+  const query = searchParams.get('query')?.trim() || ''
 
   try {
     if (view === 'album') {
@@ -145,7 +135,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ galle
         return NextResponse.json(errorBody('album query param is required for view=album'), { status: 400 })
       }
 
-      const data = await getAlbumData({ gallery, album, visitedPlace })
+      const data = await getAlbumData({ gallery, album, query })
       const domains = buildFilterMetadata(data.items)
 
       return NextResponse.json({
@@ -153,15 +143,14 @@ export async function GET(request: NextRequest, props: { params: Promise<{ galle
         view,
         filters: {
           album,
-          keyword: keyword ?? null,
-          visitedPlace,
+          query: query || null,
         },
         counts: {
           totalItemCount: data.totalItemCount ?? data.items.length,
           scopedItemCount: data.items.length,
         },
         domains,
-        keywordDebug: buildKeywordDebug(data.items, domains.indexedKeywords, keyword),
+        keywordDebug: buildKeywordDebug(data.items, domains.indexedKeywords, query),
       })
     }
 
@@ -171,15 +160,14 @@ export async function GET(request: NextRequest, props: { params: Promise<{ galle
         return NextResponse.json(errorBody('monthDay query param is required for view=today'), { status: 400 })
       }
 
-      const data = await getTodayItems(gallery, monthDay, visitedPlace)
+      const data = await getTodayItems(gallery, monthDay, query)
 
       return NextResponse.json({
         gallery,
         view,
         filters: {
           monthDay,
-          keyword: keyword ?? null,
-          visitedPlace,
+          query: query || null,
         },
         counts: {
           totalItemCount: data.totalItemCount ?? data.items.length,
@@ -193,66 +181,58 @@ export async function GET(request: NextRequest, props: { params: Promise<{ galle
           yearOptions: data.yearOptions,
           tagOptions: data.tagOptions,
         },
-        keywordDebug: buildKeywordDebug(data.items, data.indexedKeywords, keyword),
+        keywordDebug: buildKeywordDebug(data.items, data.indexedKeywords, query),
       })
     }
 
     if (view === 'persons') {
-      const selectedAge = getAgeFromSearchParams({ age: searchParams.get('age') ?? undefined })
-      const selectedPerson = getPersonFromSearchParams({ person: searchParams.get('person') ?? undefined })
+      const selectedAge = getAgeFromSearchParams({ query })
+      const selectedPerson = getPersonFromSearchParams({ query })
       const data = await getPersonsPageData({
         gallery,
         selectedAge,
         selectedPerson,
         searchParams: {
-          visitedCountry: searchParams.get('visitedCountry') ?? undefined,
-          visitedRegion: searchParams.get('visitedRegion') ?? undefined,
-          age: searchParams.get('age') ?? undefined,
-          person: searchParams.get('person') ?? undefined,
+          query,
         },
       })
-      const visitedScopedItems = visitedPlace
-        ? data.items.filter((item) => item.visitedPlace?.country === visitedPlace.country && item.visitedPlace?.region === visitedPlace.region)
-        : data.items
-      const filteredItems = filterPersonsItems(visitedScopedItems, selectedAge, selectedPerson)
-      const domains = buildFilterMetadata(visitedScopedItems)
+      const filteredItems = data.items
+      const domains = buildFilterMetadata(data.items)
 
       return NextResponse.json({
         gallery,
         view,
         filters: {
-          keyword: keyword ?? null,
-          visitedPlace,
+          query: query || null,
           age: selectedAge,
           person: selectedPerson,
         },
         counts: {
           totalItemCount: data.totalItemCount ?? data.items.length,
-          scopedItemCount: visitedScopedItems.length,
+          scopedItemCount: data.items.length,
           selectedItemCount: filteredItems.length,
         },
         domains,
         ageSummary: data.initialAgeSummary,
-        keywordDebug: buildKeywordDebug(visitedScopedItems, domains.indexedKeywords, keyword),
+        keywordDebug: buildKeywordDebug(data.items, domains.indexedKeywords, query),
       })
     }
 
-    const data = await getAllData({ gallery, visitedPlace })
+    const data = await getAllData({ gallery, query })
     const domains = buildFilterMetadata(data.items)
 
     return NextResponse.json({
       gallery,
       view,
       filters: {
-        keyword: keyword ?? null,
-        visitedPlace,
+        query: query || null,
       },
       counts: {
         totalItemCount: data.totalItemCount ?? data.items.length,
         scopedItemCount: data.items.length,
       },
       domains,
-      keywordDebug: buildKeywordDebug(data.items, domains.indexedKeywords, keyword),
+      keywordDebug: buildKeywordDebug(data.items, domains.indexedKeywords, query),
     })
   } catch (error) {
     console.error('Failed to inspect domains:', error)
@@ -268,4 +248,3 @@ export {
   notSupported as DELETE, notSupported as HEAD, notSupported as OPTIONS, notSupported as PATCH, notSupported as POST,
   notSupported as PUT,
 }
-

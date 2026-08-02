@@ -2,9 +2,7 @@
 
 import { useCallback, useMemo } from 'react'
 
-import RemovableFilterChip from '../components/Search/RemovableFilterChip'
 import { isSearchOnlyPersonCandidate } from '../lib/domains/keywords'
-import type { PersonAgeFilterValue } from '../lib/persons'
 import { classifySearchSelection } from '../lib/search-submit-intent'
 import type { IndexedKeywords } from '../types/common'
 
@@ -20,16 +18,12 @@ function uniqueValues(values: string[]) {
 export default function usePersonsFilterControls<ItemType extends PersonSearchItem>({
   items,
   keywordFromUrl,
-  selectedAge,
   selectedPerson,
-  setSelectedAge,
   setSelectedPerson,
 }: {
   items: ItemType[]
   keywordFromUrl: string
-  selectedAge: PersonAgeFilterValue
   selectedPerson: string | null
-  setSelectedAge: (value: PersonAgeFilterValue) => void
   setSelectedPerson: (value: string | null) => void
 }) {
   const knownPeople = useMemo(() => uniqueValues([
@@ -69,39 +63,11 @@ export default function usePersonsFilterControls<ItemType extends PersonSearchIt
     return true
   }, [knownPeople, setSelectedPerson])
 
-  const hasActivePersonFilters = selectedAge !== null || selectedPerson !== null
   const effectiveSelectedPerson = selectedPerson ?? inferredPersonDetailsName
-
-  const extraFilterChips = useMemo(() => {
-    if (!hasActivePersonFilters) {
-      return null
-    }
-
-    return (
-      <>
-        {selectedAge !== null && (
-          <RemovableFilterChip
-            label={`Age: ${selectedAge === 'unknown' ? 'Unknown' : selectedAge}`}
-            onRemove={() => setSelectedAge(null)}
-            removeTitle="Clear age filter"
-          />
-        )}
-        {selectedPerson && (
-          <RemovableFilterChip
-            label={`Person: ${selectedPerson}`}
-            onRemove={() => setSelectedPerson(null)}
-            removeTitle="Clear person filter"
-          />
-        )}
-      </>
-    )
-  }, [hasActivePersonFilters, selectedAge, selectedPerson, setSelectedAge, setSelectedPerson])
 
   return {
     effectiveSelectedPerson,
-    extraFilterChips,
     handleStructuredOptionSubmit,
-    hasActivePersonFilters,
     inferredPersonDetailsName,
   }
 }

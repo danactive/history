@@ -18,7 +18,6 @@ export default function AllClient({
   personOptions,
   tagOptions,
   clusteredMarkers,
-  visitedFilterLabel,
 }: All.ComponentProps) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
 
@@ -43,7 +42,6 @@ export default function AllClient({
     indexedKeywords,
     personOptions,
     tagOptions,
-    visitedFilterLabel,
     ownedPersonFilter: true,
   })
 

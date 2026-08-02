@@ -42,8 +42,6 @@ export default async function PersonsServer({
     initialAgeScopeItems,
     initialPersonScopeItems,
     totalItemCount,
-    visitedPlace,
-    visitedFilterLabel,
     clusteredMarkers,
   } = buildClusteredPageData(await getPersonsPageData({
     gallery,
@@ -68,8 +66,6 @@ export default async function PersonsServer({
         initialPersonScopeItems={initialPersonScopeItems}
         initialSelectedAge={initialSelectedAge}
         initialSelectedPerson={initialSelectedPerson}
-        visitedPlace={visitedPlace}
-        visitedFilterLabel={visitedFilterLabel}
       />
     </Suspense>
   )

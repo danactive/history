@@ -21,6 +21,7 @@ import getAlbums from './albums'
 import { getAllData } from './all'
 import { filterSearchOnlyPersonCounts, isTagKeyword } from './domains/keywords'
 import { buildPersonCountsFromItems } from './domains/persons'
+import { formatFilterQuery } from './filter-query'
 import getGalleries from './galleries'
 import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
@@ -126,7 +127,16 @@ async function getScopedCandidates(input: StorySearchSchemaInput): Promise<Story
   const visitedFilter = getVisitedPlaceFilter(input)
   const groups = await Promise.all(galleries.map(async (gallery) => {
     if (visitedFilter) {
-      const { items } = await getAllData({ gallery, visitedPlace: visitedFilter })
+      const query = formatFilterQuery(visitedFilter.region
+        ? {
+            type: 'and',
+            children: [
+              { type: 'term', kind: 'country', value: visitedFilter.country },
+              { type: 'term', kind: 'region', value: visitedFilter.region },
+            ],
+          }
+        : { type: 'term', kind: 'country', value: visitedFilter.country })
+      const { items } = await getAllData({ gallery, query })
       return items.map(mapAllItemToCandidate)
     }
 
@@ -452,4 +462,3 @@ export type {
   StorySearchResult,
   StorySearchSchemaInput,
 }
-

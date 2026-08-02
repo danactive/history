@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 
-import { getPersonsPageData } from '../persons-page'
+import { getPersonsMenuBaseQuery, getPersonsPageData } from '../persons-page'
 
 vi.mock('../persons', () => ({
   __esModule: true,
@@ -39,12 +39,19 @@ vi.mock('../persons', () => ({
 }))
 
 describe('persons page data', () => {
+  test('uses only non-person predicates as the menu baseline', () => {
+    expect(getPersonsMenuBaseQuery(
+      'country:Canada && tag:best^ && person:"Alice Example" && age:21',
+      { countries: ['Canada'], tags: ['best^'], people: ['Alice Example'] },
+    )).toBe('country:Canada && tag:best^')
+  })
+
   test('keeps scoped persons search options backend-classified', async () => {
     const result = await getPersonsPageData({
       gallery: 'demo',
       selectedAge: null,
       selectedPerson: null,
-      searchParams: { visitedCountry: 'Demo Country' },
+      searchParams: { query: 'country:"Demo Country"' },
     })
 
     expect(result.indexedKeywords).toEqual(expect.arrayContaining([

@@ -12,7 +12,7 @@ import {
   type RouteParamsProps,
   type RouteProps,
 } from '../../../src/lib/server/page-route'
-import { parsePersonSearchParams, parseVisitedSearchParams, type PersonsSearchParams } from '../../../src/lib/server/search-params'
+import { getQueryFromSearchParams, type QuerySearchParams } from '../../../src/lib/server/search-params'
 
 export async function generateMetadata(
   { params }: RouteParamsProps<AlbumRouteParams>,
@@ -34,18 +34,17 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-export default async function AlbumServer(props: RouteProps<AlbumRouteParams, PersonsSearchParams>) {
+export default async function AlbumServer(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
   const {
     params: { album, gallery },
     searchParams,
   } = await resolveRouteInputs(props.params, props.searchParams)
-  const { visitedPlace } = parseVisitedSearchParams(searchParams)
-  const { person } = parsePersonSearchParams(searchParams)
+  const query = getQueryFromSearchParams(searchParams)
 
   const {
-    items, meta, indexedKeywords, personOptions, tagOptions, totalItemCount, visitedPlace: scopedVisitedPlace, visitedFilterLabel,
+    items, meta, indexedKeywords, personOptions, tagOptions, totalItemCount,
     clusteredMarkers,
-  } = buildClusteredPageData(await getAlbumData({ album, gallery, visitedPlace, selectedPerson: person }))
+  } = buildClusteredPageData(await getAlbumData({ album, gallery, query }))
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AlbumPageComponent
@@ -58,8 +57,6 @@ export default async function AlbumServer(props: RouteProps<AlbumRouteParams, Pe
         personOptions={personOptions}
         tagOptions={tagOptions}
         clusteredMarkers={clusteredMarkers}
-        visitedPlace={scopedVisitedPlace}
-        visitedFilterLabel={visitedFilterLabel}
       />
     </Suspense>
   )

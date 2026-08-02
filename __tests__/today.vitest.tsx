@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test, vi } from 'vitest'
 import TodayServer from '../app/[gallery]/today/page'
-import { Gallery } from '../src/types/common'
+import type { Today } from '../src/types/pages'
 import { getPrimaryFilename } from '../src/utils'
+
+type AlbumClientMockProps = Pick<Today.ComponentProps, 'items' | 'gallery' | 'monthDay' | 'totalItemCount'>
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
@@ -11,18 +13,10 @@ vi.mock('../src/components/Album/AlbumClient', () => ({
     gallery,
     monthDay,
     totalItemCount,
-    visitedFilterLabel,
-  }: {
-    items: Array<{ filename: string | string[] }>
-    gallery: Gallery
-    monthDay?: string
-    totalItemCount?: number
-    visitedFilterLabel?: string | null
-  }) => (
+  }: AlbumClientMockProps) => (
     <div>
       {gallery && monthDay ? <div>{`/${gallery}/today/details?day=${monthDay}`}</div> : null}
       <div>{totalItemCount ?? 'no-total'}</div>
-      <div>{visitedFilterLabel ?? 'no-visited'}</div>
       {items.map((item) => {
         const filename = getPrimaryFilename(item.filename)
         return <div key={filename}>{filename}</div>
@@ -72,8 +66,8 @@ vi.mock('../src/lib/album', () => ({
         },
         {
           id: '2',
-          filename: '2025-01-02-01.jpg',
-          photoDate: '2025-01-02',
+          filename: '2025-07-12-02.jpg',
+          photoDate: '2025-07-12',
           city: 'Toronto, ON, Canada',
           location: 'Temple',
           caption: 'Other day',
@@ -110,22 +104,20 @@ describe('Today page', () => {
 
     expect(screen.getByText('/demo/today/details?day=07-12')).toBeInTheDocument()
     expect(screen.getByText('no-total')).toBeInTheDocument()
-    expect(screen.getByText('no-visited')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.queryByText('2025-01-02-01.jpg')).not.toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-02.jpg')).toBeInTheDocument()
   })
 
-  test('applies visited filters on the server for today routes', async () => {
+  test('applies typed country and region filters on the server for today routes', async () => {
     const component = await TodayServer({
       params: Promise.resolve({ gallery: 'demo' }),
-      searchParams: Promise.resolve({ day: '07-12', visitedCountry: 'Canada', visitedRegion: 'BC' }),
+      searchParams: Promise.resolve({ day: '07-12', query: 'country:Canada && region:BC' }),
     })
 
     render(component)
 
-    expect(screen.getByText('1')).toBeInTheDocument()
-    expect(screen.getByText('BC, Canada')).toBeInTheDocument()
+    expect(screen.getByText('2')).toBeInTheDocument()
     expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
-    expect(screen.queryByText('2025-01-02-01.jpg')).not.toBeInTheDocument()
+    expect(screen.queryByText('2025-07-12-02.jpg')).not.toBeInTheDocument()
   })
 })
