@@ -4,6 +4,7 @@ import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './f
 import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import { allPageItemMapper, getAllItems } from './get-all-items'
 import { buildFilterMetadata } from './server/filter-metadata'
+import { getInitialActiveFacetCounts } from './active-facets'
 
 export async function getAllData({ gallery, query, mapBounds }: GalleryParams & {
   query?: string
@@ -13,15 +14,21 @@ export async function getAllData({ gallery, query, mapBounds }: GalleryParams & 
   const totalItemCount = mapBounds
     ? filterItemsByMapBounds(data.items, true, mapBounds).length
     : data.items.length
+  const baseMetadata = buildFilterMetadata(data.items)
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(data.items, true, mapBounds) : data.items,
+    query,
+    context: getFilterQueryContext(baseMetadata),
+  })
 
   if (!query) {
     return {
       ...data,
       totalItemCount,
+      activeFacetCounts,
     }
   }
 
-  const baseMetadata = buildFilterMetadata(data.items)
   const scopedItems = filterItemsByQuery(data.items, parseFilterQuery(query, getFilterQueryContext(baseMetadata)))
 
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
@@ -32,5 +39,6 @@ export async function getAllData({ gallery, query, mapBounds }: GalleryParams & 
     personOptions,
     tagOptions,
     totalItemCount,
+    activeFacetCounts,
   }
 }

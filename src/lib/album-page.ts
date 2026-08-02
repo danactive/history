@@ -2,6 +2,7 @@ import getAlbum from './album'
 import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
 import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import { buildFilterMetadata } from './server/filter-metadata'
+import { getInitialActiveFacetCounts } from './active-facets'
 import { addGeographyToSearch } from './search'
 import type { AlbumRouteParams } from './server/page-route'
 import type { Album } from '../types/pages'
@@ -24,6 +25,11 @@ export async function getAlbumData(
     : query
       ? preparedItems.length
       : undefined
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(preparedItems, true, mapBounds) : preparedItems,
+    query,
+    context: getFilterQueryContext(baseMetadata),
+  })
 
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
@@ -36,5 +42,6 @@ export async function getAlbumData(
     indexedKeywords,
     personOptions,
     tagOptions,
+    activeFacetCounts,
   }
 }

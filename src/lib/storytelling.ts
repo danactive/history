@@ -24,7 +24,7 @@ import { filterSearchOnlyPersonCounts, isTagKeyword } from './domains/keywords'
 import { buildPersonCountsFromItems } from './domains/persons'
 import { formatFilterQuery } from './filter-query'
 import getGalleries from './galleries'
-import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
+import { buildPersonGuiHref, buildTodayPageHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
 import indexKeywords from './search'
 import {
@@ -89,8 +89,13 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
 }
 
 type GalleryInventory = {
+  defaultGallery: Gallery
   galleries: Gallery[]
   summaries: Array<{ gallery: Gallery; albumCount: number }>
+}
+
+export function getStorytellingDefaultGallery(galleries: readonly Gallery[]) {
+  return galleries.find(gallery => gallery !== config.defaultGallery) ?? config.defaultGallery
 }
 
 async function getGalleryInventory(): Promise<GalleryInventory> {
@@ -100,21 +105,25 @@ async function getGalleryInventory(): Promise<GalleryInventory> {
     return { gallery, albumCount: albums.length }
   }))
 
-  return { galleries, summaries }
+  return {
+    defaultGallery: getStorytellingDefaultGallery(galleries),
+    galleries,
+    summaries,
+  }
 }
 
-function buildGalleryInventoryLines({ galleries, summaries }: GalleryInventory) {
-  const nonDefaultGalleries = galleries.filter(gallery => gallery !== config.defaultGallery)
-  const defaultGallery = galleries.includes(config.defaultGallery)
-    ? config.defaultGallery
-    : `${config.defaultGallery} (not currently available)`
+function buildGalleryInventoryLines({ defaultGallery, galleries, summaries }: GalleryInventory) {
+  const nonDefaultGalleries = galleries.filter(gallery => gallery !== defaultGallery)
+  const displayedDefaultGallery = galleries.includes(defaultGallery)
+    ? defaultGallery
+    : `${defaultGallery} (not currently available)`
 
   return [
-    `Default gallery: ${defaultGallery}`,
+    `Default gallery: ${displayedDefaultGallery}`,
     `Non-default galleries: ${nonDefaultGalleries.join(', ') || 'none'}`,
     'Gallery album counts:',
     ...summaries.map(({ gallery, albumCount }) => (
-      `- ${gallery}${gallery === config.defaultGallery ? ' (default)' : ''}: ${albumCount} album(s)`
+      `- ${gallery}${gallery === defaultGallery ? ' (default)' : ''}: ${albumCount} album(s)`
     )),
   ]
 }
@@ -377,7 +386,11 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
     .slice(0, displayLimit)
     .map(option => option.label)
 
-  return formatOnThisDayResourceText({ summary: resourceSummary }, buildTodayGuiHref(gallery, output.monthDay), {
+  return formatOnThisDayResourceText({
+    summary: resourceSummary,
+    totalMatches: output.totalMatches,
+    matches: output.matches,
+  }, buildTodayPageHref(gallery, output.monthDay), {
     years,
     locations: locationOptions.slice(0, displayLimit).map(option => option.label),
     persons: personCounts.slice(0, displayLimit),

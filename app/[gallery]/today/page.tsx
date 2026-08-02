@@ -43,6 +43,7 @@ export default async function TodayServer({
     indexedKeywords,
     personOptions,
     tagOptions,
+    activeFacetCounts,
     totalItemCount,
     clusteredMarkers,
   } = buildClusteredPageData(
@@ -58,6 +59,7 @@ export default async function TodayServer({
         indexedKeywords={indexedKeywords}
         personOptions={personOptions}
         tagOptions={tagOptions}
+        activeFacetCounts={activeFacetCounts}
         clusteredMarkers={clusteredMarkers}
       />
     </Suspense>

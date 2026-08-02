@@ -9,6 +9,7 @@ import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideTodayItem } from '../types/common'
 import type { Today } from '../types/pages'
 import { compareNewestFirst } from '../utils'
+import { getInitialActiveFacetCounts } from './active-facets'
 
 type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 
@@ -61,6 +62,11 @@ export async function getTodayItems(
     ? filterItemsByMapBounds(items, true, mapBounds).length
     : items.length
   const baseMetadata = buildFilterMetadata(items)
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(items, true, mapBounds) : items,
+    query,
+    context: getFilterQueryContext(baseMetadata),
+  })
   const hasQuery = Boolean(query)
   const parsedQuery = query ? parseFilterQuery(query, getFilterQueryContext(baseMetadata)) : null
   const scopedItems = parsedQuery
@@ -78,5 +84,6 @@ export async function getTodayItems(
     yearOptions,
     tagOptions,
     totalItemCount: hasQuery || mapBounds ? totalItemCount : undefined,
+    activeFacetCounts,
   }
 }

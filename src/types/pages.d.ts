@@ -2,6 +2,7 @@ import type { Filesystem } from '../lib/filesystems'
 import type { PersonOption } from '../lib/domains/persons'
 import type { ClusteredMarkers } from '../lib/generate-clusters'
 import type { AgeSummaryValue } from '../utils/person-age'
+import type { ActiveFacetCounts } from '../lib/active-facets'
 import type {
   AlbumMeta,
   Gallery as GalleryName,
@@ -18,9 +19,10 @@ export type ServerPageDataBase<TItem> = {
   personOptions?: PersonOption[];
   tagOptions?: IndexedKeywords[];
   totalItemCount?: number;
+  activeFacetCounts?: ActiveFacetCounts;
 }
 
-export type SearchMetadata = Pick<ServerPageDataBase<never>, 'indexedKeywords' | 'personOptions' | 'tagOptions'>
+export type SearchMetadata = Pick<ServerPageDataBase<never>, 'indexedKeywords' | 'personOptions' | 'tagOptions' | 'activeFacetCounts'>
 
 export type SearchUiConfig = {
   summaryLabel?: string;

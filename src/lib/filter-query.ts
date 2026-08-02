@@ -25,7 +25,7 @@ export type FilterQueryContext = {
   keywords?: string[]
 }
 
-type FilterQueryItem = {
+export type FilterQueryItem = {
   corpus: string
   city?: string
   filename?: string | string[]

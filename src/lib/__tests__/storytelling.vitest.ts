@@ -13,6 +13,7 @@ import {
   buildAlbumStory,
   buildDateDetailsText,
   buildPersonDetailsText,
+  getStorytellingDefaultGallery,
   getOnThisDayStory,
   getPeopleStoryIndex,
   resolveSearchOnlyPersonEntryFromItems,
@@ -122,15 +123,20 @@ describe('Storytelling library', () => {
 
   test('identifies the default and non-default galleries in the gallery inventory', async () => {
     const { galleries } = await getGalleries()
-    const nonDefaultGalleries = galleries.filter(gallery => gallery !== config.defaultGallery)
+    const defaultGallery = getStorytellingDefaultGallery(galleries)
+    const nonDefaultGalleries = galleries.filter(gallery => gallery !== defaultGallery)
     const text = await buildGalleriesDetailsText()
 
-    expect(text).toContain(`Default gallery: ${config.defaultGallery}`)
+    expect(text).toContain(`Default gallery: ${defaultGallery}`)
     expect(text).toContain(`Non-default galleries: ${nonDefaultGalleries.join(', ') || 'none'}`)
-    expect(text).toContain(`- ${config.defaultGallery} (default): `)
+    expect(text).toContain(`- ${defaultGallery} (default): `)
     nonDefaultGalleries.forEach((gallery) => {
       expect(text).toContain(`- ${gallery}: `)
     })
+  })
+
+  test('uses the configured gallery only when no non-config gallery exists', () => {
+    expect(getStorytellingDefaultGallery([config.defaultGallery])).toBe(config.defaultGallery)
   })
 
   test('promotes repeated search-only names into album person counts before keyword tags', () => {
@@ -256,7 +262,9 @@ describe('Storytelling library', () => {
     expect(text).toContain('Locations: ')
     expect(text).toContain('Persons: ')
     expect(text).toContain('Keyword tags: ')
-    expect(text).toContain('GUI: http://localhost:3030/')
+    expect(text).toContain('Matching memories (newest first):')
+    expect(text).toContain('View the graphical interface in a web browser: http://localhost:3030/')
+    expect(text).toContain('/today?day=01-04')
     expect(text).not.toContain('.jpg')
   })
 
@@ -296,5 +304,9 @@ describe('Storytelling library', () => {
 
     expect(text).not.toContain('Limited to 3.')
     expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
+    expect(text).toContain('Matching memories (newest first):')
+    expect(text).toContain('- 2022-07-18: Title 2')
+    expect(text).toContain('Album: sample-album')
+    expect(text).toContain('Caption: Caption 2')
   })
 })

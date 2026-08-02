@@ -20,7 +20,10 @@ type Props = {
   totalCount: number
   keyword: string
   parsedKeyword: ParsedKeywordQuery
+  activeFacetCounts: number[]
+  advancedFacetCount: number | null
   mapFilterEnabled?: boolean
+  mapFacetCount?: number
   searchOptions: IndexedKeywords[]
   selectedOption: IndexedKeywords | null
   inputValue: string
@@ -40,9 +43,9 @@ type Props = {
   clearActionTitle?: string
 }
 
-function formatQueryToken(token: string) {
+function formatQueryToken(token: string, count: number) {
   const match = token.match(/^(country|region|person|tag|year|age|keyword):(.+)$/i)
-  if (!match) return token
+  if (!match) return `${token} (${count})`
   const labels: Record<string, string> = {
     country: 'Country',
     region: 'Region',
@@ -53,7 +56,7 @@ function formatQueryToken(token: string) {
     keyword: 'Keyword',
   }
   const value = match[2].replace(/^"(.*)"$/, '$1')
-  return `${labels[match[1].toLowerCase()]}: ${value}`
+  return `${labels[match[1].toLowerCase()]}: ${value} (${count})`
 }
 
 function getQueryRemoveTitle(token: string) {
@@ -69,7 +72,10 @@ export default function Controls({
   totalCount,
   keyword,
   parsedKeyword,
+  activeFacetCounts,
+  advancedFacetCount,
   mapFilterEnabled,
+  mapFacetCount,
   searchOptions,
   selectedOption,
   inputValue,
@@ -119,7 +125,7 @@ export default function Controls({
                   {parsedKeyword.isAdvanced ? (
                     <RemovableFilterChip
                       className={styles.filterToken}
-                      label="Advanced query"
+                      label={`Advanced query (${advancedFacetCount ?? visibleCount})`}
                       onRemove={onClear}
                       removeTitle="Clear search and view adjacent photos"
                       removeAriaLabel="Clear advanced query"
@@ -129,7 +135,7 @@ export default function Controls({
                       <RemovableFilterChip
                         key={`${token}-${idx}`}
                         className={styles.filterToken}
-                        label={formatQueryToken(token)}
+                        label={formatQueryToken(token, activeFacetCounts[idx] ?? visibleCount)}
                         onRemove={() => onRemoveKeywordToken(idx)}
                         removeTitle={getQueryRemoveTitle(token)}
                       />
@@ -140,7 +146,7 @@ export default function Controls({
               {mapFilterEnabled && (
                 <RemovableFilterChip
                   className={styles.filterToken}
-                  label="Map filter"
+                  label={`Map filter (${mapFacetCount ?? totalCount})`}
                   onRemove={() => onClearMapFilter?.()}
                   removeTitle="Clear map filter"
                 />

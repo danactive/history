@@ -35,6 +35,7 @@ export default async function AllServer({
     indexedKeywords,
     personOptions,
     tagOptions,
+    activeFacetCounts,
     totalItemCount,
     clusteredMarkers,
   } = buildClusteredPageData(await getAllData({ gallery, query, mapBounds }))
@@ -48,6 +49,7 @@ export default async function AllServer({
         indexedKeywords={indexedKeywords}
         personOptions={personOptions}
         tagOptions={tagOptions}
+        activeFacetCounts={activeFacetCounts}
         clusteredMarkers={clusteredMarkers}
       />
     </Suspense>

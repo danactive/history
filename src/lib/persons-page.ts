@@ -18,6 +18,7 @@ import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import type { Persons } from '../types/pages'
 import { buildAgeSummary } from '../utils/person-age'
 import type { Gallery } from '../types/common'
+import { getInitialActiveFacetCounts } from './active-facets'
 
 export type AgeFilterValue = number | 'unknown' | null
 
@@ -57,6 +58,11 @@ export async function getPersonsPageData({
   const query = typeof searchParams?.query === 'string' ? searchParams.query : ''
   const baseMetadata = buildFilterMetadata(personsData.items)
   const queryContext = getFilterQueryContext(baseMetadata)
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(personsData.items, true, mapBounds) : personsData.items,
+    query,
+    context: queryContext,
+  })
   const menuBaseQuery = getPersonsMenuBaseQuery(query, queryContext)
   const menuBaseItems = menuBaseQuery
     ? filterItemsByQuery(personsData.items, parseFilterQuery(menuBaseQuery, queryContext))
@@ -93,5 +99,6 @@ export async function getPersonsPageData({
     initialBaseScopeItems: mapMenuBaseItems ?? (selectedAge === null && selectedPerson ? menuBaseItems : undefined),
     initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
     initialPersonScopeItems: personScopeItems,
+    activeFacetCounts,
   }
 }

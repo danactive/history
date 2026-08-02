@@ -229,6 +229,105 @@ describe('Router ready', () => {
     expect(container.textContent).toMatch(/Search results 9 of 108/)
   })
 
+  it('keeps the full total and independent server facet counts for an AND query', () => {
+    mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'person:"Example Person" && country:Exampleland' },
+    })
+    const items = [{
+      ...mockItem,
+      corpus: 'Example Person Exampleland',
+      city: 'Example City, Exampleland',
+      filename: 'fixture-one.jpg',
+      persons: [{ full: 'Example Person' }],
+    }]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        totalCount: 9,
+        activeFacetCounts: {
+          advancedQueryCount: null,
+          tokenCounts: [3, 1],
+        },
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 1 of 9/)
+    expect(container.textContent).toContain('Person: Example Person (3)')
+    expect(container.textContent).toContain('Country: Exampleland (1)')
+  })
+
+  it('displays map-scoped facet counts without changing the query route', () => {
+    const { push, replace } = mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'tag:featured^', bbox: '15,15,25,25' },
+    })
+    const items = [
+      { ...mockItem, corpus: 'featured in scope', search: 'featured^', coordinates: [20, 20] as [number, number] },
+      { ...mockItem, corpus: 'highlight in scope', search: 'highlight^', coordinates: [21, 21] as [number, number] },
+      { ...mockItem, corpus: 'featured outside scope', search: 'featured^', coordinates: [30, 30] as [number, number] },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        tagOptions: [
+          { label: 'featured^ (2)', value: 'featured^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+        ],
+        totalCount: 2,
+        mapFilterEnabled: true,
+        mapBounds: [[15, 15], [25, 25]],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toContain('Tag: featured^ (1)')
+    expect(container.textContent).toContain('Map filter (2)')
+    expect(push).not.toHaveBeenCalled()
+    expect(replace).not.toHaveBeenCalled()
+  })
+
+  it('displays each active OR branch count', () => {
+    mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'tag:featured^ || tag:highlight^' },
+    })
+    const items = [
+      { ...mockItem, corpus: 'featured one', search: 'featured^' },
+      { ...mockItem, corpus: 'featured two', search: 'featured^' },
+      { ...mockItem, corpus: 'highlight', search: 'highlight^' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        tagOptions: [
+          { label: 'featured^ (2)', value: 'featured^', filterKind: 'tag' },
+          { label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' },
+        ],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toContain('Tag: featured^ (2)')
+    expect(container.textContent).toContain('Tag: highlight^ (1)')
+  })
+
   it('rebuilds the count total after local map movement', () => {
     mockNavigation({ pathname: '/demo/all', params: { bbox: '15,15,25,25' } })
     const items = [
@@ -289,8 +388,8 @@ describe('Router ready', () => {
         gallery: 'demo',
         items: [],
         indexedKeywords: [
-          { label: 'Zulu (10)', value: 'Zulu' },
           { label: 'Alpha (3)', value: 'Alpha' },
+          { label: 'Zulu (10)', value: 'Zulu' },
           { label: 'Beta (1)', value: 'Beta' },
         ],
       })

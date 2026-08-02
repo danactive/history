@@ -13,6 +13,11 @@ type VisitedSearchOptionItem = SearchOptionItem & {
   photoDate: string | null
 }
 
+function getOptionCount(option: IndexedKeywords) {
+  const match = option.label.match(/\((\d+)\)$/)
+  return match ? Number(match[1]) : 0
+}
+
 function hasCityAndFilename(item: SearchOptionItem): item is VisitedSearchOptionItem {
   return typeof item.city === 'string' && Boolean(item.filename)
 }
@@ -41,5 +46,8 @@ export function buildSearchOptions<ItemType extends SearchOptionItem>(
     options.set(option.value, option)
   })
 
-  return [...options.values()]
+  return [...options.values()].sort((left, right) => (
+    getOptionCount(right) - getOptionCount(left)
+    || left.value.localeCompare(right.value)
+  ))
 }

@@ -28,6 +28,7 @@ function AlbumClient({
   indexedKeywords,
   personOptions,
   tagOptions,
+  activeFacetCounts,
   clusteredMarkers,
   gallery,
   album,
@@ -57,6 +58,7 @@ function AlbumClient({
     indexedKeywords,
     personOptions,
     tagOptions,
+    activeFacetCounts,
     ownedPersonFilter: true,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>

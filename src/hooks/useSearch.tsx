@@ -8,6 +8,7 @@ import {
 } from 'react'
 import Controls from '../components/Search/Controls'
 import { buildSearchOptions } from '../lib/domains/search'
+import { getActiveFacetCounts } from '../lib/active-facets'
 import { buildFilterMetadataFromLocations } from '../lib/filter-metadata-core'
 import {
   parseKeywordQuery,
@@ -66,6 +67,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   indexedKeywords = [],
   personOptions = [],
   tagOptions = [],
+  activeFacetCounts: initialActiveFacetCounts,
   refImageGallery,
   mapFilterEnabled,
   mapBounds,
@@ -244,9 +246,21 @@ export default function useSearch<ItemType extends SearchableItem>({
     && mapBounds
     && areMapBoundsEqual(mapBounds, urlMapBounds),
   )
-  const visibleTotalCount = isUrlMapScope
-    ? totalCount ?? mapScopedItems.length
-    : mapScopedItems.length
+  const visibleTotalCount = mapFilterEnabled && !isUrlMapScope
+    ? mapScopedItems.length
+    : totalCount ?? items.length
+  const localActiveFacetCounts = useMemo(
+    () => getActiveFacetCounts({
+      items: mapScopedItems,
+      query: keyword,
+      context: queryContext,
+      parsedQuery: parsedKeyword,
+    }),
+    [keyword, mapScopedItems, parsedKeyword, queryContext],
+  )
+  const activeFacetCounts = initialActiveFacetCounts && (!mapFilterEnabled || isUrlMapScope)
+    ? initialActiveFacetCounts
+    : localActiveFacetCounts
 
   const searchBox = (
     <Controls
@@ -255,7 +269,10 @@ export default function useSearch<ItemType extends SearchableItem>({
       totalCount={visibleTotalCount}
       keyword={keyword}
       parsedKeyword={parsedKeyword}
+      activeFacetCounts={activeFacetCounts.tokenCounts}
+      advancedFacetCount={activeFacetCounts.advancedQueryCount}
       mapFilterEnabled={mapFilterEnabled}
+      mapFacetCount={mapFilterEnabled ? visibleTotalCount : undefined}
       searchOptions={searchOptions}
       selectedOption={selectedOption}
       inputValue={inputValue}

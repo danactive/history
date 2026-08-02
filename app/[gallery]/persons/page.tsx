@@ -39,6 +39,7 @@ export default async function PersonsServer({
     indexedKeywords,
     personOptions,
     tagOptions,
+    activeFacetCounts,
     initialAgeSummary,
     initialBaseScopeItems,
     initialAgeScopeItems,
@@ -62,6 +63,7 @@ export default async function PersonsServer({
         indexedKeywords={indexedKeywords}
         personOptions={personOptions}
         tagOptions={tagOptions}
+        activeFacetCounts={activeFacetCounts}
         clusteredMarkers={clusteredMarkers}
         initialAgeSummary={initialAgeSummary}
         initialBaseScopeItems={initialBaseScopeItems}

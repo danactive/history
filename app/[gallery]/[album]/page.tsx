@@ -44,7 +44,7 @@ export default async function AlbumServer(props: RouteProps<AlbumRouteParams, Qu
   const mapBounds = parseMapBoundsParam(searchParams.bbox)
 
   const {
-    items, meta, indexedKeywords, personOptions, tagOptions, totalItemCount,
+    items, meta, indexedKeywords, personOptions, tagOptions, activeFacetCounts, totalItemCount,
     clusteredMarkers,
   } = buildClusteredPageData(await getAlbumData({ album, gallery, query, mapBounds }))
   return (
@@ -58,6 +58,7 @@ export default async function AlbumServer(props: RouteProps<AlbumRouteParams, Qu
         indexedKeywords={indexedKeywords}
         personOptions={personOptions}
         tagOptions={tagOptions}
+        activeFacetCounts={activeFacetCounts}
         clusteredMarkers={clusteredMarkers}
       />
     </Suspense>
