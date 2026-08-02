@@ -2,11 +2,9 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import type { FilterControlsProps } from '../components/Persons/FilterControls'
-import type { Gallery } from '../types/common'
-import type { All } from '../types/pages'
+import type { Persons } from '../types/pages'
 import type { PersonAgeFilterValue } from '../lib/persons'
 import { parsePersonsRouteFilters } from '../lib/persons-route-filters'
-import { type AgeSummaryValue } from '../utils/person-age'
 import usePersonsDerivedData from './usePersonsDerivedData'
 import useMapFilter from './useMapFilter'
 import useMemory from './useMemory'
@@ -18,21 +16,16 @@ export default function usePersonsFilter({
   items,
   totalItemCount,
   indexedKeywords,
+  tagOptions,
   initialAgeSummary,
   initialBaseScopeItems,
   initialAgeScopeItems,
   initialPersonScopeItems,
   initialSelectedAge,
   initialSelectedPerson,
-}: All.ItemData & {
-  gallery: Gallery
+}: Persons.ItemData & {
   totalItemCount?: number
-  initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number }
-  initialBaseScopeItems?: All.ItemData['items']
-  initialAgeScopeItems?: All.ItemData['items']
-  initialPersonScopeItems?: All.ItemData['items']
   initialSelectedAge?: PersonAgeFilterValue
-  initialSelectedPerson?: string | null
 }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -98,6 +91,7 @@ export default function usePersonsFilter({
     totalCount: totalItemCount,
     syncSearchState: false,
     indexedKeywords,
+    tagOptions,
     personDetailsName: effectiveSelectedPerson,
     extraFilterChips,
     extraFiltersActive: hasActivePersonFilters,

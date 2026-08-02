@@ -1,5 +1,6 @@
 import type { ServerSideAllItem, VisitedPlace } from '../types/common'
 import type { All } from '../types/pages'
+import type { GalleryParams } from './server/page-route'
 import { filterItemsBySelectedPerson } from './filter-selected-person'
 import { filterItemsByVisitedPlace, formatVisitedPlace } from './domains/visited'
 import { allPageItemMapper, getAllItems } from './get-all-items'
@@ -9,7 +10,10 @@ export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visited
   return filterItemsByVisitedPlace(items, visitedPlace)
 }
 
-export async function getAllData({ gallery, visitedPlace, selectedPerson }: All.Params & { selectedPerson?: string | null }): Promise<All.ItemData> {
+export async function getAllData({ gallery, visitedPlace, selectedPerson }: GalleryParams & {
+  visitedPlace?: VisitedPlace | null
+  selectedPerson?: string | null
+}): Promise<All.ItemData> {
   const data = await getAllItems(gallery, allPageItemMapper, true)
 
   const visitedScopedItems = visitedPlace

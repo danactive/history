@@ -16,6 +16,7 @@ export default function AllClient({
   totalItemCount,
   indexedKeywords,
   personOptions,
+  tagOptions,
   clusteredMarkers,
   visitedFilterLabel,
 }: All.ComponentProps) {
@@ -41,6 +42,7 @@ export default function AllClient({
     totalCount: totalItemCount,
     indexedKeywords,
     personOptions,
+    tagOptions,
     visitedFilterLabel,
     ownedPersonFilter: true,
   })

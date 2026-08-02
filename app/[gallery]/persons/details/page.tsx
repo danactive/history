@@ -1,11 +1,16 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { resolveRouteInputs, resolveSearchParams, type GalleryRouteProps, type RouteProps } from '../../../../src/lib/server/page-route'
+import {
+  resolveRouteInputs,
+  resolveSearchParams,
+  type GalleryRouteProps,
+  type RouteSearchParamsProps,
+} from '../../../../src/lib/server/page-route'
 import { parsePersonSearchParams, type PersonsSearchParams } from '../../../../src/lib/server/search-params'
 import { resolvePersonResource } from '../../../../src/lib/storytelling'
 
 export async function generateMetadata(
-  { searchParams }: Pick<RouteProps<never, PersonsSearchParams>, 'searchParams'>,
+  { searchParams }: RouteSearchParamsProps<PersonsSearchParams>,
 ): Promise<Metadata> {
   const resolvedSearchParams = await resolveSearchParams(searchParams)
   const { person } = parsePersonSearchParams(resolvedSearchParams)

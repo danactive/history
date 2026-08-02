@@ -7,6 +7,7 @@ import { buildClearedSearchRoutePath, buildSearchRoutePath } from '../lib/search
 import { resolveSearchSubmitIntent } from '../lib/search-submit-intent'
 import { formatVisitedPlace, matchesVisitedPlace } from '../lib/visited-core'
 import type { IndexedKeywords, VisitedPlace } from '../types/common'
+import type { SearchControllerConfig } from '../types/pages'
 import { getPrimaryFilename } from '../utils'
 
 type SearchableItem = {
@@ -21,6 +22,24 @@ export function createKeywordOption(value: string): IndexedKeywords {
   return {
     label: value,
     value,
+    isCreateOption: true,
+  }
+}
+
+export function createTagOption(value: string): IndexedKeywords {
+  return {
+    label: value,
+    value,
+    filterKind: 'tag',
+    isCreateOption: true,
+  }
+}
+
+export function createYearOption(value: string): IndexedKeywords {
+  return {
+    label: value,
+    value,
+    filterKind: 'year',
     isCreateOption: true,
   }
 }
@@ -41,7 +60,8 @@ export default function useSearchController<ItemType>({
   selectedPerson,
   ownedPersonFilter,
   knownPeople = [],
-}: {
+  knownTags = [],
+}: SearchControllerConfig & {
   itemsRef: { current: ItemType[] }
   searchOptions: IndexedKeywords[]
   currentVisitedFilter: VisitedPlace | null
@@ -51,27 +71,34 @@ export default function useSearchController<ItemType>({
   selectById?: (id: string, isClear?: boolean) => void
   mapFilterEnabled?: boolean
   onClearMapFilter?: (coordinates?: [number, number] | null) => void
-  onClearExtraFilters?: () => void
-  extraQueryParamsToClear?: string[]
-  onStructuredOptionSubmit?: (option: IndexedKeywords) => boolean
   selectedPerson?: string | null
-  ownedPersonFilter?: boolean
   knownPeople?: string[]
+  knownTags?: string[]
 }) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
   const initialKeyword = searchParams?.get('keyword') ?? ''
+  const initialTag = searchParams?.get('tag') ?? ''
+  const initialYear = searchParams?.get('year') ?? ''
   const initialVisitedCountry = searchParams?.get('visitedCountry') ?? ''
   const initialVisitedRegion = searchParams?.get('visitedRegion') ?? ''
 
   const [keyword, setKeyword] = useState<string>(initialKeyword)
+  const [tag, setTag] = useState<string>(initialTag)
+  const [year, setYear] = useState<string>(initialYear)
   const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(
-    initialKeyword ? createKeywordOption(initialKeyword) : (fallbackSelectedOption ?? null),
+    initialYear
+      ? createYearOption(initialYear)
+      : initialTag
+      ? createTagOption(initialTag)
+      : initialKeyword
+        ? createKeywordOption(initialKeyword)
+        : (fallbackSelectedOption ?? null),
   )
   const [inputValue, setInputValue] = useState<string>(
-    initialKeyword || initialVisitedRegion || initialVisitedCountry || fallbackSelectedOption?.value || '',
+    initialYear || initialTag || initialKeyword || initialVisitedRegion || initialVisitedCountry || fallbackSelectedOption?.value || '',
   )
 
   const activeVisitedOption = useMemo(() => {
@@ -90,6 +117,8 @@ export default function useSearchController<ItemType>({
 
   const getNextPath = useCallback((
     nextKeyword: string,
+    nextTag?: string | null,
+    nextYear?: string | null,
     select?: string | null,
     nextVisitedPlace?: VisitedPlace | null,
     nextPerson?: string | null,
@@ -98,6 +127,8 @@ export default function useSearchController<ItemType>({
       pathname,
       baseSearchParams: searchParams,
       keyword: nextKeyword,
+      tag: nextTag,
+      year: nextYear,
       person: nextPerson,
       select,
       visitedPlace: nextVisitedPlace,
@@ -130,22 +161,27 @@ export default function useSearchController<ItemType>({
       selectedOption,
       inputValue,
       knownPeople,
+      knownTags,
     })
 
     if (intent.type === 'visited') {
       setKeyword('')
+      setTag('')
+      setYear('')
       setMemoryIndex?.(0)
-      router.push(getNextPath('', null, intent.visitedPlace))
+      router.push(getNextPath(keyword, tag, year, null, intent.visitedPlace))
       return
     }
 
     if (intent.type === 'person') {
       if (ownedPersonFilter) {
         setKeyword('')
+        setTag('')
+        setYear('')
         setSelectedOption(intent.option ?? { label: intent.person, value: intent.person, filterKind: 'person' })
         setInputValue(intent.person)
         setMemoryIndex?.(0)
-        router.push(getNextPath('', null, currentVisitedFilter, intent.person))
+        router.push(getNextPath('', '', '', null, currentVisitedFilter, intent.person))
         return
       }
 
@@ -154,6 +190,28 @@ export default function useSearchController<ItemType>({
         return
       }
 
+      return
+    }
+
+    if (intent.type === 'tag') {
+      setKeyword('')
+      setTag(intent.tag)
+      setYear('')
+      setSelectedOption(intent.option ?? createTagOption(intent.tag))
+      setInputValue(intent.tag)
+      setMemoryIndex?.(0)
+      router.push(getNextPath('', intent.tag, ''))
+      return
+    }
+
+    if (intent.type === 'year') {
+      setKeyword('')
+      setTag('')
+      setYear(intent.year)
+      setSelectedOption(intent.option ?? createYearOption(intent.year))
+      setInputValue(intent.year)
+      setMemoryIndex?.(0)
+      router.push(getNextPath('', '', intent.year))
       return
     }
 
@@ -168,10 +226,12 @@ export default function useSearchController<ItemType>({
       }
 
       setKeyword(intent.option.value)
+      setTag('')
+      setYear('')
       setSelectedOption(createKeywordOption(intent.option.value))
       setInputValue(intent.option.value)
       setMemoryIndex?.(0)
-      router.push(getNextPath(intent.option.value))
+      router.push(getNextPath(intent.option.value, '', ''))
       return
     }
 
@@ -180,13 +240,18 @@ export default function useSearchController<ItemType>({
     }
 
     setKeyword(intent.keyword)
+    setTag('')
+    setYear('')
     setSelectedOption(createKeywordOption(intent.keyword))
     setInputValue(intent.keyword)
     setMemoryIndex?.(0)
-    router.push(getNextPath(intent.keyword))
+    router.push(getNextPath(intent.keyword, '', ''))
   }, [
     selectedOption,
     inputValue,
+    keyword,
+    tag,
+    year,
     setMemoryIndex,
     router,
     getNextPath,
@@ -194,6 +259,7 @@ export default function useSearchController<ItemType>({
     ownedPersonFilter,
     currentVisitedFilter,
     knownPeople,
+    knownTags,
   ])
 
   const handleClear = useCallback(() => {
@@ -206,10 +272,12 @@ export default function useSearchController<ItemType>({
     }
 
     setKeyword('')
+    setTag('')
+    setYear('')
     setSelectedOption(null)
     setInputValue('')
 
-    router.replace(getNextPath('', identifier, null))
+    router.replace(getNextPath('', '', '', identifier, null))
   }, [refImageGallery, itemsRef, selectById, router, getNextPath])
 
   const handleClearVisitedFilter = useCallback(() => {
@@ -221,10 +289,15 @@ export default function useSearchController<ItemType>({
       selectById(identifier, true)
     }
 
-    setSelectedOption(keyword ? createKeywordOption(keyword) : null)
-    setInputValue(keyword)
-    router.replace(getNextPath(keyword, identifier, null))
-  }, [refImageGallery, itemsRef, selectById, keyword, router, getNextPath])
+    const nextSearchValue = year || tag || keyword
+    setSelectedOption(year
+      ? createYearOption(year)
+      : tag
+        ? createTagOption(tag)
+        : keyword ? createKeywordOption(keyword) : null)
+    setInputValue(nextSearchValue)
+    router.replace(getNextPath(keyword, tag, year, identifier, null))
+  }, [refImageGallery, itemsRef, selectById, keyword, tag, year, router, getNextPath])
 
   const handleClearSelectedPerson = useCallback(() => {
     if (!selectedPerson) {
@@ -239,14 +312,16 @@ export default function useSearchController<ItemType>({
       selectById(identifier, true)
     }
 
-    router.replace(getNextPath(keyword, identifier, currentVisitedFilter, null))
-  }, [currentVisitedFilter, getNextPath, itemsRef, keyword, refImageGallery, router, selectById, selectedPerson])
+    router.replace(getNextPath(keyword, tag, year, identifier, currentVisitedFilter, null))
+  }, [currentVisitedFilter, getNextPath, itemsRef, keyword, tag, year, refImageGallery, router, selectById, selectedPerson])
 
   const applyKeywordToUrl = useCallback((nextKeyword: string) => {
     setKeyword(nextKeyword)
+    setTag('')
+    setYear('')
     setSelectedOption(nextKeyword ? createKeywordOption(nextKeyword) : null)
     setInputValue(nextKeyword)
-    router.replace(getNextPath(nextKeyword))
+    router.replace(getNextPath(nextKeyword, '', ''))
   }, [router, getNextPath])
 
   const handleClearAll = useCallback(() => {
@@ -259,6 +334,8 @@ export default function useSearchController<ItemType>({
     }
 
     setKeyword('')
+    setTag('')
+    setYear('')
     setSelectedOption(null)
     setInputValue('')
 
@@ -288,7 +365,45 @@ export default function useSearchController<ItemType>({
 
   useEffect(() => {
     const nextKeyword = searchParams?.get('keyword') ?? ''
+    const nextTag = searchParams?.get('tag') ?? ''
+    const nextYear = searchParams?.get('year') ?? ''
     setKeyword((previousKeyword) => (previousKeyword === nextKeyword ? previousKeyword : nextKeyword))
+    setTag((previousTag) => (previousTag === nextTag ? previousTag : nextTag))
+    setYear((previousYear) => (previousYear === nextYear ? previousYear : nextYear))
+
+    if (nextYear) {
+      setSelectedOption((previousOption) => {
+        if (
+          previousOption
+          && previousOption.value === nextYear
+          && previousOption.filterKind === 'year'
+          && previousOption.isCreateOption
+        ) {
+          return previousOption
+        }
+
+        return createYearOption(nextYear)
+      })
+      setInputValue((previousInputValue) => (previousInputValue === nextYear ? previousInputValue : nextYear))
+      return
+    }
+
+    if (nextTag) {
+      setSelectedOption((previousOption) => {
+        if (
+          previousOption
+          && previousOption.value === nextTag
+          && previousOption.filterKind === 'tag'
+          && previousOption.isCreateOption
+        ) {
+          return previousOption
+        }
+
+        return createTagOption(nextTag)
+      })
+      setInputValue((previousInputValue) => (previousInputValue === nextTag ? previousInputValue : nextTag))
+      return
+    }
 
     if (nextKeyword) {
       setSelectedOption((previousOption) => {
@@ -360,6 +475,8 @@ export default function useSearchController<ItemType>({
   return {
     inputValue,
     keyword,
+    tag,
+    year,
     selectedOption,
     setKeyword,
     applyKeywordToUrl,

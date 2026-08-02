@@ -5,12 +5,17 @@ import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import { getAlbumData } from '../../../src/lib/album-page'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
-import { buildClusteredPageData, resolveRouteInputs, type RouteProps } from '../../../src/lib/server/page-route'
+import {
+  buildClusteredPageData,
+  resolveRouteInputs,
+  type AlbumRouteParams,
+  type RouteParamsProps,
+  type RouteProps,
+} from '../../../src/lib/server/page-route'
 import { parsePersonSearchParams, parseVisitedSearchParams, type PersonsSearchParams } from '../../../src/lib/server/search-params'
-import type { Album } from '../../../src/types/pages'
 
 export async function generateMetadata(
-  { params }: { params: Promise<Album.Params> },
+  { params }: RouteParamsProps<AlbumRouteParams>,
 ): Promise<Metadata> {
   const album = (await params).album
   return { title: `Album ${album} - History App` }
@@ -29,7 +34,7 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-export default async function AlbumServer(props: RouteProps<Album.Params, PersonsSearchParams>) {
+export default async function AlbumServer(props: RouteProps<AlbumRouteParams, PersonsSearchParams>) {
   const {
     params: { album, gallery },
     searchParams,

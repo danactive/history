@@ -1,15 +1,24 @@
 import type { ClusteredMarkers } from '../generate-clusters'
 import { generateClusters } from '../generate-clusters'
 import getGalleries from '../galleries'
-import type { Item } from '../../types/common'
-import type { Gallery } from '../../types/common'
+import type { AlbumMeta, Gallery, Item } from '../../types/common'
+
+export type GalleryParams = { gallery: Gallery }
+
+export type AlbumRouteParams = GalleryParams & {
+  album: NonNullable<AlbumMeta['albumName']>
+}
 
 export type RouteProps<TParams, TSearchParams> = {
   params: Promise<TParams>
   searchParams?: Promise<TSearchParams>
 }
 
-export type GalleryRouteProps<TSearchParams> = RouteProps<{ gallery: Gallery }, TSearchParams>
+export type RouteParamsProps<TParams> = Pick<RouteProps<TParams, never>, 'params'>
+
+export type RouteSearchParamsProps<TSearchParams> = Pick<RouteProps<never, TSearchParams>, 'searchParams'>
+
+export type GalleryRouteProps<TSearchParams> = RouteProps<GalleryParams, TSearchParams>
 
 export async function generateGalleryStaticParams() {
   const { galleries } = await getGalleries()

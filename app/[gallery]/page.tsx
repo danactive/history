@@ -3,8 +3,14 @@ import { Suspense } from 'react'
 
 import GalleryPageComponent from '../../src/components/GalleryPage'
 import getAlbums from '../../src/lib/albums'
-import getGalleries from '../../src/lib/galleries'
 import { buildFilterMetadata } from '../../src/lib/server/filter-metadata'
+import {
+  generateGalleryStaticParams,
+  resolveRouteInputs,
+  type GalleryRouteProps,
+} from '../../src/lib/server/page-route'
+import { parseVisitedSearchParams, type VisitedSearchParams } from '../../src/lib/server/search-params'
+import { formatVisitedPlace } from '../../src/lib/visited-core'
 import type { Gallery as GalleryName, ServerSideAlbumItem } from '../../src/types/common'
 import type { Gallery } from '../../src/types/pages'
 
@@ -13,19 +19,17 @@ export const metadata: Metadata = {
 }
 
 export async function generateStaticParams() {
-  const { galleries } = await getGalleries()
-  return galleries.map((gallery) => ({
-    gallery,
-  }))
+  return generateGalleryStaticParams()
 }
 
-async function getAlbumsData(gallery: GalleryName): Promise<Gallery.ComponentProps> {
+async function getAlbumsData(gallery: GalleryName, searchParams?: VisitedSearchParams): Promise<Gallery.ComponentProps> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
   const preparedAlbums = albums.map((album): ServerSideAlbumItem => ({
     ...album,
     corpus: [album.h1, album.h2, album.year, album.search].join(' '),
   }))
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(preparedAlbums)
+  const { visitedPlace } = parseVisitedSearchParams(searchParams)
 
   return {
     gallery,
@@ -33,15 +37,28 @@ async function getAlbumsData(gallery: GalleryName): Promise<Gallery.ComponentPro
     indexedKeywords,
     personOptions,
     tagOptions,
+    visitedPlace,
+    visitedFilterLabel: visitedPlace ? formatVisitedPlace(visitedPlace) : null,
   }
 }
 
-export default async function GalleryServer({ params }: { params: Promise<Gallery.Params> }) {
+export default async function GalleryServer({
+  params,
+  searchParams,
+}: GalleryRouteProps<VisitedSearchParams>) {
   const {
-    gallery,
-  } = await params
+    params: { gallery },
+    searchParams: resolvedSearchParams,
+  } = await resolveRouteInputs(params, searchParams)
 
-  const { albums, indexedKeywords, personOptions, tagOptions } = await getAlbumsData(gallery)
+  const {
+    albums,
+    indexedKeywords,
+    personOptions,
+    tagOptions,
+    visitedPlace,
+    visitedFilterLabel,
+  } = await getAlbumsData(gallery, resolvedSearchParams)
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -51,6 +68,8 @@ export default async function GalleryServer({ params }: { params: Promise<Galler
         indexedKeywords={indexedKeywords}
         personOptions={personOptions}
         tagOptions={tagOptions}
+        visitedPlace={visitedPlace}
+        visitedFilterLabel={visitedFilterLabel}
       />
     </Suspense>
   )

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
+import type { GalleryParams, RouteParamsProps } from '../../../src/lib/server/page-route'
 import { buildGalleryDetailsText } from '../../../src/lib/storytelling'
-import type { Gallery } from '../../../src/types/common'
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ gallery: Gallery }> },
+  { params }: RouteParamsProps<GalleryParams>,
 ): Promise<Metadata> {
   const { gallery } = await params
   return { title: `Gallery details ${gallery} - History App` }
@@ -11,9 +11,7 @@ export async function generateMetadata(
 
 export default async function GalleryDetailsPage({
   params,
-}: {
-  params: Promise<{ gallery: Gallery }>
-}) {
+}: RouteParamsProps<GalleryParams>) {
   const { gallery } = await params
   const text = await buildGalleryDetailsText(gallery)
 

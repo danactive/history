@@ -23,104 +23,97 @@ export type ServerPageDataBase<TItem> = {
   visitedFilterLabel?: string | null;
 }
 
+export type SearchMetadata = Pick<ServerPageDataBase<never>, 'indexedKeywords' | 'personOptions' | 'tagOptions'>
+
+export type SearchMetadataWithVisitedLabel = SearchMetadata & Pick<ServerPageDataBase<never>, 'visitedFilterLabel'>
+
+export type SearchMetadataWithVisited = SearchMetadataWithVisitedLabel & Pick<ServerPageDataBase<never>, 'visitedPlace'>
+
+export type SearchUiConfig = {
+  summaryLabel?: string;
+  totalCount?: number;
+  personDetailsName?: string | null;
+  extraFilterChips?: React.ReactNode;
+  extraFiltersActive?: boolean;
+  onClearExtraFilters?: () => void;
+  extraQueryParamsToClear?: string[];
+  onStructuredOptionSubmit?: (option: IndexedKeywords) => boolean;
+  ownedPersonFilter?: boolean;
+}
+
+export type SearchControllerConfig = Pick<
+  SearchUiConfig,
+  'onClearExtraFilters' | 'extraQueryParamsToClear' | 'onStructuredOptionSubmit' | 'ownedPersonFilter'
+>
+
+export type AgeSummary = {
+  ages: { age: AgeSummaryValue; count: number }[];
+  totalPhotoCount?: number;
+}
+
+export type PersonFilterScopeData = {
+  initialAgeSummary?: AgeSummary;
+  initialBaseScopeItems?: ServerSideAllItem[];
+  initialAgeScopeItems?: ServerSideAllItem[];
+  initialPersonScopeItems?: ServerSideAllItem[];
+  initialSelectedAge?: number | 'unknown' | null;
+  initialSelectedPerson?: string | null;
+}
+
+export type AllItemsPageData = ServerPageDataBase<ServerSideAllItem> & {
+  gallery: GalleryName;
+} & PersonFilterScopeData
+
+export type PhotoPageData<TItem> = ServerPageDataBase<TItem> & {
+  album?: NonNullable<AlbumMeta['albumName']>;
+  monthDay?: string;
+  meta?: object;
+}
+
+export type PhotoPageComponentProps<TItem> = PhotoPageData<TItem> & {
+  gallery: GalleryName;
+  clusteredMarkers: ClusteredMarkers;
+}
+
 export namespace Gallery {
-  export type ComponentProps = {
+  export type ComponentProps = SearchMetadataWithVisited & {
     gallery: GalleryName;
     albums: ServerSideAlbumItem[];
-    indexedKeywords: IndexedKeywords[];
-    personOptions?: PersonOption[];
-    tagOptions?: IndexedKeywords[];
-  }
-  export interface Params {
-    gallery: GalleryName
   }
 }
 
 export namespace Album {
-  export type ComponentProps = {
-    gallery: GalleryName;
-    album?: NonNullable<AlbumMeta['albumName']>;
-    monthDay?: string;
-    items: ServerSidePhotoItem[];
-    totalItemCount?: number;
-    meta?: object;
-    indexedKeywords: IndexedKeywords[];
-    personOptions?: PersonOption[];
-    tagOptions?: IndexedKeywords[];
-    clusteredMarkers: ClusteredMarkers;
-    visitedPlace?: VisitedPlace | null;
-    visitedFilterLabel?: string | null;
-  }
+  export type ComponentProps = PhotoPageComponentProps<ServerSidePhotoItem>
 
-  export type ItemData = ServerPageDataBase<ServerSidePhotoItem> & {
+  export type ItemData = PhotoPageData<ServerSidePhotoItem> & {
     gallery: GalleryName;
-    album?: NonNullable<AlbumMeta['albumName']>;
-    monthDay?: string;
-    meta?: object;
-  }
-
-  export interface Params {
-    gallery: GalleryName;
-    album: NonNullable<AlbumMeta['albumName']>
   }
 }
 
 export namespace Today {
-  export type ItemData = ServerPageDataBase<ServerSideTodayItem>
+  export type ItemData = PhotoPageData<ServerSideTodayItem>
+
+  export type ComponentProps = PhotoPageComponentProps<ServerSideTodayItem>
 }
 
 export namespace Persons {
-  export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
-    gallery: GalleryName,
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
-    initialBaseScopeItems?: ServerSideAllItem[];
-    initialAgeScopeItems?: ServerSideAllItem[];
-    initialPersonScopeItems?: ServerSideAllItem[];
-    initialSelectedAge?: number | 'unknown' | null;
-    initialSelectedPerson?: string | null;
+  export type ItemData = AllItemsPageData
+
+  export type ComponentProps = ItemData & {
+    clusteredMarkers: ClusteredMarkers;
   }
 }
 
 export namespace Walk {
   export type ItemFile = Filesystem
-  export interface Params {
-    path?: string[];
-  }
 }
 
 export namespace All {
-  export type ComponentProps = {
-    gallery: Gallery,
-    items: ServerSideAllItem[];
-    totalItemCount?: number;
-    indexedKeywords: IndexedKeywords[];
-    personOptions?: PersonOption[];
-    tagOptions?: IndexedKeywords[];
+  export type ItemData = AllItemsPageData & {
+    trailingAction?: React.ReactNode;
+  }
+
+  export type ComponentProps = ItemData & {
     clusteredMarkers: ClusteredMarkers;
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
-    initialBaseScopeItems?: ServerSideAllItem[];
-    initialAgeScopeItems?: ServerSideAllItem[];
-    initialPersonScopeItems?: ServerSideAllItem[];
-    initialSelectedAge?: number | 'unknown' | null;
-    initialSelectedPerson?: string | null;
-    visitedPlace?: VisitedPlace | null;
-    visitedFilterLabel?: string | null;
-    trailingAction?: React.ReactNode;
-  }
-
-  export type ItemData = ServerPageDataBase<ServerSideAllItem> & {
-    gallery: GalleryName,
-    initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number };
-    initialBaseScopeItems?: ServerSideAllItem[];
-    initialAgeScopeItems?: ServerSideAllItem[];
-    initialPersonScopeItems?: ServerSideAllItem[];
-    initialSelectedAge?: number | 'unknown' | null;
-    initialSelectedPerson?: string | null;
-    trailingAction?: React.ReactNode;
-  }
-
-  export interface Params {
-    gallery: GalleryName,
-    visitedPlace?: VisitedPlace | null
   }
 }

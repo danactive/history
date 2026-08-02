@@ -1,31 +1,22 @@
 'use client'
-import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
 import { buildSelectableItemIndex, filterItemsByMapBounds, resolveSelectedItemIndex } from '../lib/map-filtering'
-import type { IndexedKeywords } from '../types/common'
-import type { All } from '../types/pages'
+import type { All, SearchMetadataWithVisitedLabel, SearchUiConfig } from '../types/pages'
 import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
 import useSearch from './useSearch'
 
-type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'personOptions' | 'visitedFilterLabel' | 'trailingAction'> & {
-  summaryLabel?: string
-  totalCount?: number
+type UseMapFilterProps = SearchMetadataWithVisitedLabel & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'> & {
   syncSearchState?: boolean
-  personDetailsName?: string | null
-  extraFilterChips?: ReactNode
-  extraFiltersActive?: boolean
-  onClearExtraFilters?: () => void
-  extraQueryParamsToClear?: string[]
-  onStructuredOptionSubmit?: (option: IndexedKeywords) => boolean
-  ownedPersonFilter?: boolean
 }
 
 export default function useMapFilter({
   items,
   indexedKeywords,
   personOptions,
+  tagOptions,
   visitedFilterLabel,
   trailingAction,
   gallery,
@@ -76,6 +67,7 @@ export default function useMapFilter({
     setMemoryIndex,
     indexedKeywords,
     personOptions,
+    tagOptions,
     visitedFilterLabel,
     refImageGallery,
     mapFilterEnabled,

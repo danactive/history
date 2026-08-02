@@ -104,7 +104,7 @@ describe('search submit intent', () => {
     })
   })
 
-  test('turns classified tags and years into keyword-like submissions', () => {
+  test('turns classified tags and years into first-class submissions', () => {
     expect(resolveSearchSubmitIntent({
       selectedOption: {
         label: 'tag^ (1)',
@@ -114,7 +114,7 @@ describe('search submit intent', () => {
       inputValue: 'tag^',
     })).toEqual({
       type: 'tag',
-      keyword: 'tag^',
+      tag: 'tag^',
       option: {
         label: 'tag^ (1)',
         value: 'tag^',
@@ -127,8 +127,34 @@ describe('search submit intent', () => {
       inputValue: '2024',
     })).toEqual({
       type: 'year',
-      keyword: '2024',
+      year: '2024',
       option: undefined,
+    })
+  })
+
+  test('keeps compound ad-hoc expressions on the keyword path', () => {
+    expect(resolveSearchSubmitIntent({
+      selectedOption: {
+        label: 'Add "best^ && highlight^"',
+        value: 'best^ && highlight^',
+        isCreateOption: true,
+      },
+      inputValue: 'best^ && highlight^',
+    })).toEqual({
+      type: 'keyword',
+      keyword: 'best^ && highlight^',
+    })
+
+    expect(resolveSearchSubmitIntent({
+      selectedOption: {
+        label: 'Add "2026 || 2027"',
+        value: '2026 || 2027',
+        isCreateOption: true,
+      },
+      inputValue: '2026 || 2027',
+    })).toEqual({
+      type: 'keyword',
+      keyword: '2026 || 2027',
     })
   })
 

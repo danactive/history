@@ -5,11 +5,21 @@ import GalleryServer from '../app/[gallery]/page'
 
 vi.mock('../src/components/GalleryPage', () => ({
   __esModule: true,
-  default: ({ indexedKeywords }: { indexedKeywords: Array<{ value: string; filterKind?: string }> }) => (
+  default: ({
+    indexedKeywords,
+    visitedFilterLabel,
+    visitedPlace,
+  }: {
+    indexedKeywords: Array<{ value: string; filterKind?: string }>
+    visitedFilterLabel?: string | null
+    visitedPlace?: { country: string; region: string | null } | null
+  }) => (
     <div>
       {indexedKeywords.map((option) => (
         <div key={option.value}>{`${option.value}:${option.filterKind ?? 'none'}`}</div>
       ))}
+      <div>{`visitedFilterLabel:${visitedFilterLabel ?? 'none'}`}</div>
+      <div>{`visitedPlace:${visitedPlace ? `${visitedPlace.country}/${visitedPlace.region ?? 'none'}` : 'none'}`}</div>
     </div>
   ),
 }))
@@ -40,9 +50,10 @@ vi.mock('../src/lib/galleries', () => ({
 }))
 
 describe('Gallery page', () => {
-  test('passes backend-classified tag and person options to the gallery client', async () => {
+  test('passes backend-classified search options and first-class visited metadata to the gallery client', async () => {
     const component = await GalleryServer({
       params: Promise.resolve({ gallery: 'demo' }),
+      searchParams: Promise.resolve({ visitedCountry: 'Mexico', visitedRegion: 'Guanajuato' }),
     })
 
     render(component)
@@ -50,5 +61,7 @@ describe('Gallery page', () => {
     expect(screen.getByText('tag^:tag')).toBeInTheDocument()
     expect(screen.getByText('First Middle Last:person')).toBeInTheDocument()
     expect(screen.getByText('2026:year')).toBeInTheDocument()
+    expect(screen.getByText('visitedFilterLabel:Guanajuato, Mexico')).toBeInTheDocument()
+    expect(screen.getByText('visitedPlace:Mexico/Guanajuato')).toBeInTheDocument()
   })
 })

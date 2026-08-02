@@ -36,6 +36,28 @@ describe('search route params', () => {
     expect(path).toBe('/demo/all?foo=bar&keyword=Alice&select=alice.jpg&visitedCountry=Canada&visitedRegion=BC')
   })
 
+  test('builds search route paths with a first-class tag param', () => {
+    const path = buildSearchRoutePath({
+      pathname: '/demo/all',
+      baseSearchParams: { toString: () => 'foo=bar&keyword=Alice' },
+      keyword: '',
+      tag: 'tag^',
+    })
+
+    expect(path).toBe('/demo/all?foo=bar&tag=tag%5E')
+  })
+
+  test('builds search route paths with a first-class year param', () => {
+    const path = buildSearchRoutePath({
+      pathname: '/demo/all',
+      baseSearchParams: { toString: () => 'foo=bar&keyword=Alice' },
+      keyword: '',
+      year: '2026',
+    })
+
+    expect(path).toBe('/demo/all?foo=bar&year=2026')
+  })
+
   test('clears visited filters while preserving keyword when requested', () => {
     const path = buildSearchRoutePath({
       pathname: '/demo/all',
@@ -51,7 +73,7 @@ describe('search route params', () => {
   test('builds clear-all paths while preserving unrelated params', () => {
     const path = buildClearedSearchRoutePath({
       pathname: '/demo/persons',
-      baseSearchParams: { toString: () => 'keyword=Alice&age=21&person=Alice&foo=bar' },
+      baseSearchParams: { toString: () => 'keyword=Alice&tag=tag%5E&year=2026&age=21&person=Alice&foo=bar' },
       select: 'alice.jpg',
       extraQueryParamsToClear: ['age', 'person'],
     })

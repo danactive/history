@@ -4,10 +4,11 @@ import { filterItemsByVisitedPlaceFromCities, formatVisitedPlace } from './domai
 import { buildFilterMetadata } from './server/filter-metadata'
 import { addGeographyToSearch } from './search'
 import type { VisitedPlace } from '../types/common'
+import type { AlbumRouteParams } from './server/page-route'
 import type { Album } from '../types/pages'
 
 export async function getAlbumData(
-  { album, gallery, visitedPlace, selectedPerson }: Album.Params & {
+  { album, gallery, visitedPlace, selectedPerson }: AlbumRouteParams & {
     visitedPlace?: VisitedPlace | null
     selectedPerson?: string | null
   },

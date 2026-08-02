@@ -8,7 +8,6 @@ import {
 } from 'react'
 import Controls from '../components/Search/Controls'
 import RemovableFilterChip from '../components/Search/RemovableFilterChip'
-import type { PersonOption } from '../lib/domains/persons'
 import { filterItemsBySelectedPerson } from '../lib/filter-selected-person'
 import { buildSearchOptions } from '../lib/domains/search'
 import { getVisitedPlaceFromSearchParams } from '../lib/domains/visited'
@@ -18,7 +17,8 @@ import {
   parseKeywordQuery,
 } from '../lib/search-filtering'
 import { formatVisitedPlace } from '../lib/visited-core'
-import { Gallery, IndexedKeywords, VisitedPlace } from '../types/common'
+import { Gallery, VisitedPlace } from '../types/common'
+import type { SearchMetadataWithVisitedLabel, SearchUiConfig } from '../types/pages'
 import useBookmark from './useBookmark'
 import useSearchController from './useSearchController'
 import useSearchDetailActions from './useSearchDetailActions'
@@ -41,28 +41,16 @@ type FilenameItem = SearchableItem & {
   filename: string | string[];
 }
 
-interface UseSearchProps<ItemType> {
+interface UseSearchProps<ItemType> extends SearchMetadataWithVisitedLabel, SearchUiConfig {
   gallery: Gallery;
   items: ItemType[];
-  summaryLabel?: string;
-  totalCount?: number;
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
-  indexedKeywords?: IndexedKeywords[];
-  personOptions?: PersonOption[];
-  visitedFilterLabel?: string | null;
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
-  personDetailsName?: string | null;
   selectById?: (id: string, isClear?: boolean) => void;
   trailingAction?: React.ReactNode;
-  extraFilterChips?: React.ReactNode;
-  extraFiltersActive?: boolean;
-  onClearExtraFilters?: () => void;
-  extraQueryParamsToClear?: string[];
-  onStructuredOptionSubmit?: (option: IndexedKeywords) => boolean;
-  ownedPersonFilter?: boolean;
 }
 
 function hasFilename(item: SearchableItem): item is FilenameItem {
@@ -78,6 +66,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   setMemoryIndex,
   indexedKeywords = [],
   personOptions = [],
+  tagOptions = [],
   visitedFilterLabel,
   refImageGallery,
   mapFilterEnabled,
@@ -94,6 +83,8 @@ export default function useSearch<ItemType extends SearchableItem>({
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const activeTag = searchParams?.get('tag')?.trim() || ''
+  const activeYear = searchParams?.get('year')?.trim() || ''
   const selectedPerson = ownedPersonFilter
     ? searchParams?.get('person')?.trim() || null
     : null
@@ -116,10 +107,15 @@ export default function useSearch<ItemType extends SearchableItem>({
     [items, personOptions],
   )
 
+  const knownTags = useMemo(
+    () => Array.from(new Set(tagOptions.map((option) => option.value))),
+    [tagOptions],
+  )
+
   const fallbackSelectedOption = useMemo(() => {
     const preferredPersonDetailsName = selectedPerson ?? personDetailsName
 
-    if (!preferredPersonDetailsName || searchParams?.get('keyword') || currentVisitedFilter) {
+    if (!preferredPersonDetailsName || searchParams?.get('keyword') || activeTag || activeYear || currentVisitedFilter) {
       return null
     }
 
@@ -136,6 +132,8 @@ export default function useSearch<ItemType extends SearchableItem>({
   const {
     inputValue,
     keyword,
+    tag,
+    year,
     selectedOption,
     setKeyword,
     applyKeywordToUrl,
@@ -164,6 +162,7 @@ export default function useSearch<ItemType extends SearchableItem>({
     selectedPerson,
     ownedPersonFilter,
     knownPeople,
+    knownTags,
   })
 
   const visitedFiltered = useMemo(
@@ -177,8 +176,8 @@ export default function useSearch<ItemType extends SearchableItem>({
   )
 
   const filtered = useMemo(
-    () => filterByKeyword({ items: personFiltered, keyword, indexedKeywords }),
-    [personFiltered, keyword, indexedKeywords],
+    () => filterByKeyword({ items: personFiltered, keyword: year || tag || keyword, indexedKeywords }),
+    [personFiltered, year, tag, keyword, indexedKeywords],
   )
 
   const {
@@ -192,7 +191,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   const { detailActions } = useSearchDetailActions({
     gallery,
     items,
-    keyword,
+    keyword: year || tag || keyword,
     personDetailsName: selectedPerson ?? personDetailsName,
     trailingAction,
   })
@@ -234,6 +233,9 @@ export default function useSearch<ItemType extends SearchableItem>({
     ? formatVisitedPlace(currentVisitedFilter)
     : visitedFilterLabel
 
+  const activeTagValue = tag || activeTag
+  const activeYearValue = year || activeYear
+
   const ownedPersonChip = selectedPerson ? (
     <RemovableFilterChip
       className={styles.filterToken}
@@ -260,6 +262,8 @@ export default function useSearch<ItemType extends SearchableItem>({
       visibleCount={visibleCount}
       totalCount={totalCount ?? items.length}
       keyword={keyword}
+      activeTag={activeTagValue || null}
+      activeYear={activeYearValue || null}
       parsedKeyword={parsedKeyword}
       activeVisitedFilterLabel={activeVisitedFilterLabel}
       mapFilterEnabled={mapFilterEnabled}
@@ -274,6 +278,8 @@ export default function useSearch<ItemType extends SearchableItem>({
       onInputValueChange={handleInputValueChange}
       onRemoveKeywordToken={handleRemoveKeywordToken}
       onClear={handleClear}
+      onClearTag={handleClear}
+      onClearYear={handleClear}
       onClearVisitedFilter={handleClearVisitedFilter}
       onClearMapFilter={onClearMapFilter}
       extraFilterChips={combinedExtraFilterChips}
@@ -288,7 +294,7 @@ export default function useSearch<ItemType extends SearchableItem>({
 
   return {
     filtered,
-    keyword,
+    keyword: year || tag || keyword,
     setKeyword,
     searchBox,
     setVisibleCount,

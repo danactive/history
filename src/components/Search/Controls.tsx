@@ -19,6 +19,8 @@ type Props = {
   visibleCount: number
   totalCount: number
   keyword: string
+  activeTag?: string | null
+  activeYear?: string | null
   parsedKeyword: ParsedKeywordQuery
   activeVisitedFilterLabel: string | null | undefined
   mapFilterEnabled?: boolean
@@ -33,6 +35,8 @@ type Props = {
   onInputValueChange: (value: string) => void
   onRemoveKeywordToken: (tokenIndex: number) => void
   onClear: () => void
+  onClearTag: () => void
+  onClearYear: () => void
   onClearVisitedFilter: () => void
   onClearMapFilter?: (coordinates?: [number, number] | null) => void
   extraFilterChips?: React.ReactNode
@@ -47,6 +51,8 @@ export default function Controls({
   visibleCount,
   totalCount,
   keyword,
+  activeTag,
+  activeYear,
   parsedKeyword,
   activeVisitedFilterLabel,
   mapFilterEnabled,
@@ -61,6 +67,8 @@ export default function Controls({
   onInputValueChange,
   onRemoveKeywordToken,
   onClear,
+  onClearTag,
+  onClearYear,
   onClearVisitedFilter,
   onClearMapFilter,
   extraFilterChips,
@@ -69,8 +77,12 @@ export default function Controls({
   clearActionLabel = 'Clear',
   clearActionTitle = 'Clear search and view adjacent photos',
 }: Props) {
-  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
-  const hasActiveFilters = Boolean(keyword || activeVisitedFilterLabel || mapFilterEnabled || extraFiltersActive)
+  const keywordResultLabel = activeYear
+    ? <> for year &quot;{activeYear}&quot;</>
+    : activeTag
+    ? <> for tag &quot;{activeTag}&quot;</>
+    : keyword ? <> for &quot;{keyword}&quot;</> : null
+  const hasActiveFilters = Boolean(keyword || activeTag || activeYear || activeVisitedFilterLabel || mapFilterEnabled || extraFiltersActive)
 
   return (
     <form onSubmit={onSubmit}>
@@ -90,7 +102,21 @@ export default function Controls({
           <div className={styles.chipsSection}>
             <div className={styles.chipsLabel}>Active filters</div>
             <div className={styles.chipsRow}>
-              {keyword && (
+              {activeYear ? (
+                <RemovableFilterChip
+                  className={styles.filterToken}
+                  label={`Year: ${activeYear}`}
+                  onRemove={onClearYear}
+                  removeTitle={`Clear year filter ${activeYear}`}
+                />
+              ) : activeTag ? (
+                <RemovableFilterChip
+                  className={styles.filterToken}
+                  label={`Tag: ${activeTag}`}
+                  onRemove={onClearTag}
+                  removeTitle={`Clear tag filter ${activeTag}`}
+                />
+              ) : keyword && (
                 <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
                   {parsedKeyword.mode && (
                     <Chip size="sm" color="primary" variant="outlined" sx={filterChipSx}>

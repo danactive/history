@@ -16,11 +16,6 @@ export const metadata: Metadata = {
   title: 'Persons - History App',
 }
 
-type SearchParams = {
-  age?: string | string[]
-  person?: string | string[]
-} & PersonsSearchParams
-
 export async function generateStaticParams() {
   return generateGalleryStaticParams()
 }
@@ -28,7 +23,7 @@ export async function generateStaticParams() {
 export default async function PersonsServer({
   params,
   searchParams,
-}: GalleryRouteProps<SearchParams>) {
+}: GalleryRouteProps<PersonsSearchParams>) {
   const {
     params: { gallery },
     searchParams: resolvedSearchParams,

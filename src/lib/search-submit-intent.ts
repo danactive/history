@@ -27,15 +27,26 @@ function resolveKnownPerson(
   return partialMatches.length === 1 ? partialMatches[0] ?? null : null
 }
 
+function isImplicitScalarFilterValue(value: string) {
+  const trimmed = value.trim()
+  return trimmed.length > 0
+    && !/[()]/.test(trimmed)
+    && !trimmed.includes('&&')
+    && !trimmed.includes('||')
+    && !/\s/.test(trimmed)
+}
+
 export function classifySearchSelection({
   selectedOption,
   inputValue,
   knownPeople = [],
+  knownTags = [],
   personMatchMode = 'exact',
 }: {
   selectedOption?: IndexedKeywords | null
   inputValue: string
   knownPeople?: string[]
+  knownTags?: string[]
   personMatchMode?: 'exact' | 'unique-contains'
 }): SearchSelectionClassification {
   if (selectedOption?.visitedPlace) {
@@ -59,11 +70,15 @@ export function classifySearchSelection({
     }
   }
 
-  if (selectedOption?.filterKind === 'tag' || isTagKeyword(value)) {
+  if (
+    selectedOption?.filterKind === 'tag'
+    || knownTags.includes(value)
+    || (isImplicitScalarFilterValue(value) && isTagKeyword(value))
+  ) {
     return { kind: 'tag', value, option: selectedOption ?? undefined }
   }
 
-  if (selectedOption?.filterKind === 'year' || isYearToken(value)) {
+  if (selectedOption?.filterKind === 'year' || (isImplicitScalarFilterValue(value) && isYearToken(value))) {
     return { kind: 'year', value, option: selectedOption ?? undefined }
   }
 
@@ -78,8 +93,8 @@ export function classifySearchSelection({
 export type SearchSubmitIntent =
   | { type: 'visited'; visitedPlace: VisitedPlace }
   | { type: 'person'; person: string; option?: IndexedKeywords }
-  | { type: 'tag'; keyword: string; option?: IndexedKeywords }
-  | { type: 'year'; keyword: string; option?: IndexedKeywords }
+  | { type: 'tag'; tag: string; option?: IndexedKeywords }
+  | { type: 'year'; year: string; option?: IndexedKeywords }
   | { type: 'structured'; option: IndexedKeywords }
   | { type: 'keyword'; keyword: string }
   | { type: 'noop' }
@@ -88,17 +103,20 @@ export function resolveSearchSubmitIntent({
   selectedOption,
   inputValue,
   knownPeople,
+  knownTags,
   personMatchMode,
 }: {
   selectedOption: IndexedKeywords | null
   inputValue: string
   knownPeople?: string[]
+  knownTags?: string[]
   personMatchMode?: 'exact' | 'unique-contains'
 }): SearchSubmitIntent {
   const classification = classifySearchSelection({
     selectedOption,
     inputValue,
     knownPeople,
+    knownTags,
     personMatchMode,
   })
 
@@ -120,7 +138,7 @@ export function resolveSearchSubmitIntent({
   if (classification.kind === 'tag') {
     return {
       type: 'tag',
-      keyword: classification.value,
+      tag: classification.value,
       option: classification.option,
     }
   }
@@ -128,7 +146,7 @@ export function resolveSearchSubmitIntent({
   if (classification.kind === 'year') {
     return {
       type: 'year',
-      keyword: classification.value,
+      year: classification.value,
       option: classification.option,
     }
   }

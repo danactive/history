@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
-import { resolveRouteInputs, resolveSearchParams, type GalleryRouteProps, type RouteProps } from '../../../../src/lib/server/page-route'
+import {
+  resolveRouteInputs,
+  resolveSearchParams,
+  type GalleryRouteProps,
+  type RouteSearchParamsProps,
+} from '../../../../src/lib/server/page-route'
 import { parseTodayRouteSearchParams, type TodaySearchParams } from '../../../../src/lib/server/search-params'
 import { buildDateDetailsText } from '../../../../src/lib/storytelling'
 
 export async function generateMetadata(
-  { searchParams }: Pick<RouteProps<never, TodaySearchParams>, 'searchParams'>,
+  { searchParams }: RouteSearchParamsProps<TodaySearchParams>,
 ): Promise<Metadata> {
   const resolvedSearchParams = await resolveSearchParams(searchParams)
   const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)

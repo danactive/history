@@ -60,6 +60,50 @@ beforeEach(() => {
 })
 
 describe('album page data', () => {
+  test('keeps album search options backend-classified and exposes tag options', async () => {
+    getAlbum.mockResolvedValueOnce({
+      album: {
+        meta: { geo: { zoom: 8 } },
+        items: [
+          {
+            id: '1',
+            filename: '2026-01-01-01.jpg',
+            photoDate: '2026-01-01',
+            city: 'Demo City, Demo Region, Demo Country',
+            location: null,
+            caption: 'Caption',
+            description: null,
+            search: 'tag^, First Middle Last, 2026',
+            persons: null,
+            title: 'Title',
+            coordinates: null,
+            coordinateAccuracy: 0,
+            thumbPath: '',
+            photoPath: '',
+            mediaPath: '',
+            videoPaths: null,
+            reference: null,
+          },
+        ],
+      },
+    })
+
+    const result = await getAlbumData({
+      gallery: 'demo',
+      album: 'album-one',
+    })
+
+    expect(result.indexedKeywords).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'tag^', filterKind: 'tag' }),
+      expect.objectContaining({ value: 'First Middle Last', filterKind: 'person' }),
+      expect.objectContaining({ value: '2026', filterKind: 'year' }),
+    ]))
+
+    expect(result.tagOptions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ value: 'tag^', filterKind: 'tag' }),
+    ]))
+  })
+
   test('filters album items by selected person before rebuilding metadata', async () => {
     const result = await getAlbumData({
       gallery: 'demo',

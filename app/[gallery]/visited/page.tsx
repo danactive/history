@@ -1,15 +1,17 @@
 import type { Metadata } from 'next'
 import Link from '../../../src/components/Link'
-import getGalleries from '../../../src/lib/galleries'
+import {
+  generateGalleryStaticParams,
+  type GalleryParams,
+  type RouteParamsProps,
+} from '../../../src/lib/server/page-route'
 import type { RegionVisit } from '../../../src/lib/visited'
 import { formatVisitedYears, getVisitedData } from '../../../src/lib/visited'
 import type { Gallery as GalleryName, VisitedPlace } from '../../../src/types/common'
-import type { Gallery } from '../../../src/types/pages'
 import styles from './styles.module.css'
 
 export async function generateStaticParams() {
-  const { galleries } = await getGalleries()
-  return galleries.map((gallery) => ({ gallery }))
+  return generateGalleryStaticParams()
 }
 
 export const metadata: Metadata = {
@@ -31,7 +33,7 @@ function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
   return `/${gallery}/all?${searchParams.toString()}`
 }
 
-export default async function VisitedServer(props: { params: Promise<Gallery.Params> }) {
+export default async function VisitedServer(props: RouteParamsProps<GalleryParams>) {
   const { gallery } = await props.params
   const countries = await getVisitedData(gallery)
 

@@ -967,6 +967,7 @@ describe('Clear button functionality', () => {
         items,
         indexedKeywords: [
           { label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' },
+          { label: '2026 (1)', value: '2026', filterKind: 'year' },
           { label: 'First Middle Last (1)', value: 'First Middle Last', filterKind: 'person' },
         ],
         ownedPersonFilter: true,
@@ -978,7 +979,11 @@ describe('Clear button functionality', () => {
 
     fireEvent.click(getByText('tag^ (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
-    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?keyword=tag%5E')
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?tag=tag%5E')
+
+    fireEvent.click(getByText('2026 (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+    expect(mockPush).toHaveBeenLastCalledWith('/demo/today?year=2026')
 
     fireEvent.click(getByText('First Middle Last (1)'))
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
@@ -1020,6 +1025,121 @@ describe('Clear button functionality', () => {
     expect(mockPush).toHaveBeenCalledWith('/demo/today?person=First+Middle+Last')
   })
 
+  it('uses server tag options as the source of truth for tag routing on generic pages', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo/today', params: {} })
+
+    const items = [
+      {
+        corpus: 'First Middle Last portrait tagged tag^',
+        filename: 'classified.jpg',
+        search: 'First Middle Last, tag^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [
+          { label: 'tag^ (1)', value: 'tag^' },
+          { label: 'First Middle Last (1)', value: 'First Middle Last', filterKind: 'person' },
+        ],
+        tagOptions: [
+          { label: 'tag^ (1)', value: 'tag^' },
+        ],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, container } = render(<TestComponent />)
+
+    fireEvent.click(getByText('tag^ (1)'))
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/today?tag=tag%5E')
+  })
+
+  it('owns a tag route filter on generic pages and exposes it as an active chip', () => {
+    mockNavigation({ pathname: '/demo/all', params: { tag: 'tag^' } })
+
+    const items = [
+      {
+        corpus: 'First Middle Last portrait tagged tag^',
+        filename: 'tagged.jpg',
+        search: 'First Middle Last, tag^',
+      },
+      {
+        corpus: 'Jordan portrait tagged otherTag^',
+        filename: 'other.jpg',
+        search: 'Jordan, otherTag^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' }],
+        tagOptions: [{ label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' }],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { result } = renderHook(() => useSearch({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [{ label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' }],
+      tagOptions: [{ label: 'tag^ (1)', value: 'tag^', filterKind: 'tag' }],
+      ownedPersonFilter: true,
+    }))
+    render(<TestComponent />)
+
+    expect(result.current.filtered).toEqual([items[0]])
+    expect(document.body.textContent).toContain('Tag: tag^')
+  })
+
+  it('owns a year route filter on generic pages and exposes it as an active chip', () => {
+    mockNavigation({ pathname: '/demo/all', params: { year: '2026' } })
+
+    const items = [
+      {
+        corpus: 'First Middle Last portrait tagged tag^',
+        filename: '2026-01-01-tagged.jpg',
+        photoDate: '2026-01-01',
+        search: 'First Middle Last, tag^',
+      },
+      {
+        corpus: 'Jordan portrait tagged otherTag^',
+        filename: '2025-01-01-other.jpg',
+        photoDate: '2025-01-01',
+        search: 'Jordan, otherTag^',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: '2026 (1)', value: '2026', filterKind: 'year' }],
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { result } = renderHook(() => useSearch({
+      gallery: 'demo',
+      items,
+      indexedKeywords: [{ label: '2026 (1)', value: '2026', filterKind: 'year' }],
+      ownedPersonFilter: true,
+    }))
+    render(<TestComponent />)
+
+    expect(result.current.filtered).toEqual([items[0]])
+    expect(document.body.textContent).toContain('Year: 2026')
+  })
+
   it('submits a selected non-person suggestion as a keyword route on generic pages', () => {
     const { push: mockPush } = mockNavigation({ pathname: '/demo', params: {} })
 
@@ -1055,6 +1175,39 @@ describe('Clear button functionality', () => {
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
     expect(mockPush).toHaveBeenCalledWith('/demo?keyword=Birds')
+  })
+
+  it('keeps ad-hoc compound tag expressions on the keyword route', () => {
+    const { push: mockPush } = mockNavigation({ pathname: '/demo', params: {} })
+
+    const items = [
+      {
+        corpus: 'best^ highlight^ retrospective album',
+        filename: 'album-a.jpg',
+        search: 'best^, highlight^',
+        year: '2024',
+      },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'best^ (1)', value: 'best^', filterKind: 'tag' }],
+        tagOptions: [{ label: 'best^ (1)', value: 'best^', filterKind: 'tag' }],
+        summaryLabel: 'Albums',
+        ownedPersonFilter: true,
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'best^ && highlight^' } })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo?keyword=best%5E+%26%26+highlight%5E')
   })
 
   it('filters generic pages by owned person route using corpus/search fallback when items have no persons array', () => {

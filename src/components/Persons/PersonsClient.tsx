@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
-import type { All } from '../../types/pages'
+import type { Persons } from '../../types/pages'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
 import FilterControls from './FilterControls'
@@ -19,6 +19,7 @@ export default function PersonsClient({
   totalItemCount,
   indexedKeywords,
   personOptions,
+  tagOptions,
   clusteredMarkers,
   initialAgeSummary,
   initialBaseScopeItems,
@@ -26,7 +27,7 @@ export default function PersonsClient({
   initialPersonScopeItems,
   initialSelectedAge,
   initialSelectedPerson,
-}: All.ComponentProps) {
+}: Persons.ComponentProps) {
   const {
     refImageGallery,
     memoryIndex,
@@ -53,6 +54,7 @@ export default function PersonsClient({
     totalItemCount,
     indexedKeywords,
     personOptions,
+    tagOptions,
     initialAgeSummary,
     initialBaseScopeItems,
     initialAgeScopeItems,

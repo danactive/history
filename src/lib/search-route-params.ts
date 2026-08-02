@@ -17,7 +17,7 @@ export function createSearchRouteParams(searchParams?: SearchParamsLike) {
     return params
   }
 
-  ['keyword', 'person', 'select', 'visitedCountry', 'visitedRegion'].forEach((key) => {
+  ['keyword', 'tag', 'year', 'person', 'select', 'visitedCountry', 'visitedRegion'].forEach((key) => {
     const value = searchParams?.get?.(key)
     if (value) {
       params.set(key, value)
@@ -31,6 +31,8 @@ export function buildSearchRoutePath({
   pathname,
   baseSearchParams,
   keyword,
+  tag,
+  year,
   person,
   select,
   visitedPlace,
@@ -38,6 +40,8 @@ export function buildSearchRoutePath({
   pathname: string
   baseSearchParams: SearchParamsLike
   keyword: string
+  tag?: string | null
+  year?: string | null
   person?: string | null
   select?: string | null
   visitedPlace?: VisitedPlace | null
@@ -48,6 +52,22 @@ export function buildSearchRoutePath({
     params.set('keyword', keyword)
   } else {
     params.delete('keyword')
+  }
+
+  if (tag !== undefined) {
+    if (tag) {
+      params.set('tag', tag)
+    } else {
+      params.delete('tag')
+    }
+  }
+
+  if (year !== undefined) {
+    if (year) {
+      params.set('year', year)
+    } else {
+      params.delete('year')
+    }
   }
 
   if (person !== undefined) {
@@ -93,6 +113,8 @@ export function buildClearedSearchRoutePath({
 }) {
   const params = createSearchRouteParams(baseSearchParams)
   params.delete('keyword')
+  params.delete('tag')
+  params.delete('year')
   params.delete('visitedCountry')
   params.delete('visitedRegion')
   extraQueryParamsToClear.forEach((key) => {
