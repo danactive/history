@@ -461,11 +461,14 @@ describe('storytelling MCP server', () => {
     await client.initialize()
     const result = await client.listResourceTemplates()
 
-    expect(result.resourceTemplates.map(template => template.uriTemplate)).toEqual(expect.arrayContaining([
-      'history://gallery/{gallery}',
-      'history://album/{gallery}/{album}',
-      'history://person/{gallery}/{name}',
-      'history://day/{gallery}/{monthDay}',
+    expect(result.resourceTemplates).toEqual(expect.arrayContaining([
+      expect.objectContaining({ uriTemplate: 'history://gallery/{gallery}' }),
+      expect.objectContaining({ uriTemplate: 'history://album/{gallery}/{album}' }),
+      expect.objectContaining({ uriTemplate: 'history://person/{gallery}/{name}' }),
+      expect.objectContaining({
+        uriTemplate: 'history://day/{gallery}/{monthDay}',
+        title: 'History Today: On This Day',
+      }),
     ]))
   })
 

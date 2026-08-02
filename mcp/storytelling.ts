@@ -1,5 +1,5 @@
-import { McpServer, ResourceTemplate } from '@modelcontextprotocol/server'
-import { StdioServerTransport } from '@modelcontextprotocol/server/stdio'
+import { createMcpHandler, McpServer, ResourceTemplate } from '@modelcontextprotocol/server'
+import { serveStdio } from '@modelcontextprotocol/server/stdio'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
@@ -376,18 +376,16 @@ function createStorytellingServer() {
   return server
 }
 
-async function main() {
-  const server = createStorytellingServer()
-  const transport = new StdioServerTransport()
-  await server.connect(transport)
+function createStorytellingHttpHandler() {
+  return createMcpHandler(createStorytellingServer, { responseMode: 'sse' })
+}
+
+function main() {
+  serveStdio(createStorytellingServer)
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === modulePath) {
-  main().catch((error: unknown) => {
-    const message = error instanceof Error ? error.stack ?? error.message : String(error)
-    console.error(message)
-    process.exit(1)
-  })
+  main()
 }
 
-export { createStorytellingServer }
+export { createStorytellingHttpHandler, createStorytellingServer }
