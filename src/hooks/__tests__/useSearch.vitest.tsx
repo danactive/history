@@ -21,7 +21,13 @@ vi.mock('../../components/ComboBox', () => ({
   __esModule: true,
   default: ({ options, onChange, inputValue, onInputChange }: any) => (
     <div>
-      <input value={inputValue ?? ''} onChange={(event) => onInputChange?.(event.target.value)} />
+      <input
+        value={inputValue ?? ''}
+        onChange={(event) => {
+          onInputChange?.(event.target.value, 'input')
+          onInputChange?.('', 'reset')
+        }}
+      />
       {options.map((option: any) => (
         <button key={option.label} type="button" onClick={() => onChange(option)}>
           {option.label}
@@ -656,6 +662,83 @@ describe('Clear button functionality', () => {
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
 
     expect(mockPush).toHaveBeenCalledWith('/demo/persons?query=Alice')
+  })
+
+  it('stacks typed text with the active query instead of replacing the existing filter', () => {
+    const { push: mockPush } = mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'country:Canada' },
+    })
+    const items = [
+      { corpus: 'Canada portrait', filename: 'canada.jpg', city: 'Toronto, Canada' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'portrait' } })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/all?query=country%3ACanada+%26%26+portrait')
+  })
+
+  it('replaces the active query when the user enters a complete Boolean expression', () => {
+    const { push: mockPush } = mockNavigation({
+      pathname: '/demo/all',
+      params: { query: 'country:Canada' },
+    })
+    const items = [
+      { corpus: 'USA highlight^', filename: 'usa.jpg', city: 'Seattle, USA', search: 'highlight^' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' }],
+        tagOptions: [{ label: 'highlight^ (1)', value: 'highlight^', filterKind: 'tag' }],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'country:USA && highlight^' } })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/all?query=country%3AUSA+%26%26+tag%3Ahighlight%5E')
+  })
+
+  it('keeps an operator edit when autocomplete emits a programmatic input reset', () => {
+    const { push: mockPush } = mockNavigation({
+      pathname: '/demo/persons',
+      params: { query: 'country:Japan && year:2011' },
+    })
+    const items = [
+      { corpus: 'Japan 2011', filename: 'japan.jpg', city: 'Tokyo, Japan', photoDate: '2011-01-01' },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+    const input = container.querySelector('input') as HTMLInputElement
+
+    fireEvent.change(input, { target: { value: 'country:Japan || year:2011' } })
+
+    expect(input.value).toBe('country:Japan || year:2011')
+
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(mockPush).toHaveBeenCalledWith('/demo/persons?query=country%3AJapan+%7C%7C+year%3A2011')
   })
 
   it('shows Clear for a visited filter and clears visited params while keeping the selected media in place', async () => {

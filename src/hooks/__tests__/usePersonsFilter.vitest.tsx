@@ -184,6 +184,27 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.selectedPerson).toBe('Alice')
   })
 
+  test('does not replace a clean persons route on mount', () => {
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+
+    renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    expect(replace).not.toHaveBeenCalled()
+  })
+
+  test('coalesces duplicate URL replacements before route state catches up', () => {
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    act(() => {
+      result.current.setSelectedAge(21)
+      result.current.setSelectedAge(21)
+    })
+
+    expect(replace).toHaveBeenCalledTimes(1)
+    expect(replace).toHaveBeenCalledWith('/demo/persons?query=age%3A21', { scroll: false })
+  })
+
   test('keeps person when age is cleared', () => {
     query = new URLSearchParams('query=person%3AAlice+%26%26+age%3A21')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]

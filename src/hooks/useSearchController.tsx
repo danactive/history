@@ -48,6 +48,13 @@ function combineAnd(currentQuery: string, selection: FilterQueryNode, context: F
   return formatFilterQuery(current ? { type: 'and', children: [current, selection] } : selection)
 }
 
+function isCompleteQueryEdit(value: string) {
+  return value.includes('&&')
+    || value.includes('||')
+    || /[()]/.test(value)
+    || /^\s*(?:country|region|person|tag|year|age|keyword):/i.test(value)
+}
+
 export default function useSearchController<ItemType>({
   itemsRef,
   searchOptions,
@@ -98,10 +105,16 @@ export default function useSearchController<ItemType>({
   ), [pathname, searchParams])
 
   const handleSelectedOptionChange = useCallback((nextOption: IndexedKeywords | null) => {
-    setSelectedOption(nextOption?.value ? nextOption : null)
+    const option = nextOption?.value ? nextOption : null
+    setSelectedOption(option)
+    setInputValue(option?.value ?? '')
   }, [])
 
-  const handleInputValueChange = useCallback((nextInputValue: string) => {
+  const handleInputValueChange = useCallback((nextInputValue: string, reason?: string) => {
+    if (reason === 'reset') {
+      return
+    }
+
     setInputValue(nextInputValue)
     setSelectedOption((previousOption) => previousOption?.value === nextInputValue ? previousOption : null)
   }, [])
@@ -144,6 +157,12 @@ export default function useSearchController<ItemType>({
     }
 
     if (intent.type === 'keyword') {
+      const textQuery = parseFilterQuery(intent.keyword, queryContext)
+      if (query && textQuery && !isCompleteQueryEdit(intent.keyword)) {
+        applyQuery(combineAnd(query, textQuery, queryContext))
+        return
+      }
+
       applyQuery(intent.keyword)
     }
   }, [

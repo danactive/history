@@ -24,6 +24,20 @@ export default function usePersonsRouteState({
   const [selectedAge, setSelectedAgeState] = useState<PersonAgeFilterValue>(initialSelectedAge)
   const [selectedPerson, setSelectedPersonState] = useState<string | null>(initialSelectedPerson)
   const shouldSyncUrlRef = useRef(false)
+  const pendingUrlRef = useRef<string | null>(null)
+
+  const replaceUrl = useCallback((nextUrl: string) => {
+    const currentUrl = typeof window === 'undefined'
+      ? null
+      : `${window.location.pathname}${window.location.search}`
+
+    if (currentUrl === nextUrl || pendingUrlRef.current === nextUrl) {
+      return
+    }
+
+    pendingUrlRef.current = nextUrl
+    replace(nextUrl, { scroll: false })
+  }, [replace])
 
   const syncUrlImmediately = useCallback((nextAge: PersonAgeFilterValue, nextPerson: string | null) => {
     const params = buildPersonsRouteSearchParams(searchParamsSnapshot, {
@@ -35,15 +49,8 @@ export default function usePersonsRouteState({
     const query = params.toString()
     const nextUrl = query ? `${pathname}?${query}` : pathname
 
-    if (typeof window !== 'undefined') {
-      const currentUrl = `${window.location.pathname}${window.location.search}`
-      if (currentUrl !== nextUrl) {
-        window.history.replaceState(null, '', nextUrl)
-      }
-    }
-
-    replace(nextUrl, { scroll: false })
-  }, [pathname, replace, routeFilters, searchParamsSnapshot])
+    replaceUrl(nextUrl)
+  }, [pathname, replaceUrl, routeFilters, searchParamsSnapshot])
 
   const setSelectedAge = useCallback((value: PersonAgeFilterValue) => {
     if (selectedAge === value) {
@@ -91,8 +98,15 @@ export default function usePersonsRouteState({
       return
     }
 
-    replace(canonicalQuery ? `${pathname}?${canonicalQuery}` : pathname, { scroll: false })
-  }, [pathname, replace, routeFilters, searchParamsSnapshot])
+    replaceUrl(canonicalQuery ? `${pathname}?${canonicalQuery}` : pathname)
+  }, [pathname, replaceUrl, routeFilters, searchParamsSnapshot])
+
+  useEffect(() => {
+    const currentUrl = searchParamsSnapshot ? `${pathname}?${searchParamsSnapshot}` : pathname
+    if (pendingUrlRef.current === currentUrl) {
+      pendingUrlRef.current = null
+    }
+  }, [pathname, searchParamsSnapshot])
 
   useEffect(() => {
     if (!shouldSyncUrlRef.current) {
@@ -102,7 +116,7 @@ export default function usePersonsRouteState({
     if (routeFilters.selectedAge === selectedAge && routeFilters.selectedPerson === selectedPerson) {
       shouldSyncUrlRef.current = false
     }
-  }, [pathname, replace, routeFilters, searchParamsSnapshot, selectedAge, selectedPerson])
+  }, [routeFilters, selectedAge, selectedPerson])
 
   return {
     isServerScopeCurrent: selectedAge === initialSelectedAge && selectedPerson === initialSelectedPerson,

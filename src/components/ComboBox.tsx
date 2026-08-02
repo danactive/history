@@ -23,7 +23,7 @@ export default function ComboBox(
     onChange: (option: IndexedKeywords) => void,
     value: IndexedKeywords | null,
     inputValue?: string,
-    onInputChange?: (value: string) => void,
+    onInputChange?: (value: string, reason?: string) => void,
   },
 ) {
   return (
@@ -32,8 +32,8 @@ export default function ComboBox(
         className={className}
         value={(valueText ?? null) as IndexedKeywords | undefined}
         inputValue={inputValue ?? ''}
-        onInputChange={(_event, newInputValue) => {
-          onInputChange?.(newInputValue)
+        onInputChange={(_event, newInputValue, reason) => {
+          onInputChange?.(newInputValue, reason)
         }}
         disableClearable
         onChange={(_event: any, newValue: any): void => {
