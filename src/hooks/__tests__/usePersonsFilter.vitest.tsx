@@ -44,7 +44,6 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
     </>
   ),
   setDisplayedItems: setDisplayedItemsMock,
-  setVisibleCount: setVisibleCountMock,
   mapFilterEnabled: false,
   handleToggleMapFilter: vi.fn(),
   handleBoundsChange: vi.fn(),
@@ -54,7 +53,6 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
 })))
 
 const setDisplayedItemsMock = vi.hoisted(() => vi.fn())
-const setVisibleCountMock = vi.hoisted(() => vi.fn())
 
 vi.mock('../useMapFilter', () => ({
   __esModule: true,
@@ -169,7 +167,6 @@ describe('usePersonsFilter URL sync', () => {
     replace.mockClear()
     useMapFilter.mockClear()
     setDisplayedItemsMock.mockReset()
-    setVisibleCountMock.mockReset()
     vi.mocked(usePathname).mockReturnValue('/demo/persons')
     vi.mocked(useRouter).mockReturnValue({ replace } as any)
     vi.mocked(useSearchParams).mockImplementation(() => searchParamsMock as any)
@@ -517,6 +514,38 @@ describe('usePersonsFilter URL sync', () => {
     expect(replace).toHaveBeenCalledWith('/demo/persons?query=person%3AAlice+%26%26+age%3A48', { scroll: false })
   })
 
+  test('keeps the first menu anchored to the bbox base scope when the URL selects an age', () => {
+    query = new URLSearchParams('query=age%3A21&bbox=15%2C15%2C25%2C25')
+    const ageScopedItems = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const mapBaseScope = [
+      ageScopedItems[0],
+      makeItem('2', 'Bob', '1979-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items: ageScopedItems,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialBaseScopeItems: mapBaseScope,
+    }))
+
+    expect(result.current.filterControlsProps.totalPhotoCount).toBe(2)
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 1 },
+      { age: 42, count: 1 },
+    ])
+    expect(result.current.ageFiltered).toEqual(ageScopedItems)
+
+    act(() => {
+      result.current.setSelectedAge(42)
+    })
+
+    expect(result.current.selectedAge).toBe(42)
+    expect(result.current.filterControlsProps.totalPhotoCount).toBe(2)
+    expect(result.current.ageFiltered).toEqual([mapBaseScope[1]])
+  })
+
   test('keeps other people available in the people dropdown after selecting a person', () => {
     query = new URLSearchParams('query=person%3AAlice+%26%26+age%3A21')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
@@ -588,7 +617,6 @@ describe('usePersonsFilter URL sync', () => {
 
     expect(result.current.ageFiltered).toEqual([items[0]])
     expect(setDisplayedItemsMock).toHaveBeenLastCalledWith([items[0]])
-    expect(setVisibleCountMock).toHaveBeenLastCalledWith(1)
   })
 
   test('keeps the final person-filtered slice narrow while the people menu stays on the cached age scope', () => {
@@ -619,7 +647,6 @@ describe('usePersonsFilter URL sync', () => {
       { name: 'Bob', count: 1 },
     ])
     expect(setDisplayedItemsMock).toHaveBeenLastCalledWith([visibleItems[0]])
-    expect(setVisibleCountMock).toHaveBeenLastCalledWith(1)
   })
 
   test('keeps the people dropdown visible when a person is already selected', () => {

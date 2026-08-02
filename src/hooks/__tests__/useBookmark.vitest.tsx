@@ -278,6 +278,69 @@ describe('useBookmark', () => {
     })
   })
 
+  it('includes the active map filter as a GeoJSON bbox', async () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'https://example.com', search: '?query=country%3ACanada' },
+      writable: true,
+      configurable: true,
+    })
+    const ref = React.createRef<any>()
+    ref.current = { getCurrentIndex: () => 0 }
+
+    function TestComponent() {
+      const { BookmarkButton } = useBookmark({
+        refImageGallery: ref,
+        displayedItems,
+        pathname,
+        mapBounds: [[-123.1234567, 49.1], [-122.9, 49.2]],
+      })
+      return <BookmarkButton />
+    }
+
+    const { container } = render(<TestComponent />)
+    fireEvent.click(container.querySelector('button')!)
+
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalledWith(
+        'https://example.com/gallery/vacation-2024?query=country%3ACanada&select=IMG_001.jpg&bbox=-123.123457%2C49.1%2C-122.9%2C49.2',
+      )
+    })
+    expect(mockReplaceState).toHaveBeenCalledWith(
+      null,
+      '',
+      '/gallery/vacation-2024?query=country%3ACanada&select=IMG_001.jpg&bbox=-123.123457%2C49.1%2C-122.9%2C49.2',
+    )
+  })
+
+  it('removes a stale bbox when map filtering is no longer active', async () => {
+    Object.defineProperty(window, 'location', {
+      value: { origin: 'https://example.com', search: '?bbox=-123.1%2C49.1%2C-122.9%2C49.3' },
+      writable: true,
+      configurable: true,
+    })
+    const ref = React.createRef<any>()
+    ref.current = { getCurrentIndex: () => 0 }
+
+    function TestComponent() {
+      const { BookmarkButton } = useBookmark({
+        refImageGallery: ref,
+        displayedItems,
+        pathname,
+        mapBounds: null,
+      })
+      return <BookmarkButton />
+    }
+
+    const { container } = render(<TestComponent />)
+    fireEvent.click(container.querySelector('button')!)
+
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalledWith(
+        'https://example.com/gallery/vacation-2024?select=IMG_001.jpg',
+      )
+    })
+  })
+
   it('uses execCommand fallback when clipboard API fails', async () => {
     mockWriteText.mockRejectedValueOnce(new Error('Clipboard denied'))
 

@@ -1,12 +1,13 @@
 import getAlbum from './album'
 import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
+import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import { buildFilterMetadata } from './server/filter-metadata'
 import { addGeographyToSearch } from './search'
 import type { AlbumRouteParams } from './server/page-route'
 import type { Album } from '../types/pages'
 
 export async function getAlbumData(
-  { album, gallery, query }: AlbumRouteParams & { query?: string },
+  { album, gallery, query, mapBounds }: AlbumRouteParams & { query?: string, mapBounds?: Bounds | null },
 ): Promise<Album.ItemData> {
   const { album: { items, meta } } = await getAlbum(gallery, album)
   const preparedItems = items.map((item) => ({
@@ -18,6 +19,11 @@ export async function getAlbumData(
   const scopedItems = query
     ? filterItemsByQuery(preparedItems, parseFilterQuery(query, getFilterQueryContext(baseMetadata)))
     : preparedItems
+  const totalItemCount = mapBounds
+    ? filterItemsByMapBounds(preparedItems, true, mapBounds).length
+    : query
+      ? preparedItems.length
+      : undefined
 
   const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
@@ -25,7 +31,7 @@ export async function getAlbumData(
     gallery,
     album,
     items: scopedItems,
-    totalItemCount: query ? preparedItems.length : undefined,
+    totalItemCount,
     meta,
     indexedKeywords,
     personOptions,

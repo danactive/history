@@ -1,3 +1,5 @@
+import { mapBoundsSearchParam } from './map-filter-query'
+
 type SearchParamsLike = {
   get?: (key: string) => string | null
   toString?: () => string
@@ -60,6 +62,7 @@ export function buildClearedSearchRoutePath({
 }) {
   const params = createSearchRouteParams(baseSearchParams)
   params.delete('query')
+  params.delete(mapBoundsSearchParam)
   retiredFilterKeys.forEach((key) => params.delete(key))
   extraQueryParamsToClear.forEach((key) => params.delete(key))
 

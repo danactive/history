@@ -2,10 +2,21 @@ import { renderHook, act, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import useMapFilter from '../useMapFilter'
 import useMemory from '../useMemory'
+import { filterItemsByMapBounds } from '../../lib/map-filtering'
 
 const useSearchMock = vi.hoisted(() => vi.fn())
-const setVisibleCountMock = vi.hoisted(() => vi.fn())
 const setDisplayedItemsMock = vi.hoisted(() => vi.fn())
+const navigationMock = vi.hoisted(() => ({
+  pathname: '/demo/all',
+  searchParams: new URLSearchParams(),
+  replace: vi.fn(),
+}))
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => navigationMock.pathname,
+  useRouter: () => ({ replace: navigationMock.replace }),
+  useSearchParams: () => navigationMock.searchParams,
+}))
 
 // Mock useSearch so tests can control filtered results and inspect callbacks.
 vi.mock('../useSearch', () => ({
@@ -41,13 +52,15 @@ const makeItem = (id: string, coords: [number, number] = [0, 0]): ServerSideAllI
 
 describe('Viewed persistence across map/keyword filtering', () => {
   beforeEach(() => {
-    setVisibleCountMock.mockReset()
+    navigationMock.pathname = '/demo/all'
+    navigationMock.searchParams = new URLSearchParams()
+    navigationMock.replace.mockReset()
     setDisplayedItemsMock.mockReset()
-    useSearchMock.mockImplementation(({ items }: any) => ({
+    useSearchMock.mockImplementation(({ items, mapFilterEnabled, mapBounds }: any) => ({
       filtered: items,
+      visibleItems: filterItemsByMapBounds(items, mapFilterEnabled, mapBounds),
       keyword: '',
       searchBox: <div data-testid="search-box" />,
-      setVisibleCount: setVisibleCountMock,
       setDisplayedItems: setDisplayedItemsMock,
     }))
   })
@@ -91,6 +104,31 @@ describe('Viewed persistence across map/keyword filtering', () => {
     expect(result.current.mapFilterEnabled).toBe(false)
     expect(result.current.itemsToShow.map(i => i.id).sort()).toEqual(['1', '2', '3'])
     expect(['1', '2', '3'].every(id => result.current.viewedList.has(id))).toBe(true)
+  })
+
+  test('restores an enabled map filter from a GeoJSON bbox URL parameter', () => {
+    navigationMock.searchParams = new URLSearchParams('query=tag%3Abest%5E&bbox=15%2C15%2C25%2C25')
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
+
+    const { result } = renderHook(() => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    expect(result.current.mapFilterEnabled).toBe(true)
+    expect(result.current.mapBounds).toEqual([[15, 15], [25, 25]])
+    expect(result.current.itemsToShow.map(item => item.id)).toEqual(['2'])
+    expect(navigationMock.replace).not.toHaveBeenCalled()
+  })
+
+  test('keeps map movement out of router navigation', () => {
+    navigationMock.searchParams = new URLSearchParams('query=tag%3Abest%5E&select=two.jpg')
+    const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20])]
+    const { result } = renderHook(() => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }))
+
+    act(() => { result.current.handleToggleMapFilter() })
+    act(() => { result.current.handleBoundsChange([[14, 14], [24, 24]]) })
+    act(() => { result.current.handleBoundsChange([[15.1234567, 15], [25, 25]]) })
+
+    expect(result.current.mapBounds).toEqual([[15.1234567, 15], [25, 25]])
+    expect(navigationMock.replace).not.toHaveBeenCalled()
   })
 
   test('repeated setViewed calls do not duplicate entries', () => {
@@ -142,15 +180,16 @@ describe('Viewed persistence across map/keyword filtering', () => {
   })
 
   test('onClearMapFilter disables map filtering and preserves clear coordinates', async () => {
+    navigationMock.searchParams = new URLSearchParams('query=tag%3Abest%5E&bbox=15%2C15%2C25%2C25')
     const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20])]
     let latestArgs: any
     useSearchMock.mockImplementation((args: any) => {
       latestArgs = args
       return {
         filtered: args.items,
+        visibleItems: filterItemsByMapBounds(args.items, args.mapFilterEnabled, args.mapBounds),
         keyword: '',
         searchBox: <div data-testid="search-box" />,
-        setVisibleCount: setVisibleCountMock,
         setDisplayedItems: setDisplayedItemsMock,
       }
     })
@@ -166,6 +205,7 @@ describe('Viewed persistence across map/keyword filtering', () => {
     expect(result.current.mapFilterEnabled).toBe(false)
     expect(result.current.clearCoordinates).toEqual([123, 45])
     expect(result.current.isClearing).toBe(true)
+    expect(navigationMock.replace).not.toHaveBeenCalled()
 
     await waitFor(() => {
       expect(result.current.isClearing).toBe(false)
@@ -173,25 +213,21 @@ describe('Viewed persistence across map/keyword filtering', () => {
     })
   })
 
-  test('updates visible counts and displayed items for the current itemsToShow', async () => {
+  test('derives itemsToShow from the map-filtered search result without a synchronization effect', () => {
     const items = [makeItem('1', [10, 10]), makeItem('2', [20, 20]), makeItem('3', [30, 30])]
     const { result } = renderHook(
       ({ items }) => useMapFilter({ gallery: 'demo', items, indexedKeywords: [] }),
       { initialProps: { items } },
     )
 
-    await waitFor(() => {
-      expect(setDisplayedItemsMock).toHaveBeenLastCalledWith(items)
-      expect(setVisibleCountMock).toHaveBeenLastCalledWith(3)
-    })
+    expect(result.current.itemsToShow).toEqual(items)
+    expect(setDisplayedItemsMock).not.toHaveBeenCalled()
 
     act(() => { result.current.handleToggleMapFilter() })
     act(() => { result.current.handleBoundsChange([[15, 15], [25, 25]]) })
 
-    await waitFor(() => {
-      expect(setDisplayedItemsMock).toHaveBeenLastCalledWith([items[1]])
-      expect(setVisibleCountMock).toHaveBeenLastCalledWith(1)
-    })
+    expect(result.current.itemsToShow).toEqual([items[1]])
+    expect(setDisplayedItemsMock).not.toHaveBeenCalled()
   })
 
   test('passes the photo summary label into useSearch by default', () => {

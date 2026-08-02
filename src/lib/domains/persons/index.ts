@@ -1,39 +1,14 @@
 import type { ServerSideAllItem } from '../../../types/common'
 import { calcAgeAtDate, resolvePhotoDate } from '../../../utils/person-age'
 import { filterItemsBySelectedPerson } from '../../filter-selected-person'
-import { countValuesByFrequency } from '../../storytelling-ranking'
+export {
+  buildPersonCountsFromItems,
+  buildPersonOptions,
+  type PersonCount,
+  type PersonOption,
+} from './metadata'
 
 export type PersonAgeFilterValue = number | 'unknown' | null
-
-export type PersonCount = {
-  name: string
-  count: number
-}
-
-export type PersonOption = {
-  label: string
-  value: string
-  count: number
-}
-
-type PersonCountableItem = {
-  persons?: { full: string }[] | null
-}
-
-export function buildPersonCountsFromItems<ItemType extends PersonCountableItem>(items: ItemType[], limit: number) {
-  return countValuesByFrequency(
-    items.flatMap(item => item.persons?.map(person => person.full) ?? []),
-    limit,
-  )
-}
-
-export function buildPersonOptions(personCounts: PersonCount[]): PersonOption[] {
-  return personCounts.map(({ name, count }) => ({
-    label: `${name} (${count})`,
-    value: name,
-    count,
-  }))
-}
 
 export function filterPersonsItems(
   items: ServerSideAllItem[],

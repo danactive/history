@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 
 import PersonsClient from '../../../src/components/Persons/PersonsClient'
 import PersonsFallback from '../../../src/components/Persons/PersonsFallback'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import { getPersonsPageData } from '../../../src/lib/persons-page'
 import {
   buildClusteredPageData,
@@ -32,6 +33,7 @@ export default async function PersonsServer({
     selectedAge: initialSelectedAge,
     selectedPerson: initialSelectedPerson,
   } = parsePersonsRouteSearchParams(resolvedSearchParams)
+  const mapBounds = parseMapBoundsParam(resolvedSearchParams.bbox)
   const {
     items,
     indexedKeywords,
@@ -48,6 +50,7 @@ export default async function PersonsServer({
     selectedAge: initialSelectedAge,
     selectedPerson: initialSelectedPerson,
     searchParams: resolvedSearchParams,
+    mapBounds,
   }))
 
   return (

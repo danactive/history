@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 3030",
+    "dev": "next dev --turbopack -p 3030",
     "generate-types": "tsx ./scripts/generate-types.ts",
     "build": "npm run generate-types && next build --webpack",
     "mcp": "tsx ./mcp/storytelling.ts",

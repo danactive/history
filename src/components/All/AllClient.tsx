@@ -30,6 +30,7 @@ export default function AllClient({
     viewedList,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
@@ -68,6 +69,7 @@ export default function AllClient({
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}

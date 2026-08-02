@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import AllClient from '../../../src/components/All/AllClient'
 import { getAllData } from '../../../src/lib/all'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import {
   buildClusteredPageData,
   generateGalleryStaticParams,
@@ -27,6 +28,7 @@ export default async function AllServer({
     searchParams: resolvedSearchParams,
   } = await resolveRouteInputs(params, searchParams)
   const query = getQueryFromSearchParams(resolvedSearchParams)
+  const mapBounds = parseMapBoundsParam(resolvedSearchParams.bbox)
 
   const {
     items = [],
@@ -35,7 +37,7 @@ export default async function AllServer({
     tagOptions,
     totalItemCount,
     clusteredMarkers,
-  } = buildClusteredPageData(await getAllData({ gallery, query }))
+  } = buildClusteredPageData(await getAllData({ gallery, query, mapBounds }))
 
   return (
     <Suspense fallback={<div>Loading...</div>}>

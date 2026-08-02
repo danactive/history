@@ -40,12 +40,6 @@ export default function usePersonsDerivedData({
   setSelectedAge: (value: PersonAgeFilterValue) => void
 }) {
   const scopedItems = useMemo(() => {
-    const canUseInitialBaseScope = selectedAge !== null
-      && initialSelectedAge === null
-      && initialSelectedPerson !== null
-      && effectiveSelectedPerson === initialSelectedPerson
-      && initialBaseScopeItems !== undefined
-
     const canUseInitialAgeScope = selectedAge !== null
       && selectedAge === initialSelectedAge
       && initialSelectedPerson !== null
@@ -56,7 +50,7 @@ export default function usePersonsDerivedData({
       && effectiveSelectedPerson === initialSelectedPerson
       && initialPersonScopeItems !== undefined
 
-    if (canUseInitialBaseScope) {
+    if (initialBaseScopeItems !== undefined) {
       return initialBaseScopeItems
     }
 

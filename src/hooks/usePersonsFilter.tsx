@@ -73,8 +73,8 @@ export default function usePersonsFilter({
     keyword,
     searchBox,
     setDisplayedItems,
-    setVisibleCount,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
@@ -84,7 +84,6 @@ export default function usePersonsFilter({
     gallery,
     items,
     totalCount: totalItemCount,
-    syncSearchState: false,
     indexedKeywords,
     tagOptions,
     personDetailsName: effectiveSelectedPerson,
@@ -116,8 +115,7 @@ export default function usePersonsFilter({
 
   useEffect(() => {
     setDisplayedItems(ageFiltered)
-    setVisibleCount(ageFiltered.length)
-  }, [ageFiltered, setDisplayedItems, setVisibleCount])
+  }, [ageFiltered, setDisplayedItems])
 
   const { memoryHtml: personsMemoryHtml, setViewed: personsSetViewed } = useMemory(
     ageFiltered,
@@ -148,6 +146,7 @@ export default function usePersonsFilter({
     keyword,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     isClearing,

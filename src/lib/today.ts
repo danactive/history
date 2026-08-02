@@ -1,6 +1,7 @@
 import getAlbum from './album'
 import getAlbums from './albums'
 import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
+import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import { addYearToSearch, getItemYearFromFilename } from './domains/years'
 import { buildFilterMetadata, type ServerPageFilterMetadata } from './server/filter-metadata'
 import { addGeographyToSearch } from './search'
@@ -15,6 +16,7 @@ export async function getTodayItems(
   gallery: Gallery,
   monthDay: string,
   query?: string,
+  mapBounds?: Bounds | null,
 ): Promise<TodayItemsResult> {
   const { [gallery]: { albums } } = await getAlbums(gallery)
 
@@ -55,7 +57,9 @@ export async function getTodayItems(
 
   items.sort(compareNewestFirst)
 
-  const totalItemCount = items.length
+  const totalItemCount = mapBounds
+    ? filterItemsByMapBounds(items, true, mapBounds).length
+    : items.length
   const baseMetadata = buildFilterMetadata(items)
   const hasQuery = Boolean(query)
   const parsedQuery = query ? parseFilterQuery(query, getFilterQueryContext(baseMetadata)) : null
@@ -73,6 +77,6 @@ export async function getTodayItems(
     personOptions,
     yearOptions,
     tagOptions,
-    totalItemCount: hasQuery ? totalItemCount : undefined,
+    totalItemCount: hasQuery || mapBounds ? totalItemCount : undefined,
   }
 }

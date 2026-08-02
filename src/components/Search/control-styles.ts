@@ -63,13 +63,13 @@ export const selectButtonSx = {
   pr: 1.75,
   '--Icon-color': 'rgba(255, 255, 255, 0.7)',
   '--variant-softBg': 'rgba(26, 30, 36, 0.92)',
-  '--variant-softHoverBg': 'rgba(48, 54, 63, 0.98)',
-  '--variant-softActiveBg': 'rgba(54, 60, 70, 0.98)',
+  '--variant-softHoverBg': 'rgba(38, 43, 50, 0.96)',
+  '--variant-softActiveBg': 'rgba(44, 49, 57, 0.98)',
   '&:hover': {
-    backgroundColor: 'rgba(48, 54, 63, 0.98)',
+    backgroundColor: 'rgba(38, 43, 50, 0.96)',
   },
   '&:focus-visible, &[aria-expanded="true"]': {
-    backgroundColor: 'rgba(48, 54, 63, 0.98)',
+    backgroundColor: 'rgba(38, 43, 50, 0.96)',
   },
   '& .MuiSelect-indicator': {
     color: 'rgba(255, 255, 255, 0.7)',

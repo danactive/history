@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
+import { generateClusters } from '../../lib/generate-clusters'
 import type { Persons } from '../../types/pages'
 import AllItems from '../All/Items'
 import AlbumContext from '../Context'
@@ -35,6 +36,7 @@ export default function PersonsClient({
     setViewed,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     isClearing,
@@ -71,6 +73,10 @@ export default function PersonsClient({
   })
 
   const hasActivePersonsFilters = selectedAge !== null || selectedPerson !== null
+  const visibleClusteredMarkers = useMemo(
+    () => hasActivePersonsFilters ? generateClusters(ageFiltered) : clusteredMarkers,
+    [ageFiltered, clusteredMarkers, hasActivePersonsFilters],
+  )
 
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [])
 
@@ -101,12 +107,13 @@ export default function PersonsClient({
         />
         <SplitViewer
           setViewed={setViewed}
-          clusteredMarkers={clusteredMarkers}
+          clusteredMarkers={visibleClusteredMarkers}
           items={ageFiltered}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}

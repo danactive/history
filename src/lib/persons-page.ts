@@ -14,6 +14,7 @@ import {
   type FilterQueryContext,
 } from './filter-query'
 import { buildFilterMetadata } from './server/filter-metadata'
+import { filterItemsByMapBounds, type Bounds } from './map-filtering'
 import type { Persons } from '../types/pages'
 import { buildAgeSummary } from '../utils/person-age'
 import type { Gallery } from '../types/common'
@@ -44,11 +45,13 @@ export async function getPersonsPageData({
   selectedAge,
   selectedPerson,
   searchParams,
+  mapBounds,
 }: {
   gallery: Gallery
   selectedAge: AgeFilterValue
   selectedPerson: string | null
   searchParams?: PersonsSearchParams
+  mapBounds?: Bounds | null
 }): Promise<Persons.ItemData> {
   const personsData = await getPersonsData({ gallery })
   const query = typeof searchParams?.query === 'string' ? searchParams.query : ''
@@ -66,6 +69,9 @@ export async function getPersonsPageData({
   const ageScopeItems = selectedAge !== null
     ? filterPersonsItems(menuBaseItems, selectedAge, null)
     : undefined
+  const mapMenuBaseItems = mapBounds && (selectedAge !== null || selectedPerson !== null)
+    ? filterItemsByMapBounds(menuBaseItems, true, mapBounds)
+    : undefined
   const visibleItems = filterPersonsItems(menuBaseItems, selectedAge, selectedPerson)
   const hasServerScope = Boolean(query) || selectedAge !== null || selectedPerson !== null
   const scopedFilterMetadata = hasServerScope ? buildFilterMetadata(visibleItems) : null
@@ -77,12 +83,14 @@ export async function getPersonsPageData({
   return {
     gallery,
     items: visibleItems,
-    totalItemCount: personsData.items.length,
+    totalItemCount: mapBounds
+      ? filterItemsByMapBounds(personsData.items, true, mapBounds).length
+      : personsData.items.length,
     indexedKeywords,
     personOptions,
     tagOptions,
     initialAgeSummary,
-    initialBaseScopeItems: selectedAge === null && selectedPerson ? menuBaseItems : undefined,
+    initialBaseScopeItems: mapMenuBaseItems ?? (selectedAge === null && selectedPerson ? menuBaseItems : undefined),
     initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
     initialPersonScopeItems: personScopeItems,
   }

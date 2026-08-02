@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import {
   buildClusteredPageData,
   generateGalleryStaticParams,
@@ -36,6 +37,7 @@ export default async function TodayServer({
     searchParams)
   const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   const query = getQueryFromSearchParams(resolvedSearchParams)
+  const mapBounds = parseMapBoundsParam(resolvedSearchParams.bbox)
   const {
     items,
     indexedKeywords,
@@ -44,7 +46,7 @@ export default async function TodayServer({
     totalItemCount,
     clusteredMarkers,
   } = buildClusteredPageData(
-    await getTodayItems(gallery, monthDay, query),
+    await getTodayItems(gallery, monthDay, query, mapBounds),
   )
   return (
     <Suspense fallback={<div>Loading Today...</div>}>

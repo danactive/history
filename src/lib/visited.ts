@@ -14,6 +14,7 @@ export {
   formatVisitedPlace,
   formatVisitedYears,
   getVisitedPlace,
+  isSearchableVisitedRegion,
   matchesVisitedPlace,
 } from './visited-core'
 export type { CountryVisit, RegionVisit, VisitedPlace, VisitedRegionCountryIndex } from './visited-core'

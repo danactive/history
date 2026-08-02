@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 function haveSameItems<ItemType>(left: ItemType[], right: ItemType[]) {
   if (left === right) {
@@ -15,29 +15,18 @@ function haveSameItems<ItemType>(left: ItemType[], right: ItemType[]) {
 }
 
 export default function useVisibleSearchState<ItemType>(
-  filtered: ItemType[],
-  initialItems: ItemType[],
+  visibleItems: ItemType[],
   visibleItemsRef: { current: ItemType[] },
 ) {
-  const [displayedItems, setDisplayedItems] = useState<ItemType[]>(initialItems)
-  const [visibleCount, setVisibleCount] = useState<number>(filtered.length)
+  const [displayedItems, setDisplayedItems] = useState<ItemType[] | null>(null)
 
   const setDisplayedItemsStable = useCallback((items: ItemType[]) => {
-    setDisplayedItems((previousItems) => (haveSameItems(previousItems, items) ? previousItems : items))
+    setDisplayedItems((previousItems) => (
+      previousItems !== null && haveSameItems(previousItems, items) ? previousItems : items
+    ))
   }, [])
 
-  const setVisibleCountStable = useCallback((count: number) => {
-    setVisibleCount((previousCount) => (previousCount === count ? previousCount : count))
-  }, [])
-
-  useEffect(() => {
-    setVisibleCount((previousCount) => (previousCount === filtered.length ? previousCount : filtered.length))
-  }, [filtered.length])
-
-  const itemsToUse = useMemo(
-    () => (displayedItems.length ? displayedItems : filtered),
-    [displayedItems, filtered],
-  )
+  const itemsToUse = displayedItems ?? visibleItems
 
   useEffect(() => {
     visibleItemsRef.current = itemsToUse
@@ -46,7 +35,6 @@ export default function useVisibleSearchState<ItemType>(
   return {
     itemsToUse,
     setDisplayedItems: setDisplayedItemsStable,
-    setVisibleCount: setVisibleCountStable,
-    visibleCount,
+    visibleCount: itemsToUse.length,
   }
 }

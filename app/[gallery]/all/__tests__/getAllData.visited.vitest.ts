@@ -16,7 +16,13 @@ vi.mock('../../../../src/lib/albums', () => ({
   }),
 }))
 
-function buildItem(id: string, filename: string, city: string, persons: Item['persons'] = null): Item {
+function buildItem(
+  id: string,
+  filename: string,
+  city: string,
+  persons: Item['persons'] = null,
+  coordinates: Item['coordinates'] = null,
+): Item {
   return {
     id,
     filename,
@@ -28,7 +34,7 @@ function buildItem(id: string, filename: string, city: string, persons: Item['pe
     search: null,
     persons,
     title: '',
-    coordinates: null,
+    coordinates,
     coordinateAccuracy: null,
     thumbPath: '',
     photoPath: '',
@@ -46,7 +52,7 @@ vi.mock('../../../../src/lib/album', () => ({
         album: {
           meta: { geo: { zoom: 8 } },
           items: [
-            buildItem('flight-ch', '2018-01-01-01.jpg', 'Zürich, Switzerland, Aeroplane'),
+            buildItem('flight-ch', '2018-01-01-01.jpg', 'Zürich, Switzerland, Aeroplane', null, [10, 10]),
             buildItem('flight-us', '2016-03-25-01.jpg', 'Straits of Florida, USA, Aeroplane'),
           ],
         },
@@ -58,7 +64,7 @@ vi.mock('../../../../src/lib/album', () => ({
         album: {
           meta: { geo: { zoom: 7 } },
           items: [
-            buildItem('alice-only', '1999-05-06-01.jpg', 'Zürich, Switzerland', [{ full: 'Alice Example', dob: null }]),
+            buildItem('alice-only', '1999-05-06-01.jpg', 'Zürich, Switzerland', [{ full: 'Alice Example', dob: null }], [10, 10]),
             buildItem('lausanne-1', '1999-05-06-02.jpg', 'Lausanne, Switzerland'),
           ],
         },
@@ -114,5 +120,16 @@ describe('getAllData visited filtering', () => {
 
     expect(items.map((item) => item.id)).toEqual(['alice-only'])
     expect(totalItemCount).toBe(6)
+  })
+
+  test('keeps the map-bounded total when the query narrows the returned items', async () => {
+    const result = await getAllData({
+      gallery: 'demo',
+      query: 'person:"Alice Example"',
+      mapBounds: [[0, 0], [20, 20]],
+    })
+
+    expect(result.items.map((item) => item.id)).toEqual(['alice-only'])
+    expect(result.totalItemCount).toBe(2)
   })
 })

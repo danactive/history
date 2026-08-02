@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import type { Bounds } from '../lib/map-filtering'
+import { areMapBoundsEqual } from '../lib/map-filter-query'
 
-export default function useMapFilterState() {
-  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
-  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
+export default function useMapFilterState(initialMapBounds: Bounds | null = null) {
+  const [mapFilterEnabled, setMapFilterEnabled] = useState(Boolean(initialMapBounds))
+  const [mapBounds, setMapBounds] = useState<Bounds | null>(initialMapBounds)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [clearCoordinates, setClearCoordinates] = useState<[number, number] | null>(null)
   const [isClearing, setIsClearing] = useState(false)
@@ -26,19 +27,7 @@ export default function useMapFilterState() {
       return
     }
 
-    setMapBounds((previousBounds) => {
-      if (
-        previousBounds
-        && previousBounds[0][0] === bounds[0][0]
-        && previousBounds[0][1] === bounds[0][1]
-        && previousBounds[1][0] === bounds[1][0]
-        && previousBounds[1][1] === bounds[1][1]
-      ) {
-        return previousBounds
-      }
-
-      return bounds
-    })
+    setMapBounds(previousBounds => areMapBoundsEqual(previousBounds, bounds) ? previousBounds : bounds)
   }, [])
 
   const selectById = useCallback((id: string) => {
@@ -69,6 +58,11 @@ export default function useMapFilterState() {
       return () => clearTimeout(timeout)
     }
   }, [isClearing, mapFilterEnabled])
+
+  useEffect(() => {
+    setMapBounds(previousBounds => areMapBoundsEqual(previousBounds, initialMapBounds) ? previousBounds : initialMapBounds)
+    setMapFilterEnabled(Boolean(initialMapBounds))
+  }, [initialMapBounds])
 
   return {
     clearCoordinates,

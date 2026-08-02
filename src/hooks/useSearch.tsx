@@ -8,10 +8,13 @@ import {
 } from 'react'
 import Controls from '../components/Search/Controls'
 import { buildSearchOptions } from '../lib/domains/search'
+import { buildFilterMetadataFromLocations } from '../lib/filter-metadata-core'
 import {
   parseKeywordQuery,
 } from '../lib/search-filtering'
 import { filterItemsByQuery, getConjunctiveFilterTerms, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
+import { filterItemsByMapBounds, type Bounds } from '../lib/map-filtering'
+import { areMapBoundsEqual, mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
 import { Gallery, VisitedPlace } from '../types/common'
 import type { SearchMetadata, SearchUiConfig } from '../types/pages'
 import useBookmark from './useBookmark'
@@ -29,6 +32,7 @@ interface SearchableItem {
   persons?: { full: string }[] | null;
   search?: string | null;
   visitedPlace?: VisitedPlace | null;
+  coordinates?: [number, number] | null;
 }
 
 type FilenameItem = SearchableItem & {
@@ -42,6 +46,7 @@ interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
+  mapBounds?: Bounds | null;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
   selectById?: (id: string, isClear?: boolean) => void;
   trailingAction?: React.ReactNode;
@@ -63,6 +68,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   tagOptions = [],
   refImageGallery,
   mapFilterEnabled,
+  mapBounds,
   onClearMapFilter,
   personDetailsName,
   selectById,
@@ -76,22 +82,40 @@ export default function useSearch<ItemType extends SearchableItem>({
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
   const pathname = usePathname()
+  const mapBoundsParam = searchParams?.get(mapBoundsSearchParam)
+  const urlMapBounds = useMemo(() => parseMapBounds(mapBoundsParam), [mapBoundsParam])
+  const mapScopedItems = useMemo(
+    () => filterItemsByMapBounds(items, Boolean(mapFilterEnabled), mapBounds ?? null),
+    [items, mapBounds, mapFilterEnabled],
+  )
+
+  const mapScopedMetadata = useMemo(
+    () => mapFilterEnabled
+      ? buildFilterMetadataFromLocations(mapScopedItems, buildSearchOptions(mapScopedItems))
+      : null,
+    [mapFilterEnabled, mapScopedItems],
+  )
+
+  const scopedIndexedKeywords = mapScopedMetadata?.indexedKeywords ?? indexedKeywords
+  const scopedPersonOptions = mapScopedMetadata?.personOptions ?? personOptions
+  const scopedTagOptions = mapScopedMetadata?.tagOptions ?? tagOptions
+
   const searchOptions = useMemo(
-    () => buildSearchOptions(items, indexedKeywords),
-    [items, indexedKeywords],
+    () => buildSearchOptions(mapScopedItems, scopedIndexedKeywords),
+    [mapScopedItems, scopedIndexedKeywords],
   )
 
   const knownPeople = useMemo(
     () => Array.from(new Set([
-      ...personOptions.map((option) => option.value),
-      ...items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
+      ...scopedPersonOptions.map((option) => option.value),
+      ...mapScopedItems.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
     ])),
-    [items, personOptions],
+    [mapScopedItems, scopedPersonOptions],
   )
 
   const knownTags = useMemo(
-    () => Array.from(new Set(tagOptions.map((option) => option.value))),
-    [tagOptions],
+    () => Array.from(new Set(scopedTagOptions.map((option) => option.value))),
+    [scopedTagOptions],
   )
 
   const fallbackSelectedOption = useMemo(() => {
@@ -146,22 +170,26 @@ export default function useSearch<ItemType extends SearchableItem>({
     regions: Array.from(new Set(searchOptions.flatMap(option => option.visitedPlace?.region ? [option.visitedPlace.region] : []))),
     people: knownPeople,
     tags: knownTags,
-    keywords: indexedKeywords
+    keywords: scopedIndexedKeywords
       .filter(option => !option.filterKind || option.filterKind === 'keyword')
       .map(option => option.value),
-  }), [indexedKeywords, knownPeople, knownTags, searchOptions])
+  }), [knownPeople, knownTags, scopedIndexedKeywords, searchOptions])
 
   const filtered = useMemo(
     () => filterItemsByQuery(items, parseFilterQuery(keyword, queryContext)),
     [items, keyword, queryContext],
   )
 
+  const visibleItems = useMemo(
+    () => filterItemsByMapBounds(filtered, Boolean(mapFilterEnabled), mapBounds ?? null),
+    [filtered, mapBounds, mapFilterEnabled],
+  )
+
   const {
     itemsToUse,
     setDisplayedItems,
-    setVisibleCount,
     visibleCount,
-  } = useVisibleSearchState(filtered, items, visibleItemsRef)
+  } = useVisibleSearchState(visibleItems, visibleItemsRef)
 
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
   const selectedQueryPerson = useMemo(
@@ -207,15 +235,24 @@ export default function useSearch<ItemType extends SearchableItem>({
     displayedItems: itemsToUse,
     pathname,
     currentIndex: memoryIndex,
+    mapBounds,
   })
 
   const hasExtraFilters = Boolean(extraFiltersActive)
+  const isUrlMapScope = Boolean(
+    mapFilterEnabled
+    && mapBounds
+    && areMapBoundsEqual(mapBounds, urlMapBounds),
+  )
+  const visibleTotalCount = isUrlMapScope
+    ? totalCount ?? mapScopedItems.length
+    : mapScopedItems.length
 
   const searchBox = (
     <Controls
       summaryLabel={summaryLabel}
       visibleCount={visibleCount}
-      totalCount={totalCount ?? items.length}
+      totalCount={visibleTotalCount}
       keyword={keyword}
       parsedKeyword={parsedKeyword}
       mapFilterEnabled={mapFilterEnabled}
@@ -243,10 +280,10 @@ export default function useSearch<ItemType extends SearchableItem>({
 
   return {
     filtered,
+    visibleItems,
     keyword,
     setKeyword,
     searchBox,
-    setVisibleCount,
     setDisplayedItems,
   }
 }

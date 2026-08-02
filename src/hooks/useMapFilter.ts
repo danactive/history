@@ -1,16 +1,16 @@
 'use client'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
-import { buildSelectableItemIndex, filterItemsByMapBounds, resolveSelectedItemIndex } from '../lib/map-filtering'
+import { buildSelectableItemIndex, resolveSelectedItemIndex } from '../lib/map-filtering'
+import { mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
 import type { All, SearchMetadata, SearchUiConfig } from '../types/pages'
 import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
 import useSearch from './useSearch'
 
-type UseMapFilterProps = SearchMetadata & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'> & {
-  syncSearchState?: boolean
-}
+type UseMapFilterProps = SearchMetadata & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'>
 
 export default function useMapFilter({
   items,
@@ -21,15 +21,20 @@ export default function useMapFilter({
   gallery,
   personDetailsName,
   totalCount,
-  syncSearchState = true,
   summaryLabel = 'Photos',
   extraFilterChips,
   extraFiltersActive,
   onClearExtraFilters,
-  extraQueryParamsToClear,
+  extraQueryParamsToClear = [],
   onStructuredOptionSubmit,
   ownedPersonFilter = false,
 }: UseMapFilterProps) {
+  const searchParams = useSearchParams()
+  const mapBoundsParam = searchParams.get(mapBoundsSearchParam)
+  const initialMapBounds = useMemo(
+    () => parseMapBounds(mapBoundsParam),
+    [mapBoundsParam],
+  )
   const refImageGallery = useRef<ImageGalleryRef>(null)
   const {
     autoInitialViewRef,
@@ -41,21 +46,29 @@ export default function useMapFilter({
 
   const {
     clearCoordinates,
-    handleBoundsChange,
-    handleClearMapFilter,
-    handleToggleMapFilter,
+    handleBoundsChange: setMapBounds,
+    handleClearMapFilter: clearMapFilter,
+    handleToggleMapFilter: toggleMapFilter,
     isClearing,
     mapBounds,
     mapFilterEnabled,
     selectedId,
     selectById,
-  } = useMapFilterState()
+  } = useMapFilterState(initialMapBounds)
+
+  const handleBoundsChange = useCallback((bounds: Parameters<typeof setMapBounds>[0]) => {
+    setMapBounds(bounds)
+  }, [setMapBounds])
+
+  const handleClearMapFilter = useCallback((coordinates?: [number, number] | null) => {
+    clearMapFilter(coordinates)
+  }, [clearMapFilter])
 
   const {
     filtered,
+    visibleItems,
     keyword,
     searchBox,
-    setVisibleCount,
     setDisplayedItems,
   } = useSearch({
     gallery,
@@ -69,6 +82,7 @@ export default function useMapFilter({
     tagOptions,
     refImageGallery,
     mapFilterEnabled,
+    mapBounds,
     onClearMapFilter: handleClearMapFilter,
     personDetailsName,
     selectById,
@@ -76,28 +90,20 @@ export default function useMapFilter({
     extraFilterChips,
     extraFiltersActive,
     onClearExtraFilters,
-    extraQueryParamsToClear,
+    extraQueryParamsToClear: [
+      mapBoundsSearchParam,
+      ...extraQueryParamsToClear.filter(key => key !== mapBoundsSearchParam),
+    ],
     onStructuredOptionSubmit,
     ownedPersonFilter,
   })
 
-  const itemsToShow = useMemo(() => {
-    return filterItemsByMapBounds(filtered, mapFilterEnabled, mapBounds)
-  }, [mapFilterEnabled, mapBounds, filtered])
+  const itemsToShow = visibleItems
 
   // Memoized ID-to-index maps for O(1) lookups (critical for large datasets)
   const itemsToShowMap = useMemo(() => buildSelectableItemIndex(itemsToShow), [itemsToShow])
 
   const filteredMap = useMemo(() => buildSelectableItemIndex(filtered), [filtered])
-
-  // Update displayed items whenever itemsToShow changes
-  useEffect(() => {
-    if (!syncSearchState) {
-      return
-    }
-
-    setDisplayedItems(itemsToShow)
-  }, [itemsToShow, setDisplayedItems, syncSearchState])
 
   const { setViewed, memoryHtml, viewedList } = useMemory(
     itemsToShow,
@@ -106,10 +112,10 @@ export default function useMapFilter({
   )
 
   const handleToggleMapFilterWithMemoryReset = useCallback(() => {
-    handleToggleMapFilter(() => {
+    toggleMapFilter(() => {
       prepareForMapFilterEnable()
     })
-  }, [handleToggleMapFilter, prepareForMapFilterEnable])
+  }, [prepareForMapFilterEnable, toggleMapFilter])
 
   useEffect(() => {
     if (mapFilterEnabled && resetIndexOnEnableRef.current) {
@@ -133,17 +139,6 @@ export default function useMapFilter({
     }
   }, [itemsToShowMap, filteredMap, selectedId, setMemoryIndex])
 
-  useEffect(() => {
-    if (!syncSearchState) {
-      return
-    }
-
-    const timeout = setTimeout(() => {
-      setVisibleCount(itemsToShow.length)
-    }, 100)
-    return () => clearTimeout(timeout)
-  }, [itemsToShow.length, setVisibleCount, syncSearchState])
-
   return {
     refImageGallery,
     memoryIndex,
@@ -155,8 +150,8 @@ export default function useMapFilter({
     keyword,
     searchBox,
     setDisplayedItems,
-    setVisibleCount,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter: handleToggleMapFilterWithMemoryReset,
     handleBoundsChange,
     itemsToShow,

@@ -3,6 +3,7 @@ import { getConjunctiveFilterTerms, replaceConjunctiveFilterTerms } from './filt
 
 export type PersonsRouteSearchParams = {
   query?: string | string[]
+  bbox?: string | string[]
 }
 
 export type PersonsRouteFilters = {

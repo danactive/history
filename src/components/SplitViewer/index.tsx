@@ -14,6 +14,7 @@ import type { MapRef } from 'react-map-gl/mapbox'
 import config from '../../../src/models/config'
 import { Viewed } from '../../hooks/useMemory'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
+import type { Bounds } from '../../lib/map-filtering'
 import { Item } from '../../types/common'
 import { getExt, getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
@@ -69,6 +70,7 @@ function SplitViewer({
   memoryIndex,
   setMemoryIndex,
   mapFilterEnabled,
+  mapBounds,
   isClearing,
   clearCoordinates,
   onToggleMapFilter,
@@ -81,6 +83,7 @@ function SplitViewer({
   memoryIndex: number;
   setMemoryIndex: (n: number) => void;
   mapFilterEnabled?: boolean;
+  mapBounds?: Bounds | null;
   isClearing?: boolean;
   clearCoordinates?: [number, number] | null;
   onToggleMapFilter?: () => void;
@@ -187,6 +190,7 @@ function SplitViewer({
             items={items}
             centroid={effectiveCentroid}
             mapFilterEnabled={mapFilterEnabled}
+            filterBounds={mapBounds}
             onToggleMapFilter={onToggleMapFilter}
             onBoundsChange={onMapBoundsChange}
           />

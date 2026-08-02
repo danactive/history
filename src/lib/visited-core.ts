@@ -72,6 +72,16 @@ function normalizeRegion(value: string | null) {
   return trimmed.length > 0 ? trimmed : null
 }
 
+type SearchableVisitedRegion = Pick<RegionVisit, 'count'> & Partial<Pick<RegionVisit, 'region' | 'filter'>>
+
+export function isSearchableVisitedRegion(region: SearchableVisitedRegion) {
+  const regionName = region.region ?? region.filter?.region
+
+  return region.count >= config.visitedRegionSearchMinPhotoCount
+    || (typeof regionName === 'string'
+      && regionName.trim().length < config.visitedRegionSearchShortNameMaxLengthExclusive)
+}
+
 function isLikelyCountryName(value: string) {
   const trimmed = value.trim()
   if (!trimmed) return false
@@ -327,31 +337,27 @@ export function buildVisitedDataFromItems(items: Pick<Item, 'city' | 'filename' 
 
 export function buildVisitedKeywordOptions(items: Pick<Item, 'city' | 'filename' | 'photoDate'>[]): IndexedKeywords[] {
   const visitedData = buildVisitedDataFromItems(items)
-  const options = new Map<string, IndexedKeywords>()
 
-  visitedData.forEach((country) => {
-    const countryLabel = `${country.country} (${country.count})`
-    options.set(country.filter.country, {
-      label: countryLabel,
+  return visitedData.flatMap((country) => {
+    const countryOption: IndexedKeywords = {
+      label: `${country.country} (${country.count})`,
       value: country.filter.country,
       visitedPlace: country.filter,
-    })
-
-    country.regions.forEach((region) => {
-      if (region.count < config.visitedRegionSearchMinCount) {
-        return
-      }
-
-      const value = formatVisitedPlace(region.filter)
-      options.set(value, {
-        label: `${value} (${region.count})`,
-        value,
-        visitedPlace: region.filter,
+    }
+    const regionOptions = country.regions
+      .filter(isSearchableVisitedRegion)
+      .sort((left, right) => right.count - left.count || left.region.localeCompare(right.region))
+      .map((region) => {
+        const value = formatVisitedPlace(region.filter)
+        return {
+          label: `${value} (${region.count})`,
+          value,
+          visitedPlace: region.filter,
+        }
       })
-    })
-  })
 
-  return [...options.values()].sort((left, right) => left.value.localeCompare(right.value))
+    return [countryOption, ...regionOptions]
+  })
 }
 
 export type { CountryVisit, RegionVisit, VisitedPlace, VisitedRegionCountryIndex }

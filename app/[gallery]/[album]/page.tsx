@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import { getAlbumData } from '../../../src/lib/album-page'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
 import {
@@ -40,11 +41,12 @@ export default async function AlbumServer(props: RouteProps<AlbumRouteParams, Qu
     searchParams,
   } = await resolveRouteInputs(props.params, props.searchParams)
   const query = getQueryFromSearchParams(searchParams)
+  const mapBounds = parseMapBoundsParam(searchParams.bbox)
 
   const {
     items, meta, indexedKeywords, personOptions, tagOptions, totalItemCount,
     clusteredMarkers,
-  } = buildClusteredPageData(await getAlbumData({ album, gallery, query }))
+  } = buildClusteredPageData(await getAlbumData({ album, gallery, query, mapBounds }))
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <AlbumPageComponent

@@ -171,6 +171,116 @@ describe('Router ready', () => {
     expect(container.textContent).toMatch(/Albums 2 of 2/)
   })
 
+  it('preserves the map-scoped total when a tag query narrows server-provided items', async () => {
+    mockNavigation({ pathname: '/demo/all', params: { query: 'tag:best^', bbox: '15,15,25,25' } })
+    const items = [
+      { ...mockItem, corpus: 'best photograph', search: 'best^', coordinates: [20, 20] as [number, number] },
+      { ...mockItem, corpus: 'another best photograph', search: 'best^', coordinates: [21, 21] as [number, number] },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        tagOptions: [{ label: 'best^ (2)', value: 'best^', filterKind: 'tag' }],
+        totalCount: 3,
+        mapFilterEnabled: true,
+        mapBounds: [[15, 15], [25, 25]],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    await waitFor(() => {
+      expect(container.textContent).toMatch(/Search results 2 of 3/)
+    })
+  })
+
+  it('preserves the map-scoped total when a person query narrows server-provided items', () => {
+    mockNavigation({
+      pathname: '/demo/persons',
+      params: { query: 'person:"Example Person"', bbox: '15,15,25,25' },
+    })
+    const items = Array.from({ length: 9 }, (_, index) => ({
+      ...mockItem,
+      id: String(index),
+      corpus: 'Example Person',
+      filename: `fixture-${index}.jpg`,
+      persons: [{ full: 'Example Person' }],
+      coordinates: [20, 20] as [number, number],
+    }))
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        totalCount: 108,
+        mapFilterEnabled: true,
+        mapBounds: [[15, 15], [25, 25]],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 9 of 108/)
+  })
+
+  it('rebuilds the count total after local map movement', () => {
+    mockNavigation({ pathname: '/demo/all', params: { bbox: '15,15,25,25' } })
+    const items = [
+      { ...mockItem, corpus: 'inside one', coordinates: [20, 20] as [number, number] },
+      { ...mockItem, corpus: 'inside two', coordinates: [21, 21] as [number, number] },
+      { ...mockItem, corpus: 'outside', coordinates: [30, 30] as [number, number] },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [],
+        totalCount: 7,
+        mapFilterEnabled: true,
+        mapBounds: [[19, 19], [22, 22]],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 2 of 2/)
+  })
+
+  it('rebuilds tag option counts from the active map bounds', () => {
+    mockNavigation({ pathname: '/demo/all', params: {} })
+    const items = [
+      { ...mockItem, corpus: 'best photograph', search: 'best^', city: 'Kyoto, Japan', coordinates: [20, 20] as [number, number] },
+      { ...mockItem, corpus: 'highlight photograph', search: 'highlight^', city: 'Kyoto, Japan', coordinates: [21, 21] as [number, number] },
+      { ...mockItem, corpus: 'best photograph elsewhere', search: 'best^', city: 'Osaka, Japan', coordinates: [30, 30] as [number, number] },
+    ]
+
+    function TestComponent() {
+      const search = useSearch({
+        gallery: 'demo',
+        items,
+        indexedKeywords: [{ label: 'best^ (1124)', value: 'best^', filterKind: 'tag' }],
+        tagOptions: [{ label: 'best^ (1124)', value: 'best^', filterKind: 'tag' }],
+        mapFilterEnabled: true,
+        mapBounds: [[15, 15], [25, 25]],
+      })
+      return <div>{search.searchBox}</div>
+    }
+
+    const { getByText, queryByText, container } = render(<TestComponent />)
+
+    expect(container.textContent).toMatch(/Search results 2 of 2/)
+    expect(getByText('best^ (1)')).toBeInTheDocument()
+    expect(queryByText('best^ (1124)')).not.toBeInTheDocument()
+  })
+
   it('preserves frequency-first keyword ordering in the search options', () => {
     mockNavigation({ pathname: '/demo', params: {} })
 
@@ -468,17 +578,6 @@ describe('Clear button functionality', () => {
     // Use a wrapper component to access the hook directly.
     function TestComponent() {
       const search = useSearch({ gallery: 'demo', items, indexedKeywords: [] })
-      const { filtered, setVisibleCount, setDisplayedItems } = search
-      const initialFiltered = React.useRef(filtered)
-
-      React.useEffect(() => {
-        setVisibleCount(filtered.length)
-      }, [filtered.length, setVisibleCount])
-
-      React.useEffect(() => {
-        setDisplayedItems(initialFiltered.current)
-      }, [setDisplayedItems])
-
       return <div>{search.searchBox}</div>
     }
 

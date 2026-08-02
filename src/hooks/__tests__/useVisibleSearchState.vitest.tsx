@@ -11,7 +11,6 @@ describe('useVisibleSearchState', () => {
 
     const { result } = renderHook(() => useVisibleSearchState(
       [first, second],
-      [first, second],
       visibleItemsRef,
     ))
 

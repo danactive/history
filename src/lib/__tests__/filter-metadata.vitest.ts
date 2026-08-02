@@ -26,6 +26,48 @@ describe('filter metadata composer', () => {
     expect(options.map(option => option.value)).toContain('Canada')
   })
 
+  test('includes an abbreviated province in server-side location options', () => {
+    const options = buildLocationOptions([
+      {
+        city: 'Banff National Park, AB, Canada',
+        filename: '2021-07-03-37.jpg',
+        photoDate: '2021-07-03',
+      },
+    ])
+
+    expect(options).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        value: 'AB, Canada',
+        visitedPlace: { country: 'Canada', region: 'AB' },
+      }),
+    ]))
+  })
+
+  test('puts server-sorted visited options before non-location search keywords', () => {
+    const metadata = buildFilterMetadata([
+      ...Array.from({ length: 3 }, (_, index) => ({
+        city: 'Banff National Park, AB, Canada',
+        filename: `2021-07-03-${index}.jpg`,
+        photoDate: '2021-07-03',
+        search: null,
+        persons: null,
+      })),
+      ...Array.from({ length: 9 }, (_, index) => ({
+        city: 'Yoho National Park, BC, Canada',
+        filename: `2021-07-04-${index}.jpg`,
+        photoDate: '2021-07-04',
+        search: null,
+        persons: null,
+      })),
+    ])
+
+    expect(metadata.indexedKeywords.slice(0, 3).map(option => option.value)).toEqual([
+      'Canada',
+      'BC, Canada',
+      'AB, Canada',
+    ])
+  })
+
   test('builds indexed keywords and typed buckets from a scoped corpus', () => {
     const metadata = buildFilterMetadata(items)
 

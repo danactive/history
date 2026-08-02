@@ -44,6 +44,7 @@ function AlbumClient({
     viewedList,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
@@ -102,6 +103,7 @@ function AlbumClient({
           memoryIndex={memoryIndex}
           setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
           onToggleMapFilter={handleToggleMapFilter}

@@ -214,6 +214,41 @@ describe('visited location aggregation', () => {
     ]))
   })
 
+  test('includes regions shorter than the configured threshold even below the normal minimum', () => {
+    const options = buildVisitedKeywordOptions([
+      { city: 'Banff National Park, AB, Canada', filename: '2021-07-03-37.jpg', photoDate: null },
+    ])
+
+    expect(options).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        label: 'AB, Canada (1)',
+        value: 'AB, Canada',
+        visitedPlace: { country: 'Canada', region: 'AB' },
+      }),
+    ]))
+  })
+
+  test('orders each country before its regions, with regions ordered by count', () => {
+    const options = buildVisitedKeywordOptions([
+      ...Array.from({ length: 3 }, (_, index) => ({
+        city: 'Banff National Park, AB, Canada',
+        filename: `2021-07-03-${index}.jpg`,
+        photoDate: null,
+      })),
+      ...Array.from({ length: 9 }, (_, index) => ({
+        city: 'Yoho National Park, BC, Canada',
+        filename: `2021-07-04-${index}.jpg`,
+        photoDate: null,
+      })),
+    ])
+
+    expect(options.map(option => option.value)).toEqual([
+      'Canada',
+      'BC, Canada',
+      'AB, Canada',
+    ])
+  })
+
   test('formats consecutive years as ranges', () => {
     expect(formatVisitedYears(['2015', '2018', '2019', '2020', '2021'])).toBe('2015, 2018-2021')
     expect(formatVisitedYears(['Unknown', 'NaN', '2020', '2019', '2019'])).toBe('2019-2020')
