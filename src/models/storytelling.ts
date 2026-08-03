@@ -52,6 +52,11 @@ const personStoryIndexEntrySchema = z.object({
   albums: z.array(z.string().trim().min(1)),
 }).strip()
 
+const personAlbumDetailsSchema = z.object({
+  name: z.string().trim().min(1),
+  keywordTags: z.array(z.string().trim().min(1)),
+}).strip()
+
 export const storySearchInputSchema = z.object({
   query: z.string().optional().describe('Free-text story query such as a place, theme, or event.'),
   gallery: generatedGallerySchema.optional().describe('Gallery name from the local archive.'),
@@ -112,20 +117,66 @@ function formatCountedValues(values: PersonCount[]) {
     .join(', ') || 'none'
 }
 
-function formatAlbumResourceText(album: Pick<AlbumStoryResult, 'summary' | 'placeCounts' | 'personCounts' | 'keywordTags'>) {
+function formatStoryMomentDetails(memory: StoryMoment) {
+  const title = memory.title || memory.caption || memory.description || 'Untitled memory'
+  const location = memory.location || memory.city
+  const memoryDetails = [
+    `  Album: ${memory.album ?? 'unknown'}`,
+    memory.caption && memory.caption !== title ? `  Caption: ${memory.caption}` : null,
+    memory.description && memory.description !== title && memory.description !== memory.caption
+      ? `  Description: ${memory.description}`
+      : null,
+    location ? `  Location: ${location}` : null,
+    memory.persons.length > 0 ? `  People: ${memory.persons.join(', ')}` : null,
+  ]
+
+  return [`- ${memory.date ?? 'Unknown date'}: ${title}`, ...memoryDetails.filter(Boolean)]
+}
+
+function formatStoryMomentList(
+  heading: string,
+  moments: StoryMoment[],
+  totalMoments: number,
+  qualifier: string,
+) {
+  if (moments.length === 0) {
+    return [`${heading}: none`]
+  }
+
+  const displayHeading = moments.length < totalMoments
+    ? `${heading} (showing ${moments.length} of ${totalMoments}, ${qualifier}):`
+    : `${heading} (${qualifier}):`
+
+  return [displayHeading, ...moments.flatMap(formatStoryMomentDetails)]
+}
+
+function formatAlbumResourceText(
+  album: Pick<AlbumStoryResult, 'summary' | 'placeCounts' | 'personCounts' | 'keywordTags' | 'itemCount' | 'highlights'>,
+  guiHref: string,
+) {
   return [
     album.summary,
     `Places: ${formatCountedValues(album.placeCounts)}`,
     `Persons: ${formatCountedValues(album.personCounts)}`,
     `Keyword tags: ${album.keywordTags.join(', ') || 'none'}`,
+    ...formatStoryMomentList('Highlights', album.highlights, album.itemCount, 'selected for narrative richness'),
+    `View the graphical interface in a web browser: ${guiHref}`,
   ].join('\n')
 }
 
 function formatPersonResourceText(
   person: Pick<PersonStoryIndexEntry, 'name' | 'appearances' | 'firstSeen' | 'lastSeen' | 'dateOfBirth' | 'albums'>,
   gallery: PersonStoryIndexResult['gallery'],
+  albumDetails: PersonAlbumDetails[],
   guiHref: string,
 ) {
+  const albums = albumDetails.length > 0
+    ? ['Albums:', ...albumDetails.map(album => [
+      `- ${album.name}`,
+      `  Keywords: ${album.keywordTags.join(', ') || 'no keyword tags'}`,
+    ].join('\n'))]
+    : ['Albums: none']
+
   return [
     `Person ${person.name}`,
     `Gallery is ${gallery}`,
@@ -133,13 +184,13 @@ function formatPersonResourceText(
     `First seen: ${person.firstSeen ?? 'unknown'}`,
     `Last seen: ${person.lastSeen ?? 'unknown'}`,
     `Date of birth: ${person.dateOfBirth ?? 'unknown'}`,
-    `Albums: ${person.albums.join(', ') || 'none'}`,
-    `GUI: ${guiHref}`,
+    ...albums,
+    `View the graphical interface in a web browser: ${guiHref}`,
   ].join('\n')
 }
 
 function formatOnThisDayResourceText(
-  output: Pick<OnThisDayStoryResult, 'summary'>,
+  output: Pick<OnThisDayStoryResult, 'summary' | 'totalMatches' | 'matches'>,
   guiHref: string,
   details: {
     years: string
@@ -154,7 +205,8 @@ function formatOnThisDayResourceText(
     `Locations: ${details.locations.join(', ') || 'none'}`,
     `Persons: ${formatCountedValues(details.persons)}`,
     `Keyword tags: ${details.keywordTags.join(', ') || 'none'}`,
-    `GUI: ${guiHref}`,
+    ...formatStoryMomentList('Matching memories', output.matches, output.totalMatches, 'newest first'),
+    `View the graphical interface in a web browser: ${guiHref}`,
   ].join('\n')
 }
 
@@ -185,6 +237,7 @@ type StorySearchResult = z.infer<typeof storySearchResultSchema>
 type PersonCount = z.infer<typeof personCountSchema>
 type AlbumStoryResult = z.infer<typeof albumStoryResultSchema>
 type PersonStoryIndexEntry = z.infer<typeof personStoryIndexEntrySchema>
+type PersonAlbumDetails = z.infer<typeof personAlbumDetailsSchema>
 type PersonStoryIndexResult = z.infer<typeof personStoryIndexResultSchema>
 type OnThisDayStoryResult = z.infer<typeof onThisDayStoryResultSchema>
 

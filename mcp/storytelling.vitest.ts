@@ -91,6 +91,11 @@ const toolCallResultSchema = z.object({
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
+    uri: z.string().optional(),
+    name: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    mimeType: z.string().optional(),
   })).optional(),
   structuredContent: z.record(z.string(), z.unknown()).optional(),
 })
@@ -101,21 +106,24 @@ const getPromptResultSchema = z.object({
     content: z.object({
       type: z.string(),
       text: z.string().optional(),
+      uri: z.string().optional(),
+      name: z.string().optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      mimeType: z.string().optional(),
     }),
   })),
 })
 
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
-const buildAlbumStory = vi.hoisted(() => vi.fn())
 const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleriesDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleryDetailsText = vi.hoisted(() => vi.fn())
+const buildPeopleInventoryText = vi.hoisted(() => vi.fn())
 const buildDateDetailsText = vi.hoisted(() => vi.fn())
 const buildPersonDetailsText = vi.hoisted(() => vi.fn())
-const getPeopleStoryIndex = vi.hoisted(() => vi.fn())
-const getOnThisDayStory = vi.hoisted(() => vi.fn())
-const buildStorytellingOverview = vi.hoisted(() => vi.fn())
+const getStorytellingDefaultGallery = vi.hoisted(() => vi.fn())
 
 vi.mock('../src/lib/galleries', () => ({
   default: getGalleries,
@@ -127,14 +135,12 @@ vi.mock('../src/lib/albums', () => ({
 
 vi.mock('../src/lib/storytelling', () => ({
   buildAlbumDetailsText,
-  buildAlbumStory,
   buildDateDetailsText,
   buildGalleriesDetailsText,
   buildGalleryDetailsText,
+  buildPeopleInventoryText,
   buildPersonDetailsText,
-  getPeopleStoryIndex,
-  getOnThisDayStory,
-  buildStorytellingOverview,
+  getStorytellingDefaultGallery,
 }))
 
 vi.mock('../src/models/config', () => ({
@@ -319,17 +325,18 @@ afterEach(async () => {
 beforeEach(() => {
   getGalleries.mockReset()
   getAlbums.mockReset()
-  buildAlbumStory.mockReset()
   buildAlbumDetailsText.mockReset()
   buildGalleriesDetailsText.mockReset()
   buildGalleryDetailsText.mockReset()
+  buildPeopleInventoryText.mockReset()
   buildPersonDetailsText.mockReset()
-  getPeopleStoryIndex.mockReset()
-  getOnThisDayStory.mockReset()
+  getStorytellingDefaultGallery.mockReset()
   buildDateDetailsText.mockReset()
-  buildStorytellingOverview.mockReset()
 
   getGalleries.mockResolvedValue({ galleries: ['demo', 'public'] })
+  getStorytellingDefaultGallery.mockImplementation((galleries: readonly string[]) => (
+    galleries.find(gallery => gallery !== 'demo') ?? 'demo'
+  ))
   getAlbums.mockResolvedValue({
     demo: {
       albums: [{ name: 'trip', h1: 'Trip', h2: 'Notes', year: '2024', search: 'Nagoya Castle, Atsuta Shrine' }],
@@ -340,18 +347,12 @@ beforeEach(() => {
   })
   buildGalleriesDetailsText.mockResolvedValue([
     'Available galleries',
-    'Default gallery: demo',
-    'Non-default galleries: public',
+    'Default gallery: public',
+    'Non-default galleries: demo',
     'Gallery album counts:',
-    '- demo (default): 1 album(s)',
-    '- public: 1 album(s)',
+    '- demo: 1 album(s)',
+    '- public (default): 1 album(s)',
   ].join('\n'))
-  buildAlbumStory.mockResolvedValue({
-    summary: 'Album summary',
-    places: ['Nagoya'],
-    people: ['Mister Gingerbread'],
-    personCounts: [{ name: 'Mister Gingerbread', count: 23 }],
-  })
   buildGalleryDetailsText.mockImplementation(async (gallery: string) => {
     if (gallery === 'public') {
       return [
@@ -368,10 +369,16 @@ beforeEach(() => {
       'with keywords Nagoya Castle, Atsuta Shrine',
     ].join('\n')
   })
+  buildPeopleInventoryText.mockImplementation(async (gallery: string) => [
+    `Person inventory for gallery ${gallery}`,
+    'People: 1',
+    '- Mister Gingerbread (3 appearances)',
+  ].join('\n'))
   buildAlbumDetailsText.mockResolvedValue([
     'Album summary',
     'Places: Nagoya',
     'Persons: Mister Gingerbread (23)',
+    'View the graphical interface in a web browser: http://localhost:3030/demo/trip',
   ].join('\n'))
   buildPersonDetailsText.mockResolvedValue([
     'Person Mister Gingerbread',
@@ -380,31 +387,18 @@ beforeEach(() => {
     'First seen: 2024-01-02',
     'Last seen: 2024-02-03',
     'Date of birth: unknown',
-    'Albums: trip',
-    'GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread',
+    'Albums:',
+    '- trip',
+    '  Keywords: Nagoya Castle (2), Atsuta Shrine (1)',
+    'View the graphical interface in a web browser: http://localhost:3030/demo/persons?query=person%3AMister+Gingerbread',
   ].join('\n'))
   buildDateDetailsText.mockResolvedValue([
     'On this day summary',
-    'GUI: http://localhost:3030/demo/today/details?day=01-02',
-    '2024-01-02: On this day memory (2024-01-02-01.jpg)',
+    'Matching memories (newest first):',
+    '- 2024-01-02: On this day memory',
+    '  Album: trip',
+    'View the graphical interface in a web browser: http://localhost:3030/demo/today?day=01-02',
   ].join('\n'))
-  getPeopleStoryIndex.mockResolvedValue({
-    summary: 'People summary',
-    people: [{
-      name: 'Mister Gingerbread',
-      appearances: 3,
-      firstSeen: '2024-01-02',
-      lastSeen: '2024-02-03',
-      dateOfBirth: null,
-      albums: ['trip'],
-    }],
-  })
-  getOnThisDayStory.mockResolvedValue({
-    summary: 'On this day summary',
-    monthDay: '01-02',
-    matches: [{ date: '2024-01-02', caption: 'On this day memory', filename: '2024-01-02-01.jpg' }],
-  })
-  buildStorytellingOverview.mockResolvedValue('Overview text')
 })
 
 describe('storytelling MCP server', () => {
@@ -436,10 +430,19 @@ describe('storytelling MCP server', () => {
     expect(result.tools.map(tool => tool.name)).toEqual([
       'get_album_story',
       'get_on_this_day_story',
+      'get_person_story',
     ])
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
-      description: expect.stringContaining('single album'),
+      description: expect.stringContaining('narrative context and highlights'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
+      title: 'Get memories On This Day Story',
+      description: expect.stringContaining('dates, albums, captions'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
+      title: 'Get Person Story',
+      description: expect.stringContaining('appearance counts'),
     }))
   })
 
@@ -458,7 +461,7 @@ describe('storytelling MCP server', () => {
     ]))
   })
 
-  test('lists resource templates for galleries, albums, people, and days', async () => {
+  test('lists gallery and people inventory resource templates', async () => {
     const client = await createConnection()
 
     await client.initialize()
@@ -466,16 +469,12 @@ describe('storytelling MCP server', () => {
 
     expect(result.resourceTemplates).toEqual(expect.arrayContaining([
       expect.objectContaining({ uriTemplate: 'history://gallery/{gallery}' }),
-      expect.objectContaining({ uriTemplate: 'history://album/{gallery}/{album}' }),
-      expect.objectContaining({ uriTemplate: 'history://person/{gallery}/{name}' }),
-      expect.objectContaining({
-        uriTemplate: 'history://day/{gallery}/{monthDay}',
-        title: 'History Today: On This Day',
-      }),
+      expect.objectContaining({ uriTemplate: 'history://people/{gallery}' }),
     ]))
+    expect(result.resourceTemplates).toHaveLength(2)
   })
 
-  test('lists and reads the consolidated storytelling guide resource', async () => {
+  test('lists only inventory resources', async () => {
     const client = await createConnection()
 
     await client.initialize()
@@ -483,21 +482,15 @@ describe('storytelling MCP server', () => {
 
     expect(resources.resources).toEqual(expect.arrayContaining([
       expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
-      expect.objectContaining({ uri: 'history://guide', title: 'History Storytelling Guide' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
-      expect.objectContaining({ uri: 'history://album/demo/trip', title: 'History Album' }),
-      expect.objectContaining({ uri: 'history://person/demo/Mister%20Gingerbread', title: 'History Person' }),
+      expect.objectContaining({ uri: 'history://people/demo', title: 'History People' }),
     ]))
-
-    const guide = await client.readResource('history://guide')
-
-    expect(guide.contents[0]).toEqual(expect.objectContaining({
-      uri: 'history://guide',
-      text: expect.stringContaining('Overview text'),
-    }))
-    expect(guide.contents[0]?.text).toContain('history://galleries')
-    expect(guide.contents[0]?.text).toContain('Recommended workflow:')
-    expect(guide.contents[0]?.text).toContain('story-from-history prompt')
+    expect(resources.resources.map(resource => resource.uri)).not.toEqual(expect.arrayContaining([
+      'history://guide',
+      'history://album/demo/trip',
+      'history://person/demo/Mister%20Gingerbread',
+      'history://day/demo/01-02',
+    ]))
   })
 
   test('returns evidence-first prompt instructions', async () => {
@@ -507,12 +500,12 @@ describe('storytelling MCP server', () => {
       'Tell me about recurring winter travel.',
     ].join(' ')
     const resourceText = [
-      'Read history://galleries and at least one relevant history resource',
+      'Read history://galleries and a relevant history://gallery/{gallery} inventory',
       'before composing the response.',
     ].join(' ')
     const toolText = [
-      'Call get_album_story or get_on_this_day_story',
-      'when either tool is relevant to the request.',
+      'Call get_album_story, get_on_this_day_story, or get_person_story',
+      'when relevant to the request.',
     ].join(' ')
 
     await client.initialize()
@@ -522,13 +515,50 @@ describe('storytelling MCP server', () => {
       tone: 'warm',
     })
 
-    expect(prompt.messages).toHaveLength(1)
-    expect(prompt.messages[0]?.content.text).toContain(requestText)
-    expect(prompt.messages[0]?.content.text).toContain('Focus on gallery: demo.')
-    expect(prompt.messages[0]?.content.text).toContain(resourceText)
-    expect(prompt.messages[0]?.content.text).toContain(toolText)
-    expect(prompt.messages[0]?.content.text).toContain('Use only archive evidence returned by the resources and tools.')
-    expect(prompt.messages[0]?.content.text).toContain('say so instead of inventing details')
+    const inventoryMessage = prompt.messages.find(message => message.content.type === 'resource_link')
+    const textMessage = prompt.messages.find(message => message.content.type === 'text')
+
+    expect(prompt.messages).toHaveLength(2)
+    expect(inventoryMessage?.content).toEqual({
+      type: 'resource_link',
+      uri: 'history://gallery/demo',
+      name: 'Album inventory for demo',
+      title: 'History Gallery',
+      description: 'Album names for the demo gallery.',
+    })
+    expect(textMessage?.content.text).toContain(requestText)
+    expect(textMessage?.content.text).toContain('Focus on gallery: demo.')
+    expect(textMessage?.content.text).toContain(resourceText)
+    expect(textMessage?.content.text).toContain(toolText)
+    expect(textMessage?.content.text).toContain('Use only archive evidence returned by the resources and tools.')
+    expect(textMessage?.content.text).toContain('say so instead of inventing details')
+  })
+
+  test('returns the gallery inventory link when a prompt query is omitted', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const prompt = await client.getPrompt('story-from-history', {})
+
+    expect(prompt.messages).toEqual([
+      {
+        role: 'user',
+        content: {
+          type: 'resource_link',
+          uri: 'history://galleries',
+          name: 'Photo gallery inventory',
+          title: 'History Photo Galleries',
+          description: 'Available galleries and their album counts.',
+        },
+      },
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: 'Read the linked inventory to discover galleries or album names, then call this prompt again with a story request.',
+        },
+      },
+    ])
   })
 
   test('reads gallery inventory resources', async () => {
@@ -538,70 +568,145 @@ describe('storytelling MCP server', () => {
     const galleries = await client.readResource('history://galleries')
     const gallery = await client.readResource('history://gallery/demo')
     const otherGallery = await client.readResource('history://gallery/public')
+    const people = await client.readResource('history://people/demo')
 
     expect(buildGalleriesDetailsText).toHaveBeenCalledTimes(1)
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('public')
+    expect(buildPeopleInventoryText).toHaveBeenCalledWith('demo')
     expect(galleries.contents[0]?.text).toContain('Available galleries')
-    expect(galleries.contents[0]?.text).toContain('Default gallery: demo')
-    expect(galleries.contents[0]?.text).toContain('Non-default galleries: public')
-    expect(galleries.contents[0]?.text).toContain('- demo (default): 1 album(s)')
+    expect(galleries.contents[0]?.text).toContain('Default gallery: public')
+    expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
+    expect(galleries.contents[0]?.text).toContain('- public (default): 1 album(s)')
     expect(gallery.contents[0]?.text).toContain('Gallery is demo')
     expect(gallery.contents[0]?.text).toContain('trip: Trip')
     expect(gallery.contents[0]?.text).toContain('with keywords Nagoya Castle, Atsuta Shrine')
     expect(otherGallery.contents[0]?.text).toContain('Gallery is public')
     expect(otherGallery.contents[0]?.text).toContain('other-trip: Other Trip')
+    expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
+    expect(people.contents[0]?.text).toContain('Mister Gingerbread (3 appearances)')
   })
 
-  test('reads album and person resources', async () => {
-    const client = await createConnection()
-
-    await client.initialize()
-    const album = await client.readResource('history://album/demo/trip')
-    const person = await client.readResource('history://person/demo/Mister%20Gingerbread')
-
-    expect(album.contents[0]?.text).toContain('Album summary')
-    expect(album.contents[0]?.text).toContain('Places: Nagoya')
-    expect(album.contents[0]?.text).toContain('Persons: Mister Gingerbread (23)')
-    expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
-    expect(person.contents[0]?.text).toContain('Appearances: 3')
-    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread')
-  })
-
-  test('maps get_album_story responses into text and structured content', async () => {
+  test('returns album details through a tool', async () => {
     const client = await createConnection()
 
     await client.initialize()
     const output = await client.callTool('get_album_story', { gallery: 'demo', album: 'trip' })
 
-    expect(buildAlbumStory).toHaveBeenCalledWith('demo', 'trip', 8)
-    expect(output.content).toEqual([{ type: 'text', text: 'Album summary' }])
-    expect(output.structuredContent).toEqual(expect.objectContaining({ summary: 'Album summary' }))
+    expect(buildAlbumDetailsText).toHaveBeenCalledWith('demo', 'trip', 8)
+    expect(output.content).toEqual([{ type: 'text', text: [
+      'Album summary',
+      'Places: Nagoya',
+      'Persons: Mister Gingerbread (23)',
+      'View the graphical interface in a web browser: http://localhost:3030/demo/trip',
+    ].join('\n') }])
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      album: 'trip',
+    })
   })
 
-  test('defaults gallery to config.defaultGallery when get_album_story omits it', async () => {
+  test('defaults an omitted gallery to the non-config gallery', async () => {
     const client = await createConnection()
 
     await client.initialize()
     await client.callTool('get_album_story', { album: 'trip' })
 
-    expect(buildAlbumStory).toHaveBeenCalledWith('demo', 'trip', 8)
+    expect(buildAlbumDetailsText).toHaveBeenCalledWith('public', 'trip', 8)
   })
 
-  test('maps get_people_story_index and get_on_this_day_story responses', async () => {
+  test('links the gallery resource when an album is omitted for discovery', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('get_album_story', { gallery: 'public' })
+
+    expect(buildAlbumDetailsText).not.toHaveBeenCalled()
+    expect(output.content).toEqual([
+      {
+        type: 'text',
+        text: 'Read the linked History Gallery resource to discover album names in public, then call get_album_story with the selected album.',
+      },
+      {
+        type: 'resource_link',
+        uri: 'history://gallery/public',
+        name: 'Album inventory for public',
+        title: 'History Gallery',
+        description: 'Album names and summaries for the public gallery.',
+        mimeType: 'text/plain',
+      },
+    ])
+    expect(output.structuredContent).toEqual({
+      gallery: 'public',
+      resourceUri: 'history://gallery/public',
+    })
+  })
+
+  test('returns on-this-day details through a tool', async () => {
     const client = await createConnection()
 
     await client.initialize()
 
     const onThisDayOutput = await client.callTool('get_on_this_day_story', { monthDay: '01-02' })
-    expect(getOnThisDayStory).toHaveBeenCalledWith('demo', '01-02', 8)
-    expect(onThisDayOutput.content).toEqual([{ type: 'text', text: 'On this day summary' }])
-    expect(onThisDayOutput.structuredContent).toEqual(expect.objectContaining({ summary: 'On this day summary' }))
+
+    expect(buildDateDetailsText).toHaveBeenCalledWith('public', '01-02', 8)
+    expect(onThisDayOutput.content).toEqual([{ type: 'text', text: [
+      'On this day summary',
+      'Matching memories (newest first):',
+      '- 2024-01-02: On this day memory',
+      '  Album: trip',
+      'View the graphical interface in a web browser: http://localhost:3030/demo/today?day=01-02',
+    ].join('\n') }])
+    expect(onThisDayOutput.structuredContent).toEqual({
+      gallery: 'public',
+      monthDay: '01-02',
+    })
+  })
+
+  test('returns person details through a tool', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('get_person_story', { gallery: 'demo', person: 'Mister Gingerbread' })
+
+    expect(buildPersonDetailsText).toHaveBeenCalledWith('demo', 'Mister Gingerbread')
+    expect(output.content?.[0]?.text).toContain('Person Mister Gingerbread')
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      person: 'Mister Gingerbread',
+    })
+  })
+
+  test('links the people inventory when a person is omitted for discovery', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('get_person_story', { gallery: 'public' })
+
+    expect(buildPersonDetailsText).not.toHaveBeenCalled()
+    expect(output.content).toEqual([
+      {
+        type: 'text',
+        text: 'Read the linked People inventory to discover person names in public, then call get_person_story with the selected person.',
+      },
+      {
+        type: 'resource_link',
+        uri: 'history://people/public',
+        name: 'People in public',
+        title: 'History People',
+        description: 'Person names and appearance counts for the public gallery.',
+        mimeType: 'text/plain',
+      },
+    ])
+    expect(output.structuredContent).toEqual({
+      gallery: 'public',
+      resourceUri: 'history://people/public',
+    })
   })
 
   test('returns recoverable tool errors instead of raw protocol failures', async () => {
     const client = await createConnection()
-    buildAlbumStory.mockRejectedValueOnce(new ReferenceError('No album was found'))
+    buildAlbumDetailsText.mockRejectedValueOnce(new ReferenceError('No album was found'))
 
     await client.initialize()
 
@@ -612,25 +717,4 @@ describe('storytelling MCP server', () => {
     expect(output.structuredContent).toBeUndefined()
   })
 
-  test('reads on-this-day resources', async () => {
-    const client = await createConnection()
-
-    await client.initialize()
-    const output = await client.readResource('history://day/demo/01-02')
-
-    expect(buildDateDetailsText).toHaveBeenCalledWith('demo', '01-02', 8)
-    expect(output.contents[0]?.text).toContain('On this day summary')
-    expect(output.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/today/details?day=01-02')
-    expect(output.contents[0]?.text).toContain('2024-01-02: On this day memory')
-  })
-
-  test('rejects invalid on-this-day resource monthDay values', async () => {
-    const client = await createConnection()
-
-    await client.initialize()
-
-    await expect(client.readResource('history://day/demo/2016-07')).rejects.toThrow(
-      'Invalid string: must match pattern',
-    )
-  })
 })

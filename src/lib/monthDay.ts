@@ -29,7 +29,11 @@ export function buildTodayPageHref(gallery: Gallery, monthDay: string) {
   return `${guiOrigin}/${encodeURIComponent(gallery)}/today?${searchParams.toString()}`
 }
 
+export function buildAlbumPageHref(gallery: Gallery, album: string) {
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`
+}
+
 export function buildPersonGuiHref(gallery: Gallery, name: string) {
-  const searchParams = new URLSearchParams({ person: name })
-  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons/details?${searchParams.toString()}`
+  const searchParams = new URLSearchParams({ query: `person:${name}` })
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons?${searchParams.toString()}`
 }

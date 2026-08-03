@@ -24,7 +24,7 @@ import { filterSearchOnlyPersonCounts, isTagKeyword } from './domains/keywords'
 import { buildPersonCountsFromItems } from './domains/persons'
 import { formatFilterQuery } from './filter-query'
 import getGalleries from './galleries'
-import { buildPersonGuiHref, buildTodayPageHref } from './monthDay'
+import { buildAlbumPageHref, buildPersonGuiHref, buildTodayPageHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
 import indexKeywords from './search'
 import {
@@ -56,7 +56,6 @@ function buildAlbumPeopleAndKeywordTags(
   places: string[],
   limit: number,
 ) {
-  const indexedKeywords = indexKeywords(items).indexedKeywords
   const itemPersonCounts = buildPersonCountsFromItems(items, items.length)
   const itemPersonNames = new Set(itemPersonCounts.map(person => person.name))
   const searchOnlyPersonCounts = filterSearchOnlyPersonCounts(countValuesByFrequency(
@@ -71,16 +70,20 @@ function buildAlbumPeopleAndKeywordTags(
     .sort((left, right) => right.count - left.count)
     .slice(0, limit)
   const people = personCounts.map(person => person.name)
-  const keywordTags = indexedKeywords
-    .filter(option => isTagKeyword(option.value))
-    .map(option => option.label)
-    .slice(0, limit)
+  const keywordTags = buildKeywordTags(items, limit)
 
   return {
     people,
     personCounts,
     keywordTags,
   }
+}
+
+function buildKeywordTags(items: Pick<Item, 'search'>[], limit: number) {
+  return indexKeywords(items).indexedKeywords
+    .filter(option => isTagKeyword(option.value))
+    .map(option => option.label)
+    .slice(0, limit)
 }
 
 async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]> {
@@ -266,7 +269,7 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
 
 export async function buildAlbumDetailsText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
   const output = await buildAlbumStory(gallery, album, limit)
-  return formatAlbumResourceText(output)
+  return formatAlbumResourceText(output, buildAlbumPageHref(gallery, album))
 }
 
 function resolvePersonEntry(output: PersonStoryIndexResult, name: string) {
@@ -346,8 +349,19 @@ async function resolveSearchOnlyPersonEntry(gallery: Gallery, name: string): Pro
   })), name)
 }
 
+function buildPersonAlbumDetails(
+  albums: string[],
+  items: Array<Pick<Item, 'search'> & { album?: string }>,
+) {
+  return albums.map((album) => ({
+    name: album,
+    keywordTags: buildKeywordTags(items.filter(item => item.album === album), DEFAULT_LIMIT),
+  }))
+}
+
 async function getResolvedPersonResource(gallery: Gallery, name: string) {
-  const output = await getPeopleStoryIndex(gallery)
+  const { people, allPeopleItems } = await getPeopleStoryData(gallery)
+  const output = buildPeopleStoryIndex(gallery, people, allPeopleItems)
   const person = resolvePersonEntry(output, name) ?? await resolveSearchOnlyPersonEntry(gallery, name)
   if (!person) {
     throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
@@ -355,7 +369,12 @@ async function getResolvedPersonResource(gallery: Gallery, name: string) {
 
   return {
     person,
-    text: formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name)),
+    text: formatPersonResourceText(
+      person,
+      gallery,
+      buildPersonAlbumDetails(person.albums, allPeopleItems.items),
+      buildPersonGuiHref(gallery, person.name),
+    ),
   }
 }
 
@@ -399,11 +418,24 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {
+  const { people, allPeopleItems } = await getPeopleStoryData(gallery)
+  return buildPeopleStoryIndex(gallery, people, allPeopleItems)
+}
+
+async function getPeopleStoryData(gallery: Gallery) {
   const [people, allPeopleItems] = await Promise.all([
     getPersons(gallery),
     getPersonsData({ gallery }),
   ])
 
+  return { people, allPeopleItems }
+}
+
+function buildPeopleStoryIndex(
+  gallery: Gallery,
+  people: Person[],
+  allPeopleItems: Awaited<ReturnType<typeof getPersonsData>>,
+): PersonStoryIndexResult {
   const peopleByName = new Map<string, Person>(people.map(person => [person.full, person]))
   const aggregate = new Map<string, PersonStoryIndexEntry>()
 
@@ -445,6 +477,16 @@ export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStory
     gallery,
     people: indexedPeople,
   })
+}
+
+export async function buildPeopleInventoryText(gallery: Gallery) {
+  const output = await getPeopleStoryIndex(gallery)
+
+  return [
+    `Person inventory for gallery ${gallery}`,
+    `People: ${output.people.length}`,
+    ...output.people.map(person => `- ${person.name} (${person.appearances} appearance${person.appearances === 1 ? '' : 's'})`),
+  ].join('\n')
 }
 
 export async function getOnThisDayStory(gallery: Gallery, monthDay?: string, limit = DEFAULT_LIMIT): Promise<OnThisDayStoryResult> {

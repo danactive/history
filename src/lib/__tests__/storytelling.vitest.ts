@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import config from '../../models/config'
-import { formatAlbumResourceText } from '../../models/storytelling'
+import { formatAlbumResourceText, formatPersonResourceText } from '../../models/storytelling'
 import getAlbum from '../album'
 import * as allLib from '../all'
 import getGalleries from '../galleries'
@@ -12,6 +12,7 @@ import {
   buildGalleriesDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildPeopleInventoryText,
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
   getOnThisDayStory,
@@ -94,7 +95,7 @@ describe('Storytelling library', () => {
     expect(result.personCounts).toEqual(expectedPersonCounts)
   })
 
-  test('formats album details with descending persons and keyword tags', () => {
+  test('formats album details with descending persons, keyword tags, and highlights', () => {
     const text = formatAlbumResourceText({
       summary: 'Album Sample contains 4 items.',
       placeCounts: [
@@ -106,11 +107,36 @@ describe('Storytelling library', () => {
         { name: 'Taylor Example', count: 3 },
       ],
       keywordTags: ['architecture (2)', 'memory (1)'],
-    })
+      itemCount: 4,
+      highlights: [{
+        gallery: config.defaultGallery,
+        album: 'sample',
+        filename: '2024-01-02-01.jpg',
+        date: '2024-01-02',
+        title: 'Sample highlight',
+        caption: 'A memorable detail',
+        description: null,
+        search: null,
+        city: 'Example City',
+        location: 'Sample Place',
+        persons: ['Taylor Example'],
+        mediaPath: '',
+        thumbPath: '',
+        reference: null,
+        visitedPlace: null,
+        score: 1,
+        reasons: [],
+      }],
+    }, 'http://localhost:3030/demo/sample')
 
     expect(text).toContain('Places: Example City (3), Sample Town (1)')
     expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
     expect(text).toContain('Keyword tags: architecture (2), memory (1)')
+    expect(text).toContain('Highlights (showing 1 of 4, selected for narrative richness):')
+    expect(text).toContain('- 2024-01-02: Sample highlight')
+    expect(text).toContain('Album: sample')
+    expect(text).toContain('Caption: A memorable detail')
+    expect(text).toContain('View the graphical interface in a web browser: http://localhost:3030/demo/sample')
   })
 
   test('builds gallery details text from the shared builder', async () => {
@@ -198,10 +224,38 @@ describe('Storytelling library', () => {
     expect(gingerbread?.albums).toContain(config.defaultAlbum)
   })
 
+  test('builds a people inventory for discovery', async () => {
+    const text = await buildPeopleInventoryText(config.defaultGallery)
+
+    expect(text).toContain(`Person inventory for gallery ${config.defaultGallery}`)
+    expect(text).toContain('People: ')
+    expect(text).toContain('Mister Gingerbread (1 appearance)')
+  })
+
   test('resolves person resource text from a case-insensitive person name', async () => {
     const text = await buildPersonDetailsText(config.defaultGallery, 'mister gingerbread')
 
     expect(text).toContain('Person Mister Gingerbread')
+    expect(text).toContain(`- ${config.defaultAlbum}\n  Keywords:`)
+    expect(text).toContain(
+      `View the graphical interface in a web browser: http://localhost:3030/${config.defaultGallery}/persons?query=person%3AMister+Gingerbread`,
+    )
+  })
+
+  test('formats each person album with its keyword tags', () => {
+    const text = formatPersonResourceText({
+      name: 'Taylor Example',
+      appearances: 3,
+      firstSeen: '2021-02-01',
+      lastSeen: '2024-03-04',
+      dateOfBirth: null,
+      albums: ['sample-album'],
+    }, config.defaultGallery, [{
+      name: 'sample-album',
+      keywordTags: ['travel^ (2)', 'waterfront^ (1)'],
+    }], 'http://localhost:3030/demo/persons?query=person%3ATaylor+Example')
+
+    expect(text).toContain('Albums:\n- sample-album\n  Keywords: travel^ (2), waterfront^ (1)')
   })
 
   test('resolves a search-only person entry from synthetic metadata', async () => {

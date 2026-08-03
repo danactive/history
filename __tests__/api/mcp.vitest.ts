@@ -56,6 +56,7 @@ describe('MCP HTTP endpoint', () => {
           tools: expect.arrayContaining([
             expect.objectContaining({ name: 'get_album_story' }),
             expect.objectContaining({ name: 'get_on_this_day_story' }),
+            expect.objectContaining({ name: 'get_person_story' }),
           ]),
         }),
       }),
