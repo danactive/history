@@ -319,15 +319,15 @@ describe('storytelling MCP server integration', () => {
     ])
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
-      description: expect.stringContaining('narrative context and highlights'),
+      description: expect.stringContaining('configured gallery keywords'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
       title: 'Get memories On This Day Story',
-      description: expect.stringContaining('dates, albums, captions'),
+      description: expect.stringContaining('configured gallery keywords'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
       title: 'Get Person Story',
-      description: expect.stringContaining('appearance counts'),
+      description: expect.stringContaining('gallery keyword inventory'),
     }))
   }, 20000)
 
@@ -376,7 +376,8 @@ describe('storytelling MCP server integration', () => {
     expect(galleries.contents[0]?.text).toContain('Default gallery: dan')
     expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
     expect(galleries.contents[0]?.text).toContain('- demo:')
-    expect(gallery.contents[0]?.text).toContain('Gallery is demo')
+    expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
+    expect(gallery.contents[0]?.text).toContain('## Albums')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
   }, 20000)
 
@@ -391,6 +392,7 @@ describe('storytelling MCP server integration', () => {
     })
     expect(albumStory.content?.[0]?.text).toContain('Album')
     expect(albumStory.content?.[0]?.text).toContain('Highlights')
+    expect(albumStory.content?.[0]?.text).toContain('## Gallery keywords\n- Album: sample')
     expect(albumStory.content?.[0]?.text).toContain('View the graphical interface in a web browser: http://localhost:3030/demo/sample')
     expect(albumStory.structuredContent).toEqual({
       gallery: 'demo',
@@ -399,14 +401,17 @@ describe('storytelling MCP server integration', () => {
 
     const onThisDay = await client.callTool('get_on_this_day_story', { gallery: 'demo', monthDay: '01-02' })
     expect(onThisDay.content?.[0]?.text).toContain('Matching memories')
+    expect(onThisDay.content?.[0]?.text).toContain('## Gallery keywords\n- Album: sample')
     expect(onThisDay.structuredContent).toEqual({
       gallery: 'demo',
       monthDay: '01-02',
     })
 
     const person = await client.callTool('get_person_story', { gallery: 'demo', person: 'Mister Gingerbread' })
-    expect(person.content?.[0]?.text).toContain('Person Mister Gingerbread')
-    expect(person.content?.[0]?.text).toContain('Albums:\n- sample\n  Keywords:')
+    expect(person.content?.[0]?.text).toContain('# Person story: Mister Gingerbread')
+    expect(person.content?.[0]?.text).toContain('## Related albums\n- Album: sample')
+    expect(person.content?.[0]?.text).toContain('- Popular keywords: ')
+    expect(person.content?.[0]?.text).not.toContain('## Gallery keywords')
     expect(person.structuredContent).toEqual({
       gallery: 'demo',
       person: 'Mister Gingerbread',

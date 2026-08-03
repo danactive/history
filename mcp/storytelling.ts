@@ -144,7 +144,7 @@ function createStorytellingServer() {
     {
       title: 'Get Album Story',
       description: [
-        'Return the narrative context and highlights for an album.',
+        'Return the narrative context, configured gallery keywords, and highlights for an album.',
         'Omit album to discover valid names through the linked History Gallery inventory.',
       ].join(' '),
       inputSchema: z.object({
@@ -184,7 +184,7 @@ function createStorytellingServer() {
     {
       title: 'Get memories On This Day Story',
       description:
-        'Return on-this-day memory details, including dates, albums, captions, locations, and people.',
+        'Return on-this-day memory details, including dates, albums, captions, locations, people, and configured gallery keywords.',
       inputSchema: z.object({
         gallery: gallerySchemaWithDefault,
         monthDay: monthDaySchema.optional(),
@@ -208,7 +208,7 @@ function createStorytellingServer() {
     {
       title: 'Get Person Story',
       description: [
-        'Return appearance counts, date range, albums, and a graphical interface link for a person.',
+        'Return appearance counts, date range, related album keywords, the gallery keyword inventory, and a graphical interface link for a person.',
         'Omit person to discover valid names through the linked People inventory.',
       ].join(' '),
       inputSchema: z.object({

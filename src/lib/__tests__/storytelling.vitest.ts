@@ -106,7 +106,15 @@ describe('Storytelling library', () => {
         { name: 'Jordan Sample', count: 1 },
         { name: 'Taylor Example', count: 3 },
       ],
-      keywordTags: ['architecture (2)', 'memory (1)'],
+      popularKeywords: ['architecture (2)', 'memory (1)'],
+      keywordTags: ['architecture^ (2)'],
+      galleryKeywords: [{
+        name: 'sample',
+        title: 'Sample',
+        subtitle: null,
+        year: null,
+        keywords: ['Nagoya Castle', 'Atsuta Shrine'],
+      }],
       itemCount: 4,
       highlights: [{
         gallery: config.defaultGallery,
@@ -129,9 +137,13 @@ describe('Storytelling library', () => {
       }],
     }, 'http://localhost:3030/demo/sample')
 
-    expect(text).toContain('Places: Example City (3), Sample Town (1)')
-    expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
-    expect(text).toContain('Keyword tags: architecture (2), memory (1)')
+    expect(text).toContain('# Album story')
+    expect(text).toContain('- Places: Example City (3), Sample Town (1)')
+    expect(text).toContain('- Persons: Taylor Example (3), Jordan Sample (1)')
+    expect(text).toContain('- Popular: architecture (2), memory (1)')
+    expect(text).toContain('- Tags: architecture^ (2)')
+    expect(text).toContain('## Gallery keywords\n- Album: sample\n  - Title: Sample')
+    expect(text).toContain('- Gallery includes: Nagoya Castle, Atsuta Shrine')
     expect(text).toContain('Highlights (showing 1 of 4, selected for narrative richness):')
     expect(text).toContain('- 2024-01-02: Sample highlight')
     expect(text).toContain('Album: sample')
@@ -142,9 +154,10 @@ describe('Storytelling library', () => {
   test('builds gallery details text from the shared builder', async () => {
     const text = await buildGalleryDetailsText(config.defaultGallery)
 
-    expect(text).toContain(`Gallery is ${config.defaultGallery}`)
-    expect(text).toContain('Albums: ')
-    expect(text).toContain('sample: Sample')
+    expect(text).toContain(`# Gallery: ${config.defaultGallery}`)
+    expect(text).toContain('## Albums')
+    expect(text).toContain('- Album: sample')
+    expect(text).toContain('- Gallery includes: ')
   })
 
   test('identifies the default and non-default galleries in the gallery inventory', async () => {
@@ -235,14 +248,15 @@ describe('Storytelling library', () => {
   test('resolves person resource text from a case-insensitive person name', async () => {
     const text = await buildPersonDetailsText(config.defaultGallery, 'mister gingerbread')
 
-    expect(text).toContain('Person Mister Gingerbread')
-    expect(text).toContain(`- ${config.defaultAlbum}\n  Keywords:`)
+    expect(text).toContain('# Person story: Mister Gingerbread')
+    expect(text).toContain(`- Album: ${config.defaultAlbum}`)
+    expect(text).toContain('- Popular keywords: ')
     expect(text).toContain(
       `View the graphical interface in a web browser: http://localhost:3030/${config.defaultGallery}/persons?query=person%3AMister+Gingerbread`,
     )
   })
 
-  test('formats each person album with its keyword tags', () => {
+  test('formats each person album with configured and popular keywords', () => {
     const text = formatPersonResourceText({
       name: 'Taylor Example',
       appearances: 3,
@@ -252,10 +266,19 @@ describe('Storytelling library', () => {
       albums: ['sample-album'],
     }, config.defaultGallery, [{
       name: 'sample-album',
-      keywordTags: ['travel^ (2)', 'waterfront^ (1)'],
+      title: 'Sample Album',
+      subtitle: 'A sample subtitle',
+      year: '2024',
+      keywords: ['Nagoya Castle', 'Atsuta Shrine'],
+      popularKeywords: ['travel (2)', 'waterfront (1)'],
     }], 'http://localhost:3030/demo/persons?query=person%3ATaylor+Example')
 
-    expect(text).toContain('Albums:\n- sample-album\n  Keywords: travel^ (2), waterfront^ (1)')
+    expect(text).toContain('## Related albums\n- Album: sample-album')
+    expect(text).toContain('- Title: Sample Album')
+    expect(text).toContain('- Subtitle: A sample subtitle')
+    expect(text).toContain('- Gallery includes: Nagoya Castle, Atsuta Shrine')
+    expect(text).toContain('- Popular keywords: travel (2), waterfront (1)')
+    expect(text).not.toContain('## Gallery keywords')
   })
 
   test('resolves a search-only person entry from synthetic metadata', async () => {
@@ -309,13 +332,16 @@ describe('Storytelling library', () => {
     expect(result.summary).not.toContain('Found 3 on-this-day matches for 07-18.')
   })
 
-  test('builds on-this-day resource text with years, locations, and keyword tags', async () => {
+  test('builds on-this-day resource text with years, locations, and gallery keywords', async () => {
     const text = await buildDateDetailsText(config.defaultGallery, '01-04', 3)
 
-    expect(text).toContain('Years: ')
-    expect(text).toContain('Locations: ')
-    expect(text).toContain('Persons: ')
-    expect(text).toContain('Keyword tags: ')
+    expect(text).toContain('# On this day: 01-04')
+    expect(text).toContain('- Years: ')
+    expect(text).toContain('- Locations: ')
+    expect(text).toContain('- Persons: ')
+    expect(text).toContain('- Popular: ')
+    expect(text).toContain('- Tags: ')
+    expect(text).toContain(`## Gallery keywords\n- Album: ${config.defaultAlbum}`)
     expect(text).toContain('Matching memories (newest first):')
     expect(text).toContain('View the graphical interface in a web browser: http://localhost:3030/')
     expect(text).toContain('/today?day=01-04')

@@ -356,17 +356,22 @@ beforeEach(() => {
   buildGalleryDetailsText.mockImplementation(async (gallery: string) => {
     if (gallery === 'public') {
       return [
-        'Gallery is public',
-        'Albums: 1',
-        'other-trip: Other Trip',
+        '# Gallery: public',
+        '',
+        '## Albums',
+        '- Album: other-trip',
+        '  - Title: Other Trip',
+        '  - Gallery includes: none',
       ].join('\n')
     }
 
     return [
-      'Gallery is demo',
-      'Albums: 1',
-      'trip: Trip',
-      'with keywords Nagoya Castle, Atsuta Shrine',
+      '# Gallery: demo',
+      '',
+      '## Albums',
+      '- Album: trip',
+      '  - Title: Trip',
+      '  - Gallery includes: Nagoya Castle, Atsuta Shrine',
     ].join('\n')
   })
   buildPeopleInventoryText.mockImplementation(async (gallery: string) => [
@@ -378,6 +383,8 @@ beforeEach(() => {
     'Album summary',
     'Places: Nagoya',
     'Persons: Mister Gingerbread (23)',
+    'Gallery keywords:',
+    '- trip: Nagoya Castle, Atsuta Shrine',
     'View the graphical interface in a web browser: http://localhost:3030/demo/trip',
   ].join('\n'))
   buildPersonDetailsText.mockResolvedValue([
@@ -389,11 +396,16 @@ beforeEach(() => {
     'Date of birth: unknown',
     'Albums:',
     '- trip',
-    '  Keywords: Nagoya Castle (2), Atsuta Shrine (1)',
+    '  Keywords: Nagoya Castle, Atsuta Shrine',
+    '  Popular keywords: Nagoya Castle (2), Atsuta Shrine (1)',
+    'Gallery keywords:',
+    '- trip: Nagoya Castle, Atsuta Shrine',
     'View the graphical interface in a web browser: http://localhost:3030/demo/persons?query=person%3AMister+Gingerbread',
   ].join('\n'))
   buildDateDetailsText.mockResolvedValue([
     'On this day summary',
+    'Gallery keywords:',
+    '- trip: Nagoya Castle, Atsuta Shrine',
     'Matching memories (newest first):',
     '- 2024-01-02: On this day memory',
     '  Album: trip',
@@ -434,15 +446,15 @@ describe('storytelling MCP server', () => {
     ])
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
-      description: expect.stringContaining('narrative context and highlights'),
+      description: expect.stringContaining('configured gallery keywords'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
       title: 'Get memories On This Day Story',
-      description: expect.stringContaining('dates, albums, captions'),
+      description: expect.stringContaining('configured gallery keywords'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
       title: 'Get Person Story',
-      description: expect.stringContaining('appearance counts'),
+      description: expect.stringContaining('gallery keyword inventory'),
     }))
   })
 
@@ -578,11 +590,11 @@ describe('storytelling MCP server', () => {
     expect(galleries.contents[0]?.text).toContain('Default gallery: public')
     expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
     expect(galleries.contents[0]?.text).toContain('- public (default): 1 album(s)')
-    expect(gallery.contents[0]?.text).toContain('Gallery is demo')
-    expect(gallery.contents[0]?.text).toContain('trip: Trip')
-    expect(gallery.contents[0]?.text).toContain('with keywords Nagoya Castle, Atsuta Shrine')
-    expect(otherGallery.contents[0]?.text).toContain('Gallery is public')
-    expect(otherGallery.contents[0]?.text).toContain('other-trip: Other Trip')
+    expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
+    expect(gallery.contents[0]?.text).toContain('- Album: trip')
+    expect(gallery.contents[0]?.text).toContain('Gallery includes: Nagoya Castle, Atsuta Shrine')
+    expect(otherGallery.contents[0]?.text).toContain('# Gallery: public')
+    expect(otherGallery.contents[0]?.text).toContain('- Album: other-trip')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
     expect(people.contents[0]?.text).toContain('Mister Gingerbread (3 appearances)')
   })
@@ -598,6 +610,8 @@ describe('storytelling MCP server', () => {
       'Album summary',
       'Places: Nagoya',
       'Persons: Mister Gingerbread (23)',
+      'Gallery keywords:',
+      '- trip: Nagoya Castle, Atsuta Shrine',
       'View the graphical interface in a web browser: http://localhost:3030/demo/trip',
     ].join('\n') }])
     expect(output.structuredContent).toEqual({
@@ -652,6 +666,8 @@ describe('storytelling MCP server', () => {
     expect(buildDateDetailsText).toHaveBeenCalledWith('public', '01-02', 8)
     expect(onThisDayOutput.content).toEqual([{ type: 'text', text: [
       'On this day summary',
+      'Gallery keywords:',
+      '- trip: Nagoya Castle, Atsuta Shrine',
       'Matching memories (newest first):',
       '- 2024-01-02: On this day memory',
       '  Album: trip',
