@@ -6,7 +6,7 @@ import { addGeographyToSearch } from '../lib/search'
 import { buildVisitedRegionCountryIndex, getVisitedPlace } from '../lib/visited'
 import config from '../models/config'
 import type { AlbumMeta, Gallery, Item, ServerSideAllItem } from '../types/common'
-import { compareNewestFirst, getPrimaryFilename } from '../utils'
+import { compareNewestFirst } from '../utils'
 import type { VisitedRegionCountryIndex } from './visited'
 import type { All } from '../types/pages'
 import { buildFilterMetadata } from './server/filter-metadata'
@@ -70,8 +70,6 @@ export function allPageItemMapper({
   albumName, albumCoordinateAccuracy, items, gallery, regionCountryIndex,
 }: PrepareItemsParams): ServerSideAllItem[] {
   return items.map((item) => {
-    const filenameStr = getPrimaryFilename(item.filename)
-    const titleStr = Array.isArray(item.title) ? (item.title[0] ?? '') : (item.title ?? '')
     const searchStr = addYearToSearch(addGeographyToSearch(item) ?? '', item)
     const year = getItemYearFromFilename(item)
     const corpus = [
@@ -84,24 +82,10 @@ export function allPageItemMapper({
     ].join(' ').trim()
 
     return {
-      id: item.id,
-      filename: filenameStr,
-      photoDate: item.photoDate,
-      city: item.city,
-      location: item.location,
-      description: item.description,
-      caption: item.caption,
-      persons: item.persons,
-      coordinates: item.coordinates,
-      coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
-      thumbPath: item.thumbPath,
-      photoPath: item.photoPath,
-      mediaPath: item.mediaPath,
-      reference: item.reference,
-      videoPaths: null,
+      ...item,
       gallery,
       album: albumName,
-      title: titleStr,
+      coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
       corpus,
       search: searchStr,
       visitedPlace: getVisitedPlace(item, regionCountryIndex),

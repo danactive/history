@@ -18,10 +18,11 @@ vi.mock('../../../../src/lib/albums', () => ({
 
 function buildItem(
   id: string,
-  filename: string,
+  filename: Item['filename'],
   city: string,
   persons: Item['persons'] = null,
   coordinates: Item['coordinates'] = null,
+  overrides: Partial<Item> = {},
 ): Item {
   return {
     id,
@@ -41,6 +42,7 @@ function buildItem(
     mediaPath: '',
     videoPaths: null,
     reference: null,
+    ...overrides,
   }
 }
 
@@ -52,7 +54,18 @@ vi.mock('../../../../src/lib/album', () => ({
         album: {
           meta: { geo: { zoom: 8 } },
           items: [
-            buildItem('flight-ch', '2018-01-01-01.jpg', 'Zürich, Switzerland, Aeroplane', null, [10, 10]),
+            buildItem(
+              'flight-ch',
+              ['2018-01-01-01.jpg', '2018-01-01-02.jpg'],
+              'Zürich, Switzerland, Aeroplane',
+              null,
+              [10, 10],
+              {
+                location: 'Example location',
+                title: 'Example location (Zürich, Switzerland, Aeroplane)',
+                reference: ['https://example.test/wiki', 'Example_reference'],
+              },
+            ),
             buildItem('flight-us', '2016-03-25-01.jpg', 'Straits of Florida, USA, Aeroplane'),
           ],
         },
@@ -92,7 +105,7 @@ describe('getAllData visited filtering', () => {
       query: 'country:Aeroplane && region:Switzerland',
     })
 
-    expect(items.map((item) => item.filename)).toEqual(['2018-01-01-01.jpg'])
+    expect(items.map((item) => item.filename)).toEqual([['2018-01-01-01.jpg', '2018-01-01-02.jpg']])
     expect(items[0]?.visitedPlace).toEqual({ country: 'Aeroplane', region: 'Switzerland' })
     expect(totalItemCount).toBe(6)
   })
@@ -131,5 +144,16 @@ describe('getAllData visited filtering', () => {
 
     expect(result.items.map((item) => item.id)).toEqual(['alice-only'])
     expect(result.totalItemCount).toBe(2)
+  })
+
+  test('preserves source metadata for multi-file archive items', async () => {
+    const { items } = await getAllData({ gallery: 'demo' })
+
+    expect(items.find((item) => item.id === 'flight-ch')).toEqual(expect.objectContaining({
+      filename: ['2018-01-01-01.jpg', '2018-01-01-02.jpg'],
+      location: 'Example location',
+      title: 'Example location (Zürich, Switzerland, Aeroplane)',
+      reference: ['https://example.test/wiki', 'Example_reference'],
+    }))
   })
 })
