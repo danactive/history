@@ -1,11 +1,11 @@
+import type { Album } from '../types/pages'
+import { getInitialActiveFacetCounts } from './active-facets'
 import getAlbum from './album'
 import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
 import { filterItemsByMapBounds, type Bounds } from './map-filtering'
-import { buildFilterMetadata } from './server/filter-metadata'
-import { getInitialActiveFacetCounts } from './active-facets'
 import { addGeographyToSearch } from './search'
+import { buildFilterMetadata } from './server/filter-metadata'
 import type { AlbumRouteParams } from './server/page-route'
-import type { Album } from '../types/pages'
 
 export async function getAlbumData(
   { album, gallery, query, mapBounds }: AlbumRouteParams & { query?: string, mapBounds?: Bounds | null },

@@ -16,7 +16,7 @@ interface InputProps {
 
 export function renderAlbumCaptionAction(
   gallery: ServerSideAllItem['gallery'],
-  album: ServerSideAllItem['album'] | undefined,
+  album: ServerSideAllItem['album'],
   filename: ServerSideAllItem['filename'],
   corpus: ServerSideAllItem['corpus'],
 ) {

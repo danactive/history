@@ -34,12 +34,7 @@ function title(item: XmlItem): string {
     return photoLoc
   }
 
-  if (isNotEmpty(photoCity)) {
-    return photoCity
-  }
-
-  // If both are empty, return a default
-  return 'Untitled'
+  return photoCity
 }
 
 function transformCaption(item: XmlItem) {
@@ -111,7 +106,7 @@ const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
 
   const { gallery } = meta
 
-  const updateItem = (item: XmlItem | undefined): Item => {
+  const updateItem = (item: XmlItem): Item => {
     if (!item) {
       throw new ReferenceError('XML is missing <item> element in parent <album> element')
     }
@@ -124,22 +119,25 @@ const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
       throw new ReferenceError(`XML is missing <filename> element in parent <item id="${id}" /> element`)
     }
 
-    const { filename, photoDate } = item
-    // Allow photoCity to be optional, default to empty string if missing
-    const photoCity = item.photoCity ?? ''
+    const { filename } = item
 
+    if (!('photoCity' in item)) {
+      throw new ReferenceError(`XML is missing <photo_city> element in parent <item id="${id}" /><filename>${filename} element`)
+    }
+
+    const { photoCity, photoDate } = item
     const latitude = item?.geo?.lat ? parseFloat(item.geo.lat) : null
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
     const accuracy = item?.geo?.accuracy ? Number(item.geo.accuracy) : null
 
-    const thumbPath = utils.thumbPath(item.filename, gallery)
-    const photoPath = utils.photoPath(item.filename, gallery)
-    const videoPaths = utils.getVideoPaths(item.filename, gallery)
+    const thumbPath = utils.thumbPath(filename, gallery)
+    const photoPath = utils.photoPath(filename, gallery)
+    const videoPaths = utils.getVideoPaths(filename, gallery)
 
     const out: Item = {
       id,
       filename,
-      photoDate: photoDate || null,
+      photoDate: photoDate,
       city: photoCity,
       location: item.photoLoc || null,
       caption: transformCaption(item),

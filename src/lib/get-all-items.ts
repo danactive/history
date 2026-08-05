@@ -70,13 +70,13 @@ export function allPageItemMapper({
   albumName, albumCoordinateAccuracy, items, gallery, regionCountryIndex,
 }: PrepareItemsParams): ServerSideAllItem[] {
   return items.map((item) => {
-    const searchStr = addYearToSearch(addGeographyToSearch(item) ?? '', item)
+    const searchStr = addYearToSearch(addGeographyToSearch(item), item)
     const year = getItemYearFromFilename(item)
     const corpus = [
       item.description ?? '',
-      item.caption ?? '',
+      item.caption,
       item.location ?? '',
-      item.city ?? '',
+      item.city,
       searchStr,
       year,
     ].join(' ').trim()

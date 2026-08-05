@@ -127,19 +127,17 @@ function formatCountedValues(values: PersonCount[]) {
 }
 
 function formatStoryMomentDetails(memory: StoryMoment) {
-  const title = memory.title || memory.caption || memory.description || 'Untitled memory'
-  const location = memory.location || memory.city
+  const { caption, title } = memory
   const memoryDetails = [
     `  Album: ${memory.album ?? 'unknown'}`,
-    memory.caption && memory.caption !== title ? `  Caption: ${memory.caption}` : null,
-    memory.description && memory.description !== title && memory.description !== memory.caption
+    caption !== title ? `  Caption: ${caption}` : null,
+    memory.description && memory.description !== title && memory.description !== caption
       ? `  Description: ${memory.description}`
       : null,
-    location ? `  Location: ${location}` : null,
     memory.persons.length > 0 ? `  People: ${memory.persons.join(', ')}` : null,
   ]
 
-  return [`- ${memory.date ?? 'Unknown date'}: ${title}`, ...memoryDetails.filter(Boolean)]
+  return [`- On ${memory.date ?? 'unknown'} date @ ${title}`, ...memoryDetails.filter(Boolean)]
 }
 
 function formatStoryMomentList(

@@ -440,7 +440,7 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
     ? `Found ${output.totalMatches} on-this-day match${output.totalMatches === 1 ? '' : 'es'} for ${output.monthDay}.`
     : `No on-this-day matches for ${output.monthDay}.`
 
-  const [{ indexedKeywords, locationOptions, personCounts, yearOptions, tagOptions }, galleryAlbums] = await Promise.all([
+  const [{ items, indexedKeywords, locationOptions, personCounts, yearOptions, tagOptions }, galleryAlbums] = await Promise.all([
     getTodayItems(gallery, output.monthDay),
     getAlbums(gallery),
   ])
@@ -468,7 +468,7 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
     keywordTags,
     galleryKeywords: buildAlbumKeywordDetails(
       galleryAlbums[gallery].albums,
-      galleryAlbums[gallery].albums.map(candidate => candidate.name),
+      items.flatMap(item => item.album ? [item.album] : []),
     ),
   })
 }

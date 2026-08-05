@@ -1,25 +1,26 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
-
 import config from '../../models/config'
 import { formatAlbumResourceText, formatPersonResourceText } from '../../models/storytelling'
 import getAlbum from '../album'
+import type { GalleryAlbumsBody } from '../albums'
+import * as albumsLib from '../albums'
 import * as allLib from '../all'
 import getGalleries from '../galleries'
-import * as todayLib from '../today'
 import {
   buildAlbumPeopleAndKeywordTags,
-  buildGalleryDetailsText,
-  buildGalleriesDetailsText,
   buildAlbumStory,
   buildDateDetailsText,
+  buildGalleriesDetailsText,
+  buildGalleryDetailsText,
   buildPeopleInventoryText,
   buildPersonDetailsText,
-  getStorytellingDefaultGallery,
   getOnThisDayStory,
   getPeopleStoryIndex,
+  getStorytellingDefaultGallery,
   resolveSearchOnlyPersonEntryFromItems,
   searchStoryMoments,
 } from '../storytelling'
+import * as todayLib from '../today'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -145,7 +146,7 @@ describe('Storytelling library', () => {
     expect(text).toContain('## Gallery keywords\n- Album: sample\n  - Title: Sample')
     expect(text).toContain('- Gallery includes: Nagoya Castle, Atsuta Shrine')
     expect(text).toContain('Highlights (showing 1 of 4, selected for narrative richness):')
-    expect(text).toContain('- 2024-01-02: Sample highlight')
+    expect(text).toContain('- On 2024-01-02 date @ Sample highlight')
     expect(text).toContain('Album: sample')
     expect(text).toContain('Caption: A memorable detail')
     expect(text).toContain('View the graphical interface in a web browser: http://localhost:3030/demo/sample')
@@ -348,6 +349,59 @@ describe('Storytelling library', () => {
     expect(text).not.toContain('.jpg')
   })
 
+  test('maps on-this-day gallery keywords to matching albums only', async () => {
+    const matchingItem = {
+      ...createSyntheticAllItem('matching', '2024-01-04-01.jpg'),
+      album: 'matching-album',
+    }
+    vi.spyOn(allLib, 'getAllData').mockResolvedValue({
+      gallery: config.defaultGallery,
+      items: [matchingItem],
+      indexedKeywords: [],
+    })
+    vi.spyOn(todayLib, 'getTodayItems').mockResolvedValue({
+      items: [matchingItem],
+      indexedKeywords: [],
+      locationOptions: [],
+      personCounts: [],
+      personOptions: [],
+      yearOptions: [],
+      tagOptions: [],
+    })
+    const galleryAlbums = {
+      [config.defaultGallery]: {
+        albums: [
+          {
+            name: 'matching-album',
+            h1: 'Matching album',
+            h2: '',
+            version: '',
+            thumbPath: '',
+            year: '2024',
+            search: 'matching keyword',
+          },
+          {
+            name: 'unmatched-album',
+            h1: 'Unmatched album',
+            h2: '',
+            version: '',
+            thumbPath: '',
+            year: '2099',
+            search: 'unmatched keyword',
+          },
+        ],
+      },
+    } as GalleryAlbumsBody
+    vi.spyOn(albumsLib, 'default').mockResolvedValue(galleryAlbums)
+
+    const text = await buildDateDetailsText(config.defaultGallery, '01-04')
+
+    expect(text).toContain('## Gallery keywords\n- Album: matching-album')
+    expect(text).toContain('- Gallery includes: matching keyword')
+    expect(text).not.toContain('unmatched-album')
+    expect(text).not.toContain('unmatched keyword')
+  })
+
   test('omits limit wording from on-this-day resource text', async () => {
     vi.spyOn(allLib, 'getAllData').mockResolvedValue({
       gallery: 'demo',
@@ -385,7 +439,7 @@ describe('Storytelling library', () => {
     expect(text).not.toContain('Limited to 3.')
     expect(text).toContain('Persons: Taylor Example (3), Jordan Sample (1)')
     expect(text).toContain('Matching memories (newest first):')
-    expect(text).toContain('- 2022-07-18: Title 2')
+    expect(text).toContain('- On 2022-07-18 date @ Title 2')
     expect(text).toContain('Album: sample-album')
     expect(text).toContain('Caption: Caption 2')
   })

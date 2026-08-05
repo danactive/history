@@ -62,7 +62,7 @@ const mapAlbumItemToCandidate = (
 })
 
 const mapAllItemToCandidate = (item: ServerSideAllItem): StoryCandidate => ({
-  gallery: item.gallery as Gallery,
+  gallery: item.gallery,
   album: item.album ?? null,
   filename: getFilename(item),
   date: getItemDate(item),

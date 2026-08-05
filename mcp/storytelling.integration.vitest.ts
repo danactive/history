@@ -401,7 +401,7 @@ describe('storytelling MCP server integration', () => {
 
     const onThisDay = await client.callTool('get_on_this_day_story', { gallery: 'demo', monthDay: '01-02' })
     expect(onThisDay.content?.[0]?.text).toContain('Matching memories')
-    expect(onThisDay.content?.[0]?.text).toContain('## Gallery keywords\n- Album: sample')
+    expect(onThisDay.content?.[0]?.text).toContain('## Gallery keywords\n- none')
     expect(onThisDay.structuredContent).toEqual({
       gallery: 'demo',
       monthDay: '01-02',
