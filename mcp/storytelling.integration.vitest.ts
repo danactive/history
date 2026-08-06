@@ -444,7 +444,7 @@ describe('storytelling MCP server integration', () => {
     })
     expect(media.content?.[0]?.text).toContain('Selected media item')
     expect(media.content?.[0]?.text).toContain('Inline preview uses the largest available display image that stays within the MCP payload budget.')
-    expect(media.content?.[0]?.text).toContain('Use the linked media resource or interactive app for the full-resolution item.')
+    expect(media.content?.[0]?.text).toContain('Use the linked album page or interactive app to open the selected item locally.')
     expect(media.content?.[0]?.text).toContain('Interactive media view is available in MCP clients that support Apps.')
     expect(media.content?.[0]?.text).toContain('Archive metadata:')
     expect(media.content?.find(block => block.type === 'image')).toEqual(expect.objectContaining({
@@ -452,8 +452,8 @@ describe('storytelling MCP server integration', () => {
       data: expect.any(String),
     }))
     expect(media.content?.find(block => block.type === 'resource_link')).toEqual(expect.objectContaining({
-      uri: expect.stringContaining('http://localhost:3030/galleries/demo/media/'),
-      mimeType: expect.stringMatching(/^image\//),
+      uri: expect.stringContaining('http://localhost:3030/demo/sample?select='),
+      mimeType: 'text/html',
     }))
     expect(media.structuredContent).toEqual(expect.objectContaining({
       gallery: 'demo',

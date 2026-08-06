@@ -94,6 +94,7 @@ const PEOPLE_TEMPLATE = 'history://people/{gallery}'
 const FALLBACK_VIDEO_EXTENSIONS = ['avi', 'm2ts', 'mov', 'mp4', 'mts', 'ogv', 'webm']
 const MEDIA_APP_URI = 'ui://history/media-viewer.html'
 const MAX_INLINE_PREVIEW_BYTES = 90_000
+const MAX_APP_EMBED_PREVIEW_BYTES = 350_000
 const APP_ORIGIN = `http://localhost:${config.nextPort}`
 const extAppsRuntimeSource = readFileSync(
   path.join(projectRoot, 'node_modules', '@modelcontextprotocol', 'ext-apps', 'dist', 'src', 'app-with-deps.js'),
@@ -110,6 +111,12 @@ function buildPeopleResourceUri(gallery: string) {
 
 function buildAbsoluteAppUrl(relativePath: string) {
   return new URL(relativePath, APP_ORIGIN).toString()
+}
+
+function buildAlbumSelectionUrl(gallery: string, album: string, select: string) {
+  const url = new URL(`/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`, APP_ORIGIN)
+  url.searchParams.set('select', select)
+  return url.toString()
 }
 
 async function resolveAlbumName(gallery: Gallery, requestedAlbum: string) {
@@ -156,6 +163,7 @@ function buildMediaItemPayload(item: Item) {
   const filename = getPrimaryFilename(item.filename)
   const extension = getExt(item.mediaPath)
   const mediaType = isVideoExtension(extension) ? 'video' : 'image'
+  const embeddedPreview = buildEmbeddedPreview(item, MAX_APP_EMBED_PREVIEW_BYTES)
 
   return {
     filename,
@@ -170,6 +178,7 @@ function buildMediaItemPayload(item: Item) {
     thumbUrl: buildAbsoluteAppUrl(item.thumbPath),
     photoUrl: buildAbsoluteAppUrl(item.photoPath),
     mediaUrl: buildAbsoluteAppUrl(item.mediaPath),
+    embeddedPreviewUrl: embeddedPreview?.dataUrl ?? null,
     videoUrls: Array.isArray(item.videoPaths)
       ? item.videoPaths.map(buildAbsoluteAppUrl)
       : item.videoPaths
@@ -356,7 +365,24 @@ function buildMediaAppHtml() {
       URL.revokeObjectURL(runtimeUrl);
 
       const root = document.getElementById('app');
-      const state = { app: null, payload: null, loading: false, error: null };
+      const state = { app: null, payload: null, loading: false, error: null, inlinePreviewUrl: null, mediaResourceUrl: null };
+
+      function extractInlinePreviewUrl(content) {
+        const image = (content || []).find(block => block.type === 'image' && typeof block.data === 'string');
+
+        if (!image) {
+          return null;
+        }
+
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+        const mimeType = allowedTypes.includes(image.mimeType) ? image.mimeType : 'image/jpeg';
+        return 'data:' + mimeType + ';base64,' + image.data;
+      }
+
+      function extractMediaResourceUrl(content) {
+        const resource = (content || []).find(block => block.type === 'resource_link' && typeof block.uri === 'string');
+        return resource?.uri || null;
+      }
 
       function setStatus(message) {
         const status = document.getElementById('status');
@@ -452,6 +478,7 @@ function buildMediaAppHtml() {
         }
 
         const { item, previous, next, items } = state.payload;
+        const displayImageUrl = item.embeddedPreviewUrl || state.inlinePreviewUrl || item.photoUrl;
         attachKeyboardNavigation(previous, next);
 
         const nav = document.createElement('nav');
@@ -474,17 +501,28 @@ function buildMediaAppHtml() {
           const video = document.createElement('video');
           video.className = 'media';
           video.controls = true;
-          video.poster = item.photoUrl;
+          video.poster = displayImageUrl;
           video.src = item.mediaUrl;
           mediaWrap.append(video);
         } else {
           const image = document.createElement('img');
           image.className = 'media';
-          image.src = item.photoUrl;
+          image.src = displayImageUrl;
           image.alt = item.caption || item.title || item.filename;
           mediaWrap.append(image);
         }
         panel.append(mediaWrap);
+
+        if (state.mediaResourceUrl) {
+          const link = document.createElement('a');
+          link.href = state.mediaResourceUrl;
+          link.textContent = 'Open full-resolution media';
+          link.target = '_blank';
+          link.rel = 'noreferrer noopener';
+          link.style.display = 'inline-block';
+          link.style.padding = '8px 22px 0';
+          panel.append(link);
+        }
 
         const thumbs = document.createElement('ul');
         thumbs.className = 'thumbs';
@@ -533,6 +571,8 @@ function buildMediaAppHtml() {
           loading: false,
           error: null,
           payload: result.structuredContent || null,
+          inlinePreviewUrl: extractInlinePreviewUrl(result.content),
+          mediaResourceUrl: extractMediaResourceUrl(result.content),
         });
       }
 
@@ -655,19 +695,17 @@ function withToolErrorHandling<TArgs extends Record<string, unknown>>(
   }
 }
 
-function buildMediaResourceLinkContent(item: Item): ToolContentBlock {
+function buildMediaResourceLinkContent(gallery: string, album: string, item: Item): ToolContentBlock {
   const filename = getPrimaryFilename(item.filename)
-  const resourcePath = item.photoPath || item.mediaPath
-  const uri = buildAbsoluteAppUrl(resourcePath)
-  const detectedMimeType = mime.lookup(resourcePath)
+  const uri = buildAlbumSelectionUrl(gallery, album, filename)
 
   return {
     type: 'resource_link',
     uri,
-    name: filename,
+    name: album,
     title: item.title || filename,
     description: item.caption || item.description || `Selected media item ${filename}`,
-    mimeType: typeof detectedMimeType === 'string' ? detectedMimeType : 'image/jpeg',
+    mimeType: 'text/html',
     annotations: {
       audience: ['user', 'assistant'],
       priority: 0.9,
@@ -675,7 +713,7 @@ function buildMediaResourceLinkContent(item: Item): ToolContentBlock {
   }
 }
 
-function buildInlinePreviewContent(item: Item): ToolContentBlock | null {
+function buildEmbeddedPreview(item: Item, maxBytes: number) {
   const previewPaths = [item.photoPath, item.thumbPath].filter(Boolean)
 
   for (const previewPath of previewPaths) {
@@ -684,20 +722,18 @@ function buildInlinePreviewContent(item: Item): ToolContentBlock | null {
     try {
       const buffer = readFileSync(absolutePath)
 
-      if (buffer.byteLength > MAX_INLINE_PREVIEW_BYTES) {
+      if (buffer.byteLength > maxBytes) {
         continue
       }
 
       const detectedMimeType = mime.lookup(previewPath)
+      const mimeType = typeof detectedMimeType === 'string' ? detectedMimeType : 'image/jpeg'
+      const data = buffer.toString('base64')
 
       return {
-        type: 'image',
-        data: buffer.toString('base64'),
-        mimeType: typeof detectedMimeType === 'string' ? detectedMimeType : 'image/jpeg',
-        annotations: {
-          audience: ['user', 'assistant'],
-          priority: 0.8,
-        },
+        data,
+        mimeType,
+        dataUrl: 'data:' + mimeType + ';base64,' + data,
       }
     } catch {
       continue
@@ -707,9 +743,27 @@ function buildInlinePreviewContent(item: Item): ToolContentBlock | null {
   return null
 }
 
-function buildMediaToolContentBlocks(item: Item, message: string): ToolContentBlock[] {
+function buildInlinePreviewContent(item: Item): ToolContentBlock | null {
+  const preview = buildEmbeddedPreview(item, MAX_INLINE_PREVIEW_BYTES)
+
+  if (!preview) {
+    return null
+  }
+
+  return {
+    type: 'image',
+    data: preview.data,
+    mimeType: preview.mimeType,
+    annotations: {
+      audience: ['user', 'assistant'],
+      priority: 0.8,
+    },
+  }
+}
+
+function buildMediaToolContentBlocks(gallery: string, album: string, item: Item, message: string): ToolContentBlock[] {
   const primaryText = stringifyLines([message, '', buildMediaMetadataText(item)])
-  const mediaResourceLink = buildMediaResourceLinkContent(item)
+  const mediaResourceLink = buildMediaResourceLinkContent(gallery, album, item)
   const inlinePreview = buildInlinePreviewContent(item)
 
   return [
@@ -866,11 +920,13 @@ function createStorytellingServer() {
 
       return {
         content: buildMediaToolContentBlocks(
+          gallery,
+          resolvedAlbum,
           selectedItem,
           [
             `Selected media item ${selectedFilename} from album ${resolvedAlbum} in gallery ${gallery}.`,
             'Inline preview uses the largest available display image that stays within the MCP payload budget.',
-            'Use the linked media resource or interactive app for the full-resolution item.',
+            'Use the linked album page or interactive app to open the selected item locally.',
             'Interactive media view is available in MCP clients that support Apps.',
           ].join('\n'),
         ),

@@ -797,7 +797,7 @@ describe('storytelling MCP server', () => {
     expect(output.content?.[0]).toEqual({ type: 'text', text: [
       'Selected media item 2024-01-02-01.jpg from album trip in gallery demo.',
       'Inline preview uses the largest available display image that stays within the MCP payload budget.',
-      'Use the linked media resource or interactive app for the full-resolution item.',
+      'Use the linked album page or interactive app to open the selected item locally.',
       'Interactive media view is available in MCP clients that support Apps.',
       'Archive metadata:',
       'Filename: 2024-01-02-01.jpg',
@@ -809,11 +809,11 @@ describe('storytelling MCP server', () => {
       'People: Mister Gingerbread',
     ].join('\n') })
     expect(output.content?.find(block => block.type === 'resource_link')).toEqual(expect.objectContaining({
-      uri: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
-      name: '2024-01-02-01.jpg',
+      uri: 'http://localhost:3030/demo/trip?select=2024-01-02-01.jpg',
+      name: 'trip',
       title: 'Nagoya Castle',
       description: 'Castle view',
-      mimeType: 'image/jpeg',
+      mimeType: 'text/html',
     }))
     expect(output.content?.find(block => block.type === 'image')).toBeUndefined()
     expect(output.structuredContent).toEqual({
@@ -836,6 +836,7 @@ describe('storytelling MCP server', () => {
         thumbUrl: 'http://localhost:3030/galleries/demo/media/thumbs/2024/2024-01-02-01.jpg',
         photoUrl: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
         mediaUrl: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+        embeddedPreviewUrl: null,
         videoUrls: [],
       },
       previous: null,
