@@ -93,8 +93,8 @@ describe('MCP HTTP endpoint', () => {
         id: 1,
         result: expect.objectContaining({
           serverInfo: {
-            name: 'history-storytelling',
-            version: '1.0.0',
+            name: 'history',
+            version: '12.5.0',
           },
         }),
       }),

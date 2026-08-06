@@ -1,10 +1,15 @@
+import { readFileSync } from 'node:fs'
 import { createMcpHandler, McpServer, ResourceTemplate } from '@modelcontextprotocol/server'
 import { serveStdio } from '@modelcontextprotocol/server/stdio'
+import { registerAppResource, registerAppTool, RESOURCE_MIME_TYPE } from '@modelcontextprotocol/ext-apps/server'
+import mime from 'mime-types'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
+import getAlbum from '../src/lib/album'
 import getGalleries from '../src/lib/galleries'
 import { getDefaultMonthDay, monthDaySchema } from '../src/lib/monthDay'
+import config from '../src/models/config'
 import {
   buildAlbumDetailsText,
   buildDateDetailsText,
@@ -14,10 +19,17 @@ import {
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
 } from '../src/lib/storytelling'
+import type { Item } from '../src/types/common'
+import { getExt, getPrimaryFilename } from '../src/utils'
 import { generatedGalleries, generatedGallerySchema } from '../src/types/generated'
 
 const modulePath = fileURLToPath(import.meta.url)
 const projectRoot = path.resolve(path.dirname(modulePath), '..')
+const packageMetadata = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'), 'utf8')) as {
+  version?: string
+}
+const SERVER_NAME = 'history'
+const SERVER_VERSION = packageMetadata.version ?? '0.0.0'
 
 function ensureProjectRoot() {
   if (process.cwd() !== projectRoot) {
@@ -56,6 +68,14 @@ function getGalleryFromTemplate(uri: URL, value: unknown, segmentIndex = 0) {
 const GALLERIES_URI = 'history://galleries'
 const GALLERY_TEMPLATE = 'history://gallery/{gallery}'
 const PEOPLE_TEMPLATE = 'history://people/{gallery}'
+const FALLBACK_VIDEO_EXTENSIONS = ['avi', 'm2ts', 'mov', 'mp4', 'mts', 'ogv', 'webm']
+const MEDIA_APP_URI = 'ui://history/media-viewer.html'
+const MAX_INLINE_PREVIEW_BYTES = 90_000
+const APP_ORIGIN = `http://localhost:${config.nextPort}`
+const extAppsRuntimeSource = readFileSync(
+  path.join(projectRoot, 'node_modules', '@modelcontextprotocol', 'ext-apps', 'dist', 'src', 'app-with-deps.js'),
+  'utf8',
+)
 
 function buildGalleryResourceUri(gallery: string) {
   return `history://gallery/${encodeURIComponent(gallery)}`
@@ -65,13 +85,435 @@ function buildPeopleResourceUri(gallery: string) {
   return `history://people/${encodeURIComponent(gallery)}`
 }
 
+function buildAbsoluteAppUrl(relativePath: string) {
+  return new URL(relativePath, APP_ORIGIN).toString()
+}
+
+function isVideoExtension(extension: string | null) {
+  if (!extension) {
+    return false
+  }
+
+  const configuredVideoTypes = [
+    ...(config.supportedFileTypes?.video ?? []),
+    ...(config.rawFileTypes?.video ?? []),
+  ]
+
+  return (configuredVideoTypes.length > 0 ? configuredVideoTypes : FALLBACK_VIDEO_EXTENSIONS).includes(extension)
+}
+
+function buildMediaItemPayload(item: Item) {
+  const filename = getPrimaryFilename(item.filename)
+  const extension = getExt(item.mediaPath)
+  const mediaType = isVideoExtension(extension) ? 'video' : 'image'
+
+  return {
+    filename,
+    title: item.title,
+    caption: item.caption,
+    description: item.description,
+    photoDate: item.photoDate,
+    city: item.city,
+    location: item.location,
+    persons: item.persons?.map((person) => person.full) ?? [],
+    mediaType,
+    thumbUrl: buildAbsoluteAppUrl(item.thumbPath),
+    photoUrl: buildAbsoluteAppUrl(item.photoPath),
+    mediaUrl: buildAbsoluteAppUrl(item.mediaPath),
+    videoUrls: Array.isArray(item.videoPaths)
+      ? item.videoPaths.map(buildAbsoluteAppUrl)
+      : item.videoPaths
+        ? [buildAbsoluteAppUrl(item.videoPaths)]
+        : [],
+  }
+}
+
+function buildMediaMetadataText(item: Item) {
+  const location = [item.city, item.location].filter(Boolean).join(' / ')
+  const people = item.persons?.map((person) => person.full).filter(Boolean).join(', ')
+
+  return stringifyLines([
+    'Archive metadata:',
+    `Filename: ${getPrimaryFilename(item.filename)}`,
+    `Date: ${item.photoDate || 'unknown'}`,
+    `Location: ${location || 'unknown'}`,
+    `Title: ${item.title || 'unknown'}`,
+    `Caption: ${item.caption || 'unknown'}`,
+    `Description: ${item.description || 'unknown'}`,
+    `People: ${people || 'none recorded'}`,
+  ])
+}
+
+function buildMediaNavigationItemPayload(item: Item) {
+  const payload = buildMediaItemPayload(item)
+
+  return {
+    filename: payload.filename,
+    title: payload.title,
+    caption: payload.caption,
+    mediaType: payload.mediaType,
+    thumbUrl: payload.thumbUrl,
+    select: payload.filename,
+  }
+}
+
+function escapeInlineScriptSource(source: string) {
+  return JSON.stringify(source).replace(/<\/script/gi, '<\\/script')
+}
+
+function buildMediaAppHtml() {
+  const runtimeSourceLiteral = escapeInlineScriptSource(extAppsRuntimeSource)
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History media viewer</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --app-bg: var(--color-background-primary, #f6f4ef);
+        --app-panel: var(--color-background-secondary, rgba(255, 255, 255, 0.78));
+        --app-text: var(--color-text-primary, #1b1a17);
+        --app-muted: var(--color-text-secondary, #5f5a4f);
+        --app-border: var(--color-border-primary, rgba(27, 26, 23, 0.16));
+        --app-accent: var(--color-text-accent, #0f766e);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font-sans, 'Iowan Old Style', 'Palatino Linotype', serif);
+        background:
+          radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 32%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.75), transparent 38%),
+          var(--app-bg);
+        color: var(--app-text);
+      }
+
+      #app { min-height: 100vh; }
+      .shell {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      .panel {
+        background: var(--app-panel);
+        border: 1px solid var(--app-border);
+        border-radius: 20px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(10px);
+      }
+      .hero {
+        padding: 20px 22px 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 1.05;
+      }
+      .caption, .hint, .status {
+        color: var(--app-muted);
+      }
+      .hint, .status {
+        margin: 10px 0 0;
+        font-size: 0.95rem;
+      }
+      .nav {
+        display: flex;
+        gap: 12px;
+        padding: 0 22px 18px;
+      }
+      button {
+        appearance: none;
+        border: 1px solid var(--app-border);
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--app-text);
+        padding: 10px 14px;
+        border-radius: 999px;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+      .media-wrap {
+        padding: 0 22px;
+      }
+      .media {
+        width: 100%;
+        max-height: 66vh;
+        display: block;
+        object-fit: contain;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 18px;
+      }
+      .thumbs {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+        gap: 10px;
+        padding: 18px 22px 8px;
+        margin: 0;
+      }
+      .thumb {
+        width: 100%;
+        display: block;
+        border-radius: 12px;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+      .thumb-button {
+        padding: 0;
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      .thumb-button[aria-current="true"] {
+        border-color: var(--app-accent);
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 30%, transparent);
+      }
+      .details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        padding: 16px 22px 24px;
+      }
+      .detail dt {
+        color: var(--app-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .detail dd {
+        margin: 6px 0 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      const runtimeSource = ${runtimeSourceLiteral};
+      const runtimeUrl = URL.createObjectURL(new Blob([runtimeSource], { type: 'text/javascript' }));
+      const {
+        App,
+        PostMessageTransport,
+        applyDocumentTheme,
+        applyHostStyleVariables,
+        applyHostFonts,
+      } = await import(runtimeUrl);
+      URL.revokeObjectURL(runtimeUrl);
+
+      const root = document.getElementById('app');
+      const state = { app: null, payload: null, loading: false, error: null };
+
+      function setStatus(message) {
+        const status = document.getElementById('status');
+        if (status) status.textContent = message || '';
+      }
+
+      function updateState(next) {
+        Object.assign(state, next);
+        render();
+      }
+
+      async function selectMedia(select) {
+        if (!state.app || !state.payload || state.loading) return;
+
+        updateState({ loading: true, error: null });
+        try {
+          const result = await state.app.callServerTool({
+            name: 'get_album_media',
+            arguments: {
+              gallery: state.payload.gallery,
+              album: state.payload.album,
+              select,
+            },
+          });
+          handleToolResult(result);
+        } catch (error) {
+          updateState({ loading: false, error: error instanceof Error ? error.message : String(error) });
+        }
+      }
+
+      function createDetail(label, value) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'detail';
+        const dt = document.createElement('dt');
+        dt.textContent = label;
+        const dd = document.createElement('dd');
+        dd.textContent = value;
+        wrapper.append(dt, dd);
+        return wrapper;
+      }
+
+      function attachKeyboardNavigation(previous, next) {
+        window.onkeydown = (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement) {
+            const tagName = target.tagName;
+            if (target.isContentEditable || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') {
+              return;
+            }
+          }
+
+          if (event.key === 'ArrowLeft' && previous) {
+            event.preventDefault();
+            void selectMedia(previous.select);
+          }
+
+          if (event.key === 'ArrowRight' && next) {
+            event.preventDefault();
+            void selectMedia(next.select);
+          }
+        };
+      }
+
+      function render() {
+        root.textContent = '';
+
+        const shell = document.createElement('main');
+        shell.className = 'shell';
+        const panel = document.createElement('section');
+        panel.className = 'panel';
+        shell.append(panel);
+
+        const hero = document.createElement('header');
+        hero.className = 'hero';
+        const title = document.createElement('h1');
+        title.textContent = state.payload?.item?.title || 'History media viewer';
+        const caption = document.createElement('p');
+        caption.className = 'caption';
+        caption.textContent = state.payload?.item?.caption || 'Waiting for media selection...';
+        const hint = document.createElement('p');
+        hint.className = 'hint';
+        hint.textContent = 'Use Left and Right arrow keys or the thumbnail strip to move through the album.';
+        const status = document.createElement('p');
+        status.className = 'status';
+        status.id = 'status';
+        status.textContent = state.loading ? 'Loading media…' : state.error || '';
+        hero.append(title, caption, hint, status);
+        panel.append(hero);
+
+        if (!state.payload) {
+          root.append(shell);
+          return;
+        }
+
+        const { item, previous, next, items } = state.payload;
+        attachKeyboardNavigation(previous, next);
+
+        const nav = document.createElement('nav');
+        nav.className = 'nav';
+        nav.setAttribute('aria-label', 'Media navigation');
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Previous';
+        prevButton.disabled = !previous || state.loading;
+        prevButton.onclick = () => previous && void selectMedia(previous.select);
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next';
+        nextButton.disabled = !next || state.loading;
+        nextButton.onclick = () => next && void selectMedia(next.select);
+        nav.append(prevButton, nextButton);
+        panel.append(nav);
+
+        const mediaWrap = document.createElement('section');
+        mediaWrap.className = 'media-wrap';
+        if (item.mediaType === 'video') {
+          const video = document.createElement('video');
+          video.className = 'media';
+          video.controls = true;
+          video.poster = item.photoUrl;
+          video.src = item.mediaUrl;
+          mediaWrap.append(video);
+        } else {
+          const image = document.createElement('img');
+          image.className = 'media';
+          image.src = item.photoUrl;
+          image.alt = item.caption || item.title || item.filename;
+          mediaWrap.append(image);
+        }
+        panel.append(mediaWrap);
+
+        const thumbs = document.createElement('ul');
+        thumbs.className = 'thumbs';
+        for (const thumb of items) {
+          const li = document.createElement('li');
+          const button = document.createElement('button');
+          button.className = 'thumb-button';
+          button.type = 'button';
+          button.setAttribute('aria-label', thumb.caption || thumb.title || thumb.filename);
+          button.setAttribute('aria-current', String(thumb.select === state.payload.select));
+          button.disabled = state.loading;
+          button.onclick = () => void selectMedia(thumb.select);
+
+          const img = document.createElement('img');
+          img.className = 'thumb';
+          img.src = thumb.thumbUrl;
+          img.alt = thumb.caption || thumb.title || thumb.filename;
+          button.append(img);
+          li.append(button);
+          thumbs.append(li);
+        }
+        panel.append(thumbs);
+
+        const details = document.createElement('dl');
+        details.className = 'details';
+        details.append(
+          createDetail('Gallery', state.payload.gallery),
+          createDetail('Album', state.payload.album),
+          createDetail('Filename', item.filename),
+          createDetail('Date', item.photoDate || 'unknown'),
+          createDetail('Location', item.location || item.city || 'unknown'),
+          createDetail('People', item.persons.length > 0 ? item.persons.join(', ') : 'none'),
+        );
+        panel.append(details);
+
+        root.append(shell);
+      }
+
+      function handleToolResult(result) {
+        if (result.isError) {
+          updateState({ loading: false, error: (result.content || []).map(block => block.text || '').join('\n') || 'Unable to load media.' });
+          return;
+        }
+
+        updateState({
+          loading: false,
+          error: null,
+          payload: result.structuredContent || null,
+        });
+      }
+
+      const app = new App({ name: 'history-media-viewer', version: '1.0.0' }, {});
+      state.app = app;
+      app.ontoolresult = handleToolResult;
+      app.onhostcontextchanged = (ctx) => {
+        if (ctx.theme) applyDocumentTheme(ctx.theme);
+        if (ctx.styles?.variables) applyHostStyleVariables(ctx.styles.variables);
+        if (ctx.styles?.css?.fonts) applyHostFonts(ctx.styles.css.fonts);
+        if (ctx.safeAreaInsets) {
+          document.body.style.padding = [ctx.safeAreaInsets.top, ctx.safeAreaInsets.right, ctx.safeAreaInsets.bottom, ctx.safeAreaInsets.left]
+            .map((value) => value + 'px')
+            .join(' ');
+        }
+      };
+
+      render();
+      await app.connect(new PostMessageTransport(window.parent, window.parent));
+    </script>
+  </body>
+</html>`
+}
+
 const SERVER_INSTRUCTIONS = stringifyLines([
   'Use this MCP server to explore the history photo/video archive',
   [
     'Resources are inventories: read history://galleries, then read history://gallery/{gallery}',
     'to discover album names or history://people/{gallery} to discover person names.',
   ].join(' '),
-  'Use get_album_story, get_on_this_day_story, or get_person_story for archive details.',
+  'Use get_album_story, get_album_media, get_on_this_day_story, or get_person_story for archive details.',
   'Keep stories grounded in returned albums, dates, places, and people.',
 ])
 
@@ -91,18 +533,25 @@ type ToolResourceLink = {
   mimeType?: string
 }
 
+type ToolContentBlock =
+  | { type: 'text'; text: string; annotations?: { audience?: Array<'user' | 'assistant'>; priority?: number } }
+  | { type: 'image'; data: string; mimeType: string; annotations?: { audience?: Array<'user' | 'assistant'>; priority?: number } }
+  | ({ type: 'resource_link'; annotations?: { audience?: Array<'user' | 'assistant'>; priority?: number } } & ToolResourceLink)
+
 function toolResult<TStructuredContent extends Record<string, unknown>>({
   text,
+  content,
   structured,
   resourceLink,
 }: {
-  text: string
+  text?: string
+  content?: ToolContentBlock[]
   structured: TStructuredContent
   resourceLink?: ToolResourceLink
 }) {
   return {
-    content: [
-      { type: 'text' as const, text },
+    content: content ?? [
+      { type: 'text' as const, text: text ?? '' },
       ...(resourceLink ? [{ type: 'resource_link' as const, ...resourceLink }] : []),
     ],
     structuredContent: structured,
@@ -117,7 +566,12 @@ function toolErrorResult(error: unknown) {
 }
 
 function withToolErrorHandling<TArgs extends Record<string, unknown>>(
-  handler: (args: TArgs) => Promise<{ text: string, structured: Record<string, unknown>, resourceLink?: ToolResourceLink }>,
+  handler: (args: TArgs) => Promise<{
+    text?: string
+    content?: ToolContentBlock[]
+    structured: Record<string, unknown>
+    resourceLink?: ToolResourceLink
+  }>,
 ) {
   return async (args: TArgs) => {
     try {
@@ -129,15 +583,88 @@ function withToolErrorHandling<TArgs extends Record<string, unknown>>(
   }
 }
 
+function buildMediaResourceLinkContent(item: Item): ToolContentBlock {
+  const filename = getPrimaryFilename(item.filename)
+  const resourcePath = item.photoPath || item.mediaPath
+  const uri = buildAbsoluteAppUrl(resourcePath)
+  const detectedMimeType = mime.lookup(resourcePath)
+
+  return {
+    type: 'resource_link',
+    uri,
+    name: filename,
+    title: item.title || filename,
+    description: item.caption || item.description || `Selected media item ${filename}`,
+    mimeType: typeof detectedMimeType === 'string' ? detectedMimeType : 'image/jpeg',
+    annotations: {
+      audience: ['user', 'assistant'],
+      priority: 0.9,
+    },
+  }
+}
+
+function buildInlinePreviewContent(item: Item): ToolContentBlock | null {
+  const previewPaths = [item.photoPath, item.thumbPath].filter(Boolean)
+
+  for (const previewPath of previewPaths) {
+    const absolutePath = path.join(projectRoot, 'public', previewPath.replace(/^\//, ''))
+
+    try {
+      const buffer = readFileSync(absolutePath)
+
+      if (buffer.byteLength > MAX_INLINE_PREVIEW_BYTES) {
+        continue
+      }
+
+      const detectedMimeType = mime.lookup(previewPath)
+
+      return {
+        type: 'image',
+        data: buffer.toString('base64'),
+        mimeType: typeof detectedMimeType === 'string' ? detectedMimeType : 'image/jpeg',
+        annotations: {
+          audience: ['user', 'assistant'],
+          priority: 0.8,
+        },
+      }
+    } catch {
+      continue
+    }
+  }
+
+  return null
+}
+
+function buildMediaToolContentBlocks(item: Item, message: string): ToolContentBlock[] {
+  const primaryText = stringifyLines([message, '', buildMediaMetadataText(item)])
+  const mediaResourceLink = buildMediaResourceLinkContent(item)
+  const inlinePreview = buildInlinePreviewContent(item)
+
+  return [
+    {
+      type: 'text',
+      text: primaryText,
+      annotations: {
+        audience: ['user', 'assistant'],
+        priority: 1,
+      },
+    },
+    ...(inlinePreview ? [inlinePreview] : []),
+    mediaResourceLink,
+  ]
+}
+
 function createStorytellingServer() {
   ensureProjectRoot()
 
   const server = new McpServer({
-    name: 'history-storytelling',
-    version: '1.0.0',
+    name: SERVER_NAME,
+    version: SERVER_VERSION,
   }, {
     instructions: SERVER_INSTRUCTIONS,
   })
+  const appToolServer = { registerTool: server.registerTool.bind(server) } as unknown as Parameters<typeof registerAppTool>[0]
+  const appResourceServer = { registerResource: server.registerResource.bind(server) } as unknown as Parameters<typeof registerAppResource>[0]
 
   server.registerTool(
     'get_album_story',
@@ -176,6 +703,106 @@ function createStorytellingServer() {
           album,
         },
       }
+    }),
+  )
+
+  registerAppTool(
+    appToolServer,
+    'get_album_media',
+    {
+      title: 'Get Album Media',
+      description: [
+        'Return one selected photo or video from an album and open an interactive MCP App when supported by the client.',
+        'Omit select to return the first item in the album.',
+      ].join(' '),
+      inputSchema: z.object({
+        gallery: gallerySchemaWithDefault,
+        album: albumSchema,
+        select: z.string().min(1).optional().describe(
+          'Exact filename of the photo or video to display. Omit it to select the album\'s first item.',
+        ),
+      }),
+      annotations: { readOnlyHint: true },
+      _meta: {
+        ui: {
+          resourceUri: MEDIA_APP_URI,
+        },
+      },
+    },
+    withToolErrorHandling(async ({ gallery, album, select }) => {
+      const result = await getAlbum(gallery, album)
+      const items = result.album.items
+
+      if (items.length === 0) {
+        throw new ReferenceError(`Album ${album} in gallery ${gallery} does not contain any media items`)
+      }
+
+      const selectedIndex = select
+        ? items.findIndex(item => getPrimaryFilename(item.filename) === select)
+        : 0
+      const normalizedSelectedIndex = selectedIndex >= 0 ? selectedIndex : -1
+      const selectedItem = normalizedSelectedIndex >= 0
+        ? items[normalizedSelectedIndex]
+        : null
+
+      if (!selectedItem) {
+        throw new ReferenceError(`No media item named ${select} was found in album ${album} for gallery ${gallery}`)
+      }
+
+      const selectedFilename = getPrimaryFilename(selectedItem.filename)
+      const previousItem = normalizedSelectedIndex > 0
+        ? items[normalizedSelectedIndex - 1]
+        : null
+      const nextItem = normalizedSelectedIndex < items.length - 1
+        ? items[normalizedSelectedIndex + 1]
+        : null
+
+      return {
+        content: buildMediaToolContentBlocks(
+          selectedItem,
+          [
+            `Selected media item ${selectedFilename} from album ${album} in gallery ${gallery}.`,
+            'Inline preview uses the largest available display image that stays within the MCP payload budget.',
+            'Use the linked media resource or interactive app for the full-resolution item.',
+            'Interactive media view is available in MCP clients that support Apps.',
+          ].join('\n'),
+        ),
+        structured: {
+          gallery,
+          album,
+          select: selectedFilename,
+          selectedIndex: normalizedSelectedIndex,
+          totalItems: items.length,
+          item: buildMediaItemPayload(selectedItem),
+          previous: previousItem ? buildMediaNavigationItemPayload(previousItem) : null,
+          next: nextItem ? buildMediaNavigationItemPayload(nextItem) : null,
+          items: items.map(item => buildMediaNavigationItemPayload(item)),
+        },
+      }
+    }),
+  )
+
+  registerAppResource(
+    appResourceServer,
+    'history-media-viewer',
+    MEDIA_APP_URI,
+    {
+      title: 'History Media Viewer',
+      description: 'Interactive MCP App for browsing a selected photo or video from the history archive.',
+    },
+    async () => ({
+      contents: [{
+        uri: MEDIA_APP_URI,
+        mimeType: RESOURCE_MIME_TYPE,
+        text: buildMediaAppHtml(),
+        _meta: {
+          ui: {
+            csp: {
+              resourceDomains: [APP_ORIGIN],
+            },
+          },
+        },
+      }],
     }),
   )
 

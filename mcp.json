@@ -1,14 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "dev.local/history-http",
+  "name": "history",
   "description": "Read-only storytelling tools for a local history photo archive.",
   "version": "12.5.0",
-  "remotes": [
-    {
-      "type": "streamable-http",
-      "url": "http://localhost:3030/mcp"
-    }
-  ],
   "mcpServers": {
     "history": {
       "type": "stdio",

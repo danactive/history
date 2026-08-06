@@ -83,6 +83,7 @@ const readResourceResultSchema = z.object({
     uri: z.string(),
     text: z.string().optional(),
     mimeType: z.string().optional(),
+    _meta: z.record(z.string(), z.unknown()).optional(),
   })),
 })
 
@@ -91,6 +92,7 @@ const toolCallResultSchema = z.object({
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
+    data: z.string().optional(),
     uri: z.string().optional(),
     name: z.string().optional(),
     title: z.string().optional(),
@@ -117,6 +119,7 @@ const getPromptResultSchema = z.object({
 
 const getGalleries = vi.hoisted(() => vi.fn())
 const getAlbums = vi.hoisted(() => vi.fn())
+const getAlbum = vi.hoisted(() => vi.fn())
 const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleriesDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleryDetailsText = vi.hoisted(() => vi.fn())
@@ -127,6 +130,10 @@ const getStorytellingDefaultGallery = vi.hoisted(() => vi.fn())
 
 vi.mock('../src/lib/galleries', () => ({
   default: getGalleries,
+}))
+
+vi.mock('../src/lib/album', () => ({
+  default: getAlbum,
 }))
 
 vi.mock('../src/lib/albums', () => ({
@@ -345,6 +352,51 @@ beforeEach(() => {
       albums: [{ name: 'other-trip', h1: 'Other Trip', h2: '', year: '2025', search: null }],
     },
   })
+  getAlbum.mockResolvedValue({
+    album: {
+      items: [
+        {
+          id: '1',
+          filename: '2024-01-02-01.jpg',
+          photoDate: '2024-01-02',
+          city: 'Nagoya',
+          location: 'Castle',
+          caption: 'Castle view',
+          description: 'A clear winter afternoon',
+          search: null,
+          persons: [{ full: 'Mister Gingerbread', dob: null }],
+          title: 'Nagoya Castle',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '/galleries/demo/media/thumbs/2024/2024-01-02-01.jpg',
+          photoPath: '/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+          mediaPath: '/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+          videoPaths: null,
+          reference: null,
+        },
+        {
+          id: '2',
+          filename: '2024-01-03-02.mp4',
+          photoDate: '2024-01-03',
+          city: 'Nagoya',
+          location: 'Shrine',
+          caption: 'Shrine video',
+          description: null,
+          search: null,
+          persons: null,
+          title: 'Atsuta Shrine',
+          coordinates: null,
+          coordinateAccuracy: null,
+          thumbPath: '/galleries/demo/media/thumbs/2024/2024-01-03-02.jpg',
+          photoPath: '/galleries/demo/media/photos/2024/2024-01-03-02.jpg',
+          mediaPath: '/galleries/demo/media/videos/2024/2024-01-03-02.mp4',
+          videoPaths: ['/galleries/demo/media/videos/2024/2024-01-03-02.mp4'],
+          reference: null,
+        },
+      ],
+      meta: { gallery: 'demo' },
+    },
+  })
   buildGalleriesDetailsText.mockResolvedValue([
     'Available galleries',
     'Default gallery: public',
@@ -420,8 +472,8 @@ describe('storytelling MCP server', () => {
     const result = await client.initialize()
 
     expect(result.serverInfo).toEqual({
-      name: 'history-storytelling',
-      version: '1.0.0',
+      name: 'history',
+      version: '12.5.0',
     })
     expect(result.protocolVersion).toBeTruthy()
     expect(result.capabilities).toEqual(expect.objectContaining({
@@ -430,6 +482,7 @@ describe('storytelling MCP server', () => {
       resources: expect.any(Object),
     }))
     expect(result.instructions).toContain('history://galleries')
+    expect(result.instructions).toContain('get_album_media')
     expect(result.instructions).toContain('get_on_this_day_story')
   })
 
@@ -441,6 +494,7 @@ describe('storytelling MCP server', () => {
 
     expect(result.tools.map(tool => tool.name)).toEqual([
       'get_album_story',
+      'get_album_media',
       'get_on_this_day_story',
       'get_person_story',
     ])
@@ -451,6 +505,10 @@ describe('storytelling MCP server', () => {
     expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
       title: 'Get memories On This Day Story',
       description: expect.stringContaining('configured gallery keywords'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_album_media')).toEqual(expect.objectContaining({
+      title: 'Get Album Media',
+      description: expect.stringContaining('selected photo or video'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
       title: 'Get Person Story',
@@ -496,6 +554,7 @@ describe('storytelling MCP server', () => {
       expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
       expect.objectContaining({ uri: 'history://people/demo', title: 'History People' }),
+      expect.objectContaining({ uri: 'ui://history/media-viewer.html', title: 'History Media Viewer' }),
     ]))
     expect(resources.resources.map(resource => resource.uri)).not.toEqual(expect.arrayContaining([
       'history://guide',
@@ -581,6 +640,7 @@ describe('storytelling MCP server', () => {
     const gallery = await client.readResource('history://gallery/demo')
     const otherGallery = await client.readResource('history://gallery/public')
     const people = await client.readResource('history://people/demo')
+    const mediaViewer = await client.readResource('ui://history/media-viewer.html')
 
     expect(buildGalleriesDetailsText).toHaveBeenCalledTimes(1)
     expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
@@ -597,6 +657,8 @@ describe('storytelling MCP server', () => {
     expect(otherGallery.contents[0]?.text).toContain('- Album: other-trip')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
     expect(people.contents[0]?.text).toContain('Mister Gingerbread (3 appearances)')
+    expect(mediaViewer.contents[0]?.mimeType).toBe('text/html;profile=mcp-app')
+    expect(mediaViewer.contents[0]?.text).toContain('History media viewer')
   })
 
   test('returns album details through a tool', async () => {
@@ -617,6 +679,86 @@ describe('storytelling MCP server', () => {
     expect(output.structuredContent).toEqual({
       gallery: 'demo',
       album: 'trip',
+    })
+  })
+
+  test('returns album media through a tool with a dedicated viewer URL', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('get_album_media', { gallery: 'demo', album: 'trip' })
+
+    expect(getAlbum).toHaveBeenCalledWith('demo', 'trip')
+    expect(output.content?.[0]).toEqual({ type: 'text', text: [
+      'Selected media item 2024-01-02-01.jpg from album trip in gallery demo.',
+      'Inline preview uses the largest available display image that stays within the MCP payload budget.',
+      'Use the linked media resource or interactive app for the full-resolution item.',
+      'Interactive media view is available in MCP clients that support Apps.',
+      'Archive metadata:',
+      'Filename: 2024-01-02-01.jpg',
+      'Date: 2024-01-02',
+      'Location: Nagoya / Castle',
+      'Title: Nagoya Castle',
+      'Caption: Castle view',
+      'Description: A clear winter afternoon',
+      'People: Mister Gingerbread',
+    ].join('\n') })
+    expect(output.content?.find(block => block.type === 'resource_link')).toEqual(expect.objectContaining({
+      uri: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+      name: '2024-01-02-01.jpg',
+      title: 'Nagoya Castle',
+      description: 'Castle view',
+      mimeType: 'image/jpeg',
+    }))
+    expect(output.content?.find(block => block.type === 'image')).toBeUndefined()
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      album: 'trip',
+      select: '2024-01-02-01.jpg',
+      selectedIndex: 0,
+      totalItems: 2,
+      item: {
+        filename: '2024-01-02-01.jpg',
+        title: 'Nagoya Castle',
+        caption: 'Castle view',
+        description: 'A clear winter afternoon',
+        photoDate: '2024-01-02',
+        city: 'Nagoya',
+        location: 'Castle',
+        persons: ['Mister Gingerbread'],
+        mediaType: 'image',
+        thumbUrl: 'http://localhost:3030/galleries/demo/media/thumbs/2024/2024-01-02-01.jpg',
+        photoUrl: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+        mediaUrl: 'http://localhost:3030/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+        videoUrls: [],
+      },
+      previous: null,
+      next: {
+        filename: '2024-01-03-02.mp4',
+        title: 'Atsuta Shrine',
+        caption: 'Shrine video',
+        mediaType: 'video',
+        thumbUrl: 'http://localhost:3030/galleries/demo/media/thumbs/2024/2024-01-03-02.jpg',
+        select: '2024-01-03-02.mp4',
+      },
+      items: [
+        {
+          filename: '2024-01-02-01.jpg',
+          title: 'Nagoya Castle',
+          caption: 'Castle view',
+          mediaType: 'image',
+          thumbUrl: 'http://localhost:3030/galleries/demo/media/thumbs/2024/2024-01-02-01.jpg',
+          select: '2024-01-02-01.jpg',
+        },
+        {
+          filename: '2024-01-03-02.mp4',
+          title: 'Atsuta Shrine',
+          caption: 'Shrine video',
+          mediaType: 'video',
+          thumbUrl: 'http://localhost:3030/galleries/demo/media/thumbs/2024/2024-01-03-02.jpg',
+          select: '2024-01-03-02.mp4',
+        },
+      ],
     })
   })
 

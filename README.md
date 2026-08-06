@@ -26,7 +26,8 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 
 #### MCP server
 - `npm run dev` also exposes the same server over streaming HTTP at `http://localhost:3030/mcp`; clients that require HTTPS must use a deployed HTTPS `/mcp` endpoint instead, or use stdio locally `npm run mcp`
-- Server registry for MCP manifest use `mcp.json`
+- `mcp.json` is intentionally stdio-only for local clients so the toolset does not drift between a live Next dev server and a separate stdio process
+- If you want to test the streaming HTTP transport, connect directly to `http://localhost:3030/mcp` instead of adding a second local server entry alongside stdio
 
 - For VS Code workspace configuration, use /vscode-mcp.json and `Install Server from Manifest`
 

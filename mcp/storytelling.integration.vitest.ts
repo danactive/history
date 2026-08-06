@@ -77,6 +77,7 @@ const readResourceResultSchema = z.object({
     uri: z.string(),
     text: z.string().optional(),
     mimeType: z.string().optional(),
+    _meta: z.record(z.string(), z.unknown()).optional(),
   })),
 })
 
@@ -85,6 +86,7 @@ const toolCallResultSchema = z.object({
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
+    data: z.string().optional(),
     uri: z.string().optional(),
     name: z.string().optional(),
     title: z.string().optional(),
@@ -294,8 +296,8 @@ describe('storytelling MCP server integration', () => {
     const result = await client.initialize()
 
     expect(result.serverInfo).toEqual({
-      name: 'history-storytelling',
-      version: '1.0.0',
+      name: 'history',
+      version: '12.5.0',
     })
     expect(result.protocolVersion).toBeTruthy()
     expect(result.capabilities).toEqual(expect.objectContaining({
@@ -314,6 +316,7 @@ describe('storytelling MCP server integration', () => {
 
     expect(result.tools.map(tool => tool.name)).toEqual([
       'get_album_story',
+      'get_album_media',
       'get_on_this_day_story',
       'get_person_story',
     ])
@@ -324,6 +327,10 @@ describe('storytelling MCP server integration', () => {
     expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
       title: 'Get memories On This Day Story',
       description: expect.stringContaining('configured gallery keywords'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_album_media')).toEqual(expect.objectContaining({
+      title: 'Get Album Media',
+      description: expect.stringContaining('selected photo or video'),
     }))
     expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
       title: 'Get Person Story',
@@ -354,6 +361,7 @@ describe('storytelling MCP server integration', () => {
       expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
       expect.objectContaining({ uri: 'history://people/demo', title: 'History People' }),
+      expect.objectContaining({ uri: 'ui://history/media-viewer.html', title: 'History Media Viewer' }),
     ]))
     expect(resources.resources.map(resource => resource.uri)).not.toEqual(expect.arrayContaining([
       'history://guide',
@@ -371,6 +379,7 @@ describe('storytelling MCP server integration', () => {
     const galleries = await client.readResource('history://galleries')
     const gallery = await client.readResource('history://gallery/demo')
     const people = await client.readResource('history://people/demo')
+    const mediaViewer = await client.readResource('ui://history/media-viewer.html')
 
     expect(galleries.contents[0]?.text).toContain('Available galleries')
     expect(galleries.contents[0]?.text).toContain('Default gallery: dan')
@@ -379,6 +388,8 @@ describe('storytelling MCP server integration', () => {
     expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
     expect(gallery.contents[0]?.text).toContain('## Albums')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
+    expect(mediaViewer.contents[0]?.mimeType).toBe('text/html;profile=mcp-app')
+    expect(mediaViewer.contents[0]?.text).toContain('History media viewer')
   }, 20000)
 
   test('returns album, on-this-day, and person details through tools', async () => {
@@ -406,6 +417,43 @@ describe('storytelling MCP server integration', () => {
       gallery: 'demo',
       monthDay: '01-02',
     })
+
+    const media = await client.callTool('get_album_media', {
+      gallery: 'demo',
+      album: 'sample',
+    })
+    expect(media.content?.[0]?.text).toContain('Selected media item')
+    expect(media.content?.[0]?.text).toContain('Inline preview uses the largest available display image that stays within the MCP payload budget.')
+    expect(media.content?.[0]?.text).toContain('Use the linked media resource or interactive app for the full-resolution item.')
+    expect(media.content?.[0]?.text).toContain('Interactive media view is available in MCP clients that support Apps.')
+    expect(media.content?.[0]?.text).toContain('Archive metadata:')
+    expect(media.content?.find(block => block.type === 'image')).toEqual(expect.objectContaining({
+      mimeType: expect.stringMatching(/^image\//),
+      data: expect.any(String),
+    }))
+    expect(media.content?.find(block => block.type === 'resource_link')).toEqual(expect.objectContaining({
+      uri: expect.stringContaining('http://localhost:3030/galleries/demo/media/'),
+      mimeType: expect.stringMatching(/^image\//),
+    }))
+    expect(media.structuredContent).toEqual(expect.objectContaining({
+      gallery: 'demo',
+      album: 'sample',
+      selectedIndex: expect.any(Number),
+      totalItems: expect.any(Number),
+      item: expect.objectContaining({
+        filename: expect.any(String),
+        mediaType: expect.stringMatching(/^(image|video)$/),
+        mediaUrl: expect.stringContaining('http://localhost:3030/galleries/demo/media/'),
+      }),
+      items: expect.arrayContaining([
+        expect.objectContaining({
+          filename: expect.any(String),
+          select: expect.any(String),
+          mediaType: expect.stringMatching(/^(image|video)$/),
+          thumbUrl: expect.stringContaining('http://localhost:3030/galleries/demo/media/thumbs/'),
+        }),
+      ]),
+    }))
 
     const person = await client.callTool('get_person_story', { gallery: 'demo', person: 'Mister Gingerbread' })
     expect(person.content?.[0]?.text).toContain('# Person story: Mister Gingerbread')
