@@ -19,7 +19,9 @@ import {
   buildPeopleInventoryText,
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
+  searchStoryMoments,
 } from '../src/lib/storytelling'
+import { storySearchInputSchema } from '../src/models/storytelling'
 import type { Gallery, Item } from '../src/types/common'
 import { getExt, getPrimaryFilename } from '../src/utils'
 import { generatedGalleries, generatedGallerySchema } from '../src/types/generated'
@@ -561,9 +563,31 @@ const SERVER_INSTRUCTIONS = stringifyLines([
     'Resources are inventories: read history://galleries, then read history://gallery/{gallery}',
     'to discover album names or history://people/{gallery} to discover person names.',
   ].join(' '),
-  'Use get_album_story, get_album_media, get_on_this_day_story, or get_person_story for archive details.',
+  [
+    'Use search_story_moments first for free-text discovery, then use get_album_story,',
+    'get_album_media, get_on_this_day_story, or get_person_story for exact follow-up details.',
+  ].join(' '),
   'Keep stories grounded in returned albums, dates, places, and people.',
 ])
+
+function buildStorySearchText(result: Awaited<ReturnType<typeof searchStoryMoments>>) {
+  return [
+    result.summary,
+    '',
+    '## Matches',
+    ...(result.matches.length > 0
+      ? result.matches.flatMap(match => [
+          `- Album: ${match.album ?? 'unknown'} | File: ${match.filename} | Date: ${match.date ?? 'unknown'}`,
+          `  Title: ${match.title}`,
+          `  Location: ${[match.city, match.location].filter(Boolean).join(' / ') || 'unknown'}`,
+          `  People: ${match.persons.join(', ') || 'none'}`,
+        ])
+      : ['- none']),
+    '',
+    'Use get_album_media with the exact album and file from a match to view the photo or video.',
+    'Use get_album_story with the exact album from a match to read the broader narrative context.',
+  ].join('\n')
+}
 
 function formatToolError(error: unknown) {
   if (error instanceof Error) {
@@ -713,6 +737,37 @@ function createStorytellingServer() {
   })
   const appToolServer = { registerTool: server.registerTool.bind(server) } as unknown as Parameters<typeof registerAppTool>[0]
   const appResourceServer = { registerResource: server.registerResource.bind(server) } as unknown as Parameters<typeof registerAppResource>[0]
+
+  server.registerTool(
+    'search_story_moments',
+    {
+      title: 'Search Story Moments',
+      description: [
+        'Search the archive by free-text themes, place names, people, countries, regions, years, or exact album names.',
+        'Use this first when you do not already know the exact album name or filename.',
+      ].join(' '),
+      inputSchema: storySearchInputSchema,
+      annotations: { readOnlyHint: true },
+    },
+    withToolErrorHandling(async ({ gallery, album, ...rest }) => {
+      const resolvedGallery = parseGallery(gallery)
+      const resolvedAlbum = album ? await resolveAlbumName(resolvedGallery, album) : undefined
+      const result = await searchStoryMoments({
+        ...rest,
+        gallery: resolvedGallery,
+        ...(resolvedAlbum ? { album: resolvedAlbum } : {}),
+      })
+
+      return {
+        text: buildStorySearchText(result),
+        structured: {
+          ...result,
+          gallery: resolvedGallery,
+          requestedAlbum: album ?? null,
+        },
+      }
+    }),
+  )
 
   server.registerTool(
     'get_album_story',
@@ -1029,7 +1084,8 @@ function createStorytellingServer() {
             `Generate a ${tone} story for this archive request: ${query}.`,
             gallery ? `Focus on gallery: ${gallery}.` : 'Use any relevant gallery.',
             `Read ${GALLERIES_URI} and a relevant history://gallery/{gallery} inventory before composing the response.`,
-            'Call get_album_story, get_on_this_day_story, or get_person_story when relevant to the request.',
+            'Call search_story_moments first when you do not already know the exact album or filename.',
+            'Call get_album_story, get_album_media, get_on_this_day_story, or get_person_story when relevant to the request.',
             'Use only archive evidence returned by the resources and tools.',
             'Cite concrete albums, dates, places, and people from the tool results.',
             'If the archive evidence is thin or incomplete, say so instead of inventing details.',

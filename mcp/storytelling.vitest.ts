@@ -128,6 +128,7 @@ const buildPeopleInventoryText = vi.hoisted(() => vi.fn())
 const buildDateDetailsText = vi.hoisted(() => vi.fn())
 const buildPersonDetailsText = vi.hoisted(() => vi.fn())
 const getStorytellingDefaultGallery = vi.hoisted(() => vi.fn())
+const searchStoryMoments = vi.hoisted(() => vi.fn())
 
 vi.mock('../src/lib/galleries', () => ({
   default: getGalleries,
@@ -150,6 +151,7 @@ vi.mock('../src/lib/storytelling', () => ({
   buildPeopleInventoryText,
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
+  searchStoryMoments,
 }))
 
 vi.mock('../src/models/config', () => ({
@@ -341,6 +343,7 @@ beforeEach(() => {
   buildPersonDetailsText.mockReset()
   getStorytellingDefaultGallery.mockReset()
   buildDateDetailsText.mockReset()
+  searchStoryMoments.mockReset()
 
   getGalleries.mockResolvedValue({ galleries: ['demo', 'public'] })
   getStorytellingDefaultGallery.mockImplementation((galleries: readonly string[]) => (
@@ -478,6 +481,40 @@ beforeEach(() => {
     '  Album: trip',
     'View the graphical interface in a web browser: http://localhost:3030/demo/today?day=01-02',
   ].join('\n'))
+  searchStoryMoments.mockResolvedValue({
+    summary: 'Found 1 story candidate from 2 scanned items.',
+    filtersApplied: {
+      query: 'castle',
+      gallery: 'public',
+      album: null,
+      person: null,
+      city: null,
+      country: null,
+      region: null,
+      year: null,
+      limit: 8,
+    },
+    totalCandidates: 2,
+    matches: [{
+      gallery: 'demo',
+      album: 'trip',
+      filename: '2024-01-02-01.jpg',
+      date: '2024-01-02',
+      title: 'Nagoya Castle',
+      caption: 'Castle view',
+      description: 'A clear winter afternoon',
+      search: null,
+      city: 'Nagoya',
+      location: 'Castle',
+      persons: ['Mister Gingerbread'],
+      mediaPath: '/galleries/demo/media/photos/2024/2024-01-02-01.jpg',
+      thumbPath: '/galleries/demo/media/thumbs/2024/2024-01-02-01.jpg',
+      reference: null,
+      visitedPlace: null,
+      score: 1,
+      reasons: ['matches query'],
+    }],
+  })
 })
 
 describe('storytelling MCP server', () => {
@@ -497,6 +534,7 @@ describe('storytelling MCP server', () => {
       resources: expect.any(Object),
     }))
     expect(result.instructions).toContain('history://galleries')
+    expect(result.instructions).toContain('search_story_moments')
     expect(result.instructions).toContain('get_album_media')
     expect(result.instructions).toContain('get_on_this_day_story')
   })
@@ -508,11 +546,16 @@ describe('storytelling MCP server', () => {
     const result = await client.listTools()
 
     expect(result.tools.map(tool => tool.name)).toEqual([
+      'search_story_moments',
       'get_album_story',
       'get_album_media',
       'get_on_this_day_story',
       'get_person_story',
     ])
+    expect(result.tools.find(tool => tool.name === 'search_story_moments')).toEqual(expect.objectContaining({
+      title: 'Search Story Moments',
+      description: expect.stringContaining('free-text'),
+    }))
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
       description: expect.stringContaining('configured gallery keywords'),
@@ -589,8 +632,9 @@ describe('storytelling MCP server', () => {
       'Read history://galleries and a relevant history://gallery/{gallery} inventory',
       'before composing the response.',
     ].join(' ')
+    const searchToolText = 'Call search_story_moments first when you do not already know the exact album or filename.'
     const toolText = [
-      'Call get_album_story, get_on_this_day_story, or get_person_story',
+      'Call get_album_story, get_album_media, get_on_this_day_story, or get_person_story',
       'when relevant to the request.',
     ].join(' ')
 
@@ -615,6 +659,7 @@ describe('storytelling MCP server', () => {
     expect(textMessage?.content.text).toContain(requestText)
     expect(textMessage?.content.text).toContain('Focus on gallery: demo.')
     expect(textMessage?.content.text).toContain(resourceText)
+    expect(textMessage?.content.text).toContain(searchToolText)
     expect(textMessage?.content.text).toContain(toolText)
     expect(textMessage?.content.text).toContain('Use only archive evidence returned by the resources and tools.')
     expect(textMessage?.content.text).toContain('say so instead of inventing details')
@@ -706,6 +751,26 @@ describe('storytelling MCP server', () => {
       album: 'trip',
       requestedAlbum: 'trip',
     })
+  })
+
+  test('returns story search matches through a tool', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('search_story_moments', { query: 'castle' })
+
+    expect(searchStoryMoments).toHaveBeenCalledWith({ query: 'castle', gallery: 'public', limit: 8 })
+    expect(output.content?.[0]?.text).toContain('Found 1 story candidate from 2 scanned items.')
+    expect(output.content?.[0]?.text).toContain('- Album: trip | File: 2024-01-02-01.jpg | Date: 2024-01-02')
+    expect(output.content?.[0]?.text).toContain('Use get_album_media with the exact album and file from a match to view the photo or video.')
+    expect(output.structuredContent).toEqual(expect.objectContaining({
+      gallery: 'public',
+      requestedAlbum: null,
+      matches: [expect.objectContaining({
+        album: 'trip',
+        filename: '2024-01-02-01.jpg',
+      })],
+    }))
   })
 
   test('resolves human-facing album labels before reading album stories', async () => {

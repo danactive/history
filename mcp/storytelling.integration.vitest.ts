@@ -315,11 +315,16 @@ describe('storytelling MCP server integration', () => {
     const result = await client.listTools()
 
     expect(result.tools.map(tool => tool.name)).toEqual([
+      'search_story_moments',
       'get_album_story',
       'get_album_media',
       'get_on_this_day_story',
       'get_person_story',
     ])
+    expect(result.tools.find(tool => tool.name === 'search_story_moments')).toEqual(expect.objectContaining({
+      title: 'Search Story Moments',
+      description: expect.stringContaining('free-text'),
+    }))
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
       description: expect.stringContaining('configured gallery keywords'),
@@ -397,6 +402,19 @@ describe('storytelling MCP server integration', () => {
     const client = startStorytellingServer()
 
     await client.initialize()
+
+    const search = await client.callTool('search_story_moments', { gallery: 'demo', query: 'gingerbread' })
+    expect(search.content?.[0]?.text).toContain('## Matches')
+    expect(search.content?.[0]?.text).toContain('Use get_album_media with the exact album and file from a match to view the photo or video.')
+    expect(search.structuredContent).toEqual(expect.objectContaining({
+      gallery: 'demo',
+      matches: expect.arrayContaining([
+        expect.objectContaining({
+          album: expect.any(String),
+          filename: expect.any(String),
+        }),
+      ]),
+    }))
 
     const albumStory = await client.callTool('get_album_story', {
       gallery: 'demo',
