@@ -12,6 +12,7 @@ import {
   buildDateDetailsText,
   buildGalleriesDetailsText,
   buildGalleryDetailsText,
+  buildGalleryInventoryText,
   buildPeopleInventoryText,
   buildPersonDetailsText,
   getOnThisDayStory,
@@ -159,6 +160,35 @@ describe('Storytelling library', () => {
     expect(text).toContain('## Albums')
     expect(text).toContain('- Album: sample')
     expect(text).toContain('- Gallery includes: ')
+  })
+
+  test('builds compact paginated gallery inventory text for MCP resources', async () => {
+    const galleryAlbums = {
+      [config.defaultGallery]: {
+        albums: Array.from({ length: 30 }, (_, index) => ({
+          name: `album-${index + 1}`,
+          h1: `Album ${index + 1}`,
+          h2: '',
+          version: '',
+          thumbPath: '',
+          year: '2024',
+          search: `keyword-${index + 1}`,
+        })),
+      },
+    } as GalleryAlbumsBody
+    vi.spyOn(albumsLib, 'default').mockResolvedValue(galleryAlbums)
+
+    const text = await buildGalleryInventoryText(config.defaultGallery, { page: 2, limit: 10 })
+
+    expect(text).toContain('- Albums: 30')
+    expect(text).toContain('- Page: 2 of 3')
+    expect(text).toContain('- Showing albums 11-20')
+    expect(text).toContain('- album-11 | title=Album 11 | year=2024 | keywords=keyword-11')
+    expect(text).toContain('- album-20 | title=Album 20 | year=2024 | keywords=keyword-20')
+    expect(text).not.toContain('- album-10 |')
+    expect(text).not.toContain('- album-21 |')
+    expect(text).toContain(`- Previous page: history://gallery/${config.defaultGallery}?page=1&limit=10`)
+    expect(text).toContain(`- Next page: history://gallery/${config.defaultGallery}?page=3&limit=10`)
   })
 
   test('identifies the default and non-default galleries in the gallery inventory', async () => {

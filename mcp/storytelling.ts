@@ -7,6 +7,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as z from 'zod/v4'
 import getAlbum from '../src/lib/album'
+import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
 import { getDefaultMonthDay, monthDaySchema } from '../src/lib/monthDay'
 import config from '../src/models/config'
@@ -14,12 +15,12 @@ import {
   buildAlbumDetailsText,
   buildDateDetailsText,
   buildGalleriesDetailsText,
-  buildGalleryDetailsText,
+  buildGalleryInventoryText,
   buildPeopleInventoryText,
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
 } from '../src/lib/storytelling'
-import type { Item } from '../src/types/common'
+import type { Gallery, Item } from '../src/types/common'
 import { getExt, getPrimaryFilename } from '../src/utils'
 import { generatedGalleries, generatedGallerySchema } from '../src/types/generated'
 
@@ -62,7 +63,27 @@ function getTemplatePathSegments(uri: URL) {
 
 function getGalleryFromTemplate(uri: URL, value: unknown, segmentIndex = 0) {
   const pathSegments = getTemplatePathSegments(uri)
-  return parseGallery(value ?? pathSegments[segmentIndex])
+  const templateValue = typeof value === 'string'
+    ? value.split('?')[0]
+    : value
+
+  return parseGallery(templateValue ?? pathSegments[segmentIndex])
+}
+
+function parsePositiveIntSearchParam(uri: URL, key: string, defaultValue: number, maxValue: number) {
+  const rawValue = uri.searchParams.get(key)
+
+  if (!rawValue) {
+    return defaultValue
+  }
+
+  const parsedValue = Number.parseInt(rawValue, 10)
+
+  if (!Number.isFinite(parsedValue) || parsedValue < 1) {
+    return defaultValue
+  }
+
+  return Math.min(parsedValue, maxValue)
 }
 
 const GALLERIES_URI = 'history://galleries'
@@ -87,6 +108,33 @@ function buildPeopleResourceUri(gallery: string) {
 
 function buildAbsoluteAppUrl(relativePath: string) {
   return new URL(relativePath, APP_ORIGIN).toString()
+}
+
+async function resolveAlbumName(gallery: Gallery, requestedAlbum: string) {
+  const normalizedRequestedAlbum = requestedAlbum.trim().toLowerCase()
+  const galleryAlbums = await getAlbums(gallery)
+  const albums = galleryAlbums[gallery].albums
+  type GalleryAlbumEntry = (typeof albums)[number]
+
+  const exactNameMatch = albums.find((album: GalleryAlbumEntry) => album.name.toLowerCase() === normalizedRequestedAlbum)
+
+  if (exactNameMatch) {
+    return exactNameMatch.name
+  }
+
+  const exactLabelMatch = albums.find((album: GalleryAlbumEntry) => [album.h1, album.h2, album.search]
+    .filter((value): value is string => Boolean(value))
+    .some(value => value.toLowerCase() === normalizedRequestedAlbum))
+
+  if (exactLabelMatch) {
+    return exactLabelMatch.name
+  }
+
+  const tokenMatch = albums.find((album: GalleryAlbumEntry) => [album.h1, album.h2, album.search]
+    .filter((value): value is string => Boolean(value))
+    .some(value => value.toLowerCase().split(/,\s*/).includes(normalizedRequestedAlbum)))
+
+  return tokenMatch?.name ?? requestedAlbum
 }
 
 function isVideoExtension(extension: string | null) {
@@ -696,11 +744,14 @@ function createStorytellingServer() {
         }
       }
 
+      const resolvedAlbum = await resolveAlbumName(gallery, album)
+
       return {
-        text: await buildAlbumDetailsText(gallery, album, 8),
+        text: await buildAlbumDetailsText(gallery, resolvedAlbum, 8),
         structured: {
           gallery,
-          album,
+          album: resolvedAlbum,
+          requestedAlbum: album,
         },
       }
     }),
@@ -730,11 +781,12 @@ function createStorytellingServer() {
       },
     },
     withToolErrorHandling(async ({ gallery, album, select }) => {
-      const result = await getAlbum(gallery, album)
+      const resolvedAlbum = await resolveAlbumName(gallery, album)
+      const result = await getAlbum(gallery, resolvedAlbum)
       const items = result.album.items
 
       if (items.length === 0) {
-        throw new ReferenceError(`Album ${album} in gallery ${gallery} does not contain any media items`)
+        throw new ReferenceError(`Album ${resolvedAlbum} in gallery ${gallery} does not contain any media items`)
       }
 
       const selectedIndex = select
@@ -746,7 +798,7 @@ function createStorytellingServer() {
         : null
 
       if (!selectedItem) {
-        throw new ReferenceError(`No media item named ${select} was found in album ${album} for gallery ${gallery}`)
+        throw new ReferenceError(`No media item named ${select} was found in album ${resolvedAlbum} for gallery ${gallery}`)
       }
 
       const selectedFilename = getPrimaryFilename(selectedItem.filename)
@@ -761,7 +813,7 @@ function createStorytellingServer() {
         content: buildMediaToolContentBlocks(
           selectedItem,
           [
-            `Selected media item ${selectedFilename} from album ${album} in gallery ${gallery}.`,
+            `Selected media item ${selectedFilename} from album ${resolvedAlbum} in gallery ${gallery}.`,
             'Inline preview uses the largest available display image that stays within the MCP payload budget.',
             'Use the linked media resource or interactive app for the full-resolution item.',
             'Interactive media view is available in MCP clients that support Apps.',
@@ -769,7 +821,8 @@ function createStorytellingServer() {
         ),
         structured: {
           gallery,
-          album,
+          album: resolvedAlbum,
+          requestedAlbum: album,
           select: selectedFilename,
           selectedIndex: normalizedSelectedIndex,
           totalItems: items.length,
@@ -924,15 +977,21 @@ function createStorytellingServer() {
     }),
     {
       title: 'History Gallery',
-      description: 'Album inventory and summary for a specific photo gallery.',
+      description: 'Compact paginated album inventory for a specific photo gallery. Use ?page=N&limit=M to read additional pages.',
       mimeType: 'text/plain',
     },
-    async (uri, variables) => ({
+    async (uri, variables) => {
+      const gallery = getGalleryFromTemplate(uri, variables.gallery, 0)
+      const page = parsePositiveIntSearchParam(uri, 'page', 1, 1000)
+      const limit = parsePositiveIntSearchParam(uri, 'limit', 25, 50)
+
+      return ({
       contents: [{
         uri: uri.href,
-        text: await buildGalleryDetailsText(getGalleryFromTemplate(uri, variables.gallery, 0)),
+        text: await buildGalleryInventoryText(gallery, { page, limit }),
       }],
-    }),
+      })
+    },
   )
 
   server.registerPrompt(

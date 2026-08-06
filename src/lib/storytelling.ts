@@ -49,6 +49,8 @@ import { getTodayItems } from './today'
 
 const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
+const DEFAULT_GALLERY_RESOURCE_PAGE_SIZE = 25
+const MAX_GALLERY_RESOURCE_PAGE_SIZE = 50
 
 const clampLimit = (limit = DEFAULT_LIMIT) => Math.max(1, Math.min(limit, MAX_LIMIT))
 
@@ -183,6 +185,59 @@ export async function buildGalleryDetailsText(gallery: Gallery) {
     '## Albums',
     ...albumDetails.flatMap(formatGalleryAlbumDetails),
   ].join('\n')
+}
+
+function formatCompactGalleryAlbumLine(album: {
+  name: string
+  title: string
+  year: string | null
+  keywords: string[]
+}) {
+  return [
+    `- ${album.name}`,
+    `title=${album.title || 'unknown'}`,
+    `year=${album.year || 'unknown'}`,
+    `keywords=${album.keywords.join(', ') || 'none'}`,
+  ].join(' | ')
+}
+
+export async function buildGalleryInventoryText(
+  gallery: Gallery,
+  {
+    page = 1,
+    limit = DEFAULT_GALLERY_RESOURCE_PAGE_SIZE,
+  }: {
+    page?: number
+    limit?: number
+  } = {},
+) {
+  const albumNames = await getAlbums(gallery)
+  const { albums } = albumNames[gallery]
+  const normalizedLimit = Math.max(1, Math.min(limit, MAX_GALLERY_RESOURCE_PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(albums.length / normalizedLimit))
+  const normalizedPage = Math.max(1, Math.min(page, totalPages))
+  const startIndex = (normalizedPage - 1) * normalizedLimit
+  const displayedAlbums = albums.slice(startIndex, startIndex + normalizedLimit)
+  const albumDetails = buildAlbumKeywordDetails(displayedAlbums, displayedAlbums.map(album => album.name))
+  const pageUri = `history://gallery/${encodeURIComponent(gallery)}`
+
+  return [
+    `# Gallery: ${gallery}`,
+    '',
+    '## Overview',
+    `- Albums: ${albums.length}`,
+    `- Page: ${normalizedPage} of ${totalPages}`,
+    `- Showing albums ${displayedAlbums.length === 0 ? 0 : startIndex + 1}-${startIndex + displayedAlbums.length}`,
+    '- Use exact album names from this page with get_album_story or get_album_media.',
+    '',
+    '## Albums',
+    ...albumDetails.map(formatCompactGalleryAlbumLine),
+    '',
+    '## Pagination',
+    normalizedPage > 1 ? `- Previous page: ${pageUri}?page=${normalizedPage - 1}&limit=${normalizedLimit}` : null,
+    normalizedPage < totalPages ? `- Next page: ${pageUri}?page=${normalizedPage + 1}&limit=${normalizedLimit}` : null,
+    `- Read a specific page: ${pageUri}?page=N&limit=${normalizedLimit}`,
+  ].filter((line): line is string => line !== null).join('\n')
 }
 
 async function getScopedCandidates(input: StorySearchSchemaInput): Promise<StoryCandidate[]> {

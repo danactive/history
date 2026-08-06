@@ -123,6 +123,7 @@ const getAlbum = vi.hoisted(() => vi.fn())
 const buildAlbumDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleriesDetailsText = vi.hoisted(() => vi.fn())
 const buildGalleryDetailsText = vi.hoisted(() => vi.fn())
+const buildGalleryInventoryText = vi.hoisted(() => vi.fn())
 const buildPeopleInventoryText = vi.hoisted(() => vi.fn())
 const buildDateDetailsText = vi.hoisted(() => vi.fn())
 const buildPersonDetailsText = vi.hoisted(() => vi.fn())
@@ -145,6 +146,7 @@ vi.mock('../src/lib/storytelling', () => ({
   buildDateDetailsText,
   buildGalleriesDetailsText,
   buildGalleryDetailsText,
+  buildGalleryInventoryText,
   buildPeopleInventoryText,
   buildPersonDetailsText,
   getStorytellingDefaultGallery,
@@ -405,25 +407,38 @@ beforeEach(() => {
     '- demo: 1 album(s)',
     '- public (default): 1 album(s)',
   ].join('\n'))
-  buildGalleryDetailsText.mockImplementation(async (gallery: string) => {
+  buildGalleryInventoryText.mockImplementation(async (gallery: string, options?: { page?: number, limit?: number }) => {
+    const page = options?.page ?? 1
+    const limit = options?.limit ?? 25
+
     if (gallery === 'public') {
       return [
         '# Gallery: public',
         '',
+        '## Overview',
+        `- Page: ${page} of 1`,
+        '- Showing albums 1-1',
+        '',
         '## Albums',
-        '- Album: other-trip',
-        '  - Title: Other Trip',
-        '  - Gallery includes: none',
+        '- other-trip | title=Other Trip | year=unknown | keywords=none',
+        '',
+        '## Pagination',
+        `- Read a specific page: history://gallery/public?page=N&limit=${limit}`,
       ].join('\n')
     }
 
     return [
       '# Gallery: demo',
       '',
+      '## Overview',
+      `- Page: ${page} of 1`,
+      '- Showing albums 1-1',
+      '',
       '## Albums',
-      '- Album: trip',
-      '  - Title: Trip',
-      '  - Gallery includes: Nagoya Castle, Atsuta Shrine',
+      '- trip | title=Trip | year=unknown | keywords=Nagoya Castle, Atsuta Shrine',
+      '',
+      '## Pagination',
+      `- Read a specific page: history://gallery/demo?page=N&limit=${limit}`,
     ].join('\n')
   })
   buildPeopleInventoryText.mockImplementation(async (gallery: string) => [
@@ -643,22 +658,32 @@ describe('storytelling MCP server', () => {
     const mediaViewer = await client.readResource('ui://history/media-viewer.html')
 
     expect(buildGalleriesDetailsText).toHaveBeenCalledTimes(1)
-    expect(buildGalleryDetailsText).toHaveBeenCalledWith('demo')
-    expect(buildGalleryDetailsText).toHaveBeenCalledWith('public')
+    expect(buildGalleryInventoryText).toHaveBeenCalledWith('demo', { page: 1, limit: 25 })
+    expect(buildGalleryInventoryText).toHaveBeenCalledWith('public', { page: 1, limit: 25 })
     expect(buildPeopleInventoryText).toHaveBeenCalledWith('demo')
     expect(galleries.contents[0]?.text).toContain('Available galleries')
     expect(galleries.contents[0]?.text).toContain('Default gallery: public')
     expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
     expect(galleries.contents[0]?.text).toContain('- public (default): 1 album(s)')
     expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
-    expect(gallery.contents[0]?.text).toContain('- Album: trip')
-    expect(gallery.contents[0]?.text).toContain('Gallery includes: Nagoya Castle, Atsuta Shrine')
+    expect(gallery.contents[0]?.text).toContain('- trip | title=Trip | year=unknown | keywords=Nagoya Castle, Atsuta Shrine')
     expect(otherGallery.contents[0]?.text).toContain('# Gallery: public')
-    expect(otherGallery.contents[0]?.text).toContain('- Album: other-trip')
+    expect(otherGallery.contents[0]?.text).toContain('- other-trip | title=Other Trip | year=unknown | keywords=none')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
     expect(people.contents[0]?.text).toContain('Mister Gingerbread (3 appearances)')
     expect(mediaViewer.contents[0]?.mimeType).toBe('text/html;profile=mcp-app')
     expect(mediaViewer.contents[0]?.text).toContain('History media viewer')
+  })
+
+  test('reads paginated gallery inventory resources', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const gallery = await client.readResource('history://gallery/demo?page=2&limit=10')
+
+    expect(buildGalleryInventoryText).toHaveBeenCalledWith('demo', { page: 2, limit: 10 })
+    expect(gallery.contents[0]?.text).toContain('- Page: 2 of 1')
+    expect(gallery.contents[0]?.text).toContain('history://gallery/demo?page=N&limit=10')
   })
 
   test('returns album details through a tool', async () => {
@@ -679,6 +704,21 @@ describe('storytelling MCP server', () => {
     expect(output.structuredContent).toEqual({
       gallery: 'demo',
       album: 'trip',
+      requestedAlbum: 'trip',
+    })
+  })
+
+  test('resolves human-facing album labels before reading album stories', async () => {
+    const client = await createConnection()
+
+    await client.initialize()
+    const output = await client.callTool('get_album_story', { gallery: 'demo', album: 'Nagoya Castle' })
+
+    expect(buildAlbumDetailsText).toHaveBeenCalledWith('demo', 'trip', 8)
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      album: 'trip',
+      requestedAlbum: 'Nagoya Castle',
     })
   })
 
@@ -714,6 +754,7 @@ describe('storytelling MCP server', () => {
     expect(output.structuredContent).toEqual({
       gallery: 'demo',
       album: 'trip',
+      requestedAlbum: 'trip',
       select: '2024-01-02-01.jpg',
       selectedIndex: 0,
       totalItems: 2,

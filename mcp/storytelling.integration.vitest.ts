@@ -386,6 +386,7 @@ describe('storytelling MCP server integration', () => {
     expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
     expect(galleries.contents[0]?.text).toContain('- demo:')
     expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
+    expect(gallery.contents[0]?.text).toContain('## Pagination')
     expect(gallery.contents[0]?.text).toContain('## Albums')
     expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
     expect(mediaViewer.contents[0]?.mimeType).toBe('text/html;profile=mcp-app')
@@ -408,6 +409,7 @@ describe('storytelling MCP server integration', () => {
     expect(albumStory.structuredContent).toEqual({
       gallery: 'demo',
       album: 'sample',
+      requestedAlbum: 'sample',
     })
 
     const onThisDay = await client.callTool('get_on_this_day_story', { gallery: 'demo', monthDay: '01-02' })
