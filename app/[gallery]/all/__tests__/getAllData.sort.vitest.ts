@@ -9,8 +9,9 @@ vi.mock('../../../../src/lib/albums', () => ({
   default: async (gallery: Gallery) => ({
     [gallery]: {
       albums: [
-        { name: 'Alpha' },
-        { name: 'Beta' },
+        { name: 'Alpha', year: '2024' },
+        { name: 'Beta', year: '2025' },
+        { name: 'Undated', year: '' },
       ],
     },
   }),
@@ -32,12 +33,23 @@ vi.mock('../../../../src/lib/album', () => ({
         },
       }
     }
+    if (albumName === 'Beta') {
+      return {
+        album: {
+          meta: { geo: { zoom: 6 } },
+          items: [
+            { id: 'B24', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'B24X', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          ],
+        },
+      }
+    }
     return {
       album: {
-        meta: { geo: { zoom: 6 } },
+        meta: { geo: { zoom: 4 } },
         items: [
-          { id: 'B24', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
-          { id: 'B24X', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          { id: 'U90', filename: ['2035-01-01-90.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          { id: 'U10', filename: ['2018-01-01-10.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
         ],
       },
     }
@@ -48,11 +60,11 @@ vi.mock('../../../../src/lib/album', () => ({
 
 // Tests
 describe('getAllData ordering', () => {
-  test('orders newest filenames first and breaks ties by larger id', async () => {
+  test('groups albums by newest year, leaves undated albums last, and sorts each album oldest first', async () => {
     const gallery: Gallery = 'demo'
     const { items } = await getAllData({ gallery })
     const ids = items.map(i => i.id)
-    expect(ids).toEqual(['B24X', 'B24', 'A20', 'A10', 'A90', 'A50'])
+    expect(ids).toEqual(['B24', 'B24X', 'A50', 'A90', 'A10', 'A20', 'U10', 'U90'])
   })
 
   test('coordinateAccuracy falls back to album meta zoom per album', async () => {

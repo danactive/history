@@ -1,8 +1,5 @@
 import { createStorytellingHttpHandler } from '../../mcp/storytelling'
 
-export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
-
 const handler = createStorytellingHttpHandler()
 
 function handle(request: Request) {

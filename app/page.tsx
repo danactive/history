@@ -1,4 +1,5 @@
 import { List, ListDivider, ListItem } from '@mui/joy'
+import { cacheLife, cacheTag } from 'next/cache'
 import type { Metadata } from 'next'
 import { Fragment } from 'react'
 
@@ -9,8 +10,16 @@ export const metadata: Metadata = {
   title: 'Galleries - History App',
 }
 
+async function getCachedGalleries() {
+  'use cache'
+
+  cacheLife('max')
+  cacheTag('gallery-index')
+  return getGalleries()
+}
+
 export default async function Home() {
-  const { galleries } = await getGalleries()
+  const { galleries } = await getCachedGalleries()
 
   return (
     <main>

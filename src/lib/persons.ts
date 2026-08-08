@@ -4,7 +4,7 @@ import type { All } from '../types/pages'
 import type { GalleryParams } from './server/page-route'
 import { filterPersonsItems, type PersonAgeFilterValue } from './domains/persons'
 import { handleLibraryError } from './errors'
-import { getAllItems, personsPageItemMapper } from './get-all-items'
+import { getPersonsPageItems } from './get-all-items'
 import { readPersons } from './xml'
 
 type Envelope = { body: Person[], status: number }
@@ -45,7 +45,7 @@ async function get(
 }
 
 export async function getPersonsData({ gallery }: GalleryParams): Promise<All.ItemData> {
-  return getAllItems(gallery, personsPageItemMapper, false)
+  return getPersonsPageItems(gallery)
 }
 
 export type { PersonAgeFilterValue }

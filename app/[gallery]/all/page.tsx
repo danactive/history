@@ -19,7 +19,15 @@ export const metadata: Metadata = {
   title: 'All - History App',
 }
 
-export default async function AllServer({
+export default function AllServer(props: GalleryRouteProps<QuerySearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AllServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function AllServerContent({
   params,
   searchParams,
 }: GalleryRouteProps<QuerySearchParams>) {
@@ -41,17 +49,15 @@ export default async function AllServer({
   } = buildClusteredPageData(await getAllData({ gallery, query, mapBounds }))
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AllClient
-        gallery={gallery}
-        items={items}
-        totalItemCount={totalItemCount}
-        indexedKeywords={indexedKeywords}
-        personOptions={personOptions}
-        tagOptions={tagOptions}
-        activeFacetCounts={activeFacetCounts}
-        clusteredMarkers={clusteredMarkers}
-      />
-    </Suspense>
+    <AllClient
+      gallery={gallery}
+      items={items}
+      totalItemCount={totalItemCount}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+    />
   )
 }

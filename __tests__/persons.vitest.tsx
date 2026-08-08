@@ -148,9 +148,18 @@ vi.mock('../src/utils/person-age', () => ({
   },
 }))
 
+async function resolvePersonsServer(props: Parameters<typeof PersonsServer>[0]) {
+  const page = PersonsServer(props)
+  const content = page.props.children as {
+    props: unknown;
+    type: (props: unknown) => Promise<React.ReactNode>;
+  }
+  return content.type(content.props)
+}
+
 describe('Persons page', () => {
   test('prefilters items from a canonical person query on the server', async () => {
-    const component = await PersonsServer({
+    const component = await resolvePersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ query: 'person:"Sample Person"' }),
     })
@@ -165,7 +174,7 @@ describe('Persons page', () => {
   })
 
   test('keeps the age scope on the server when age and person are both selected', async () => {
-    const component = await PersonsServer({
+    const component = await resolvePersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ query: 'person:"Sample Person" && age:96' }),
     })
@@ -182,7 +191,7 @@ describe('Persons page', () => {
   })
 
   test('keeps the final age-filtered slice on the server when only age is selected', async () => {
-    const component = await PersonsServer({
+    const component = await resolvePersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ query: 'age:96' }),
     })
@@ -198,7 +207,7 @@ describe('Persons page', () => {
   })
 
   test('applies typed country, region, and age predicates on the server', async () => {
-    const component = await PersonsServer({
+    const component = await resolvePersonsServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ query: 'country:Canada && region:BC && age:unknown' }),
     })

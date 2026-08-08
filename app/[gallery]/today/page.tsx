@@ -24,7 +24,17 @@ export async function generateStaticParams() {
   return generateGalleryStaticParams()
 }
 
-export default async function TodayServer({
+export default function TodayServer(props: GalleryRouteProps<
+  TodayRouteSearchParams & QuerySearchParams
+>) {
+  return (
+    <Suspense fallback={<div>Loading Today...</div>}>
+      <TodayServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function TodayServerContent({
   params,
   searchParams,
 }: GalleryRouteProps<
@@ -50,18 +60,16 @@ export default async function TodayServer({
     await getTodayItems(gallery, monthDay, query, mapBounds),
   )
   return (
-    <Suspense fallback={<div>Loading Today...</div>}>
-      <AlbumPageComponent
-        gallery={gallery}
-        monthDay={monthDay}
-        items={items}
-        totalItemCount={totalItemCount}
-        indexedKeywords={indexedKeywords}
-        personOptions={personOptions}
-        tagOptions={tagOptions}
-        activeFacetCounts={activeFacetCounts}
-        clusteredMarkers={clusteredMarkers}
-      />
-    </Suspense>
+    <AlbumPageComponent
+      gallery={gallery}
+      monthDay={monthDay}
+      items={items}
+      totalItemCount={totalItemCount}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+    />
   )
 }

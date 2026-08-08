@@ -98,9 +98,18 @@ vi.mock('../src/lib/generate-clusters', () => ({
   generateClusters: () => [],
 }))
 
+async function resolveAlbumServer(props: Parameters<typeof AlbumServer>[0]) {
+  const page = AlbumServer(props)
+  const content = page.props.children as {
+    props: unknown;
+    type: (props: unknown) => Promise<React.ReactNode>;
+  }
+  return content.type(content.props)
+}
+
 describe('Album page', () => {
   test('applies typed country and region filters on the server for album routes', async () => {
-    const component = await AlbumServer({
+    const component = await resolveAlbumServer({
       params: Promise.resolve({ gallery: 'demo', album: 'sample' }),
       searchParams: Promise.resolve({ query: 'country:Canada && region:BC' }),
     })

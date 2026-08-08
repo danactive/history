@@ -74,9 +74,18 @@ vi.mock('../src/lib/album', () => ({
   })),
 }))
 
+async function resolveAlbumServer(props: Parameters<typeof AlbumServer>[0]) {
+  const page = AlbumServer(props)
+  const content = page.props.children as {
+    props: unknown;
+    type: (props: unknown) => Promise<React.ReactNode>;
+  }
+  return content.type(content.props)
+}
+
 describe('Album page', () => {
   test('passes backend-classified tag options to the album client', async () => {
-    const component = await AlbumServer({
+    const component = await resolveAlbumServer({
       params: Promise.resolve({ gallery: 'demo', album: 'album-one' }),
       searchParams: Promise.resolve({ visitedCountry: 'Mexico', visitedRegion: 'Guanajuato' }),
     })
@@ -90,7 +99,7 @@ describe('Album page', () => {
   })
 
   test('filters album items from the canonical query before rendering the client', async () => {
-    const component = await AlbumServer({
+    const component = await resolveAlbumServer({
       params: Promise.resolve({ gallery: 'demo', album: 'album-one' }),
       searchParams: Promise.resolve({ query: 'tag:tag^' }),
     })

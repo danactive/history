@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from '../../../src/components/Link'
 import {
   generateGalleryStaticParams,
@@ -32,7 +33,15 @@ function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
   return `/${gallery}/all?${searchParams.toString()}`
 }
 
-export default async function VisitedServer(props: RouteParamsProps<GalleryParams>) {
+export default function VisitedServer(props: RouteParamsProps<GalleryParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VisitedServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function VisitedServerContent(props: RouteParamsProps<GalleryParams>) {
   const { gallery } = await props.params
   const countries = await getVisitedData(gallery)
 

@@ -56,9 +56,18 @@ vi.mock('../src/lib/galleries', () => ({
   default: vi.fn(async () => ({ galleries: ['demo'] })),
 }))
 
+async function resolveGalleryServer(props: Parameters<typeof GalleryServer>[0]) {
+  const page = GalleryServer(props)
+  const content = page.props.children as {
+    props: unknown;
+    type: (props: unknown) => Promise<React.ReactNode>;
+  }
+  return content.type(content.props)
+}
+
 describe('Gallery page', () => {
   test('passes backend-classified search options to the gallery client', async () => {
-    const component = await GalleryServer({
+    const component = await resolveGalleryServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({}),
     })
@@ -71,7 +80,7 @@ describe('Gallery page', () => {
   })
 
   test('filters albums from the canonical query before rendering the client', async () => {
-    const component = await GalleryServer({
+    const component = await resolveGalleryServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ query: 'tag:tag^' }),
     })

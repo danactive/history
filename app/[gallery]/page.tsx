@@ -45,7 +45,15 @@ async function getAlbumsData(gallery: GalleryName, searchParams?: QuerySearchPar
   }
 }
 
-export default async function GalleryServer({
+export default function GalleryServer(props: GalleryRouteProps<QuerySearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GalleryServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function GalleryServerContent({
   params,
   searchParams,
 }: GalleryRouteProps<QuerySearchParams>) {
@@ -62,14 +70,12 @@ export default async function GalleryServer({
   } = await getAlbumsData(gallery, resolvedSearchParams)
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <GalleryPageComponent
-        albums={albums}
-        gallery={gallery}
-        indexedKeywords={indexedKeywords}
-        personOptions={personOptions}
-        tagOptions={tagOptions}
-      />
-    </Suspense>
+    <GalleryPageComponent
+      albums={albums}
+      gallery={gallery}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+    />
   )
 }

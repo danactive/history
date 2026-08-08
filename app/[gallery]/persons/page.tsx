@@ -21,7 +21,15 @@ export async function generateStaticParams() {
   return generateGalleryStaticParams()
 }
 
-export default async function PersonsServer({
+export default function PersonsServer(props: GalleryRouteProps<PersonsSearchParams>) {
+  return (
+    <Suspense fallback={<PersonsFallback />}>
+      <PersonsServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function PersonsServerContent({
   params,
   searchParams,
 }: GalleryRouteProps<PersonsSearchParams>) {
@@ -55,23 +63,21 @@ export default async function PersonsServer({
   }))
 
   return (
-    <Suspense fallback={<PersonsFallback />}>
-      <PersonsClient
-        gallery={gallery}
-        items={items}
-        totalItemCount={totalItemCount}
-        indexedKeywords={indexedKeywords}
-        personOptions={personOptions}
-        tagOptions={tagOptions}
-        activeFacetCounts={activeFacetCounts}
-        clusteredMarkers={clusteredMarkers}
-        initialAgeSummary={initialAgeSummary}
-        initialBaseScopeItems={initialBaseScopeItems}
-        initialAgeScopeItems={initialAgeScopeItems}
-        initialPersonScopeItems={initialPersonScopeItems}
-        initialSelectedAge={initialSelectedAge}
-        initialSelectedPerson={initialSelectedPerson}
-      />
-    </Suspense>
+    <PersonsClient
+      gallery={gallery}
+      items={items}
+      totalItemCount={totalItemCount}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+      initialAgeSummary={initialAgeSummary}
+      initialBaseScopeItems={initialBaseScopeItems}
+      initialAgeScopeItems={initialAgeScopeItems}
+      initialPersonScopeItems={initialPersonScopeItems}
+      initialSelectedAge={initialSelectedAge}
+      initialSelectedPerson={initialSelectedPerson}
+    />
   )
 }

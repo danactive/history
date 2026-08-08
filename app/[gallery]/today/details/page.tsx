@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import {
   resolveRouteInputs,
   resolveSearchParams,
@@ -16,7 +17,15 @@ export async function generateMetadata(
   return { title: `Date details ${monthDay} - History App` }
 }
 
-export default async function TodayDetailsPage({
+export default function TodayDetailsPage(props: GalleryRouteProps<TodaySearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TodayDetailsContent {...props} />
+    </Suspense>
+  )
+}
+
+async function TodayDetailsContent({
   params,
   searchParams,
 }: GalleryRouteProps<TodaySearchParams>) {

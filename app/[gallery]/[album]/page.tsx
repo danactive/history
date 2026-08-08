@@ -35,7 +35,15 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-export default async function AlbumServer(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
+export default function AlbumServer(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AlbumServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function AlbumServerContent(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
   const {
     params: { album, gallery },
     searchParams,
@@ -48,19 +56,17 @@ export default async function AlbumServer(props: RouteProps<AlbumRouteParams, Qu
     clusteredMarkers,
   } = buildClusteredPageData(await getAlbumData({ album, gallery, query, mapBounds }))
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AlbumPageComponent
-        gallery={gallery}
-        album={album}
-        items={items}
-        totalItemCount={totalItemCount}
-        meta={meta}
-        indexedKeywords={indexedKeywords}
-        personOptions={personOptions}
-        tagOptions={tagOptions}
-        activeFacetCounts={activeFacetCounts}
-        clusteredMarkers={clusteredMarkers}
-      />
-    </Suspense>
+    <AlbumPageComponent
+      gallery={gallery}
+      album={album}
+      items={items}
+      totalItemCount={totalItemCount}
+      meta={meta}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+    />
   )
 }

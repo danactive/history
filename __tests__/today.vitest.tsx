@@ -93,9 +93,18 @@ vi.mock('../src/lib/generate-clusters', () => ({
   generateClusters: () => [],
 }))
 
+async function resolveTodayServer(props: Parameters<typeof TodayServer>[0]) {
+  const page = TodayServer(props)
+  const content = page.props.children as {
+    props: unknown;
+    type: (props: unknown) => Promise<React.ReactNode>;
+  }
+  return content.type(content.props)
+}
+
 describe('Today page', () => {
   test('uses the day query string to filter items', async () => {
-    const component = await TodayServer({
+    const component = await resolveTodayServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ day: '07-12' }),
     })
@@ -109,7 +118,7 @@ describe('Today page', () => {
   })
 
   test('applies typed country and region filters on the server for today routes', async () => {
-    const component = await TodayServer({
+    const component = await resolveTodayServer({
       params: Promise.resolve({ gallery: 'demo' }),
       searchParams: Promise.resolve({ day: '07-12', query: 'country:Canada && region:BC' }),
     })

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 import {
   resolveRouteInputs,
   resolveSearchParams,
@@ -17,7 +18,15 @@ export async function generateMetadata(
   return { title: `${person ?? 'Person'} details - History App` }
 }
 
-export default async function PersonDetailsPage({
+export default function PersonDetailsPage(props: GalleryRouteProps<PersonDetailsSearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PersonDetailsContent {...props} />
+    </Suspense>
+  )
+}
+
+async function PersonDetailsContent({
   params,
   searchParams,
 }: GalleryRouteProps<PersonDetailsSearchParams>) {
