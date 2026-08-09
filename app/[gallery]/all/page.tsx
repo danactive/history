@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import AllClient from '../../../src/components/All/AllClient'
 import { getAllData } from '../../../src/lib/all'
+import { compactAllPageItems } from '../../../src/lib/all-client-items'
 import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import {
   buildClusteredPageData,
@@ -51,7 +52,7 @@ async function AllServerContent({
   return (
     <AllClient
       gallery={gallery}
-      items={items}
+      items={compactAllPageItems(items)}
       totalItemCount={totalItemCount}
       indexedKeywords={indexedKeywords}
       personOptions={personOptions}

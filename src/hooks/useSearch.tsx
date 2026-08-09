@@ -298,6 +298,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   return {
     filtered,
     visibleItems,
+    itemsToUse,
     keyword,
     setKeyword,
     searchBox,

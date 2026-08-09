@@ -80,6 +80,7 @@ export default function usePersonsFilter({
     itemsToShow,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   } = useMapFilter({
     gallery,
     items,
@@ -122,6 +123,17 @@ export default function usePersonsFilter({
     refImageGallery,
     { autoInitialView: false },
   )
+
+  // The person-specific memory panel is a second observer of the canonical
+  // selection. Its filtered list is the same list shown by this page's viewer.
+  useEffect(() => {
+    if (!selectionCoordinator) return undefined
+
+    return selectionCoordinator.subscribe(({ index }) => {
+      if (index >= 0) personsSetViewed(index)
+    })
+  }, [personsSetViewed, selectionCoordinator])
+
   // Combined memoryHtml: prefer personsMemoryHtml (same structure)
   const finalMemoryHtml = personsMemoryHtml ?? memoryHtml
 
@@ -151,6 +163,7 @@ export default function usePersonsFilter({
     handleBoundsChange,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
     // age/person
     selectedAge,
     setSelectedAge,

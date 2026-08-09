@@ -8,6 +8,7 @@ import type { All, SearchMetadata, SearchUiConfig } from '../types/pages'
 import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
+import useSelectionCoordinator from './useSelectionCoordinator'
 import useSearch from './useSearch'
 
 type UseMapFilterProps = SearchMetadata & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'>
@@ -68,6 +69,7 @@ export default function useMapFilter({
   const {
     filtered,
     visibleItems,
+    itemsToUse,
     keyword,
     searchBox,
     setDisplayedItems,
@@ -100,7 +102,7 @@ export default function useMapFilter({
     ownedPersonFilter,
   })
 
-  const itemsToShow = visibleItems
+  const itemsToShow = itemsToUse ?? visibleItems
 
   // Memoized ID-to-index maps for O(1) lookups (critical for large datasets)
   const itemsToShowMap = useMemo(() => buildSelectableItemIndex(itemsToShow), [itemsToShow])
@@ -112,6 +114,12 @@ export default function useMapFilter({
     refImageGallery,
     { autoInitialView: autoInitialViewRef.current },
   )
+  const selectionCoordinator = useSelectionCoordinator({
+    items: itemsToShow,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+  })
 
   const handleToggleMapFilterWithMemoryReset = useCallback(() => {
     toggleMapFilter(() => {
@@ -122,24 +130,30 @@ export default function useMapFilter({
   useEffect(() => {
     if (mapFilterEnabled && resetIndexOnEnableRef.current) {
       resetIndexOnEnableRef.current = false
-      setMemoryIndex(0)
-
-      if (refImageGallery.current) {
-        refImageGallery.current.slideToIndex(0)
-      }
-
-      setViewed(0)
+      selectionCoordinator.selectIndex(0, {
+        origin: 'filter',
+        cameraIntent: 'preserve',
+      })
       autoInitialViewRef.current = true
     }
-  }, [autoInitialViewRef, mapFilterEnabled, refImageGallery, resetIndexOnEnableRef, setMemoryIndex, setViewed])
+  }, [autoInitialViewRef, mapFilterEnabled, resetIndexOnEnableRef, selectionCoordinator])
 
   // Update memoryIndex when selectedId changes
   useEffect(() => {
     const nextIndex = resolveSelectedItemIndex(selectedId, itemsToShowMap, filteredMap)
     if (nextIndex !== null) {
-      setMemoryIndex(nextIndex)
+      if (nextIndex < itemsToShow.length) {
+        selectionCoordinator.selectIndex(nextIndex, {
+          origin: 'filter',
+          cameraIntent: 'preserve',
+        })
+      } else {
+        // Keep the pending selection for a result outside the active map
+        // viewport; clearing that filter resolves it through the coordinator.
+        setMemoryIndex(nextIndex)
+      }
     }
-  }, [itemsToShowMap, filteredMap, selectedId, setMemoryIndex])
+  }, [itemsToShow.length, itemsToShowMap, filteredMap, selectedId, selectionCoordinator, setMemoryIndex])
 
   return {
     refImageGallery,
@@ -161,5 +175,6 @@ export default function useMapFilter({
     selectById,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   }
 }

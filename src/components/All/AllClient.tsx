@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
+import { expandAllPageItems, type CompactAllPageItem } from '../../lib/all-client-items'
 import { All } from '../../types/pages'
 import AlbumContext from '../Context'
 import FilterArea from '../Search/FilterArea'
@@ -19,8 +20,9 @@ export default function AllClient({
   tagOptions,
   activeFacetCounts,
   clusteredMarkers,
-}: All.ComponentProps) {
+}: Omit<All.ComponentProps, 'items'> & { items: CompactAllPageItem[] }) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+  const expandedItems = useMemo(() => expandAllPageItems(items, gallery), [gallery, items])
 
   const {
     refImageGallery,
@@ -37,9 +39,10 @@ export default function AllClient({
     itemsToShow,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   } = useMapFilter({
     gallery,
-    items,
+    items: expandedItems,
     totalCount: totalItemCount,
     indexedKeywords,
     personOptions,
@@ -53,6 +56,7 @@ export default function AllClient({
     refImageGallery,
     setMemoryIndex,
     setViewed,
+    selectionCoordinator,
     defer: true,
   })
 
@@ -64,16 +68,15 @@ export default function AllClient({
           memoryContent={memoryHtml}
         />
         <SplitViewer
-          setViewed={setViewed}
           items={itemsToShow}
           clusteredMarkers={clusteredMarkers}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
-          setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
+          selectionCoordinator={selectionCoordinator}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
@@ -81,6 +84,7 @@ export default function AllClient({
           items={itemsToShow}
           refImageGallery={refImageGallery}
           viewedList={viewedList}
+          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

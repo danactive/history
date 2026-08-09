@@ -42,6 +42,7 @@ export default function PersonsClient({
     handleBoundsChange,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
     filterControlsProps,
     ageFiltered,
     itemsWithCorpus,
@@ -72,6 +73,7 @@ export default function PersonsClient({
     refImageGallery,
     setMemoryIndex,
     setViewed,
+    selectionCoordinator,
   })
 
   const hasActivePersonsFilters = selectedAge !== null || selectedPerson !== null
@@ -108,16 +110,15 @@ export default function PersonsClient({
           memoryContent={memoryHtml}
         />
         <SplitViewer
-          setViewed={setViewed}
           clusteredMarkers={visibleClusteredMarkers}
           items={ageFiltered}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
-          setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
+          selectionCoordinator={selectionCoordinator}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
@@ -125,6 +126,7 @@ export default function PersonsClient({
           items={itemsWithCorpus}
           refImageGallery={refImageGallery}
           viewedList={viewedList}
+          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

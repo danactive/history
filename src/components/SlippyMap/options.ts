@@ -22,10 +22,6 @@ export const validatePoint = (
   }
 }
 
-type ItemWithCoordinate = {
-  coordinates: Item['coordinates']
-}
-
 interface SelectedFeature extends Feature {
   properties: {
     selected?: boolean
@@ -49,15 +45,15 @@ function getCachedH3Index(item: Item): string | null {
 }
 
 export function transformSourceOptions(
-  { items = [], selected, zoom = 10, clusteredMarkers }:
+  { items = [], zoom = 10, resolution: requestedResolution, clusteredMarkers }:
   {
     clusteredMarkers: ClusteredMarkers,
     items?: Item[],
-    selected: ItemWithCoordinate,
     zoom?: number,
+    resolution?: ResolutionKey,
   },
 ): GeoJSONSourceSpecification {
-  const resolution = getResolutionForZoom(zoom)
+  const resolution = requestedResolution ?? getResolutionForZoom(zoom)
 
   // Use server/client precomputed if provided, else compute locally
   const computed = clusteredMarkers ?? generateClusters(items)
@@ -73,7 +69,6 @@ export function transformSourceOptions(
 
   const geoJsonFeature = (item: Item): SelectedFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
-    const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
     const baseKey = getCachedH3Index(item)
     const commonLabel = (baseKey && computed.labels[baseKey]?.[resolution]) || getLabelForResolution(item, resolution)
@@ -86,10 +81,6 @@ export function transformSourceOptions(
         label: individualLabel,
         commonLabel,
       },
-    }
-
-    if (selectedLatitude === latitude && selectedLongitude === longitude) {
-      point.properties.selected = true
     }
     return point
   }
@@ -114,6 +105,37 @@ export function transformSourceOptions(
         ['get', 'commonLabel'],
         'Unknown',
       ],
+    },
+  }
+}
+
+export function transformSelectedSourceOptions(
+  { selected, zoom = 10, resolution: requestedResolution }:
+  {
+    selected: Item | null,
+    zoom?: number,
+    resolution?: ResolutionKey,
+  },
+): GeoJSONSourceSpecification {
+  const resolution = requestedResolution ?? getResolutionForZoom(zoom)
+  const { latitude, longitude, isInvalidPoint } = validatePoint(selected?.coordinates ?? null)
+  const features: SelectedFeature[] = !selected || isInvalidPoint
+    ? []
+    : [{
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [longitude, latitude] },
+      properties: {
+        selected: true,
+        label: getLabelForResolution(selected, resolution),
+        commonLabel: getLabelForResolution(selected, resolution),
+      },
+    }]
+
+  return {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features,
     },
   }
 }

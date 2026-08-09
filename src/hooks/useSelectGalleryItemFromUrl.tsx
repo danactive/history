@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { getPrimaryFilename } from '../utils'
+import type { SelectionCoordinator } from './useSelectionCoordinator'
 
 type SelectableGalleryItem = {
   filename?: string | string[] | null
@@ -14,12 +15,14 @@ export default function useSelectGalleryItemFromUrl<ItemType extends SelectableG
   refImageGallery,
   setMemoryIndex,
   setViewed,
+  selectionCoordinator,
   defer = false,
 }: {
   items: ItemType[]
   refImageGallery: React.RefObject<{ getCurrentIndex?: () => number; slideToIndex?: (index: number) => void } | null>
   setMemoryIndex: (index: number) => void
   setViewed: (index: number) => void
+  selectionCoordinator?: SelectionCoordinator
   defer?: boolean
 }) {
   const searchParams = useSearchParams()
@@ -36,13 +39,17 @@ export default function useSelectGalleryItemFromUrl<ItemType extends SelectableG
     }
 
     const syncSelection = () => {
-      if (refImageGallery.current?.getCurrentIndex?.() === nextIndex) {
+      if (!selectionCoordinator && refImageGallery.current?.getCurrentIndex?.() === nextIndex) {
         return
       }
 
-      refImageGallery.current?.slideToIndex?.(nextIndex)
-      setMemoryIndex(nextIndex)
-      setViewed(nextIndex)
+      if (selectionCoordinator) {
+        selectionCoordinator.selectIndex(nextIndex, { origin: 'url' })
+      } else {
+        refImageGallery.current?.slideToIndex?.(nextIndex)
+        setMemoryIndex(nextIndex)
+        setViewed(nextIndex)
+      }
     }
 
     if (!defer) {
@@ -52,5 +59,5 @@ export default function useSelectGalleryItemFromUrl<ItemType extends SelectableG
 
     const timeout = setTimeout(syncSelection, 0)
     return () => clearTimeout(timeout)
-  }, [defer, items, refImageGallery, selectId, setMemoryIndex, setViewed])
+  }, [defer, items, refImageGallery, selectId, selectionCoordinator, setMemoryIndex, setViewed])
 }

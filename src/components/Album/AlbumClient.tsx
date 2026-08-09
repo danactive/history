@@ -51,6 +51,7 @@ function AlbumClient({
     itemsToShow,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   } = useMapFilter({
     gallery,
     items,
@@ -72,12 +73,12 @@ function AlbumClient({
     refImageGallery,
     setMemoryIndex,
     setViewed,
+    selectionCoordinator,
   })
 
   const handleThumbSelect = useCallback((index: number) => {
-    refImageGallery.current?.slideToIndex(index)
-    setMemoryIndex(index)
-  }, [refImageGallery, setMemoryIndex])
+    selectionCoordinator.selectIndex(index, { origin: 'thumbnail' })
+  }, [selectionCoordinator])
 
   const getThumbProps = useCallback((item: Album.ComponentProps['items'][number], index: number): ThumbImgProps => ({
     onSelectIndex: handleThumbSelect,
@@ -98,16 +99,15 @@ function AlbumClient({
           memoryContent={memoryHtml}
         />
         <SplitViewer
-          setViewed={setViewed}
           clusteredMarkers={clusteredMarkers}
           items={itemsToShow}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
-          setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
+          selectionCoordinator={selectionCoordinator}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
@@ -116,6 +116,7 @@ function AlbumClient({
           className={styles.thumbWrapper}
           getKey={(item) => getPrimaryFilename(item.filename)}
           getThumbProps={getThumbProps}
+          virtualize
         />
       </AlbumContext.Provider>
     </div>
