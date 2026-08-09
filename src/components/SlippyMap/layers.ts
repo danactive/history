@@ -20,12 +20,8 @@ const marker = {
       filter: ['has', 'point_count'],
       id: 'cluster',
     },
-    selected: {
-      filter: ['has', 'selected'],
-      id: 'selected',
-    },
     uncluster: {
-      filter: ['all', ['!', ['has', 'point_count']], ['!', ['has', 'selected']]],
+      filter: ['!', ['has', 'point_count']],
       id: 'uncluster',
     },
   },
@@ -90,27 +86,6 @@ export const clusterLabelLayer: LayerProps = {
   paint: marker.label.paint,
 }
 
-export const selectedPointLayer: LayerProps = {
-  id: `${marker.types.selected.id}-points`,
-  type: 'circle',
-  filter: marker.types.selected.filter,
-  paint: {
-    'circle-color': '#FFFFFF',
-    'circle-radius': 10,
-    'circle-stroke-width': 4,
-    'circle-stroke-color': '#000',
-  },
-}
-
-export const selectedLabelLayer: LayerProps = {
-  id: `${marker.types.selected.id}-labels`,
-  type: 'symbol',
-  filter: marker.types.selected.filter,
-  layout: marker.label.layout,
-  paint: marker.label.paint,
-}
-
-
 export const unclusterPointLayer: LayerProps = {
   id: `${marker.types.uncluster.id}-points`,
   type: 'circle',
@@ -121,6 +96,22 @@ export const unclusterPointLayer: LayerProps = {
     'circle-stroke-width': 2,
     'circle-stroke-color': '#000',
   },
+}
+
+export function getUnclusterPointLayer(selectedKey: string | null): LayerProps {
+  const isSelected = ['==', ['get', 'selectionKey'], selectedKey ?? ''] as const
+
+  return {
+    id: unclusterPointLayer.id,
+    type: 'circle',
+    filter: marker.types.uncluster.filter,
+    paint: {
+      'circle-color': ['case', isSelected, '#FFFFFF', swatches.christmas[0][1]],
+      'circle-radius': 10,
+      'circle-stroke-width': ['case', isSelected, 4, 2],
+      'circle-stroke-color': '#000',
+    },
+  }
 }
 
 export const unclusterLabelLayer: LayerProps = {

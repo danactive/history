@@ -22,12 +22,17 @@ export const validatePoint = (
   }
 }
 
-interface SelectedFeature extends Feature {
+interface MapFeature extends Feature {
   properties: {
-    selected?: boolean
+    selectionKey: string
     label: string
     commonLabel: string
   }
+}
+
+export function getMarkerSelectionKey(coordinates: Item['coordinates']) {
+  const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
+  return isInvalidPoint ? null : `${longitude}:${latitude}`
 }
 
 export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
@@ -67,17 +72,18 @@ export function transformSourceOptions(
     return freqB - freqA
   })
 
-  const geoJsonFeature = (item: Item): SelectedFeature => {
+  const geoJsonFeature = (item: Item): MapFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
 
     const baseKey = getCachedH3Index(item)
     const commonLabel = (baseKey && computed.labels[baseKey]?.[resolution]) || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 
-    const point: SelectedFeature = {
+    const point: MapFeature = {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [longitude, latitude] },
       properties: {
+        selectionKey: `${longitude}:${latitude}`,
         label: individualLabel,
         commonLabel,
       },
@@ -105,37 +111,6 @@ export function transformSourceOptions(
         ['get', 'commonLabel'],
         'Unknown',
       ],
-    },
-  }
-}
-
-export function transformSelectedSourceOptions(
-  { selected, zoom = 10, resolution: requestedResolution }:
-  {
-    selected: Item | null,
-    zoom?: number,
-    resolution?: ResolutionKey,
-  },
-): GeoJSONSourceSpecification {
-  const resolution = requestedResolution ?? getResolutionForZoom(zoom)
-  const { latitude, longitude, isInvalidPoint } = validatePoint(selected?.coordinates ?? null)
-  const features: SelectedFeature[] = !selected || isInvalidPoint
-    ? []
-    : [{
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [longitude, latitude] },
-      properties: {
-        selected: true,
-        label: getLabelForResolution(selected, resolution),
-        commonLabel: getLabelForResolution(selected, resolution),
-      },
-    }]
-
-  return {
-    type: 'geojson',
-    data: {
-      type: 'FeatureCollection',
-      features,
     },
   }
 }

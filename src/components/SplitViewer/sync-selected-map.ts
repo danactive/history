@@ -1,12 +1,10 @@
-import type { GeoJSONSource } from 'mapbox-gl'
-import type { FeatureCollection } from 'geojson'
 import type { MapRef } from 'react-map-gl/mapbox'
 
 import type { Item } from '../../types/common'
-import { transformSelectedSourceOptions, validatePoint } from '../SlippyMap/options'
+import { validatePoint } from '../SlippyMap/options'
 
 type SyncSelectedMapOptions = {
-  mapRef: Pick<MapRef, 'flyTo' | 'getMap'>;
+  mapRef: Pick<MapRef, 'flyTo'>;
   item: Item | null;
   defaultZoom: number;
   shouldFly: boolean;
@@ -14,9 +12,9 @@ type SyncSelectedMapOptions = {
 }
 
 /**
- * Update the one-feature selected source synchronously. This intentionally
- * avoids touching the static, clustered source while a gallery transition is
- * still doing its own work.
+ * Start the selected photo's camera animation without touching the static,
+ * clustered source. Marker styling is projected by SlippyMap from the same
+ * selected ID, preserving the reference clustering semantics.
  */
 export function syncSelectedMap({
   mapRef,
@@ -25,15 +23,6 @@ export function syncSelectedMap({
   shouldFly,
   previousFlightKey,
 }: SyncSelectedMapOptions): string | null {
-  const map = mapRef.getMap()
-  const selectedSource = map.getSource('selectedSlippyMap') as GeoJSONSource | undefined
-  const selectedData = transformSelectedSourceOptions({
-    selected: item,
-    zoom: map.getZoom(),
-  }).data as FeatureCollection
-
-  selectedSource?.setData(selectedData)
-
   const { isInvalidPoint, latitude, longitude } = validatePoint(item?.coordinates ?? null)
   if (!item || isInvalidPoint || !shouldFly) return null
 

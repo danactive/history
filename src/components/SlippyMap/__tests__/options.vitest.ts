@@ -3,10 +3,10 @@ import { describe, expect, test } from 'vitest'
 import { type Item } from '../../../types/common'
 import {
   transformMapOptions,
-  transformSelectedSourceOptions,
   transformSourceOptions,
   validatePoint,
 } from '../options'
+import { getUnclusterPointLayer } from '../layers'
 import { generateClusters } from '../../../lib/generate-clusters'
 import type { ClusteredMarkers } from '../../../lib/generate-clusters'
 
@@ -56,12 +56,12 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: { label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '123:321', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '321:123', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]
@@ -82,20 +82,24 @@ describe('Options - <SlippyMap />', () => {
       expect(received).toEqual(expected)
     })
 
-    test('builds the selected marker independently from the clustered source', () => {
-      const selected = { ...mockItem, coordinates: [321, 123] as [number, number] }
+    test('styles selection only when the feature is unclustered', () => {
+      const layer = getUnclusterPointLayer('selected-photo')
 
-      expect(transformSelectedSourceOptions({ selected })).toEqual({
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [{
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [321, 123] },
-            properties: { selected: true, label: 'Canada', commonLabel: 'Canada' },
-          }],
-        },
-      })
+      expect(layer.filter).toEqual(['!', ['has', 'point_count']])
+      expect(layer.paint).toEqual(expect.objectContaining({
+        'circle-color': [
+          'case',
+          ['==', ['get', 'selectionKey'], 'selected-photo'],
+          '#FFFFFF',
+          '#FFCCCB',
+        ],
+        'circle-stroke-width': [
+          'case',
+          ['==', ['get', 'selectionKey'], 'selected-photo'],
+          4,
+          2,
+        ],
+      }))
     })
 
     test('Mix Valid or Invalid coordinates', () => {
@@ -114,7 +118,7 @@ describe('Options - <SlippyMap />', () => {
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '321:123', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]

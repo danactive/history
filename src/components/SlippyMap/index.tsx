@@ -24,15 +24,13 @@ import {
   clusterCountLayer,
   clusterLabelLayer,
   clusterPointLayer,
-  selectedLabelLayer,
-  selectedPointLayer,
+  getUnclusterPointLayer,
   unclusterLabelLayer,
-  unclusterPointLayer,
 } from './layers'
 import {
   getResolutionForZoom,
+  getMarkerSelectionKey,
   transformMapOptions,
-  transformSelectedSourceOptions,
   transformSourceOptions,
 } from './options'
 import styles from './styles.module.css'
@@ -113,19 +111,16 @@ export default function SlippyMap({
     [items, currentResolution, clusteredMarkers],
   )
 
-  const selectedGeoJsonSource = useMemo(
-    () => transformSelectedSourceOptions({
-      selected: activeCentroid,
-      resolution: currentResolution,
-    }),
-    [activeCentroid, currentResolution],
+  const selectedUnclusterPointLayer = useMemo(
+    () => getUnclusterPointLayer(getMarkerSelectionKey(activeCentroid?.coordinates ?? null)),
+    [activeCentroid?.coordinates],
   )
 
   const layerIds: string[] = []
   if (clusterPointLayer.id) layerIds.push(clusterPointLayer.id)
   if (clusterCountLayer.id) layerIds.push(clusterCountLayer.id)
   if (clusterLabelLayer.id) layerIds.push(clusterLabelLayer.id)
-  if (unclusterPointLayer.id) layerIds.push(unclusterPointLayer.id)
+  if (selectedUnclusterPointLayer.id) layerIds.push(selectedUnclusterPointLayer.id)
   if (unclusterLabelLayer.id) layerIds.push(unclusterLabelLayer.id)
 
   // Helper to read current bounds immediately
@@ -233,12 +228,8 @@ export default function SlippyMap({
             <Layer {...clusterPointLayer} />
             <Layer {...clusterCountLayer} />
             <Layer {...clusterLabelLayer} />
-            <Layer {...unclusterPointLayer} />
+            <Layer {...selectedUnclusterPointLayer} />
             <Layer {...unclusterLabelLayer} />
-          </Source>
-          <Source id="selectedSlippyMap" {...selectedGeoJsonSource}>
-            <Layer {...selectedPointLayer} />
-            <Layer {...selectedLabelLayer} />
           </Source>
         </Map>
       </div>

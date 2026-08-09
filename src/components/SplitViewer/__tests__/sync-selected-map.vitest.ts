@@ -24,16 +24,9 @@ const item: Item = {
 }
 
 describe('syncSelectedMap', () => {
-  it('updates the selected source and begins an animated flight immediately', () => {
-    const setData = vi.fn()
+  it('begins an animated flight without rebuilding the clustered source', () => {
     const flyTo = vi.fn()
-    const mapRef = {
-      flyTo,
-      getMap: () => ({
-        getSource: () => ({ setData }),
-        getZoom: () => 14,
-      }),
-    } as unknown as Pick<MapRef, 'flyTo' | 'getMap'>
+    const mapRef = { flyTo } as unknown as Pick<MapRef, 'flyTo'>
 
     const flightKey = syncSelectedMap({
       mapRef,
@@ -43,9 +36,6 @@ describe('syncSelectedMap', () => {
       previousFlightKey: null,
     })
 
-    expect(setData).toHaveBeenCalledWith(expect.objectContaining({
-      features: [expect.objectContaining({ geometry: { type: 'Point', coordinates: item.coordinates } })],
-    }))
     expect(flyTo).toHaveBeenCalledWith({
       center: item.coordinates,
       zoom: 15,
@@ -54,16 +44,9 @@ describe('syncSelectedMap', () => {
     expect(flightKey).toBe('photo-1:-123.108:49.277:15')
   })
 
-  it('keeps the selected marker in sync without moving a map-filtered viewport', () => {
-    const setData = vi.fn()
+  it('preserves a map-filtered viewport', () => {
     const flyTo = vi.fn()
-    const mapRef = {
-      flyTo,
-      getMap: () => ({
-        getSource: () => ({ setData }),
-        getZoom: () => 14,
-      }),
-    } as unknown as Pick<MapRef, 'flyTo' | 'getMap'>
+    const mapRef = { flyTo } as unknown as Pick<MapRef, 'flyTo'>
 
     const flightKey = syncSelectedMap({
       mapRef,
@@ -73,7 +56,6 @@ describe('syncSelectedMap', () => {
       previousFlightKey: null,
     })
 
-    expect(setData).toHaveBeenCalledTimes(1)
     expect(flyTo).not.toHaveBeenCalled()
     expect(flightKey).toBeNull()
   })
