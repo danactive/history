@@ -387,9 +387,10 @@ describe('storytelling MCP server integration', () => {
     const mediaViewer = await client.readResource('ui://history/media-viewer.html')
 
     expect(galleries.contents[0]?.text).toContain('Available galleries')
-    expect(galleries.contents[0]?.text).toContain('Default gallery: dan')
-    expect(galleries.contents[0]?.text).toContain('Non-default galleries: demo')
-    expect(galleries.contents[0]?.text).toContain('- demo:')
+    expect(galleries.contents[0]?.text).toContain('Default gallery:')
+    expect(galleries.contents[0]?.text).toContain('Non-default galleries:')
+    expect(galleries.contents[0]?.text).toContain('Gallery album counts:')
+    expect(galleries.contents[0]?.text).toContain('- demo')
     expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
     expect(gallery.contents[0]?.text).toContain('## Pagination')
     expect(gallery.contents[0]?.text).toContain('## Albums')
