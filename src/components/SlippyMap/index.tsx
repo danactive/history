@@ -11,6 +11,7 @@ import {
 } from 'react'
 import Map, {
   Layer, Source,
+  type ErrorEvent as MapErrorEvent,
   type MapMouseEvent,
   type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
@@ -33,6 +34,7 @@ import {
   transformMapOptions,
   transformSourceOptions,
 } from './options'
+import { isTransientMapboxNetworkError } from './map-errors'
 import styles from './styles.module.css'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
@@ -160,6 +162,11 @@ export default function SlippyMap({
     onMapReady?.()
   }, [applyFilterBounds, onMapReady])
 
+  const handleMapError = useCallback((event: MapErrorEvent) => {
+    if (isTransientMapboxNetworkError(event.error)) return
+    console.error(event.error)
+  }, [])
+
   // Wrap toggle so enabling the filter captures bounds instantly (no move needed)
   const handleToggleClick = () => {
     const nextEnabled = !mapFilterEnabled
@@ -217,6 +224,7 @@ export default function SlippyMap({
           mapboxAccessToken={MAPBOX_TOKEN}
           interactiveLayerIds={layerIds}
           onClick={onClick}
+          onError={handleMapError}
           onLoad={handleMapLoad}
           onMouseDown={() => { userMovedMapRef.current = true }}
           onTouchStart={() => { userMovedMapRef.current = true }}
