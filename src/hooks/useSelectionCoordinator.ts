@@ -33,6 +33,7 @@ export type SelectionCoordinator = {
 
 type UseSelectionCoordinatorProps = {
   items: Item[];
+  itemsChangeCameraIntent?: CameraIntent;
   refImageGallery: React.RefObject<ImageGalleryRef | null>;
   setMemoryIndex: (index: number) => void;
   setViewed: (index: number) => void;
@@ -45,6 +46,7 @@ type UseSelectionCoordinatorProps = {
  */
 export default function useSelectionCoordinator({
   items,
+  itemsChangeCameraIntent = 'preserve',
   refImageGallery,
   setMemoryIndex,
   setViewed,
@@ -138,11 +140,11 @@ export default function useSelectionCoordinator({
     if (previous.index !== nextIndex || previous.item?.id !== items[nextIndex]?.id) {
       selectIndex(nextIndex, {
         origin: 'filter',
-        cameraIntent: 'preserve',
+        cameraIntent: itemsChangeCameraIntent,
         syncGallery: true,
       })
     }
-  }, [items, publish, selectIndex])
+  }, [items, itemsChangeCameraIntent, publish, selectIndex])
 
   return useMemo(() => ({ getSnapshot, subscribe, selectIndex, selectId }), [getSnapshot, selectId, selectIndex, subscribe])
 }

@@ -66,6 +66,36 @@ describe('useSelectionCoordinator', () => {
     act(() => result.current.selectId('two', { origin: 'thumbnail' }))
     rerender({ visibleItems: [items[1]] })
 
-    expect(result.current.getSnapshot()).toEqual(expect.objectContaining({ item: items[1], index: 0 }))
+    expect(result.current.getSnapshot()).toEqual(expect.objectContaining({
+      item: items[1],
+      index: 0,
+      cameraIntent: 'preserve',
+    }))
+  })
+
+  it('follows a new photo selected by a non-map UI filter', () => {
+    const refImageGallery = createRef<ImageGalleryRef>()
+    const setMemoryIndex = vi.fn()
+    const setViewed = vi.fn()
+    const listener = vi.fn()
+    const { result, rerender } = renderHook(
+      ({ visibleItems }) => useSelectionCoordinator({
+        items: visibleItems,
+        itemsChangeCameraIntent: 'follow',
+        refImageGallery,
+        setMemoryIndex,
+        setViewed,
+      }),
+      { initialProps: { visibleItems: items } },
+    )
+    result.current.subscribe(listener)
+
+    rerender({ visibleItems: [items[1]] })
+
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({
+      item: items[1],
+      origin: 'filter',
+      cameraIntent: 'follow',
+    }))
   })
 })

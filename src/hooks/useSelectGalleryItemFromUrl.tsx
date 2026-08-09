@@ -1,7 +1,7 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { getPrimaryFilename } from '../utils'
 import type { SelectionCoordinator } from './useSelectionCoordinator'
@@ -27,9 +27,14 @@ export default function useSelectGalleryItemFromUrl<ItemType extends SelectableG
 }) {
   const searchParams = useSearchParams()
   const selectId = searchParams.get('select')
+  const appliedSelectIdRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!selectId || items.length === 0) {
+    if (!selectId) {
+      appliedSelectIdRef.current = null
+      return
+    }
+    if (items.length === 0 || appliedSelectIdRef.current === selectId) {
       return
     }
 
@@ -39,6 +44,11 @@ export default function useSelectGalleryItemFromUrl<ItemType extends SelectableG
     }
 
     const syncSelection = () => {
+      if (appliedSelectIdRef.current === selectId) {
+        return
+      }
+      appliedSelectIdRef.current = selectId
+
       if (!selectionCoordinator && refImageGallery.current?.getCurrentIndex?.() === nextIndex) {
         return
       }

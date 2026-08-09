@@ -116,6 +116,7 @@ export default function useMapFilter({
   )
   const selectionCoordinator = useSelectionCoordinator({
     items: itemsToShow,
+    itemsChangeCameraIntent: mapFilterEnabled ? 'preserve' : 'follow',
     refImageGallery,
     setMemoryIndex,
     setViewed,

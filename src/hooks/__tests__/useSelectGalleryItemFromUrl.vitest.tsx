@@ -81,4 +81,32 @@ describe('useSelectGalleryItemFromUrl', () => {
     expect(setMemoryIndex).not.toHaveBeenCalled()
     expect(setViewed).not.toHaveBeenCalled()
   })
+
+  test('does not reapply a URL selection after subsequent gallery state renders', () => {
+    useSearchParamsMock.mockReturnValue({
+      get: (key: string) => (key === 'select' ? 'two.jpg' : null),
+    })
+
+    const items = [{ filename: 'one.jpg' }, { filename: 'two.jpg' }, { filename: 'three.jpg' }]
+    const slideToIndex = vi.fn()
+    const setMemoryIndex = vi.fn()
+    const setViewed = vi.fn()
+    const refImageGallery = { current: { getCurrentIndex: () => 0, slideToIndex } }
+
+    const { rerender } = renderHook(({ renderRevision }) => useSelectGalleryItemFromUrl({
+      items,
+      refImageGallery,
+      setMemoryIndex,
+      setViewed: (index) => setViewed(index, renderRevision),
+    }), { initialProps: { renderRevision: 0 } })
+
+    expect(slideToIndex).toHaveBeenCalledTimes(1)
+    expect(slideToIndex).toHaveBeenCalledWith(1)
+
+    rerender({ renderRevision: 1 })
+
+    expect(slideToIndex).toHaveBeenCalledTimes(1)
+    expect(setMemoryIndex).toHaveBeenCalledTimes(1)
+    expect(setViewed).toHaveBeenCalledTimes(1)
+  })
 })
