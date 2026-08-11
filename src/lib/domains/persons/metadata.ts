@@ -13,7 +13,7 @@ type PersonCountableItem = {
   persons?: { full: string }[] | null
 }
 
-export function buildPersonCountsFromItems<ItemType extends PersonCountableItem>(items: ItemType[], limit: number) {
+export function buildPersonCountsFromItems<ItemType extends PersonCountableItem>(items: ItemType[]) {
   const counts = new Map<string, number>()
 
   items.flatMap(item => item.persons?.map(person => person.full) ?? [])
@@ -24,7 +24,6 @@ export function buildPersonCountsFromItems<ItemType extends PersonCountableItem>
 
   return [...counts.entries()]
     .sort((left, right) => right[1] - left[1])
-    .slice(0, limit)
     .map(([name, count]) => ({ name, count }))
 }
 

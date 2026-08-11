@@ -283,7 +283,7 @@ describe('Storytelling library', () => {
     expect(text).toContain(`- Album: ${config.defaultAlbum}`)
     expect(text).toContain('- Popular keywords: ')
     expect(text).toContain(
-      `View the graphical interface in a web browser: http://localhost:3030/${config.defaultGallery}/persons?query=person%3AMister+Gingerbread`,
+      `View the graphical interface in a web browser: http://localhost:3030/${config.defaultGallery}/persons?query=person%3A%22Mister+Gingerbread%22`,
     )
   })
 

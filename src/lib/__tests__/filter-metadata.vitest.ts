@@ -81,6 +81,21 @@ describe('filter metadata composer', () => {
     expect(metadata.tagOptions.map(option => option.value)).toEqual(expect.arrayContaining(['concert^', 'memory^']))
   })
 
+  test('includes every person from a multi-person item', () => {
+    const metadata = buildFilterMetadata([{
+      city: '',
+      filename: '2024-01-01-01.jpg',
+      photoDate: '2024-01-01',
+      persons: [{ full: 'Taylor Example' }, { full: 'Jordan Sample' }],
+      search: 'Taylor Example, Jordan Sample',
+    }])
+
+    expect(metadata.personOptions.map(option => option.value)).toEqual(expect.arrayContaining([
+      'Taylor Example',
+      'Jordan Sample',
+    ]))
+  })
+
   test('classifies search-only tags and people from server metadata', () => {
     const metadata = buildFilterMetadata([
       {

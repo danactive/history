@@ -85,4 +85,23 @@ describe('filter query', () => {
 
     expect(formatFilterQuery(parseFilterQuery('Canada', ambiguousContext))).toBe('Canada')
   })
+
+  test('round-trips quoted values containing backslashes and quotes', () => {
+    const term = { type: 'term' as const, kind: 'person' as const, value: 'Alice\\"Admin" || person:Bob' }
+
+    expect(parseFilterQuery(formatFilterQuery(term))).toEqual(term)
+  })
+
+  test('serializes typed values containing query syntax', () => {
+    const query = {
+      type: 'and' as const,
+      children: [
+        { type: 'term' as const, kind: 'country' as const, value: 'Congo (DRC)' },
+        { type: 'term' as const, kind: 'region' as const, value: 'West && Central' },
+      ],
+    }
+
+    expect(formatFilterQuery(query)).toBe('country:"Congo (DRC)" && region:"West && Central"')
+    expect(parseFilterQuery(formatFilterQuery(query))).toEqual(query)
+  })
 })

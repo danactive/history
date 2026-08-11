@@ -2,6 +2,11 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from '../../../src/components/Link'
 import {
+  formatFilterQuery,
+  type FilterQueryNode,
+  type FilterQueryTerm,
+} from '../../../src/lib/filter-query'
+import {
   generateGalleryStaticParams,
   type GalleryParams,
   type RouteParamsProps,
@@ -25,9 +30,14 @@ function formatYears(years: string[]) {
 }
 
 function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
-  const query = filter.region
-    ? `country:${filter.country} && region:${filter.region}`
-    : `country:${filter.country}`
+  const country: FilterQueryTerm = { type: 'term', kind: 'country', value: filter.country }
+  const filterQuery: FilterQueryNode = filter.region
+    ? {
+        type: 'and',
+        children: [country, { type: 'term', kind: 'region', value: filter.region }],
+      }
+    : country
+  const query = formatFilterQuery(filterQuery)
   const searchParams = new URLSearchParams({ query })
 
   return `/${gallery}/all?${searchParams.toString()}`

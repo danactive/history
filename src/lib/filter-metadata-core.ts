@@ -58,7 +58,7 @@ export function buildFilterMetadataFromLocations<ItemType extends FilterMetadata
   const { indexedKeywords: rawIndexedKeywords } = indexKeywords(items)
   const visitedLocationOptions = locationOptions.filter(option => Boolean(option.visitedPlace))
   const locationValues = new Set(visitedLocationOptions.map(option => option.value))
-  const itemPersonCounts = buildPersonCountsFromItems(items, items.length)
+  const itemPersonCounts = buildPersonCountsFromItems(items)
   const itemPersonValues = itemPersonCounts.map(({ name }) => name)
   const searchOnlyPersonCounts = filterSearchOnlyPersonCounts(
     rawIndexedKeywords.map(option => ({

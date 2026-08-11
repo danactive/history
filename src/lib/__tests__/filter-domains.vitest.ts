@@ -148,7 +148,7 @@ describe('persons domain', () => {
       { persons: [{ full: 'Taylor Example' }, { full: 'Jordan Sample' }] },
       { persons: [{ full: 'Taylor Example' }] },
       { persons: null },
-    ], 10)
+    ])
 
     expect(counts).toEqual([
       { name: 'Taylor Example', count: 2 },
@@ -157,6 +157,24 @@ describe('persons domain', () => {
     expect(buildPersonOptions(counts)).toEqual([
       { label: 'Taylor Example (2)', value: 'Taylor Example', count: 2 },
       { label: 'Jordan Sample (1)', value: 'Jordan Sample', count: 1 },
+    ])
+  })
+
+  test('counts every person in a group photo', () => {
+    const counts = buildPersonCountsFromItems([
+      {
+        persons: [
+          { full: 'Taylor Example' },
+          { full: 'Jordan Sample' },
+          { full: 'Avery Person' },
+        ],
+      },
+    ])
+
+    expect(counts).toEqual([
+      { name: 'Taylor Example', count: 1 },
+      { name: 'Jordan Sample', count: 1 },
+      { name: 'Avery Person', count: 1 },
     ])
   })
 

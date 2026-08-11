@@ -63,13 +63,13 @@ function uniqueExactMatch(value: string, candidates: string[] = []) {
 function unquote(value: string) {
   const trimmed = value.trim()
   if (trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')) {
-    return trimmed.slice(1, -1).replace(/\\"/g, '"')
+    return trimmed.slice(1, -1).replace(/\\(["\\])/g, '$1')
   }
   return trimmed
 }
 
 function quote(value: string) {
-  return /[\s()&|:]/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value
+  return /[\s()&|:"\\]/.test(value) ? `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"` : value
 }
 
 function tokenize(input: string): QueryToken[] {
@@ -86,6 +86,12 @@ function tokenize(input: string): QueryToken[] {
   for (let index = 0; index < input.length; index += 1) {
     const char = input[index]
     const next = input[index + 1]
+
+    if (quoted && char === '\\' && next) {
+      current += char + next
+      index += 1
+      continue
+    }
 
     if (char === '"') {
       quoted = !quoted

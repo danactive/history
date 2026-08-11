@@ -21,7 +21,7 @@ export default function AdminAlbumThumbs(
     : []
   const hasMultiSelection = (selectedIndices?.size ?? 0) > 1
 
-  const handleSelect = useCallback((index: number, e: React.MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
+  const handleSelect = useCallback((index: number, e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLUListElement>) => {
     const item = items[index]
     if (item) setItem(item, index, e.shiftKey)
   }, [items, setItem])

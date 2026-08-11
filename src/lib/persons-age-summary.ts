@@ -57,7 +57,7 @@ export function derivePersonsAgeSummary({
       }
 
       const age = calcAgeAtDate(person.dob, photoDate)
-      if (age === null || Number.isNaN(age)) {
+      if (age === null || Number.isNaN(age) || age < 0) {
         return
       }
 

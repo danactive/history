@@ -9,7 +9,7 @@ import * as z from 'zod/v4'
 import getAlbum from '../src/lib/album'
 import getAlbums from '../src/lib/albums'
 import getGalleries from '../src/lib/galleries'
-import { getDefaultMonthDay, monthDaySchema } from '../src/lib/monthDay'
+import { getDefaultMonthDay, guiOrigin as appOrigin, monthDaySchema } from '../src/lib/monthDay'
 import config from '../src/models/config'
 import {
   buildAlbumDetailsText,
@@ -95,7 +95,6 @@ const FALLBACK_VIDEO_EXTENSIONS = ['avi', 'm2ts', 'mov', 'mp4', 'mts', 'ogv', 'w
 const MEDIA_APP_URI = 'ui://history/media-viewer.html'
 const MAX_INLINE_PREVIEW_BYTES = 90_000
 const MAX_APP_EMBED_PREVIEW_BYTES = 350_000
-const APP_ORIGIN = `http://localhost:${config.nextPort}`
 const extAppsRuntimeSource = readFileSync(
   path.join(projectRoot, 'node_modules', '@modelcontextprotocol', 'ext-apps', 'dist', 'src', 'app-with-deps.js'),
   'utf8',
@@ -110,11 +109,11 @@ function buildPeopleResourceUri(gallery: string) {
 }
 
 function buildAbsoluteAppUrl(relativePath: string) {
-  return new URL(relativePath, APP_ORIGIN).toString()
+  return new URL(relativePath, appOrigin).toString()
 }
 
 function buildAlbumSelectionUrl(gallery: string, album: string, select: string) {
-  const url = new URL(`/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`, APP_ORIGIN)
+  const url = new URL(`/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`, appOrigin)
   url.searchParams.set('select', select)
   return url.toString()
 }
@@ -962,7 +961,7 @@ function createStorytellingServer() {
         _meta: {
           ui: {
             csp: {
-              resourceDomains: [APP_ORIGIN],
+              resourceDomains: [appOrigin],
             },
           },
         },

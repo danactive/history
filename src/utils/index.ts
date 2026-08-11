@@ -51,8 +51,8 @@ function compareWithEmptyLast(left: string, right: string) {
 
 export function compareItemOldestFirst<T extends ChronologicalSortable>(left: T, right: T) {
   const dateOrder = compareWithEmptyLast(
-    left.photoDate ?? getPrimaryFilename(left.filename),
-    right.photoDate ?? getPrimaryFilename(right.filename),
+    left.photoDate || getPrimaryFilename(left.filename),
+    right.photoDate || getPrimaryFilename(right.filename),
   )
   if (dateOrder !== 0) return dateOrder
 

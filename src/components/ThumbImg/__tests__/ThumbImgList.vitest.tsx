@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 import { describe, expect, test, vi } from 'vitest'
 
@@ -32,5 +32,26 @@ describe('ThumbImgList', () => {
     const renderedItems = container.querySelectorAll('li')
     expect(renderedItems.length).toBeGreaterThan(0)
     expect(renderedItems.length).toBeLessThan(items.length)
+  })
+
+  test('renders selection-only thumbnails as keyboard-focusable buttons', () => {
+    const onSelectIndex = vi.fn()
+
+    render(
+      <ThumbImgList
+        items={[{ id: 'one' }]}
+        getKey={(item) => item.id}
+        getThumbProps={(_item, index) => ({
+          caption: 'Select thumbnail',
+          onSelectIndex,
+          selectIndex: index,
+          src: '/thumb-one.jpg',
+          viewed: false,
+        })}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Select thumbnail' }))
+    expect(onSelectIndex).toHaveBeenCalledWith(0)
   })
 })

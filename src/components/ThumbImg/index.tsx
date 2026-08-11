@@ -14,9 +14,9 @@ import Img from '../Img'
 import styles from './styles.module.css'
 
 export type ThumbImgProps = {
-  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  onClick?: (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLUListElement>) => void;
   onSelectIndex?: (index: number) => void;
-  onSelectWithEvent?: (index: number, event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => void;
+  onSelectWithEvent?: (index: number, event: MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLUListElement>) => void;
   selectIndex?: number;
   caption: string;
   href?: string;
@@ -72,7 +72,7 @@ function ThumbImg({
     if (globalViewed && !viewed) setViewed(true)
   }, [globalViewed, viewed])
 
-  const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLUListElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLUListElement>) => {
     event.preventDefault()
     if (!viewed) setViewed(true)
     if (onSelectWithEvent != null && selectIndex != null) {
@@ -88,22 +88,41 @@ function ThumbImg({
 
   return (
     <li className={`${styles.bullet} ${captionAction ? styles.bulletWithAction : ''}`} style={style}>
-      <a
-        className={getViewed(
-          editingThumb ? globalViewed : (globalViewed || viewed),
-          multiSelected,
-          editingThumb,
-        )}
-        href={href}
-        onClick={handleClick}
-      >
-        <Img
-          src={src}
-          alt={caption}
-          width={width}
-          height={height}
-        />
-      </a>
+      {href ? (
+        <a
+          className={getViewed(
+            editingThumb ? globalViewed : (globalViewed || viewed),
+            multiSelected,
+            editingThumb,
+          )}
+          href={href}
+          onClick={handleClick}
+        >
+          <Img
+            src={src}
+            alt={caption}
+            width={width}
+            height={height}
+          />
+        </a>
+      ) : (
+        <button
+          type="button"
+          className={getViewed(
+            editingThumb ? globalViewed : (globalViewed || viewed),
+            multiSelected,
+            editingThumb,
+          )}
+          onClick={handleClick}
+        >
+          <Img
+            src={src}
+            alt={caption}
+            width={width}
+            height={height}
+          />
+        </button>
+      )}
       <span className={styles.caption}>{caption}</span>
       {captionAction ? <span className={styles.captionAction}>{captionAction}</span> : null}
     </li>

@@ -59,7 +59,7 @@ function buildAlbumPeopleAndKeywordTags(
   places: string[],
   limit: number,
 ) {
-  const itemPersonCounts = buildPersonCountsFromItems(items, items.length)
+  const itemPersonCounts = buildPersonCountsFromItems(items)
   const itemPersonNames = new Set(itemPersonCounts.map(person => person.name))
   const searchOnlyPersonCounts = filterSearchOnlyPersonCounts(countValuesByFrequency(
     items.flatMap((item) => item.search?.split(', ').map((token) => token.trim()).filter(Boolean) ?? []),

@@ -7,27 +7,27 @@ test('server is up and renders homepage', async ({ page }) => {
 
 test.describe('All album', () => {
   test('shows expected count for lowercase keyword', async ({ page }) => {
-    await page.goto('/demo/all?keyword=gingerbread')
+    await page.goto('/demo/all?query=gingerbread')
     await expect(
-      page.getByRole('heading', { name: /search results 1 of 6 for "gingerbread"/i }),
+      page.getByRole('heading', { name: /photos 1 of 6 for "gingerbread"/i }),
     ).toBeVisible()
   })
 
   test('shows expected count for mixed-case keyword', async ({ page }) => {
-    await page.goto('/demo/all?keyword=Gingerbread')
+    await page.goto('/demo/all?query=Gingerbread')
     await expect(
-      page.getByRole('heading', { name: /search results 1 of 6 for "Gingerbread"/i }),
+      page.getByRole('heading', { name: /photos 1 of 6 for "Gingerbread"/i }),
     ).toBeVisible()
   })
 
   test('renders keyword chip and allows token clear', async ({ page }) => {
-    await page.goto('/demo/all?keyword=gingerbread')
+    await page.goto('/demo/all?query=gingerbread')
 
     await expect(page.getByText('gingerbread').first()).toBeVisible()
-    await page.getByRole('button', { name: /remove keyword token gingerbread/i }).click()
+    await page.getByRole('button', { name: /remove query term gingerbread/i }).click()
 
     await expect(
-      page.getByRole('heading', { name: /search results 6 of 6/i }),
+      page.getByRole('heading', { name: /photos 6 of 6/i }),
     ).toBeVisible()
   })
 })
