@@ -94,7 +94,7 @@ describe('MCP HTTP endpoint', () => {
         result: expect.objectContaining({
           serverInfo: {
             name: 'history',
-            version: '12.5.0',
+            version: '12.6.0',
           },
         }),
       }),
