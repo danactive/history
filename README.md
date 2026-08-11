@@ -25,12 +25,12 @@ Your personal **history** storyboarded with photo and video albums. Associate ph
 1. Start the image classifier in /apps/api for the Admin > Edit Album page
 
 #### MCP server
-1. `npm run mcp` starts a read-only MCP server over stdio transport
-1. The server exposes history resources plus album-story and on-this-day storytelling tools
-1. For MCP clients connect with the mcp.json manifest
+- `npm run dev` also exposes the same server over streaming HTTP at `http://localhost:3030/mcp`; clients that require HTTPS must use a deployed HTTPS `/mcp` endpoint instead, or use stdio locally `npm run mcp`
+- Set `HISTORY_APP_ORIGIN` to the deployed app origin (for example, `https://history.example.com`) so MCP media links and the interactive media viewer CSP use the public host.
+- `mcp.json` is intentionally stdio-only for local clients so the toolset does not drift between a live Next dev server and a separate stdio process
+- If you want to test the streaming HTTP transport, connect directly to `http://localhost:3030/mcp` instead of adding a second local server entry alongside stdio
 
 - For VS Code workspace configuration, use /vscode-mcp.json and `Install Server from Manifest`
-
 
 #### How-to build for PROD
 1. `npm run build` Bundle JavaScript files, and pre-compile

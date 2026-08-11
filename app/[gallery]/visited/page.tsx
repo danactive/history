@@ -1,15 +1,23 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from '../../../src/components/Link'
-import getGalleries from '../../../src/lib/galleries'
+import {
+  formatFilterQuery,
+  type FilterQueryNode,
+  type FilterQueryTerm,
+} from '../../../src/lib/filter-query'
+import {
+  generateGalleryStaticParams,
+  type GalleryParams,
+  type RouteParamsProps,
+} from '../../../src/lib/server/page-route'
 import type { RegionVisit } from '../../../src/lib/visited'
 import { formatVisitedYears, getVisitedData } from '../../../src/lib/visited'
 import type { Gallery as GalleryName, VisitedPlace } from '../../../src/types/common'
-import type { Gallery } from '../../../src/types/pages'
 import styles from './styles.module.css'
 
 export async function generateStaticParams() {
-  const { galleries } = await getGalleries()
-  return galleries.map((gallery) => ({ gallery }))
+  return generateGalleryStaticParams()
 }
 
 export const metadata: Metadata = {
@@ -22,16 +30,28 @@ function formatYears(years: string[]) {
 }
 
 function buildVisitedHref(gallery: GalleryName, filter: VisitedPlace) {
-  const searchParams = new URLSearchParams({ visitedCountry: filter.country })
-
-  if (filter.region) {
-    searchParams.set('visitedRegion', filter.region)
-  }
+  const country: FilterQueryTerm = { type: 'term', kind: 'country', value: filter.country }
+  const filterQuery: FilterQueryNode = filter.region
+    ? {
+        type: 'and',
+        children: [country, { type: 'term', kind: 'region', value: filter.region }],
+      }
+    : country
+  const query = formatFilterQuery(filterQuery)
+  const searchParams = new URLSearchParams({ query })
 
   return `/${gallery}/all?${searchParams.toString()}`
 }
 
-export default async function VisitedServer(props: { params: Promise<Gallery.Params> }) {
+export default function VisitedServer(props: RouteParamsProps<GalleryParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VisitedServerContent {...props} />
+    </Suspense>
+  )
+}
+
+async function VisitedServerContent(props: RouteParamsProps<GalleryParams>) {
   const { gallery } = await props.params
   const countries = await getVisitedData(gallery)
 

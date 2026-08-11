@@ -1,9 +1,15 @@
 import * as z from 'zod/v4'
 
+import { formatFilterQuery } from './filter-query'
 import config from '../models/config'
 import type { Gallery } from '../types/common'
 
-export const guiOrigin = `http://localhost:${config.nextPort}`
+export function getGuiOrigin(origin = process.env.HISTORY_APP_ORIGIN) {
+  const configuredOrigin = origin?.trim()
+  return configuredOrigin ? new URL(configuredOrigin).origin : `http://localhost:${config.nextPort}`
+}
+
+export const guiOrigin = getGuiOrigin()
 
 export const monthDaySchema = z.string().regex(/^\d{2}-\d{2}$/).describe('Month-day in MM-DD format. Defaults to today.')
 
@@ -24,17 +30,17 @@ export function getMonthDayFromSearchParams(searchParams?: TodaySearchParams) {
   return day ? parseMonthDay(day) : getDefaultMonthDay()
 }
 
-export function buildTodayGuiHref(gallery: Gallery, monthDay: string) {
-  const searchParams = new URLSearchParams({ day: parseMonthDay(monthDay) })
-  return `${guiOrigin}/${encodeURIComponent(gallery)}/today/details?${searchParams.toString()}`
-}
-
 export function buildTodayPageHref(gallery: Gallery, monthDay: string) {
   const searchParams = new URLSearchParams({ day: parseMonthDay(monthDay) })
   return `${guiOrigin}/${encodeURIComponent(gallery)}/today?${searchParams.toString()}`
 }
 
+export function buildAlbumPageHref(gallery: Gallery, album: string) {
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`
+}
+
 export function buildPersonGuiHref(gallery: Gallery, name: string) {
-  const searchParams = new URLSearchParams({ person: name })
-  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons/details?${searchParams.toString()}`
+  const query = formatFilterQuery({ type: 'term', kind: 'person', value: name })
+  const searchParams = new URLSearchParams({ query })
+  return `${guiOrigin}/${encodeURIComponent(gallery)}/persons?${searchParams.toString()}`
 }

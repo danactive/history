@@ -1,8 +1,10 @@
 import transformJsonSchema, { errorSchema, type ErrorOptionalMessage } from '../models/person'
 import type { Gallery, Person } from '../types/common'
 import type { All } from '../types/pages'
+import type { GalleryParams } from './server/page-route'
+import { filterPersonsItems, type PersonAgeFilterValue } from './domains/persons'
 import { handleLibraryError } from './errors'
-import { getAllItems, personsPageItemMapper } from './get-all-items'
+import { getPersonsPageItems } from './get-all-items'
 import { readPersons } from './xml'
 
 type Envelope = { body: Person[], status: number }
@@ -42,8 +44,11 @@ async function get(
   }
 }
 
-export async function getPersonsData({ gallery }: All.Params): Promise<All.ItemData> {
-  return getAllItems(gallery, personsPageItemMapper, false)
+export async function getPersonsData({ gallery }: GalleryParams): Promise<All.ItemData> {
+  return getPersonsPageItems(gallery)
 }
+
+export type { PersonAgeFilterValue }
+export { filterPersonsItems }
 
 export default get

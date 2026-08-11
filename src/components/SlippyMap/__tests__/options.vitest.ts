@@ -1,7 +1,12 @@
 import { describe, expect, test } from 'vitest'
 
 import { type Item } from '../../../types/common'
-import { transformMapOptions, transformSourceOptions, validatePoint } from '../options'
+import {
+  transformMapOptions,
+  transformSourceOptions,
+  validatePoint,
+} from '../options'
+import { getUnclusterPointLayer } from '../layers'
 import { generateClusters } from '../../../lib/generate-clusters'
 import type { ClusteredMarkers } from '../../../lib/generate-clusters'
 
@@ -46,17 +51,17 @@ describe('Options - <SlippyMap />', () => {
       ]
       // Generate H3-based clusters
       const clusteredMarkers: ClusteredMarkers = generateClusters(items)
-      const received = transformSourceOptions({ items, selected: items[1], clusteredMarkers })
+      const received = transformSourceOptions({ items, clusteredMarkers })
 
       const features = [
         {
           geometry: { coordinates: [123, 321], type: 'Point' },
-          properties: { label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '123:321', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { selected: true, label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '321:123', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]
@@ -77,6 +82,26 @@ describe('Options - <SlippyMap />', () => {
       expect(received).toEqual(expected)
     })
 
+    test('styles selection only when the feature is unclustered', () => {
+      const layer = getUnclusterPointLayer('selected-photo')
+
+      expect(layer.filter).toEqual(['!', ['has', 'point_count']])
+      expect(layer.paint).toEqual(expect.objectContaining({
+        'circle-color': [
+          'case',
+          ['==', ['get', 'selectionKey'], 'selected-photo'],
+          '#FFFFFF',
+          '#FFCCCB',
+        ],
+        'circle-stroke-width': [
+          'case',
+          ['==', ['get', 'selectionKey'], 'selected-photo'],
+          4,
+          2,
+        ],
+      }))
+    })
+
     test('Mix Valid or Invalid coordinates', () => {
       const items: Item[] = [
         { ...mockItem, filename: '123.jpg' },
@@ -87,14 +112,13 @@ describe('Options - <SlippyMap />', () => {
       const clusteredMarkers: ClusteredMarkers = generateClusters(items)
       const received = transformSourceOptions({
         items,
-        selected: { coordinates: items[2].coordinates },
         clusteredMarkers,
       })
 
       const features = [
         {
           geometry: { coordinates: [321, 123], type: 'Point' },
-          properties: { selected: true, label: 'Canada', commonLabel: 'Canada' },
+          properties: { selectionKey: '321:123', label: 'Canada', commonLabel: 'Canada' },
           type: 'Feature',
         },
       ]

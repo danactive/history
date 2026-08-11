@@ -1,202 +1,160 @@
 'use client'
-import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { ImageGalleryRef } from 'react-image-gallery'
-import type { All } from '../types/pages'
-import { getPrimaryFilename } from '../utils'
+import { buildSelectableItemIndex, resolveSelectedItemIndex } from '../lib/map-filtering'
+import { mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
+import type { All, SearchMetadata, SearchUiConfig } from '../types/pages'
+import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
+import useMapFilterState from './useMapFilterState'
+import useSelectionCoordinator from './useSelectionCoordinator'
 import useSearch from './useSearch'
 
-type Bounds = [[number, number],[number, number]]
+type UseMapFilterProps = SearchMetadata & SearchUiConfig & Pick<All.ItemData, 'gallery' | 'items' | 'trailingAction'>
 
-type UseMapFilterProps = Pick<All.ItemData, 'gallery' | 'items' | 'indexedKeywords' | 'visitedFilterLabel' | 'trailingAction'> & {
-  personDetailsName?: string | null
-}
-
-export default function useMapFilter({ items, indexedKeywords, visitedFilterLabel, trailingAction, gallery, personDetailsName }: UseMapFilterProps) {
+export default function useMapFilter({
+  items,
+  indexedKeywords,
+  personOptions,
+  tagOptions,
+  activeFacetCounts,
+  trailingAction,
+  gallery,
+  personDetailsName,
+  totalCount,
+  summaryLabel = 'Photos',
+  extraFilterChips,
+  extraFiltersActive,
+  onClearExtraFilters,
+  extraQueryParamsToClear = [],
+  onStructuredOptionSubmit,
+  ownedPersonFilter = false,
+}: UseMapFilterProps) {
+  const searchParams = useSearchParams()
+  const mapBoundsParam = searchParams.get(mapBoundsSearchParam)
+  const initialMapBounds = useMemo(
+    () => parseMapBounds(mapBoundsParam),
+    [mapBoundsParam],
+  )
   const refImageGallery = useRef<ImageGalleryRef>(null)
-  const [memoryIndex, setMemoryIndexState] = useState(0)
-  const resetIndexOnEnableRef = useRef(false) // flag to force index 0 when enabling map filter
-  const autoInitialViewRef = useRef(true) // controls useMemory auto mark
-  const [isClearing, setIsClearing] = useState(false) // flag to prevent map updates during clear
+  const {
+    autoInitialViewRef,
+    memoryIndex,
+    prepareForMapFilterEnable,
+    resetIndexOnEnableRef,
+    setMemoryIndex,
+  } = useMapFilterMemory()
 
-  const setMemoryIndex: Dispatch<SetStateAction<number>> = useCallback((value) => {
-    setMemoryIndexState(prev => {
-      const next = typeof value === 'function' ? value(prev) : value
-      return prev === next ? prev : next
-    })
-  }, [])
+  const {
+    clearCoordinates,
+    handleBoundsChange: setMapBounds,
+    handleClearMapFilter: clearMapFilter,
+    handleToggleMapFilter: toggleMapFilter,
+    isClearing,
+    mapBounds,
+    mapFilterEnabled,
+    selectedId,
+    selectById,
+  } = useMapFilterState(initialMapBounds)
 
-  const [mapFilterEnabled, setMapFilterEnabled] = useState(false)
-  const [mapBounds, setMapBounds] = useState<Bounds | null>(null)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [clearCoordinates, setClearCoordinates] = useState<[number, number] | null>(null)
+  const handleBoundsChange = useCallback((bounds: Parameters<typeof setMapBounds>[0]) => {
+    setMapBounds(bounds)
+  }, [setMapBounds])
 
   const handleClearMapFilter = useCallback((coordinates?: [number, number] | null) => {
-    // Preserve coordinates before clearing filter
-    if (coordinates) {
-      setClearCoordinates(coordinates)
-    }
-    setIsClearing(true)
-    setMapFilterEnabled(false)
-    setMapBounds(null)
-  }, [])
-
-  const selectById = useCallback((id: string) => {
-    // Simply update selectedId for both clear and normal operations
-    // The URL-based handling in each client will position the gallery
-    setSelectedId(prev => (prev === id ? prev : id))
-  }, [])
+    clearMapFilter(coordinates)
+  }, [clearMapFilter])
 
   const {
     filtered,
+    visibleItems,
+    itemsToUse,
     keyword,
     searchBox,
-    setVisibleCount,
     setDisplayedItems,
   } = useSearch({
     gallery,
     items,
+    summaryLabel,
+    totalCount,
     memoryIndex,
     setMemoryIndex,
     indexedKeywords,
-    visitedFilterLabel,
+    personOptions,
+    tagOptions,
+    activeFacetCounts,
     refImageGallery,
     mapFilterEnabled,
+    mapBounds,
     onClearMapFilter: handleClearMapFilter,
     personDetailsName,
     selectById,
     trailingAction,
+    extraFilterChips,
+    extraFiltersActive,
+    onClearExtraFilters,
+    extraQueryParamsToClear: [
+      mapBoundsSearchParam,
+      ...extraQueryParamsToClear.filter(key => key !== mapBoundsSearchParam),
+    ],
+    onStructuredOptionSubmit,
+    ownedPersonFilter,
   })
 
-  const handleBoundsChange = useCallback((bounds: Bounds) => {
-    if (!bounds) return
-    setMapBounds(prev => {
-      if (
-        prev &&
-        prev[0][0] === bounds[0][0] &&
-        prev[0][1] === bounds[0][1] &&
-        prev[1][0] === bounds[1][0] &&
-        prev[1][1] === bounds[1][1]
-      ) return prev
-      return bounds
-    })
-  }, [])
-
-  const itemsToShow = useMemo(() => {
-    if (!mapFilterEnabled || !mapBounds) return filtered
-    const [[swLng, swLat], [neLng, neLat]] = mapBounds
-    return filtered.filter(it => {
-      const coords = it.coordinates as [number, number] | undefined
-      if (!coords) return false
-      const [lng, lat] = coords
-      return lng >= swLng && lng <= neLng && lat >= swLat && lat <= neLat
-    })
-  }, [mapFilterEnabled, mapBounds, filtered])
+  const itemsToShow = itemsToUse ?? visibleItems
 
   // Memoized ID-to-index maps for O(1) lookups (critical for large datasets)
-  const itemsToShowMap = useMemo(() => {
-    const map = new Map<string, number>()
-    itemsToShow.forEach((item: any, idx) => {
-      // Index by ID
-      if (item.id) map.set(item.id, idx)
-      // Also index by filename (globally unique)
-      const filename = getPrimaryFilename(item.filename)
-      if (filename) map.set(filename, idx)
-    })
-    return map
-  }, [itemsToShow])
+  const itemsToShowMap = useMemo(() => buildSelectableItemIndex(itemsToShow), [itemsToShow])
 
-  const filteredMap = useMemo(() => {
-    const map = new Map<string, number>()
-    filtered.forEach((item: any, idx) => {
-      // Index by ID
-      if (item.id) map.set(item.id, idx)
-      // Also index by filename (globally unique)
-      const filename = getPrimaryFilename(item.filename)
-      if (filename) map.set(filename, idx)
-    })
-    return map
-  }, [filtered])
+  const filteredMap = useMemo(() => buildSelectableItemIndex(filtered), [filtered])
 
-  // Update displayed items whenever itemsToShow changes
-  useEffect(() => {
-    setDisplayedItems(itemsToShow)
-  }, [itemsToShow, setDisplayedItems])
-
-  // Pass suppression flag to useMemory
   const { setViewed, memoryHtml, viewedList } = useMemory(
     itemsToShow,
     refImageGallery,
     { autoInitialView: autoInitialViewRef.current },
   )
+  const selectionCoordinator = useSelectionCoordinator({
+    items: itemsToShow,
+    itemsChangeCameraIntent: mapFilterEnabled ? 'preserve' : 'follow',
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+  })
 
-  const handleToggleMapFilter = useCallback(() => {
-    setMapFilterEnabled(prev => {
-      const next = !prev
-      if (next) {
-        // enabling: suppress auto mark for new filtered list; force index 0 after list settles
-        resetIndexOnEnableRef.current = true
-        autoInitialViewRef.current = false
-      } else {
-        // disabling: clear bounds only
-        setMapBounds(null)
-      }
-      return next
+  const handleToggleMapFilterWithMemoryReset = useCallback(() => {
+    toggleMapFilter(() => {
+      prepareForMapFilterEnable()
     })
-  }, [])
+  }, [prepareForMapFilterEnable, toggleMapFilter])
 
-  // After map filter enables and itemsToShow recalculates, force memoryIndex 0 and mark viewed
   useEffect(() => {
     if (mapFilterEnabled && resetIndexOnEnableRef.current) {
-      // Now itemsToShow is narrowed; mark only index 0
       resetIndexOnEnableRef.current = false
-      setMemoryIndexState(0)
-      // Move gallery to first item if mounted
-      if (refImageGallery.current) {
-        refImageGallery.current.slideToIndex(0)
-      }
-      setViewed(0)
-      // Re-enable auto marking for subsequent filtered changes
+      selectionCoordinator.selectIndex(0, {
+        origin: 'filter',
+        cameraIntent: 'preserve',
+      })
       autoInitialViewRef.current = true
     }
-  }, [mapFilterEnabled, itemsToShow, setViewed])
+  }, [autoInitialViewRef, mapFilterEnabled, resetIndexOnEnableRef, selectionCoordinator])
 
   // Update memoryIndex when selectedId changes
   useEffect(() => {
-    if (!selectedId) return
-
-    // Use O(1) map lookup
-    const idx = itemsToShowMap.get(selectedId)
-    if (idx !== undefined) {
-      setMemoryIndex(idx)
-      return
+    const nextIndex = resolveSelectedItemIndex(selectedId, itemsToShowMap, filteredMap)
+    if (nextIndex !== null) {
+      if (nextIndex < itemsToShow.length) {
+        selectionCoordinator.selectIndex(nextIndex, {
+          origin: 'filter',
+          cameraIntent: 'preserve',
+        })
+      } else {
+        // Keep the pending selection for a result outside the active map
+        // viewport; clearing that filter resolves it through the coordinator.
+        setMemoryIndex(nextIndex)
+      }
     }
-
-    // Fallback to filtered
-    const idx2 = filteredMap.get(selectedId)
-    if (idx2 !== undefined) {
-      setMemoryIndex(idx2)
-    }
-  }, [itemsToShowMap, filteredMap, selectedId, setMemoryIndex])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setVisibleCount(itemsToShow.length)
-    }, 100)
-    return () => clearTimeout(timeout)
-  }, [itemsToShow.length, setVisibleCount])
-
-  // Clear clearing flag after gallery repositions during clear
-  useEffect(() => {
-    if (isClearing && !mapFilterEnabled) {
-      // Wait for gallery to reposition, then clear flag and coordinates
-      const timeout = setTimeout(() => {
-        setIsClearing(false)
-        setClearCoordinates(null)
-      }, 200)
-      return () => clearTimeout(timeout)
-    }
-  }, [mapFilterEnabled, memoryIndex, isClearing])
+  }, [itemsToShow.length, itemsToShowMap, filteredMap, selectedId, selectionCoordinator, setMemoryIndex])
 
   return {
     refImageGallery,
@@ -208,13 +166,16 @@ export default function useMapFilter({ items, indexedKeywords, visitedFilterLabe
     filtered,
     keyword,
     searchBox,
+    setDisplayedItems,
     mapFilterEnabled,
-    handleToggleMapFilter,
+    mapBounds,
+    handleToggleMapFilter: handleToggleMapFilterWithMemoryReset,
     handleBoundsChange,
     itemsToShow,
     selectedId,
     selectById,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   }
 }

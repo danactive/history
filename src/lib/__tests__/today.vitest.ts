@@ -151,6 +151,13 @@ beforeEach(() => {
 })
 
 describe('today library', () => {
+  test('orders matching items by newest album year and oldest filename within each album', async () => {
+    const result = await getTodayItems('demo', '07-18')
+    const ids = result.items.map(item => item.id)
+
+    expect(ids).toEqual(['3', '4', '1', '2'])
+  })
+
   test('orders location options by highest count first', async () => {
     const result = await getTodayItems('demo', '07-18')
     const counts = result.locationOptions.map((option) => option.count)
@@ -165,5 +172,17 @@ describe('today library', () => {
 
     expect(counts.length).toBeGreaterThan(1)
     expect(counts).toEqual([...counts].sort((left, right) => right - left))
+  })
+
+  test('filters today items by a canonical person query before rebuilding derived metadata', async () => {
+    const result = await getTodayItems('demo', '07-18', 'person:"Taylor Example"')
+
+    expect(result.totalItemCount).toBe(4)
+    expect(result.items.map((item) => item.id)).toEqual(['4', '1', '2'])
+    expect(result.personOptions).toEqual([
+      { label: 'Taylor Example (3)', value: 'Taylor Example', count: 3 },
+    ])
+    expect(result.indexedKeywords.map((option) => option.value)).toContain('Taylor Example')
+    expect(result.indexedKeywords.map((option) => option.value)).not.toContain('Jordan Sample')
   })
 })

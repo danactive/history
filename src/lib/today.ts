@@ -1,114 +1,87 @@
-import getAlbum from './album'
-import getAlbums from './albums'
-import indexKeywords, { addGeographyToSearch, addYearToSearch, getItemYearFromFilename } from './search'
-import { countValuesByFrequency } from './storytelling-ranking'
-import { buildVisitedDataFromItems, formatVisitedPlace } from './visited'
-import config from '../models/config'
-import type { AlbumMeta, Gallery, IndexedKeywords, Item } from '../types/common'
+import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
+import { filterItemsByMapBounds, type Bounds } from './map-filtering'
+import { addYearToSearch, getItemYearFromFilename } from './domains/years'
+import { buildFilterMetadata, type ServerPageFilterMetadata } from './server/filter-metadata'
+import { addGeographyToSearch } from './search'
+import type { AlbumMeta, Gallery, Item, ServerSideTodayItem } from '../types/common'
+import type { Today } from '../types/pages'
+import { compareItemOldestFirst } from '../utils'
+import { getInitialActiveFacetCounts } from './active-facets'
+import { applyGalleryItemsCachePolicy, getOrderedAlbumItems } from './get-all-items'
 
-interface ServerSideTodayItem extends Item {
-  album?: NonNullable<AlbumMeta['albumName']>;
-  corpus: string;
-  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
+
+const prepareTodayItems = (
+  { albumName, albumCoordinateAccuracy, items }:
+  {
+    albumName: AlbumMeta['albumName'],
+    albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
+    items: Item[],
+  },
+) => items.map((item) => {
+  const year = getItemYearFromFilename(item)
+  const search = addYearToSearch(addGeographyToSearch(item), item)
+  return {
+    ...item,
+    album: albumName,
+    corpus: [item.description, item.caption, item.location, item.city, search, year]
+      .join(' ')
+      .trim(),
+    coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
+    search,
+  }
+})
+
+export async function getTodayPageItems(gallery: Gallery, monthDay: string): Promise<ServerSideTodayItem[]> {
+  'use cache'
+
+  applyGalleryItemsCachePolicy(gallery)
+
+  const albums = await getOrderedAlbumItems(gallery)
+  return albums.flatMap(({ albumCoordinateAccuracy, albumName, items }) => {
+    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
+    return prepareTodayItems({
+      albumName,
+      albumCoordinateAccuracy,
+      items: itemsMatchDate,
+    }).sort(compareItemOldestFirst)
+  })
 }
 
-type CountedOption = {
-  label: string
-  value: string
-  count: number
-}
+export async function getTodayItems(
+  gallery: Gallery,
+  monthDay: string,
+  query?: string,
+  mapBounds?: Bounds | null,
+): Promise<TodayItemsResult> {
+  const items = await getTodayPageItems(gallery, monthDay)
 
-function splitTodayKeywords(items: ServerSideTodayItem[], indexedKeywords: IndexedKeywords[]) {
-  const visitedData = buildVisitedDataFromItems(items.map((item) => ({
-    city: item.city,
-    filename: item.filename,
-    photoDate: item.photoDate ?? null,
-  })))
-  const locationOptions = visitedData
-    .flatMap((country) => {
-      const countryOption = {
-        label: `${country.country} (${country.count})`,
-        value: country.filter.country,
-        visitedPlace: country.filter,
-        count: country.count,
-      }
-      const regionOptions = country.regions
-        .filter(region => region.count >= config.visitedRegionSearchMinCount)
-        .map((region) => ({
-          label: `${formatVisitedPlace(region.filter)} (${region.count})`,
-          value: formatVisitedPlace(region.filter),
-          visitedPlace: region.filter,
-          count: region.count,
-        }))
+  const totalItemCount = mapBounds
+    ? filterItemsByMapBounds(items, true, mapBounds).length
+    : items.length
+  const baseMetadata = buildFilterMetadata(items)
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(items, true, mapBounds) : items,
+    query,
+    context: getFilterQueryContext(baseMetadata),
+  })
+  const hasQuery = Boolean(query)
+  const parsedQuery = query ? parseFilterQuery(query, getFilterQueryContext(baseMetadata)) : null
+  const scopedItems = parsedQuery
+    ? filterItemsByQuery(items, parsedQuery)
+    : items
 
-      return [countryOption, ...regionOptions]
-    })
-    .sort((left, right) => right.count - left.count || left.value.localeCompare(right.value))
-
-  const locationValues = new Set(locationOptions.map(option => option.value))
-  const personCounts = countValuesByFrequency(
-    items.flatMap(item => item.persons?.map(person => person.full) ?? []),
-    items.length,
-  )
-  const personOptions: CountedOption[] = personCounts.map(({ name, count }) => ({
-    label: `${name} (${count})`,
-    value: name,
-    count,
-  }))
-  const personValues = new Set(personOptions.map(option => option.value))
-  const yearOptions = indexedKeywords.filter(option => /^\d{4}$/.test(option.value))
-  const tagOptions = indexedKeywords.filter(
-    option => !/^\d{4}$/.test(option.value) && !locationValues.has(option.value) && !personValues.has(option.value),
-  )
+  const { indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions } = buildFilterMetadata(scopedItems)
 
   return {
+    items: scopedItems,
+    indexedKeywords,
     locationOptions,
     personCounts,
     personOptions,
     yearOptions,
     tagOptions,
+    totalItemCount: hasQuery || mapBounds ? totalItemCount : undefined,
+    activeFacetCounts,
   }
-}
-
-export async function getTodayItems(gallery: Gallery, monthDay: string) {
-  const { [gallery]: { albums } } = await getAlbums(gallery)
-
-  const prepareItems = (
-    { albumName, albumCoordinateAccuracy, items }:
-    {
-      albumName: AlbumMeta['albumName'],
-      albumCoordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'],
-      items: Item[],
-    },
-  ) => items.map((item) => {
-    const year = getItemYearFromFilename(item)
-    const search = addYearToSearch(addGeographyToSearch(item), item)
-    return {
-      ...item,
-      album: albumName,
-      corpus: [item.description, item.caption, item.location, item.city, search, year]
-        .join(' ')
-        .trim(),
-      coordinateAccuracy: item.coordinateAccuracy ?? albumCoordinateAccuracy,
-      search,
-    }
-  })
-
-  const items = (await albums.reduce(async (previousPromise, album) => {
-    const previousItems = await previousPromise
-    const { album: { items: albumItems, meta } } = await getAlbum(gallery, album.name)
-    const itemsMatchDate = albumItems.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
-    const albumCoordinateAccuracy = meta?.geo?.zoom ?? config.defaultZoom
-    const preparedItems = prepareItems({
-      albumName: album.name,
-      albumCoordinateAccuracy,
-      items: itemsMatchDate,
-    })
-    return previousItems.concat(preparedItems.reverse())
-  }, Promise.resolve([] as ServerSideTodayItem[]))).reverse()
-
-  const { indexedKeywords } = indexKeywords(items)
-  const { locationOptions, personCounts, personOptions, yearOptions, tagOptions } = splitTodayKeywords(items, indexedKeywords)
-
-  return { items, indexedKeywords, locationOptions, personCounts, personOptions, yearOptions, tagOptions }
 }

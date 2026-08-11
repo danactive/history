@@ -1,37 +1,40 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
+import {
+  resolveRouteInputs,
+  resolveSearchParams,
+  type GalleryRouteProps,
+  type RouteSearchParamsProps,
+} from '../../../../src/lib/server/page-route'
+import { parsePersonSearchParams, type PersonDetailsSearchParams } from '../../../../src/lib/server/search-params'
 import { resolvePersonResource } from '../../../../src/lib/storytelling'
-import type { Gallery } from '../../../../src/types/common'
-
-type SearchParams = {
-  person?: string | string[]
-}
-
-function getPersonFromSearchParams(searchParams?: SearchParams) {
-  const person = typeof searchParams?.person === 'string' ? searchParams.person.trim() : ''
-  return person || null
-}
 
 export async function generateMetadata(
-  { searchParams }: { searchParams?: Promise<SearchParams> },
+  { searchParams }: RouteSearchParamsProps<PersonDetailsSearchParams>,
 ): Promise<Metadata> {
-  const resolvedSearchParams = await (searchParams ?? Promise.resolve({}))
-  const person = getPersonFromSearchParams(resolvedSearchParams)
+  const resolvedSearchParams = await resolveSearchParams(searchParams)
+  const { person } = parsePersonSearchParams(resolvedSearchParams)
   return { title: `${person ?? 'Person'} details - History App` }
 }
 
-export default async function PersonDetailsPage({
+export default function PersonDetailsPage(props: GalleryRouteProps<PersonDetailsSearchParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PersonDetailsContent {...props} />
+    </Suspense>
+  )
+}
+
+async function PersonDetailsContent({
   params,
   searchParams,
-}: {
-  params: Promise<{ gallery: Gallery }>
-  searchParams?: Promise<SearchParams>
-}) {
-  const [{ gallery }, resolvedSearchParams] = await Promise.all([
-    params,
-    searchParams ?? Promise.resolve({}),
-  ])
-  const person = getPersonFromSearchParams(resolvedSearchParams)
+}: GalleryRouteProps<PersonDetailsSearchParams>) {
+  const {
+    params: { gallery },
+    searchParams: resolvedSearchParams,
+  } = await resolveRouteInputs(params, searchParams)
+  const { person } = parsePersonSearchParams(resolvedSearchParams)
 
   if (!person) {
     return (

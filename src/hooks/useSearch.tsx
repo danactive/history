@@ -1,91 +1,56 @@
 'use client'
 
-import { Button, Chip, Stack } from '@mui/joy'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import {
   type Dispatch, type SetStateAction,
   useCallback,
-  useEffect, useMemo, useState,
+  useMemo, useRef,
 } from 'react'
-import AutoComplete from '../components/ComboBox'
-import Link from '../components/Link'
+import Controls from '../components/Search/Controls'
+import { buildSearchOptions } from '../lib/domains/search'
+import { getActiveFacetCounts } from '../lib/active-facets'
+import { buildFilterMetadataFromLocations } from '../lib/filter-metadata-core'
 import {
-  buildVisitedKeywordOptions,
-  buildVisitedRegionCountryIndex,
-  formatVisitedPlace,
-  getVisitedPlace,
-  matchesVisitedPlace,
-} from '../lib/visited-core'
-import { Gallery, IndexedKeywords, VisitedPlace } from '../types/common'
-import { getPrimaryFilename } from '../utils'
-import { resolveUniquePersonName } from '../utils/person-search'
-import { matchCorpus } from '../utils/search'
-import styles from './search.module.css'
+  parseKeywordQuery,
+} from '../lib/search-filtering'
+import { filterItemsByQuery, getConjunctiveFilterTerms, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
+import { filterItemsByMapBounds, type Bounds } from '../lib/map-filtering'
+import { areMapBoundsEqual, mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
+import { Gallery, VisitedPlace } from '../types/common'
+import type { SearchMetadata, SearchUiConfig } from '../types/pages'
 import useBookmark from './useBookmark'
+import useSearchController from './useSearchController'
+import useSearchDetailActions from './useSearchDetailActions'
+import useVisibleSearchState from './useVisibleSearchState'
+
+export { parseKeywordQuery } from '../lib/search-filtering'
 
 interface SearchableItem {
   corpus: string;
   city?: string;
+  year?: string | null;
   photoDate?: string | null;
   persons?: { full: string }[] | null;
   search?: string | null;
   visitedPlace?: VisitedPlace | null;
+  coordinates?: [number, number] | null;
 }
 
 type FilenameItem = SearchableItem & {
   filename: string | string[];
 }
 
-interface UseSearchProps<ItemType> {
+interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {
   gallery: Gallery;
   items: ItemType[];
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
-  indexedKeywords?: IndexedKeywords[];
-  visitedFilterLabel?: string | null;
   refImageGallery?: React.RefObject<any>;
   mapFilterEnabled?: boolean;
+  mapBounds?: Bounds | null;
   onClearMapFilter?: (coordinates?: [number, number] | null) => void;
-  personDetailsName?: string | null;
   selectById?: (id: string, isClear?: boolean) => void;
   trailingAction?: React.ReactNode;
-}
-
-type QueryMode = 'AND' | 'OR' | null
-type ParsedKeywordQuery = {
-  mode: QueryMode
-  tokens: string[]
-  isAdvanced: boolean
-}
-
-export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {
-  const keyword = rawKeyword.trim()
-  if (!keyword) return { mode: null, tokens: [], isAdvanced: false }
-
-  const hasAnd = keyword.includes('&&')
-  const hasOr = keyword.includes('||')
-  const hasGrouping = keyword.includes('(') || keyword.includes(')')
-
-  // Keep complex expressions as a single "Advanced query" chip.
-  if (hasGrouping || (hasAnd && hasOr)) {
-    return { mode: null, tokens: [keyword], isAdvanced: true }
-  }
-
-  if (hasAnd) {
-    const tokens = keyword.split('&&').map(t => t.trim()).filter(Boolean)
-    return tokens.length > 0
-      ? { mode: 'AND', tokens, isAdvanced: false }
-      : { mode: null, tokens: [keyword], isAdvanced: true }
-  }
-
-  if (hasOr) {
-    const tokens = keyword.split('||').map(t => t.trim()).filter(Boolean)
-    return tokens.length > 0
-      ? { mode: 'OR', tokens, isAdvanced: false }
-      : { mode: null, tokens: [keyword], isAdvanced: true }
-  }
-
-  return { mode: null, tokens: [keyword], isAdvanced: false }
 }
 
 function hasFilename(item: SearchableItem): item is FilenameItem {
@@ -95,240 +60,151 @@ function hasFilename(item: SearchableItem): item is FilenameItem {
 export default function useSearch<ItemType extends SearchableItem>({
   gallery,
   items,
+  summaryLabel,
+  totalCount,
   memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
-  visitedFilterLabel,
+  personOptions = [],
+  tagOptions = [],
+  activeFacetCounts: initialActiveFacetCounts,
   refImageGallery,
   mapFilterEnabled,
+  mapBounds,
   onClearMapFilter,
   personDetailsName,
   selectById,
   trailingAction,
+  extraFilterChips,
+  extraFiltersActive = false,
+  onClearExtraFilters,
+  extraQueryParamsToClear = [],
+  onStructuredOptionSubmit,
+  ownedPersonFilter = false,
 }: UseSearchProps<ItemType>) {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const pathname = usePathname()
-
-  const initialKeyword = searchParams?.get('keyword') ?? ''
-  const initialVisitedCountry = searchParams?.get('visitedCountry') ?? ''
-  const initialVisitedRegion = searchParams?.get('visitedRegion') ?? ''
-  const [keyword, setKeyword] = useState<string>(initialKeyword)
-  const [selectedOption, setSelectedOption] = useState<IndexedKeywords | null>(
-    initialKeyword ? { label: initialKeyword, value: initialKeyword } : null,
+  const mapBoundsParam = searchParams?.get(mapBoundsSearchParam)
+  const urlMapBounds = useMemo(() => parseMapBounds(mapBoundsParam), [mapBoundsParam])
+  const mapScopedItems = useMemo(
+    () => filterItemsByMapBounds(items, Boolean(mapFilterEnabled), mapBounds ?? null),
+    [items, mapBounds, mapFilterEnabled],
   )
-  const [inputValue, setInputValue] = useState<string>(initialKeyword || initialVisitedRegion || initialVisitedCountry)
-  const [displayedItems, setDisplayedItems] = useState<ItemType[]>(items)
-  const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
-  const resolvedPersonDetailsName = useMemo(() => {
-    if (personDetailsName) return personDetailsName
-    if (!gallery || !keyword) return null
-    return resolveUniquePersonName(items, keyword)
-  }, [gallery, items, keyword, personDetailsName])
-  const personDetailsHref = gallery && resolvedPersonDetailsName
-    ? `/${gallery}/persons/details?${new URLSearchParams({ person: resolvedPersonDetailsName }).toString()}`
-    : null
 
-  const currentVisitedFilter = useMemo<VisitedPlace | null>(() => {
-    if (!initialVisitedCountry) {
+  const mapScopedMetadata = useMemo(
+    () => mapFilterEnabled
+      ? buildFilterMetadataFromLocations(mapScopedItems, buildSearchOptions(mapScopedItems))
+      : null,
+    [mapFilterEnabled, mapScopedItems],
+  )
+
+  const scopedIndexedKeywords = mapScopedMetadata?.indexedKeywords ?? indexedKeywords
+  const scopedPersonOptions = mapScopedMetadata?.personOptions ?? personOptions
+  const scopedTagOptions = mapScopedMetadata?.tagOptions ?? tagOptions
+
+  const searchOptions = useMemo(
+    () => buildSearchOptions(mapScopedItems, scopedIndexedKeywords),
+    [mapScopedItems, scopedIndexedKeywords],
+  )
+
+  const knownPeople = useMemo(
+    () => Array.from(new Set([
+      ...scopedPersonOptions.map((option) => option.value),
+      ...mapScopedItems.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
+    ])),
+    [mapScopedItems, scopedPersonOptions],
+  )
+
+  const knownTags = useMemo(
+    () => Array.from(new Set(scopedTagOptions.map((option) => option.value))),
+    [scopedTagOptions],
+  )
+
+  const fallbackSelectedOption = useMemo(() => {
+    const preferredPersonDetailsName = personDetailsName
+
+    if (!preferredPersonDetailsName || searchParams?.get('query')) {
       return null
     }
 
-    return {
-      country: initialVisitedCountry,
-      region: initialVisitedRegion || null,
+    return searchOptions.find((option) => (
+      option.value === preferredPersonDetailsName && !option.visitedPlace
+    )) ?? {
+      label: preferredPersonDetailsName,
+      value: preferredPersonDetailsName,
     }
-  }, [initialVisitedCountry, initialVisitedRegion])
+  }, [personDetailsName, searchOptions, searchParams])
 
-  const visitedOptions = useMemo(
-    () => buildVisitedKeywordOptions(
-      items
-        .filter((item): item is ItemType & FilenameItem & Required<Pick<FilenameItem, 'city'>> => (
-          typeof item.city === 'string' && hasFilename(item)
-        ))
-        .map((item) => ({
-          city: item.city,
-          filename: item.filename,
-          photoDate: item.photoDate ?? null,
-        })),
-    ),
-    [items],
+  const visibleItemsRef = useRef<ItemType[]>(items)
+
+  const {
+    inputValue,
+    keyword,
+    selectedOption,
+    setKeyword,
+    applyKeywordToUrl,
+    handleClear,
+    handleClearAll,
+    handleInputValueChange,
+    handleSelectedOptionChange,
+    handleSubmit,
+  } = useSearchController<ItemType>({
+    itemsRef: visibleItemsRef,
+    searchOptions,
+    fallbackSelectedOption,
+    refImageGallery,
+    setMemoryIndex,
+    selectById,
+    mapFilterEnabled,
+    onClearMapFilter,
+    onClearExtraFilters,
+    extraQueryParamsToClear: ownedPersonFilter
+      ? ['person', ...extraQueryParamsToClear.filter((key) => key !== 'person')]
+      : extraQueryParamsToClear,
+    onStructuredOptionSubmit,
+    ownedPersonFilter,
+    knownPeople,
+    knownTags,
+  })
+
+  const queryContext = useMemo<FilterQueryContext>(() => ({
+    countries: Array.from(new Set(searchOptions.flatMap(option => option.visitedPlace ? [option.visitedPlace.country] : []))),
+    regions: Array.from(new Set(searchOptions.flatMap(option => option.visitedPlace?.region ? [option.visitedPlace.region] : []))),
+    people: knownPeople,
+    tags: knownTags,
+    keywords: scopedIndexedKeywords
+      .filter(option => !option.filterKind || option.filterKind === 'keyword')
+      .map(option => option.value),
+  }), [knownPeople, knownTags, scopedIndexedKeywords, searchOptions])
+
+  const filtered = useMemo(
+    () => filterItemsByQuery(items, parseFilterQuery(keyword, queryContext)),
+    [items, keyword, queryContext],
   )
 
-  const searchOptions = useMemo(() => {
-    const options = new Map<string, IndexedKeywords>()
-
-    indexedKeywords.forEach((option) => {
-      options.set(option.value, option)
-    })
-
-    visitedOptions.forEach((option) => {
-      options.set(option.value, option)
-    })
-
-    return [...options.values()].sort((left, right) => left.value.localeCompare(right.value))
-  }, [indexedKeywords, visitedOptions])
-
-  const activeVisitedOption = useMemo(() => {
-    if (!currentVisitedFilter) return null
-
-    return searchOptions.find((option) => {
-      if (!option.visitedPlace) return false
-      return matchesVisitedPlace(option.visitedPlace, currentVisitedFilter)
-        && formatVisitedPlace(option.visitedPlace) === formatVisitedPlace(currentVisitedFilter)
-    }) ?? {
-      label: formatVisitedPlace(currentVisitedFilter),
-      value: formatVisitedPlace(currentVisitedFilter),
-      visitedPlace: currentVisitedFilter,
-    }
-  }, [currentVisitedFilter, searchOptions])
-
-  const getCurrentParams = useCallback(() => {
-    const serializedParams = typeof searchParams?.toString === 'function'
-      ? searchParams.toString()
-      : ''
-    const params = serializedParams && serializedParams !== '[object Object]'
-      ? new URLSearchParams(serializedParams)
-      : new URLSearchParams()
-
-    if (params.size > 0) {
-      return params
-    }
-
-    ['keyword', 'select', 'visitedCountry', 'visitedRegion'].forEach((key) => {
-      const value = searchParams?.get(key)
-      if (value) {
-        params.set(key, value)
-      }
-    })
-
-    return params
-  }, [searchParams])
-
-  const getNextPath = useCallback((nextKeyword: string, select?: string | null, nextVisitedPlace?: VisitedPlace | null) => {
-    const params = getCurrentParams()
-
-    if (nextKeyword) {
-      params.set('keyword', nextKeyword)
-    } else {
-      params.delete('keyword')
-    }
-
-    if (select) {
-      params.set('select', select)
-    } else {
-      params.delete('select')
-    }
-
-    if (nextVisitedPlace === null) {
-      params.delete('visitedCountry')
-      params.delete('visitedRegion')
-    } else if (nextVisitedPlace) {
-      params.set('visitedCountry', nextVisitedPlace.country)
-      if (nextVisitedPlace.region) {
-        params.set('visitedRegion', nextVisitedPlace.region)
-      } else {
-        params.delete('visitedRegion')
-      }
-    }
-
-    const query = params.toString()
-    return query ? `${pathname}?${query}` : pathname
-  }, [getCurrentParams, pathname])
-
-  const visitedFiltered = useMemo(() => {
-    if (!currentVisitedFilter) return items
-
-    const regionCountryIndex = buildVisitedRegionCountryIndex(
-      items.filter((item): item is ItemType & Required<Pick<SearchableItem, 'city'>> => typeof item.city === 'string'),
-    )
-
-    return items.filter((item) => {
-      const itemVisitedPlace = item.visitedPlace ?? (typeof item.city === 'string'
-        ? getVisitedPlace({ city: item.city }, regionCountryIndex)
-        : null)
-
-      return matchesVisitedPlace(itemVisitedPlace, currentVisitedFilter)
-    })
-  }, [currentVisitedFilter, items])
-
-  const filtered = useMemo(() => {
-    if (!keyword) return visitedFiltered
-    return visitedFiltered.filter((item) => matchCorpus(item.corpus, keyword))
-  }, [visitedFiltered, keyword])
-
-  // Count of currently visible thumbnails (consumer can override this if needed)
-  const [visibleCount, setVisibleCount] = useState<number>(filtered.length)
-
-  // Make setVisibleCount stable to prevent useEffect loops
-  const setVisibleCountStable = useCallback((count: number) => {
-    setVisibleCount((prev) => (prev === count ? prev : count))
-  }, [])
-
-  // Sync visibleCount when filtered items change (avoids state-update-during-render)
-  useEffect(() => {
-    setVisibleCount((prev) => (prev === filtered.length ? prev : filtered.length))
-  }, [filtered.length])
-
-  const itemsToUse = useMemo(
-    () => (displayedItems.length ? displayedItems : filtered),
-    [displayedItems, filtered],
+  const visibleItems = useMemo(
+    () => filterItemsByMapBounds(filtered, Boolean(mapFilterEnabled), mapBounds ?? null),
+    [filtered, mapBounds, mapFilterEnabled],
   )
 
-  const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (selectedOption?.visitedPlace) {
-      setKeyword('')
-      setMemoryIndex?.(0)
-      router.push(getNextPath('', null, selectedOption.visitedPlace))
-      return
-    }
+  const {
+    itemsToUse,
+    setDisplayedItems,
+    visibleCount,
+  } = useVisibleSearchState(visibleItems, visibleItemsRef)
 
-    const newKeyword = selectedOption?.value ?? ''
-    setKeyword(newKeyword)
-    setMemoryIndex?.(0)
-    router.push(getNextPath(newKeyword))
-  }, [selectedOption, setMemoryIndex, router, getNextPath])
-
-  const handleClear = useCallback(() => {
-    // Get current photo ID from displayed items (respects map filter)
-    const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
-    const currentItem = itemsToUse[currentIndex]
-    const identifier = currentItem && hasFilename(currentItem) ? getPrimaryFilename(currentItem.filename) : ''
-
-    if (selectById && identifier) {
-      selectById(identifier, true)
-    }
-
-    // Clear search state
-    setKeyword('')
-    setSelectedOption(null)
-    setInputValue('')
-
-    // Update URL to reflect the selection (use filename for global uniqueness)
-    router.replace(getNextPath('', identifier, null))
-  }, [refImageGallery, displayedItems, filtered, selectById, router, getNextPath])
-
-  const handleClearVisitedFilter = useCallback(() => {
-    const currentIndex = refImageGallery?.current?.getCurrentIndex?.() ?? 0
-    const currentItem = itemsToUse[currentIndex]
-    const identifier = currentItem && hasFilename(currentItem) ? getPrimaryFilename(currentItem.filename) : ''
-
-    if (selectById && identifier) {
-      selectById(identifier, true)
-    }
-
-    setSelectedOption(keyword ? { label: keyword, value: keyword } : null)
-    setInputValue(keyword)
-    router.replace(getNextPath(keyword, identifier, null))
-  }, [refImageGallery, itemsToUse, selectById, keyword, router, getNextPath])
-
-  const applyKeywordToUrl = useCallback((nextKeyword: string) => {
-    setKeyword(nextKeyword)
-    setSelectedOption(nextKeyword ? { label: nextKeyword, value: nextKeyword } : null)
-    setInputValue(nextKeyword)
-    router.replace(getNextPath(nextKeyword))
-  }, [router, getNextPath])
+  const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
+  const selectedQueryPerson = useMemo(
+    () => getConjunctiveFilterTerms(keyword, queryContext).get('person') ?? null,
+    [keyword, queryContext],
+  )
+  const { detailActions } = useSearchDetailActions({
+    gallery,
+    items,
+    keyword,
+    personDetailsName: selectedQueryPerson ?? personDetailsName,
+    trailingAction,
+  })
 
   const handleRemoveKeywordToken = useCallback((tokenIndex: number) => {
     if (parsedKeyword.isAdvanced) {
@@ -336,7 +212,7 @@ export default function useSearch<ItemType extends SearchableItem>({
       return
     }
 
-    const remaining = parsedKeyword.tokens.filter((_, i) => i !== tokenIndex)
+    const remaining = parsedKeyword.tokens.filter((_, index) => index !== tokenIndex)
     if (remaining.length === 0) {
       handleClear()
       return
@@ -361,194 +237,71 @@ export default function useSearch<ItemType extends SearchableItem>({
     displayedItems: itemsToUse,
     pathname,
     currentIndex: memoryIndex,
+    mapBounds,
   })
 
-  const keywordResultLabel = keyword ? <> for &quot;{keyword}&quot;</> : null
-  const activeVisitedFilterLabel = currentVisitedFilter
-    ? formatVisitedPlace(currentVisitedFilter)
-    : visitedFilterLabel
-  const detailActions = personDetailsHref || trailingAction
-    ? (
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-          {personDetailsHref ? <Link href={personDetailsHref}>Person details</Link> : null}
-          {trailingAction}
-        </Stack>
-      )
-    : null
+  const hasExtraFilters = Boolean(extraFiltersActive)
+  const isUrlMapScope = Boolean(
+    mapFilterEnabled
+    && mapBounds
+    && areMapBoundsEqual(mapBounds, urlMapBounds),
+  )
+  const visibleTotalCount = mapFilterEnabled && !isUrlMapScope
+    ? mapScopedItems.length
+    : totalCount ?? items.length
+  const localActiveFacetCounts = useMemo(
+    () => getActiveFacetCounts({
+      items: mapScopedItems,
+      query: keyword,
+      context: queryContext,
+      parsedQuery: parsedKeyword,
+    }),
+    [keyword, mapScopedItems, parsedKeyword, queryContext],
+  )
+  const activeFacetCounts = initialActiveFacetCounts && (!mapFilterEnabled || isUrlMapScope)
+    ? initialActiveFacetCounts
+    : localActiveFacetCounts
 
   const searchBox = (
-    <form onSubmit={handleSubmit}>
-      <div className={styles.row}>
-        <h3 className={styles.searchCount}>
-          Search results {visibleCount} of {items.length}
-          {keywordResultLabel}
-        </h3>
-        {keyword && (
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            {parsedKeyword.mode && (
-              <Chip size="sm" color="primary" variant="outlined">
-                {parsedKeyword.mode}
-              </Chip>
-            )}
-            {parsedKeyword.isAdvanced ? (
-              <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-                <Chip size="sm" color="primary" variant="soft">
-                  Advanced query
-                </Chip>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="plain"
-                  onClick={handleClear}
-                  title="Clear search and view adjacent photos"
-                  aria-label="Clear advanced query"
-                >
-                  ×
-                </Button>
-              </Stack>
-            ) : (
-              parsedKeyword.tokens.map((token, idx) => (
-                <Stack key={`${token}-${idx}`} direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-                  <Chip size="sm" color="primary" variant="soft">
-                    {token}
-                  </Chip>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="plain"
-                    onClick={() => handleRemoveKeywordToken(idx)}
-                    title={`Remove keyword token ${token}`}
-                    aria-label={`Remove keyword token ${token}`}
-                  >
-                    ×
-                  </Button>
-                </Stack>
-              ))
-            )}
-          </Stack>
-        )}
-        {activeVisitedFilterLabel && (
-          <Stack direction="row" spacing={0.25} sx={{ alignItems: 'center' }}>
-            <Chip size="sm" color="primary" variant="soft">
-              {activeVisitedFilterLabel}
-            </Chip>
-            <Button
-              type="button"
-              size="sm"
-              variant="plain"
-              onClick={handleClearVisitedFilter}
-              title={`Clear visited filter ${activeVisitedFilterLabel}`}
-              aria-label={`Clear visited filter ${activeVisitedFilterLabel}`}
-            >
-              ×
-            </Button>
-          </Stack>
-        )}
-        {mapFilterEnabled && (
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-            <Chip size="sm" color="primary" variant="soft">
-              Map filter
-            </Chip>
-            <Button
-              type="button"
-              size="sm"
-              variant="plain"
-              onClick={() => onClearMapFilter?.()}
-              title="Clear map filter"
-              aria-label="Clear map filter"
-            >
-              ×
-            </Button>
-          </Stack>
-        )}
-        <AutoComplete
-          className={styles.autocomplete}
-          options={searchOptions}
-          onChange={setSelectedOption}
-          value={selectedOption}
-          inputValue={inputValue}
-          onInputChange={setInputValue}
-        />
-        <Button
-          type="submit"
-          title="`&&` is AND; `||` is OR; for example `breakfast||lunch`"
-          color="neutral"
-        >
-          Filter
-        </Button>
-        {(keyword || activeVisitedFilterLabel) && (
-          <Button
-            type="button"
-            onClick={handleClear}
-            color="primary"
-            variant="soft"
-            title="Clear search and view adjacent photos"
-          >
-            Clear
-          </Button>
-        )}
-        {canBookmark && <BookmarkButton />}
-        {detailActions}
-      </div>
-    </form>
+    <Controls
+      summaryLabel={summaryLabel}
+      visibleCount={visibleCount}
+      totalCount={visibleTotalCount}
+      keyword={keyword}
+      parsedKeyword={parsedKeyword}
+      activeFacetCounts={activeFacetCounts.tokenCounts}
+      advancedFacetCount={activeFacetCounts.advancedQueryCount}
+      mapFilterEnabled={mapFilterEnabled}
+      mapFacetCount={mapFilterEnabled ? visibleTotalCount : undefined}
+      searchOptions={searchOptions}
+      selectedOption={selectedOption}
+      inputValue={inputValue}
+      canBookmark={canBookmark}
+      detailActions={detailActions}
+      BookmarkButton={BookmarkButton}
+      onSubmit={handleSubmit}
+      onSelectedOptionChange={handleSelectedOptionChange}
+      onInputValueChange={handleInputValueChange}
+      onRemoveKeywordToken={handleRemoveKeywordToken}
+      onClear={handleClear}
+      onClearMapFilter={onClearMapFilter}
+      extraFilterChips={extraFilterChips}
+      extraFiltersActive={hasExtraFilters}
+      onClearAll={handleClearAll}
+      clearActionLabel={mapFilterEnabled || hasExtraFilters ? 'Clear all' : 'Clear'}
+      clearActionTitle={mapFilterEnabled || hasExtraFilters
+        ? 'Clear active filters and view adjacent photos'
+        : 'Clear search and view adjacent photos'}
+    />
   )
-
-  useEffect(() => {
-    const nextKeyword = searchParams?.get('keyword') ?? ''
-    setKeyword((previousKeyword) => (previousKeyword === nextKeyword ? previousKeyword : nextKeyword))
-
-    if (nextKeyword) {
-      setSelectedOption((previousOption) => {
-        if (
-          previousOption
-          && previousOption.value === nextKeyword
-          && !previousOption.visitedPlace
-        ) {
-          return previousOption
-        }
-
-        return { label: nextKeyword, value: nextKeyword }
-      })
-      setInputValue((previousInputValue) => (previousInputValue === nextKeyword ? previousInputValue : nextKeyword))
-      return
-    }
-
-    if (activeVisitedOption) {
-      setSelectedOption((previousOption) => {
-        const nextVisitedPlace = activeVisitedOption.visitedPlace
-
-        if (
-          nextVisitedPlace
-          &&
-          previousOption
-          && previousOption.value === activeVisitedOption.value
-          && previousOption.visitedPlace
-          && matchesVisitedPlace(previousOption.visitedPlace, nextVisitedPlace)
-          && matchesVisitedPlace(nextVisitedPlace, previousOption.visitedPlace)
-        ) {
-          return previousOption
-        }
-
-        return activeVisitedOption
-      })
-      setInputValue((previousInputValue) => (
-        previousInputValue === activeVisitedOption.value
-          ? previousInputValue
-          : activeVisitedOption.value
-      ))
-      return
-    }
-
-    setSelectedOption((previousOption) => (previousOption === null ? previousOption : null))
-    setInputValue((previousInputValue) => (previousInputValue === '' ? previousInputValue : ''))
-  }, [activeVisitedOption, searchParams])
 
   return {
     filtered,
+    visibleItems,
+    itemsToUse,
     keyword,
     setKeyword,
     searchBox,
-    setVisibleCount: setVisibleCountStable,
     setDisplayedItems,
   }
 }

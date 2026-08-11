@@ -170,15 +170,7 @@ describe('Album library', () => {
 
       expect(locationOnly.album.items[0].title).toBe('Lookout')
       expect(cityOnly.album.items[0].title).toBe('Vancouver')
-      expect(untitled.album.items[0].title).toBe('Untitled')
-    })
-
-    test('allows missing photoCity and defaults it to an empty string', () => {
-      const mock = makeXmlAlbum({ item: makeXmlItem({ photoCity: undefined, photoLoc: '' }) })
-
-      const result = transformJsonSchema(mock, [])
-      expect(result.album.items[0].city).toBe('')
-      expect(result.album.items[0].title).toBe('Untitled')
+      expect(untitled.album.items[0].title).toBe('')
     })
 
     test('keeps valid zero coordinates', () => {

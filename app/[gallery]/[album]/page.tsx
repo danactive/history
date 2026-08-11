@@ -2,15 +2,21 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
-import getAlbum from '../../../src/lib/album'
+import { getAlbumData } from '../../../src/lib/album-page'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
 import getAlbums from '../../../src/lib/albums'
 import getGalleries from '../../../src/lib/galleries'
-import { generateClusters } from '../../../src/lib/generate-clusters'
-import indexKeywords, { addGeographyToSearch } from '../../../src/lib/search'
-import type { Album } from '../../../src/types/pages'
+import {
+  buildClusteredPageData,
+  resolveRouteInputs,
+  type AlbumRouteParams,
+  type RouteParamsProps,
+  type RouteProps,
+} from '../../../src/lib/server/page-route'
+import { getQueryFromSearchParams, type QuerySearchParams } from '../../../src/lib/server/search-params'
 
 export async function generateMetadata(
-  { params }: { params: Promise<Album.Params> },
+  { params }: RouteParamsProps<AlbumRouteParams>,
 ): Promise<Metadata> {
   const album = (await params).album
   return { title: `Album ${album} - History App` }
@@ -29,32 +35,38 @@ export async function generateStaticParams() {
   return buildStaticPaths()
 }
 
-async function getAlbumItems({ album, gallery }: Album.Params): Promise<Album.ItemData> {
-  const { album: { items, meta } } = await getAlbum(gallery, album)
-  const preparedItems = items.map((item) => ({
-    ...item,
-    search: addGeographyToSearch(item),
-    corpus: [item.description, item.caption, item.location, item.city, item.search].join(' '),
-  }))
-  return { gallery, album, items: preparedItems, meta, ...indexKeywords(preparedItems) }
-}
-
-export default async function AlbumServer(props: { params: Promise<Album.Params> }) {
-  const params = await props.params
-  const { album, gallery } = params
-
-  const { items, meta, indexedKeywords } = await getAlbumItems({ album, gallery })
-  const clusterMarkers = generateClusters(items)
+export default function AlbumServer(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <AlbumPageComponent
-        gallery={gallery}
-        album={album}
-        items={items}
-        meta={meta}
-        indexedKeywords={indexedKeywords}
-        clusteredMarkers={clusterMarkers}
-      />
+      <AlbumServerContent {...props} />
     </Suspense>
+  )
+}
+
+async function AlbumServerContent(props: RouteProps<AlbumRouteParams, QuerySearchParams>) {
+  const {
+    params: { album, gallery },
+    searchParams,
+  } = await resolveRouteInputs(props.params, props.searchParams)
+  const query = getQueryFromSearchParams(searchParams)
+  const mapBounds = parseMapBoundsParam(searchParams.bbox)
+
+  const {
+    items, meta, indexedKeywords, personOptions, tagOptions, activeFacetCounts, totalItemCount,
+    clusteredMarkers,
+  } = buildClusteredPageData(await getAlbumData({ album, gallery, query, mapBounds }))
+  return (
+    <AlbumPageComponent
+      gallery={gallery}
+      album={album}
+      items={items}
+      totalItemCount={totalItemCount}
+      meta={meta}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+    />
   )
 }

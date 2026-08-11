@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 
 import config from '../../../src/models/config'
-import { getExt } from '../index'
+import { compareItemOldestFirst, getExt } from '../index'
 
 describe('Utilities', () => {
   describe('getExt', () => {
@@ -29,5 +29,14 @@ describe('Utilities', () => {
       expect(getExt('2021-12-25.thumb.JPG')).toBe('jpg')
       expect(getExt('2021-12-25..JpG')).toBe('jpg')
     })
+  })
+
+  test('falls back to the filename when a photo date is blank', () => {
+    const items = [
+      { id: 'dated', filename: '2021-01-01-01.jpg', photoDate: '2021-01-01' },
+      { id: 'fallback', filename: '2020-01-01-01.jpg', photoDate: '' },
+    ]
+
+    expect(items.sort(compareItemOldestFirst).map(item => item.id)).toEqual(['fallback', 'dated'])
   })
 })

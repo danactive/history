@@ -1,0 +1,70 @@
+.root {
+  display: grid;
+  gap: 1rem;
+}
+
+.controls {
+  display: grid;
+  gap: 0.75rem;
+  min-height: 11.25rem;
+}
+
+.summaryBar {
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: #404040;
+}
+
+.subheadingBar {
+  width: 70%;
+  height: 2.25rem;
+  border-radius: 0.625rem;
+  background: #3a3a3a;
+}
+
+.chips {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  height: 2.25rem;
+  border-radius: 999px;
+  background: #4a4a4a;
+}
+
+.chipWide {
+  width: 11.25rem;
+}
+
+.chipMedium {
+  width: 8.75rem;
+}
+
+.viewer {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  min-height: 80vh;
+}
+
+.galleryPane {
+  min-height: 80vh;
+  background: #1d1d1d;
+}
+
+.mapPane {
+  min-height: 80vh;
+  background: #252525;
+}
+
+@media (max-width: 900px) {
+  .viewer {
+    grid-template-columns: 1fr;
+  }
+
+  .galleryPane,
+  .mapPane {
+    min-height: 40vh;
+  }
+}

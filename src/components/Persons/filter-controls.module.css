@@ -1,0 +1,26 @@
+.root {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.selectRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.selectWrap {
+  flex: 1 1 13rem;
+  min-width: 12rem;
+}
+
+@media (max-width: 640px) {
+  .selectRow {
+    align-items: stretch;
+  }
+
+  .selectWrap {
+    min-width: 100%;
+  }
+}

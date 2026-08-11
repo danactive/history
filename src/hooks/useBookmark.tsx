@@ -2,12 +2,16 @@
 
 import { Button } from '@mui/joy'
 import type { RefObject } from 'react'
+import { pillActionButtonSx } from '../components/Search/control-styles'
+import type { Bounds } from '../lib/map-filtering'
+import { mapBoundsSearchParam, serializeMapBounds } from '../lib/map-filter-query'
 
 interface UseBookmarkProps<ItemType> {
   refImageGallery?: RefObject<any>
   displayedItems: ItemType[]
   pathname: string
   currentIndex?: number
+  mapBounds?: Bounds | null
 }
 
 export default function useBookmark<ItemType>({
@@ -15,6 +19,7 @@ export default function useBookmark<ItemType>({
   displayedItems,
   pathname,
   currentIndex,
+  mapBounds,
 }: UseBookmarkProps<ItemType>) {
 
   const handleBookmark = async () => {
@@ -33,6 +38,12 @@ export default function useBookmark<ItemType>({
 
     const params = new URLSearchParams(window.location.search)
     params.set('select', identifier)
+    // A bookmark deliberately snapshots the local map filter without routing during map movement.
+    if (mapBounds) {
+      params.set(mapBoundsSearchParam, serializeMapBounds(mapBounds))
+    } else {
+      params.delete(mapBoundsSearchParam)
+    }
     const queryString = params.toString()
     const bookmarkUrl = `${window.location.origin}${pathname}${queryString ? `?${queryString}` : ''}`
 
@@ -66,6 +77,7 @@ export default function useBookmark<ItemType>({
       color="primary"
       variant="soft"
       title="Copy bookmark URL to clipboard"
+      sx={pillActionButtonSx}
     >
       Bookmark
     </Button>

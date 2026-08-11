@@ -1,5 +1,5 @@
 import type { GalleryAlbum, IndexedKeywords, Item } from '../types/common'
-import { getPrimaryFilename } from '../utils'
+import { addYearToSearch, getItemYearFromFilename } from './domains/years'
 
 /**
  * Index search keywords from search xml element and dedupe
@@ -8,7 +8,7 @@ import { getPrimaryFilename } from '../utils'
  * @param {string} items.search keyword
  * @returns {{ indexedKeywords }}
  */
-function indexKeywords(items: { search: Item['search'] | GalleryAlbum['search'] }[]) {
+function indexKeywords(items: { search?: Item['search'] | GalleryAlbum['search'] }[]) {
   const summedKeywords = items.reduce((out, item) => {
     item.search?.split(', ').forEach((val) => {
 
@@ -53,13 +53,4 @@ export function addGeographyToSearch(item: Item) {
   return item.search === null ? country : `${item.search}, ${country}`
 }
 
-export function getItemYearFromFilename(item: Item): string {
-  const filename = getPrimaryFilename(item.filename)
-  const year = filename?.toString?.().substring?.(0, 4)
-  return year && /^\d{4}$/.test(year) ? year : ''
-}
-
-export function addYearToSearch(search: string, item: Item): string {
-  const year = getItemYearFromFilename(item)
-  return year ? `${search}, ${year}` : search
-}
+export { addYearToSearch, getItemYearFromFilename }

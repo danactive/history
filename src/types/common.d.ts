@@ -151,6 +151,12 @@ interface ServerSidePhotoItem extends Item {
   corpus: string;
 }
 
+interface ServerSideTodayItem extends Item {
+  album?: NonNullable<AlbumMeta['albumName']>;
+  corpus: string;
+  coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
+}
+
 interface ServerSideAllItem extends Item {
   album?: NonNullable<AlbumMeta['albumName']>;
   gallery: Gallery;
@@ -162,7 +168,9 @@ interface ServerSideAllItem extends Item {
 type IndexedKeywords = {
   label: string;
   value: string;
+  filterKind?: 'keyword' | 'year' | 'tag' | 'person';
   visitedPlace?: VisitedPlace;
+  isCreateOption?: boolean;
 }
 
 // SplitViewer fullscreenMap
@@ -199,6 +207,7 @@ export type {
   XmlGalleryAlbum,
   GalleryAlbum,
   ServerSideAlbumItem,
+  ServerSideTodayItem,
   ServerSideAllItem,
   XmlItem,
   RawXmlItem,

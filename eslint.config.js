@@ -7,7 +7,7 @@ import testingLibrary from 'eslint-plugin-testing-library'
 
 export default [
   { // needs to be its own array index or is not applyed
-    ignores: ['node_modules/', '.next', 'dist'],
+    ignores: ['node_modules/', '.next', 'dist', 'next-env.d.ts'],
   },
   {
     plugins: {

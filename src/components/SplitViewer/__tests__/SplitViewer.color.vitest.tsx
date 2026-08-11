@@ -1,14 +1,7 @@
-import React from 'react'
-import { render } from '@testing-library/react'
+import React, { createRef } from 'react'
+import { act, fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-
-// Mock use-color-thief to synchronously provide a color
-vi.mock('use-color-thief', () => ({
-  default: () => ({
-    color: [255, 200, 100],
-    palette: null,
-  }),
-}))
+import type { ImageGalleryRef } from 'react-image-gallery'
 
 // Stub next/image SSR to avoid image optimization in tests
 vi.mock('next/image', () => ({
@@ -21,11 +14,33 @@ vi.mock('next/image', () => ({
 
 import type { Item } from '../../../types/common.d'
 import type { ClusteredMarkers } from '../../../lib/generate-clusters'
-import type { Viewed } from '../../../hooks/useMemory'
-import SplitViewer from '../index'
+import type { SelectionCoordinator } from '../../../hooks/useSelectionCoordinator'
+import SplitViewer, { getGalleryWindowStart } from '../index'
 
-describe('SplitViewer colour-thief background', () => {
-  it('applies background style from useColorThief hook', () => {
+function createItem(index: number): Item {
+  return {
+    id: String(index),
+    caption: `Photo ${index}`,
+    filename: `photo-${index}.jpg`,
+    photoDate: null,
+    city: 'Test City',
+    location: null,
+    description: null,
+    search: null,
+    persons: null,
+    title: `Photo ${index}`,
+    coordinates: null,
+    coordinateAccuracy: null,
+    thumbPath: `/thumb-${index}.jpg`,
+    photoPath: `/photo-${index}.jpg`,
+    mediaPath: `/photo-${index}.jpg`,
+    videoPaths: null,
+    reference: null,
+  }
+}
+
+describe('SplitViewer rendering', () => {
+  it('renders without injecting a dynamic background style tag', () => {
     const items: Item[] = [
       {
         id: '1',
@@ -54,28 +69,69 @@ describe('SplitViewer colour-thief background', () => {
       generatedAt: new Date().toISOString(),
       itemCount: 0,
     }
-    const setViewedMock: Viewed = vi.fn()
-    const setMemoryIndexMock = vi.fn()
     const onToggleMapFilterMock = vi.fn()
     const onMapBoundsChangeMock = vi.fn()
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item: items[0], index: 0, revision: 0, origin: 'filter', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
 
     const { container } = render(
       <SplitViewer
         clusteredMarkers={clustered}
         items={items}
         refImageGallery={null}
-        setViewed={setViewedMock}
         memoryIndex={0}
-        setMemoryIndex={setMemoryIndexMock}
+        selectionCoordinator={selectionCoordinator}
         mapFilterEnabled={false}
         onToggleMapFilter={onToggleMapFilterMock}
         onMapBoundsChange={onMapBoundsChangeMock}
       />,
     )
 
-    // Assert a <style> tag was injected with the expected background color
-    const styleEl = container.querySelector('style')
-    expect(styleEl).toBeTruthy()
-    expect(styleEl?.textContent).toContain('background: rgb(255, 200, 100)')
+    expect(container.querySelector('.image-gallery')).toBeTruthy()
+    expect(container.querySelector('style')).toBeNull()
+  })
+
+  it('bounds a large gallery while preserving global selection indices', () => {
+    const items = Array.from({ length: 100 }, (_, index) => createItem(index))
+    const refImageGallery = createRef<ImageGalleryRef>()
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item: items[50], index: 50, revision: 0, origin: 'filter', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: items.length,
+    }
+
+    const { container } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={items}
+        refImageGallery={refImageGallery}
+        memoryIndex={50}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    expect(getGalleryWindowStart(items.length, 50)).toBe(35)
+    expect(container.querySelectorAll('.image-gallery-slide')).toHaveLength(31)
+
+    fireEvent.keyDown(window, { key: 'ArrowRight' })
+    expect(selectionCoordinator.selectIndex).toHaveBeenCalledWith(51, {
+      origin: 'gallery',
+      syncGallery: false,
+    })
+
+    act(() => refImageGallery.current?.slideToIndex(90))
+    expect(refImageGallery.current?.getCurrentIndex()).toBe(90)
+    expect(container.querySelectorAll('.image-gallery-slide').length).toBeLessThanOrEqual(31)
   })
 })

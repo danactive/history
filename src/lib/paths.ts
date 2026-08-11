@@ -10,6 +10,10 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
   return `${base}.${futureExt}`
 }
 
+function getMediaDirectory(filename: string) {
+  return filename.indexOf('-') >= 0 ? filename.split('-')[0] : 'false'
+}
+
 /**
  * Photo or thumbnail path to public folder on local filesystem
  * @param {object} filename file plus extension
@@ -19,7 +23,7 @@ const filenameAsJpg = (filename: Item['filename'][0]) => {
  */
 export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: 'original' | 'photo' | 'thumb') => {
   const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
-  const year = imageFilename.indexOf('-') >= 0 ? imageFilename.split('-')[0] : ''
+  const year = getMediaDirectory(imageFilename)
 
   return `/galleries/${gallery}/media/${rasterType}s/${year}/${imageFilename}`
 }
@@ -49,7 +53,7 @@ export const getVideoPaths = (filename: XmlItem['filename'], gallery: Gallery) =
   const filenames = Array.isArray(filename) ? filename : [filename]
 
   return filenames.map(fn => {
-    const year = fn.indexOf('-') >= 0 ? fn.split('-')[0] : ''
+    const year = getMediaDirectory(fn)
     return `/galleries/${gallery}/media/videos/${year}/${fn}`
   })
 }

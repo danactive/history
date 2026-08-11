@@ -4,7 +4,6 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import {
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -12,25 +11,31 @@ import {
 } from 'react'
 import Map, {
   Layer, Source,
+  type ErrorEvent as MapErrorEvent,
   type MapMouseEvent,
   type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
-
 import config from '../../../src/models/config'
+import type { ClusteredMarkers } from '../../lib/generate-clusters'
+import { areMapBoundsEqual } from '../../lib/map-filter-query'
+import type { Bounds } from '../../lib/map-filtering'
 import type { Item } from '../../types/common'
 import AlbumContext from '../Context'
 import {
   clusterCountLayer,
   clusterLabelLayer,
   clusterPointLayer,
-  selectedLabelLayer,
-  selectedPointLayer,
+  getUnclusterPointLayer,
   unclusterLabelLayer,
-  unclusterPointLayer,
 } from './layers'
+import {
+  getResolutionForZoom,
+  getMarkerSelectionKey,
+  transformMapOptions,
+  transformSourceOptions,
+} from './options'
+import { isTransientMapboxNetworkError } from './map-errors'
 import styles from './styles.module.css'
-import { getResolutionForZoom, transformMapOptions, transformSourceOptions } from './options'
-import type { ClusteredMarkers } from '../../lib/generate-clusters'
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
 
@@ -40,6 +45,8 @@ type SlippyMapProps = {
   centroid?: Item | null;
   mapRef?: RefObject<MapRef | null> | null;
   mapFilterEnabled?: boolean;
+  filterBounds?: Bounds | null;
+  onMapReady?: () => void;
   onToggleMapFilter?: () => void;
   onBoundsChange?: (bounds: [[number, number], [number, number]]) => void;
 }
@@ -50,6 +57,8 @@ export default function SlippyMap({
   centroid = null,
   mapRef,
   mapFilterEnabled = false,
+  filterBounds = null,
+  onMapReady,
   onToggleMapFilter,
   onBoundsChange,
 }: SlippyMapProps) {
@@ -60,35 +69,15 @@ export default function SlippyMap({
   const activeCentroid = centroid ?? (items.length > 0 ? items[0] : null)
   const coordinates: [number, number] = (activeCentroid?.coordinates as [number, number]) ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
-
-  // Track previous coordinates/zoom to avoid unnecessary updates
-  const prevCoordsRef = useRef<[number, number]>([0, 0])
-  const prevZoomRef = useRef<number>(metaZoom)
-
-  const [currentResolution, setCurrentResolution] = useState(() =>
-    getResolutionForZoom(zoom),
+  const initialViewport = useMemo(
+    () => transformMapOptions({ coordinates, zoom }),
+    [coordinates, zoom],
   )
-  const [currentZoom, setCurrentZoom] = useState(zoom)
 
-  const [viewport, setViewport] = useState(() => {
-    if (typeof window === 'undefined') return {} as any
-    return transformMapOptions({ coordinates, zoom })
-  })
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    // Only update if coordinates or zoom actually changed
-    const [prevLng, prevLat] = prevCoordsRef.current
-    const [lng, lat] = coordinates
-    const prevZoom = prevZoomRef.current
-    if (prevLng === lng && prevLat === lat && prevZoom === zoom) return
-    prevCoordsRef.current = coordinates
-    prevZoomRef.current = zoom
-    setViewport(transformMapOptions({ coordinates, zoom }))
-    setCurrentZoom(zoom)
-    setCurrentResolution(getResolutionForZoom(zoom))
-  }, [coordinates, zoom])
+  const currentResolutionRef = useRef(getResolutionForZoom(zoom))
+  const [currentResolution, setCurrentResolution] = useState(currentResolutionRef.current)
+  const applyingFilterBoundsRef = useRef(false)
+  const userMovedMapRef = useRef(false)
 
   const onClick = (event: MapMouseEvent) => {
     const feature = event.features && event.features[0]
@@ -103,6 +92,9 @@ export default function SlippyMap({
     const src = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
     src.getClusterExpansionZoom(clusterId, (err: any, expansionZoom?: number | null) => {
       if (err || expansionZoom == null) return
+      if (mapFilterEnabled) {
+        userMovedMapRef.current = true
+      }
       mapRef.current?.flyTo({
         center: coords,
         zoom: expansionZoom,
@@ -110,27 +102,31 @@ export default function SlippyMap({
     })
   }
 
-  // Pass current zoom to transformSourceOptions
+  // Keep all points stable through photo navigation and camera animation. The
+  // selected point is a separate one-feature source below.
   const geoJsonSource = useMemo(
     () => transformSourceOptions({
       items,
-      selected: { coordinates },
-      zoom: currentZoom,
+      resolution: currentResolution,
       clusteredMarkers,
     }),
-    [items, coordinates, currentZoom, clusteredMarkers],
+    [items, currentResolution, clusteredMarkers],
+  )
+
+  const selectedUnclusterPointLayer = useMemo(
+    () => getUnclusterPointLayer(getMarkerSelectionKey(activeCentroid?.coordinates ?? null)),
+    [activeCentroid?.coordinates],
   )
 
   const layerIds: string[] = []
   if (clusterPointLayer.id) layerIds.push(clusterPointLayer.id)
   if (clusterCountLayer.id) layerIds.push(clusterCountLayer.id)
   if (clusterLabelLayer.id) layerIds.push(clusterLabelLayer.id)
-  if (selectedPointLayer.id) layerIds.push(selectedPointLayer.id)
-  if (unclusterPointLayer.id) layerIds.push(unclusterPointLayer.id)
+  if (selectedUnclusterPointLayer.id) layerIds.push(selectedUnclusterPointLayer.id)
   if (unclusterLabelLayer.id) layerIds.push(unclusterLabelLayer.id)
 
   // Helper to read current bounds immediately
-  const readBounds = (): [[number, number],[number, number]] | null => {
+  const readBounds = useCallback((): [[number, number],[number, number]] | null => {
     try {
       const mapInstance = mapRef?.current?.getMap()
       if (!mapInstance) return null
@@ -140,7 +136,36 @@ export default function SlippyMap({
     } catch {
       return null
     }
-  }
+  }, [mapRef])
+
+  const applyFilterBounds = useCallback(() => {
+    if (!mapFilterEnabled || !filterBounds) return
+
+    const currentBounds = readBounds()
+    if (areMapBoundsEqual(currentBounds, filterBounds)) return
+
+    applyingFilterBoundsRef.current = true
+    userMovedMapRef.current = false
+    const map = mapRef?.current
+    if (!map) return
+
+    map.fitBounds(filterBounds, { duration: 0 })
+
+    const fittedZoom = map.getZoom()
+    const nextResolution = getResolutionForZoom(fittedZoom)
+    currentResolutionRef.current = nextResolution
+    setCurrentResolution(nextResolution)
+  }, [filterBounds, mapFilterEnabled, mapRef, readBounds])
+
+  const handleMapLoad = useCallback(() => {
+    applyFilterBounds()
+    onMapReady?.()
+  }, [applyFilterBounds, onMapReady])
+
+  const handleMapError = useCallback((event: MapErrorEvent) => {
+    if (isTransientMapboxNetworkError(event.error)) return
+    console.error(event.error)
+  }, [])
 
   // Wrap toggle so enabling the filter captures bounds instantly (no move needed)
   const handleToggleClick = () => {
@@ -153,29 +178,31 @@ export default function SlippyMap({
     // When disabling, onToggleMapFilter clears bounds already
   }
 
-  const moveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handleMove = useCallback((evt: ViewStateChangeEvent) => {
-    setViewport(evt.viewState)
+    const nextResolution = getResolutionForZoom(evt.viewState.zoom)
+    if (nextResolution !== currentResolutionRef.current) {
+      currentResolutionRef.current = nextResolution
+      setCurrentResolution(nextResolution)
+    }
+  }, [])
 
-    // Update zoom and check if resolution changed
-    const newZoom = evt.viewState.zoom
-    setCurrentZoom(newZoom)
-    const newResolution = getResolutionForZoom(newZoom)
-    if (newResolution !== currentResolution) {
-      setCurrentResolution(newResolution)
+  const handleMoveEnd = useCallback(() => {
+    if (!mapFilterEnabled || !onBoundsChange) return
+
+    // Fitting a bookmarked bbox fires map move events. It must not replace the
+    // saved bounds with Mapbox's aspect-ratio-adjusted viewport.
+    if (applyingFilterBoundsRef.current) {
+      applyingFilterBoundsRef.current = false
+      userMovedMapRef.current = false
+      return
     }
 
-    if (!mapFilterEnabled || !onBoundsChange) return
-    if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
-    moveTimeoutRef.current = setTimeout(() => {
-      const b = readBounds()
-      if (b) onBoundsChange(b)
-    }, 100)
-  }, [mapFilterEnabled, onBoundsChange, mapRef, currentResolution])
+    if (!userMovedMapRef.current) return
+    userMovedMapRef.current = false
 
-  useEffect(() => () => {
-    if (moveTimeoutRef.current) clearTimeout(moveTimeoutRef.current)
-  }, [])
+    const bounds = readBounds()
+    if (bounds) onBoundsChange(bounds)
+  }, [mapFilterEnabled, onBoundsChange, readBounds])
 
   return (
     <>
@@ -190,22 +217,26 @@ export default function SlippyMap({
           {mapFilterEnabled ? 'Map filter: ON' : 'Map filter: OFF'}
         </button>
         <Map
-          {...viewport}
+          initialViewState={initialViewport}
           ref={mapRef}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
+          mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
           mapboxAccessToken={MAPBOX_TOKEN}
           interactiveLayerIds={layerIds}
           onClick={onClick}
+          onError={handleMapError}
+          onLoad={handleMapLoad}
+          onMouseDown={() => { userMovedMapRef.current = true }}
+          onTouchStart={() => { userMovedMapRef.current = true }}
+          onWheel={() => { userMovedMapRef.current = true }}
           onMove={handleMove}
+          onMoveEnd={handleMoveEnd}
         >
           <Source id="slippyMap" {...geoJsonSource}>
             <Layer {...clusterPointLayer} />
             <Layer {...clusterCountLayer} />
             <Layer {...clusterLabelLayer} />
-            <Layer {...selectedPointLayer} />
-            <Layer {...selectedLabelLayer} />
-            <Layer {...unclusterPointLayer} />
+            <Layer {...selectedUnclusterPointLayer} />
             <Layer {...unclusterLabelLayer} />
           </Source>
         </Map>

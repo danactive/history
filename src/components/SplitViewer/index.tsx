@@ -2,30 +2,59 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
   type Ref,
 } from 'react'
+import dynamic from 'next/dynamic'
 import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalleryRef } from 'react-image-gallery'
 import 'react-image-gallery/styles/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
-import useColorThief from 'use-color-thief'
 import config from '../../../src/models/config'
-import { Viewed } from '../../hooks/useMemory'
+import type { SelectionCoordinator, SelectionSnapshot } from '../../hooks/useSelectionCoordinator'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
+import type { Bounds } from '../../lib/map-filtering'
 import { Item } from '../../types/common'
 import { getExt, getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
-import SlippyMap from '../SlippyMap'
-import { validatePoint } from '../SlippyMap/options'
 import Video from '../Video'
+import { syncSelectedMap } from './sync-selected-map'
 import styles from './styles.module.css'
+
+const SlippyMap = dynamic(() => import('../SlippyMap'), {
+  ssr: false,
+  loading: () => <div className={styles.mapPlaceholder} />,
+})
 
 interface ImageGalleryType extends GalleryItem {
   filename: string;
   mediaPath: string;
   caption: string;
+}
+
+const MAX_RENDERED_SLIDES = 31
+const GALLERY_EDGE_BUFFER = 5
+const GALLERY_SLIDE_DURATION = 250
+
+type GalleryWindowState = {
+  anchorIndex: number;
+  generation: number;
+  sourceVersion: number;
+  start: number;
+}
+
+export function getGalleryWindowStart(
+  itemCount: number,
+  selectedIndex: number,
+  windowSize = MAX_RENDERED_SLIDES,
+) {
+  if (itemCount <= windowSize) return 0
+
+  const safeSelectedIndex = Math.max(0, Math.min(selectedIndex, itemCount - 1))
+  const centeredStart = safeSelectedIndex - Math.floor(windowSize / 2)
+  return Math.max(0, Math.min(centeredStart, itemCount - windowSize))
 }
 
 const toCarousel = (item: Item) => {
@@ -61,10 +90,10 @@ function SplitViewer({
   clusteredMarkers,
   items,
   refImageGallery,
-  setViewed,
   memoryIndex,
-  setMemoryIndex,
+  selectionCoordinator,
   mapFilterEnabled,
+  mapBounds,
   isClearing,
   clearCoordinates,
   onToggleMapFilter,
@@ -73,10 +102,10 @@ function SplitViewer({
   clusteredMarkers: ClusteredMarkers;
   items: Item[];
   refImageGallery: Ref<ImageGalleryRef> | null;
-  setViewed: Viewed;
   memoryIndex: number;
-  setMemoryIndex: (n: number) => void;
+  selectionCoordinator: SelectionCoordinator;
   mapFilterEnabled?: boolean;
+  mapBounds?: Bounds | null;
   isClearing?: boolean;
   clearCoordinates?: [number, number] | null;
   onToggleMapFilter?: () => void;
@@ -86,6 +115,10 @@ function SplitViewer({
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
+  const localGalleryRef = useRef<ImageGalleryRef>(null)
+  const lastMapSelectionRef = useRef<string | null>(null)
+  const mapModeRef = useRef({ isClearing, mapFilterEnabled, metaZoom })
+  mapModeRef.current = { isClearing, mapFilterEnabled, metaZoom }
   const fullscreenMap = useCallback(() => {
     const div = refMapBox.current
     if (div?.requestFullscreen) {
@@ -101,15 +134,92 @@ function SplitViewer({
     }
   }, [])
 
-  // Build carousel items
-  const carouselItems = useMemo(
-    () => items.map(toCarousel),
-    [items],
-  )
-
-  const safeIndex = carouselItems.length === 0
+  const safeIndex = items.length === 0
     ? -1
-    : (memoryIndex >= carouselItems.length ? carouselItems.length - 1 : memoryIndex)
+    : Math.max(0, Math.min(memoryIndex, items.length - 1))
+
+  const galleryItemsRef = useRef(items)
+  const gallerySourceVersionRef = useRef(0)
+  if (galleryItemsRef.current !== items) {
+    galleryItemsRef.current = items
+    gallerySourceVersionRef.current += 1
+  }
+  const gallerySourceVersion = gallerySourceVersionRef.current
+
+  const [galleryWindow, setGalleryWindow] = useState<GalleryWindowState>(() => ({
+    anchorIndex: safeIndex,
+    generation: 0,
+    sourceVersion: gallerySourceVersion,
+    start: getGalleryWindowStart(items.length, safeIndex),
+  }))
+
+  const activeGalleryWindow = useMemo<GalleryWindowState>(() => {
+    const windowEnd = galleryWindow.start + MAX_RENDERED_SLIDES
+    const sourceChanged = galleryWindow.sourceVersion !== gallerySourceVersion
+    const selectionOutsideWindow = safeIndex < galleryWindow.start || safeIndex >= windowEnd
+    if (!sourceChanged && !selectionOutsideWindow) return galleryWindow
+
+    return {
+      anchorIndex: safeIndex,
+      generation: galleryWindow.generation + 1,
+      sourceVersion: gallerySourceVersion,
+      start: getGalleryWindowStart(items.length, safeIndex),
+    }
+  }, [gallerySourceVersion, galleryWindow, items.length, safeIndex])
+
+  useEffect(() => {
+    if (activeGalleryWindow !== galleryWindow) {
+      setGalleryWindow(activeGalleryWindow)
+    }
+  }, [activeGalleryWindow, galleryWindow])
+
+  const galleryWindowEnd = Math.min(items.length, activeGalleryWindow.start + MAX_RENDERED_SLIDES)
+  const carouselItems = useMemo(
+    () => items.slice(activeGalleryWindow.start, galleryWindowEnd).map(toCarousel),
+    [activeGalleryWindow.start, galleryWindowEnd, items],
+  )
+  const localStartIndex = safeIndex < 0
+    ? undefined
+    : Math.max(0, Math.min(
+      activeGalleryWindow.anchorIndex - activeGalleryWindow.start,
+      carouselItems.length - 1,
+    ))
+  const selectedIndexRef = useRef(safeIndex)
+  const requestedIndexRef = useRef<number | null>(null)
+  if (requestedIndexRef.current === null) {
+    selectedIndexRef.current = safeIndex
+  } else if (requestedIndexRef.current === safeIndex) {
+    requestedIndexRef.current = null
+    selectedIndexRef.current = safeIndex
+  } else if (requestedIndexRef.current >= items.length) {
+    requestedIndexRef.current = null
+    selectedIndexRef.current = safeIndex
+  }
+
+  const showGlobalIndex = useCallback((index: number) => {
+    if (items.length === 0) return
+
+    const nextIndex = Math.max(0, Math.min(index, items.length - 1))
+    requestedIndexRef.current = nextIndex
+    selectedIndexRef.current = nextIndex
+    setGalleryWindow((previousWindow) => ({
+      anchorIndex: nextIndex,
+      generation: previousWindow.generation + 1,
+      sourceVersion: gallerySourceVersionRef.current,
+      start: getGalleryWindowStart(items.length, nextIndex),
+    }))
+  }, [items.length])
+
+  useImperativeHandle(refImageGallery, () => ({
+    play: () => localGalleryRef.current?.play(),
+    pause: () => localGalleryRef.current?.pause(),
+    togglePlay: () => localGalleryRef.current?.togglePlay(),
+    fullScreen: () => localGalleryRef.current?.fullScreen(),
+    exitFullScreen: () => localGalleryRef.current?.exitFullScreen(),
+    toggleFullScreen: () => localGalleryRef.current?.toggleFullScreen(),
+    slideToIndex: showGlobalIndex,
+    getCurrentIndex: () => selectedIndexRef.current,
+  }), [refImageGallery, showGlobalIndex])
 
   // Dynamic centroid (always reflects current selected item)
   const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
@@ -134,62 +244,119 @@ function SplitViewer({
     }
   }, [mapFilterEnabled, isClearing, dynamicCentroid])
 
-  // Always use locked centroid during filter or clear, dynamic otherwise
-  const effectiveCentroid = (mapFilterEnabled || isClearing) ? lockedCentroid : dynamicCentroid
+  // Filtering owns the camera bounds, but not the selected marker: it must
+  // continue to identify the photo currently displayed in the gallery. Only
+  // the short clear transition holds the previous position in place.
+  const effectiveCentroid = isClearing ? lockedCentroid : dynamicCentroid
 
-  // Only pass startIndex on first mount; afterward let the gallery manage its own state
-  const initialIndexRef = useRef(safeIndex)
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
-  const startIndexProp = mounted ? undefined : initialIndexRef.current
+  const syncMapToSelection = useCallback((selection: SelectionSnapshot) => {
+    const currentMap = mapRef.current
+    if (!currentMap) return
+    const mode = mapModeRef.current
+    if (mode.isClearing) {
+      lastMapSelectionRef.current = null
+      return
+    }
 
-  // Background thumbnail (may be undefined initially)
-  const bgThumb = carouselItems[safeIndex]?.thumbnail
+    lastMapSelectionRef.current = syncSelectedMap({
+      mapRef: currentMap,
+      item: selection.item,
+      defaultZoom: mode.metaZoom,
+      shouldFly: selection.cameraIntent === 'follow' && !mode.mapFilterEnabled,
+      previousFlightKey: lastMapSelectionRef.current,
+    })
+  }, [])
 
-  // Slide handler with bounds + map flight (only when map filter OFF)
+  useEffect(() => selectionCoordinator.subscribe(syncMapToSelection), [selectionCoordinator, syncMapToSelection])
+
+  // The gallery asks its owning state to select a photo. Keeping that state as
+  // the source of truth prevents filters from desynchronizing photo and map.
   const handleBeforeSlide: ImageGalleryProps['onBeforeSlide'] = (nextIdxRaw) => {
     if (carouselItems.length === 0) return
     let nextIdx = nextIdxRaw
     if (nextIdx < 0 || nextIdx >= carouselItems.length) {
       nextIdx = Math.max(0, Math.min(nextIdx, carouselItems.length - 1))
     }
-    const item = items[nextIdx]
-    if (!item) return
-    if (nextIdx !== memoryIndex) {
-      setMemoryIndex(nextIdx)
-      setViewed(nextIdx)
-    }
-    const { isInvalidPoint, latitude, longitude } = validatePoint(item.coordinates)
-    if (!mapFilterEnabled && mapRef.current && !isInvalidPoint) {
-      const zoom = item.coordinateAccuracy ?? metaZoom
-      mapRef.current.flyTo({ center: [longitude, latitude], zoom })
-    }
+    const globalIndex = activeGalleryWindow.start + nextIdx
+    selectedIndexRef.current = globalIndex
+    selectionCoordinator.selectIndex(globalIndex, {
+      origin: 'gallery',
+      syncGallery: false,
+    })
   }
 
-  // Extract color from background thumbnail
-  const bgThumbUrl = bgThumb ? `/_next/image?url=${encodeURIComponent(bgThumb)}&w=384&q=75` : null
-  const { color } = useColorThief(bgThumbUrl ?? '', { format: 'rgb' })
+  const handleSlide: ImageGalleryProps['onSlide'] = (localIndex) => {
+    const globalIndex = activeGalleryWindow.start + localIndex
+    const closeToStart = localIndex < GALLERY_EDGE_BUFFER && globalIndex > 0
+    const closeToEnd = localIndex >= carouselItems.length - GALLERY_EDGE_BUFFER
+      && globalIndex < items.length - 1
+    if (!closeToStart && !closeToEnd) return
 
-  // Convert RGB array to CSS rgb string
-  const colourString = color && Array.isArray(color)
-    ? `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-    : undefined
+    setGalleryWindow((previousWindow) => {
+      const nextStart = getGalleryWindowStart(items.length, globalIndex)
+      if (previousWindow.start === nextStart) return previousWindow
+
+      return {
+        anchorIndex: globalIndex,
+        generation: previousWindow.generation + 1,
+        sourceVersion: gallerySourceVersionRef.current,
+        start: nextStart,
+      }
+    })
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+
+      const target = event.target
+      if (target instanceof HTMLElement && (
+        target.isContentEditable
+        || target instanceof HTMLInputElement
+        || target instanceof HTMLTextAreaElement
+        || target instanceof HTMLSelectElement
+        || target.closest('.mapboxgl-map') !== null
+      )) return
+      if (items.length < 2) return
+
+      event.preventDefault()
+      const direction = event.key === 'ArrowRight' ? 1 : -1
+      const currentIndex = selectedIndexRef.current
+      const nextIndex = (currentIndex + direction + items.length) % items.length
+      const localIndex = nextIndex - activeGalleryWindow.start
+
+      if (localIndex >= 0 && localIndex < carouselItems.length) {
+        localGalleryRef.current?.slideToIndex(localIndex)
+      } else {
+        selectionCoordinator.selectIndex(nextIndex, { origin: 'gallery' })
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeGalleryWindow.start, carouselItems.length, items.length, selectionCoordinator])
+
+  const handleMapReady = useCallback(() => {
+    syncMapToSelection(selectionCoordinator.getSnapshot())
+  }, [selectionCoordinator, syncMapToSelection])
 
   return (
     <>
-      {colourString && (
-        <style>{`.image-gallery, .image-gallery-content.fullscreen, .image-gallery-background { background: ${colourString}; }`}</style>
-      )}
-      <section className={`${styles.split} image-gallery-background`}>
+      <section className={styles.split}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery
-            ref={refImageGallery}
+            key={`${activeGalleryWindow.sourceVersion}:${activeGalleryWindow.generation}`}
+            ref={localGalleryRef}
             onBeforeSlide={handleBeforeSlide}
-            startIndex={startIndexProp}
+            onSlide={handleSlide}
+            startIndex={localStartIndex}
             items={carouselItems}
+            disableKeyDown
+            infinite={false}
             showPlayButton={false}
             showThumbnails={false}
-            slideDuration={550}
+            slideDuration={GALLERY_SLIDE_DURATION}
             useWindowKeyDown={false}
             lazyLoad
           />
@@ -200,7 +367,9 @@ function SplitViewer({
             clusteredMarkers={clusteredMarkers}
             items={items}
             centroid={effectiveCentroid}
+            onMapReady={handleMapReady}
             mapFilterEnabled={mapFilterEnabled}
+            filterBounds={mapBounds}
             onToggleMapFilter={onToggleMapFilter}
             onBoundsChange={onMapBoundsChange}
           />

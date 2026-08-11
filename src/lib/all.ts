@@ -1,21 +1,44 @@
-import type { ServerSideAllItem, VisitedPlace } from '../types/common'
 import type { All } from '../types/pages'
-import { allPageItemMapper, getAllItems } from './get-all-items'
-import indexKeywords from './search'
-import { matchesVisitedPlace } from './visited'
+import type { GalleryParams } from './server/page-route'
+import { filterItemsByQuery, getFilterQueryContext, parseFilterQuery } from './filter-query'
+import { filterItemsByMapBounds, type Bounds } from './map-filtering'
+import { getAllPageItems } from './get-all-items'
+import { buildFilterMetadata } from './server/filter-metadata'
+import { getInitialActiveFacetCounts } from './active-facets'
 
-export function filterAllItemsByVisitedPlace(items: ServerSideAllItem[], visitedPlace: VisitedPlace) {
-  return items.filter(item => matchesVisitedPlace(item.visitedPlace, visitedPlace))
-}
+export async function getAllData({ gallery, query, mapBounds }: GalleryParams & {
+  query?: string
+  mapBounds?: Bounds | null
+}): Promise<All.ItemData> {
+  const data = await getAllPageItems(gallery)
+  const totalItemCount = mapBounds
+    ? filterItemsByMapBounds(data.items, true, mapBounds).length
+    : data.items.length
+  const baseMetadata = buildFilterMetadata(data.items)
+  const activeFacetCounts = getInitialActiveFacetCounts({
+    items: mapBounds ? filterItemsByMapBounds(data.items, true, mapBounds) : data.items,
+    query,
+    context: getFilterQueryContext(baseMetadata),
+  })
 
-export async function getAllData({ gallery, visitedPlace }: All.Params): Promise<All.ItemData> {
-  const data = await getAllItems(gallery, allPageItemMapper, true)
-
-  if (!visitedPlace) {
-    return data
+  if (!query) {
+    return {
+      ...data,
+      totalItemCount,
+      activeFacetCounts,
+    }
   }
 
-  const items = filterAllItemsByVisitedPlace(data.items, visitedPlace)
-  const { indexedKeywords } = indexKeywords(items)
-  return { gallery, items, indexedKeywords }
+  const scopedItems = filterItemsByQuery(data.items, parseFilterQuery(query, getFilterQueryContext(baseMetadata)))
+
+  const { indexedKeywords, personOptions, tagOptions } = buildFilterMetadata(scopedItems)
+  return {
+    gallery,
+    items: scopedItems,
+    indexedKeywords,
+    personOptions,
+    tagOptions,
+    totalItemCount,
+    activeFacetCounts,
+  }
 }

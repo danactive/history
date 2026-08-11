@@ -1,19 +1,26 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import type { GalleryParams, RouteParamsProps } from '../../../src/lib/server/page-route'
 import { buildGalleryDetailsText } from '../../../src/lib/storytelling'
-import type { Gallery } from '../../../src/types/common'
 
 export async function generateMetadata(
-  { params }: { params: Promise<{ gallery: Gallery }> },
+  { params }: RouteParamsProps<GalleryParams>,
 ): Promise<Metadata> {
   const { gallery } = await params
   return { title: `Gallery details ${gallery} - History App` }
 }
 
-export default async function GalleryDetailsPage({
+export default function GalleryDetailsPage(props: RouteParamsProps<GalleryParams>) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GalleryDetailsContent {...props} />
+    </Suspense>
+  )
+}
+
+async function GalleryDetailsContent({
   params,
-}: {
-  params: Promise<{ gallery: Gallery }>
-}) {
+}: RouteParamsProps<GalleryParams>) {
   const { gallery } = await params
   const text = await buildGalleryDetailsText(gallery)
 

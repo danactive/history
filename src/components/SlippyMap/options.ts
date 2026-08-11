@@ -22,16 +22,17 @@ export const validatePoint = (
   }
 }
 
-type ItemWithCoordinate = {
-  coordinates: Item['coordinates']
-}
-
-interface SelectedFeature extends Feature {
+interface MapFeature extends Feature {
   properties: {
-    selected?: boolean
+    selectionKey: string
     label: string
     commonLabel: string
   }
+}
+
+export function getMarkerSelectionKey(coordinates: Item['coordinates']) {
+  const { isInvalidPoint, latitude, longitude } = validatePoint(coordinates)
+  return isInvalidPoint ? null : `${longitude}:${latitude}`
 }
 
 export type ResolutionKey = '100m' | '300m' | '1.5km' | '5km' | '10km'
@@ -49,15 +50,15 @@ function getCachedH3Index(item: Item): string | null {
 }
 
 export function transformSourceOptions(
-  { items = [], selected, zoom = 10, clusteredMarkers }:
+  { items = [], zoom = 10, resolution: requestedResolution, clusteredMarkers }:
   {
     clusteredMarkers: ClusteredMarkers,
     items?: Item[],
-    selected: ItemWithCoordinate,
     zoom?: number,
+    resolution?: ResolutionKey,
   },
 ): GeoJSONSourceSpecification {
-  const resolution = getResolutionForZoom(zoom)
+  const resolution = requestedResolution ?? getResolutionForZoom(zoom)
 
   // Use server/client precomputed if provided, else compute locally
   const computed = clusteredMarkers ?? generateClusters(items)
@@ -71,25 +72,21 @@ export function transformSourceOptions(
     return freqB - freqA
   })
 
-  const geoJsonFeature = (item: Item): SelectedFeature => {
+  const geoJsonFeature = (item: Item): MapFeature => {
     const { latitude, longitude } = validatePoint(item.coordinates)
-    const { latitude: selectedLatitude, longitude: selectedLongitude } = validatePoint(selected.coordinates)
 
     const baseKey = getCachedH3Index(item)
     const commonLabel = (baseKey && computed.labels[baseKey]?.[resolution]) || getLabelForResolution(item, resolution)
     const individualLabel = getLabelForResolution(item, resolution)
 
-    const point: SelectedFeature = {
+    const point: MapFeature = {
       type: 'Feature',
       geometry: { type: 'Point', coordinates: [longitude, latitude] },
       properties: {
+        selectionKey: `${longitude}:${latitude}`,
         label: individualLabel,
         commonLabel,
       },
-    }
-
-    if (selectedLatitude === latitude && selectedLongitude === longitude) {
-      point.properties.selected = true
     }
     return point
   }

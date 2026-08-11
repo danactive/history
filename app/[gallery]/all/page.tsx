@@ -2,66 +2,63 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import AllClient from '../../../src/components/All/AllClient'
 import { getAllData } from '../../../src/lib/all'
-import getGalleries from '../../../src/lib/galleries'
-import { generateClusters } from '../../../src/lib/generate-clusters'
-import { formatVisitedPlace } from '../../../src/lib/visited'
-import type { VisitedPlace } from '../../../src/types/common'
-import type { All } from '../../../src/types/pages'
+import { compactAllPageItems } from '../../../src/lib/all-client-items'
+import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
+import {
+  buildClusteredPageData,
+  generateGalleryStaticParams,
+  resolveRouteInputs,
+  type GalleryRouteProps,
+} from '../../../src/lib/server/page-route'
+import { getQueryFromSearchParams, type QuerySearchParams } from '../../../src/lib/server/search-params'
 
 export async function generateStaticParams() {
-  const { galleries } = await getGalleries()
-  return galleries.map((gallery) => ({ gallery }))
+  return generateGalleryStaticParams()
 }
 
 export const metadata: Metadata = {
   title: 'All - History App',
 }
 
-type SearchParams = {
-  visitedCountry?: string | string[]
-  visitedRegion?: string | string[]
-}
-
-function getVisitedPlaceFromSearchParams(searchParams?: SearchParams): VisitedPlace | null {
-  const country = typeof searchParams?.visitedCountry === 'string' ? searchParams.visitedCountry.trim() : ''
-  const regionValue = typeof searchParams?.visitedRegion === 'string' ? searchParams.visitedRegion.trim() : ''
-
-  if (!country) {
-    return null
-  }
-
-  return {
-    country,
-    region: regionValue || null,
-  }
-}
-
-export default async function AllServer({
-  params,
-  searchParams,
-}: {
-  params: Promise<All.Params>,
-  searchParams?: Promise<SearchParams>,
-}) {
-  const [{ gallery }, resolvedSearchParams] = await Promise.all([
-    params,
-    searchParams ?? Promise.resolve({}),
-  ])
-  const visitedPlace = getVisitedPlaceFromSearchParams(resolvedSearchParams)
-
-  const { items = [], indexedKeywords } = await getAllData({ gallery, visitedPlace })
-  const clusterMarkers = generateClusters(items)
-
+export default function AllServer(props: GalleryRouteProps<QuerySearchParams>) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <AllClient
-        gallery={gallery}
-        items={items}
-        indexedKeywords={indexedKeywords}
-        clusteredMarkers={clusterMarkers}
-        visitedPlace={visitedPlace}
-        visitedFilterLabel={visitedPlace ? formatVisitedPlace(visitedPlace) : null}
-      />
+      <AllServerContent {...props} />
     </Suspense>
+  )
+}
+
+async function AllServerContent({
+  params,
+  searchParams,
+}: GalleryRouteProps<QuerySearchParams>) {
+  const {
+    params: { gallery },
+    searchParams: resolvedSearchParams,
+  } = await resolveRouteInputs(params, searchParams)
+  const query = getQueryFromSearchParams(resolvedSearchParams)
+  const mapBounds = parseMapBoundsParam(resolvedSearchParams.bbox)
+
+  const {
+    items = [],
+    indexedKeywords,
+    personOptions,
+    tagOptions,
+    activeFacetCounts,
+    totalItemCount,
+    clusteredMarkers,
+  } = buildClusteredPageData(await getAllData({ gallery, query, mapBounds }))
+
+  return (
+    <AllClient
+      gallery={gallery}
+      items={compactAllPageItems(items)}
+      totalItemCount={totalItemCount}
+      indexedKeywords={indexedKeywords}
+      personOptions={personOptions}
+      tagOptions={tagOptions}
+      activeFacetCounts={activeFacetCounts}
+      clusteredMarkers={clusteredMarkers}
+    />
   )
 }

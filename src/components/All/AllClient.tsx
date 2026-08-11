@@ -1,23 +1,28 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
+import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
+import { expandAllPageItems, type CompactAllPageItem } from '../../lib/all-client-items'
 import { All } from '../../types/pages'
-import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
+import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
 import AllItems from './Items'
 
 export default function AllClient({
   gallery,
   items,
+  totalItemCount,
   indexedKeywords,
+  personOptions,
+  tagOptions,
+  activeFacetCounts,
   clusteredMarkers,
-  visitedFilterLabel,
-}: All.ComponentProps) {
+}: Omit<All.ComponentProps, 'items'> & { items: CompactAllPageItem[] }) {
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
+  const expandedItems = useMemo(() => expandAllPageItems(items, gallery), [gallery, items])
 
   const {
     refImageGallery,
@@ -25,63 +30,61 @@ export default function AllClient({
     setMemoryIndex,
     setViewed,
     memoryHtml,
-    keyword,
+    viewedList,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
     isClearing,
     clearCoordinates,
-  } = useMapFilter({ gallery, items, indexedKeywords, visitedFilterLabel })
+    selectionCoordinator,
+  } = useMapFilter({
+    gallery,
+    items: expandedItems,
+    totalCount: totalItemCount,
+    indexedKeywords,
+    personOptions,
+    tagOptions,
+    activeFacetCounts,
+    ownedPersonFilter: true,
+  })
 
-  const searchParams = useSearchParams()
-  const selectId = searchParams.get('select')
-
-  // Handle URL ?select= parameter
-  useEffect(() => {
-    if (!selectId || itemsToShow.length === 0) return
-
-    const idx = itemsToShow.findIndex(i => {
-      const filename = getPrimaryFilename(i.filename)
-      return filename === selectId
-    })
-
-    if (idx >= 0) {
-      // Use timeout to allow gallery to process items update (which might reset index)
-      // before enforcing the selected index
-      setTimeout(() => {
-        if (refImageGallery.current?.getCurrentIndex?.() !== idx) {
-          refImageGallery.current?.slideToIndex(idx)
-          setMemoryIndex(idx)
-          setViewed(idx)
-        }
-      }, 0)
-    }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
+  useSelectGalleryItemFromUrl({
+    items: itemsToShow,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+    selectionCoordinator,
+    defer: true,
+  })
 
   return (
     <div>
       <AlbumContext.Provider value={zooms}>
-        {searchBox}
-        {memoryHtml}
+        <FilterArea
+          searchControls={searchBox}
+          memoryContent={memoryHtml}
+        />
         <SplitViewer
-          setViewed={setViewed}
           items={itemsToShow}
           clusteredMarkers={clusteredMarkers}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
-          setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
+          selectionCoordinator={selectionCoordinator}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
         <AllItems
           items={itemsToShow}
-          keyword={keyword}
           refImageGallery={refImageGallery}
+          viewedList={viewedList}
+          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

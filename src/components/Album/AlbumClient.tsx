@@ -1,14 +1,16 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import useMapFilter from '../../hooks/useMapFilter'
+import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
 import type { Album } from '../../types/pages'
 import { getPrimaryFilename } from '../../utils'
 import AlbumContext from '../Context'
 import Link from '../Link'
+import FilterArea from '../Search/FilterArea'
 import SplitViewer from '../SplitViewer'
-import ThumbImg from '../ThumbImg'
+import { renderAlbumCaptionAction } from '../All/Items'
+import { ThumbImgList, type ThumbImgProps } from '../ThumbImg'
 import styles from './styles.module.css'
 
 /**
@@ -19,7 +21,19 @@ import styles from './styles.module.css'
  * @param {Map<string, string[]>} props.indexedKeywords Indexed keywords map.
  * @returns {JSX.Element} Album page markup.
  */
-function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gallery, album, monthDay }: Album.ComponentProps) {
+function AlbumClient({
+  items = [],
+  totalItemCount,
+  meta,
+  indexedKeywords,
+  personOptions,
+  tagOptions,
+  activeFacetCounts,
+  clusteredMarkers,
+  gallery,
+  album,
+  monthDay,
+}: Album.ComponentProps) {
   const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
   const dateDetailsHref = gallery && monthDay ? `/${gallery}/today/details?${new URLSearchParams({ day: monthDay }).toString()}` : null
   const {
@@ -31,15 +45,22 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
     viewedList,
     searchBox,
     mapFilterEnabled,
+    mapBounds,
     handleToggleMapFilter,
     handleBoundsChange,
     itemsToShow,
     isClearing,
     clearCoordinates,
+    selectionCoordinator,
   } = useMapFilter({
     gallery,
     items,
+    totalCount: totalItemCount,
     indexedKeywords,
+    personOptions,
+    tagOptions,
+    activeFacetCounts,
+    ownedPersonFilter: true,
     trailingAction: albumDetailsHref
       ? <Link href={albumDetailsHref}>Album details</Link>
       : dateDetailsHref
@@ -47,62 +68,56 @@ function AlbumClient({ items = [], meta, indexedKeywords, clusteredMarkers, gall
         : null,
   })
 
-  const searchParams = useSearchParams()
-  const selectId = searchParams.get('select')
-
-  useEffect(() => {
-    if (!selectId || itemsToShow.length === 0) return
-    const idx = itemsToShow.findIndex(i => {
-      const filename = getPrimaryFilename(i.filename)
-      return filename === selectId
-    })
-
-    // Only slide if we found the item (idx >= 0) AND the gallery isn't already at that index
-    if (idx >= 0 && refImageGallery.current?.getCurrentIndex?.() !== idx) {
-      refImageGallery.current?.slideToIndex(idx)
-      setMemoryIndex(idx)
-      setViewed(idx)
-    }
-  }, [selectId, itemsToShow, refImageGallery, setMemoryIndex, setViewed])
+  useSelectGalleryItemFromUrl({
+    items: itemsToShow,
+    refImageGallery,
+    setMemoryIndex,
+    setViewed,
+    selectionCoordinator,
+  })
 
   const handleThumbSelect = useCallback((index: number) => {
-    refImageGallery.current?.slideToIndex(index)
-    setMemoryIndex(index)
-  }, [refImageGallery, setMemoryIndex])
+    selectionCoordinator.selectIndex(index, { origin: 'thumbnail' })
+  }, [selectionCoordinator])
+
+  const getThumbProps = useCallback((item: Album.ComponentProps['items'][number], index: number): ThumbImgProps => ({
+    onSelectIndex: handleThumbSelect,
+    selectIndex: index,
+    src: item.thumbPath,
+    caption: item.caption,
+    viewed: viewedList.has(item.id),
+    captionAction: monthDay && !album
+      ? renderAlbumCaptionAction(gallery, item.album, item.filename, item.corpus)
+      : null,
+  }), [album, gallery, handleThumbSelect, monthDay, viewedList])
 
   return (
     <div>
       <AlbumContext.Provider value={meta}>
-        {searchBox}
-        {memoryHtml}
+        <FilterArea
+          searchControls={searchBox}
+          memoryContent={memoryHtml}
+        />
         <SplitViewer
-          setViewed={setViewed}
           clusteredMarkers={clusteredMarkers}
           items={itemsToShow}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
-          setMemoryIndex={setMemoryIndex}
           mapFilterEnabled={mapFilterEnabled}
+          mapBounds={mapBounds}
           isClearing={isClearing}
           clearCoordinates={clearCoordinates}
+          selectionCoordinator={selectionCoordinator}
           onToggleMapFilter={handleToggleMapFilter}
           onMapBoundsChange={handleBoundsChange}
         />
-        <ul className={styles.thumbWrapper}>
-          {itemsToShow.map((item, index) => {
-            const filename = getPrimaryFilename(item.filename)
-            return (
-              <ThumbImg
-                onSelectIndex={handleThumbSelect}
-                selectIndex={index}
-                src={item.thumbPath}
-                caption={item.caption}
-                key={filename}
-                viewed={viewedList.has(item.id)}
-              />
-            )
-          })}
-        </ul>
+        <ThumbImgList
+          items={itemsToShow}
+          className={styles.thumbWrapper}
+          getKey={(item) => getPrimaryFilename(item.filename)}
+          getThumbProps={getThumbProps}
+          virtualize
+        />
       </AlbumContext.Provider>
     </div>
   )

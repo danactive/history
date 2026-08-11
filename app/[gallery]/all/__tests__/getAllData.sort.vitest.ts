@@ -9,8 +9,9 @@ vi.mock('../../../../src/lib/albums', () => ({
   default: async (gallery: Gallery) => ({
     [gallery]: {
       albums: [
-        { name: 'Alpha' },
-        { name: 'Beta' },
+        { name: 'Alpha', year: '2024' },
+        { name: 'Beta', year: '2025' },
+        { name: 'Undated', year: '' },
       ],
     },
   }),
@@ -24,20 +25,31 @@ vi.mock('../../../../src/lib/album', () => ({
         album: {
           meta: { geo: { zoom: 8 } },
           items: [
-            { id: 'A00', filename: ['A1-2000.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
-            { id: 'A05', filename: ['A2-2005.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
-            { id: 'A10', filename: ['A3-2010.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
-            { id: 'A20', filename: ['A4-2020.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'A50', filename: ['1920-01-01-50.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'A90', filename: ['1920-01-01-90.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'A10', filename: ['2010-01-01-10.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'A20', filename: ['2020-01-01-20.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          ],
+        },
+      }
+    }
+    if (albumName === 'Beta') {
+      return {
+        album: {
+          meta: { geo: { zoom: 6 } },
+          items: [
+            { id: 'B24', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+            { id: 'B24X', filename: ['2024-01-01-24.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
           ],
         },
       }
     }
     return {
       album: {
-        meta: { geo: { zoom: 6 } },
+        meta: { geo: { zoom: 4 } },
         items: [
-          { id: 'B1', filename: ['B1.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
-          { id: 'B2', filename: ['B2.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          { id: 'U90', filename: ['2035-01-01-90.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
+          { id: 'U10', filename: ['2018-01-01-10.jpg'], description: 'd', caption: 'c', location: 'loc', city: 'city', search: 's' },
         ],
       },
     }
@@ -48,11 +60,11 @@ vi.mock('../../../../src/lib/album', () => ({
 
 // Tests
 describe('getAllData ordering', () => {
-  test('order is expected', async () => {
+  test('groups albums by newest year, leaves undated albums last, and sorts each album oldest first', async () => {
     const gallery: Gallery = 'demo'
     const { items } = await getAllData({ gallery })
     const ids = items.map(i => i.id)
-    expect(ids).toEqual(['B1', 'B2', 'A00', 'A05', 'A10', 'A20'])
+    expect(ids).toEqual(['B24', 'B24X', 'A50', 'A90', 'A10', 'A20', 'U10', 'U90'])
   })
 
   test('coordinateAccuracy falls back to album meta zoom per album', async () => {

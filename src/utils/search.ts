@@ -4,11 +4,14 @@
 const AND_OPERATOR = '&&'
 const OR_OPERATOR = '||'
 
-const normalize = (text: string) =>
+export const normalizeSearchValue = (text: string) =>
   text
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    .trim()
+
+const normalize = (text: string) => normalizeSearchValue(text)
 
 /**
  * Matches a search keyword against a corpus string using boolean operators.

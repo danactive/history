@@ -77,6 +77,7 @@ const readResourceResultSchema = z.object({
     uri: z.string(),
     text: z.string().optional(),
     mimeType: z.string().optional(),
+    _meta: z.record(z.string(), z.unknown()).optional(),
   })),
 })
 
@@ -85,12 +86,28 @@ const toolCallResultSchema = z.object({
   content: z.array(z.object({
     type: z.string(),
     text: z.string().optional(),
+    data: z.string().optional(),
+    uri: z.string().optional(),
+    name: z.string().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    mimeType: z.string().optional(),
   })).optional(),
   structuredContent: z.record(z.string(), z.unknown()).optional(),
 })
 
-const summaryStructuredSchema = z.object({
-  summary: z.string(),
+const getPromptResultSchema = z.object({
+  messages: z.array(z.object({
+    role: z.string(),
+    content: z.object({
+      type: z.string(),
+      text: z.string().optional(),
+      uri: z.string().optional(),
+      name: z.string().optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+    }),
+  })),
 })
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -213,6 +230,19 @@ class McpStdioClient {
     return toolCallResultSchema.parse(response.result)
   }
 
+  async getPrompt(name: string, args: Record<string, unknown>) {
+    const response = await this.request('prompts/get', {
+      name,
+      arguments: args,
+    })
+
+    if (response.error) {
+      throw new Error(`Prompt retrieval failed: ${response.error.message}`)
+    }
+
+    return getPromptResultSchema.parse(response.result)
+  }
+
   private async request(method: string, params: Record<string, unknown>) {
     const id = this.nextId++
     const payload = serializeMessage({
@@ -266,8 +296,8 @@ describe('storytelling MCP server integration', () => {
     const result = await client.initialize()
 
     expect(result.serverInfo).toEqual({
-      name: 'history-storytelling',
-      version: '1.0.0',
+      name: 'history',
+      version: '12.6.0',
     })
     expect(result.protocolVersion).toBeTruthy()
     expect(result.capabilities).toEqual(expect.objectContaining({
@@ -285,16 +315,35 @@ describe('storytelling MCP server integration', () => {
     const result = await client.listTools()
 
     expect(result.tools.map(tool => tool.name)).toEqual([
+      'search_story_moments',
       'get_album_story',
+      'get_album_media',
       'get_on_this_day_story',
+      'get_person_story',
     ])
+    expect(result.tools.find(tool => tool.name === 'search_story_moments')).toEqual(expect.objectContaining({
+      title: 'Search Story Moments',
+      description: expect.stringContaining('free-text'),
+    }))
     expect(result.tools.find(tool => tool.name === 'get_album_story')).toEqual(expect.objectContaining({
       title: 'Get Album Story',
-      description: expect.stringContaining('single album'),
+      description: expect.stringContaining('configured gallery keywords'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_on_this_day_story')).toEqual(expect.objectContaining({
+      title: 'Get memories On This Day Story',
+      description: expect.stringContaining('configured gallery keywords'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_album_media')).toEqual(expect.objectContaining({
+      title: 'Get Album Media',
+      description: expect.stringContaining('selected photo or video'),
+    }))
+    expect(result.tools.find(tool => tool.name === 'get_person_story')).toEqual(expect.objectContaining({
+      title: 'Get Person Story',
+      description: expect.stringContaining('gallery keyword inventory'),
     }))
   }, 20000)
 
-  test('lists resource templates for galleries, albums, people, and days', async () => {
+  test('lists gallery and people inventory resource templates', async () => {
     const client = startStorytellingServer()
 
     await client.initialize()
@@ -302,13 +351,12 @@ describe('storytelling MCP server integration', () => {
 
     expect(result.resourceTemplates.map(template => template.uriTemplate)).toEqual(expect.arrayContaining([
       'history://gallery/{gallery}',
-      'history://album/{gallery}/{album}',
-      'history://person/{gallery}/{name}',
-      'history://day/{gallery}/{monthDay}',
+      'history://people/{gallery}',
     ]))
+    expect(result.resourceTemplates).toHaveLength(2)
   }, 20000)
 
-  test('lists and reads the consolidated storytelling guide resource', async () => {
+  test('lists only inventory resources', async () => {
     const client = startStorytellingServer()
 
     await client.initialize()
@@ -316,61 +364,192 @@ describe('storytelling MCP server integration', () => {
 
     expect(resources.resources).toEqual(expect.arrayContaining([
       expect.objectContaining({ uri: 'history://galleries', title: 'History Photo Galleries' }),
-      expect.objectContaining({ uri: 'history://guide', title: 'History Storytelling Guide' }),
       expect.objectContaining({ uri: 'history://gallery/demo', title: 'History Gallery' }),
+      expect.objectContaining({ uri: 'history://people/demo', title: 'History People' }),
+      expect.objectContaining({ uri: 'ui://history/media-viewer.html', title: 'History Media Viewer' }),
     ]))
-
-    const guide = await client.readResource('history://guide')
-
-    expect(guide.contents[0]).toEqual(expect.objectContaining({
-      uri: 'history://guide',
-      text: expect.any(String),
-    }))
-    expect(guide.contents[0]?.text).toContain('history://galleries')
-    expect(guide.contents[0]?.text).toContain('Recommended workflow:')
+    expect(resources.resources.map(resource => resource.uri)).not.toEqual(expect.arrayContaining([
+      'history://guide',
+      'history://album/demo/sample',
+      'history://person/demo/Mister%20Gingerbread',
+      'history://day/demo/01-02',
+    ]))
   }, 20000)
 
-  test('reads gallery inventory resources', async () => {
+  test('reads gallery and people inventory resources', async () => {
     const client = startStorytellingServer()
 
     await client.initialize()
 
     const galleries = await client.readResource('history://galleries')
     const gallery = await client.readResource('history://gallery/demo')
+    const people = await client.readResource('history://people/demo')
+    const mediaViewer = await client.readResource('ui://history/media-viewer.html')
 
     expect(galleries.contents[0]?.text).toContain('Available galleries')
-    expect(galleries.contents[0]?.text).toContain('demo:')
-    expect(gallery.contents[0]?.text).toContain('Gallery is demo')
+    expect(galleries.contents[0]?.text).toContain('Default gallery:')
+    expect(galleries.contents[0]?.text).toContain('Non-default galleries:')
+    expect(galleries.contents[0]?.text).toContain('Gallery album counts:')
+    expect(galleries.contents[0]?.text).toContain('- demo')
+    expect(gallery.contents[0]?.text).toContain('# Gallery: demo')
+    expect(gallery.contents[0]?.text).toContain('## Pagination')
+    expect(gallery.contents[0]?.text).toContain('## Albums')
+    expect(people.contents[0]?.text).toContain('Person inventory for gallery demo')
+    expect(mediaViewer.contents[0]?.mimeType).toBe('text/html;profile=mcp-app')
+    expect(mediaViewer.contents[0]?.text).toContain('History media viewer')
   }, 20000)
 
-  test('reads album and person resources', async () => {
+  test('returns album, on-this-day, and person details through tools', async () => {
     const client = startStorytellingServer()
 
     await client.initialize()
 
-    const album = await client.readResource('history://album/demo/sample')
-    const person = await client.readResource('history://person/demo/Mister%20Gingerbread')
-
-    expect(album.contents[0]?.text).toContain('Album')
-    expect(person.contents[0]?.text).toContain('Person Mister Gingerbread')
-    expect(person.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/persons/details?person=Mister+Gingerbread')
-  }, 20000)
-
-  test('maps album and on-this-day storytelling tools into content and structured payloads', async () => {
-    const client = startStorytellingServer()
-
-    await client.initialize()
+    const search = await client.callTool('search_story_moments', { gallery: 'demo', query: 'gingerbread' })
+    expect(search.content?.[0]?.text).toContain('## Matches')
+    expect(search.content?.[0]?.text).toContain('Use get_album_media with the exact album and file from a match to view the photo or video.')
+    expect(search.structuredContent).toEqual(expect.objectContaining({
+      gallery: 'demo',
+      matches: expect.arrayContaining([
+        expect.objectContaining({
+          album: expect.any(String),
+          filename: expect.any(String),
+        }),
+      ]),
+    }))
 
     const albumStory = await client.callTool('get_album_story', {
+      gallery: 'demo',
       album: 'sample',
     })
-    expect(albumStory.content?.[0]?.type).toBe('text')
-    expect(albumStory.content?.[0]?.text).toBeTruthy()
-    expect(summaryStructuredSchema.parse(albumStory.structuredContent).summary).toBeTruthy()
+    expect(albumStory.content?.[0]?.text).toContain('Album')
+    expect(albumStory.content?.[0]?.text).toContain('Highlights')
+    expect(albumStory.content?.[0]?.text).toContain('## Gallery keywords\n- Album: sample')
+    expect(albumStory.content?.[0]?.text).toContain('View the graphical interface in a web browser: http://localhost:3030/demo/sample')
+    expect(albumStory.structuredContent).toEqual({
+      gallery: 'demo',
+      album: 'sample',
+      requestedAlbum: 'sample',
+    })
 
-    const onThisDay = await client.callTool('get_on_this_day_story', { monthDay: '01-02' })
-    expect(onThisDay.content?.[0]?.text).toBeTruthy()
-    expect(summaryStructuredSchema.parse(onThisDay.structuredContent).summary).toBeTruthy()
+    const onThisDay = await client.callTool('get_on_this_day_story', { gallery: 'demo', monthDay: '01-02' })
+    expect(onThisDay.content?.[0]?.text).toContain('Matching memories')
+    expect(onThisDay.content?.[0]?.text).toContain('## Gallery keywords\n- none')
+    expect(onThisDay.structuredContent).toEqual({
+      gallery: 'demo',
+      monthDay: '01-02',
+    })
+
+    const media = await client.callTool('get_album_media', {
+      gallery: 'demo',
+      album: 'sample',
+    })
+    expect(media.content?.[0]?.text).toContain('Selected media item')
+    expect(media.content?.[0]?.text).toContain('Inline preview uses the largest available display image that stays within the MCP payload budget.')
+    expect(media.content?.[0]?.text).toContain('Use the linked album page or interactive app to open the selected item locally.')
+    expect(media.content?.[0]?.text).toContain('Interactive media view is available in MCP clients that support Apps.')
+    expect(media.content?.[0]?.text).toContain('Archive metadata:')
+    expect(media.content?.find(block => block.type === 'image')).toEqual(expect.objectContaining({
+      mimeType: expect.stringMatching(/^image\//),
+      data: expect.any(String),
+    }))
+    expect(media.content?.find(block => block.type === 'resource_link')).toEqual(expect.objectContaining({
+      uri: expect.stringContaining('http://localhost:3030/demo/sample?select='),
+      mimeType: 'text/html',
+    }))
+    expect(media.structuredContent).toEqual(expect.objectContaining({
+      gallery: 'demo',
+      album: 'sample',
+      selectedIndex: expect.any(Number),
+      totalItems: expect.any(Number),
+      item: expect.objectContaining({
+        filename: expect.any(String),
+        mediaType: expect.stringMatching(/^(image|video)$/),
+        mediaUrl: expect.stringContaining('http://localhost:3030/galleries/demo/media/'),
+      }),
+      items: expect.arrayContaining([
+        expect.objectContaining({
+          filename: expect.any(String),
+          select: expect.any(String),
+          mediaType: expect.stringMatching(/^(image|video)$/),
+          thumbUrl: expect.stringContaining('http://localhost:3030/galleries/demo/media/thumbs/'),
+        }),
+      ]),
+    }))
+
+    const person = await client.callTool('get_person_story', { gallery: 'demo', person: 'Mister Gingerbread' })
+    expect(person.content?.[0]?.text).toContain('# Person story: Mister Gingerbread')
+    expect(person.content?.[0]?.text).toContain('## Related albums\n- Album: sample')
+    expect(person.content?.[0]?.text).toContain('- Popular keywords: ')
+    expect(person.content?.[0]?.text).not.toContain('## Gallery keywords')
+    expect(person.structuredContent).toEqual({
+      gallery: 'demo',
+      person: 'Mister Gingerbread',
+    })
+  }, 20000)
+
+  test('links a gallery resource to discover album names', async () => {
+    const client = startStorytellingServer()
+
+    await client.initialize()
+    const output = await client.callTool('get_album_story', { gallery: 'demo' })
+
+    expect(output.content).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'resource_link',
+        uri: 'history://gallery/demo',
+        name: 'Album inventory for demo',
+      }),
+    ]))
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      resourceUri: 'history://gallery/demo',
+    })
+  }, 20000)
+
+  test('links a people resource to discover person names', async () => {
+    const client = startStorytellingServer()
+
+    await client.initialize()
+    const output = await client.callTool('get_person_story', { gallery: 'demo' })
+
+    expect(output.content).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'resource_link',
+        uri: 'history://people/demo',
+        name: 'People in demo',
+      }),
+    ]))
+    expect(output.structuredContent).toEqual({
+      gallery: 'demo',
+      resourceUri: 'history://people/demo',
+    })
+  }, 20000)
+
+  test('links the gallery inventory when a prompt query is omitted', async () => {
+    const client = startStorytellingServer()
+
+    await client.initialize()
+    const prompt = await client.getPrompt('story-from-history', {})
+
+    expect(prompt.messages).toEqual([
+      {
+        role: 'user',
+        content: {
+          type: 'resource_link',
+          uri: 'history://galleries',
+          name: 'Photo gallery inventory',
+          title: 'History Photo Galleries',
+          description: 'Available galleries and their album counts.',
+        },
+      },
+      {
+        role: 'user',
+        content: {
+          type: 'text',
+          text: 'Read the linked inventory to discover galleries or album names, then call this prompt again with a story request.',
+        },
+      },
+    ])
   }, 20000)
 
   test('returns tool errors as recoverable MCP results', async () => {
@@ -388,13 +567,4 @@ describe('storytelling MCP server integration', () => {
     expect(output.structuredContent).toBeUndefined()
   }, 20000)
 
-  test('reads on-this-day resources', async () => {
-    const client = startStorytellingServer()
-
-    await client.initialize()
-    const output = await client.readResource('history://day/demo/01-02')
-
-    expect(output.contents[0]?.text).toContain('01-02')
-    expect(output.contents[0]?.text).toContain('GUI: http://localhost:3030/demo/today/details?day=01-02')
-  }, 20000)
 })

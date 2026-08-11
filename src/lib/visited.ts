@@ -1,6 +1,9 @@
 import type { Gallery } from '../types/common'
 import getAlbum from './album'
 import getAlbums from './albums'
+export {
+  filterItemsByVisitedPlace,
+} from './domains/visited'
 import type { CountryVisit } from './visited-core'
 import { buildVisitedDataFromItems } from './visited-core'
 
@@ -11,6 +14,7 @@ export {
   formatVisitedPlace,
   formatVisitedYears,
   getVisitedPlace,
+  isSearchableVisitedRegion,
   matchesVisitedPlace,
 } from './visited-core'
 export type { CountryVisit, RegionVisit, VisitedPlace, VisitedRegionCountryIndex } from './visited-core'

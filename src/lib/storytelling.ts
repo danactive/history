@@ -1,5 +1,6 @@
 import {
   formatAlbumResourceText,
+  formatGalleryAlbumDetails,
   formatOnThisDayResourceText,
   formatPersonResourceText,
   validateAlbumStoryResult,
@@ -16,11 +17,15 @@ import {
   type StorySearchSchemaInput,
 } from '../models/storytelling'
 import type { Gallery, Item, Person } from '../types/common'
+import config from '../models/config'
 import getAlbum from './album'
 import getAlbums from './albums'
 import { getAllData } from './all'
+import { filterSearchOnlyPersonCounts, isTagKeyword } from './domains/keywords'
+import { buildPersonCountsFromItems } from './domains/persons'
+import { formatFilterQuery } from './filter-query'
 import getGalleries from './galleries'
-import { buildPersonGuiHref, buildTodayGuiHref } from './monthDay'
+import { buildAlbumPageHref, buildPersonGuiHref, buildTodayPageHref } from './monthDay'
 import getPersons, { getPersonsData } from './persons'
 import indexKeywords from './search'
 import {
@@ -44,46 +49,72 @@ import { getTodayItems } from './today'
 
 const DEFAULT_LIMIT = 8
 const MAX_LIMIT = 25
+const DEFAULT_GALLERY_RESOURCE_PAGE_SIZE = 25
+const MAX_GALLERY_RESOURCE_PAGE_SIZE = 50
 
 const clampLimit = (limit = DEFAULT_LIMIT) => Math.max(1, Math.min(limit, MAX_LIMIT))
-
-const hasPersonLikeCasing = (value: string) => /^[A-Z][A-Za-z'-]+(?: [A-Z][A-Za-z'-]+)+$/.test(value)
 
 function buildAlbumPeopleAndKeywordTags(
   items: Item[],
   places: string[],
   limit: number,
 ) {
-  const indexedKeywords = indexKeywords(items).indexedKeywords
-  const itemPersonCounts = countValuesByFrequency(
-    items.flatMap((item) => item.persons?.map((person) => person.full) ?? []),
-    items.length,
-  )
+  const itemPersonCounts = buildPersonCountsFromItems(items)
   const itemPersonNames = new Set(itemPersonCounts.map(person => person.name))
-  const searchOnlyPersonCounts = countValuesByFrequency(
+  const searchOnlyPersonCounts = filterSearchOnlyPersonCounts(countValuesByFrequency(
     items.flatMap((item) => item.search?.split(', ').map((token) => token.trim()).filter(Boolean) ?? []),
     items.length * 10,
-  ).filter(({ name, count }) => !itemPersonNames.has(name)
-    && !name.endsWith('^')
-    && !places.includes(name)
-    && !/^\d{4}$/.test(name)
-    && hasPersonLikeCasing(name)
-    && count > 0)
+  ), {
+    knownPeople: itemPersonNames,
+    reservedValues: places,
+  })
 
   const personCounts = [...itemPersonCounts, ...searchOnlyPersonCounts]
     .sort((left, right) => right.count - left.count)
     .slice(0, limit)
   const people = personCounts.map(person => person.name)
-  const keywordTags = indexedKeywords
-    .filter(option => option.value.endsWith('^'))
-    .map(option => option.label)
-    .slice(0, limit)
+  const { popularKeywords, keywordTags } = buildKeywordIndexes(items, limit)
 
   return {
     people,
     personCounts,
+    popularKeywords,
     keywordTags,
   }
+}
+
+function buildKeywordIndexes(items: Pick<Item, 'search'>[], limit: number) {
+  const indexedKeywords = indexKeywords(items).indexedKeywords
+
+  return {
+    popularKeywords: indexedKeywords.map(option => option.label).slice(0, limit),
+    keywordTags: indexedKeywords
+      .filter(option => isTagKeyword(option.value))
+      .map(option => option.label)
+      .slice(0, limit),
+  }
+}
+
+function buildAlbumKeywordDetails(
+  albums: Array<{ name: string, h1: string, h2: string, year: string, search: string | null }>,
+  albumNames: Iterable<string>,
+) {
+  const detailsByAlbum = new Map(albums.map(album => [album.name, album]))
+
+  return [...new Set(albumNames)].map((name) => {
+    const album = detailsByAlbum.get(name)
+
+    return {
+      name,
+      title: album?.h1 ?? name,
+      subtitle: album?.h2 || null,
+      year: album?.year || null,
+      keywords: album?.search
+        ?.split(',')
+        .map(keyword => keyword.trim())
+        .filter(Boolean) ?? [],
+    }
+  })
 }
 
 async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]> {
@@ -91,30 +122,122 @@ async function getGalleryCandidates(gallery: Gallery): Promise<StoryCandidate[]>
   return items.map(mapAllItemToCandidate)
 }
 
-export async function buildGalleriesDetailsText() {
+type GalleryInventory = {
+  defaultGallery: Gallery
+  galleries: Gallery[]
+  summaries: Array<{ gallery: Gallery; albumCount: number }>
+}
+
+export function getStorytellingDefaultGallery(galleries: readonly Gallery[]) {
+  return galleries.find(gallery => gallery !== config.defaultGallery) ?? config.defaultGallery
+}
+
+async function getGalleryInventory(): Promise<GalleryInventory> {
   const { galleries } = await getGalleries()
-  const counts = await Promise.all(galleries.map(async (gallery) => {
-    const albums = await getAlbums(gallery)
-    return `${gallery}: ${albums[gallery].albums.length} album(s)`
+  const summaries = await Promise.all(galleries.map(async (gallery) => {
+    const { albums } = (await getAlbums(gallery))[gallery]
+    return { gallery, albumCount: albums.length }
   }))
+
+  return {
+    defaultGallery: getStorytellingDefaultGallery(galleries),
+    galleries,
+    summaries,
+  }
+}
+
+function buildGalleryInventoryLines({ defaultGallery, galleries, summaries }: GalleryInventory) {
+  const nonDefaultGalleries = galleries.filter(gallery => gallery !== defaultGallery)
+  const displayedDefaultGallery = galleries.includes(defaultGallery)
+    ? defaultGallery
+    : `${defaultGallery} (not currently available)`
+
+  return [
+    `Default gallery: ${displayedDefaultGallery}`,
+    `Non-default galleries: ${nonDefaultGalleries.join(', ') || 'none'}`,
+    'Gallery album counts:',
+    ...summaries.map(({ gallery, albumCount }) => (
+      `- ${gallery}${gallery === defaultGallery ? ' (default)' : ''}: ${albumCount} album(s)`
+    )),
+  ]
+}
+
+export async function buildGalleriesDetailsText() {
+  const galleryInventory = await getGalleryInventory()
 
   return [
     'Available galleries',
-    ...counts,
+    ...buildGalleryInventoryLines(galleryInventory),
   ].join('\n')
 }
 
 export async function buildGalleryDetailsText(gallery: Gallery) {
   const albumNames = await getAlbums(gallery)
   const { albums } = albumNames[gallery]
+  const albumDetails = buildAlbumKeywordDetails(albums, albums.map(album => album.name))
+
   return [
-    `Gallery is ${gallery}`,
-    `Albums: ${albums.length}`,
-    ...albums.map((album) => [
-      `${album.name}: ${album.h1}${album.h2 ? ` — ${album.h2}` : ''}${album.year ? ` (${album.year})` : ''}`,
-      album.search ? `with keywords ${album.search}` : null,
-    ].filter((line): line is string => Boolean(line)).join('\n')),
+    `# Gallery: ${gallery}`,
+    '',
+    '## Overview',
+    `- Albums: ${albums.length}`,
+    '',
+    '## Albums',
+    ...albumDetails.flatMap(formatGalleryAlbumDetails),
   ].join('\n')
+}
+
+function formatCompactGalleryAlbumLine(album: {
+  name: string
+  title: string
+  year: string | null
+  keywords: string[]
+}) {
+  return [
+    `- ${album.name}`,
+    `title=${album.title || 'unknown'}`,
+    `year=${album.year || 'unknown'}`,
+    `keywords=${album.keywords.join(', ') || 'none'}`,
+  ].join(' | ')
+}
+
+export async function buildGalleryInventoryText(
+  gallery: Gallery,
+  {
+    page = 1,
+    limit = DEFAULT_GALLERY_RESOURCE_PAGE_SIZE,
+  }: {
+    page?: number
+    limit?: number
+  } = {},
+) {
+  const albumNames = await getAlbums(gallery)
+  const { albums } = albumNames[gallery]
+  const normalizedLimit = Math.max(1, Math.min(limit, MAX_GALLERY_RESOURCE_PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(albums.length / normalizedLimit))
+  const normalizedPage = Math.max(1, Math.min(page, totalPages))
+  const startIndex = (normalizedPage - 1) * normalizedLimit
+  const displayedAlbums = albums.slice(startIndex, startIndex + normalizedLimit)
+  const albumDetails = buildAlbumKeywordDetails(displayedAlbums, displayedAlbums.map(album => album.name))
+  const pageUri = `history://gallery/${encodeURIComponent(gallery)}`
+
+  return [
+    `# Gallery: ${gallery}`,
+    '',
+    '## Overview',
+    `- Albums: ${albums.length}`,
+    `- Page: ${normalizedPage} of ${totalPages}`,
+    `- Showing albums ${displayedAlbums.length === 0 ? 0 : startIndex + 1}-${startIndex + displayedAlbums.length}`,
+    '- Use exact album names from this page with get_album_story or get_album_media.',
+    '',
+    '## Albums',
+    ...albumDetails.map(formatCompactGalleryAlbumLine),
+    '',
+    '## Pagination',
+    normalizedPage > 1 ? `- Previous page: ${pageUri}?page=${normalizedPage - 1}&limit=${normalizedLimit}` : null,
+    normalizedPage < totalPages ? `- Next page: ${pageUri}?page=${normalizedPage + 1}&limit=${normalizedLimit}` : null,
+    `- Read a specific page: ${pageUri}?page=N&limit=${normalizedLimit}`,
+  ].filter((line): line is string => line !== null).join('\n')
 }
 
 async function getScopedCandidates(input: StorySearchSchemaInput): Promise<StoryCandidate[]> {
@@ -131,7 +254,16 @@ async function getScopedCandidates(input: StorySearchSchemaInput): Promise<Story
   const visitedFilter = getVisitedPlaceFilter(input)
   const groups = await Promise.all(galleries.map(async (gallery) => {
     if (visitedFilter) {
-      const { items } = await getAllData({ gallery, visitedPlace: visitedFilter })
+      const query = formatFilterQuery(visitedFilter.region
+        ? {
+            type: 'and',
+            children: [
+              { type: 'term', kind: 'country', value: visitedFilter.country },
+              { type: 'term', kind: 'region', value: visitedFilter.region },
+            ],
+          }
+        : { type: 'term', kind: 'country', value: visitedFilter.country })
+      const { items } = await getAllData({ gallery, query })
       return items.map(mapAllItemToCandidate)
     }
 
@@ -190,7 +322,7 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
 
   const placeCounts = countValuesByFrequency(candidates.map(item => item.city).filter(Boolean), maxItems)
   const places = placeCounts.map(place => place.name)
-  const { people, personCounts, keywordTags } = buildAlbumPeopleAndKeywordTags(
+  const { people, personCounts, popularKeywords, keywordTags } = buildAlbumPeopleAndKeywordTags(
     albumData.items,
     places,
     maxItems,
@@ -217,14 +349,19 @@ export async function buildAlbumStory(gallery: Gallery, album: string, limit = D
     placeCounts,
     people,
     personCounts,
+    popularKeywords,
     keywordTags,
+    galleryKeywords: buildAlbumKeywordDetails(
+      galleryAlbums[gallery].albums,
+      galleryAlbums[gallery].albums.map(candidate => candidate.name),
+    ),
     highlights,
   })
 }
 
 export async function buildAlbumDetailsText(gallery: Gallery, album: string, limit = DEFAULT_LIMIT) {
   const output = await buildAlbumStory(gallery, album, limit)
-  return formatAlbumResourceText(output)
+  return formatAlbumResourceText(output, buildAlbumPageHref(gallery, album))
 }
 
 function resolvePersonEntry(output: PersonStoryIndexResult, name: string) {
@@ -304,8 +441,26 @@ async function resolveSearchOnlyPersonEntry(gallery: Gallery, name: string): Pro
   })), name)
 }
 
+function buildPersonAlbumDetails(
+  albums: string[],
+  galleryAlbums: Array<{ name: string, h1: string, h2: string, year: string, search: string | null }>,
+  items: Array<Pick<Item, 'search'> & { album?: string }>,
+) {
+  return buildAlbumKeywordDetails(galleryAlbums, albums).map((album) => ({
+    ...album,
+    popularKeywords: buildKeywordIndexes(
+      items.filter(item => item.album === album.name),
+      DEFAULT_LIMIT,
+    ).popularKeywords,
+  }))
+}
+
 async function getResolvedPersonResource(gallery: Gallery, name: string) {
-  const output = await getPeopleStoryIndex(gallery)
+  const [{ people, allPeopleItems }, galleryAlbums] = await Promise.all([
+    getPeopleStoryData(gallery),
+    getAlbums(gallery),
+  ])
+  const output = buildPeopleStoryIndex(gallery, people, allPeopleItems)
   const person = resolvePersonEntry(output, name) ?? await resolveSearchOnlyPersonEntry(gallery, name)
   if (!person) {
     throw new ReferenceError(`No person named ${name} was found in gallery ${gallery}`)
@@ -313,7 +468,12 @@ async function getResolvedPersonResource(gallery: Gallery, name: string) {
 
   return {
     person,
-    text: formatPersonResourceText(person, gallery, buildPersonGuiHref(gallery, person.name)),
+    text: formatPersonResourceText(
+      person,
+      gallery,
+      buildPersonAlbumDetails(person.albums, galleryAlbums[gallery].albums, allPeopleItems.items),
+      buildPersonGuiHref(gallery, person.name),
+    ),
   }
 }
 
@@ -335,7 +495,10 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
     ? `Found ${output.totalMatches} on-this-day match${output.totalMatches === 1 ? '' : 'es'} for ${output.monthDay}.`
     : `No on-this-day matches for ${output.monthDay}.`
 
-  const { locationOptions, personCounts, yearOptions, tagOptions } = await getTodayItems(gallery, output.monthDay)
+  const [{ items, indexedKeywords, locationOptions, personCounts, yearOptions, tagOptions }, galleryAlbums] = await Promise.all([
+    getTodayItems(gallery, output.monthDay),
+    getAlbums(gallery),
+  ])
   const years = formatVisitedYears(yearOptions
     .map(option => option.value)
     .filter(value => /^\d{4}$/.test(value))
@@ -343,21 +506,47 @@ export async function buildDateDetailsText(gallery: Gallery, monthDay?: string, 
   const keywordTags = tagOptions
     .slice(0, displayLimit)
     .map(option => option.label)
+  const popularKeywords = indexedKeywords
+    .slice(0, displayLimit)
+    .map(option => option.label)
 
-  return formatOnThisDayResourceText({ summary: resourceSummary }, buildTodayGuiHref(gallery, output.monthDay), {
+  return formatOnThisDayResourceText({
+    summary: resourceSummary,
+    monthDay: output.monthDay,
+    totalMatches: output.totalMatches,
+    matches: output.matches,
+  }, buildTodayPageHref(gallery, output.monthDay), {
     years,
     locations: locationOptions.slice(0, displayLimit).map(option => option.label),
     persons: personCounts.slice(0, displayLimit),
+    popularKeywords,
     keywordTags,
+    galleryKeywords: buildAlbumKeywordDetails(
+      galleryAlbums[gallery].albums,
+      items.flatMap(item => item.album ? [item.album] : []),
+    ),
   })
 }
 
 export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStoryIndexResult> {
+  const { people, allPeopleItems } = await getPeopleStoryData(gallery)
+  return buildPeopleStoryIndex(gallery, people, allPeopleItems)
+}
+
+async function getPeopleStoryData(gallery: Gallery) {
   const [people, allPeopleItems] = await Promise.all([
     getPersons(gallery),
     getPersonsData({ gallery }),
   ])
 
+  return { people, allPeopleItems }
+}
+
+function buildPeopleStoryIndex(
+  gallery: Gallery,
+  people: Person[],
+  allPeopleItems: Awaited<ReturnType<typeof getPersonsData>>,
+): PersonStoryIndexResult {
   const peopleByName = new Map<string, Person>(people.map(person => [person.full, person]))
   const aggregate = new Map<string, PersonStoryIndexEntry>()
 
@@ -401,6 +590,16 @@ export async function getPeopleStoryIndex(gallery: Gallery): Promise<PersonStory
   })
 }
 
+export async function buildPeopleInventoryText(gallery: Gallery) {
+  const output = await getPeopleStoryIndex(gallery)
+
+  return [
+    `Person inventory for gallery ${gallery}`,
+    `People: ${output.people.length}`,
+    ...output.people.map(person => `- ${person.name} (${person.appearances} appearance${person.appearances === 1 ? '' : 's'})`),
+  ].join('\n')
+}
+
 export async function getOnThisDayStory(gallery: Gallery, monthDay?: string, limit = DEFAULT_LIMIT): Promise<OnThisDayStoryResult> {
   const targetMonthDay = monthDay ?? new Date().toLocaleString('en-CA').substring(5, 10)
   const maxItems = clampLimit(limit)
@@ -434,17 +633,13 @@ export async function getOnThisDayStory(gallery: Gallery, monthDay?: string, lim
 }
 
 export async function buildStorytellingOverview() {
-  const { galleries } = await getGalleries()
-  const counts = await Promise.all(galleries.map(async (gallery) => {
-    const albumData = await getAlbums(gallery)
-    return `${gallery}: ${albumData[gallery].albums.length} album(s)`
-  }))
+  const galleryInventory = await getGalleryInventory()
 
   return [
     'History storytelling MCP server',
     'Read-only tools for finding people, places, albums, and narrative moments in a local photo/video archive.',
-    `Available galleries: ${galleries.join(', ') || 'none'}`,
-    ...counts,
+    'Gallery inventory:',
+    ...buildGalleryInventoryLines(galleryInventory),
     'Recommended flow: search_story_moments -> get_album_story -> story-from-history prompt.',
   ].join('\n')
 }
@@ -457,4 +652,3 @@ export type {
   StorySearchResult,
   StorySearchSchemaInput,
 }
-
