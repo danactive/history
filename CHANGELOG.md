@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.6.0](https://github.com/danactive/history/compare/v12.5.0...v12.6.0) (2026-08-11)
+
+
+### Features
+
+* **Albums:** Facet filters with relative counts ([7d1d857](https://github.com/danactive/history/commit/7d1d857eb46ae89d798c8515c6fc90564b14e10f))
+* **All:** Classifier for person, tag, visited (weak && ||) ([9bf4761](https://github.com/danactive/history/commit/9bf47615e2af4eae2549d5b7579fbcaffb6aa60e))
+* **All:** Cross-album thumbnails ([0bb6e4b](https://github.com/danactive/history/commit/0bb6e4bc97bd9833d60042f6c7249046814b97a4))
+* **All:** Map Filter applies to query string ([7ec1770](https://github.com/danactive/history/commit/7ec17708e81131c0db70b520477c103b5dbe3177))
+* **MCP:** Add person tool ([d3e8c7d](https://github.com/danactive/history/commit/d3e8c7d60b57530adc70ff72832ee2f0daeb9da0))
+* **MCP:** Add search tool ([4cbf53a](https://github.com/danactive/history/commit/4cbf53a7d095e5ee943d7fbafc0e7362ec9725a4))
+* **MCP:** Add streaming HTTP transport to existing MCP server (was only stdio) ([d38b9e1](https://github.com/danactive/history/commit/d38b9e16322738f757057db0e9f67ec471d581bf))
+* **MCP:** Add tool Get Album Media to display a thumb and metadata ([40ee7b1](https://github.com/danactive/history/commit/40ee7b14d645c74b040c44d1a03be8e0e40701d5))
+* **MCP:** Format as markdown and better discover of album meta ([e6dab59](https://github.com/danactive/history/commit/e6dab59d36a737eb6bfcea40edc0c9ab6811e9ef))
+* **MCP:** Update mcp manifest to server registry ([bbbfae6](https://github.com/danactive/history/commit/bbbfae621009762b7c7eace95c129b8fa10b0436))
+* **UI:** Standardize filters ([1f42c75](https://github.com/danactive/history/commit/1f42c75f533d633b6ce10afffb6958e89715b131))
+
+
+### Bug Fixes
+
+* **All:** Preserves the original item to avoid missing attr ([b2254ae](https://github.com/danactive/history/commit/b2254ae05b224979d4206d4094525aaae37009f3))
+* **Map:** Suppress tile errors ([6e457ce](https://github.com/danactive/history/commit/6e457cecd067524f65fe4cdb322f67c85c25de91))
+* **Persons:** Dropdown shows accurate counts ([88634d0](https://github.com/danactive/history/commit/88634d0de57fbc70ab40a0ac2d72a8a1be15feee))
+
 ## [12.5.0](https://github.com/danactive/history/compare/v12.4.0...v12.5.0) (2026-07-19)
 
 
