@@ -1,4 +1,3 @@
-import { getAgeSummaryPerson } from './persons-filter-scopes'
 import {
   getAgeFromPersonsRouteSearchParams,
   getPersonFromPersonsRouteSearchParams,
@@ -67,24 +66,17 @@ export async function getPersonsPageData({
   const menuBaseItems = menuBaseQuery
     ? filterItemsByQuery(personsData.items, parseFilterQuery(menuBaseQuery, queryContext))
     : personsData.items
-  const ageSummaryPerson = getAgeSummaryPerson(selectedAge, selectedPerson)
-  const summaryItems = filterPersonsItems(menuBaseItems, null, ageSummaryPerson)
-  const personScopeItems = selectedAge !== null && selectedPerson
-    ? filterPersonsItems(menuBaseItems, null, selectedPerson)
-    : undefined
-  const ageScopeItems = selectedAge !== null
-    ? filterPersonsItems(menuBaseItems, selectedAge, null)
-    : undefined
-  const mapMenuBaseItems = mapBounds && (selectedAge !== null || selectedPerson !== null)
+  const menuScopeItems = mapBounds
     ? filterItemsByMapBounds(menuBaseItems, true, mapBounds)
-    : undefined
+    : menuBaseItems
+  const ageSummaryItems = filterPersonsItems(menuScopeItems, null, selectedPerson)
   const visibleItems = filterPersonsItems(menuBaseItems, selectedAge, selectedPerson)
   const hasServerScope = Boolean(query) || selectedAge !== null || selectedPerson !== null
   const scopedFilterMetadata = hasServerScope ? buildFilterMetadata(visibleItems) : null
   const indexedKeywords = scopedFilterMetadata?.indexedKeywords ?? personsData.indexedKeywords
   const personOptions = scopedFilterMetadata?.personOptions ?? personsData.personOptions
   const tagOptions = scopedFilterMetadata?.tagOptions ?? personsData.tagOptions
-  const initialAgeSummary = buildAgeSummary(summaryItems, ageSummaryPerson)
+  const initialAgeSummary = buildAgeSummary(ageSummaryItems, selectedPerson)
 
   return {
     gallery,
@@ -96,9 +88,9 @@ export async function getPersonsPageData({
     personOptions,
     tagOptions,
     initialAgeSummary,
-    initialBaseScopeItems: mapMenuBaseItems ?? (selectedAge === null && selectedPerson ? menuBaseItems : undefined),
-    initialAgeScopeItems: selectedAge !== null && selectedPerson ? ageScopeItems : undefined,
-    initialPersonScopeItems: personScopeItems,
+    initialBaseScopeItems: selectedAge !== null || selectedPerson !== null || mapBounds
+      ? menuScopeItems
+      : undefined,
     activeFacetCounts,
   }
 }

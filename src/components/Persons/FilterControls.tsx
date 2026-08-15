@@ -17,7 +17,7 @@ export type PersonCount = {
 
 export type FilterControlsProps = {
   agesWithCounts: AgeCount[]
-  peopleAtSelectedAge: string[]
+  people: string[]
   peopleWithCounts: PersonCount[]
   selectedAge: PersonAgeFilterValue
   selectedPerson: string | null
@@ -28,7 +28,7 @@ export type FilterControlsProps = {
 
 export default function FilterControls({
   agesWithCounts,
-  peopleAtSelectedAge,
+  people,
   peopleWithCounts,
   selectedAge,
   selectedPerson,
@@ -45,11 +45,9 @@ export default function FilterControls({
 
   const selectedPersonCount = selectedPerson
     ? peopleWithCounts.find(({ name }) => name === selectedPerson)?.count ?? 0
-    : peopleAtSelectedAge.length
-  const peopleAtSelectedAgeLabel = `${peopleAtSelectedAge.length} ${peopleAtSelectedAge.length === 1 ? 'person' : 'persons'}`
-  const allPersonsLabel = selectedAge === null
-    ? `All persons (${peopleAtSelectedAgeLabel})`
-    : `All persons at ${selectedAge} (${peopleAtSelectedAgeLabel})`
+    : people.length
+  const peopleLabel = `${people.length} ${people.length === 1 ? 'person' : 'persons'}`
+  const allPersonsLabel = `All persons (${peopleLabel})`
   const personButtonLabel = selectedPerson
     ? `${selectedPerson} (${selectedPersonCount} ${selectedPersonCount === 1 ? 'photo' : 'photos'})`
     : allPersonsLabel
@@ -65,7 +63,7 @@ export default function FilterControls({
               const nextAge = value === 'unknown'
                 ? 'unknown'
                 : (value ? Number.parseInt(value, 10) : null)
-              setSelectedAge(nextAge === 'unknown' || !Number.isNaN(nextAge as number) ? nextAge : null)
+              setSelectedAge(nextAge === 'unknown' || (typeof nextAge === 'number' && nextAge >= 0) ? nextAge : null)
             }}
             variant="soft"
             size="sm"
@@ -90,7 +88,7 @@ export default function FilterControls({
           </Select>
         </div>
 
-        {peopleAtSelectedAge.length > 0 && (
+        {people.length > 0 && (
           <div className={styles.selectWrap}>
             <Select
               value={selectedPerson ?? ''}

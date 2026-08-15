@@ -15,6 +15,10 @@ export function filterPersonsItems(
   selectedAge: PersonAgeFilterValue,
   selectedPerson: string | null,
 ) {
+  if (typeof selectedAge === 'number' && selectedAge < 0) {
+    return []
+  }
+
   const personFilteredItems = filterItemsBySelectedPerson(items, selectedPerson)
 
   if (selectedAge === null) {

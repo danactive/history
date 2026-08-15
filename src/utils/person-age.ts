@@ -92,4 +92,3 @@ export function buildAgeSummary(
     totalPhotoCount: items.length,
   }
 }
-

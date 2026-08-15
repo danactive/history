@@ -19,8 +19,6 @@ export default function usePersonsFilter({
   tagOptions,
   initialAgeSummary,
   initialBaseScopeItems,
-  initialAgeScopeItems,
-  initialPersonScopeItems,
   initialSelectedAge,
   initialSelectedPerson,
 }: Persons.ItemData & {
@@ -96,18 +94,14 @@ export default function usePersonsFilter({
     ageFiltered,
     agesWithCounts,
     itemsWithCorpus,
-    peopleAtSelectedAge,
+    people,
     peopleWithCounts,
     totalPhotoCount,
   } = usePersonsDerivedData({
     itemsToShow,
     selectedAge,
     effectiveSelectedPerson,
-    initialSelectedPerson: resolvedInitialPerson,
-    initialSelectedAge: resolvedInitialAge,
     initialBaseScopeItems,
-    initialAgeScopeItems,
-    initialPersonScopeItems,
     isServerScopeCurrent,
     mapFilterEnabled,
     initialAgeSummary,
@@ -139,7 +133,7 @@ export default function usePersonsFilter({
 
   const filterControlsProps: FilterControlsProps = {
     agesWithCounts,
-    peopleAtSelectedAge,
+    people,
     peopleWithCounts,
     selectedAge,
     selectedPerson,
