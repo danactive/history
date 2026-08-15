@@ -37,6 +37,7 @@ export default function GalleryClient({ gallery, albums, indexedKeywords, person
             <li className={styles.rowLabel}>View</li>
             <li className={styles.rowItem}><Link className={styles.viewLink} href={`/${gallery}/all`}>All</Link></li>
             <li className={styles.rowItem}><Link className={styles.viewLink} href={`/${gallery}/today`}>Today</Link></li>
+            <li className={styles.rowItem}><Link className={styles.viewLink} href={`/${gallery}/calendar`}>Calendar</Link></li>
             <li className={styles.rowItem}><Link className={styles.viewLink} href={`/${gallery}/persons`}>Persons</Link></li>
             <li className={styles.rowItem}><Link className={styles.viewLink} href={`/${gallery}/visited`}>Visited</Link></li>
           </ul>

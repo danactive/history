@@ -11,6 +11,10 @@ import { applyGalleryItemsCachePolicy, getOrderedAlbumItems } from './get-all-it
 
 type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 
+export function getItemMonthDay(item: Item) {
+  return item.filename.toString().substring(5, 10)
+}
+
 const prepareTodayItems = (
   { albumName, albumCoordinateAccuracy, items }:
   {
@@ -39,7 +43,7 @@ export async function getTodayPageItems(gallery: Gallery, monthDay: string): Pro
 
   const albums = await getOrderedAlbumItems(gallery)
   return albums.flatMap(({ albumCoordinateAccuracy, albumName, items }) => {
-    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
+    const itemsMatchDate = items.filter((item) => getItemMonthDay(item) === monthDay)
     return prepareTodayItems({
       albumName,
       albumCoordinateAccuracy,

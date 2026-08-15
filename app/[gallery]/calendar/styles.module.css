@@ -1,0 +1,58 @@
+.page {
+  max-width: 76rem;
+  padding: 1rem 0 3rem;
+}
+
+.intro {
+  margin: 0 0 1.5rem;
+  opacity: 0.8;
+}
+
+.months {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+.month h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+.table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.table th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  opacity: 0.68;
+  padding: 0 0 0.3rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.day {
+  height: 2rem;
+  padding: 0.1rem;
+  text-align: center;
+}
+
+.dayLink {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-weight: 700;
+  height: 1.8rem;
+  justify-content: center;
+  text-decoration: none;
+  width: 1.8rem;
+}
+
+.dayLink:hover,
+.dayLink:focus-visible {
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  text-decoration: underline;
+}
