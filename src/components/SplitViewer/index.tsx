@@ -186,6 +186,7 @@ function SplitViewer({
     ))
   const selectedIndexRef = useRef(safeIndex)
   const requestedIndexRef = useRef<number | null>(null)
+  const isWrappingCarouselRef = useRef(false)
   if (requestedIndexRef.current === null) {
     selectedIndexRef.current = safeIndex
   } else if (requestedIndexRef.current === safeIndex) {
@@ -209,6 +210,31 @@ function SplitViewer({
       start: getGalleryWindowStart(items.length, nextIndex),
     }))
   }, [items.length])
+
+  const selectGlobalGalleryIndex = useCallback((index: number) => {
+    if (items.length === 0) return
+
+    const nextIndex = (index + items.length) % items.length
+    showGlobalIndex(nextIndex)
+    selectionCoordinator.selectIndex(nextIndex, {
+      origin: 'gallery',
+      syncGallery: false,
+    })
+  }, [items.length, selectionCoordinator, showGlobalIndex])
+
+  const navigateCarousel = useCallback((direction: -1 | 1) => {
+    if (items.length < 2) return
+
+    const nextIndex = (selectedIndexRef.current + direction + items.length) % items.length
+    const localIndex = nextIndex - activeGalleryWindow.start
+
+    if (localIndex >= 0 && localIndex < carouselItems.length) {
+      localGalleryRef.current?.slideToIndex(localIndex)
+      return
+    }
+
+    selectGlobalGalleryIndex(nextIndex)
+  }, [activeGalleryWindow.start, carouselItems.length, items.length, selectGlobalGalleryIndex])
 
   useImperativeHandle(refImageGallery, () => ({
     play: () => localGalleryRef.current?.play(),
@@ -277,7 +303,23 @@ function SplitViewer({
     if (nextIdx < 0 || nextIdx >= carouselItems.length) {
       nextIdx = Math.max(0, Math.min(nextIdx, carouselItems.length - 1))
     }
-    const globalIndex = activeGalleryWindow.start + nextIdx
+    const currentIndex = selectedIndexRef.current
+    const currentLocalIndex = currentIndex - activeGalleryWindow.start
+    const lastLocalIndex = carouselItems.length - 1
+    const wrappedForward = currentLocalIndex === lastLocalIndex && nextIdx === 0
+    const wrappedBackward = currentLocalIndex === 0 && nextIdx === lastLocalIndex
+    const globalIndex = wrappedForward
+      ? (currentIndex + 1) % items.length
+      : wrappedBackward
+        ? (currentIndex - 1 + items.length) % items.length
+        : activeGalleryWindow.start + nextIdx
+
+    if (wrappedForward || wrappedBackward) {
+      isWrappingCarouselRef.current = true
+      selectGlobalGalleryIndex(globalIndex)
+      return
+    }
+
     selectedIndexRef.current = globalIndex
     selectionCoordinator.selectIndex(globalIndex, {
       origin: 'gallery',
@@ -286,6 +328,11 @@ function SplitViewer({
   }
 
   const handleSlide: ImageGalleryProps['onSlide'] = (localIndex) => {
+    if (isWrappingCarouselRef.current) {
+      isWrappingCarouselRef.current = false
+      return
+    }
+
     const globalIndex = activeGalleryWindow.start + localIndex
     const closeToStart = localIndex < GALLERY_EDGE_BUFFER && globalIndex > 0
     const closeToEnd = localIndex >= carouselItems.length - GALLERY_EDGE_BUFFER
@@ -353,7 +400,33 @@ function SplitViewer({
             startIndex={localStartIndex}
             items={carouselItems}
             disableKeyDown
-            infinite={false}
+            infinite
+            renderLeftNav={(_, disabled) => (
+              <button
+                aria-label="Previous Slide"
+                className="image-gallery-icon image-gallery-left-nav"
+                disabled={disabled || items.length < 2}
+                type="button"
+                onClick={() => navigateCarousel(-1)}
+              >
+                <svg className="image-gallery-svg" fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="6 0 12 24">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+            )}
+            renderRightNav={(_, disabled) => (
+              <button
+                aria-label="Next Slide"
+                className="image-gallery-icon image-gallery-right-nav"
+                disabled={disabled || items.length < 2}
+                type="button"
+                onClick={() => navigateCarousel(1)}
+              >
+                <svg className="image-gallery-svg" fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="6 0 12 24">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            )}
             showPlayButton={false}
             showThumbnails={false}
             slideDuration={GALLERY_SLIDE_DURATION}

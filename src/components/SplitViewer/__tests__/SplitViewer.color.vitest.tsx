@@ -122,7 +122,7 @@ describe('SplitViewer rendering', () => {
     )
 
     expect(getGalleryWindowStart(items.length, 50)).toBe(35)
-    expect(container.querySelectorAll('.image-gallery-slide')).toHaveLength(31)
+    expect(container.querySelectorAll('.image-gallery-slide')).toHaveLength(33)
 
     fireEvent.keyDown(window, { key: 'ArrowRight' })
     expect(selectionCoordinator.selectIndex).toHaveBeenCalledWith(51, {
@@ -132,6 +132,46 @@ describe('SplitViewer rendering', () => {
 
     act(() => refImageGallery.current?.slideToIndex(90))
     expect(refImageGallery.current?.getCurrentIndex()).toBe(90)
-    expect(container.querySelectorAll('.image-gallery-slide').length).toBeLessThanOrEqual(31)
+    expect(container.querySelectorAll('.image-gallery-slide').length).toBeLessThanOrEqual(33)
+  })
+
+  it('wraps carousel navigation at both ends', () => {
+    const items = Array.from({ length: 100 }, (_, index) => createItem(index))
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item: items[99], index: 99, revision: 0, origin: 'filter', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: items.length,
+    }
+
+    const renderViewer = (memoryIndex: number) => (
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={items}
+        refImageGallery={null}
+        memoryIndex={memoryIndex}
+        selectionCoordinator={selectionCoordinator}
+      />
+    )
+    const { getByRole, rerender } = render(renderViewer(99))
+
+    fireEvent.click(getByRole('button', { name: 'Next Slide' }))
+    rerender(renderViewer(0))
+    fireEvent.click(getByRole('button', { name: 'Previous Slide' }))
+
+    expect(selectionCoordinator.selectIndex).toHaveBeenNthCalledWith(1, 0, {
+      origin: 'gallery',
+      syncGallery: false,
+    })
+    expect(selectionCoordinator.selectIndex).toHaveBeenNthCalledWith(2, 99, {
+      origin: 'gallery',
+      syncGallery: false,
+    })
   })
 })

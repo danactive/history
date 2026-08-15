@@ -5,6 +5,45 @@ import type { PersonAgeFilterValue } from '../../lib/persons'
 import { pillSelectSx, popupListSx, selectButtonSx } from '../Search/control-styles'
 import styles from './filter-controls.module.css'
 
+const darkSelectSx = {
+  ...pillSelectSx,
+  '--variant-softBg': 'rgba(26, 30, 36, 0.92)',
+  '--variant-softHoverBg': 'rgba(38, 43, 50, 0.96)',
+  '--variant-softActiveBg': 'rgba(44, 49, 57, 0.98)',
+  '&:hover, &:focus-within, &.MuiSelect-expanded': {
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    borderColor: 'transparent',
+  },
+} as const
+
+const darkSelectButtonSx = {
+  ...selectButtonSx,
+  backgroundColor: 'rgba(26, 30, 36, 0.92)',
+  color: 'rgba(255, 255, 255, 0.92)',
+  '&:hover, &:focus-visible, &[aria-expanded="true"]': {
+    backgroundColor: 'rgba(38, 43, 50, 0.96) !important',
+    color: 'rgba(255, 255, 255, 0.96)',
+  },
+} as const
+
+const darkOptionSx = {
+  '--variant-plainColor': 'rgba(255, 255, 255, 0.92)',
+  '--variant-plainHoverColor': 'rgba(255, 255, 255, 0.96)',
+  '--variant-plainHoverBg': 'rgba(52, 58, 68, 0.98)',
+  '--variant-plainActiveColor': 'rgba(255, 255, 255, 0.98)',
+  '--variant-plainActiveBg': 'rgba(71, 113, 129, 0.62)',
+  color: 'rgba(255, 255, 255, 0.92)',
+  '&:hover, &.MuiOption-highlighted:not([aria-selected="true"])': {
+    backgroundColor: 'rgba(52, 58, 68, 0.98) !important',
+    color: 'rgba(255, 255, 255, 0.96)',
+  },
+  '&[aria-selected="true"], &[aria-selected="true"]:hover': {
+    backgroundColor: 'rgba(71, 113, 129, 0.68) !important',
+    color: 'rgba(255, 255, 255, 0.98)',
+  },
+} as const
+
 export type AgeCount = {
   age: number | 'unknown'
   count: number
@@ -67,21 +106,21 @@ export default function FilterControls({
             }}
             variant="soft"
             size="sm"
-            sx={pillSelectSx}
+            sx={darkSelectSx}
             slotProps={{
               button: {
-                sx: selectButtonSx,
+                sx: darkSelectButtonSx,
               },
               listbox: {
                 sx: popupListSx,
               },
             }}
           >
-            <Option value="">
+            <Option value="" sx={darkOptionSx}>
               All ages ({totalPhotoCount} {totalPhotoCount === 1 ? 'photo' : 'photos'})
             </Option>
             {agesWithCounts.map(({ age, count }) => (
-              <Option key={String(age)} value={String(age)}>
+              <Option key={String(age)} value={String(age)} sx={darkOptionSx}>
                 {age === 'unknown' ? 'Unknown age' : age} ({count} {count === 1 ? 'photo' : 'photos'})
               </Option>
             ))}
@@ -96,21 +135,21 @@ export default function FilterControls({
               onChange={(_, value) => setSelectedPerson(value || null)}
               variant="soft"
               size="sm"
-              sx={pillSelectSx}
+              sx={darkSelectSx}
               slotProps={{
                 button: {
-                  sx: selectButtonSx,
+                  sx: darkSelectButtonSx,
                 },
                 listbox: {
                   sx: popupListSx,
                 },
               }}
             >
-              <Option value="">
+              <Option value="" sx={darkOptionSx}>
                 {allPersonsLabel}
               </Option>
               {peopleWithCounts.map(({ name, count }) => (
-                <Option key={name} value={name}>
+                <Option key={name} value={name} sx={darkOptionSx}>
                   {name} ({count} {count === 1 ? 'photo' : 'photos'})
                 </Option>
               ))}
