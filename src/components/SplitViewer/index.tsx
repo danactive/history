@@ -156,7 +156,8 @@ function SplitViewer({
   const activeGalleryWindow = useMemo<GalleryWindowState>(() => {
     const windowEnd = galleryWindow.start + MAX_RENDERED_SLIDES
     const sourceChanged = galleryWindow.sourceVersion !== gallerySourceVersion
-    const selectionOutsideWindow = safeIndex < galleryWindow.start || safeIndex >= windowEnd
+    const selectionOutsideWindow = safeIndex >= 0
+      && (safeIndex < galleryWindow.start || safeIndex >= windowEnd)
     if (!sourceChanged && !selectionOutsideWindow) return galleryWindow
 
     return {
@@ -409,7 +410,15 @@ function SplitViewer({
                 type="button"
                 onClick={() => navigateCarousel(-1)}
               >
-                <svg className="image-gallery-svg" fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="6 0 12 24">
+                <svg
+                  className="image-gallery-svg"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="square"
+                  strokeLinejoin="miter"
+                  strokeWidth="1"
+                  viewBox="6 0 12 24"
+                >
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
@@ -422,7 +431,15 @@ function SplitViewer({
                 type="button"
                 onClick={() => navigateCarousel(1)}
               >
-                <svg className="image-gallery-svg" fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" strokeWidth="1" viewBox="6 0 12 24">
+                <svg
+                  className="image-gallery-svg"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="square"
+                  strokeLinejoin="miter"
+                  strokeWidth="1"
+                  viewBox="6 0 12 24"
+                >
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>

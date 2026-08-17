@@ -1,6 +1,6 @@
 import Button from '@mui/joy/Button'
 import Textarea from '@mui/joy/Textarea'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import type { Filesystem } from '../../lib/filesystems'
@@ -12,7 +12,10 @@ export default function ActionButtons(
   { items: Filesystem[] },
 ) {
   const [textXml, setTextXml] = useState('')
+  const [resizeError, setResizeError] = useState('')
+  const [isResizing, setIsResizing] = useState(false)
   const params = useParams<{ path: string[] }>()
+  const router = useRouter()
   const path = params.path ? `/${params.path.join('/')}` : '/'
 
   async function rename() {
@@ -49,6 +52,8 @@ export default function ActionButtons(
   }
 
   async function resize() {
+    setIsResizing(true)
+    setResizeError('')
     const postBody: ResizeRequestBody = {
       source_folder: path,
       get_metadata: false,
@@ -62,13 +67,28 @@ export default function ActionButtons(
       body: JSON.stringify(postBody),
     }
 
-    fetch('/api/admin/resize', options)
+    try {
+      const response = await fetch('/api/admin/resize', options)
+      const result = await response.json() as { meta?: { error?: { count?: number, message?: string[] } } }
+      const errors = result.meta?.error
+      if (!response.ok || (errors?.count ?? 0) > 0) {
+        throw new Error(errors?.message?.join(' ') || 'Could not resize photos')
+      }
+      router.push(`/admin/thumbs${encodeURI(path)}`)
+    } catch (error) {
+      setResizeError(error instanceof Error ? error.message : 'Could not resize photos')
+    } finally {
+      setIsResizing(false)
+    }
   }
 
   return (
     <div>
       <Button color='neutral' onClick={() => rename()}>Rename</Button>
-      <Button color='neutral' onClick={() => resize()}>Resize</Button>
+      <Button color='neutral' onClick={() => resize()} loading={isResizing}>
+        Resize &amp; frame thumbs
+      </Button>
+      {resizeError && <p>{resizeError}</p>}
       <Textarea
         disabled={false}
         minRows={2}

@@ -40,6 +40,33 @@ function createItem(index: number): Item {
 }
 
 describe('SplitViewer rendering', () => {
+  it('renders an empty result set without repeatedly updating its gallery window', () => {
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 0,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item: null, index: -1, revision: 0, origin: 'filter', cameraIntent: 'preserve' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+
+    const { container } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={[]}
+        refImageGallery={null}
+        memoryIndex={0}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    expect(container.querySelector('.image-gallery')).toBeTruthy()
+  })
+
   it('renders without injecting a dynamic background style tag', () => {
     const items: Item[] = [
       {

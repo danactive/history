@@ -1,0 +1,77 @@
+.header {
+  margin-bottom: 1.25rem;
+  color: #f1f3f5;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header p {
+  margin: 0.35rem 0 0;
+  color: #c2c8cf;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid #4f5963;
+  border-radius: 0.6rem;
+  background: #24282d;
+  box-shadow: 0 5px 14px rgb(0 0 0 / 20%);
+}
+
+.filename {
+  overflow: hidden;
+  margin: 0;
+  color: #f1f3f5;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 185 / 45;
+  border: 2px solid #2788c7;
+  background: #101214;
+  border-radius: 0.25rem;
+  cursor: grab;
+  touch-action: none;
+}
+
+.preview:active {
+  cursor: grabbing;
+}
+
+.zoomLabel {
+  display: flex;
+  justify-content: space-between;
+  color: #d8dde3;
+  font-size: 0.85rem;
+}
+
+.zoom {
+  width: 100%;
+  accent-color: #2788c7;
+}
+
+.saved {
+  color: #8ee6a5;
+  font-size: 0.85rem;
+}
+
+.error {
+  margin: 0;
+  color: #ff9ca5;
+}
