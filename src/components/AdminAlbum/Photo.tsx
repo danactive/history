@@ -5,9 +5,10 @@ import Typography from '@mui/joy/Typography'
 import useSWRMutation from 'swr/mutation'
 
 import { originalPath, photoPath } from '../../lib/paths'
-import type {
-  ClassificationRequest,
-  ClassificationResponse,
+import {
+  normalizePhotoClassificationResponse,
+  type ClassificationRequest,
+  type PhotoClassificationResponse,
 } from '../../models/classifier'
 import config from '../../models/config'
 import type { Gallery, RawXmlItem } from '../../types/common'
@@ -25,36 +26,43 @@ function OpenInNewIcon() {
 const fetcher = async (
   url: string,
   { arg }: { arg: ClassificationRequest },
-): Promise<ClassificationResponse> => {
+): Promise<PhotoClassificationResponse> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(arg),
   })
-  const data = await response.json()
+  const data: unknown = await response.json().catch(() => null)
   if (!response.ok) {
-    throw new Error(data.error || 'Classifier request failed')
+    const message = (
+      typeof data === 'object'
+      && data !== null
+      && 'error' in data
+      && typeof data.error === 'string'
+    ) ? data.error : 'Photo classification is currently unavailable. Try again.'
+    throw new Error(message)
   }
-  return data
+  return normalizePhotoClassificationResponse(data)
 }
 
 export default function AdminAlbumPhoto(
-  { item, gallery, size = 'default', onAcceptPrediction }:
+  { item, gallery, size = 'default', onAddDescription }:
   {
     item: RawXmlItem,
     gallery: Gallery,
     size?: 'default' | 'small',
-    onAcceptPrediction?: (scientificName: string) => void,
+    onAddDescription?: (descriptionValue: string) => void,
   },
 ) {
-  const { trigger, data, error, isMutating } = useSWRMutation<
-    ClassificationResponse,
+  const { trigger, data, error, isMutating, reset } = useSWRMutation<
+    PhotoClassificationResponse,
     Error,
     string,
     ClassificationRequest
   >(
     '/api/admin/classify',
     fetcher,
+    { throwOnError: false },
   )
 
   const photoSrc = photoPath(item.filename, gallery)
@@ -92,35 +100,40 @@ export default function AdminAlbumPhoto(
           color="primary"
           onClick={(e) => {
             e.preventDefault()
-            trigger({
+            reset()
+            void trigger({
               path: originalSrc,
               fallbackPath: photoSrc,
               photoDate: item.photo_date,
               city: item.photo_city,
               location: item.photo_loc,
               geo: item.geo,
-            })
+            }, { throwOnError: false })
           }}
           loading={isMutating}
         >
-          Classify organism
+          Classify photo
         </Button>
-        {error && <Typography color="danger">{error.message}</Typography>}
+        {error && (
+          <Stack spacing={0.25} sx={{ mt: 1 }} role="alert">
+            <Typography level="title-sm" color="danger">
+              Classification unavailable
+            </Typography>
+            <Typography level="body-sm" sx={{ color: 'neutral.300' }}>
+              {error.message}
+            </Typography>
+          </Stack>
+        )}
         {data && (
           <Stack spacing={0.75} sx={{ mt: 1 }}>
             <Typography level="title-sm">
-              {data.status === 'identified' && 'Best-supported suggestion — verify before adding'}
-              {data.status === 'uncertain' && 'Uncertain — review the leading suggestions'}
-              {data.status === 'not_organism' && 'No clear organism detected'}
+              {data.status === 'matched'
+                ? 'Top classifier results — verify before adding'
+                : 'No reliable classification found'}
             </Typography>
-            {data.status === 'uncertain' && !data.diagnostics.topTwoSameFamily && (
-              <Typography level="body-sm">
-                The leading suggestions disagree at the family level. Do not treat this as an identification.
-              </Typography>
-            )}
-            {data.status !== 'not_organism' && data.predictions.map(prediction => (
+            {data.suggestions.map((suggestion, index) => (
               <Stack
-                key={prediction.taxonId}
+                key={`${suggestion.type}:${suggestion.id}`}
                 direction="row"
                 spacing={1}
                 alignItems="center"
@@ -128,35 +141,39 @@ export default function AdminAlbumPhoto(
               >
                 <div>
                   <div>
-                    {prediction.commonName && `${prediction.commonName} — `}
+                    {index + 1}.{' '}
+                    {suggestion.commonName && `${suggestion.commonName} — `}
                     <Link
-                      href={`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(prediction.scientificName)}`}
+                      href={`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(suggestion.name)}`}
                       target="_blank"
                     >
-                      <i>{prediction.scientificName}</i>
+                      {suggestion.type === 'organism' ? <i>{suggestion.name}</i> : suggestion.name}
                     </Link>
                   </div>
                   <Typography level="body-xs" sx={{ color: 'neutral.400' }}>
-                    {prediction.family && `${prediction.family} · `}
-                    {prediction.matchStrength} match · similarity {prediction.score.toFixed(3)}
+                    {suggestion.type === 'organism' ? 'Organism' : 'Architecture'} ·{' '}
+                    {suggestion.context && `${suggestion.context} · `}
+                    {suggestion.matchStrength} match · similarity {suggestion.score.toFixed(3)}
                   </Typography>
+                  {suggestion.reviewCues.length > 0 && (
+                    <Typography level="body-xs" sx={{ color: 'neutral.400' }}>
+                      Verify: {suggestion.reviewCues.join(', ')}
+                    </Typography>
+                  )}
                 </div>
-                {onAcceptPrediction && (
+                {onAddDescription && (
                   <Button
                     type="button"
                     size="sm"
                     variant="solid"
                     color="primary"
-                    onClick={() => onAcceptPrediction(prediction.scientificName)}
+                    onClick={() => onAddDescription(suggestion.descriptionValue)}
                   >
-                    Add keyword
+                    Add Desc
                   </Button>
                 )}
               </Stack>
             ))}
-            <Typography level="body-xs" sx={{ color: 'neutral.500' }}>
-              {data.model.id} · {data.diagnostics.cropCount} crop{data.diagnostics.cropCount === 1 ? '' : 's'}
-            </Typography>
           </Stack>
         )}
       </Stack>

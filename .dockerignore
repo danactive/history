@@ -9,5 +9,6 @@ __pycache__/
 **/[Rr][Ee][Aa][Dd][Mm][Ee].[Mm][Dd]
 models/classifier-cache
 models/imageomics_TreeOfLife-200M
+models/google_siglip2-base-patch16-224
 models/laion_CLIP-ViT-H-14-laion2B-s32B-b79K
 models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21

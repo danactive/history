@@ -1,0 +1,208 @@
+{
+  "version": "architecture-styles-v1",
+  "styles": [
+    {
+      "id": "ancient-classical",
+      "name": "Ancient Greek or Roman",
+      "family": "Classical",
+      "prompts": ["ancient Greek architecture", "ancient Roman architecture", "a Classical temple with columns and a pediment"],
+      "reviewCues": ["classical orders", "pediments", "formal stone symmetry"]
+    },
+    {
+      "id": "romanesque",
+      "name": "Romanesque",
+      "family": "Romanesque",
+      "prompts": ["Romanesque architecture", "a Romanesque stone church", "a building with heavy masonry and round arches"],
+      "reviewCues": ["round arches", "heavy masonry", "small deeply set openings"]
+    },
+    {
+      "id": "gothic",
+      "name": "Gothic",
+      "family": "Gothic",
+      "prompts": ["Gothic architecture", "a medieval Gothic cathedral", "a Gothic building with pointed arches and stone tracery"],
+      "reviewCues": ["pointed arches", "tracery", "strong vertical emphasis"]
+    },
+    {
+      "id": "gothic-revival",
+      "name": "Gothic Revival",
+      "family": "Gothic",
+      "prompts": ["Gothic Revival architecture", "a Victorian Gothic Revival building", "a Neo-Gothic building with pointed arches"],
+      "reviewCues": ["pointed arches", "historic Gothic ornament", "nineteenth-century construction details"]
+    },
+    {
+      "id": "renaissance",
+      "name": "Renaissance",
+      "family": "Renaissance",
+      "prompts": ["Renaissance architecture", "an Italian Renaissance palazzo", "a symmetrical Renaissance facade with classical details"],
+      "reviewCues": ["symmetrical bays", "classical orders", "rounded arches"]
+    },
+    {
+      "id": "baroque",
+      "name": "Baroque",
+      "family": "Baroque",
+      "prompts": ["Baroque architecture", "an ornate Baroque church", "a dramatic Baroque facade with curved forms"],
+      "reviewCues": ["dramatic curves", "dense ornament", "strong light-and-shadow modelling"]
+    },
+    {
+      "id": "neoclassical",
+      "name": "Neoclassical",
+      "family": "Classical",
+      "prompts": ["Neoclassical architecture", "a Neoclassical civic building", "a symmetrical building with a classical portico"],
+      "reviewCues": ["columned portico", "pediment", "restrained symmetry"]
+    },
+    {
+      "id": "beaux-arts",
+      "name": "Beaux-Arts",
+      "family": "Classical",
+      "prompts": ["Beaux-Arts architecture", "a monumental Beaux-Arts building", "an ornate symmetrical classical civic building"],
+      "reviewCues": ["monumental symmetry", "classical sculpture", "richly modelled facade"]
+    },
+    {
+      "id": "georgian",
+      "name": "Georgian",
+      "family": "Georgian",
+      "prompts": ["Georgian architecture", "a Georgian brick house", "a restrained symmetrical Georgian facade"],
+      "reviewCues": ["regular sash windows", "brick symmetry", "classical doorway"]
+    },
+    {
+      "id": "victorian",
+      "name": "Victorian",
+      "family": "Victorian",
+      "prompts": ["Victorian architecture", "an ornate Victorian building", "a nineteenth-century Victorian house"],
+      "reviewCues": ["decorative trim", "varied roofline", "contrasting materials"]
+    },
+    {
+      "id": "tudor-revival",
+      "name": "Tudor Revival",
+      "family": "Historic Revival",
+      "prompts": ["Tudor Revival architecture", "a Tudor Revival house", "a building with decorative half timbering and steep gables"],
+      "reviewCues": ["decorative half-timbering", "steep gables", "tall grouped chimneys"]
+    },
+    {
+      "id": "arts-and-crafts",
+      "name": "Arts and Crafts",
+      "family": "Arts and Crafts",
+      "prompts": ["Arts and Crafts architecture", "an Arts and Crafts house", "a handcrafted building using natural materials"],
+      "reviewCues": ["expressed craftsmanship", "natural materials", "deep sheltering roof"]
+    },
+    {
+      "id": "prairie-school",
+      "name": "Prairie School",
+      "family": "Early Modern",
+      "prompts": ["Prairie School architecture", "a Frank Lloyd Wright Prairie style house", "a low horizontal Prairie style building"],
+      "reviewCues": ["strong horizontal lines", "low-pitched roof", "broad overhanging eaves"]
+    },
+    {
+      "id": "art-nouveau",
+      "name": "Art Nouveau",
+      "family": "Art Nouveau",
+      "prompts": ["Art Nouveau architecture", "an Art Nouveau facade", "a building with organic flowing Art Nouveau ornament"],
+      "reviewCues": ["flowing organic lines", "plant-like ornament", "integrated decorative ironwork"]
+    },
+    {
+      "id": "art-deco",
+      "name": "Art Deco",
+      "family": "Art Deco",
+      "prompts": ["Art Deco architecture", "an Art Deco building facade", "a building with geometric Art Deco ornament"],
+      "reviewCues": ["geometric ornament", "stepped forms", "stylized vertical decoration"]
+    },
+    {
+      "id": "streamline-moderne",
+      "name": "Streamline Moderne",
+      "family": "Art Deco",
+      "prompts": ["Streamline Moderne architecture", "a streamlined Art Deco building", "a building with rounded corners and horizontal speed lines"],
+      "reviewCues": ["rounded corners", "horizontal bands", "nautical streamlined forms"]
+    },
+    {
+      "id": "bauhaus",
+      "name": "Bauhaus",
+      "family": "Modernism",
+      "prompts": ["Bauhaus architecture", "a functional Bauhaus building", "a geometric white Bauhaus building with little ornament"],
+      "reviewCues": ["simple geometric volumes", "functional planning", "minimal applied ornament"]
+    },
+    {
+      "id": "international-style",
+      "name": "International Style",
+      "family": "Modernism",
+      "prompts": ["International Style architecture", "an International Style glass and steel building", "a rectilinear modernist building without ornament"],
+      "reviewCues": ["rectilinear volume", "glass curtain wall", "absence of applied ornament"]
+    },
+    {
+      "id": "mid-century-modern",
+      "name": "Mid-century modern",
+      "family": "Modernism",
+      "prompts": ["mid-century modern architecture", "a mid-century modern house", "a 1950s modern building with large windows and a low roof"],
+      "reviewCues": ["low roofline", "large glazing", "indoor-outdoor connection"]
+    },
+    {
+      "id": "brutalist",
+      "name": "Brutalist",
+      "family": "Modernism",
+      "prompts": ["Brutalist architecture", "a monumental Brutalist concrete building", "a building made from massive exposed concrete forms"],
+      "reviewCues": ["exposed concrete", "massive sculptural forms", "repetitive structural modules"]
+    },
+    {
+      "id": "postmodern",
+      "name": "Postmodern",
+      "family": "Postmodern",
+      "prompts": ["Postmodern architecture", "a playful Postmodern building", "a late twentieth-century building using exaggerated historical references"],
+      "reviewCues": ["playful historic references", "bold colour or pattern", "deliberately exaggerated forms"]
+    },
+    {
+      "id": "contemporary",
+      "name": "Contemporary",
+      "family": "Contemporary",
+      "prompts": ["contemporary architecture", "a recently built contemporary building", "a contemporary glass wood and concrete building"],
+      "reviewCues": ["current materials", "asymmetrical massing", "large areas of glazing"]
+    },
+    {
+      "id": "byzantine",
+      "name": "Byzantine",
+      "family": "Byzantine",
+      "prompts": ["Byzantine architecture", "a Byzantine church with a central dome", "a building with Byzantine domes and round arches"],
+      "reviewCues": ["central dome", "round arches", "rich interior mosaics"]
+    },
+    {
+      "id": "islamic",
+      "name": "Islamic",
+      "family": "Islamic",
+      "prompts": ["Islamic architecture", "a mosque with Islamic geometric decoration", "an Islamic building with arches a courtyard and a minaret"],
+      "reviewCues": ["geometric ornament", "courtyard planning", "distinctive arches or domes"]
+    },
+    {
+      "id": "moorish-revival",
+      "name": "Moorish Revival",
+      "family": "Islamic Revival",
+      "prompts": ["Moorish Revival architecture", "a Moorish Revival building", "a historic revival building with horseshoe arches and Islamic ornament"],
+      "reviewCues": ["horseshoe arches", "polychrome surface pattern", "revival-era construction"]
+    },
+    {
+      "id": "mughal",
+      "name": "Mughal",
+      "family": "Mughal",
+      "prompts": ["Mughal architecture", "a Mughal palace or mosque", "a symmetrical Mughal building with bulbous domes and minarets"],
+      "reviewCues": ["bulbous domes", "formal symmetry", "minarets and inlaid ornament"]
+    },
+    {
+      "id": "chinese-traditional",
+      "name": "Traditional Chinese",
+      "family": "East Asian traditional",
+      "prompts": ["traditional Chinese architecture", "a traditional Chinese timber building", "a Chinese building with tiled upturned roofs"],
+      "reviewCues": ["timber frame", "tiled sweeping roof", "bracket sets"]
+    },
+    {
+      "id": "japanese-traditional",
+      "name": "Traditional Japanese",
+      "family": "East Asian traditional",
+      "prompts": ["traditional Japanese architecture", "a traditional Japanese timber building", "a Japanese temple or house with deep tiled eaves"],
+      "reviewCues": ["exposed timber structure", "deep eaves", "modular screens or bays"]
+    },
+    {
+      "id": "vernacular",
+      "name": "Vernacular",
+      "family": "Vernacular",
+      "prompts": ["vernacular architecture", "a traditional regional building made with local materials", "an indigenous local building tradition"],
+      "reviewCues": ["local materials", "climate-responsive form", "regional building tradition"]
+    }
+  ]
+}

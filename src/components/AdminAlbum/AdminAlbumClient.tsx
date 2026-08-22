@@ -11,7 +11,7 @@ import useSWR from 'swr'
 import type { SearchResult } from '../../../app/api/admin/search/route'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
-import { appendSearchKeyword } from '../../models/classifier'
+import { appendPhotoDescription } from '../../models/classifier'
 import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
@@ -104,12 +104,12 @@ export default function AdminAlbumClient(
     }
   }
 
-  const handleClassifierKeyword = (scientificName: string) => {
+  const handleClassifierDescription = (descriptionValue: string) => {
     const currentItem = getItemWithEdits(item) ?? item
     if (!currentItem) return
     handleItemUpdateWrapper({
       ...currentItem,
-      search: appendSearchKeyword(currentItem.search, scientificName),
+      photo_desc: appendPhotoDescription(currentItem.photo_desc, descriptionValue),
     })
   }
 
@@ -334,7 +334,20 @@ export default function AdminAlbumClient(
             />
           </Stack>
           {item && (
-            <Stack sx={{ position: 'sticky', top: 16, alignSelf: 'flex-start' }}>
+            <Stack
+              sx={{
+                position: 'sticky',
+                top: 16,
+                alignSelf: 'flex-start',
+                width: '36rem',
+                flexShrink: 0,
+                maxHeight: 'calc(100dvh - 32px)',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                overscrollBehavior: 'contain',
+                scrollbarGutter: 'stable',
+              }}
+            >
               <Fields
                 xmlAlbum={data}
                 item={getItemWithEdits(item)}
@@ -346,7 +359,7 @@ export default function AdminAlbumClient(
                   item={getItemWithEdits(item) ?? item}
                   gallery={currentGallery}
                   size="small"
-                  onAcceptPrediction={handleClassifierKeyword}
+                  onAddDescription={handleClassifierDescription}
                 />
               </Fields>
             </Stack>

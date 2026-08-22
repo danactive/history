@@ -1,16 +1,38 @@
 import { NextResponse } from 'next/server'
 import fs from 'node:fs/promises'
 
+import {
+  classifierFetchFailure,
+  classifierHttpFailure,
+  classifierUnexpectedResponseFailure,
+  type ClassifierBackendFailure,
+} from '../../../../src/lib/classifier-backend'
 import utilsFactory from '../../../../src/lib/utils'
 import config from '../../../../src/models/config'
 import {
   encodeClassificationMetadata,
-  normalizeClassificationResponse,
+  normalizePhotoClassificationResponse,
   type ClassificationRequest,
 } from '../../../../src/models/classifier'
 
 function setMetadataHeader(headers: Headers, name: string, value?: string | null) {
   if (value) headers.set(name, encodeClassificationMetadata(value))
+}
+
+function failureResponse(failure: ClassifierBackendFailure) {
+  return NextResponse.json(
+    { error: failure.message, code: failure.code },
+    { status: failure.status },
+  )
+}
+
+function parseResponseBody(body: string): unknown {
+  if (!body) return null
+  try {
+    return JSON.parse(body)
+  } catch {
+    return null
+  }
 }
 
 export async function POST(req: Request) {
@@ -43,27 +65,34 @@ export async function POST(req: Request) {
     setMetadataHeader(headers, 'X-Photo-City', request.city)
     setMetadataHeader(headers, 'X-Photo-Location', request.location)
 
-    const classifyUrl = `http://localhost:${config.pythonPort}/classify`
+    const classifyUrl = `http://localhost:${config.pythonPort}/classify/photo`
 
-    const res = await fetch(classifyUrl, {
-      method: 'POST',
-      headers,
-      body,
-      signal: AbortSignal.timeout(180_000),
-    })
-
-    const data: unknown = await res.json()
-    if (!res.ok) {
-      const message = typeof data === 'object' && data !== null && 'error' in data
-        ? String(data.error)
-        : 'Classifier backend failed'
-      return NextResponse.json({ error: message }, { status: res.status })
+    let res: Response
+    let responseBody: string
+    try {
+      res = await fetch(classifyUrl, {
+        method: 'POST',
+        headers,
+        body,
+        signal: AbortSignal.timeout(180_000),
+      })
+      responseBody = await res.text()
+    } catch (error) {
+      return failureResponse(classifierFetchFailure(error))
     }
 
-    return NextResponse.json(normalizeClassificationResponse(data))
+    const data = parseResponseBody(responseBody)
+    if (!res.ok) {
+      return failureResponse(classifierHttpFailure(res.status, data))
+    }
+
+    try {
+      return NextResponse.json(normalizePhotoClassificationResponse(data))
+    } catch {
+      return failureResponse(classifierUnexpectedResponseFailure())
+    }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unexpected error'
-    const status = err instanceof Error && err.name === 'TimeoutError' ? 504 : 500
-    return NextResponse.json({ error: message }, { status })
+    return NextResponse.json({ error: message, code: 'request_error' }, { status: 500 })
   }
 }

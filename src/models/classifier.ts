@@ -1,37 +1,22 @@
-export type ClassificationStatus = 'identified' | 'uncertain' | 'not_organism'
-export type MatchStrength = 'strong' | 'possible' | 'weak'
-
-export type ClassificationPrediction = {
-  taxonId: string
-  scientificName: string
+export type PhotoClassificationSuggestion = {
+  type: 'organism' | 'architecture'
+  id: string
+  name: string
   commonName: string | null
-  kingdom: string | null
-  family: string | null
-  genus: string | null
-  lineage: string[]
+  context: string | null
+  descriptionValue: string
   score: number
-  matchStrength: MatchStrength
+  matchStrength: 'strong' | 'possible' | 'weak'
+  reviewCues: string[]
 }
 
-export type ClassificationResponse = {
-  status: ClassificationStatus
-  model: {
-    id: string
-    revision: string
-    taxonomy: string
-  }
-  predictions: ClassificationPrediction[]
+export type PhotoClassificationResponse = {
+  status: 'matched' | 'no_match'
+  suggestions: PhotoClassificationSuggestion[]
   diagnostics: {
-    candidateCount: number
-    cropCount: number
-    cropAgreement: number
-    topMargin: number
-    organismScore: number
-    nonOrganismScore: number
-    topTwoSameFamily: boolean
-    topTwoSameGenus: boolean
-    metadataAvailable: boolean
-    metadataApplied: boolean
+    organismStatus: 'identified' | 'uncertain' | 'not_organism' | null
+    architectureStatus: 'identified' | 'uncertain' | 'not_architecture' | null
+    unavailableClassifiers: string[]
   }
 }
 
@@ -55,29 +40,27 @@ const isRecord = (value: unknown): value is Record<string, unknown> => (
   typeof value === 'object' && value !== null
 )
 
-export function normalizeClassificationResponse(value: unknown): ClassificationResponse {
+export function normalizePhotoClassificationResponse(value: unknown): PhotoClassificationResponse {
   if (
     !isRecord(value)
-    || !Array.isArray(value.predictions)
+    || !Array.isArray(value.suggestions)
+    || value.suggestions.length > 4
     || typeof value.status !== 'string'
-    || !isRecord(value.model)
     || !isRecord(value.diagnostics)
   ) {
     throw new Error('Classifier returned an invalid response')
   }
 
-  return value as ClassificationResponse
+  return value as PhotoClassificationResponse
 }
 
-export function appendSearchKeyword(search: string | undefined, keyword: string): string {
-  const trimmedKeyword = keyword.trim()
-  const keywords = (search ?? '')
-    .split(',')
-    .map(value => value.trim())
-    .filter(Boolean)
+export function appendPhotoDescription(description: string | undefined, value: string): string {
+  const currentDescription = (description ?? '').trim()
+  const trimmedValue = value.trim()
 
-  if (!keywords.some(value => value.toLocaleLowerCase() === trimmedKeyword.toLocaleLowerCase())) {
-    keywords.push(trimmedKeyword)
+  if (!trimmedValue) return currentDescription
+  if (currentDescription.toLocaleLowerCase().includes(trimmedValue.toLocaleLowerCase())) {
+    return currentDescription
   }
-  return keywords.join(', ')
+  return currentDescription ? `${currentDescription} — ${trimmedValue}` : trimmedValue
 }

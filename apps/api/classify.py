@@ -34,7 +34,9 @@ async def initialize_classifier() -> None:
     await run_in_threadpool(engine.initialize)
 
 
-async def classify_image(request: Request):
+async def classification_request(
+    request: Request,
+) -> tuple[Image.Image, dict[str, str | None]]:
     image_bytes = await request.body()
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Image body is empty")
@@ -47,4 +49,16 @@ async def classify_image(request: Request):
     except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
         raise HTTPException(status_code=400, detail="Unsupported or invalid image") from error
 
-    return await run_in_threadpool(engine.classify, image, classification_metadata(request))
+    return image, classification_metadata(request)
+
+
+async def classify_loaded_image(
+    image: Image.Image,
+    metadata: dict[str, str | None],
+):
+    return await run_in_threadpool(engine.classify, image, metadata)
+
+
+async def classify_image(request: Request):
+    image, metadata = await classification_request(request)
+    return await classify_loaded_image(image, metadata)
