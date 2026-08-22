@@ -1,54 +1,42 @@
-# Python API quick start
+# Photo-analysis service
 
-The History app uses one local FastAPI service for all photo-analysis functions:
+`apps/` contains History's optional local AI subsystem. It is deliberately separate from Next.js
+so the gallery remains usable without large Python dependencies or model assets, while the Album
+Editor can request richer insights when the service is running.
 
-- `POST /scores` provides aesthetic scores and editing insights.
-- `POST /classify/organism` provides offline BioCLIP 2 organism diagnostics.
-- `POST /classify/architecture` provides offline architectural-style diagnostics.
-- `POST /classify/photo` returns up to four balanced organism or architecture results for review.
+## One service, several capabilities
 
-Both accept raw JPEG or PNG bytes and run on `http://localhost:8080`.
+The `apps/api/` FastAPI application owns every Python photo-analysis feature and listens on port
+8080. It accepts image bytes rather than filesystem paths and provides:
 
-## First-time model setup
+| Route | Responsibility |
+| --- | --- |
+| `GET /health` | Reports model readiness, pinned revisions, taxonomy identities, and devices. |
+| `POST /scores` | Returns aesthetic measurements and editing insights. |
+| `POST /classify/organism` | Retrieves organism candidates with BioCLIP 2. |
+| `POST /classify/architecture` | Retrieves architectural styles with SigLIP 2. |
+| `POST /classify/photo` | Chooses and balances reviewable results from both specialists. |
 
-Download and verify the pinned BioCLIP 2 bundle if it is not already present:
+The Album Editor calls the combined route through the Next.js endpoint in
+`app/api/admin/classify/route.ts`. There is one user-facing **Classify photo** action and one Python
+server; organism and architecture classification are specialists inside that service, not
+separate applications.
 
-```sh
-make load-bioclip2
-make load-architecture-classifier
-```
+## Offline model boundary
 
-The immutable model and TreeOfLife-200M species-index revisions, required artifacts, and SHA-256
-values are defined in `apps/load-weights/manifests`. Runtime inference remains offline.
+Classifier inference uses only verified files under the ignored repository-level `models/`
+directory. `apps/load-weights/` contains the pinned manifests and downloader that populate those
+directories. Runtime network access is not a fallback: a missing model, tokenizer, taxonomy, or
+checksum is surfaced as a readiness failure.
 
-## Build and run
+The service is advisory. Similarities are retrieval scores rather than probabilities, clearly
+gated-out suggestions are hidden by the combined route, and results do not update album XML
+automatically. The user must choose **Add Desc** and complete the existing XML-generation workflow.
 
-```sh
-make build-ai-api
-make ai-api
-```
+## Where to continue
 
-Only `make ai-api` is needed to serve every Python feature. Its Docker target mounts the verified
-TreeOfLife-200M species index and SigLIP 2 bundle read-only.
-
-Check classifier readiness:
-
-```sh
-curl http://localhost:8080/health
-```
-
-A ready response reports BioCLIP details and the lazy architecture classifier. Architecture changes
-from `not_loaded` to `ok` after its first request.
-
-## Exercise the routes
-
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/scores
-```
-
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/classify/photo
-```
-
-Classifier similarities are retrieval scores, not probabilities. The combined route omits
-uncertain candidates instead of presenting a poor organism or architectural-style guess.
+- Read [apps/api/README.md](api/README.md) for the API contract, classifier behavior, and source
+  layout.
+- Read [apps/load-weights/README.md](load-weights/README.md) for the asset and integrity model.
+- Use the [photo-classifier agent skill](../.agents/skills/photo-classifier/SKILL.md) for fresh-clone
+  setup, downloads, builds, startup, testing, calibration work, and troubleshooting.
