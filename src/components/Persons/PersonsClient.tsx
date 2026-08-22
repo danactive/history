@@ -122,7 +122,7 @@ export default function PersonsClient({
           items={itemsWithCorpus}
           refImageGallery={refImageGallery}
           viewedList={viewedList}
-          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
+          onSelectId={(id) => selectionCoordinator.selectId(id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

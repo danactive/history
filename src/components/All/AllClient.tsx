@@ -84,7 +84,7 @@ export default function AllClient({
           items={itemsToShow}
           refImageGallery={refImageGallery}
           viewedList={viewedList}
-          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
+          onSelectId={(id) => selectionCoordinator.selectId(id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

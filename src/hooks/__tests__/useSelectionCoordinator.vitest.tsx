@@ -73,6 +73,26 @@ describe('useSelectionCoordinator', () => {
     }))
   })
 
+  it('selects the matching filename when album-local IDs are duplicated', () => {
+    const refImageGallery = createRef<ImageGalleryRef>()
+    const setMemoryIndex = vi.fn()
+    const setViewed = vi.fn()
+    const duplicateIdItems = items.map((item) => ({ ...item, id: 'album-local-id' }))
+    const { result } = renderHook(() => useSelectionCoordinator({
+      items: duplicateIdItems,
+      refImageGallery,
+      setMemoryIndex,
+      setViewed,
+    }))
+
+    act(() => result.current.selectId('two.jpg', { origin: 'thumbnail' }))
+
+    expect(result.current.getSnapshot()).toEqual(expect.objectContaining({
+      item: duplicateIdItems[1],
+      index: 1,
+    }))
+  })
+
   it('follows a new photo selected by a non-map UI filter', () => {
     const refImageGallery = createRef<ImageGalleryRef>()
     const setMemoryIndex = vi.fn()

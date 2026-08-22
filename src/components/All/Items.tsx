@@ -12,7 +12,7 @@ interface InputProps {
   items: ServerSideAllItem[];
   refImageGallery: RefObject<ImageGalleryRef | null>;
   viewedList: Set<string>;
-  onSelectItem?: (item: ServerSideAllItem) => void;
+  onSelectId?: (id: string) => void;
 }
 
 export function renderAlbumCaptionAction(
@@ -32,15 +32,15 @@ export function renderAlbumCaptionAction(
   )
 }
 
-function All({ items, refImageGallery, viewedList, onSelectItem }: InputProps) {
+function All({ items, refImageGallery, viewedList, onSelectId }: InputProps) {
   const selectThumb = useCallback((index: number) => {
     const item = items[index]
-    if (item && onSelectItem) {
-      onSelectItem(item)
+    if (item && onSelectId) {
+      onSelectId(getPrimaryFilename(item.filename))
       return
     }
     refImageGallery.current?.slideToIndex(index)
-  }, [items, onSelectItem, refImageGallery])
+  }, [items, onSelectId, refImageGallery])
 
   const getThumbProps = useCallback((item: ServerSideAllItem, index: number): ThumbImgProps => ({
     onSelectIndex: selectThumb,
