@@ -116,6 +116,7 @@ function SplitViewer({
   const refMapBox = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapRef>(null)
   const localGalleryRef = useRef<ImageGalleryRef>(null)
+  const [isMapVisible, setIsMapVisible] = useState(true)
   const lastMapSelectionRef = useRef<string | null>(null)
   const mapModeRef = useRef({ isClearing, mapFilterEnabled, metaZoom })
   mapModeRef.current = { isClearing, mapFilterEnabled, metaZoom }
@@ -250,6 +251,7 @@ function SplitViewer({
 
   // Dynamic centroid (always reflects current selected item)
   const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
+  const selectedCaption = dynamicCentroid?.caption || 'No photo selected'
 
   // Locked centroid used while map filter is ON or during clear
   const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)
@@ -390,8 +392,24 @@ function SplitViewer({
   }, [selectionCoordinator, syncMapToSelection])
 
   return (
-    <>
-      <section className={styles.split}>
+    <section className={styles.viewer}>
+      <header className={styles.viewerBar}>
+        <div className={styles.itemSummary} aria-live="polite">
+          <span className={styles.itemPosition}>
+            {safeIndex === -1 ? 'No items' : `${safeIndex + 1} of ${items.length}`}
+          </span>
+          <span className={styles.itemCaption}>{selectedCaption}</span>
+        </div>
+        <button
+          type="button"
+          className={styles.mapVisibilityButton}
+          onClick={() => setIsMapVisible(visible => !visible)}
+          aria-pressed={isMapVisible}
+        >
+          {isMapVisible ? 'Hide map' : 'Show map'}
+        </button>
+      </header>
+      <section className={`${styles.split} ${isMapVisible ? '' : styles.mapHidden}`}>
         <section className={styles.left} key="splitLeft">
           <ImageGallery
             key={`${activeGalleryWindow.sourceVersion}:${activeGalleryWindow.generation}`}
@@ -451,22 +469,24 @@ function SplitViewer({
             lazyLoad
           />
         </section>
-        <section className={styles.right} key="splitRight" ref={refMapBox}>
-          <SlippyMap
-            mapRef={mapRef}
-            clusteredMarkers={clusteredMarkers}
-            items={items}
-            centroid={effectiveCentroid}
-            onMapReady={handleMapReady}
-            mapFilterEnabled={mapFilterEnabled}
-            filterBounds={mapBounds}
-            onToggleMapFilter={onToggleMapFilter}
-            onBoundsChange={onMapBoundsChange}
-          />
-          <button type="button" onClick={fullscreenMap}>Full Map</button>
-        </section>
+        {isMapVisible ? (
+          <section className={styles.right} key="splitRight" ref={refMapBox}>
+            <SlippyMap
+              mapRef={mapRef}
+              clusteredMarkers={clusteredMarkers}
+              items={items}
+              centroid={effectiveCentroid}
+              onMapReady={handleMapReady}
+              mapFilterEnabled={mapFilterEnabled}
+              filterBounds={mapBounds}
+              onToggleMapFilter={onToggleMapFilter}
+              onBoundsChange={onMapBoundsChange}
+            />
+            <button type="button" className={styles.fullMapButton} onClick={fullscreenMap}>Full map</button>
+          </section>
+        ) : null}
       </section>
-    </>
+    </section>
   )
 }
 

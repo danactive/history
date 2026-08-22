@@ -54,7 +54,7 @@ describe('SplitViewer rendering', () => {
       selectId: vi.fn(),
     }
 
-    const { container } = render(
+    const { container, getByRole } = render(
       <SplitViewer
         clusteredMarkers={clustered}
         items={[]}
@@ -65,6 +65,38 @@ describe('SplitViewer rendering', () => {
     )
 
     expect(container.querySelector('.image-gallery')).toBeTruthy()
+    expect(getByRole('button', { name: 'Hide map' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('lets viewers hide the map and keep the gallery as the presentation surface', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+
+    const { getByRole, container } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={[item]}
+        refImageGallery={null}
+        memoryIndex={0}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    fireEvent.click(getByRole('button', { name: 'Hide map' }))
+
+    expect(getByRole('button', { name: 'Show map' })).toHaveAttribute('aria-pressed', 'false')
+    expect(container.querySelector('[class*="mapHidden"]')).toBeTruthy()
   })
 
   it('renders without injecting a dynamic background style tag', () => {

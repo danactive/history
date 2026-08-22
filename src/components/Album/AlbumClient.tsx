@@ -92,34 +92,42 @@ function AlbumClient({
   }), [album, gallery, handleThumbSelect, monthDay, viewedList])
 
   return (
-    <div>
+    <main className={styles.album}>
       <AlbumContext.Provider value={meta}>
         <FilterArea
           searchControls={searchBox}
           memoryContent={memoryHtml}
         />
-        <SplitViewer
-          clusteredMarkers={clusteredMarkers}
-          items={itemsToShow}
-          refImageGallery={refImageGallery}
-          memoryIndex={memoryIndex}
-          mapFilterEnabled={mapFilterEnabled}
-          mapBounds={mapBounds}
-          isClearing={isClearing}
-          clearCoordinates={clearCoordinates}
-          selectionCoordinator={selectionCoordinator}
-          onToggleMapFilter={handleToggleMapFilter}
-          onMapBoundsChange={handleBoundsChange}
-        />
-        <ThumbImgList
-          items={itemsToShow}
-          className={styles.thumbWrapper}
-          getKey={(item) => getPrimaryFilename(item.filename)}
-          getThumbProps={getThumbProps}
-          virtualize
-        />
+        <section className={styles.albumContent} aria-label="Album viewer">
+          <SplitViewer
+            clusteredMarkers={clusteredMarkers}
+            items={itemsToShow}
+            refImageGallery={refImageGallery}
+            memoryIndex={memoryIndex}
+            mapFilterEnabled={mapFilterEnabled}
+            mapBounds={mapBounds}
+            isClearing={isClearing}
+            clearCoordinates={clearCoordinates}
+            selectionCoordinator={selectionCoordinator}
+            onToggleMapFilter={handleToggleMapFilter}
+            onMapBoundsChange={handleBoundsChange}
+          />
+          <section className={styles.browseSection} aria-label="Album thumbnails">
+            <div className={styles.browseHeader}>
+              <h2>Browse album</h2>
+              <span>{itemsToShow.length} {itemsToShow.length === 1 ? 'item' : 'items'}</span>
+            </div>
+            <ThumbImgList
+              items={itemsToShow}
+              className={styles.thumbWrapper}
+              getKey={(item) => getPrimaryFilename(item.filename)}
+              getThumbProps={getThumbProps}
+              virtualize
+            />
+          </section>
+        </section>
       </AlbumContext.Provider>
-    </div>
+    </main>
   )
 }
 
