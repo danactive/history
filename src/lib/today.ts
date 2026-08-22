@@ -7,12 +7,13 @@ import type { AlbumMeta, Gallery, Item, ServerSideTodayItem } from '../types/com
 import type { Today } from '../types/pages'
 import { compareItemOldestFirst } from '../utils'
 import { getInitialActiveFacetCounts } from './active-facets'
+import { resolvePhotoDate } from '../utils/person-age'
 import { applyGalleryItemsCachePolicy, getOrderedAlbumItems } from './get-all-items'
 
 type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
 
 export function getItemMonthDay(item: Item) {
-  return item.filename.toString().substring(5, 10)
+  return resolvePhotoDate(item).substring(5, 10)
 }
 
 const prepareTodayItems = (

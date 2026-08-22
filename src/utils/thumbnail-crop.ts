@@ -40,16 +40,16 @@ export function getThumbnailCrop({
     ? sourceHeight * targetAspect
     : sourceWidth
   const baseHeight = baseWidth / targetAspect
-  const width = Math.max(1, Math.min(sourceWidth, baseWidth / safeZoom))
-  const height = Math.max(1, Math.min(sourceHeight, baseHeight / safeZoom))
+  const width = Math.max(1, Math.min(sourceWidth, Math.round(baseWidth / safeZoom)))
+  const height = Math.max(1, Math.min(sourceHeight, Math.round(baseHeight / safeZoom)))
   const maxLeft = sourceWidth - width
   const maxTop = sourceHeight - height
 
   return {
     left: Math.round(clamp(positionX, 0, 1) * maxLeft),
     top: Math.round(clamp(positionY, 0, 1) * maxTop),
-    width: Math.max(1, Math.round(width)),
-    height: Math.max(1, Math.round(height)),
+    width,
+    height,
   }
 }
 

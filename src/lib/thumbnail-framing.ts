@@ -5,6 +5,7 @@ import sharp from 'sharp'
 import config from '../models/config'
 import { getThumbnailCrop, type ThumbnailCrop } from '../utils/thumbnail-crop'
 import pathExists from './exists'
+import utilsFactory from './utils'
 
 type SaveThumbnailOptions = {
   sourceFolder: string
@@ -52,9 +53,12 @@ async function saveThumbnail({
   positionY,
 }: SaveThumbnailOptions): Promise<SaveThumbnailResult> {
   assertFilename(filename)
-  const originalsPath = await pathExists(sourceFolder)
+  const utils = utilsFactory()
+  const originalsPath = await pathExists(utils.safePublicPath(sourceFolder))
   const { photoPath, thumbPath } = getMediaFolders(originalsPath)
-  const sourcePath = path.join(photoPath, filename)
+  const sourcePath = utils.safePublicPath(path.join(photoPath, filename))
+  const safeThumbPath = utils.safePublicPath(thumbPath)
+  const destinationPath = utils.safePublicPath(path.join(safeThumbPath, filename))
 
   try {
     await access(sourcePath, constants.R_OK)
@@ -79,12 +83,12 @@ async function saveThumbnail({
     positionY,
   })
 
-  await mkdir(thumbPath, { recursive: true })
+  await mkdir(safeThumbPath, { recursive: true })
   await sharp(normalized)
     .extract(crop)
     .resize(target.width, target.height, { kernel: sharp.kernel.lanczos3 })
     .jpeg({ quality: 75, chromaSubsampling: '4:2:0', mozjpeg: true })
-    .toFile(path.join(thumbPath, filename))
+    .toFile(destinationPath)
 
   return { filename, crop }
 }

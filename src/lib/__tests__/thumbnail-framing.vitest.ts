@@ -52,4 +52,14 @@ describe('saveThumbnail', () => {
       positionY: 0.5,
     })).rejects.toThrow('Filename must not include a path')
   })
+
+  test('rejects a source folder outside the public directory', async () => {
+    await expect(saveThumbnail({
+      sourceFolder: '../',
+      filename,
+      zoom: 1,
+      positionX: 0.5,
+      positionY: 0.5,
+    })).rejects.toThrow('Restrict to public file system')
+  })
 })

@@ -16,6 +16,7 @@ export default function usePersonsDerivedData({
   selectedAge,
   effectiveSelectedPerson,
   initialBaseScopeItems,
+  initialSelectedPerson,
   isServerScopeCurrent,
   mapFilterEnabled,
   initialAgeSummary,
@@ -25,6 +26,7 @@ export default function usePersonsDerivedData({
   selectedAge: PersonAgeFilterValue
   effectiveSelectedPerson: string | null
   initialBaseScopeItems?: ServerSideAllItem[]
+  initialSelectedPerson: string | null
   isServerScopeCurrent: boolean
   mapFilterEnabled: boolean
   initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number }
@@ -34,6 +36,7 @@ export default function usePersonsDerivedData({
   const canReuseServerSummary = initialAgeSummary !== undefined
     && isServerScopeCurrent
     && !mapFilterEnabled
+    && effectiveSelectedPerson === initialSelectedPerson
 
   const {
     ageFiltered,

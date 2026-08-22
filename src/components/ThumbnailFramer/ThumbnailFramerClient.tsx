@@ -8,9 +8,11 @@ import type { FilesystemResponseBody } from '../../lib/filesystems'
 import config from '../../models/config'
 import type { Filesystem } from '../../models/filesystems'
 import { getThumbnailCrop, getThumbnailCropPanRange } from '../../utils/thumbnail-crop'
+import { encodePathSegments } from '../../utils/url-path'
 import styles from './styles.module.css'
 
 const MAX_ZOOM = 4
+const KEYBOARD_PAN_STEP = 0.05
 
 type ImageSize = { width: number, height: number }
 type DragStart = {
@@ -49,9 +51,11 @@ function ThumbnailFrame(
   { file, sourceFolder }:
   { file: Filesystem, sourceFolder: string },
 ) {
+  const cardRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
   const dragRef = useRef<DragStart | null>(null)
+  const [shouldLoadPreview, setShouldLoadPreview] = useState(false)
   const [imageSize, setImageSize] = useState<ImageSize | null>(null)
   const [zoom, setZoom] = useState(1)
   const [positionX, setPositionX] = useState(0.5)
@@ -100,18 +104,42 @@ function ThumbnailFrame(
   }, [crop])
 
   useEffect(() => {
+    const card = cardRef.current
+    if (!card) return undefined
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setShouldLoadPreview(true)
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return
+      setShouldLoadPreview(true)
+      observer.disconnect()
+    }, { rootMargin: '400px' })
+    observer.observe(card)
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!shouldLoadPreview) return undefined
+
+    let active = true
     const image = new Image()
     image.decoding = 'async'
     image.onload = () => {
+      if (!active) return
       imageRef.current = image
       setImageSize({ width: image.naturalWidth, height: image.naturalHeight })
     }
-    image.src = encodeURI(file.absolutePath)
+    image.src = encodePathSegments(file.absolutePath)
 
     return () => {
+      active = false
       imageRef.current = null
     }
-  }, [file.absolutePath])
+  }, [file.absolutePath, shouldLoadPreview])
 
   useEffect(() => {
     drawPreview()
@@ -145,6 +173,33 @@ function ThumbnailFrame(
     setSaveError(null)
   }
 
+  const panBy = (x: number, y: number) => {
+    if (!imageSize || !crop) return
+
+    const panRange = getThumbnailCropPanRange(crop, imageSize.width, imageSize.height)
+    if (panRange.x === 0 && panRange.y === 0) return
+
+    setPositionX((current) => (panRange.x === 0 ? 0.5 : clamp(current + x, 0, 1)))
+    setPositionY((current) => (panRange.y === 0 ? 0.5 : clamp(current + y, 0, 1)))
+    setSaveState('idle')
+    setSaveError(null)
+  }
+
+  const handlePreviewKeyDown = (event: React.KeyboardEvent<HTMLCanvasElement>) => {
+    const step = event.shiftKey ? KEYBOARD_PAN_STEP * 2 : KEYBOARD_PAN_STEP
+    const movement = {
+      ArrowDown: [0, step],
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+    }[event.key]
+
+    if (!movement) return
+
+    event.preventDefault()
+    panBy(movement[0], movement[1])
+  }
+
   const save = async () => {
     setSaveState('saving')
     setSaveError(null)
@@ -172,28 +227,34 @@ function ThumbnailFrame(
   }
 
   return (
-    <article className={styles.card}>
+    <article ref={cardRef} className={styles.card}>
       <h2 className={styles.filename}>{file.filename}</h2>
-      <canvas
-        ref={canvasRef}
-        className={styles.preview}
-        aria-label={`Thumbnail framing preview for ${file.filename}. Drag to pan.`}
-        onPointerDown={(event) => {
-          event.currentTarget.setPointerCapture(event.pointerId)
-          dragRef.current = {
-            pointerId: event.pointerId,
-            clientX: event.clientX,
-            clientY: event.clientY,
-            positionX,
-            positionY,
-          }
-        }}
-        onPointerMove={updatePositionFromPointer}
-        onPointerUp={(event) => {
-          if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null
-        }}
-        onPointerCancel={() => { dragRef.current = null }}
-      />
+      {shouldLoadPreview ? (
+        <canvas
+          ref={canvasRef}
+          tabIndex={0}
+          className={styles.preview}
+          aria-label={`Thumbnail framing preview for ${file.filename}. Drag or use the arrow keys to move the crop; hold Shift for larger steps.`}
+          onKeyDown={handlePreviewKeyDown}
+          onPointerDown={(event) => {
+            event.currentTarget.setPointerCapture(event.pointerId)
+            dragRef.current = {
+              pointerId: event.pointerId,
+              clientX: event.clientX,
+              clientY: event.clientY,
+              positionX,
+              positionY,
+            }
+          }}
+          onPointerMove={updatePositionFromPointer}
+          onPointerUp={(event) => {
+            if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null
+          }}
+          onPointerCancel={() => { dragRef.current = null }}
+        />
+      ) : (
+        <div className={styles.previewPlaceholder}>Preview loads when nearby</div>
+      )}
       <label className={styles.zoomLabel} htmlFor={`zoom-${file.id}`}>
         Zoom <span>{zoom.toFixed(1)}×</span>
       </label>

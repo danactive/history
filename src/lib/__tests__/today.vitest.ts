@@ -22,7 +22,7 @@ vi.mock('../visited', async () => {
   }
 })
 
-import { getTodayItems } from '../today'
+import { getItemMonthDay, getTodayItems } from '../today'
 
 beforeEach(() => {
   getAlbums.mockReset()
@@ -151,6 +151,13 @@ beforeEach(() => {
 })
 
 describe('today library', () => {
+  test('uses the canonical photo date when finding the month and day', () => {
+    expect(getItemMonthDay({
+      filename: 'not-a-date.jpg',
+      photoDate: '2024-02-29',
+    } as Parameters<typeof getItemMonthDay>[0])).toBe('02-29')
+  })
+
   test('orders matching items by newest album year and oldest filename within each album', async () => {
     const result = await getTodayItems('demo', '07-18')
     const ids = result.items.map(item => item.id)

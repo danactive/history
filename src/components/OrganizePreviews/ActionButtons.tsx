@@ -6,6 +6,7 @@ import { useState } from 'react'
 import type { Filesystem } from '../../lib/filesystems'
 import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
 import type { ResizeRequestBody } from '../../lib/resize'
+import { encodePathSegments } from '../../utils/url-path'
 
 export default function ActionButtons(
   { items }:
@@ -74,7 +75,7 @@ export default function ActionButtons(
       if (!response.ok || (errors?.count ?? 0) > 0) {
         throw new Error(errors?.message?.join(' ') || 'Could not resize photos')
       }
-      router.push(`/admin/thumbs${encodeURI(path)}`)
+      router.push(`/admin/thumbs${encodePathSegments(path)}`)
     } catch (error) {
       setResizeError(error instanceof Error ? error.message : 'Could not resize photos')
     } finally {

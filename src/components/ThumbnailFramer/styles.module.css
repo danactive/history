@@ -54,6 +54,18 @@
   cursor: grabbing;
 }
 
+.previewPlaceholder {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 185 / 45;
+  place-items: center;
+  border: 2px solid #4f5963;
+  border-radius: 0.25rem;
+  background: #101214;
+  color: #c2c8cf;
+  font-size: 0.8rem;
+}
+
 .zoomLabel {
   display: flex;
   justify-content: space-between;

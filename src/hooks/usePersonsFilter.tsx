@@ -102,6 +102,7 @@ export default function usePersonsFilter({
     selectedAge,
     effectiveSelectedPerson,
     initialBaseScopeItems,
+    initialSelectedPerson: resolvedInitialPerson,
     isServerScopeCurrent,
     mapFilterEnabled,
     initialAgeSummary,

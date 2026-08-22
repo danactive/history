@@ -352,6 +352,34 @@ describe('usePersonsFilter URL sync', () => {
     )).length).toBeGreaterThan(0)
   })
 
+  test('does not reuse an unscoped summary when a person is inferred from the keyword', () => {
+    query = new URLSearchParams('query=Alice')
+    const sharedItem = {
+      ...makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      persons: [
+        { full: 'Alice', dob: '2000-01-01' },
+        { full: 'Bob', dob: '1990-01-01' },
+      ],
+    }
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items: [sharedItem],
+      indexedKeywords: [],
+      initialAgeSummary: {
+        ages: [
+          { age: 21, count: 1 },
+          { age: 31, count: 1 },
+        ],
+        totalPhotoCount: 1,
+      },
+    }))
+
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 1 },
+    ])
+  })
+
   test('anchors all ages count to the base scope when initial items are age-filtered', () => {
     query = new URLSearchParams('query=age%3Aunknown')
     const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
