@@ -1,0 +1,34 @@
+{
+  "repo_id": "imageomics/bioclip-2",
+  "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+  "files": [
+    {
+      "name": "open_clip_model.safetensors",
+      "sha256": "b7b2bf6fbc95799e42630e394cf95803892ab447c1a8ab629dbc82fbeaf7dfef"
+    },
+    {
+      "name": "open_clip_config.json",
+      "sha256": "1bf947e96e943fe50efd5c3e26c37f843a2fa3c358967719a68c8a6d17ce68c8"
+    },
+    {
+      "name": "merges.txt",
+      "sha256": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a"
+    },
+    {
+      "name": "vocab.json",
+      "sha256": "5047b556ce86ccaf6aa22b3ffccfc52d391ea4accdab9c2f2407da5b742d4363"
+    },
+    {
+      "name": "tokenizer.json",
+      "sha256": "72ed5c96db5729294468543e4bc75fce14ca63f58e37300290189ba1c1e52b85"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "sha256": "6bdcee9ccce2a16ca2b4c0c5ed00b42c50ea225f4472a8c4c1e963a2902c2881"
+    },
+    {
+      "name": "special_tokens_map.json",
+      "sha256": "2cdb3b8331a60c92fc1e55a13e9fd61fd2293c5a51275fdcccd62b780052530e"
+    }
+  ]
+}

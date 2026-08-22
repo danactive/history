@@ -1,108 +1,46 @@
-# 🌿 iNaturalist 2021 Image Classifier & LAION Aesthetic Scoring API
+# History photo-analysis API
 
-This project provides a robust FastAPI-based backend for two advanced computer vision endpoints:
+This FastAPI application serves the aesthetic scorer and offline BioCLIP 2 classifier from one
+Python process on port 8080.
 
-- **Biodiversity Image Classification** using a fine-tuned Vision Transformer (ViT) on the iNaturalist 2021 dataset.
-- **Aesthetic Scoring** using the LAION regression head on OpenAI CLIP ViT-B/16 features.
+## Endpoints
 
-Both endpoints support raw image uploads, and leverage state-of-the-art models for their respective tasks while keeping our data private.
+- `GET /health` reports whether BioCLIP is ready, including the model revision, taxonomy digest,
+  candidate count, and device. It returns HTTP 503 when classification is unavailable.
+- `POST /scores` accepts raw image bytes and returns aesthetic metrics and editing tips.
+- `POST /classify` accepts raw image bytes and returns reviewable organism suggestions with
+  `identified`, `uncertain`, or `not_organism` status.
 
----
+Optional classification metadata is supplied through `X-Photo-Date`, `X-Photo-Latitude`,
+`X-Photo-Longitude`, `X-Photo-City`, and `X-Photo-Location`. Metadata availability is reported but
+does not currently alter ranking.
 
-## 🧠 Model Details
+## Classifier model
 
-### 1. Biodiversity Classifier
+BioCLIP 2 loads from `models/imageomics_bioclip-2` with Hugging Face and Transformers offline modes
+enabled. Species retrieval uses BioCLIP's official 867,455-entry TreeOfLife-200M text-embedding
+index mounted read-only from `models/imageomics_TreeOfLife-200M`. Model, taxonomy, and embedding
+checksums are verified before initialization.
 
-- **Model Family:** [`timm`](https://github.com/rwightman/pytorch-image-models)
-- **Model Name:** `eva02_large_patch14_clip_336.merged2b_ft_inat21`
-- **Source:** Hugging Face Hub
-- **Architecture:** Vision Transformer (EVA-CLIP backbone)
-- **Fine-tuned On:** iNaturalist 2021 (10,000+ species)
-- **Output Classes:** Mapped using `inat21_class_index.json`
+Similarity values are not calibrated probabilities. A species is presented as identified only
+when similarity, margin, crop agreement, and top-two family agreement all pass. Genus agreement is
+reported for diagnosis but is not a veto between plausible species in the same family.
 
-### 2. Aesthetic Scoring
+## Commands
 
-- **Backbone:** OpenAI CLIP ViT-B/16
-- **Regression Head:** Multilayer Perceptron (MLP) trained for aesthetic prediction ([LAION aesthetic predictor](https://github.com/LAION-AI/aesthetic-predictor))
-- **Head Weights:** `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
-- **Feature Dimension:** 512
+From the repository root:
 
----
-
-## 🚀 API Endpoints
-
-### 1. `/classify` — Biodiversity Image Classification
-
-**Description:**
-Predicts the top-3 most likely species for a given image using a ViT model fine-tuned on iNaturalist 2021.
-
-**Request:**
-- **Method:** `POST`
-- **Content-Type:** `image/jpeg` or `image/png`
-- **Body:** Raw image bytes
-
-**Example (using curl):**
 ```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @your_image.jpg http://localhost:8080/classify
+make build-ai-api
+make ai-api
 ```
 
-**Response:**
-- **Status:** 200 OK
-- **Content-Type:** `application/json`
-- **Body:** JSON object with top-3 species predictions, e.g.,
-```json
-{
-  "predictions": [
-    {"species": "Cardinalis cardinalis", "score": 0.987},
-    {"species": "Pica pica", "score": 0.005},
-    {"species": "Corvus corax", "score": 0.003}
-  ]
-}
-```
+Run the unified Python tests with:
 
-### 2. `/score` — Aesthetic Scoring
-
-**Description:**
-Predicts the aesthetic score of an image on a scale from 0 to 10 using the LAION regression head.
-
-**Request:**
-- **Method:** `POST`
-- **Content-Type:** `image/jpeg` or `image/png`
-- **Body:** Raw image bytes
-
-**Example (using curl):**
 ```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @your_image.jpg http://localhost:8080/score
+make build-test
+make test
 ```
 
-**Response:**
-- **Status:** 200 OK
-- **Content-Type:** `application/json`
-- **Body:** JSON object with the aesthetic score, e.g.,
-```json
-{
-  "score": 7.5
-}
-```
-
----
-
-## Local setup
-
-1. Download the regression head:
-   [sa_0_4_vit_b_16_linear.pth](https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth)
-1. Place it in `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
-1. The OpenAI CLIP backbone weights for ViT-B/16 will be downloaded automatically on first run `make ai-api`
-
-## Aesthetic scorer (multi-attribute)
-
-To enable the newer multi-attribute aesthetic scorer (used by `/scores`):
-
-1. Download the model weights and processor files:
-   `make load-aesthetic-scorer`
-1. Download the CLIP ViT-B/32 backbone (offline):
-   `make load-clip-vit-base-patch32`
-1. Rebuild and run the API:
-   `make build-ai-api && make ai-api`
-
-The weights are stored under `models/rsinema_aesthetic-scorer` and `models/openai_clip-vit-base-patch32` for offline loading.
+The Python suite performs real offline regression inference on the long-tailed fiscal and ochre sea
+star fixtures in `public/test/fixtures/classifier`.

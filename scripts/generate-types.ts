@@ -4,6 +4,10 @@ import { fileURLToPath } from 'node:url'
 
 import getGalleries from '../src/lib/galleries'
 
+const toSingleQuotedLiteral = (value: string) => (
+  `'${JSON.stringify(value).slice(1, -1).replaceAll("'", "\\'")}'`
+)
+
 async function generate() {
   const { galleries } = await getGalleries()
   const sortedGalleries = [...galleries].sort((left, right) => left.localeCompare(right))
@@ -12,8 +16,8 @@ async function generate() {
     throw new Error('No galleries found in public/galleries while generating gallery types')
   }
 
-  const galleryValues = sortedGalleries.map((gallery) => JSON.stringify(gallery)).join(', ')
-  const galleryUnion = sortedGalleries.map((gallery) => JSON.stringify(gallery)).join(' | ')
+  const galleryValues = sortedGalleries.map(toSingleQuotedLiteral).join(', ')
+  const galleryUnion = sortedGalleries.map(toSingleQuotedLiteral).join(' | ')
 
   const typeDef = `// AUTO-GENERATED FILE — DO NOT EDIT
 import * as z from 'zod/v4'

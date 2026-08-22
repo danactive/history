@@ -1,0 +1,15 @@
+{
+  "repo_id": "imageomics/TreeOfLife-200M",
+  "repo_type": "dataset",
+  "revision": "41f7bd67aec3de20f89b99390212dfdbce9501a6",
+  "files": [
+    {
+      "name": "embeddings/txt_emb_species.json",
+      "sha256": "4648928b006f85d83d28e5a27074ca9363465d82e778d708b369c5eaf54b8ef5"
+    },
+    {
+      "name": "embeddings/txt_emb_species.npy",
+      "sha256": "c72442de7b0cb7fcb55ab7ca08099d0f42fbd6769efe16ca64c1daa7a8b87db2"
+    }
+  ]
+}

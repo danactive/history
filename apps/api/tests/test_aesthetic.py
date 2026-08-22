@@ -1,6 +1,10 @@
+import pytest
 from PIL import Image
+
 from aesthetic import score_aesthetic
 
+
+@pytest.mark.asyncio
 async def test_score_aesthetic_on_sample_image():
     img = Image.new("RGB", (224, 224), color="blue")  # deterministic image
     score = await score_aesthetic(img)

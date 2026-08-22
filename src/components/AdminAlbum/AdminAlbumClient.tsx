@@ -11,6 +11,7 @@ import useSWR from 'swr'
 import type { SearchResult } from '../../../app/api/admin/search/route'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
+import { appendSearchKeyword } from '../../models/classifier'
 import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
@@ -101,6 +102,15 @@ export default function AdminAlbumClient(
     } else {
       handleItemUpdateOriginal(updatedItem)
     }
+  }
+
+  const handleClassifierKeyword = (scientificName: string) => {
+    const currentItem = getItemWithEdits(item) ?? item
+    if (!currentItem) return
+    handleItemUpdateWrapper({
+      ...currentItem,
+      search: appendSearchKeyword(currentItem.search, scientificName),
+    })
   }
 
   useEffect(() => {
@@ -332,7 +342,12 @@ export default function AdminAlbumClient(
                 onXmlGenerated={handleXmlGenerated}
                 applyEditsToItems={applyEditsToItems}
               >
-                <Photo item={item} gallery={currentGallery} size="small" />
+                <Photo
+                  item={getItemWithEdits(item) ?? item}
+                  gallery={currentGallery}
+                  size="small"
+                  onAcceptPrediction={handleClassifierKeyword}
+                />
               </Fields>
             </Stack>
           )}

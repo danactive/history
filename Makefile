@@ -28,6 +28,22 @@ load-weights:
 	docker rm extract-model
 	cat ./weights.log || true
 
+load-bioclip2:
+	@echo "Downloading the pinned BioCLIP 2 model and TreeOfLife species index"
+	docker build \
+		-f apps/load-weights/Dockerfile \
+		-t weights-loader .
+	docker run --name extract-model \
+		-v $$HOME/.cache/huggingface:/root/.cache/huggingface \
+		-e HF_HUB_DISABLE_XET=1 \
+		weights-loader \
+		sh -c 'python /dock/hugging-offline.py --manifest /dock/manifests/bioclip-2.json > /dock/build.log 2>&1 && \
+			python /dock/hugging-offline.py --manifest /dock/manifests/treeoflife-200m-bioclip2.json >> /dock/build.log 2>&1'
+	docker cp extract-model:/dock/models/. ./models/
+	docker cp extract-model:/dock/build.log ./weights.log || true
+	docker rm extract-model
+	cat ./weights.log || true
+
 load-aesthetic-scorer:
 	@[ -n "$(AESTHETIC_SCORER_REVISION)" ] || (echo "Set AESTHETIC_SCORER_REVISION to an immutable commit hash before download"; exit 1)
 	$(MAKE) load-clip-vit-base-patch32
@@ -48,11 +64,13 @@ ai-api:
 	# OpenAI model stores in ~/.cache/clip
 	docker run --rm --name ai-api -p 8080:8080 \
 		-v $(HOME)/.cache/clip:/root/.cache/clip \
+		-v $(PWD)/models/imageomics_TreeOfLife-200M:/dock/models/imageomics_TreeOfLife-200M:ro \
 		ai-api
 
 build-test:
 	docker build  -f apps/api/Dockerfile --build-arg INSTALL_TEST=true -t ai-api-test .
 
 test:
-	docker run --rm --entrypoint pytest ai-api-test -v
-
+	docker run --rm \
+		-v $(PWD)/models/imageomics_TreeOfLife-200M:/dock/models/imageomics_TreeOfLife-200M:ro \
+		--entrypoint pytest ai-api-test -v

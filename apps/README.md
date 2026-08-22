@@ -1,32 +1,43 @@
-# Apps Quick Start (Python API)
+# Python API quick start
 
-This folder contains the Python API used by the app.
+The History app uses one local FastAPI service for both photo-analysis functions:
 
-## Routes you likely want
+- `POST /scores` provides aesthetic scores and editing insights.
+- `POST /classify` provides offline BioCLIP 2 organism suggestions.
 
-- `POST /scores`
-- `POST /classify`
+Both accept raw JPEG or PNG bytes and run on `http://localhost:8080`.
 
-Both accept raw image bytes (`image/jpeg` or `image/png`).
+## First-time model setup
 
-## Start the API (recommended via Docker)
+Download and verify the pinned BioCLIP 2 bundle if it is not already present:
 
-From repo root:
+```sh
+make load-bioclip2
+```
+
+The immutable model and TreeOfLife-200M species-index revisions, required artifacts, and SHA-256
+values are defined in `apps/load-weights/manifests`. Runtime inference remains offline.
+
+## Build and run
 
 ```sh
 make build-ai-api
 make ai-api
 ```
 
-API runs at:
+Only `make ai-api` is needed to serve both Python features. Its Docker target mounts the verified
+TreeOfLife-200M species index read-only.
 
-```txt
-http://localhost:8080
+Check that BioCLIP initialized successfully:
+
+```sh
+curl http://localhost:8080/health
 ```
 
-## Test the two routes
+A ready response reports `status: ok`, the pinned model and species-index revisions, taxonomy
+digest, and `candidateCount: 867455`.
 
-Use any local image file (example: `public/sample.jpg`).
+## Exercise the routes
 
 ```sh
 curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/scores
@@ -36,13 +47,6 @@ curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http
 curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/classify
 ```
 
-## Optional: run without Docker
-
-```sh
-cd apps/api
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:main_py_app --host 0.0.0.0 --port 8080
-```
-
+Classifier similarities are retrieval scores, not probabilities. Species suggestions are marked
+`identified` only when the score thresholds pass and the two leading taxa agree at family level;
+otherwise the API abstains with `uncertain`.

@@ -4,12 +4,14 @@ WORKDIR /dock
 
 ARG INSTALL_TEST=false
 
-# forces computations to run single-threaded, improving consistency by eliminating variations caused by multi-threaded execution.
-ENV OMP_NUM_THREADS=1
-ENV MKL_NUM_THREADS=1
-
 # PyTest
 ENV PYTHONPATH="/dock"
+ENV HF_HUB_OFFLINE=1
+ENV TRANSFORMERS_OFFLINE=1
+ENV HF_HUB_DISABLE_TELEMETRY=1
+ENV BIOCLIP_MODEL_DIR="/dock/models/imageomics_bioclip-2"
+ENV CLASSIFIER_TAXONOMY_PATH="/dock/models/imageomics_TreeOfLife-200M/embeddings/txt_emb_species.json"
+ENV CLASSIFIER_EMBEDDINGS_PATH="/dock/models/imageomics_TreeOfLife-200M/embeddings/txt_emb_species.npy"
 
 # Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,6 +29,7 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 RUN if [ "$INSTALL_TEST" = "true" ]; then python -m pip install --no-cache-dir -r requirements-dev.txt; fi
 
 COPY apps/api/ /dock/
+COPY public/test/fixtures/classifier /dock/tests/fixtures/classifier
 COPY config.json /dock/config.json
 COPY models /dock/models
 
