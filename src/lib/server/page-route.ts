@@ -11,12 +11,16 @@ export type AlbumRouteParams = GalleryParams & {
 
 export type RouteProps<TParams, TSearchParams> = {
   params: Promise<TParams>
-  searchParams?: Promise<TSearchParams>
+  searchParams: Promise<TSearchParams>
 }
 
-export type RouteParamsProps<TParams> = Pick<RouteProps<TParams, never>, 'params'>
+export type RouteParamsProps<TParams> = {
+  params: Promise<TParams>
+}
 
-export type RouteSearchParamsProps<TSearchParams> = Pick<RouteProps<never, TSearchParams>, 'searchParams'>
+export type RouteSearchParamsProps<TSearchParams> = {
+  searchParams: Promise<TSearchParams>
+}
 
 export type GalleryRouteProps<TSearchParams> = RouteProps<GalleryParams, TSearchParams>
 
@@ -26,14 +30,14 @@ export async function generateGalleryStaticParams() {
 }
 
 export async function resolveSearchParams<TSearchParams>(
-  searchParams?: Promise<TSearchParams>,
+  searchParams: Promise<TSearchParams>,
 ): Promise<TSearchParams> {
-  return searchParams ?? Promise.resolve({} as TSearchParams)
+  return searchParams
 }
 
 export async function resolveRouteInputs<TParams, TSearchParams>(
   params: Promise<TParams>,
-  searchParams?: Promise<TSearchParams>,
+  searchParams: Promise<TSearchParams>,
 ): Promise<{ params: TParams, searchParams: TSearchParams }> {
   const [resolvedParams, resolvedSearchParams] = await Promise.all([params, resolveSearchParams(searchParams)])
 

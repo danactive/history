@@ -30,7 +30,7 @@ export default function ComboBox(
     <FormControl id="free-solo-with-text-demo" sx={{ width: '100%' }}>
       <Autocomplete
         className={className}
-        value={(valueText ?? null) as IndexedKeywords | undefined}
+        value={valueText ?? undefined}
         inputValue={inputValue ?? ''}
         onInputChange={(_event, newInputValue, reason) => {
           onInputChange?.(newInputValue, reason)

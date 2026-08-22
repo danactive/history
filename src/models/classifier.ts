@@ -1,24 +1,29 @@
-export type PhotoClassificationSuggestion = {
-  type: 'organism' | 'architecture'
-  id: string
-  name: string
-  commonName: string | null
-  context: string | null
-  descriptionValue: string
-  score: number
-  matchStrength: 'strong' | 'possible' | 'weak'
-  reviewCues: string[]
-}
+import * as z from 'zod/v4'
 
-export type PhotoClassificationResponse = {
-  status: 'matched' | 'no_match'
-  suggestions: PhotoClassificationSuggestion[]
-  diagnostics: {
-    organismStatus: 'identified' | 'uncertain' | 'not_organism' | null
-    architectureStatus: 'identified' | 'uncertain' | 'not_architecture' | null
-    unavailableClassifiers: string[]
-  }
-}
+const photoClassificationSuggestionSchema = z.object({
+  type: z.enum(['organism', 'architecture']),
+  id: z.string(),
+  name: z.string(),
+  commonName: z.string().nullable(),
+  context: z.string().nullable(),
+  descriptionValue: z.string(),
+  score: z.number(),
+  matchStrength: z.enum(['strong', 'possible', 'weak']),
+  reviewCues: z.array(z.string()),
+})
+
+const photoClassificationResponseSchema = z.object({
+  status: z.enum(['matched', 'no_match']),
+  suggestions: z.array(photoClassificationSuggestionSchema).max(4),
+  diagnostics: z.object({
+    organismStatus: z.enum(['identified', 'uncertain', 'not_organism']).nullable(),
+    architectureStatus: z.enum(['identified', 'uncertain', 'not_architecture']).nullable(),
+    unavailableClassifiers: z.array(z.string()),
+  }),
+})
+
+export type PhotoClassificationSuggestion = z.infer<typeof photoClassificationSuggestionSchema>
+export type PhotoClassificationResponse = z.infer<typeof photoClassificationResponseSchema>
 
 export type ClassificationRequest = {
   path: string
@@ -36,22 +41,16 @@ export function encodeClassificationMetadata(value: string): string {
   return encodeURIComponent(value)
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> => (
-  typeof value === 'object' && value !== null
-)
+function isPhotoClassificationResponse(value: unknown): value is PhotoClassificationResponse {
+  return photoClassificationResponseSchema.safeParse(value).success
+}
 
 export function normalizePhotoClassificationResponse(value: unknown): PhotoClassificationResponse {
-  if (
-    !isRecord(value)
-    || !Array.isArray(value.suggestions)
-    || value.suggestions.length > 4
-    || typeof value.status !== 'string'
-    || !isRecord(value.diagnostics)
-  ) {
+  if (!isPhotoClassificationResponse(value)) {
     throw new Error('Classifier returned an invalid response')
   }
 
-  return value as PhotoClassificationResponse
+  return value
 }
 
 export function appendPhotoDescription(description: string | undefined, value: string): string {

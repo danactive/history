@@ -50,6 +50,10 @@ const explicitKinds: Record<string, FilterQueryTermKind> = {
   age: 'age',
 }
 
+function isFilterQueryTermKind(value: string): value is FilterQueryTermKind {
+  return value === 'text' || Object.hasOwn(explicitKinds, value)
+}
+
 function normalize(value: string) {
   return normalizeSearchValue(value)
 }
@@ -347,7 +351,7 @@ export function filterItemsByQuery<ItemType extends FilterQueryItem>(items: Item
 
 export function addFilterQueryTerm(query: string, term: FilterQueryTerm, context: FilterQueryContext = {}) {
   const existing = parseFilterQuery(query, context)
-  const next = existing ? { type: 'and' as const, children: [existing, term] } : term
+  const next: FilterQueryNode = existing ? { type: 'and', children: [existing, term] } : term
   return formatFilterQuery(next)
 }
 
@@ -372,12 +376,13 @@ export function replaceConjunctiveFilterTerms(
   context: FilterQueryContext = {},
 ) {
   const node = parseFilterQuery(query, context)
-  const removableKinds = new Set(Object.keys(replacements) as FilterQueryTermKind[])
+  const removableKinds = new Set(Object.keys(replacements).filter(isFilterQueryTermKind))
   const existingChildren = node?.type === 'and' ? node.children : node ? [node] : []
   const children = existingChildren.filter((child) => child.type !== 'term' || !removableKinds.has(child.kind))
 
   Object.entries(replacements).forEach(([kind, value]) => {
-    if (value) children.push({ type: 'term', kind: kind as FilterQueryTermKind, value })
+    if (!isFilterQueryTermKind(kind)) return
+    if (value) children.push({ type: 'term', kind, value })
   })
 
   if (children.length === 0) return ''

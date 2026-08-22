@@ -2,7 +2,7 @@ import { z } from 'zod/v4-mini'
 
 function isStandardError(error: unknown): error is Error {
   if (error instanceof Error) return true
-  if ('message' in (error as any) && 'stack' in (error as any)) {
+  if (error !== null && typeof error === 'object' && 'message' in error && 'stack' in error) {
     return true
   }
   return false

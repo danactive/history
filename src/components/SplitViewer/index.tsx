@@ -46,6 +46,8 @@ const MAX_MAP_WIDTH = 640
 const MIN_GALLERY_WIDTH = 320
 const MAP_RESIZE_STEP = 24
 
+type SplitViewerStyle = CSSProperties & Record<'--split-viewer-map-width', string>
+
 type GalleryWindowState = {
   anchorIndex: number;
   generation: number;
@@ -277,10 +279,11 @@ function SplitViewer({
   // Lock centroid when clear starts with preserved coordinates
   useEffect(() => {
     if (isClearing && clearCoordinates && dynamicCentroid) {
-      setLockedCentroid({
+      const clearedItem: Item = {
         ...dynamicCentroid,
         coordinates: clearCoordinates,
-      } as Item)
+      }
+      setLockedCentroid(clearedItem)
     }
   }, [isClearing, clearCoordinates, dynamicCentroid])
 
@@ -458,11 +461,15 @@ function SplitViewer({
     mapRef.current?.resize()
   }, [mapWidth])
 
+  const splitStyle: SplitViewerStyle = {
+    '--split-viewer-map-width': `${mapWidth}px`,
+  }
+
   return (
     <section
       ref={splitRef}
       className={`${styles.split} ${isMapVisible ? '' : styles.mapHidden}`}
-      style={{ '--split-viewer-map-width': `${mapWidth}px` } as CSSProperties}
+      style={splitStyle}
     >
       <section className={styles.left} key="splitLeft">
         <ImageGallery

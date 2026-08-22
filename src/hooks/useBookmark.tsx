@@ -5,16 +5,18 @@ import type { RefObject } from 'react'
 import { markerActionButtonSx } from '../components/Search/control-styles'
 import type { Bounds } from '../lib/map-filtering'
 import { mapBoundsSearchParam, serializeMapBounds } from '../lib/map-filter-query'
+import { getPrimaryFilename } from '../utils'
+import type { FilenameItem } from './useSearch'
 
-interface UseBookmarkProps<ItemType> {
-  refImageGallery?: RefObject<any>
+interface UseBookmarkProps<ItemType extends FilenameItem> {
+  refImageGallery?: RefObject<{ getCurrentIndex?: () => number } | null>
   displayedItems: ItemType[]
   pathname: string
   currentIndex?: number
   mapBounds?: Bounds | null
 }
 
-export default function useBookmark<ItemType>({
+export default function useBookmark<ItemType extends FilenameItem>({
   refImageGallery,
   displayedItems,
   pathname,
@@ -31,9 +33,7 @@ export default function useBookmark<ItemType>({
     if (!currentItem) return
 
     // Use filename as unique identifier (works across all albums)
-    const identifier = Array.isArray((currentItem as any).filename)
-      ? (currentItem as any).filename[0]
-      : (currentItem as any).filename
+    const identifier = getPrimaryFilename(currentItem.filename)
     if (!identifier) return
 
     const params = new URLSearchParams(window.location.search)

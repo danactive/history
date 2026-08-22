@@ -116,8 +116,7 @@ export default function AdminAlbumClient(
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input/textarea
-      const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return
       }
 
@@ -211,8 +210,9 @@ export default function AdminAlbumClient(
     _event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
-    if (newValue) {
-      setCurrentGallery(newValue as Gallery)
+    const selectedGallery = galleries.find(candidate => candidate === newValue)
+    if (selectedGallery) {
+      setCurrentGallery(selectedGallery)
       setAlbum(null)
       // Clear edits when gallery changes
       clearEdits()

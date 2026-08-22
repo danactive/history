@@ -36,7 +36,7 @@ interface SearchableItem {
   coordinates?: [number, number] | null;
 }
 
-type FilenameItem = SearchableItem & {
+export type FilenameItem = SearchableItem & {
   filename: string | string[];
 }
 
@@ -53,7 +53,7 @@ interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {
   trailingAction?: React.ReactNode;
 }
 
-function hasFilename(item: SearchableItem): item is FilenameItem {
+function hasFilename<ItemType extends SearchableItem>(item: ItemType): item is ItemType & FilenameItem {
   return 'filename' in item && Boolean(item.filename)
 }
 
@@ -234,7 +234,7 @@ export default function useSearch<ItemType extends SearchableItem>({
 
   const { BookmarkButton } = useBookmark({
     refImageGallery,
-    displayedItems: itemsToUse,
+    displayedItems: itemsToUse.filter(hasFilename),
     pathname,
     currentIndex: memoryIndex,
     mapBounds,

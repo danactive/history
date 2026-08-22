@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { createMcpHandler, McpServer, ResourceTemplate } from '@modelcontextprotocol/server'
 import { serveStdio } from '@modelcontextprotocol/server/stdio'
-import { registerAppResource, registerAppTool, RESOURCE_MIME_TYPE } from '@modelcontextprotocol/ext-apps/server'
 import mime from 'mime-types'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -28,11 +27,26 @@ import { generatedGalleries, generatedGallerySchema } from '../src/types/generat
 
 const modulePath = fileURLToPath(import.meta.url)
 const projectRoot = path.resolve(path.dirname(modulePath), '..')
-const packageMetadata = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'), 'utf8')) as {
+type PackageMetadata = {
   version?: string
 }
+
+function parsePackageMetadata(value: string): PackageMetadata {
+  try {
+    const parsed = JSON.parse(value)
+    if (parsed !== null && typeof parsed === 'object' && 'version' in parsed && typeof parsed.version === 'string') {
+      return { version: parsed.version }
+    }
+  } catch {
+    // Use the fallback server version when package metadata cannot be read.
+  }
+  return {}
+}
+
+const packageMetadata = parsePackageMetadata(readFileSync(path.join(projectRoot, 'package.json'), 'utf8'))
 const SERVER_NAME = 'history'
 const SERVER_VERSION = packageMetadata.version ?? '0.0.0'
+const MEDIA_APP_MIME_TYPE = 'text/html;profile=mcp-app'
 
 function ensureProjectRoot() {
   if (process.cwd() !== projectRoot) {
@@ -649,6 +663,14 @@ type ToolContentBlock =
   | { type: 'image'; data: string; mimeType: string; annotations?: { audience?: Array<'user' | 'assistant'>; priority?: number } }
   | ({ type: 'resource_link'; annotations?: { audience?: Array<'user' | 'assistant'>; priority?: number } } & ToolResourceLink)
 
+type PromptMessage = {
+  role: 'user'
+  content: (
+    | { type: 'text'; text: string }
+    | ({ type: 'resource_link' } & ToolResourceLink)
+  )
+}
+
 function toolResult<TStructuredContent extends Record<string, unknown>>({
   text,
   content,
@@ -660,19 +682,22 @@ function toolResult<TStructuredContent extends Record<string, unknown>>({
   structured: TStructuredContent
   resourceLink?: ToolResourceLink
 }) {
+  const fallbackContent: ToolContentBlock[] = [{ type: 'text', text: text ?? '' }]
+  if (resourceLink) {
+    fallbackContent.push({ type: 'resource_link', ...resourceLink })
+  }
+
   return {
-    content: content ?? [
-      { type: 'text' as const, text: text ?? '' },
-      ...(resourceLink ? [{ type: 'resource_link' as const, ...resourceLink }] : []),
-    ],
+    content: content ?? fallbackContent,
     structuredContent: structured,
   }
 }
 
 function toolErrorResult(error: unknown) {
+  const errorContent: ToolContentBlock = { type: 'text', text: `Error: ${formatToolError(error)}` }
   return {
     isError: true,
-    content: [{ type: 'text' as const, text: `Error: ${formatToolError(error)}` }],
+    content: [errorContent],
   }
 }
 
@@ -788,9 +813,6 @@ function createStorytellingServer() {
   }, {
     instructions: SERVER_INSTRUCTIONS,
   })
-  const appToolServer = { registerTool: server.registerTool.bind(server) } as unknown as Parameters<typeof registerAppTool>[0]
-  const appResourceServer = { registerResource: server.registerResource.bind(server) } as unknown as Parameters<typeof registerAppResource>[0]
-
   server.registerTool(
     'search_story_moments',
     {
@@ -865,8 +887,7 @@ function createStorytellingServer() {
     }),
   )
 
-  registerAppTool(
-    appToolServer,
+  server.registerTool(
     'get_album_media',
     {
       title: 'Get Album Media',
@@ -886,6 +907,7 @@ function createStorytellingServer() {
         ui: {
           resourceUri: MEDIA_APP_URI,
         },
+        'ui/resourceUri': MEDIA_APP_URI,
       },
     },
     withToolErrorHandling(async ({ gallery, album, select }) => {
@@ -945,18 +967,18 @@ function createStorytellingServer() {
     }),
   )
 
-  registerAppResource(
-    appResourceServer,
+  server.registerResource(
     'history-media-viewer',
     MEDIA_APP_URI,
     {
       title: 'History Media Viewer',
       description: 'Interactive MCP App for browsing a selected photo or video from the history archive.',
+      mimeType: MEDIA_APP_MIME_TYPE,
     },
     async () => ({
       contents: [{
         uri: MEDIA_APP_URI,
-        mimeType: RESOURCE_MIME_TYPE,
+        mimeType: MEDIA_APP_MIME_TYPE,
         text: buildMediaAppHtml(),
         _meta: {
           ui: {
@@ -1147,12 +1169,12 @@ function createStorytellingServer() {
           ].join(' ')
         : 'Read the linked inventory to discover galleries or album names, then call this prompt again with a story request.'
 
-      return {
-        messages: [
-          { role: 'user' as const, content: { type: 'resource_link' as const, ...inventoryLink } },
-          { role: 'user' as const, content: { type: 'text' as const, text } },
-        ],
-      }
+      const messages: PromptMessage[] = [
+        { role: 'user', content: { type: 'resource_link', ...inventoryLink } },
+        { role: 'user', content: { type: 'text', text } },
+      ]
+
+      return { messages }
     },
   )
 

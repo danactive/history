@@ -15,12 +15,44 @@ const MAX_ZOOM = 4
 const KEYBOARD_PAN_STEP = 0.05
 
 type ImageSize = { width: number, height: number }
+type FilesystemResponse = FilesystemResponseBody & { error?: { message: string } }
 type DragStart = {
   pointerId: number
   clientX: number
   clientY: number
   positionX: number
   positionY: number
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object'
+}
+
+function isFilesystem(value: unknown): value is Filesystem {
+  if (!isRecord(value)) return false
+
+  return typeof value.id === 'string'
+    && typeof value.label === 'string'
+    && typeof value.ext === 'string'
+    && typeof value.name === 'string'
+    && typeof value.filename === 'string'
+    && typeof value.path === 'string'
+    && typeof value.absolutePath === 'string'
+    && typeof value.mediumType === 'string'
+    && ['folder', 'image', 'video', 'unknown', 'text', 'xml'].includes(value.mediumType)
+}
+
+function parseFilesystemResponse(value: unknown): FilesystemResponse {
+  if (!isRecord(value) || !Array.isArray(value.files) || !value.files.every(isFilesystem) || typeof value.destinationPath !== 'string') {
+    throw new Error('Could not load resized photos')
+  }
+
+  const error = isRecord(value.error) && typeof value.error.message === 'string'
+    ? { message: value.error.message }
+    : undefined
+  return error
+    ? { files: value.files, destinationPath: value.destinationPath, error }
+    : { files: value.files, destinationPath: value.destinationPath }
 }
 
 function clamp(value: number, minimum: number, maximum: number) {
@@ -321,7 +353,7 @@ export default function ThumbnailFramerClient({ sourceFolder }: { sourceFolder?:
     setError(null)
     fetch(`/api/admin/filesystems?path=${encodeURIComponent(photoFolder)}`)
       .then(async (response) => {
-        const body = await response.json() as FilesystemResponseBody & { error?: { message: string } }
+        const body = parseFilesystemResponse(await response.json())
         if (!response.ok || body.error) {
           throw new Error(body.error?.message || 'Could not load resized photos')
         }

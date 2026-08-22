@@ -20,6 +20,23 @@ const NOT_AVAILABLE = 'N/A'
 // Module-level cache to persist across remounts
 const scoreCache: Record<string, { display: string, breakdown: string }> = {}
 
+function getNumber(data: Record<string, unknown>, key: string) {
+  const value = data[key]
+  return typeof value === 'number' ? value : undefined
+}
+
+function getNumberRecord(data: Record<string, unknown>, key: string) {
+  const value = data[key]
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined
+
+  const numericRecord: Record<string, number> = {}
+  for (const [entryKey, entryValue] of Object.entries(value)) {
+    if (typeof entryValue !== 'number') return undefined
+    numericRecord[entryKey] = entryValue
+  }
+  return numericRecord
+}
+
 function formatScore(
   overall: number | undefined,
   interest: number | undefined,
@@ -45,11 +62,11 @@ function formatScore(
 
 function buildBreakdown(data: Record<string, unknown>): string {
   const lines: string[] = []
-  const interest = data.visual_interest_score as number | undefined
-  const thirds = data.rule_of_thirds_score as number | undefined
-  const sharp = data.sharpness_score as number | undefined
-  const overall = data.overall_score as number | undefined
-  const model = data.model_scores as Record<string, number> | undefined
+  const interest = getNumber(data, 'visual_interest_score')
+  const thirds = getNumber(data, 'rule_of_thirds_score')
+  const sharp = getNumber(data, 'sharpness_score')
+  const overall = getNumber(data, 'overall_score')
+  const model = getNumberRecord(data, 'model_scores')
 
   if (typeof interest === 'number' && typeof thirds === 'number') {
     const comp = (interest * 0.8) + (thirds * 0.2)
