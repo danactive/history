@@ -10,12 +10,12 @@ export type PersonsAgeSummary = {
 
 export function derivePersonsAgeSummary({
   ageSummaryItems,
-  ageSummaryPerson,
+  selectedPerson,
   canReuseServerSummary,
   initialAgeSummary,
 }: {
   ageSummaryItems: ServerSideAllItem[]
-  ageSummaryPerson: string | null
+  selectedPerson: string | null
   canReuseServerSummary: boolean
   initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number }
 }): PersonsAgeSummary {
@@ -43,7 +43,7 @@ export function derivePersonsAgeSummary({
     const seen = new Set<number | 'unknown'>()
 
     item.persons.forEach((person) => {
-      if (ageSummaryPerson && person.full !== ageSummaryPerson) {
+      if (selectedPerson && person.full !== selectedPerson) {
         return
       }
 

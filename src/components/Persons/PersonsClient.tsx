@@ -25,8 +25,6 @@ export default function PersonsClient({
   clusteredMarkers,
   initialAgeSummary,
   initialBaseScopeItems,
-  initialAgeScopeItems,
-  initialPersonScopeItems,
   initialSelectedAge,
   initialSelectedPerson,
 }: Persons.ComponentProps) {
@@ -62,8 +60,6 @@ export default function PersonsClient({
     activeFacetCounts,
     initialAgeSummary,
     initialBaseScopeItems,
-    initialAgeScopeItems,
-    initialPersonScopeItems,
     initialSelectedAge,
     initialSelectedPerson,
   })

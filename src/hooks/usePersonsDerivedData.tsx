@@ -5,9 +5,8 @@ import { useEffect, useMemo } from 'react'
 import { derivePersonsAgeSummary } from '../lib/persons-age-summary'
 import type { PersonAgeFilterValue } from '../lib/persons'
 import {
-  derivePeopleAtSelectedAge,
+  derivePeople,
   derivePersonsScopes,
-  matchesSelectedPersonAge,
 } from '../lib/persons-filter-scopes'
 import type { ServerSideAllItem } from '../types/common'
 import type { AgeSummaryValue } from '../utils/person-age'
@@ -16,11 +15,8 @@ export default function usePersonsDerivedData({
   itemsToShow,
   selectedAge,
   effectiveSelectedPerson,
-  initialSelectedAge,
-  initialSelectedPerson,
   initialBaseScopeItems,
-  initialAgeScopeItems,
-  initialPersonScopeItems,
+  initialSelectedPerson,
   isServerScopeCurrent,
   mapFilterEnabled,
   initialAgeSummary,
@@ -29,75 +25,33 @@ export default function usePersonsDerivedData({
   itemsToShow: ServerSideAllItem[]
   selectedAge: PersonAgeFilterValue
   effectiveSelectedPerson: string | null
-  initialSelectedAge: PersonAgeFilterValue
-  initialSelectedPerson: string | null
   initialBaseScopeItems?: ServerSideAllItem[]
-  initialAgeScopeItems?: ServerSideAllItem[]
-  initialPersonScopeItems?: ServerSideAllItem[]
+  initialSelectedPerson: string | null
   isServerScopeCurrent: boolean
   mapFilterEnabled: boolean
   initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number }
   setSelectedAge: (value: PersonAgeFilterValue) => void
 }) {
-  const scopedItems = useMemo(() => {
-    const canUseInitialAgeScope = selectedAge !== null
-      && selectedAge === initialSelectedAge
-      && initialSelectedPerson !== null
-      && initialAgeScopeItems !== undefined
-
-    const canUseInitialPersonScope = selectedAge === null
-      && effectiveSelectedPerson !== null
-      && effectiveSelectedPerson === initialSelectedPerson
-      && initialPersonScopeItems !== undefined
-
-    if (initialBaseScopeItems !== undefined) {
-      return initialBaseScopeItems
-    }
-
-    if (canUseInitialAgeScope) {
-      return initialAgeScopeItems
-    }
-
-    return canUseInitialPersonScope ? initialPersonScopeItems : itemsToShow
-  }, [
-    effectiveSelectedPerson,
-    initialAgeScopeItems,
-    initialBaseScopeItems,
-    initialPersonScopeItems,
-    initialSelectedAge,
-    initialSelectedPerson,
-    itemsToShow,
-    selectedAge,
-  ])
-
-  const currentServerScopedItems = useMemo(() => {
-    if (!isServerScopeCurrent) {
-      return null
-    }
-
-    return scopedItems.filter((item) => matchesSelectedPersonAge(item, selectedAge, effectiveSelectedPerson))
-  }, [effectiveSelectedPerson, isServerScopeCurrent, scopedItems, selectedAge])
-
-  const canReuseServerScope = scopedItems === itemsToShow
-    && isServerScopeCurrent
-    && currentServerScopedItems !== null
-    && currentServerScopedItems.length === itemsToShow.length
-    && currentServerScopedItems.every((item, index) => item.id === itemsToShow[index]?.id)
+  const scopedItems = initialBaseScopeItems ?? itemsToShow
   const canReuseServerSummary = initialAgeSummary !== undefined
+    && isServerScopeCurrent
     && !mapFilterEnabled
-    && (selectedAge !== null || effectiveSelectedPerson === initialSelectedPerson)
+    && effectiveSelectedPerson === initialSelectedPerson
 
   const {
-    ageSummaryPerson,
-    ageSummaryItems,
-    ageBaseFiltered,
     ageFiltered,
   } = useMemo(() => derivePersonsScopes({
     items: scopedItems,
     selectedAge,
     effectiveSelectedPerson,
-    canReuseServerScope,
-  }), [canReuseServerScope, effectiveSelectedPerson, scopedItems, selectedAge])
+  }), [effectiveSelectedPerson, scopedItems, selectedAge])
+
+  const ageSummaryItems = useMemo(
+    () => effectiveSelectedPerson
+      ? scopedItems.filter((item) => item.persons?.some((person) => person.full === effectiveSelectedPerson))
+      : scopedItems,
+    [effectiveSelectedPerson, scopedItems],
+  )
 
   const {
     agesWithCounts,
@@ -106,10 +60,10 @@ export default function usePersonsDerivedData({
     totalPhotoCount,
   } = useMemo(() => derivePersonsAgeSummary({
     ageSummaryItems,
-    ageSummaryPerson,
+    selectedPerson: effectiveSelectedPerson,
     canReuseServerSummary,
     initialAgeSummary,
-  }), [ageSummaryItems, ageSummaryPerson, canReuseServerSummary, initialAgeSummary])
+  }), [ageSummaryItems, effectiveSelectedPerson, canReuseServerSummary, initialAgeSummary])
 
   useEffect(() => {
     if (!isServerScopeCurrent) {
@@ -125,9 +79,9 @@ export default function usePersonsDerivedData({
     }
   }, [hasUnknown, isServerScopeCurrent, numericAges, selectedAge, setSelectedAge])
 
-  const { peopleAtSelectedAge, peopleWithCounts } = useMemo(
-    () => derivePeopleAtSelectedAge(ageBaseFiltered, selectedAge),
-    [ageBaseFiltered, selectedAge],
+  const { people, peopleWithCounts } = useMemo(
+    () => derivePeople(scopedItems, selectedAge),
+    [scopedItems, selectedAge],
   )
 
   const itemsWithCorpus: ServerSideAllItem[] = useMemo(
@@ -143,7 +97,7 @@ export default function usePersonsDerivedData({
     ageFiltered,
     agesWithCounts,
     itemsWithCorpus,
-    peopleAtSelectedAge,
+    people,
     peopleWithCounts,
     totalPhotoCount,
   }

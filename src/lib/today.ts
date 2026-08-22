@@ -7,9 +7,14 @@ import type { AlbumMeta, Gallery, Item, ServerSideTodayItem } from '../types/com
 import type { Today } from '../types/pages'
 import { compareItemOldestFirst } from '../utils'
 import { getInitialActiveFacetCounts } from './active-facets'
+import { resolvePhotoDate } from '../utils/person-age'
 import { applyGalleryItemsCachePolicy, getOrderedAlbumItems } from './get-all-items'
 
 type TodayItemsResult = Today.ItemData & ServerPageFilterMetadata
+
+export function getItemMonthDay(item: Item) {
+  return resolvePhotoDate(item).substring(5, 10)
+}
 
 const prepareTodayItems = (
   { albumName, albumCoordinateAccuracy, items }:
@@ -39,7 +44,7 @@ export async function getTodayPageItems(gallery: Gallery, monthDay: string): Pro
 
   const albums = await getOrderedAlbumItems(gallery)
   return albums.flatMap(({ albumCoordinateAccuracy, albumName, items }) => {
-    const itemsMatchDate = items.filter((item) => item?.filename?.toString().substring?.(5, 10) === monthDay)
+    const itemsMatchDate = items.filter((item) => getItemMonthDay(item) === monthDay)
     return prepareTodayItems({
       albumName,
       albumCoordinateAccuracy,

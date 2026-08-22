@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 
 import {
   buildPersonsRouteSearchParams,
+  hasInvalidPersonsRouteAge,
   getAgeFromPersonsRouteSearchParams,
   getQueryFromPersonsRouteSearchParams,
   getPersonFromPersonsRouteSearchParams,
@@ -23,6 +24,24 @@ describe('persons route filters', () => {
     expect(getQueryFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBe('person:Alice || person:Bob')
     expect(getPersonFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBeNull()
     expect(getAgeFromPersonsRouteSearchParams({ query: 'person:Alice || person:Bob' })).toBeNull()
+  })
+
+  test('treats age zero as a valid Persons filter', () => {
+    expect(parsePersonsRouteFilters({ query: 'person:"Example Person" && age:0' })).toEqual({
+      query: 'person:"Example Person" && age:0',
+      selectedAge: 0,
+      selectedPerson: 'Example Person',
+    })
+    expect(hasInvalidPersonsRouteAge({ query: 'person:"Example Person" && age:0' })).toBe(false)
+    expect(hasInvalidPersonsRouteAge({ query: 'person:"Example Person" && age:21' })).toBe(false)
+    expect(hasInvalidPersonsRouteAge({ query: 'person:"Example Person" && age:unknown' })).toBe(false)
+    expect(hasInvalidPersonsRouteAge({ query: 'person:"Example Person" && age:-1' })).toBe(true)
+
+    expect(buildPersonsRouteSearchParams('query=person%3A%22Example+Person%22+%26%26+age%3A0&select=example.jpg', {
+      query: 'person:"Example Person" && age:0',
+      selectedAge: 0,
+      selectedPerson: 'Example Person',
+    }).toString()).toBe('query=person%3A%22Example+Person%22+%26%26+age%3A0&select=example.jpg')
   })
 
   test('serializes age and person controls into the canonical query while preserving unrelated params', () => {

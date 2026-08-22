@@ -19,6 +19,7 @@ function getTrimmedParamValue(value?: string | string[]) {
 function parseAge(value: string): PersonAgeFilterValue {
   if (!value) return null
   if (value === 'unknown') return 'unknown'
+  if (!/^\d+$/.test(value)) return null
   const age = Number.parseInt(value, 10)
   return Number.isNaN(age) ? null : age
 }
@@ -37,6 +38,13 @@ export function getAgeFromPersonsRouteSearchParams(searchParams?: PersonsRouteSe
   const query = getQueryFromPersonsRouteSearchParams(searchParams)
   if (query) return parseAge(getConjunctiveFilterTerms(query).get('age') ?? '')
   return null
+}
+
+export function hasInvalidPersonsRouteAge(searchParams?: PersonsRouteSearchParams) {
+  const query = getQueryFromPersonsRouteSearchParams(searchParams)
+  const age = query ? getConjunctiveFilterTerms(query).get('age') : undefined
+  if (!age || age === 'unknown') return false
+  return parseAge(age) === null
 }
 
 export function parsePersonsRouteFilters(searchParams?: PersonsRouteSearchParams): PersonsRouteFilters {

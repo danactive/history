@@ -49,8 +49,6 @@ export type AgeSummary = {
 export type PersonFilterScopeData = {
   initialAgeSummary?: AgeSummary;
   initialBaseScopeItems?: ServerSideAllItem[];
-  initialAgeScopeItems?: ServerSideAllItem[];
-  initialPersonScopeItems?: ServerSideAllItem[];
   initialSelectedAge?: number | 'unknown' | null;
   initialSelectedPerson?: string | null;
 }

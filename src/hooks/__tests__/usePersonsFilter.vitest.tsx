@@ -230,7 +230,7 @@ describe('usePersonsFilter URL sync', () => {
       indexedKeywords: [],
       initialSelectedAge: 21,
       initialSelectedPerson: 'Alice',
-      initialAgeScopeItems: broaderAgeScope,
+      initialBaseScopeItems: broaderAgeScope,
       initialAgeSummary: {
         ages: [{ age: 21, count: 2 }],
         totalPhotoCount: 2,
@@ -244,7 +244,7 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.selectedAge).toBe(21)
     expect(result.current.selectedPerson).toBeNull()
     expect(result.current.ageFiltered).toEqual(broaderAgeScope)
-    expect(result.current.filterControlsProps.peopleAtSelectedAge).toEqual(['Alice', 'Bob'])
+    expect(result.current.filterControlsProps.people).toEqual(['Alice', 'Bob'])
     expect(replace).toHaveBeenCalledWith('/demo/persons?query=age%3A21', { scroll: false })
   })
 
@@ -262,7 +262,7 @@ describe('usePersonsFilter URL sync', () => {
       indexedKeywords: [],
       initialSelectedAge: 21,
       initialSelectedPerson: 'Alice',
-      initialPersonScopeItems: broaderPersonScope,
+      initialBaseScopeItems: broaderPersonScope,
       initialAgeSummary: {
         ages: [
           { age: 21, count: 1 },
@@ -352,6 +352,34 @@ describe('usePersonsFilter URL sync', () => {
     )).length).toBeGreaterThan(0)
   })
 
+  test('does not reuse an unscoped summary when a person is inferred from the keyword', () => {
+    query = new URLSearchParams('query=Alice')
+    const sharedItem = {
+      ...makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+      persons: [
+        { full: 'Alice', dob: '2000-01-01' },
+        { full: 'Bob', dob: '1990-01-01' },
+      ],
+    }
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items: [sharedItem],
+      indexedKeywords: [],
+      initialAgeSummary: {
+        ages: [
+          { age: 21, count: 1 },
+          { age: 31, count: 1 },
+        ],
+        totalPhotoCount: 1,
+      },
+    }))
+
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 1 },
+    ])
+  })
+
   test('anchors all ages count to the base scope when initial items are age-filtered', () => {
     query = new URLSearchParams('query=age%3Aunknown')
     const items = [makeUnknownDobItem('1', 'Mystery', '2021-02-01')]
@@ -403,17 +431,22 @@ describe('usePersonsFilter URL sync', () => {
     )).length).toBeGreaterThan(0)
   })
 
-  test('scopes all ages counts to the selected person', () => {
+  test('scopes age menu counts to the selected person', () => {
     query = new URLSearchParams('query=person%3AAlice')
-    const items = [
+    const selectedItems = [
       makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
+    ]
+    const menuBaseItems = [
+      selectedItems[0],
+      makeItem('2', 'Bob', '1979-01-01', '2021-02-01'),
     ]
 
     const { result } = renderHook(() => usePersonsFilter({
       gallery: 'demo',
-      items,
+      items: selectedItems,
       indexedKeywords: [],
       initialSelectedPerson: 'Alice',
+      initialBaseScopeItems: menuBaseItems,
     }))
 
     render(<FilterControls {...result.current.filterControlsProps} />)
@@ -421,6 +454,36 @@ describe('usePersonsFilter URL sync', () => {
     expect(screen.getAllByText((_, node) => (
       node?.textContent?.replace(/\s+/g, ' ').trim() === 'All ages (1 photo)'
     )).length).toBeGreaterThan(0)
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 1 },
+    ])
+    expect(result.current.ageFiltered).toEqual(selectedItems)
+  })
+
+  test('shows only the selected person’s ages for a person-and-age URL', () => {
+    query = new URLSearchParams('query=person%3AAlice+%26%26+age%3A21')
+    const selectedItems = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const menuBaseItems = [
+      selectedItems[0],
+      makeItem('2', 'Alice', '1979-01-01', '2021-02-01'),
+      makeItem('3', 'Bob', '1979-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items: selectedItems,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialSelectedPerson: 'Alice',
+      initialBaseScopeItems: menuBaseItems,
+    }))
+
+    expect(result.current.filterControlsProps.totalPhotoCount).toBe(2)
+    expect(result.current.filterControlsProps.agesWithCounts).toEqual([
+      { age: 21, count: 1 },
+      { age: 42, count: 1 },
+    ])
+    expect(result.current.ageFiltered).toEqual(selectedItems)
   })
 
   test('keeps selected person when selecting an age', () => {
@@ -440,7 +503,30 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.selectedPerson).toBe('Alice')
   })
 
-  test('keeps the people menu anchored to the broader age scope when selecting an age from a person-only page', () => {
+  test('filters the people menu to the selected age', () => {
+    query = new URLSearchParams('query=age%3A21')
+    const selectedItems = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const menuBaseItems = [
+      selectedItems[0],
+      makeItem('2', 'Bob', '1979-01-01', '2021-02-01'),
+    ]
+
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo',
+      items: selectedItems,
+      indexedKeywords: [],
+      initialSelectedAge: 21,
+      initialBaseScopeItems: menuBaseItems,
+    }))
+
+    expect(result.current.filterControlsProps.people).toEqual(['Alice'])
+    expect(result.current.filterControlsProps.peopleWithCounts).toEqual([
+      { name: 'Alice', count: 1 },
+    ])
+    expect(result.current.ageFiltered).toEqual(selectedItems)
+  })
+
+  test('shows all people at the selected age from the shared base scope', () => {
     query = new URLSearchParams('query=person%3AAlice')
     const personScopedItems = [
       makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
@@ -474,7 +560,7 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.selectedAge).toBe(21)
     expect(result.current.selectedPerson).toBe('Alice')
     expect(result.current.ageFiltered).toEqual([personScopedItems[0]])
-    expect(result.current.filterControlsProps.peopleAtSelectedAge).toEqual(['Alice', 'Bob'])
+    expect(result.current.filterControlsProps.people).toEqual(['Alice', 'Bob'])
     expect(result.current.filterControlsProps.peopleWithCounts).toEqual([
       { name: 'Alice', count: 1 },
       { name: 'Bob', count: 1 },
@@ -485,6 +571,12 @@ describe('usePersonsFilter URL sync', () => {
   test('keeps broader person-scoped age options available while switching ages client-side', () => {
     query = new URLSearchParams('query=person%3AAlice+%26%26+age%3A21')
     const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const menuBaseItems = [
+      items[0],
+      makeItem('2', 'Alice', '1973-01-01', '2021-02-01'),
+      makeItem('3', 'Alice', '1973-01-01', '2021-03-01'),
+      makeItem('4', 'Alice', '1973-01-01', '2021-04-01'),
+    ]
 
     const { result } = renderHook(() => usePersonsFilter({
       gallery: 'demo',
@@ -492,6 +584,7 @@ describe('usePersonsFilter URL sync', () => {
       indexedKeywords: [],
       initialSelectedAge: 21,
       initialSelectedPerson: 'Alice',
+      initialBaseScopeItems: menuBaseItems,
       initialAgeSummary: {
         ages: [
           { age: 21, count: 1 },
@@ -560,25 +653,30 @@ describe('usePersonsFilter URL sync', () => {
       indexedKeywords: [],
       initialSelectedAge: 21,
       initialSelectedPerson: 'Alice',
-      initialAgeScopeItems: broaderAgeScope,
+      initialBaseScopeItems: broaderAgeScope,
     }))
 
-    expect(result.current.filterControlsProps.peopleAtSelectedAge).toEqual(['Alice', 'Bob'])
+    expect(result.current.filterControlsProps.people).toEqual(['Alice', 'Bob'])
     expect(result.current.filterControlsProps.peopleWithCounts).toEqual([
       { name: 'Alice', count: 1 },
       { name: 'Bob', count: 1 },
     ])
   })
 
-  test('keeps first dropdown counts anchored to the broader age scope after selecting a person client-side', () => {
+  test('updates the age menu to the selected person after a client-side selection', () => {
     query = new URLSearchParams('query=age%3A21')
     const visibleItems = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const menuBaseItems = [
+      visibleItems[0],
+      makeItem('2', 'Bob', '1979-01-01', '2021-02-01'),
+    ]
 
     const { result } = renderHook(() => usePersonsFilter({
       gallery: 'demo',
       items: visibleItems,
       indexedKeywords: [],
       initialSelectedAge: 21,
+      initialBaseScopeItems: menuBaseItems,
       initialAgeSummary: {
         ages: [
           { age: 21, count: 1 },
@@ -592,10 +690,9 @@ describe('usePersonsFilter URL sync', () => {
       result.current.setSelectedPerson('Alice')
     })
 
-    expect(result.current.filterControlsProps.totalPhotoCount).toBe(2)
+    expect(result.current.filterControlsProps.totalPhotoCount).toBe(1)
     expect(result.current.filterControlsProps.agesWithCounts).toEqual([
       { age: 21, count: 1 },
-      { age: 42, count: 1 },
     ])
     expect(result.current.ageFiltered).toHaveLength(1)
   })
@@ -633,7 +730,7 @@ describe('usePersonsFilter URL sync', () => {
       indexedKeywords: [],
       initialSelectedAge: 21,
       initialSelectedPerson: 'Alice',
-      initialAgeScopeItems: broaderAgeScope,
+      initialBaseScopeItems: broaderAgeScope,
       initialAgeSummary: {
         ages: [{ age: 21, count: 2 }],
         totalPhotoCount: 2,
@@ -641,7 +738,7 @@ describe('usePersonsFilter URL sync', () => {
     }))
 
     expect(result.current.ageFiltered).toEqual([visibleItems[0]])
-    expect(result.current.filterControlsProps.peopleAtSelectedAge).toEqual(['Alice', 'Bob'])
+    expect(result.current.filterControlsProps.people).toEqual(['Alice', 'Bob'])
     expect(result.current.filterControlsProps.peopleWithCounts).toEqual([
       { name: 'Alice', count: 1 },
       { name: 'Bob', count: 1 },
@@ -667,7 +764,7 @@ describe('usePersonsFilter URL sync', () => {
       </>,
     )
 
-    expect(screen.getByText('All persons at 21 (1 person)')).toBeInTheDocument()
+    expect(screen.getByText('All persons (1 person)')).toBeInTheDocument()
   })
 
   test('keeps age/person clear actions out of the standalone persons controls', () => {
@@ -775,7 +872,7 @@ describe('usePersonsFilter URL sync', () => {
     expect(replace).not.toHaveBeenCalledWith('/demo/persons?person=tag%5E', { scroll: false })
   })
 
-  test('scopes all ages to the selected person after choosing a pre-existing structured option', async () => {
+  test('scopes the age menu after choosing a pre-existing structured option', async () => {
     query = new URLSearchParams()
     const items = [
       makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
@@ -828,7 +925,7 @@ describe('usePersonsFilter URL sync', () => {
     expect(result.current.filterControlsProps.totalPhotoCount).toBe(1)
   })
 
-  test('scopes the first age dropdown to a unique person inferred from the keyword query', () => {
+  test('scopes the age menu to a person inferred from the keyword query', () => {
     query = new URLSearchParams('query=ali')
     const items = [
       makeItem('1', 'Alice', '2000-01-01', '2021-02-01'),
