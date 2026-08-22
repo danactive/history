@@ -1,22 +1,45 @@
 import { extendTheme } from '@mui/joy/styles'
+import { mapMarkerUi } from './components/SlippyMap/marker-theme'
 
 export const themeMui = extendTheme({
+  colorSchemes: {
+    dark: {
+      palette: {
+        focusVisible: mapMarkerUi.primary,
+      },
+    },
+    light: {
+      palette: {
+        focusVisible: mapMarkerUi.primary,
+      },
+    },
+  },
   components: {
     JoyLink: {
       styleOverrides: {
         root: {
-          color: '#6cc0e5',
+          // Text needs the lightest marker tone on the charcoal surface.
+          // Reserve the darker cluster stops for filled and pressed controls.
+          '--variant-outlinedBorder': mapMarkerUi.primary,
+          color: mapMarkerUi.subtle,
+          textDecorationColor: mapMarkerUi.primary,
           '&:hover': {
-            color: '#e6df55',
+            '--variant-outlinedBorder': mapMarkerUi.hover,
+            color: mapMarkerUi.subtle,
+            textDecorationColor: mapMarkerUi.hover,
+            textDecorationThickness: '2px',
           },
           '&:active': {
-            color: '#999540',
+            color: mapMarkerUi.primary,
           },
           '&:visited': {
-            color: '#e68393',
+            color: mapMarkerUi.subtle,
           },
           '&:visited:hover': {
-            color: '#e6df55',
+            '--variant-outlinedBorder': mapMarkerUi.hover,
+            color: mapMarkerUi.subtle,
+            textDecorationColor: mapMarkerUi.hover,
+            textDecorationThickness: '2px',
           },
         },
       },

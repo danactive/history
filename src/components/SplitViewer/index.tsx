@@ -6,6 +6,9 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
   type Ref,
 } from 'react'
 import dynamic from 'next/dynamic'
@@ -37,6 +40,11 @@ interface ImageGalleryType extends GalleryItem {
 const MAX_RENDERED_SLIDES = 31
 const GALLERY_EDGE_BUFFER = 5
 const GALLERY_SLIDE_DURATION = 250
+const INITIAL_MAP_WIDTH = 300
+const MIN_MAP_WIDTH = 240
+const MAX_MAP_WIDTH = 640
+const MIN_GALLERY_WIDTH = 320
+const MAP_RESIZE_STEP = 24
 
 type GalleryWindowState = {
   anchorIndex: number;
@@ -98,6 +106,7 @@ function SplitViewer({
   clearCoordinates,
   onToggleMapFilter,
   onMapBoundsChange,
+  mapVisible,
 }: {
   clusteredMarkers: ClusteredMarkers;
   items: Item[];
@@ -110,29 +119,40 @@ function SplitViewer({
   clearCoordinates?: [number, number] | null;
   onToggleMapFilter?: () => void;
   onMapBoundsChange?: (bounds: [[number, number],[number, number]]) => void;
+  mapVisible?: boolean;
 }) {
   const meta = useContext(AlbumContext)
   const metaZoom = meta?.geo?.zoom ?? config.defaultZoom
-  const refMapBox = useRef<HTMLDivElement>(null)
+  const refMapBox = useRef<HTMLElement>(null)
+  const splitRef = useRef<HTMLElement>(null)
   const mapRef = useRef<MapRef>(null)
   const localGalleryRef = useRef<ImageGalleryRef>(null)
-  const [isMapVisible, setIsMapVisible] = useState(true)
+  const isMapVisible = mapVisible ?? true
+  const [isMapFullscreen, setIsMapFullscreen] = useState(false)
+  const [mapWidth, setMapWidth] = useState(INITIAL_MAP_WIDTH)
   const lastMapSelectionRef = useRef<string | null>(null)
   const mapModeRef = useRef({ isClearing, mapFilterEnabled, metaZoom })
   mapModeRef.current = { isClearing, mapFilterEnabled, metaZoom }
-  const fullscreenMap = useCallback(() => {
-    const div = refMapBox.current
-    if (div?.requestFullscreen) {
-      div.requestFullscreen()
-    } else if (div?.webkitRequestFullscreen) {
-      div.webkitRequestFullscreen()
-    } else if (div?.msRequestFullscreen) {
-      div.msRequestFullscreen()
-    } else if (div?.mozRequestFullScreen) {
-      div.mozRequestFullScreen()
-    } else {
-      console.error('Failed to fullscreen')
+
+  const updateMapFullscreenState = useCallback(() => {
+    setIsMapFullscreen(document.fullscreenElement === refMapBox.current)
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', updateMapFullscreenState)
+    return () => document.removeEventListener('fullscreenchange', updateMapFullscreenState)
+  }, [updateMapFullscreenState])
+
+  const toggleMapFullscreen = useCallback(() => {
+    const mapElement = refMapBox.current
+    if (!mapElement) return
+
+    if (document.fullscreenElement === mapElement) {
+      void document.exitFullscreen()
+      return
     }
+
+    void mapElement.requestFullscreen()
   }, [])
 
   const safeIndex = items.length === 0
@@ -251,8 +271,6 @@ function SplitViewer({
 
   // Dynamic centroid (always reflects current selected item)
   const dynamicCentroid = (safeIndex === -1 || items.length === 0) ? null : items[safeIndex]
-  const selectedCaption = dynamicCentroid?.caption || 'No photo selected'
-
   // Locked centroid used while map filter is ON or during clear
   const [lockedCentroid, setLockedCentroid] = useState<typeof dynamicCentroid>(dynamicCentroid)
 
@@ -391,27 +409,63 @@ function SplitViewer({
     syncMapToSelection(selectionCoordinator.getSnapshot())
   }, [selectionCoordinator, syncMapToSelection])
 
+  const getMaximumMapWidth = useCallback(() => {
+    const splitWidth = splitRef.current?.clientWidth ?? 0
+    return splitWidth > 0
+      ? Math.min(MAX_MAP_WIDTH, Math.max(MIN_MAP_WIDTH, splitWidth - MIN_GALLERY_WIDTH))
+      : MAX_MAP_WIDTH
+  }, [])
+
+  const clampMapWidth = useCallback((width: number) => (
+    Math.max(MIN_MAP_WIDTH, Math.min(width, getMaximumMapWidth()))
+  ), [getMaximumMapWidth])
+
+  const updateMapWidthFromPointer = useCallback((clientX: number) => {
+    const split = splitRef.current
+    if (!split) return
+
+    const splitBounds = split.getBoundingClientRect()
+    setMapWidth(clampMapWidth(splitBounds.right - clientX))
+  }, [clampMapWidth])
+
+  const handleMapResizePointerDown = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    updateMapWidthFromPointer(event.clientX)
+  }, [updateMapWidthFromPointer])
+
+  const handleMapResizePointerMove = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      updateMapWidthFromPointer(event.clientX)
+    }
+  }, [updateMapWidthFromPointer])
+
+  const handleMapResizePointerUp = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }, [])
+
+  const handleMapResizeKeyDown = useCallback((event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+
+    event.preventDefault()
+    const change = event.key === 'ArrowLeft' ? MAP_RESIZE_STEP : -MAP_RESIZE_STEP
+    setMapWidth(width => clampMapWidth(width + change))
+  }, [clampMapWidth])
+
+  useEffect(() => {
+    mapRef.current?.resize()
+  }, [mapWidth])
+
   return (
-    <section className={styles.viewer}>
-      <header className={styles.viewerBar}>
-        <div className={styles.itemSummary} aria-live="polite">
-          <span className={styles.itemPosition}>
-            {safeIndex === -1 ? 'No items' : `${safeIndex + 1} of ${items.length}`}
-          </span>
-          <span className={styles.itemCaption}>{selectedCaption}</span>
-        </div>
-        <button
-          type="button"
-          className={styles.mapVisibilityButton}
-          onClick={() => setIsMapVisible(visible => !visible)}
-          aria-pressed={isMapVisible}
-        >
-          {isMapVisible ? 'Hide map' : 'Show map'}
-        </button>
-      </header>
-      <section className={`${styles.split} ${isMapVisible ? '' : styles.mapHidden}`}>
-        <section className={styles.left} key="splitLeft">
-          <ImageGallery
+    <section
+      ref={splitRef}
+      className={`${styles.split} ${isMapVisible ? '' : styles.mapHidden}`}
+      style={{ '--split-viewer-map-width': `${mapWidth}px` } as CSSProperties}
+    >
+      <section className={styles.left} key="splitLeft">
+        <ImageGallery
             key={`${activeGalleryWindow.sourceVersion}:${activeGalleryWindow.generation}`}
             ref={localGalleryRef}
             onBeforeSlide={handleBeforeSlide}
@@ -468,24 +522,64 @@ function SplitViewer({
             useWindowKeyDown={false}
             lazyLoad
           />
-        </section>
-        {isMapVisible ? (
-          <section className={styles.right} key="splitRight" ref={refMapBox}>
-            <SlippyMap
-              mapRef={mapRef}
-              clusteredMarkers={clusteredMarkers}
-              items={items}
-              centroid={effectiveCentroid}
-              onMapReady={handleMapReady}
-              mapFilterEnabled={mapFilterEnabled}
-              filterBounds={mapBounds}
-              onToggleMapFilter={onToggleMapFilter}
-              onBoundsChange={onMapBoundsChange}
-            />
-            <button type="button" className={styles.fullMapButton} onClick={fullscreenMap}>Full map</button>
-          </section>
-        ) : null}
       </section>
+      {isMapVisible ? (
+        <div
+          aria-label="Resize map"
+          aria-orientation="vertical"
+          aria-valuemax={getMaximumMapWidth()}
+          aria-valuemin={MIN_MAP_WIDTH}
+          aria-valuenow={mapWidth}
+          aria-valuetext={`Map width ${mapWidth} pixels`}
+          className={styles.mapResizeHandle}
+          role="separator"
+          tabIndex={0}
+          onKeyDown={handleMapResizeKeyDown}
+          onPointerDown={handleMapResizePointerDown}
+          onPointerMove={handleMapResizePointerMove}
+          onPointerUp={handleMapResizePointerUp}
+        />
+      ) : null}
+      {isMapVisible ? (
+        <section className={styles.right} key="splitRight" ref={refMapBox}>
+          <SlippyMap
+            mapRef={mapRef}
+            clusteredMarkers={clusteredMarkers}
+            items={items}
+            centroid={effectiveCentroid}
+            onMapReady={handleMapReady}
+            mapFilterEnabled={mapFilterEnabled}
+            filterBounds={mapBounds}
+            onToggleMapFilter={onToggleMapFilter}
+            onBoundsChange={onMapBoundsChange}
+          />
+          <div className={styles.mapActions}>
+            <button
+              aria-label={isMapFullscreen ? 'Exit map fullscreen' : 'Open map fullscreen'}
+              className={styles.mapActionButton}
+              title={isMapFullscreen ? 'Exit full map' : 'Full map'}
+              type="button"
+              onClick={toggleMapFullscreen}
+            >
+              <svg
+                aria-hidden="true"
+                fill="none"
+                focusable="false"
+                stroke="currentColor"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path d={isMapFullscreen
+                  ? 'M8 3v5H3m18 0h-5V3m0 18v-5h5M3 16h5v5'
+                  : 'M8 3H3v5m18 0V3h-5m0 18h5v-5M3 16v5h5'}
+                />
+              </svg>
+            </button>
+          </div>
+        </section>
+      ) : null}
     </section>
   )
 }

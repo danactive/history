@@ -1,6 +1,7 @@
 'use client'
 
 import type { Metadata } from 'next'
+import { useState } from 'react'
 
 import useSearch from '../../hooks/useSearch'
 import type { Gallery } from '../../types/pages'
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default function GalleryClient({ gallery, albums, indexedKeywords, personOptions, tagOptions }: Gallery.ComponentProps) {
+  const [isMapVisible, setIsMapVisible] = useState(true)
   const {
     filtered,
     searchBox,
@@ -32,6 +34,8 @@ export default function GalleryClient({ gallery, albums, indexedKeywords, person
     <>
       <FilterArea
         searchControls={searchBox}
+        isMapVisible={isMapVisible}
+        setIsMapVisible={setIsMapVisible}
         contextualControls={(
           <ul className={styles.row}>
             <li className={styles.rowLabel}>View</li>

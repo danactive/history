@@ -1,7 +1,7 @@
 import { Button, Chip, Stack } from '@mui/joy'
 
 import AutoComplete from '../ComboBox'
-import { filterChipSx, pillActionButtonSx } from './control-styles'
+import { filterChipSx, markerActionButtonSx, pillActionButtonSx } from './control-styles'
 import RemovableFilterChip from './RemovableFilterChip'
 import type { IndexedKeywords } from '../../types/common'
 import styles from '../../hooks/search.module.css'
@@ -183,7 +183,7 @@ export default function Controls({
                 color="primary"
                 variant="soft"
                 title={clearActionTitle}
-                sx={pillActionButtonSx}
+                sx={markerActionButtonSx}
               >
                 {clearActionLabel}
               </Button>

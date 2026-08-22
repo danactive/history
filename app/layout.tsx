@@ -1,4 +1,5 @@
 import ThemeRegistry from '../src/components/ThemeRegistry'
+import { mapMarkerCssVariables } from '../src/components/SlippyMap/marker-theme'
 import './global.css'
 
 export default function RootLayout({
@@ -8,7 +9,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body style={mapMarkerCssVariables}>
         <ThemeRegistry options={{ key: 'joy' }}>
           {children}
         </ThemeRegistry>

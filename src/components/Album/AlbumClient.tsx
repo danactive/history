@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import useMapFilter from '../../hooks/useMapFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
 import type { Album } from '../../types/pages'
@@ -34,6 +34,7 @@ function AlbumClient({
   album,
   monthDay,
 }: Album.ComponentProps) {
+  const [isMapVisible, setIsMapVisible] = useState(true)
   const albumDetailsHref = gallery && album ? `/${gallery}/${album}/details` : null
   const dateDetailsHref = gallery && monthDay ? `/${gallery}/today/details?${new URLSearchParams({ day: monthDay }).toString()}` : null
   const {
@@ -96,6 +97,8 @@ function AlbumClient({
       <AlbumContext.Provider value={meta}>
         <FilterArea
           searchControls={searchBox}
+          isMapVisible={isMapVisible}
+          setIsMapVisible={setIsMapVisible}
           memoryContent={memoryHtml}
         />
         <section className={styles.albumContent} aria-label="Album viewer">
@@ -104,6 +107,7 @@ function AlbumClient({
             items={itemsToShow}
             refImageGallery={refImageGallery}
             memoryIndex={memoryIndex}
+            mapVisible={isMapVisible}
             mapFilterEnabled={mapFilterEnabled}
             mapBounds={mapBounds}
             isClearing={isClearing}

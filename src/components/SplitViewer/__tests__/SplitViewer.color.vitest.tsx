@@ -65,10 +65,11 @@ describe('SplitViewer rendering', () => {
     )
 
     expect(container.querySelector('.image-gallery')).toBeTruthy()
-    expect(getByRole('button', { name: 'Hide map' })).toHaveAttribute('aria-pressed', 'true')
+    expect(getByRole('button', { name: 'Open map fullscreen' })).toHaveAttribute('title', 'Full map')
+    expect(getByRole('separator', { name: 'Resize map' })).toHaveAttribute('aria-valuenow', '300')
   })
 
-  it('lets viewers hide the map and keep the gallery as the presentation surface', () => {
+  it('keeps the gallery as the presentation surface when its parent hides the map', () => {
     const item = createItem(0)
     const clustered: ClusteredMarkers = {
       labels: {},
@@ -83,7 +84,121 @@ describe('SplitViewer rendering', () => {
       selectId: vi.fn(),
     }
 
-    const { getByRole, container } = render(
+    const { container, queryByRole } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={[item]}
+        refImageGallery={null}
+        memoryIndex={0}
+        mapVisible={false}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    expect(container.querySelector('[class*="mapHidden"]')).toBeTruthy()
+    expect(queryByRole('separator', { name: 'Resize map' })).toBeNull()
+  })
+
+  it('toggles native map fullscreen from the matching bracket button', async () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const originalFullscreenElement = Object.getOwnPropertyDescriptor(document, 'fullscreenElement')
+    const originalExitFullscreen = Object.getOwnPropertyDescriptor(document, 'exitFullscreen')
+    const originalRequestFullscreen = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'requestFullscreen')
+    const setFullscreenElement = (element: Element | null) => {
+      Object.defineProperty(document, 'fullscreenElement', {
+        configurable: true,
+        value: element,
+      })
+    }
+    const requestFullscreen = vi.fn(function requestFullscreen(this: HTMLElement) {
+      setFullscreenElement(this)
+      document.dispatchEvent(new Event('fullscreenchange'))
+      return Promise.resolve()
+    })
+    const exitFullscreen = vi.fn(() => {
+      setFullscreenElement(null)
+      document.dispatchEvent(new Event('fullscreenchange'))
+      return Promise.resolve()
+    })
+
+    Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', {
+      configurable: true,
+      value: requestFullscreen,
+    })
+    Object.defineProperty(document, 'exitFullscreen', {
+      configurable: true,
+      value: exitFullscreen,
+    })
+
+    try {
+      const { getByRole } = render(
+        <SplitViewer
+          clusteredMarkers={clustered}
+          items={[item]}
+          refImageGallery={null}
+          memoryIndex={0}
+          selectionCoordinator={selectionCoordinator}
+        />,
+      )
+
+      await act(async () => {
+        fireEvent.click(getByRole('button', { name: 'Open map fullscreen' }))
+      })
+      expect(requestFullscreen).toHaveBeenCalledOnce()
+      expect(getByRole('button', { name: 'Exit map fullscreen' })).toHaveAttribute('title', 'Exit full map')
+
+      await act(async () => {
+        fireEvent.click(getByRole('button', { name: 'Exit map fullscreen' }))
+      })
+      expect(exitFullscreen).toHaveBeenCalledOnce()
+      expect(getByRole('button', { name: 'Open map fullscreen' })).toHaveAttribute('title', 'Full map')
+    } finally {
+      if (originalFullscreenElement) {
+        Object.defineProperty(document, 'fullscreenElement', originalFullscreenElement)
+      } else {
+        Reflect.deleteProperty(document, 'fullscreenElement')
+      }
+      if (originalExitFullscreen) {
+        Object.defineProperty(document, 'exitFullscreen', originalExitFullscreen)
+      } else {
+        Reflect.deleteProperty(document, 'exitFullscreen')
+      }
+      if (originalRequestFullscreen) {
+        Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', originalRequestFullscreen)
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'requestFullscreen')
+      }
+    }
+  })
+
+  it('resizes the map rail with keyboard controls', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+
+    const { getByRole } = render(
       <SplitViewer
         clusteredMarkers={clustered}
         items={[item]}
@@ -93,10 +208,10 @@ describe('SplitViewer rendering', () => {
       />,
     )
 
-    fireEvent.click(getByRole('button', { name: 'Hide map' }))
+    const resizeMap = getByRole('separator', { name: 'Resize map' })
+    fireEvent.keyDown(resizeMap, { key: 'ArrowLeft' })
 
-    expect(getByRole('button', { name: 'Show map' })).toHaveAttribute('aria-pressed', 'false')
-    expect(container.querySelector('[class*="mapHidden"]')).toBeTruthy()
+    expect(resizeMap).toHaveAttribute('aria-valuenow', '324')
   })
 
   it('renders without injecting a dynamic background style tag', () => {

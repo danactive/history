@@ -2,7 +2,7 @@
 
 import { Button } from '@mui/joy'
 import type { RefObject } from 'react'
-import { pillActionButtonSx } from '../components/Search/control-styles'
+import { markerActionButtonSx } from '../components/Search/control-styles'
 import type { Bounds } from '../lib/map-filtering'
 import { mapBoundsSearchParam, serializeMapBounds } from '../lib/map-filter-query'
 
@@ -77,7 +77,7 @@ export default function useBookmark<ItemType>({
       color="primary"
       variant="soft"
       title="Copy bookmark URL to clipboard"
-      sx={pillActionButtonSx}
+      sx={markerActionButtonSx}
     >
       Bookmark
     </Button>

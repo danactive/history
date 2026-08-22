@@ -1,6 +1,14 @@
 export const filterChipSx = {
   '--Chip-radius': '0.7rem',
   '--Chip-paddingInline': '0.55rem',
+  '--variant-softColor': 'var(--map-marker-subtle)',
+  '--variant-softBg': 'color-mix(in srgb, var(--map-marker-active) 34%, transparent)',
+  '--variant-softHoverBg': 'color-mix(in srgb, var(--map-marker-active) 48%, transparent)',
+  '--variant-softActiveBg': 'color-mix(in srgb, var(--map-marker-pressed) 60%, transparent)',
+  '--variant-outlinedColor': 'var(--map-marker-subtle)',
+  '--variant-outlinedBorder': 'var(--map-marker-primary)',
+  '--variant-outlinedHoverBg': 'color-mix(in srgb, var(--map-marker-active) 32%, transparent)',
+  '--variant-outlinedActiveBg': 'color-mix(in srgb, var(--map-marker-pressed) 46%, transparent)',
   fontWeight: 600,
   backdropFilter: 'blur(6px)',
 } as const
@@ -20,6 +28,14 @@ export const pillActionButtonSx = {
   borderRadius: '0.7rem',
   px: 1.2,
   fontWeight: 600,
+} as const
+
+export const markerActionButtonSx = {
+  ...pillActionButtonSx,
+  '--variant-softColor': '#fff',
+  '--variant-softBg': 'var(--map-marker-active)',
+  '--variant-softHoverBg': 'var(--map-marker-hover)',
+  '--variant-softActiveBg': 'var(--map-marker-pressed)',
 } as const
 
 export const fieldSurfaceSx = {
@@ -46,7 +62,7 @@ export const pillSelectSx = {
   backgroundColor: 'transparent',
   boxShadow: 'none',
   borderColor: 'transparent',
-  '--Select-focusedHighlight': 'rgba(108, 192, 229, 0.35)',
+  '--Select-focusedHighlight': 'color-mix(in srgb, var(--map-marker-primary) 48%, transparent)',
   '&::before': {
     display: 'none',
   },
@@ -90,12 +106,12 @@ export const popupListSx = {
   backgroundColor: 'rgba(24, 28, 34, 0.98)',
   color: 'rgba(255, 255, 255, 0.92)',
   boxShadow: '0 12px 30px rgba(0, 0, 0, 0.35)',
-  '--ListItemDecorator-color': 'rgba(108, 192, 229, 0.9)',
+  '--ListItemDecorator-color': 'var(--map-marker-primary)',
   '--variant-plainColor': 'rgba(255, 255, 255, 0.92)',
   '--variant-plainHoverColor': 'rgba(255, 255, 255, 0.96)',
   '--variant-plainHoverBg': 'rgba(52, 58, 68, 0.98)',
   '--variant-plainActiveColor': 'rgba(255, 255, 255, 0.98)',
-  '--variant-plainActiveBg': 'rgba(71, 113, 129, 0.62)',
+  '--variant-plainActiveBg': 'color-mix(in srgb, var(--map-marker-active) 55%, transparent)',
   '& [role="option"]': {
     color: 'rgba(255, 255, 255, 0.92)',
     borderRadius: '0.55rem',
@@ -106,7 +122,7 @@ export const popupListSx = {
     color: 'rgba(255, 255, 255, 0.96)',
   },
   '& [role="option"][aria-selected="true"]': {
-    backgroundColor: 'rgba(71, 113, 129, 0.5)',
+    backgroundColor: 'color-mix(in srgb, var(--map-marker-active) 45%, transparent)',
     color: 'rgba(255, 255, 255, 0.96)',
   },
   '& [role="option"]:hover, & [role="option"].Mui-focused': {
@@ -114,7 +130,7 @@ export const popupListSx = {
     color: 'rgba(255, 255, 255, 0.96)',
   },
   '& [role="option"][aria-selected="true"]:hover, & [role="option"][aria-selected="true"].Mui-focused': {
-    backgroundColor: 'rgba(71, 113, 129, 0.68)',
+    backgroundColor: 'color-mix(in srgb, var(--map-marker-active) 62%, transparent)',
     color: 'rgba(255, 255, 255, 0.98)',
   },
 } as const

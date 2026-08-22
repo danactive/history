@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import config from '../../../src/models/config'
 import useMapFilter from '../../hooks/useMapFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
@@ -21,6 +21,7 @@ export default function AllClient({
   activeFacetCounts,
   clusteredMarkers,
 }: Omit<All.ComponentProps, 'items'> & { items: CompactAllPageItem[] }) {
+  const [isMapVisible, setIsMapVisible] = useState(true)
   const zooms = useMemo(() => ({ geo: { zoom: config.defaultZoom } }), [config.defaultZoom])
   const expandedItems = useMemo(() => expandAllPageItems(items, gallery), [gallery, items])
 
@@ -65,6 +66,8 @@ export default function AllClient({
       <AlbumContext.Provider value={zooms}>
         <FilterArea
           searchControls={searchBox}
+          isMapVisible={isMapVisible}
+          setIsMapVisible={setIsMapVisible}
           memoryContent={memoryHtml}
         />
         <SplitViewer
@@ -72,6 +75,7 @@ export default function AllClient({
           clusteredMarkers={clusteredMarkers}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
+          mapVisible={isMapVisible}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}

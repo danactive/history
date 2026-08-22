@@ -1,71 +1,42 @@
-.viewer {
-  display: grid;
-  gap: 0.7rem;
-}
-
-.viewerBar {
-  align-items: center;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  min-width: 0;
-}
-
-.itemSummary {
-  align-items: baseline;
-  display: flex;
-  gap: 0.65rem;
-  min-width: 0;
-}
-
-.itemPosition {
-  color: rgba(255, 255, 255, 0.64);
-  flex: 0 0 auto;
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.itemCaption {
-  font-size: clamp(0.95rem, 1.35vw, 1.2rem);
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.mapVisibilityButton,
-.fullMapButton {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.65rem;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.45rem 0.7rem;
-}
-
-.mapVisibilityButton:hover,
-.fullMapButton:hover {
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.mapVisibilityButton:focus-visible,
-.fullMapButton:focus-visible {
-  outline: 2px solid #8bd3ef;
+.mapActionButton:focus-visible,
+.mapResizeHandle:focus-visible {
+  outline: 2px solid var(--map-marker-primary);
   outline-offset: 2px;
+}
+
+.mapActionButton {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+  line-height: 0;
+  padding: 20px;
+  transition: color 0.3s ease-out;
+}
+
+.mapActionButton svg {
+  height: 32px;
+  transition: transform 0.3s ease-out;
+  width: 32px;
+}
+
+.mapActionButton:hover {
+  color: var(--map-marker-primary);
+}
+
+.mapActionButton:hover svg {
+  transform: scale(1.1);
 }
 
 .split {
   --split-viewer-gallery-bg: #101113;
   --split-viewer-height: clamp(28rem, 70vh, 56rem);
+  --ig-primary-color: var(--map-marker-primary);
   display: grid;
-  gap: 0.7rem;
-  grid-template-columns: minmax(0, 1fr) clamp(15rem, 23vw, 22rem);
-  grid-template-areas: 'left right';
+  grid-template-columns: minmax(0, 1fr) 0.7rem var(--split-viewer-map-width);
+  grid-template-areas: 'left resize right';
   background: var(--split-viewer-gallery-bg);
 }
 
@@ -84,6 +55,7 @@
   height: var(--split-viewer-height);
   min-width: 0;
   overflow: hidden;
+  position: relative;
 }
 
 .left > :global(.image-gallery),
@@ -109,11 +81,49 @@
   position: relative;
 }
 
-.fullMapButton {
-  bottom: 0.7rem;
+.mapActions {
+  bottom: 0;
+  display: flex;
+  gap: 0.45rem;
   position: absolute;
-  right: 0.7rem;
+  right: 0;
   z-index: 1;
+}
+
+.right:fullscreen,
+.right:-webkit-full-screen,
+.right:-moz-full-screen,
+.right:-ms-fullscreen {
+  height: 100vh;
+  width: 100vw;
+}
+
+.mapResizeHandle {
+  background: transparent;
+  border: 0;
+  cursor: col-resize;
+  grid-area: resize;
+  padding: 0;
+  position: relative;
+  touch-action: none;
+}
+
+.mapResizeHandle::before {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  content: '';
+  height: 3.5rem;
+  left: calc(50% - 1px);
+  position: absolute;
+  top: calc(50% - 1.75rem);
+  transition: background-color 0.15s ease, width 0.15s ease;
+  width: 2px;
+}
+
+.mapResizeHandle:hover::before,
+.mapResizeHandle:focus-visible::before {
+  background: var(--map-marker-primary);
+  width: 4px;
 }
 
 .mapPlaceholder {
@@ -130,6 +140,7 @@
       'left'
       'right';
     grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.7rem;
   }
 
   .right {
@@ -139,24 +150,36 @@
   .mapHidden {
     grid-template-areas: 'left';
   }
+
+  .mapResizeHandle {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
-  .viewerBar {
-    align-items: flex-start;
-  }
-
-  .itemSummary {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .itemCaption {
-    white-space: normal;
-  }
-
   .split {
     --split-viewer-height: min(68vh, 38rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .mapActionButton {
+    padding: 16px;
+  }
+
+  .mapActionButton svg {
+    height: 24px;
+    width: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mapActionButton {
+    padding: 12px;
+  }
+
+  .mapActionButton svg {
+    height: 16px;
+    width: 16px;
   }
 }

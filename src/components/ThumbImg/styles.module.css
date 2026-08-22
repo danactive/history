@@ -34,11 +34,11 @@
   padding: 0;
 }
 .imgButton:hover {
-  border-color: orange;
+  border-color: var(--map-marker-hover);
 }
 .highlight {
   border-color: white;
 }
 .highlightMulti {
-  border-color: #d9c24a;
+  border-color: var(--map-marker-primary);
 }
