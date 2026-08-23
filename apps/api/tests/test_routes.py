@@ -234,5 +234,18 @@ def test_scores_route(monkeypatch):
         response = client.post("/scores", content=jpeg_bytes(color="blue"))
 
     assert response.status_code == 200
-    assert "aesthetic_score" in response.json()
-    assert isinstance(response.json()["aesthetic_score"], float)
+    score = response.json()
+    assert set(score) == {
+        "overall_score",
+        "technical_score",
+        "composition_score",
+        "aesthetic_score",
+        "sharpness_score",
+        "exposure_score",
+        "resolution_score",
+        "image_width",
+        "image_height",
+        "notes",
+    }
+    assert 0.0 <= score["overall_score"] <= 100.0
+    assert 0.0 <= score["technical_score"] <= 10.0

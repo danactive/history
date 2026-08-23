@@ -1,78 +1,23 @@
 from fastapi import Request
 import torch
 import torch.nn as nn
-import torchvision.transforms as T
-from PIL import Image, ImageFilter
+from PIL import Image
 import numpy as np
 import logging
-from collections import OrderedDict
 import io
-import clip
+import math
 from transformers import CLIPProcessor, CLIPVisionModel
 
-# Set up logging once
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
-HEAD_PATH = "models/aesthetic/sa_0_4_vit_b_16_linear.pth"
 SCORER_DIR = "models/rsinema_aesthetic-scorer"
 SCORER_MODEL_PATH = f"{SCORER_DIR}/model.pt"
 CLIP_BASE_DIR = "models/openai_clip-vit-base-patch32"
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def build_head():
-    return nn.Sequential(
-        nn.Linear(512, 512),
-        nn.ReLU(),
-        nn.Linear(512, 128),
-        nn.ReLU(),
-        nn.Linear(128, 64),
-        nn.ReLU(),
-        nn.Linear(64, 16),
-        nn.ReLU(),
-        nn.Linear(16, 1),
-    )
-
-def load_aesthetic_head(head_path: str) -> nn.Module:
-    logger.info(f"📥 Loading aesthetic regression head from: {head_path}")
-    loaded = torch.load(head_path, map_location="cpu")
-
-    if isinstance(loaded, dict):
-        if 'state_dict' in loaded:
-            logger.info("🧠 Detected state_dict format with 'state_dict' key.")
-            head = build_head()
-            head.load_state_dict(loaded['state_dict'])
-            return head.eval()
-        elif all(k.startswith("layers.") for k in loaded.keys()):
-            logger.info("🧠 Detected raw state_dict format for MLP.")
-            renamed = OrderedDict((k.replace("layers.", ""), v) for k, v in loaded.items())
-            head = build_head()
-            head.load_state_dict(renamed, strict=False)
-            return head.eval()
-        elif all(isinstance(v, torch.Tensor) for v in loaded.values()):
-            logger.info("🧠 Detected plain state_dict format.")
-            head = build_head()
-            head.load_state_dict(loaded, strict=False)
-            return head.eval()
-        else:
-            raise ValueError(f"❌ Unrecognized dict format in aesthetic head. Keys: {list(loaded.keys())}")
-    else:
-        logger.info("🧠 Detected direct model object.")
-        return loaded.eval()
-
-def load_clip_model() -> tuple[torch.nn.Module, callable]:
-    logger.info("🔧 Creating ViT-B/16 model and transforms...")
-    model, preprocess = clip.load("ViT-B/16", device=device)
-    model.eval()
-    logger.info("✅ Model and transforms created.")
-    return model, preprocess
-
-# One-time global setup
-_clip_model = None
-preprocess = None
-regression_head = None
 _aesthetic_scorer = None
 _aesthetic_processor = None
 _aesthetic_backbone = None
@@ -106,15 +51,16 @@ def load_aesthetic_scorer():
   global _aesthetic_scorer, _aesthetic_processor, _aesthetic_backbone
   try:
     _aesthetic_processor = CLIPProcessor.from_pretrained(SCORER_DIR, use_fast=False, local_files_only=True)
-    _aesthetic_backbone = CLIPVisionModel.from_pretrained(CLIP_BASE_DIR, local_files_only=True).to(device)
-    loaded = torch.load(SCORER_MODEL_PATH, map_location=device)
-    if isinstance(loaded, dict) and all(isinstance(v, torch.Tensor) for v in loaded.values()):
-      scorer = AestheticScorer(_aesthetic_backbone)
-      scorer.load_state_dict(loaded, strict=False)
-      _aesthetic_scorer = scorer
-    else:
-      _aesthetic_scorer = loaded
-    _aesthetic_scorer.eval()
+    _aesthetic_backbone = CLIPVisionModel.from_pretrained(
+      CLIP_BASE_DIR,
+      local_files_only=True,
+    ).vision_model.to(device)
+    loaded = torch.load(SCORER_MODEL_PATH, map_location=device, weights_only=True)
+    if not isinstance(loaded, dict):
+      raise ValueError("Aesthetic scorer must be a state dictionary")
+    scorer = AestheticScorer(_aesthetic_backbone)
+    scorer.load_state_dict(loaded)
+    _aesthetic_scorer = scorer.to(device).eval()
     logger.info("✅ Aesthetic scorer loaded.")
   except Exception as e:
     logger.error(f"⚠️ Failed to load aesthetic scorer: {e}")
@@ -124,64 +70,9 @@ def load_aesthetic_scorer():
 
 load_aesthetic_scorer()
 
-def ensure_legacy_aesthetic_loaded():
-  global _clip_model, preprocess, regression_head
-  if _clip_model is None or preprocess is None:
-    _clip_model, preprocess = load_clip_model()
-  if regression_head is None:
-    regression_head = load_aesthetic_head(HEAD_PATH)
-
-async def score_aesthetic(req: Request) -> float:
-  ensure_legacy_aesthetic_loaded()
-  if isinstance(req, Request):
-    img_bytes = await req.body()
-    img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-  else:
-    img = req.convert("RGB")
-
-  with torch.no_grad():
-    image_tensor = preprocess(img).unsqueeze(0)
-    image_features = _clip_model.encode_image(image_tensor)
-    image_features /= image_features.norm(dim=-1, keepdim=True)
-    score_tensor = regression_head(image_features)
-    score = score_tensor.item()
-
-  return float(score)
-
 def _grayscale_np(img: Image.Image, size: int = 256) -> np.ndarray:
   resized = img.resize((size, size))
   return (np.array(resized.convert("L"), dtype=np.float32) / 255.0)
-
-def _edges_intensity(img: Image.Image, size: int = 256) -> np.ndarray:
-  resized = img.resize((size, size))
-  edges = resized.filter(ImageFilter.FIND_EDGES).convert("L")
-  return (np.array(edges, dtype=np.float32) / 255.0)
-
-def _rule_of_thirds_score(edge_map: np.ndarray) -> float:
-  if edge_map.size == 0:
-    return 0.0
-  h, w = edge_map.shape
-  ys = np.linspace(0, h - 1, h, dtype=np.float32)
-  xs = np.linspace(0, w - 1, w, dtype=np.float32)
-  yy, xx = np.meshgrid(ys, xs, indexing="ij")
-  thirds_y = np.array([h / 3, 2 * h / 3], dtype=np.float32)
-  thirds_x = np.array([w / 3, 2 * w / 3], dtype=np.float32)
-  sigma = min(h, w) / 12
-  weight = np.zeros_like(edge_map, dtype=np.float32)
-  for ty in thirds_y:
-    for tx in thirds_x:
-      weight += np.exp(-(((yy - ty) ** 2 + (xx - tx) ** 2) / (2 * sigma ** 2)))
-  weighted = float((edge_map * weight).sum())
-  total = float(edge_map.sum())
-  if total <= 0:
-    return 0.0
-  ratio = weighted / total
-  return float(max(0.0, min(10.0, ratio * 10)))
-
-def _visual_interest_score(edge_map: np.ndarray) -> float:
-  mean_edge = float(edge_map.mean())
-  score = mean_edge * 60.0
-  return float(max(0.0, min(10.0, score)))
 
 def _sharpness_score(gray: np.ndarray) -> float:
   if gray.size == 0:
@@ -198,6 +89,20 @@ def _sharpness_score(gray: np.ndarray) -> float:
   score = variance * 1000.0
   return float(max(0.0, min(10.0, score)))
 
+def _exposure_score(gray: np.ndarray) -> float:
+  if gray.size == 0:
+    return 0.0
+  shadow_clipping = float(np.mean(gray <= 0.02))
+  highlight_clipping = float(np.mean(gray >= 0.98))
+  clipping_penalty = min(7.0, (shadow_clipping + highlight_clipping) * 18.0)
+  mean_luminance = float(gray.mean())
+  luminance_penalty = max(0.0, abs(mean_luminance - 0.5) - 0.28) * 7.0
+  return float(max(0.0, min(10.0, 10.0 - clipping_penalty - luminance_penalty)))
+
+def _resolution_score(img: Image.Image) -> float:
+  short_side = min(img.size)
+  return float(max(0.0, min(10.0, ((short_side - 320) / 1120) * 10.0)))
+
 def _score_with_aesthetic_model(img: Image.Image) -> dict | None:
   if _aesthetic_scorer is None or _aesthetic_processor is None:
     return None
@@ -207,34 +112,86 @@ def _score_with_aesthetic_model(img: Image.Image) -> dict | None:
   labels = ["overall", "quality", "composition", "lighting", "color", "depth_of_field", "content"]
   return {label: float(score.item()) for label, score in zip(labels, scores)}
 
+def _normalize_model_score(raw_score: float) -> float:
+  bounded_score = max(-8.0, min(8.0, raw_score))
+  return 10.0 / (1.0 + math.exp(-bounded_score))
+
+def _model_characteristic(model_scores: dict[str, float] | None, name: str) -> float | None:
+  if model_scores is None:
+    return None
+  raw_score = model_scores.get(name)
+  if raw_score is None:
+    return None
+  return _normalize_model_score(raw_score)
+
+def _overall_score(
+  technical_score: float,
+  composition_score: float | None,
+  aesthetic_score: float | None,
+) -> float:
+  weighted_scores: list[tuple[float, float]] = [(technical_score, 0.4)]
+  if composition_score is not None:
+    weighted_scores.append((composition_score, 0.35))
+  if aesthetic_score is not None:
+    weighted_scores.append((aesthetic_score, 0.25))
+
+  total_weight = sum(weight for _, weight in weighted_scores)
+  return sum(score * weight for score, weight in weighted_scores) / total_weight * 10.0
+
+def _analysis_notes(
+  sharpness_score: float,
+  exposure_score: float,
+  resolution_score: float,
+  composition_score: float | None,
+  aesthetic_score: float | None,
+) -> list[str]:
+  notes: list[str] = []
+  if sharpness_score < 5.0:
+    notes.append("The image appears soft.")
+  if exposure_score < 6.0:
+    notes.append("Exposure has substantial clipped shadows or highlights.")
+  if resolution_score < 6.0:
+    notes.append("Limited resolution may constrain cropping or large prints.")
+  if composition_score is not None and composition_score < 5.0:
+    notes.append("The learned composition signal is below its neutral midpoint.")
+  if aesthetic_score is not None and aesthetic_score < 5.0:
+    notes.append("The learned aesthetic signal is below its neutral midpoint.")
+  if composition_score is None or aesthetic_score is None:
+    notes.append("Learned aesthetic characteristics are unavailable; technical measurements remain available.")
+  if not notes:
+    notes.append("No obvious technical limitation was detected.")
+  return notes
+
+def score_photo_image(img: Image.Image) -> dict:
+  gray = _grayscale_np(img)
+  sharpness_score = _sharpness_score(gray)
+  exposure_score = _exposure_score(gray)
+  resolution_score = _resolution_score(img)
+  technical_score = (sharpness_score * 0.5) + (exposure_score * 0.3) + (resolution_score * 0.2)
+  model_scores = _score_with_aesthetic_model(img)
+  composition_score = _model_characteristic(model_scores, "composition")
+  aesthetic_score = _model_characteristic(model_scores, "overall")
+  overall_score = _overall_score(technical_score, composition_score, aesthetic_score)
+  return {
+    "overall_score": round(overall_score, 1),
+    "technical_score": round(technical_score, 2),
+    "composition_score": round(composition_score, 2) if composition_score is not None else None,
+    "aesthetic_score": round(aesthetic_score, 2) if aesthetic_score is not None else None,
+    "sharpness_score": round(sharpness_score, 2),
+    "exposure_score": round(exposure_score, 2),
+    "resolution_score": round(resolution_score, 2),
+    "image_width": img.width,
+    "image_height": img.height,
+    "notes": _analysis_notes(
+      sharpness_score,
+      exposure_score,
+      resolution_score,
+      composition_score,
+      aesthetic_score,
+    ),
+  }
+
 async def score_photo_tips(req: Request) -> dict:
   img_bytes = await req.body()
   img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-  edge_map = _edges_intensity(img)
-  gray = _grayscale_np(img)
-  thirds_score = _rule_of_thirds_score(edge_map)
-  interest_score = _visual_interest_score(edge_map)
-  sharpness_score = _sharpness_score(gray)
-  composition = (interest_score * 0.8) + (thirds_score * 0.2)
-  sharpness_factor = 0.9 + (sharpness_score / 20.0)
-  model_scores = _score_with_aesthetic_model(img)
-  model_overall = (model_scores["overall"] * 2) if model_scores else None
-  base_overall = composition if model_overall is None else ((model_overall * 0.7) + (composition * 0.3))
-  overall_score = base_overall * sharpness_factor
-  tips = []
-  if thirds_score < 4:
-    tips.append("Try placing the subject near rule-of-thirds intersections.")
-  if interest_score < 4:
-    tips.append("Add more texture, contrast, or a clearer subject to increase visual interest.")
-  if sharpness_score < 4:
-    tips.append("Looks a bit soft; try a faster shutter or steadier shot.")
-  if not tips:
-    tips.append("Strong composition and visual interest.")
-  return {
-    "rule_of_thirds_score": round(thirds_score, 2),
-    "visual_interest_score": round(interest_score, 2),
-    "sharpness_score": round(sharpness_score, 2),
-    "overall_score": round(max(0.0, min(10.0, overall_score)) * 10, 1),
-    "model_scores": model_scores,
-    "tips": tips,
-  }
+  return score_photo_image(img)

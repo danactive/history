@@ -5,6 +5,7 @@ import {
   classifierFetchFailure,
   classifierHttpFailure,
   classifierUnexpectedResponseFailure,
+  parseBackendJson,
   type ClassifierBackendFailure,
 } from '../../../../src/lib/classifier-backend'
 import utilsFactory from '../../../../src/lib/utils'
@@ -24,15 +25,6 @@ function failureResponse(failure: ClassifierBackendFailure) {
     { error: failure.message, code: failure.code },
     { status: failure.status },
   )
-}
-
-function parseResponseBody(body: string): unknown {
-  if (!body) return null
-  try {
-    return JSON.parse(body)
-  } catch {
-    return null
-  }
 }
 
 export async function POST(req: Request) {
@@ -81,7 +73,7 @@ export async function POST(req: Request) {
       return failureResponse(classifierFetchFailure(error))
     }
 
-    const data = parseResponseBody(responseBody)
+    const data = parseBackendJson(responseBody)
     if (!res.ok) {
       return failureResponse(classifierHttpFailure(res.status, data))
     }

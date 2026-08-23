@@ -3,6 +3,7 @@ import { CSSProperties, memo } from 'react'
 import useSWR from 'swr'
 
 import config from '../../../src/models/config'
+import { normalizePhotoScore, type PhotoScore } from '../../models/scores'
 import { type Filesystem } from '../../lib/filesystems'
 import Img from '../Img'
 import Link from '../Link'
@@ -18,73 +19,28 @@ function getDraggingStyle(isDragging: boolean) {
 const NOT_AVAILABLE = 'N/A'
 
 // Module-level cache to persist across remounts
-const scoreCache: Record<string, { display: string, breakdown: string }> = {}
+const scoreCache: Record<string, PhotoScore> = {}
 
-function getNumber(data: Record<string, unknown>, key: string) {
-  const value = data[key]
-  return typeof value === 'number' ? value : undefined
+function formatScore(score: number | null): string {
+  return score === null ? NOT_AVAILABLE : `${score.toFixed(1)}/10`
 }
 
-function getNumberRecord(data: Record<string, unknown>, key: string) {
-  const value = data[key]
-  if (value === null || typeof value !== 'object' || Array.isArray(value)) return undefined
-
-  const numericRecord: Record<string, number> = {}
-  for (const [entryKey, entryValue] of Object.entries(value)) {
-    if (typeof entryValue !== 'number') return undefined
-    numericRecord[entryKey] = entryValue
-  }
-  return numericRecord
+function formatOverallScore(score: PhotoScore): string {
+  return `${score.overall_score.toFixed(1)}%`
 }
 
-function formatScore(
-  overall: number | undefined,
-  interest: number | undefined,
-  thirds: number | undefined,
-): string {
-  const percent = (value: number) => `${(value * 10).toFixed(1)}%`
-  if (typeof overall === 'number') {
-    return `${overall.toFixed(1)}%`
-  }
-  const hasInterest = typeof interest === 'number'
-  const hasThirds = typeof thirds === 'number'
-  if (hasInterest && hasThirds) {
-    return percent((interest * 0.8) + (thirds * 0.2))
-  }
-  if (hasInterest) {
-    return percent(interest)
-  }
-  if (hasThirds) {
-    return percent(thirds)
-  }
-  return NOT_AVAILABLE
-}
-
-function buildBreakdown(data: Record<string, unknown>): string {
-  const lines: string[] = []
-  const interest = getNumber(data, 'visual_interest_score')
-  const thirds = getNumber(data, 'rule_of_thirds_score')
-  const sharp = getNumber(data, 'sharpness_score')
-  const overall = getNumber(data, 'overall_score')
-  const model = getNumberRecord(data, 'model_scores')
-
-  if (typeof interest === 'number' && typeof thirds === 'number') {
-    const comp = (interest * 0.8) + (thirds * 0.2)
-    lines.push(`Composition = interest(80%) + thirds(20%) = ${comp.toFixed(2)}`)
-  }
-  if (typeof sharp === 'number') {
-    const factor = 0.9 + (sharp / 20)
-    lines.push(`Sharpness = ${sharp.toFixed(2)}, factor = ${factor.toFixed(2)}`)
-  }
-  if (model?.overall != null) {
-    const scaled = model.overall * 2
-    lines.push(`Overall aesthetic (0–5→0–10) = ${scaled.toFixed(2)}`)
-    lines.push('Blend: 70% model + 30% composition')
-  }
-  if (typeof overall === 'number') {
-    lines.push(`Overall % = ${overall.toFixed(1)}%`)
-  }
-  return lines.join('\n') || 'No breakdown available'
+function scoreTitle(score: PhotoScore): string {
+  return [
+    `Overall score: ${formatOverallScore(score)}`,
+    'Overall = technical quality (40%) + composition (35%) + visual aesthetic (25%)',
+    `Technical quality: ${formatScore(score.technical_score)}`,
+    `Composition: ${formatScore(score.composition_score)}`,
+    `Visual aesthetic: ${formatScore(score.aesthetic_score)}`,
+    `Sharpness: ${formatScore(score.sharpness_score)}`,
+    `Exposure: ${formatScore(score.exposure_score)}`,
+    `Resolution: ${formatScore(score.resolution_score)} (${score.image_width} × ${score.image_height})`,
+    ...score.notes,
+  ].join('\n')
 }
 
 // SWR fetcher that uses the cache
@@ -98,25 +54,19 @@ const fetchScore = async (absolutePath: string) => {
     body: JSON.stringify({ path: absolutePath }),
   })
   if (!res.ok) throw new Error('Failed to fetch')
-  const data = await res.json()
-  const display = formatScore(
-    data.overall_score,
-    data.visual_interest_score,
-    data.rule_of_thirds_score,
-  )
-  const breakdown = buildBreakdown(data)
-  scoreCache[absolutePath] = { display, breakdown }
-  return { display, breakdown }
+  const data = normalizePhotoScore(await res.json())
+  scoreCache[absolutePath] = data
+  return data
 }
 
 function DraggableThumb({
   item,
   displayScore,
-  scoreBreakdown,
+  scoreTitle,
 }: {
   item: Filesystem,
   displayScore: string,
-  scoreBreakdown?: string,
+  scoreTitle?: string,
 }) {
   const { filename, absolutePath } = item
 
@@ -126,7 +76,8 @@ function DraggableThumb({
         <Link href={absolutePath} target="_blank" title="View original in new tab">
           {filename}
         </Link>
-        &nbsp;<span title={scoreBreakdown ?? 'Composition scores'}>{displayScore}</span>
+        {' '}
+        <span title={scoreTitle ?? 'Photo analysis'}>{displayScore}</span>
       </span>
       <Img
         key={`thumbnail-${filename}`}
@@ -172,14 +123,12 @@ function PreviewImage(
     { revalidateOnFocus: false },
   )
 
-  let displayScore = '…'
-  let scoreBreakdown: string | undefined
-  if (isLoading) displayScore = '…'
-  else if (error) displayScore = NOT_AVAILABLE
-  else if (scoreData) {
-    displayScore = typeof scoreData === 'string' ? scoreData : scoreData.display
-    scoreBreakdown = typeof scoreData === 'string' ? undefined : scoreData.breakdown
-  }
+  const displayScore = isLoading
+    ? '…'
+    : error || !scoreData
+      ? NOT_AVAILABLE
+      : formatOverallScore(scoreData)
+  const analysisTitle = scoreData ? scoreTitle(scoreData) : undefined
 
   return (
     <div
@@ -190,8 +139,13 @@ function PreviewImage(
       style={getStyle(provided, style)}
       data-is-dragging={isDragging}
       data-index={index}
+      title={analysisTitle}
     >
-      <DraggableThumb item={item} displayScore={displayScore} scoreBreakdown={scoreBreakdown} />
+      <DraggableThumb
+        item={item}
+        displayScore={displayScore}
+        scoreTitle={analysisTitle}
+      />
     </div>
   )
 }

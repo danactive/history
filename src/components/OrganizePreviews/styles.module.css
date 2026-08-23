@@ -48,6 +48,7 @@
   box-sizing: border-box;
   padding: 4px;
 }
+
 .draggingOff {
   border-color: transparent;
   background-color: transparent;

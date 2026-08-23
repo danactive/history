@@ -33,6 +33,15 @@ function backendErrorMessage(payload: unknown): string | undefined {
   return undefined
 }
 
+export function parseBackendJson(body: string): unknown {
+  if (!body) return null
+  try {
+    return JSON.parse(body)
+  } catch {
+    return null
+  }
+}
+
 export function classifierFetchFailure(error: unknown): ClassifierBackendFailure {
   if (isRecord(error) && error.name === 'TimeoutError') {
     return {

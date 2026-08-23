@@ -13,7 +13,7 @@ image when available, falls back to the resized copy, and forwards one request t
 | Route | Result |
 | --- | --- |
 | `GET /health` | Readiness plus model revision, taxonomy, candidate-count, and device diagnostics. |
-| `POST /scores` | Aesthetic metrics and editing suggestions. |
+| `POST /scores` | Per-photo technical, composition, and aesthetic characteristics with concise notes. |
 | `POST /classify/organism` | Ranked organism diagnostics and an organism-specific status. |
 | `POST /classify/architecture` | Ranked style diagnostics and an architecture-specific status. |
 | `POST /classify/photo` | Up to four review results suitable for the Album Editor. |
@@ -54,8 +54,10 @@ on the first architecture or combined request.
 
 All required model, tokenizer, taxonomy, and embedding files are local and checksum-verified.
 Runtime initialization uses offline modes and fails closed rather than downloading missing files.
-The aesthetic endpoint can use its local heuristic fallback when its optional learned assets are
-absent.
+The aesthetic endpoint reports sharpness, exposure, and resolution from local image measurements.
+When its optional learned assets are available, it additionally reports composition and aesthetic
+characteristics. Its overall percentage is a clearly described weighted summary of those
+characteristics, not a calibrated probability or a recommendation verdict.
 
 ## Source map
 
