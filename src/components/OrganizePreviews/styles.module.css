@@ -53,6 +53,6 @@
   background-color: transparent;
 }
 .draggingOn {
-  border-color: #e6df55;
+  border-color: var(--map-marker-active);
   background-color: #877e7a;
 }

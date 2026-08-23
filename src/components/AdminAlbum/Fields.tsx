@@ -239,7 +239,7 @@ export default function Fields(
         <ComboBox
           className="keyword-autocomplete"
           options={allKeywords}
-          value={null}
+          value=""
           inputValue={autocompleteValue}
           onInputChange={(newValue) => {
             setAutocompleteValue(newValue)

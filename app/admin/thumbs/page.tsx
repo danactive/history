@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
 const ThumbnailFramerClient = dynamic(
   () => import('../../../src/components/ThumbnailFramer/ThumbnailFramerClient'),
@@ -11,5 +12,9 @@ export const metadata: Metadata = {
 }
 
 export default function ThumbnailFramerPage() {
-  return <ThumbnailFramerClient />
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ThumbnailFramerClient />
+    </Suspense>
+  )
 }

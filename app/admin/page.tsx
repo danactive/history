@@ -10,7 +10,6 @@ export default function AdminServer() {
   return (
     <ul>
       <li><Link href="/admin/walk">Walk</Link></li>
-      <li><Link href="/admin/thumbs">Frame Thumbnails</Link></li>
       <li><Link href="/admin/album">Edit Album</Link></li>
     </ul>
   )

@@ -162,7 +162,7 @@ export default function Controls({
               className={styles.autocomplete}
               options={searchOptions}
               onChange={onSelectedOptionChange}
-              value={selectedOption}
+              value={selectedOption ?? ''}
               inputValue={inputValue}
               onInputChange={onInputValueChange}
             />
