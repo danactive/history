@@ -214,6 +214,81 @@ describe('SplitViewer rendering', () => {
     expect(resizeMap).toHaveAttribute('aria-valuenow', '324')
   })
 
+  it('clamps the map width when the split container shrinks', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const originalResizeObserver = globalThis.ResizeObserver
+    let observerCallback: ResizeObserverCallback | null = null
+
+    class MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        observerCallback = callback
+      }
+
+      observe() {}
+
+      unobserve() {}
+
+      disconnect() {}
+    }
+
+    vi.stubGlobal('ResizeObserver', MockResizeObserver as unknown as typeof ResizeObserver)
+
+    try {
+      const { container, getByRole } = render(
+        <SplitViewer
+          clusteredMarkers={clustered}
+          items={[item]}
+          refImageGallery={null}
+          memoryIndex={0}
+          selectionCoordinator={selectionCoordinator}
+        />,
+      )
+
+      const split = container.querySelector('section[class*="split"]') as HTMLElement | null
+      expect(split).not.toBeNull()
+
+      let splitWidth = 900
+      Object.defineProperty(split, 'clientWidth', {
+        configurable: true,
+        get: () => splitWidth,
+      })
+
+      const resizeMap = getByRole('separator', { name: 'Resize map' })
+      for (let index = 0; index < 20; index += 1) {
+        fireEvent.keyDown(resizeMap, { key: 'ArrowLeft' })
+      }
+
+      expect(resizeMap).toHaveAttribute('aria-valuenow', '580')
+      expect(resizeMap).toHaveAttribute('aria-valuemax', '580')
+
+      splitWidth = 500
+      act(() => {
+        observerCallback?.([] as ResizeObserverEntry[], {} as ResizeObserver)
+      })
+
+      expect(resizeMap).toHaveAttribute('aria-valuenow', '240')
+      expect(resizeMap).toHaveAttribute('aria-valuemax', '240')
+    } finally {
+      if (originalResizeObserver) {
+        vi.stubGlobal('ResizeObserver', originalResizeObserver)
+      } else {
+        vi.unstubAllGlobals()
+      }
+    }
+  })
+
   it('renders without injecting a dynamic background style tag', () => {
     const items: Item[] = [
       {

@@ -6,17 +6,21 @@ const visitedPlaceSchema = z.object({
   region: z.string().trim().min(1).nullable(),
 }).strip()
 
+const storyMomentDateSchema = z.string().trim().min(1).nullable()
+const storyMomentCitySchema = z.string()
+const storyMomentLocationSchema = z.string().nullable()
+
 const storyMomentSchema = z.object({
   gallery: generatedGallerySchema,
   album: z.string().nullable(),
   filename: z.string().trim().min(1),
-  date: z.string().trim().min(1).nullable(),
+  date: storyMomentDateSchema,
   title: z.string(),
   caption: z.string(),
   description: z.string().nullable(),
   search: z.string().nullable(),
-  city: z.string(),
-  location: z.string().nullable(),
+  city: storyMomentCitySchema,
+  location: storyMomentLocationSchema,
   persons: z.array(z.string().trim().min(1)),
   mediaPath: z.string(),
   thumbPath: z.string(),
@@ -69,7 +73,7 @@ export const storySearchInputSchema = z.object({
   gallery: generatedGallerySchema.optional().describe('Gallery name from the local archive.'),
   album: z.string().optional().describe('Album name inside the selected gallery.'),
   person: z.string().optional().describe('Person name to require in the result set.'),
-  city: z.string().optional().describe('City or location fragment to require in the result set.'),
+  city: storyMomentCitySchema.optional().describe('City or location fragment to require in the result set.'),
   country: z.string().optional().describe('Exact visited country to require, for example Japan or Canada.'),
   region: z.string().optional().describe('Exact visited region to require, for example Aichi, British Columbia, or Hawaii.'),
   year: z.string().optional().describe('Four-digit year to require in the result set.'),
@@ -310,6 +314,9 @@ export {
   formatGalleryAlbumDetails,
   formatOnThisDayResourceText,
   formatPersonResourceText,
+  storyMomentCitySchema,
+  storyMomentDateSchema,
+  storyMomentLocationSchema,
   validateAlbumStoryResult,
   validateOnThisDayStoryResult,
   validatePersonStoryIndexResult,

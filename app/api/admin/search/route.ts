@@ -25,10 +25,11 @@ export async function GET(request: NextRequest) {
     // Get all galleries and albums
     const galleryAlbum = await getAlbums()
     const results: SearchResult[] = []
+    const galleries = generatedGalleries.filter(gallery => Object.hasOwn(galleryAlbum, gallery))
 
     // Search through all galleries and albums
-    for (const gallery of generatedGalleries) {
-      const albums = galleryAlbum[gallery].albums
+    for (const gallery of galleries) {
+      const { albums } = galleryAlbum[gallery]
 
       for (const album of albums) {
         try {

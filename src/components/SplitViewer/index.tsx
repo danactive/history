@@ -458,6 +458,24 @@ function SplitViewer({
   }, [clampMapWidth])
 
   useEffect(() => {
+    if (!isMapVisible) return
+
+    const split = splitRef.current
+    if (!split) return
+
+    setMapWidth(width => clampMapWidth(width))
+
+    if (typeof ResizeObserver === 'undefined') return
+
+    const observer = new ResizeObserver(() => {
+      setMapWidth(width => clampMapWidth(width))
+    })
+    observer.observe(split)
+
+    return () => observer.disconnect()
+  }, [clampMapWidth, isMapVisible])
+
+  useEffect(() => {
     mapRef.current?.resize()
   }, [mapWidth])
 

@@ -5,6 +5,8 @@ from PIL import Image
 
 import architecture
 import classify
+import main
+import photo_classify
 from main import main_py_app
 
 
@@ -216,6 +218,27 @@ def test_identified_specialist_supplies_all_four_results(monkeypatch):
         "possible",
         "weak",
     ]
+
+
+def test_unexpected_errors_are_sanitized(monkeypatch):
+    async def boom(_req):
+        raise RuntimeError("stack trace details")
+
+    routes = [
+        (classify, "classify_image", "/classify/organism"),
+        (architecture, "classify_image", "/classify/architecture"),
+        (photo_classify, "classify_photo", "/classify/photo"),
+        (main, "score_photo_tips", "/scores"),
+    ]
+
+    for module, attribute, path in routes:
+        monkeypatch.setattr(module, attribute, boom)
+
+        with TestClient(main_py_app) as client:
+            response = client.post(path, content=jpeg_bytes())
+
+        assert response.status_code == 500
+        assert response.json() == {"error": "Internal server error"}
 
 
 def test_legacy_classify_route_is_removed(monkeypatch):

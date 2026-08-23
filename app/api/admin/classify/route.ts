@@ -8,12 +8,13 @@ import {
   parseBackendJson,
   type ClassifierBackendFailure,
 } from '../../../../src/lib/classifier-backend'
+import { isStandardError, isZodError, simplifyZodMessages } from '../../../../src/lib/errors'
 import utilsFactory from '../../../../src/lib/utils'
 import config from '../../../../src/models/config'
 import {
+  classificationRequestSchema,
   encodeClassificationMetadata,
   normalizePhotoClassificationResponse,
-  type ClassificationRequest,
 } from '../../../../src/models/classifier'
 
 function setMetadataHeader(headers: Headers, name: string, value?: string | null) {
@@ -30,12 +31,8 @@ function failureResponse(failure: ClassifierBackendFailure) {
 export async function POST(req: Request) {
   try {
     const utils = utilsFactory()
-    const request: ClassificationRequest = await req.json()
+    const request = classificationRequestSchema.parse(await req.json())
     const relativePath = request.path
-
-    if (!relativePath) {
-      return NextResponse.json({ error: 'Missing image path' }, { status: 400 })
-    }
 
     const fullPath = utils.safePublicPath(relativePath)
     let buffer: Buffer
@@ -83,8 +80,11 @@ export async function POST(req: Request) {
     } catch {
       return failureResponse(classifierUnexpectedResponseFailure())
     }
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unexpected error'
+  } catch (error) {
+    if (isZodError(error)) {
+      return NextResponse.json({ error: simplifyZodMessages(error), code: 'request_error' }, { status: 400 })
+    }
+    const message = isStandardError(error) ? error.message : 'Unexpected error'
     return NextResponse.json({ error: message, code: 'request_error' }, { status: 500 })
   }
 }

@@ -1,5 +1,13 @@
 import * as z from 'zod/v4'
 
+import { xmlGeoInputSchema } from './schemas'
+import { scoreRequestSchema } from './scores'
+import {
+  storyMomentCitySchema,
+  storyMomentDateSchema,
+  storyMomentLocationSchema,
+} from './storytelling'
+
 const photoClassificationSuggestionSchema = z.object({
   type: z.enum(['organism', 'architecture']),
   id: z.string(),
@@ -22,20 +30,25 @@ const photoClassificationResponseSchema = z.object({
   }),
 })
 
+const galleryAssetPathSchema = scoreRequestSchema.shape.path.refine(
+  (value) => value.startsWith('/galleries/'),
+  { message: 'Path must point to a gallery asset' },
+)
+
+const classificationGeoSchema = xmlGeoInputSchema.pick({ lat: true, lon: true }).partial()
+
+export const classificationRequestSchema = z.object({
+  path: galleryAssetPathSchema,
+  fallbackPath: galleryAssetPathSchema.optional(),
+  photoDate: storyMomentDateSchema.optional(),
+  city: storyMomentCitySchema.optional(),
+  location: storyMomentLocationSchema.optional(),
+  geo: classificationGeoSchema.optional(),
+})
+
 export type PhotoClassificationSuggestion = z.infer<typeof photoClassificationSuggestionSchema>
 export type PhotoClassificationResponse = z.infer<typeof photoClassificationResponseSchema>
-
-export type ClassificationRequest = {
-  path: string
-  fallbackPath?: string
-  photoDate?: string | null
-  city?: string
-  location?: string
-  geo?: {
-    lat?: string
-    lon?: string
-  }
-}
+export type ClassificationRequest = z.infer<typeof classificationRequestSchema>
 
 export function encodeClassificationMetadata(value: string): string {
   return encodeURIComponent(value)

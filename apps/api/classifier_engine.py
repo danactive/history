@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+import json
 import logging
 import os
 from pathlib import Path
@@ -19,9 +20,8 @@ logger = logging.getLogger("uvicorn")
 MODEL_ID = "imageomics/bioclip-2"
 MODEL_REVISION = "2957b322090f9cb17ae72c71981c7218a28d81e0"
 MODEL_SHA256 = "b7b2bf6fbc95799e42630e394cf95803892ab447c1a8ab629dbc82fbeaf7dfef"
+SPECIES_INDEX_ID = "imageomics/TreeOfLife-200M"
 SPECIES_INDEX_REVISION = "41f7bd67aec3de20f89b99390212dfdbce9501a6"
-SPECIES_TAXONOMY_SHA256 = "4648928b006f85d83d28e5a27074ca9363465d82e778d708b369c5eaf54b8ef5"
-SPECIES_EMBEDDINGS_SHA256 = "c72442de7b0cb7fcb55ab7ca08099d0f42fbd6769efe16ca64c1daa7a8b87db2"
 
 ORGANISM_PROMPTS = (
     "a biological photograph of an animal",
@@ -47,6 +47,9 @@ class ClassifierConfig:
     model_dir: Path
     taxonomy_path: Path
     embeddings_path: Path
+    model_manifest_path: Path | None = None
+    species_index_manifest_path: Path | None = None
+    species_index_dir: Path | None = None
     minimum_similarity: float = 0.70
     minimum_margin: float = 0.015
     non_organism_margin: float = 0.02
@@ -64,6 +67,18 @@ class ClassifierConfig:
             embeddings_path=Path(os.getenv(
                 "CLASSIFIER_EMBEDDINGS_PATH",
                 "models/imageomics_TreeOfLife-200M/embeddings/txt_emb_species.npy",
+            )),
+            model_manifest_path=Path(os.getenv(
+                "BIOCLIP_MODEL_MANIFEST_PATH",
+                "apps/load-weights/manifests/bioclip-2.json",
+            )),
+            species_index_manifest_path=Path(os.getenv(
+                "CLASSIFIER_SPECIES_INDEX_MANIFEST_PATH",
+                "apps/load-weights/manifests/treeoflife-200m-bioclip2.json",
+            )),
+            species_index_dir=Path(os.getenv(
+                "CLASSIFIER_SPECIES_INDEX_DIR",
+                "models/imageomics_TreeOfLife-200M",
             )),
             minimum_similarity=float(os.getenv("CLASSIFIER_MINIMUM_SIMILARITY", "0.70")),
             minimum_margin=float(os.getenv("CLASSIFIER_MINIMUM_MARGIN", "0.015")),
@@ -174,32 +189,8 @@ class BioClipClassifier:
             logger.exception("BioCLIP 2 classifier failed to initialize")
 
     def _initialize(self) -> None:
-        checkpoint_path = self.config.model_dir / "open_clip_model.safetensors"
-        config_path = self.config.model_dir / "open_clip_config.json"
-        if not checkpoint_path.is_file() or not config_path.is_file():
-            raise FileNotFoundError(f"Incomplete BioCLIP 2 bundle in {self.config.model_dir}")
-        if not self.config.taxonomy_path.is_file() or not self.config.embeddings_path.is_file():
-            raise FileNotFoundError(
-                "Incomplete TreeOfLife-200M species index. Run make load-bioclip2 before starting the API."
-            )
-
-        actual_sha256 = sha256_file(checkpoint_path)
-        if actual_sha256 != MODEL_SHA256:
-            raise ValueError(
-                f"BioCLIP 2 checkpoint checksum mismatch: expected {MODEL_SHA256}, got {actual_sha256}"
-            )
-        taxonomy_sha256 = sha256_file(self.config.taxonomy_path)
-        if taxonomy_sha256 != SPECIES_TAXONOMY_SHA256:
-            raise ValueError(
-                "TreeOfLife taxonomy checksum mismatch: "
-                f"expected {SPECIES_TAXONOMY_SHA256}, got {taxonomy_sha256}"
-            )
-        embeddings_sha256 = sha256_file(self.config.embeddings_path)
-        if embeddings_sha256 != SPECIES_EMBEDDINGS_SHA256:
-            raise ValueError(
-                "TreeOfLife embeddings checksum mismatch: "
-                f"expected {SPECIES_EMBEDDINGS_SHA256}, got {embeddings_sha256}"
-            )
+        self._verify_model_bundle()
+        self._verify_species_index_bundle()
 
         import open_clip
 
@@ -214,6 +205,76 @@ class BioClipClassifier:
         self.taxa, self.taxonomy_version = load_taxonomy(self.config.taxonomy_path)
         self.text_features = self._load_taxon_features()
         self.gate_features = self._encode_texts(list(ORGANISM_PROMPTS + NON_ORGANISM_PROMPTS))
+
+    def _verify_manifest_bundle(
+        self,
+        *,
+        bundle_dir: Path,
+        manifest_path: Path,
+        repo_id: str,
+        revision: str,
+        missing_message: str,
+        label: str,
+    ) -> None:
+        if not manifest_path.is_file():
+            raise FileNotFoundError(f"{label} manifest is missing: {manifest_path}")
+
+        with manifest_path.open("r", encoding="utf-8") as file:
+            manifest = json.load(file)
+
+        if manifest.get("repo_id") != repo_id or manifest.get("revision") != revision:
+            raise ValueError(f"{label} manifest identity does not match the runtime")
+
+        file_specs = manifest.get("files")
+        if not isinstance(file_specs, list) or not file_specs:
+            raise ValueError(f"{label} manifest must list files")
+
+        for file_spec in file_specs:
+            name = file_spec.get("name")
+            expected_sha256 = file_spec.get("sha256")
+            if not isinstance(name, str) or not name or not isinstance(expected_sha256, str) or not expected_sha256:
+                raise ValueError(f"{label} manifest contains an invalid file entry")
+
+            path = bundle_dir / name
+            if not path.is_file():
+                raise FileNotFoundError(missing_message)
+
+            actual_sha256 = sha256_file(path)
+            if actual_sha256 != expected_sha256:
+                raise ValueError(
+                    f"{label} checksum mismatch for {name}: "
+                    f"expected {expected_sha256}, got {actual_sha256}"
+                )
+
+    def _verify_model_bundle(self) -> None:
+        self._verify_manifest_bundle(
+            bundle_dir=self.config.model_dir,
+            manifest_path=self.config.model_manifest_path or Path("apps/load-weights/manifests/bioclip-2.json"),
+            repo_id=MODEL_ID,
+            revision=MODEL_REVISION,
+            missing_message=(
+                "Incomplete BioCLIP 2 model bundle. "
+                "Run make load-bioclip2 before starting the API."
+            ),
+            label="BioCLIP 2 model",
+        )
+
+    def _verify_species_index_bundle(self) -> None:
+        species_index_dir = self.config.species_index_dir or self.config.embeddings_path.parent.parent
+        self._verify_manifest_bundle(
+            bundle_dir=species_index_dir,
+            manifest_path=(
+                self.config.species_index_manifest_path
+                or Path("apps/load-weights/manifests/treeoflife-200m-bioclip2.json")
+            ),
+            repo_id=SPECIES_INDEX_ID,
+            revision=SPECIES_INDEX_REVISION,
+            missing_message=(
+                "Incomplete TreeOfLife-200M species index. "
+                "Run make load-bioclip2 before starting the API."
+            ),
+            label="TreeOfLife-200M species index",
+        )
 
     def _load_taxon_features(self) -> torch.Tensor:
         source = np.load(self.config.embeddings_path, mmap_mode="c")

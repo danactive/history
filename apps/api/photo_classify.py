@@ -71,7 +71,9 @@ def architecture_suggestions(result: dict[str, Any]) -> list[dict[str, Any]]:
     for prediction in predictions:
         if not isinstance(prediction, dict) or prediction.get("styleId") == accepted_id:
             continue
-        strength = "possible" if accepted_id else match_strength(prediction.get("matchStrength"))
+        strength = match_strength(prediction.get("matchStrength"))
+        if accepted_id and strength == "strong":
+            strength = "possible"
         suggestions.append(architecture_suggestion(prediction, strength))
     return suggestions
 

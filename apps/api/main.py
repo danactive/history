@@ -46,7 +46,7 @@ def error_response(e: Exception):
     logger.exception("Python API request failed")
     return JSONResponse(
         status_code=500,
-        content={"error": str(e)},
+        content={"error": "Internal server error"},
     )
 
 @main_py_app.post("/classify/organism")

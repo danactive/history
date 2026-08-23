@@ -1,8 +1,11 @@
+import hashlib
+import json
 from pathlib import Path
 
 from PIL import Image
+import pytest
 
-from classifier_engine import ClassifierConfig, build_image_crops, determine_status
+from classifier_engine import BioClipClassifier, ClassifierConfig, build_image_crops, determine_status
 
 
 def config() -> ClassifierConfig:
@@ -50,3 +53,30 @@ def test_status_identifies_consistent_prediction_and_rejects_non_organism():
     assert determine_status(0.75, 0.02, 0.66, 0.3, 0.2, True, True, config()) == "identified"
     assert determine_status(0.75, 0.02, 0.66, 0.3, 0.2, True, False, config()) == "identified"
     assert determine_status(0.72, 0.02, 1.0, 0.2, 0.25, True, True, config()) == "not_organism"
+
+
+def test_model_verification_requires_all_manifest_files(tmp_path: Path):
+    model_dir = tmp_path / "bioclip"
+    model_dir.mkdir()
+    weights = b"weights"
+    (model_dir / "open_clip_model.safetensors").write_bytes(weights)
+
+    manifest_path = tmp_path / "bioclip-manifest.json"
+    manifest_path.write_text(json.dumps({
+        "repo_id": "imageomics/bioclip-2",
+        "revision": "2957b322090f9cb17ae72c71981c7218a28d81e0",
+        "files": [
+            {"name": "open_clip_model.safetensors", "sha256": hashlib.sha256(weights).hexdigest()},
+            {"name": "tokenizer.json", "sha256": "unused"},
+        ],
+    }), encoding="utf-8")
+
+    classifier = BioClipClassifier(ClassifierConfig(
+        model_dir=model_dir,
+        taxonomy_path=Path("unused"),
+        embeddings_path=Path("unused"),
+        model_manifest_path=manifest_path,
+    ))
+
+    with pytest.raises(FileNotFoundError, match="Incomplete BioCLIP 2 model bundle"):
+        classifier._verify_model_bundle()

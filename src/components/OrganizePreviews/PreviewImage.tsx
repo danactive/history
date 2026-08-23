@@ -29,10 +29,52 @@ function formatOverallScore(score: PhotoScore): string {
   return `${score.overall_score.toFixed(1)}%`
 }
 
+function formatWeight(weight: number): string {
+  return Number.isInteger(weight) ? `${weight}%` : `${weight.toFixed(1)}%`
+}
+
+function formatOverallExplanation(score: PhotoScore): string {
+  const components = [
+    {
+      label: 'technical quality',
+      baseWeight: 40,
+      available: true,
+    },
+    {
+      label: 'composition',
+      baseWeight: 35,
+      available: score.composition_score !== null,
+    },
+    {
+      label: 'visual aesthetic',
+      baseWeight: 25,
+      available: score.aesthetic_score !== null,
+    },
+  ]
+  const availableComponents = components.filter(component => component.available)
+  const availableWeight = availableComponents.reduce((sum, component) => sum + component.baseWeight, 0)
+  const explanation = availableComponents
+    .map((component) => {
+      const effectiveWeight = component.baseWeight / availableWeight * 100
+      return `${component.label} (${formatWeight(effectiveWeight)})`
+    })
+    .join(' + ')
+
+  if (availableComponents.length === components.length) {
+    return `Overall = ${explanation}`
+  }
+
+  const unavailableComponents = components
+    .filter(component => !component.available)
+    .map(component => component.label)
+    .join(' and ')
+  return `Overall = ${explanation}; ${unavailableComponents} unavailable, so the available characteristics are reweighted.`
+}
+
 function scoreTitle(score: PhotoScore): string {
   return [
     `Overall score: ${formatOverallScore(score)}`,
-    'Overall = technical quality (40%) + composition (35%) + visual aesthetic (25%)',
+    formatOverallExplanation(score),
     `Technical quality: ${formatScore(score.technical_score)}`,
     `Composition: ${formatScore(score.composition_score)}`,
     `Visual aesthetic: ${formatScore(score.aesthetic_score)}`,
