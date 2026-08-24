@@ -15,6 +15,7 @@ import {
   type StoryMoment,
   type StorySearchResult,
   type StorySearchSchemaInput,
+  type StorySearchSchemaOutput,
 } from '../models/storytelling'
 import type { Gallery, Item, Person } from '../types/common'
 import config from '../models/config'
@@ -240,15 +241,16 @@ export async function buildGalleryInventoryText(
   ].filter((line): line is string => line !== null).join('\n')
 }
 
-async function getScopedCandidates(input: StorySearchSchemaInput): Promise<StoryCandidate[]> {
-  if (input.gallery && input.album) {
-    const { album: { items } } = await getAlbum(input.gallery, input.album)
+async function getScopedCandidates(input: StorySearchSchemaOutput): Promise<StoryCandidate[]> {
+  const { gallery, album } = input
+  if (gallery && album) {
+    const { album: { items } } = await getAlbum(gallery, album)
     const regionCountryIndex = buildVisitedRegionCountryIndex(items)
-    return items.map(item => mapAlbumItemToCandidate(input.gallery as Gallery, input.album as string, item, regionCountryIndex))
+    return items.map(item => mapAlbumItemToCandidate(gallery, album, item, regionCountryIndex))
   }
 
-  const galleries = input.gallery
-    ? [input.gallery]
+  const galleries = gallery
+    ? [gallery]
     : (await getGalleries()).galleries
 
   const visitedFilter = getVisitedPlaceFilter(input)
@@ -385,7 +387,7 @@ function resolvePersonEntry(output: PersonStoryIndexResult, name: string) {
 }
 
 function getSearchTokenMatches(search: string | null | undefined, name: string) {
-  if (!search) return [] as string[]
+  if (!search) return []
 
   const normalizedName = name.trim().toLowerCase()
   return search

@@ -9,7 +9,7 @@ const AdminAlbumClient = dynamic(
 )
 import getAlbums from '../../../src/lib/albums'
 import config from '../../../src/models/config'
-import { type Gallery } from '../../../src/types/common'
+import { generatedGalleries } from '../../../src/types/generated'
 
 export const metadata: Metadata = {
   title: 'Admin > Album - History App',
@@ -26,7 +26,7 @@ export default function AdminAlbumServer() {
 async function AdminAlbumContent() {
   await connection()
   const galleryAlbum = await getAlbums()
-  const galleries = Object.keys(galleryAlbum) as Gallery[]
+  const galleries = generatedGalleries.filter(gallery => Object.hasOwn(galleryAlbum, gallery))
   const selectedGallery = galleries.find(gallery => config.defaultGallery !== gallery) ?? config.defaultGallery
 
   return (

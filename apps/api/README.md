@@ -1,108 +1,86 @@
-# 🌿 iNaturalist 2021 Image Classifier & LAION Aesthetic Scoring API
+# History photo-analysis API
 
-This project provides a robust FastAPI-based backend for two advanced computer vision endpoints:
+This directory implements the unified FastAPI service used by History's Album Editor. Aesthetic
+analysis, BioCLIP 2 organism retrieval, SigLIP 2 architectural-style retrieval, and the combined
+photo-classification policy all run in the same process on port 8080.
 
-- **Biodiversity Image Classification** using a fine-tuned Vision Transformer (ViT) on the iNaturalist 2021 dataset.
-- **Aesthetic Scoring** using the LAION regression head on OpenAI CLIP ViT-B/16 features.
+## API contract
 
-Both endpoints support raw image uploads, and leverage state-of-the-art models for their respective tasks while keeping our data private.
+Classification routes accept raw JPEG or PNG bytes. The Next.js integration loads the original
+image when available, falls back to the resized copy, and forwards one request to
+`POST /classify/photo`.
 
----
+| Route | Result |
+| --- | --- |
+| `GET /health` | Readiness plus model revision, taxonomy, candidate-count, and device diagnostics. |
+| `POST /scores` | Per-photo technical, composition, and aesthetic characteristics with concise notes. |
+| `POST /classify/organism` | Ranked organism diagnostics and an organism-specific status. |
+| `POST /classify/architecture` | Ranked style diagnostics and an architecture-specific status. |
+| `POST /classify/photo` | Up to four review results suitable for the Album Editor. |
 
-## 🧠 Model Details
+Optional context can be sent through `X-Photo-Date`, `X-Photo-Latitude`, `X-Photo-Longitude`,
+`X-Photo-City`, and `X-Photo-Location`. The API reports whether that context was available, but it
+does not currently alter visual ranking. In particular, a photo date is not treated as a building
+construction date, and an existing description is not fed back into either visual classifier.
 
-### 1. Biodiversity Classifier
+## Result policy
 
-- **Model Family:** [`timm`](https://github.com/rwightman/pytorch-image-models)
-- **Model Name:** `eva02_large_patch14_clip_336.merged2b_ft_inat21`
-- **Source:** Hugging Face Hub
-- **Architecture:** Vision Transformer (EVA-CLIP backbone)
-- **Fine-tuned On:** iNaturalist 2021 (10,000+ species)
-- **Output Classes:** Mapped using `inat21_class_index.json`
+Organism and architecture similarities come from different embedding spaces. They are retrieval
+scores—not calibrated probabilities—and must never be converted to percentages or sorted against
+one another.
 
-### 2. Aesthetic Scoring
+Each specialist can identify, abstain as uncertain, or reject the image as outside its domain. The
+combined route applies those specialist decisions and returns at most four reviewable results:
 
-- **Backbone:** OpenAI CLIP ViT-B/16
-- **Regression Head:** Multilayer Perceptron (MLP) trained for aesthetic prediction ([LAION aesthetic predictor](https://github.com/LAION-AI/aesthetic-predictor))
-- **Head Weights:** `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
-- **Feature Dimension:** 512
+- If one specialist identifies the image, its ranking is preserved.
+- If both specialists remain plausible, eligible results are alternated rather than cross-model
+  score-sorted.
+- Clearly gated-out results are omitted instead of forcing a label.
+- Match strength remains `strong`, `possible`, or `weak` to communicate review confidence.
 
----
+No route mutates album metadata. The UI presents candidates and leaves the final description edit
+to the user.
 
-## 🚀 API Endpoints
+## Models
 
-### 1. `/classify` — Biodiversity Image Classification
+The organism engine uses BioCLIP 2 with the official TreeOfLife-200M text-embedding index. It
+retrieves against 867,455 species and evaluates similarity, margin, family agreement, and crop
+agreement before presenting an identification.
 
-**Description:**
-Predicts the top-3 most likely species for a given image using a ViT model fine-tuned on iNaturalist 2021.
+The architecture engine uses SigLIP 2 as a zero-shot classifier over a versioned 29-style taxonomy.
+Prompt ensembles, style families, an architecture gate, family margin, and crop agreement help it
+distinguish a recognizable style from an ambiguous detail or non-building image. It loads lazily
+on the first architecture or combined request.
 
-**Request:**
-- **Method:** `POST`
-- **Content-Type:** `image/jpeg` or `image/png`
-- **Body:** Raw image bytes
+All required model, tokenizer, taxonomy, and embedding files are local and checksum-verified.
+Runtime initialization uses offline modes and fails closed rather than downloading missing files.
+The aesthetic endpoint reports sharpness, exposure, and resolution from local image measurements.
+When its optional learned assets are available, it additionally reports composition and aesthetic
+characteristics. Its overall percentage is a clearly described weighted summary of those
+characteristics, not a calibrated probability or a recommendation verdict.
 
-**Example (using curl):**
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @your_image.jpg http://localhost:8080/classify
-```
+## Source map
 
-**Response:**
-- **Status:** 200 OK
-- **Content-Type:** `application/json`
-- **Body:** JSON object with top-3 species predictions, e.g.,
-```json
-{
-  "predictions": [
-    {"species": "Cardinalis cardinalis", "score": 0.987},
-    {"species": "Pica pica", "score": 0.005},
-    {"species": "Corvus corax", "score": 0.003}
-  ]
-}
-```
+| File | Responsibility |
+| --- | --- |
+| `main.py` | Application lifespan, health diagnostics, and public routes. |
+| `aesthetic.py` | Aesthetic measurements, scorer integration, and fallback. |
+| `classify.py` | Organism request validation and engine invocation. |
+| `classifier_engine.py` | BioCLIP retrieval, gating, ranking, and abstention. |
+| `taxonomy.py` | Organism taxonomy and scientific-name handling. |
+| `architecture.py` | Lazy architecture-engine boundary. |
+| `architecture_engine.py` | SigLIP prompts, embeddings, gating, ranking, and abstention. |
+| `architecture_taxonomy.json` | Canonical architectural styles, families, prompts, and review cues. |
+| `photo_classify.py` | Combined selection policy and four-result response. |
+| `start.py` | Service process entry point. |
 
-### 2. `/score` — Aesthetic Scoring
+## Verification philosophy
 
-**Description:**
-Predicts the aesthetic score of an image on a scale from 0 to 10 using the LAION regression head.
+The Python suite includes real offline inference against the long-tailed fiscal and ochre sea star
+fixtures, plus architecture ambiguity, non-architecture gating, API integrity, and combined-result
+coverage. Model or taxonomy changes should be evaluated as classifier changes—not accepted only
+because unit mocks or route-shape tests pass.
 
-**Request:**
-- **Method:** `POST`
-- **Content-Type:** `image/jpeg` or `image/png`
-- **Body:** Raw image bytes
-
-**Example (using curl):**
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @your_image.jpg http://localhost:8080/score
-```
-
-**Response:**
-- **Status:** 200 OK
-- **Content-Type:** `application/json`
-- **Body:** JSON object with the aesthetic score, e.g.,
-```json
-{
-  "score": 7.5
-}
-```
-
----
-
-## Local setup
-
-1. Download the regression head:
-   [sa_0_4_vit_b_16_linear.pth](https://github.com/LAION-AI/aesthetic-predictor/blob/main/sa_0_4_vit_b_16_linear.pth)
-1. Place it in `models/aesthetic/sa_0_4_vit_b_16_linear.pth`
-1. The OpenAI CLIP backbone weights for ViT-B/16 will be downloaded automatically on first run `make ai-api`
-
-## Aesthetic scorer (multi-attribute)
-
-To enable the newer multi-attribute aesthetic scorer (used by `/scores`):
-
-1. Download the model weights and processor files:
-   `make load-aesthetic-scorer`
-1. Download the CLIP ViT-B/32 backbone (offline):
-   `make load-clip-vit-base-patch32`
-1. Rebuild and run the API:
-   `make build-ai-api && make ai-api`
-
-The weights are stored under `models/rsinema_aesthetic-scorer` and `models/openai_clip-vit-base-patch32` for offline loading.
+Use the [photo-classifier agent skill](../../.agents/skills/photo-classifier/SKILL.md) for the exact
+asset setup, build and run commands, health expectations, regression procedure, offline proof, and
+troubleshooting sequence.

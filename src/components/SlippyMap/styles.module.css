@@ -29,6 +29,6 @@
 }
 
 .toggleButton:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--map-marker-primary);
   outline-offset: 2px;
 }

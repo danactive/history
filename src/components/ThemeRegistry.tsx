@@ -55,7 +55,12 @@ export default function ThemeRegistry({ options, children }: ComponentProps) {
 
   return (
     <CacheProvider value={cache}>
-      <CssVarsProvider theme={theme}>
+      <CssVarsProvider
+        theme={theme}
+        defaultMode="dark"
+        modeStorageKey="history-mode"
+        colorSchemeStorageKey="history-color-scheme"
+      >
         {children}
       </CssVarsProvider>
     </CacheProvider>

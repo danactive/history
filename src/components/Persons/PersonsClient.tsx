@@ -1,7 +1,7 @@
 'use client'
 
 import Button from '@mui/joy/Button'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import config from '../../../src/models/config'
 import usePersonsFilter from '../../hooks/usePersonsFilter'
 import useSelectGalleryItemFromUrl from '../../hooks/useSelectGalleryItemFromUrl'
@@ -28,6 +28,7 @@ export default function PersonsClient({
   initialSelectedAge,
   initialSelectedPerson,
 }: Persons.ComponentProps) {
+  const [isMapVisible, setIsMapVisible] = useState(true)
   const {
     refImageGallery,
     memoryIndex,
@@ -85,6 +86,8 @@ export default function PersonsClient({
       <AlbumContext.Provider value={zooms}>
         <FilterArea
           searchControls={searchBox}
+          isMapVisible={isMapVisible}
+          setIsMapVisible={setIsMapVisible}
           contextualControls={<FilterControls {...filterControlsProps} />}
           emptyResults={ageFiltered.length === 0 ? (
             <EmptyResults
@@ -110,6 +113,7 @@ export default function PersonsClient({
           items={ageFiltered}
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
+          mapVisible={isMapVisible}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}
@@ -122,7 +126,7 @@ export default function PersonsClient({
           items={itemsWithCorpus}
           refImageGallery={refImageGallery}
           viewedList={viewedList}
-          onSelectItem={(item) => selectionCoordinator.selectId(item.id, { origin: 'thumbnail' })}
+          onSelectId={(id) => selectionCoordinator.selectId(id, { origin: 'thumbnail' })}
         />
       </AlbumContext.Provider>
     </div>

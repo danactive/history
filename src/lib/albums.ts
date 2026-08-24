@@ -88,23 +88,15 @@ async function get(galleryOrGalleries: AlbumMeta['gallery'] | AlbumMeta['gallery
       throw new ReferenceError(`One or more gallery names are not expected: ${inputGalleries}`)
     }
 
-    const partialOut: Partial<GalleryAlbumsBody> = {}
-
-    for (const gallery of inputGalleries) {
-      const xmlGallery = await readGallery(gallery)
-      const body = transformJsonSchema(xmlGallery, gallery)
-      partialOut[gallery] = body
-    }
-
-    const fullOut = partialOut as GalleryAlbumsBody
+    const fullOut: GalleryAlbumsBody = Object.fromEntries(await Promise.all(
+      inputGalleries.map(async (gallery) => {
+        const xmlGallery = await readGallery(gallery)
+        return [gallery, transformJsonSchema(xmlGallery, gallery)]
+      }),
+    ))
 
     if (returnEnvelope) {
       return { body: fullOut, status: 200 }
-    }
-
-    // If only one gallery was requested, return just that slice
-    if (!Array.isArray(galleryOrGalleries)) {
-      return { [galleryOrGalleries]: fullOut[galleryOrGalleries] } as GalleryAlbumsBody
     }
 
     return fullOut

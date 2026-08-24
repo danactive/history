@@ -54,7 +54,7 @@ describe('SplitViewer rendering', () => {
       selectId: vi.fn(),
     }
 
-    const { container } = render(
+    const { container, getByRole } = render(
       <SplitViewer
         clusteredMarkers={clustered}
         items={[]}
@@ -65,6 +65,228 @@ describe('SplitViewer rendering', () => {
     )
 
     expect(container.querySelector('.image-gallery')).toBeTruthy()
+    expect(getByRole('button', { name: 'Open map fullscreen' })).toHaveAttribute('title', 'Full map')
+    expect(getByRole('separator', { name: 'Resize map' })).toHaveAttribute('aria-valuenow', '300')
+  })
+
+  it('keeps the gallery as the presentation surface when its parent hides the map', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+
+    const { container, queryByRole } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={[item]}
+        refImageGallery={null}
+        memoryIndex={0}
+        mapVisible={false}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    expect(container.querySelector('[class*="mapHidden"]')).toBeTruthy()
+    expect(queryByRole('separator', { name: 'Resize map' })).toBeNull()
+  })
+
+  it('toggles native map fullscreen from the matching bracket button', async () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const originalFullscreenElement = Object.getOwnPropertyDescriptor(document, 'fullscreenElement')
+    const originalExitFullscreen = Object.getOwnPropertyDescriptor(document, 'exitFullscreen')
+    const originalRequestFullscreen = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'requestFullscreen')
+    const setFullscreenElement = (element: Element | null) => {
+      Object.defineProperty(document, 'fullscreenElement', {
+        configurable: true,
+        value: element,
+      })
+    }
+    const requestFullscreen = vi.fn(function requestFullscreen(this: HTMLElement) {
+      setFullscreenElement(this)
+      document.dispatchEvent(new Event('fullscreenchange'))
+      return Promise.resolve()
+    })
+    const exitFullscreen = vi.fn(() => {
+      setFullscreenElement(null)
+      document.dispatchEvent(new Event('fullscreenchange'))
+      return Promise.resolve()
+    })
+
+    Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', {
+      configurable: true,
+      value: requestFullscreen,
+    })
+    Object.defineProperty(document, 'exitFullscreen', {
+      configurable: true,
+      value: exitFullscreen,
+    })
+
+    try {
+      const { getByRole } = render(
+        <SplitViewer
+          clusteredMarkers={clustered}
+          items={[item]}
+          refImageGallery={null}
+          memoryIndex={0}
+          selectionCoordinator={selectionCoordinator}
+        />,
+      )
+
+      await act(async () => {
+        fireEvent.click(getByRole('button', { name: 'Open map fullscreen' }))
+      })
+      expect(requestFullscreen).toHaveBeenCalledOnce()
+      expect(getByRole('button', { name: 'Exit map fullscreen' })).toHaveAttribute('title', 'Exit full map')
+
+      await act(async () => {
+        fireEvent.click(getByRole('button', { name: 'Exit map fullscreen' }))
+      })
+      expect(exitFullscreen).toHaveBeenCalledOnce()
+      expect(getByRole('button', { name: 'Open map fullscreen' })).toHaveAttribute('title', 'Full map')
+    } finally {
+      if (originalFullscreenElement) {
+        Object.defineProperty(document, 'fullscreenElement', originalFullscreenElement)
+      } else {
+        Reflect.deleteProperty(document, 'fullscreenElement')
+      }
+      if (originalExitFullscreen) {
+        Object.defineProperty(document, 'exitFullscreen', originalExitFullscreen)
+      } else {
+        Reflect.deleteProperty(document, 'exitFullscreen')
+      }
+      if (originalRequestFullscreen) {
+        Object.defineProperty(HTMLElement.prototype, 'requestFullscreen', originalRequestFullscreen)
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, 'requestFullscreen')
+      }
+    }
+  })
+
+  it('resizes the map rail with keyboard controls', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+
+    const { getByRole } = render(
+      <SplitViewer
+        clusteredMarkers={clustered}
+        items={[item]}
+        refImageGallery={null}
+        memoryIndex={0}
+        selectionCoordinator={selectionCoordinator}
+      />,
+    )
+
+    const resizeMap = getByRole('separator', { name: 'Resize map' })
+    fireEvent.keyDown(resizeMap, { key: 'ArrowLeft' })
+
+    expect(resizeMap).toHaveAttribute('aria-valuenow', '324')
+  })
+
+  it('clamps the map width when the split container shrinks', () => {
+    const item = createItem(0)
+    const clustered: ClusteredMarkers = {
+      labels: {},
+      itemFrequency: {},
+      generatedAt: new Date().toISOString(),
+      itemCount: 1,
+    }
+    const selectionCoordinator: SelectionCoordinator = {
+      getSnapshot: () => ({ item, index: 0, revision: 0, origin: 'gallery', cameraIntent: 'follow' }),
+      subscribe: () => () => {},
+      selectIndex: vi.fn(),
+      selectId: vi.fn(),
+    }
+    const originalResizeObserver = globalThis.ResizeObserver
+    let observerCallback: ResizeObserverCallback | null = null
+
+    class MockResizeObserver {
+      constructor(callback: ResizeObserverCallback) {
+        observerCallback = callback
+      }
+
+      observe() {}
+
+      unobserve() {}
+
+      disconnect() {}
+    }
+
+    vi.stubGlobal('ResizeObserver', MockResizeObserver as unknown as typeof ResizeObserver)
+
+    try {
+      const { container, getByRole } = render(
+        <SplitViewer
+          clusteredMarkers={clustered}
+          items={[item]}
+          refImageGallery={null}
+          memoryIndex={0}
+          selectionCoordinator={selectionCoordinator}
+        />,
+      )
+
+      const split = container.querySelector('section[class*="split"]') as HTMLElement | null
+      expect(split).not.toBeNull()
+
+      let splitWidth = 900
+      Object.defineProperty(split, 'clientWidth', {
+        configurable: true,
+        get: () => splitWidth,
+      })
+
+      const resizeMap = getByRole('separator', { name: 'Resize map' })
+      for (let index = 0; index < 20; index += 1) {
+        fireEvent.keyDown(resizeMap, { key: 'ArrowLeft' })
+      }
+
+      expect(resizeMap).toHaveAttribute('aria-valuenow', '580')
+      expect(resizeMap).toHaveAttribute('aria-valuemax', '580')
+
+      splitWidth = 500
+      act(() => {
+        observerCallback?.([] as ResizeObserverEntry[], {} as ResizeObserver)
+      })
+
+      expect(resizeMap).toHaveAttribute('aria-valuenow', '240')
+      expect(resizeMap).toHaveAttribute('aria-valuemax', '240')
+    } finally {
+      if (originalResizeObserver) {
+        vi.stubGlobal('ResizeObserver', originalResizeObserver)
+      } else {
+        vi.unstubAllGlobals()
+      }
+    }
   })
 
   it('renders without injecting a dynamic background style tag', () => {

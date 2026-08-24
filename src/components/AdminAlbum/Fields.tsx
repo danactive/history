@@ -21,6 +21,10 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 const REFERENCE_SOURCES: ItemReferenceSource[] = ['facebook', 'google', 'instagram', 'wikipedia', 'youtube']
 
+function isItemReferenceSource(value: string): value is ItemReferenceSource {
+  return REFERENCE_SOURCES.some(source => source === value)
+}
+
 const DMS_PATTERN = /(\d+)[°\s]+(\d+)[\'’′\s]+(\d+(?:\.\d+)?)[\"”″\s]*([NSEW])?/i
 const DMS_PAIR_PATTERN = /\d+[°\s]+\d+[\'’′\s]+\d+(?:\.\d+)?[\"”″\s]*[NSEW]?/ig
 
@@ -193,7 +197,8 @@ export default function Fields(
               const newFilename = Array.isArray(prev.filename) ? [newFn, ...prev.filename.slice(1)] : newFn
               if (checked) return { ...prev, type: 'video', filename: newFilename }
               const { type: _t, ...rest } = prev
-              return { ...rest, filename: newFilename } as RawXmlItem
+              const photoItem: RawXmlItem = { ...rest, filename: newFilename }
+              return photoItem
             })}
             label="Video item"
             title="Item type: photo (unchecked) or video (checked). Toggles &lt;type&gt;video&lt;/type&gt; and filename extension (.jpg ↔ .mp4)."
@@ -234,7 +239,7 @@ export default function Fields(
         <ComboBox
           className="keyword-autocomplete"
           options={allKeywords}
-          value={null}
+          value=""
           inputValue={autocompleteValue}
           onInputChange={(newValue) => {
             setAutocompleteValue(newValue)
@@ -316,7 +321,9 @@ export default function Fields(
             onChange={(_, value) => {
               updateItem((prev: RawXmlItem | null) => prev ? {
                 ...prev,
-                ref: value ? { source: value as ItemReferenceSource, name: prev.ref?.name || '' } : undefined,
+                ref: value && isItemReferenceSource(value)
+                  ? { source: value, name: prev.ref?.name || '' }
+                  : undefined,
               } : null)
             }}
             placeholder="Reference Source"

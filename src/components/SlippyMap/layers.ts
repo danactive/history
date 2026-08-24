@@ -1,18 +1,5 @@
 import type { LayerProps } from 'react-map-gl/mapbox'
-
-type MapboxStop = [number, string];
-
-const swatches: Record<string, MapboxStop[]> = {
-  christmas: [
-    [0, '#FFCCCB'],
-    [10, '#FF6F61'],
-    [50, '#FF3D00'],
-    [250, '#C62828'],
-    [500, '#D32F2F'],
-    [1000, '#B71C1C'],
-    [1500, '#9E1B35'],
-  ],
-}
+import { mapMarkerClusterStops, mapMarkerColors } from './marker-theme'
 
 const marker = {
   types: {
@@ -48,7 +35,7 @@ export const clusterPointLayer: LayerProps = {
     'circle-color': {
       property: 'point_count',
       type: 'interval',
-      stops: swatches.christmas,
+      stops: mapMarkerClusterStops,
     },
     'circle-radius': {
       property: 'point_count',
@@ -91,7 +78,7 @@ export const unclusterPointLayer: LayerProps = {
   type: 'circle',
   filter: marker.types.uncluster.filter,
   paint: {
-    'circle-color': swatches.christmas[0][1],
+    'circle-color': mapMarkerColors.light,
     'circle-radius': 10,
     'circle-stroke-width': 2,
     'circle-stroke-color': '#000',
@@ -106,7 +93,7 @@ export function getUnclusterPointLayer(selectedKey: string | null): LayerProps {
     type: 'circle',
     filter: marker.types.uncluster.filter,
     paint: {
-      'circle-color': ['case', isSelected, '#FFFFFF', swatches.christmas[0][1]],
+      'circle-color': ['case', isSelected, '#FFFFFF', mapMarkerColors.light],
       'circle-radius': 10,
       'circle-stroke-width': ['case', isSelected, 4, 2],
       'circle-stroke-color': '#000',

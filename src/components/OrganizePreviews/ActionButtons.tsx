@@ -8,6 +8,27 @@ import type { RenameRequestBody, RenameResponseBody } from '../../lib/rename'
 import type { ResizeRequestBody } from '../../lib/resize'
 import { encodePathSegments } from '../../utils/url-path'
 
+type ResizeError = {
+  count?: number
+  message?: string[]
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object'
+}
+
+function getResizeError(value: unknown): ResizeError | undefined {
+  if (!isRecord(value) || !isRecord(value.meta) || !isRecord(value.meta.error)) return undefined
+
+  const { count, message } = value.meta.error
+  const error: ResizeError = {}
+  if (typeof count === 'number') error.count = count
+  if (Array.isArray(message) && message.every(entry => typeof entry === 'string')) {
+    error.message = message
+  }
+  return error
+}
+
 export default function ActionButtons(
   { items }:
   { items: Filesystem[] },
@@ -70,8 +91,8 @@ export default function ActionButtons(
 
     try {
       const response = await fetch('/api/admin/resize', options)
-      const result = await response.json() as { meta?: { error?: { count?: number, message?: string[] } } }
-      const errors = result.meta?.error
+      const result = await response.json()
+      const errors = getResizeError(result)
       if (!response.ok || (errors?.count ?? 0) > 0) {
         throw new Error(errors?.message?.join(' ') || 'Could not resize photos')
       }

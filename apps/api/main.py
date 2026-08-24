@@ -1,10 +1,15 @@
-from fastapi import FastAPI, Request
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 import logging
 import sys
-import traceback
+
 from aesthetic import score_photo_tips
-from classify import classify_image
+import architecture
+import classify
+import photo_classify
+from classifier_engine import ClassifierUnavailable
 
 # Setup logging once
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -13,37 +18,78 @@ logger.setLevel(logging.DEBUG)
 
 logger.debug("FastAPI is initializing...")
 
-main_py_app = FastAPI()
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    await classify.initialize_classifier()
+    yield
+
+
+main_py_app = FastAPI(lifespan=lifespan)
 
 @main_py_app.get("/health")
 def health_check():
-    return {"status": "ok"}
-
-def error_response(e: Exception):
-    trace = traceback.format_exc()
-    logger.error(f"Exception occurred: {str(e)}\n{trace}")
+    organism_health = classify.engine.health()
+    architecture_health = architecture.engine.health()
+    health = {
+        "status": organism_health["status"],
+        "classifiers": {
+            "organism": organism_health,
+            "architecture": architecture_health,
+        },
+    }
     return JSONResponse(
-        status_code=500,
-        content={"error": str(e), "trace": trace}
+        status_code=200 if classify.engine.ready else 503,
+        content=health,
     )
 
-@main_py_app.post("/classify")
-async def classify_endpoint(req: Request):
+def error_response(e: Exception):
+    logger.exception("Python API request failed")
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error"},
+    )
+
+@main_py_app.post("/classify/organism")
+async def classify_organism_endpoint(req: Request):
     try:
-        results = await classify_image(req)
+        results = await classify.classify_image(req)
         return results
-    except Exception as e:
-        return error_response(e)
+    except HTTPException as error:
+        return JSONResponse(status_code=error.status_code, content={"error": str(error.detail)})
+    except ClassifierUnavailable as error:
+        return JSONResponse(status_code=503, content={"error": str(error)})
+    except Exception as error:
+        return error_response(error)
+
+
+@main_py_app.post("/classify/architecture")
+async def classify_architecture_endpoint(req: Request):
+    try:
+        results = await architecture.classify_image(req)
+        return results
+    except HTTPException as error:
+        return JSONResponse(status_code=error.status_code, content={"error": str(error.detail)})
+    except ClassifierUnavailable as error:
+        return JSONResponse(status_code=503, content={"error": str(error)})
+    except Exception as error:
+        return error_response(error)
+
+
+@main_py_app.post("/classify/photo")
+async def classify_photo_endpoint(req: Request):
+    try:
+        results = await photo_classify.classify_photo(req)
+        return results
+    except HTTPException as error:
+        return JSONResponse(status_code=error.status_code, content={"error": str(error.detail)})
+    except ClassifierUnavailable as error:
+        return JSONResponse(status_code=503, content={"error": str(error)})
+    except Exception as error:
+        return error_response(error)
 
 @main_py_app.post("/scores")
 async def score_endpoint(req: Request):
     try:
-        result = await score_photo_tips(req)
-        # Backwards compatibility for callers/tests that still expect aesthetic_score.
-        if isinstance(result, dict) and "aesthetic_score" not in result:
-            score_value = result.get("overall_score")
-            if isinstance(score_value, (int, float)):
-                result["aesthetic_score"] = float(score_value)
-        return result
+        return await score_photo_tips(req)
     except Exception as e:
         return error_response(e)

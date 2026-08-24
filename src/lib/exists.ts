@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { promisify } from 'node:util'
 
+import { isStandardError } from './errors'
 import utilsFactory from './utils'
 
 const getStat = promisify(fs.stat)
@@ -32,11 +33,12 @@ const pathExists = async (verifyPath: string | undefined | null) => {
 
     throw new Error(`${MODULE_NAME}: File failed - not a file or directory`)
   } catch (error) {
+    const errorMessage = isStandardError(error) ? error.message : String(error)
     if (typeof verifyPath === 'string') {
       const pathType = path.isAbsolute(verifyPath) ? 'absolute' : 'relative'
-      throw new Error(`${MODULE_NAME}: File system path is ${pathType} and not found due to error (${(error as Error).message})`)
+      throw new Error(`${MODULE_NAME}: File system path is ${pathType} and not found due to error (${errorMessage})`)
     } else {
-      throw new Error(`${MODULE_NAME}: File system path is not found due to error (${(error as Error).message})`)
+      throw new Error(`${MODULE_NAME}: File system path is not found due to error (${errorMessage})`)
     }
   }
 }

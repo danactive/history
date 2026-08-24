@@ -9,13 +9,13 @@ import { addYearToSearch, getItemYearFromFilename } from './domains/years'
  * @returns {{ indexedKeywords }}
  */
 function indexKeywords(items: { search?: Item['search'] | GalleryAlbum['search'] }[]) {
-  const summedKeywords = items.reduce((out, item) => {
+  const summedKeywords = items.reduce<Record<string, number>>((out, item) => {
     item.search?.split(', ').forEach((val) => {
 
       out[val] = (out[val] || 0) + 1
     })
     return out
-  }, {} as Record<string, number>)
+  }, {})
 
   function isNum(n: string) {
     return Number.isFinite(Number(n))

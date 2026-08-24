@@ -1,5 +1,4 @@
 'use client'
-import type { GeoJSONSource } from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import {
   useCallback,
@@ -51,6 +50,34 @@ type SlippyMapProps = {
   onBoundsChange?: (bounds: [[number, number], [number, number]]) => void;
 }
 
+type ClusterExpansionSource = {
+  getClusterExpansionZoom: (
+    clusterId: number,
+    callback: (error: Error | null, expansionZoom?: number | null) => void,
+  ) => void
+}
+
+function isCoordinatePair(value: unknown): value is [number, number] {
+  return Array.isArray(value)
+    && value.length === 2
+    && typeof value[0] === 'number'
+    && typeof value[1] === 'number'
+}
+
+function isClusterExpansionSource(source: unknown): source is ClusterExpansionSource {
+  return source !== null
+    && typeof source === 'object'
+    && 'getClusterExpansionZoom' in source
+    && typeof source.getClusterExpansionZoom === 'function'
+}
+
+function toBounds(value: unknown): [[number, number], [number, number]] | null {
+  if (!Array.isArray(value) || value.length !== 2) return null
+  const [southwest, northeast] = value
+  if (!isCoordinatePair(southwest) || !isCoordinatePair(northeast)) return null
+  return [southwest, northeast]
+}
+
 export default function SlippyMap({
   clusteredMarkers,
   items = [],
@@ -67,7 +94,7 @@ export default function SlippyMap({
 
   // Always render the map. Prefer the passed centroid, then first item, then a safe default
   const activeCentroid = centroid ?? (items.length > 0 ? items[0] : null)
-  const coordinates: [number, number] = (activeCentroid?.coordinates as [number, number]) ?? [0, 0]
+  const coordinates: [number, number] = activeCentroid?.coordinates ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
   const initialViewport = useMemo(
     () => transformMapOptions({ coordinates, zoom }),
@@ -87,9 +114,11 @@ export default function SlippyMap({
 
     // Narrow geometry to Point before accessing coordinates
     if (feature.geometry.type !== 'Point') return
-    const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number]
+    const coords = feature.geometry.coordinates
+    if (!isCoordinatePair(coords)) return
 
-    const src = mapRef.current.getMap().getSource('slippyMap') as GeoJSONSource
+    const src = mapRef.current.getMap().getSource('slippyMap')
+    if (!isClusterExpansionSource(src)) return
     src.getClusterExpansionZoom(clusterId, (err: any, expansionZoom?: number | null) => {
       if (err || expansionZoom == null) return
       if (mapFilterEnabled) {
@@ -132,7 +161,7 @@ export default function SlippyMap({
       if (!mapInstance) return null
       const boundsObj = mapInstance.getBounds?.()
       if (!boundsObj) return null
-      return boundsObj.toArray() as [[number, number],[number, number]]
+      return toBounds(boundsObj.toArray())
     } catch {
       return null
     }

@@ -11,6 +11,7 @@ import useSWR from 'swr'
 import type { SearchResult } from '../../../app/api/admin/search/route'
 import { type GalleryAlbumsBody } from '../../lib/albums'
 import { type Gallery } from '../../lib/galleries'
+import { appendPhotoDescription } from '../../models/classifier'
 import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
@@ -103,11 +104,19 @@ export default function AdminAlbumClient(
     }
   }
 
+  const handleClassifierDescription = (descriptionValue: string) => {
+    const currentItem = getItemWithEdits(item) ?? item
+    if (!currentItem) return
+    handleItemUpdateWrapper({
+      ...currentItem,
+      photo_desc: appendPhotoDescription(currentItem.photo_desc, descriptionValue),
+    })
+  }
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in an input/textarea
-      const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return
       }
 
@@ -201,8 +210,9 @@ export default function AdminAlbumClient(
     _event: React.SyntheticEvent | null,
     newValue: string | null,
   ) => {
-    if (newValue) {
-      setCurrentGallery(newValue as Gallery)
+    const selectedGallery = galleries.find(candidate => candidate === newValue)
+    if (selectedGallery) {
+      setCurrentGallery(selectedGallery)
       setAlbum(null)
       // Clear edits when gallery changes
       clearEdits()
@@ -324,7 +334,20 @@ export default function AdminAlbumClient(
             />
           </Stack>
           {item && (
-            <Stack sx={{ position: 'sticky', top: 16, alignSelf: 'flex-start' }}>
+            <Stack
+              sx={{
+                position: 'sticky',
+                top: 16,
+                alignSelf: 'flex-start',
+                width: '36rem',
+                flexShrink: 0,
+                maxHeight: 'calc(100dvh - 32px)',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                overscrollBehavior: 'contain',
+                scrollbarGutter: 'stable',
+              }}
+            >
               <Fields
                 xmlAlbum={data}
                 item={getItemWithEdits(item)}
@@ -332,7 +355,12 @@ export default function AdminAlbumClient(
                 onXmlGenerated={handleXmlGenerated}
                 applyEditsToItems={applyEditsToItems}
               >
-                <Photo item={item} gallery={currentGallery} size="small" />
+                <Photo
+                  item={getItemWithEdits(item) ?? item}
+                  gallery={currentGallery}
+                  size="small"
+                  onAddDescription={handleClassifierDescription}
+                />
               </Fields>
             </Stack>
           )}

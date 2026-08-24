@@ -1,6 +1,7 @@
 import type { Dirent } from 'node:fs'
 import fs from 'node:fs/promises'
 import { type Gallery } from '../types/common'
+import { generatedGallerySchema } from '../types/generated'
 import { handleLibraryError } from './errors'
 
 type ErrorOptionalMessage = { galleries: object[]; error?: { message: string } }
@@ -36,7 +37,11 @@ async function get(returnEnvelope = false): Promise<
     const namesOnly = (content: Dirent) => content.name
 
     const contents = await fs.readdir('public/galleries', { withFileTypes: true })
-    const body = { galleries: contents.filter(hasPrefix).map(namesOnly) as Gallery[] }
+    const galleries = contents.filter(hasPrefix).map(namesOnly).flatMap((name) => {
+      const gallery = generatedGallerySchema.safeParse(name)
+      return gallery.success ? [gallery.data] : []
+    })
+    const body = { galleries }
 
     if (returnEnvelope) {
       return { body, status: 200 }

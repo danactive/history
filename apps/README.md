@@ -1,48 +1,42 @@
-# Apps Quick Start (Python API)
+# Photo-analysis service
 
-This folder contains the Python API used by the app.
+`apps/` contains History's optional local AI subsystem. It is deliberately separate from Next.js
+so the gallery remains usable without large Python dependencies or model assets, while the Album
+Editor can request richer insights when the service is running.
 
-## Routes you likely want
+## One service, several capabilities
 
-- `POST /scores`
-- `POST /classify`
+The `apps/api/` FastAPI application owns every Python photo-analysis feature and listens on port
+8080. It accepts image bytes rather than filesystem paths and provides:
 
-Both accept raw image bytes (`image/jpeg` or `image/png`).
+| Route | Responsibility |
+| --- | --- |
+| `GET /health` | Reports model readiness, pinned revisions, taxonomy identities, and devices. |
+| `POST /scores` | Returns aesthetic measurements and editing insights. |
+| `POST /classify/organism` | Retrieves organism candidates with BioCLIP 2. |
+| `POST /classify/architecture` | Retrieves architectural styles with SigLIP 2. |
+| `POST /classify/photo` | Chooses and balances reviewable results from both specialists. |
 
-## Start the API (recommended via Docker)
+The Album Editor calls the combined route through the Next.js endpoint in
+`app/api/admin/classify/route.ts`. There is one user-facing **Classify photo** action and one Python
+server; organism and architecture classification are specialists inside that service, not
+separate applications.
 
-From repo root:
+## Offline model boundary
 
-```sh
-make build-ai-api
-make ai-api
-```
+Classifier inference uses only verified files under the ignored repository-level `models/`
+directory. `apps/load-weights/` contains the pinned manifests and downloader that populate those
+directories. Runtime network access is not a fallback: a missing model, tokenizer, taxonomy, or
+checksum is surfaced as a readiness failure.
 
-API runs at:
+The service is advisory. Similarities are retrieval scores rather than probabilities, clearly
+gated-out suggestions are hidden by the combined route, and results do not update album XML
+automatically. The user must choose **Add Desc** and complete the existing XML-generation workflow.
 
-```txt
-http://localhost:8080
-```
+## Where to continue
 
-## Test the two routes
-
-Use any local image file (example: `public/sample.jpg`).
-
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/scores
-```
-
-```sh
-curl -X POST -H "Content-Type: image/jpeg" --data-binary @public/sample.jpg http://localhost:8080/classify
-```
-
-## Optional: run without Docker
-
-```sh
-cd apps/api
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:main_py_app --host 0.0.0.0 --port 8080
-```
-
+- Read [apps/api/README.md](api/README.md) for the API contract, classifier behavior, and source
+  layout.
+- Read [apps/load-weights/README.md](load-weights/README.md) for the asset and integrity model.
+- Use the [photo-classifier agent skill](../.agents/skills/photo-classifier/SKILL.md) for fresh-clone
+  setup, downloads, builds, startup, testing, calibration work, and troubleshooting.

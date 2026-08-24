@@ -1,10 +1,15 @@
 import Button from '@mui/joy/Button'
 import IconButton from '@mui/joy/IconButton'
 import Stack from '@mui/joy/Stack'
+import Typography from '@mui/joy/Typography'
 import useSWRMutation from 'swr/mutation'
 
-import type { Prediction } from '../../../app/api/admin/classify/route'
 import { originalPath, photoPath } from '../../lib/paths'
+import {
+  normalizePhotoClassificationResponse,
+  type ClassificationRequest,
+  type PhotoClassificationResponse,
+} from '../../models/classifier'
 import config from '../../models/config'
 import type { Gallery, RawXmlItem } from '../../types/common'
 import Img from '../Img'
@@ -18,20 +23,46 @@ function OpenInNewIcon() {
   )
 }
 
-const fetcher = async (url: string, { arg }: { arg: string }) =>
-  fetch(url, {
+const fetcher = async (
+  url: string,
+  { arg }: { arg: ClassificationRequest },
+): Promise<PhotoClassificationResponse> => {
+  const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path: arg }),
-  }).then((res) => res.json())
+    body: JSON.stringify(arg),
+  })
+  const data: unknown = await response.json().catch(() => null)
+  if (!response.ok) {
+    const message = (
+      typeof data === 'object'
+      && data !== null
+      && 'error' in data
+      && typeof data.error === 'string'
+    ) ? data.error : 'Photo classification is currently unavailable. Try again.'
+    throw new Error(message)
+  }
+  return normalizePhotoClassificationResponse(data)
+}
 
 export default function AdminAlbumPhoto(
-  { item, gallery, size = 'default' }:
-  { item: RawXmlItem, gallery: Gallery, size?: 'default' | 'small' },
+  { item, gallery, size = 'default', onAddDescription }:
+  {
+    item: RawXmlItem,
+    gallery: Gallery,
+    size?: 'default' | 'small',
+    onAddDescription?: (descriptionValue: string) => void,
+  },
 ) {
-  const { trigger, data, error, isMutating } = useSWRMutation(
+  const { trigger, data, error, isMutating, reset } = useSWRMutation<
+    PhotoClassificationResponse,
+    Error,
+    string,
+    ClassificationRequest
+  >(
     '/api/admin/classify',
     fetcher,
+    { throwOnError: false },
   )
 
   const photoSrc = photoPath(item.filename, gallery)
@@ -64,30 +95,87 @@ export default function AdminAlbumPhoto(
           </IconButton>
         </Stack>
         <Button
+          type="button"
+          variant="solid"
+          color="primary"
           onClick={(e) => {
             e.preventDefault()
-            trigger(photoSrc)
+            reset()
+            void trigger({
+              path: originalSrc,
+              fallbackPath: photoSrc,
+              photoDate: item.photo_date,
+              city: item.photo_city,
+              location: item.photo_loc,
+              geo: item.geo,
+            }, { throwOnError: false })
           }}
+          loading={isMutating}
         >
-          Classify Image
+          Classify photo
         </Button>
-        {isMutating && <div>Classifying...</div>}
-        {error && <div>Error loading classification</div>}
-        {data && <div>Predictions:
-          {data.predictions.map((p: Prediction) =>
-            (
-              <div key={p.label}>
-                <Link
-                  href={`https://en.wikipedia.org/w/index.php?search=${p.label}`}
-                  target="_blank"
-                >
-                  {p.label}
-                </Link> {(p.score * 100).toFixed(2)}%
-              </div>
-            ),
-          )}
-          </div>
-        }
+        {error && (
+          <Stack spacing={0.25} sx={{ mt: 1 }} role="alert">
+            <Typography level="title-sm" color="danger">
+              Classification unavailable
+            </Typography>
+            <Typography level="body-sm" sx={{ color: 'neutral.300' }}>
+              {error.message}
+            </Typography>
+          </Stack>
+        )}
+        {data && (
+          <Stack spacing={0.75} sx={{ mt: 1 }}>
+            <Typography level="title-sm">
+              {data.status === 'matched'
+                ? 'Top classifier results — verify before adding'
+                : 'No reliable classification found'}
+            </Typography>
+            {data.suggestions.map((suggestion, index) => (
+              <Stack
+                key={`${suggestion.type}:${suggestion.id}`}
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <div>
+                  <div>
+                    {index + 1}.{' '}
+                    {suggestion.commonName && `${suggestion.commonName} — `}
+                    <Link
+                      href={`https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(suggestion.name)}`}
+                      target="_blank"
+                    >
+                      {suggestion.type === 'organism' ? <i>{suggestion.name}</i> : suggestion.name}
+                    </Link>
+                  </div>
+                  <Typography level="body-xs" sx={{ color: 'neutral.400' }}>
+                    {suggestion.type === 'organism' ? 'Organism' : 'Architecture'} ·{' '}
+                    {suggestion.context && `${suggestion.context} · `}
+                    {suggestion.matchStrength} match · similarity {suggestion.score.toFixed(3)}
+                  </Typography>
+                  {suggestion.reviewCues.length > 0 && (
+                    <Typography level="body-xs" sx={{ color: 'neutral.400' }}>
+                      Verify: {suggestion.reviewCues.join(', ')}
+                    </Typography>
+                  )}
+                </div>
+                {onAddDescription && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="solid"
+                    color="primary"
+                    onClick={() => onAddDescription(suggestion.descriptionValue)}
+                  >
+                    Add Desc
+                  </Button>
+                )}
+              </Stack>
+            ))}
+          </Stack>
+        )}
       </Stack>
     </>
   )

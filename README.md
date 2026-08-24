@@ -1,50 +1,62 @@
-# history
+# History
 
-Your personal **history** storyboarded with photo and video albums. Associate photos with their meta data including geocode, caption... in XML albums.
-* Enhanced privacy as photos are stored locally not in the cloud
-* Plot thumbnails on a map
-* Includes administration tools for XML generation
+History is a local-first photo and video gallery for turning filesystem media into browsable
+albums, maps, and stories. Album metadata is kept in XML, while the original media remains under
+the owner's control instead of being uploaded to a hosted media library.
 
-## Project Status:
+## Project status
+
 | Service | Status |
-|---|---|
+| --- | --- |
 | Deployed | [TEST](https://history.domaindesign.ca/) |
-| Security | [![Known Vulnerabilities](https://snyk.io/test/github/danactive/history/badge.svg)](https://app.snyk.io/org/danactive/project/ca45a886-fc61-402f-9cd1-69bf22b35f24) |
-| Test Coverage | [![Coverage Status](https://coveralls.io/repos/github/danactive/history/badge.svg?branch=master)](https://coveralls.io/github/danactive/history?branch=master) |
-| License | [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](http://opensource.org/licenses/MIT) |
 
-## Installation
+## What it provides
 
-### Development
-1. Node.js via [nvm](https://github.com/nvm-sh/nvm)
-1. Install project dependencies `npm ci`
+- Gallery and album views for local photos and videos.
+- Map-based browsing using the location stored with each photo.
+- Storytelling tools built on the same album metadata.
+- A dark administration workflow for generating XML, editing descriptions, preparing resized
+  media, and composing thumbnail crops.
+- Optional offline photo analysis for aesthetic insights, organism identification, and
+  architectural-style suggestions. Suggestions are always reviewed before they affect metadata.
+- Model Context Protocol (MCP) access to the storytelling and media tools.
 
-#### How-to run on LOCAL
-1. `npm run dev` will standup both the frontend and backend
-1. View address in browser (printed in terminal on successful load)
-1. Start the image classifier in /apps/api for the Admin > Edit Album page
+## Development
 
-#### MCP server
-- `npm run dev` also exposes the same server over streaming HTTP at `http://localhost:3030/mcp`; clients that require HTTPS must use a deployed HTTPS `/mcp` endpoint instead, or use stdio locally `npm run mcp`
-- Set `HISTORY_APP_ORIGIN` to the deployed app origin (for example, `https://history.example.com`) so MCP media links and the interactive media viewer CSP use the public host.
-- `mcp.json` is intentionally stdio-only for local clients so the toolset does not drift between a live Next dev server and a separate stdio process
-- If you want to test the streaming HTTP transport, connect directly to `http://localhost:3030/mcp` instead of adding a second local server entry alongside stdio
+The repository expects Node.js from `.nvmrc` and the npm version declared in `package.json`.
 
-- For VS Code workspace configuration, use /vscode-mcp.json and `Install Server from Manifest`
+```sh
+nvm use
+npm ci
+npm run dev
+```
 
-#### How-to build for PROD
-1. `npm run build` Bundle JavaScript files, and pre-compile
-1. `npm start` Run built app
-1. View address in browser (printed in terminal on successful load)
+Open [http://localhost:3030](http://localhost:3030). `npm run dev` starts the Next.js application
+only; the Python photo-analysis service is optional and has its own lifecycle.
 
-## Changelog of releases
-See [CHANGELOG](CHANGELOG.md)
+Common checks are available through `npm run lint:ci`, `npm run test:ci`, `npm run typecheck`, and
+`npm run build`. The production server is built with `npm run build` and started with `npm start`.
 
-## Contributing to this open-source project
-See [CONTRIBUTING](api/CONTRIBUTING.md)
+For a fresh classifier setup—including exact model assets, downloads, Docker startup, health
+checks, regression fixtures, and recovery—use the
+[photo-classifier agent skill](.agents/skills/photo-classifier/SKILL.md). It is the canonical
+runbook rather than duplicating fragile model instructions across README files.
 
-## Copyright
-See [LICENSE](LICENSE)
+## MCP access
 
-## Visualization
-![Visualization of the codebase](./diagram.svg)
+The running Next.js application exposes streaming HTTP MCP at `http://localhost:3030/mcp`. Local
+clients can instead start the stdio transport with `npm run mcp`; `mcp.json` intentionally uses
+stdio so a client does not connect to two local servers with drifting toolsets.
+
+For a deployed instance, set `HISTORY_APP_ORIGIN` to its public origin so generated media links and
+the interactive viewer's content-security policy use the correct host. Clients that require HTTPS
+must use a deployed HTTPS `/mcp` endpoint.
+
+## Configuration and documentation
+
+Media sizes, supported formats, gallery defaults, and service ports live in `config.json`. The
+current thumbnail target is 185 × 45 pixels; generated derivatives should follow this shared
+configuration rather than introducing component-specific dimensions.
+
+See the [changelog](CHANGELOG.md), [MIT license](LICENSE), and
+[codebase diagram](diagram.svg).

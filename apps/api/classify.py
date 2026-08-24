@@ -1,75 +1,64 @@
-from fastapi import Request
-import torch
-import timm
-import torchvision.transforms as T
-from PIL import Image
-import json
 import io
-import logging
+from urllib.parse import unquote
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("uvicorn")
-logger.setLevel(logging.DEBUG)
+from fastapi import HTTPException, Request
+from PIL import Image, UnidentifiedImageError
+from starlette.concurrency import run_in_threadpool
 
-# Load class labels
-with open("inat21_class_index.json", "r") as f:
-  idx_to_label = json.load(f)
+from classifier_engine import BioClipClassifier
 
-# Offline model setup
-model_name = "eva02_large_patch14_clip_336"  # base architecture name
-checkpoint_path = "models/timm_eva02_large_patch14_clip_336.merged2b_ft_inat21/pytorch_model.bin"
 
-# Load model without pretraining, then load offline weights
-model = timm.create_model(model_name, pretrained=False, num_classes=len(idx_to_label))
-try:
-    checkpoint = torch.load(checkpoint_path, map_location="cpu")
-    model.load_state_dict(checkpoint)
-    model.eval()
-except Exception as e:
-    logger.debug("Error loading model:", e)
+Image.MAX_IMAGE_PIXELS = 100_000_000
+MAX_UPLOAD_BYTES = 75 * 1024 * 1024
 
-# Image transform
-raw_size = 384
-input_size = 336
+engine = BioClipClassifier()
 
-transform = T.Compose([
-  T.Resize(raw_size),
-  T.CenterCrop(input_size),
-  T.ToTensor(),
-  T.Normalize(
-    mean=[0.48145466, 0.4578275, 0.40821073],
-    std=[0.26862954, 0.26130258, 0.27577711]
-  )
-])
 
-# To show transformed image for debug
-debug_transform = T.Compose([
-  T.Resize(raw_size),
-  T.CenterCrop(input_size),
-])
+def classification_metadata(request: Request) -> dict[str, str | None]:
+    encoded = request.headers.get("x-photo-metadata-encoding") == "percent"
 
-async def classify_image(req: Request):
-  img_bytes = await req.body()
-  img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    def header(name: str) -> str | None:
+        value = request.headers.get(name)
+        return unquote(value) if encoded and value is not None else value
 
-  # Image preparation
-  input_tensor = transform(img).unsqueeze(0)
-
-  with torch.no_grad():
-    logits = model(input_tensor)
-    probs = torch.nn.functional.softmax(logits, dim=1)
-    topk = torch.topk(probs, k=3)
-
-  results = [
-    {
-      "label": idx_to_label.get(str(idx.item()), f"Unknown ({idx.item()})"),
-      "score": float(score)
+    return {
+        "photoDate": header("x-photo-date"),
+        "latitude": header("x-photo-latitude"),
+        "longitude": header("x-photo-longitude"),
+        "city": header("x-photo-city"),
+        "location": header("x-photo-location"),
     }
-    for idx, score in zip(topk.indices[0], topk.values[0])
-  ]
 
-  # 💡 Normalize results to always be a list
-  if not isinstance(results, list):
-    results = [results]
 
-  return {"predictions": results}
+async def initialize_classifier() -> None:
+    await run_in_threadpool(engine.initialize)
+
+
+async def classification_request(
+    request: Request,
+) -> tuple[Image.Image, dict[str, str | None]]:
+    image_bytes = await request.body()
+    if not image_bytes:
+        raise HTTPException(status_code=400, detail="Image body is empty")
+    if len(image_bytes) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image exceeds the 75 MB limit")
+
+    try:
+        image = Image.open(io.BytesIO(image_bytes))
+        image.load()
+    except (UnidentifiedImageError, OSError, Image.DecompressionBombError) as error:
+        raise HTTPException(status_code=400, detail="Unsupported or invalid image") from error
+
+    return image, classification_metadata(request)
+
+
+async def classify_loaded_image(
+    image: Image.Image,
+    metadata: dict[str, str | None],
+):
+    return await run_in_threadpool(engine.classify, image, metadata)
+
+
+async def classify_image(request: Request):
+    image, metadata = await classification_request(request)
+    return await classify_loaded_image(image, metadata)

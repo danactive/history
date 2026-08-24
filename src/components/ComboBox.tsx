@@ -8,6 +8,17 @@ import { IndexedKeywords } from '../types/common'
 
 const filter = createFilterOptions<IndexedKeywords>()
 
+export type ComboBoxValue = IndexedKeywords | ''
+
+type ComboBoxProps = {
+  className: string,
+  options: IndexedKeywords[],
+  onChange: (option: IndexedKeywords) => void,
+  value: ComboBoxValue,
+  inputValue: string,
+  onInputChange: (value: string, reason?: string) => void,
+}
+
 export default function ComboBox(
   {
     className,
@@ -16,24 +27,16 @@ export default function ComboBox(
     value: valueText,
     inputValue,
     onInputChange,
-  }:
-  {
-    className: string,
-    options: IndexedKeywords[],
-    onChange: (option: IndexedKeywords) => void,
-    value: IndexedKeywords | null,
-    inputValue?: string,
-    onInputChange?: (value: string, reason?: string) => void,
-  },
+  }: ComboBoxProps,
 ) {
   return (
     <FormControl id="free-solo-with-text-demo" sx={{ width: '100%' }}>
       <Autocomplete
         className={className}
-        value={(valueText ?? null) as IndexedKeywords | undefined}
-        inputValue={inputValue ?? ''}
+        value={valueText}
+        inputValue={inputValue}
         onInputChange={(_event, newInputValue, reason) => {
-          onInputChange?.(newInputValue, reason)
+          onInputChange(newInputValue, reason)
         }}
         disableClearable
         onChange={(_event: any, newValue: any): void => {
