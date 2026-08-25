@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [12.7.0](https://github.com/danactive/history/compare/v12.6.0...v12.7.0) (2026-08-25)
+
+
+### Features
+
+* **Admin > Walk:** Add thumb nail resizer step ([cde1a2c](https://github.com/danactive/history/commit/cde1a2c4c8fc7dd2874ac1760f94c72d5f65708e))
+* **Calendar:** Add new page for every date of the year ([b4f193e](https://github.com/danactive/history/commit/b4f193e7bc4a69333df94edbfe0082ea92b253b0))
+* **Docs:** Update docs based on classifier changes ([2394b99](https://github.com/danactive/history/commit/2394b999aee75ee57b52c22f512b03fdcd8e64fa))
+* **Photo Classifier:** BioCLIP2 classifier redesign ([d05e336](https://github.com/danactive/history/commit/d05e3368ad72b7c1b9c983f75cd2fa22055ebe5b))
+* **Photo Classifier:** SigLIP 2-backed zero-shot architectural-style classifier ([cd16ea4](https://github.com/danactive/history/commit/cd16ea4fefd1025d72a072c914d784daaaf89e68))
+* **Photo Scorer:** Update with technical quality, composition, visual aesthetics ([18ecfd7](https://github.com/danactive/history/commit/18ecfd7dcb7b081e00b656b5d7b9e6796dfe9f7d))
+* **Theme:** Apply the Map Cluster theme to apply across links, btns... ([dc2ff45](https://github.com/danactive/history/commit/dc2ff4564c963f0fd60593789ea2592b21cdb8a3))
+* **View > Album:** Slideshow carousel wider ([8b27677](https://github.com/danactive/history/commit/8b27677a3a3d18f1812877cda0bd7563289eceb4))
+
+
+### Bug Fixes
+
+* **Person:** Anchor menus so they do not update based on selection ([34cf8b1](https://github.com/danactive/history/commit/34cf8b11b5f14f309b307adc29e5fea653b2dee5))
+* **Persons:** Dark mode hover on menus; Loop carousel ([cc2bfbc](https://github.com/danactive/history/commit/cc2bfbcd30a90766192d085bce894e54271b9464))
+* **View > All:** Thumbs use unique id for displaying photos on carousel ([a7b10a7](https://github.com/danactive/history/commit/a7b10a7797c4bd7aa43ca59b3d401acef558f874))
+
 ## [12.6.0](https://github.com/danactive/history/compare/v12.5.0...v12.6.0) (2026-08-11)
 
 
