@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 
-import { auditCriticalTags, getMedian, parseSearchTags } from '../critical-tags'
+import { auditCriticalTags, getMedian, parseCriticalTagsConfig, parseSearchTags } from '../critical-tags'
 import type { GalleryAlbum } from '../../types/common'
 
 function makeAlbum(name: string, h1: string): GalleryAlbum {
@@ -16,6 +16,11 @@ function makeAlbum(name: string, h1: string): GalleryAlbum {
 }
 
 describe('critical tag audit', () => {
+  test('accepts only a valid critical-tag configuration', () => {
+    expect(parseCriticalTagsConfig({ 'critical-tags': [' best^ ', 'hightlight^', 'best^'] })).toEqual(['best^', 'hightlight^'])
+    expect(parseCriticalTagsConfig({ 'critical-tags': ['best^', 1] })).toEqual([])
+  })
+
   test('counts unique tagged media and albums below the median', () => {
     const audit = auditCriticalTags([
       {

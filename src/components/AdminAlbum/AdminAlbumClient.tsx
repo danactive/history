@@ -5,7 +5,7 @@ import Input from '@mui/joy/Input'
 import Option from '@mui/joy/Option'
 import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 
 import type { SearchResult } from '../../../app/api/admin/search/route'
@@ -16,6 +16,7 @@ import type { GalleryAlbum, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import Fields from './Fields'
 import Photo from './Photo'
 import Thumbs from './Thumbs'
+import { thumbTrackWidth } from '../ThumbImg'
 import { useEditCountPill } from './useEditCountPill'
 
 export type XmlItemState = RawXmlItem | null
@@ -40,6 +41,7 @@ export default function AdminAlbumClient(
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set())
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [isSearching, setIsSearching] = useState(false)
+  const thumbsContainerRef = useRef<HTMLDivElement>(null)
   const {
     EditCountPill,
     handleItemUpdate: handleItemUpdateOriginal,
@@ -130,24 +132,36 @@ export default function AdminAlbumClient(
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey) {
+        return
+      }
+
       // Don't trigger if user is typing in an input/textarea
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return
       }
 
+      if (currentIndex < 0 || items.length === 0) {
+        return
+      }
+
+      const columns = Math.max(
+        1,
+        Math.floor((thumbsContainerRef.current?.clientWidth ?? thumbTrackWidth) / thumbTrackWidth),
+      )
       let delta = 0
 
       if (e.key === 'ArrowLeft') {
         delta = -1
       } else if (e.key === 'ArrowUp') {
-        delta = -4
+        delta = -columns
       } else if (e.key === 'ArrowRight') {
         delta = 1
       } else if (e.key === 'ArrowDown') {
-        delta = 4
+        delta = columns
       }
 
-      if (delta !== 0 && items.length > 0) {
+      if (delta !== 0) {
         e.preventDefault()
         const newIndex = Math.max(0, Math.min(items.length - 1, currentIndex + delta))
         if (newIndex !== currentIndex) {
@@ -339,7 +353,7 @@ export default function AdminAlbumClient(
       {error && <div>{JSON.stringify(error)}</div>}
       {!error && data ? (
         <Stack direction="row" spacing={2} sx={{ alignItems: 'flex-start' }}>
-          <Stack sx={{ flex: 1, minWidth: 0 }}>
+          <Stack ref={thumbsContainerRef} sx={{ flex: 1, minWidth: 0 }}>
             <Thumbs
               xmlAlbum={data}
               gallery={currentGallery}

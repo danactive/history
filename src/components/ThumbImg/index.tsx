@@ -36,7 +36,7 @@ type ThumbImgListProps<T> = {
   virtualize?: boolean;
 }
 
-const THUMB_TRACK_WIDTH = 207
+export const thumbTrackWidth = 207
 // The optional album action grows a tile to 128px; including its 6px top and
 // bottom margins keeps rows from overlapping on the all-items page.
 const THUMB_ROW_HEIGHT = 140
@@ -152,7 +152,7 @@ function VirtualThumbImgList<T>({ items, className, getKey, getThumbProps }: Thu
     if (!list) return
 
     const rect = list.getBoundingClientRect()
-    const nextColumns = Math.max(1, Math.floor(rect.width / THUMB_TRACK_WIDTH))
+    const nextColumns = Math.max(1, Math.floor(rect.width / thumbTrackWidth))
     const listTop = rect.top + window.scrollY
     const startRow = Math.max(0, Math.floor((window.scrollY - listTop) / THUMB_ROW_HEIGHT) - THUMB_OVERSCAN_ROWS)
     const visibleRows = Math.ceil(window.innerHeight / THUMB_ROW_HEIGHT) + (THUMB_OVERSCAN_ROWS * 2)
@@ -215,7 +215,7 @@ function VirtualThumbImgList<T>({ items, className, getKey, getThumbProps }: Thu
             style={{
               position: 'absolute',
               top: row * THUMB_ROW_HEIGHT,
-              left: column * THUMB_TRACK_WIDTH,
+              left: column * thumbTrackWidth,
             }}
           />
         )

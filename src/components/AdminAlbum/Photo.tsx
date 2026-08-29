@@ -2,7 +2,6 @@ import Button from '@mui/joy/Button'
 import IconButton from '@mui/joy/IconButton'
 import Stack from '@mui/joy/Stack'
 import Typography from '@mui/joy/Typography'
-import NextLink from 'next/link'
 import useSWRMutation from 'swr/mutation'
 
 import { originalPath, photoPath } from '../../lib/paths'
@@ -81,7 +80,7 @@ export default function AdminAlbumPhoto(
             height={dimensions.height - 20}
           />
           <IconButton
-            component={NextLink}
+            component="a"
             href={originalSrc}
             target="_blank"
             rel="noopener noreferrer"

@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+import * as z from 'zod/v4'
 
 import type { Gallery, GalleryAlbum, Item } from '../types/common'
 
@@ -25,17 +26,17 @@ function normalizeTag(tag: string) {
   return tag.trim().toLowerCase()
 }
 
-function getCriticalTagsFromConfig(config: unknown): string[] {
-  if (typeof config !== 'object' || config === null || !('critical-tags' in config)) {
+const criticalTagsConfigSchema = z.object({
+  'critical-tags': z.array(z.string()).optional(),
+})
+
+export function parseCriticalTagsConfig(config: unknown): string[] {
+  const parsed = criticalTagsConfigSchema.safeParse(config)
+  if (!parsed.success) {
     return []
   }
 
-  const criticalTags = config['critical-tags']
-  if (!Array.isArray(criticalTags)) {
-    return []
-  }
-
-  return [...new Set(criticalTags.filter((tag): tag is string => typeof tag === 'string').map(tag => tag.trim()).filter(Boolean))]
+  return [...new Set((parsed.data['critical-tags'] ?? []).map(tag => tag.trim()).filter(Boolean))]
 }
 
 function isErrorWithCode(error: unknown): error is { code: string } {
@@ -116,7 +117,7 @@ export async function getConfiguredCriticalTags(): Promise<string[]> {
   try {
     const content = await fs.readFile('config.local.json', 'utf8')
     const config: unknown = JSON.parse(content)
-    return getCriticalTagsFromConfig(config)
+    return parseCriticalTagsConfig(config)
   } catch (error) {
     if (isErrorWithCode(error) && error.code === 'ENOENT') {
       return []
