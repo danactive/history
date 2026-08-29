@@ -1,6 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, test } from 'vitest'
+import packageJson from '../../package.json' with { type: 'json' }
 
 import { POST } from '../../app/mcp/route'
 
@@ -94,7 +95,7 @@ describe('MCP HTTP endpoint', () => {
         result: expect.objectContaining({
           serverInfo: {
             name: 'history',
-            version: '12.6.0',
+            version: packageJson.version,
           },
         }),
       }),

@@ -4,6 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, test } from 'vitest'
 import * as z from 'zod/v4'
+import packageJson from '../package.json' with { type: 'json' }
 
 type JsonRpcSuccess = {
   jsonrpc: '2.0'
@@ -297,7 +298,7 @@ describe('storytelling MCP server integration', () => {
 
     expect(result.serverInfo).toEqual({
       name: 'history',
-      version: '12.6.0',
+      version: packageJson.version,
     })
     expect(result.protocolVersion).toBeTruthy()
     expect(result.capabilities).toEqual(expect.objectContaining({
