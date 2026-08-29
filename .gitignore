@@ -42,3 +42,6 @@ api.log
 
 # Images
 public/resized
+
+# Personal settings
+config.local.json

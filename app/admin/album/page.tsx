@@ -9,27 +9,46 @@ const AdminAlbumClient = dynamic(
 )
 import getAlbums from '../../../src/lib/albums'
 import config from '../../../src/models/config'
+import type { Gallery, GalleryAlbum } from '../../../src/types/common'
 import { generatedGalleries } from '../../../src/types/generated'
 
 export const metadata: Metadata = {
   title: 'Admin > Album - History App',
 }
 
-export default function AdminAlbumServer() {
+type AdminAlbumPageProps = {
+  searchParams: Promise<{
+    album?: GalleryAlbum['name'];
+    gallery?: Gallery;
+  }>;
+}
+
+export default function AdminAlbumServer({ searchParams }: AdminAlbumPageProps) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <AdminAlbumContent />
+      <AdminAlbumContent searchParams={searchParams} />
     </Suspense>
   )
 }
 
-async function AdminAlbumContent() {
+async function AdminAlbumContent({ searchParams }: AdminAlbumPageProps) {
   await connection()
   const galleryAlbum = await getAlbums()
   const galleries = generatedGalleries.filter(gallery => Object.hasOwn(galleryAlbum, gallery))
-  const selectedGallery = galleries.find(gallery => config.defaultGallery !== gallery) ?? config.defaultGallery
+  const requested = await searchParams
+  const requestedGallery = requested.gallery
+  const selectedGallery = galleries.find(gallery => gallery === requestedGallery)
+    ?? galleries.find(gallery => config.defaultGallery !== gallery)
+    ?? config.defaultGallery
+  const requestedAlbum = requested.album
+  const initialAlbum = galleryAlbum[selectedGallery]?.albums.find(album => album.name === requestedAlbum)?.name
 
   return (
-    <AdminAlbumClient galleries={galleries} gallery={selectedGallery} galleryAlbum={galleryAlbum} />
+    <AdminAlbumClient
+      galleries={galleries}
+      gallery={selectedGallery}
+      galleryAlbum={galleryAlbum}
+      initialAlbum={initialAlbum}
+    />
   )
 }

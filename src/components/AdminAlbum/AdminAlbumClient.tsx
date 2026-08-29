@@ -20,14 +20,22 @@ import { useEditCountPill } from './useEditCountPill'
 
 export type XmlItemState = RawXmlItem | null
 
+type AdminAlbumClientProps = {
+  galleries: Gallery[];
+  galleryAlbum: GalleryAlbumsBody;
+  gallery: Gallery;
+  initialAlbum?: GalleryAlbum['name'];
+}
+
 const fetcher = (url: string) => fetch(url).then(r => r.json())
 
 export default function AdminAlbumClient(
-  { galleries, galleryAlbum, gallery }:
-  { galleries: Gallery[], galleryAlbum: GalleryAlbumsBody, gallery: Gallery },
+  { galleries, galleryAlbum, gallery, initialAlbum }: AdminAlbumClientProps,
 ) {
   const [currentGallery, setCurrentGallery] = useState<Gallery>(gallery)
-  const [album, setAlbum] = useState<GalleryAlbum | null>(null)
+  const [album, setAlbum] = useState<GalleryAlbum | null>(() => (
+    galleryAlbum[gallery]?.albums.find(candidate => candidate.name === initialAlbum) ?? null
+  ))
   const [item, setItem] = useState<XmlItemState>(null)
   const [currentIndex, setCurrentIndex] = useState<number>(-1)
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set())
