@@ -32,10 +32,9 @@ const fetcher = (url: string) => fetch(url).then(r => r.json())
 export default function AdminAlbumClient(
   { galleries, galleryAlbum, gallery, initialAlbum }: AdminAlbumClientProps,
 ) {
+  const selectedInitialAlbum = galleryAlbum[gallery]?.albums.find(candidate => candidate.name === initialAlbum) ?? null
   const [currentGallery, setCurrentGallery] = useState<Gallery>(gallery)
-  const [album, setAlbum] = useState<GalleryAlbum | null>(() => (
-    galleryAlbum[gallery]?.albums.find(candidate => candidate.name === initialAlbum) ?? null
-  ))
+  const [album, setAlbum] = useState<GalleryAlbum | null>(selectedInitialAlbum)
   const [item, setItem] = useState<XmlItemState>(null)
   const [currentIndex, setCurrentIndex] = useState<number>(-1)
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set())
@@ -50,6 +49,14 @@ export default function AdminAlbumClient(
     applyEditsToItems,
   } = useEditCountPill()
   const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
+
+  useEffect(() => {
+    setCurrentGallery(gallery)
+    setAlbum(selectedInitialAlbum)
+    setItem(null)
+    setCurrentIndex(-1)
+    setSelectedIndices(new Set())
+  }, [gallery, selectedInitialAlbum])
 
   const items = data?.album?.item
     ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item])

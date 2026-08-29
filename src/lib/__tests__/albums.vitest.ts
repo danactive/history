@@ -1,9 +1,18 @@
 import { describe, expect, test } from 'vitest'
 import config from '../../models/config'
 import type { AlbumsBody, Gallery } from '../../types/common'
-import { readGallery, transformJsonSchema } from '../albums'
+import { getAvailableGalleries } from '../../types/generated'
+import { readGallery, transformJsonSchema, type GalleryAlbumsBody } from '../albums'
 
 describe('Albums library', () => {
+  test('lists only generated galleries returned by the album loader', () => {
+    const galleryAlbums: Partial<GalleryAlbumsBody> = {
+      demo: { albums: [] },
+    }
+
+    expect(getAvailableGalleries(galleryAlbums)).toEqual(['demo'])
+  })
+
   describe('readGallery', () => {
     const unit = async (gallery: Gallery) => transformJsonSchema(await readGallery(gallery), gallery)
 

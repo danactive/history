@@ -19,6 +19,9 @@ import * as z from 'zod/v4'
 export const generatedGalleries = [${galleryValues}] as const
 export const generatedGallerySchema = z.enum(generatedGalleries)
 export type GeneratedGallery = ${galleryUnion}
+export function getAvailableGalleries<T>(galleries: Partial<Record<GeneratedGallery, T>>): GeneratedGallery[] {
+  return generatedGalleries.filter(gallery => Object.hasOwn(galleries, gallery))
+}
 `
 }
 

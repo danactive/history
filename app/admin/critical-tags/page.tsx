@@ -10,7 +10,7 @@ import {
   getConfiguredCriticalTags,
   type CriticalTagAlbum,
 } from '../../../src/lib/critical-tags'
-import type { Gallery } from '../../../src/types/common'
+import { getAvailableGalleries } from '../../../src/types/generated'
 import styles from './styles.module.css'
 
 export const metadata: Metadata = {
@@ -45,14 +45,14 @@ async function CriticalTagsContent() {
     getConfiguredCriticalTags(),
   ])
   const loadedAlbums = await Promise.all(
-    (Object.keys(galleryAlbums) as Gallery[]).flatMap(gallery => galleryAlbums[gallery].albums.map(async (album) => {
-      const { album: loadedAlbum } = await getAlbum(gallery, album.name)
-      return {
-        gallery,
-        album,
-        items: loadedAlbum.items,
-      }
-    })),
+    getAvailableGalleries(galleryAlbums).flatMap(gallery => galleryAlbums[gallery].albums.map(async (album) => {
+        const { album: loadedAlbum } = await getAlbum(gallery, album.name)
+        return {
+          gallery,
+          album,
+          items: loadedAlbum.items,
+        }
+      })),
   )
   const audit = auditCriticalTags(loadedAlbums, criticalTags)
 

@@ -4,7 +4,7 @@ import getAlbums from '../../../../src/lib/albums'
 import { getPrimaryFilename } from '../../../../src/utils'
 import { rawParseOptions, readAlbum } from '../../../../src/lib/xml'
 import type { AlbumMeta, Gallery, Item, RawXmlAlbum, RawXmlItem } from '../../../../src/types/common'
-import { generatedGalleries } from '../../../../src/types/generated'
+import { getAvailableGalleries } from '../../../../src/types/generated'
 
 export type SearchResult = {
   gallery: Gallery;
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Get all galleries and albums
     const galleryAlbum = await getAlbums()
     const results: SearchResult[] = []
-    const galleries = generatedGalleries.filter(gallery => Object.hasOwn(galleryAlbum, gallery))
+    const galleries = getAvailableGalleries(galleryAlbum)
 
     // Search through all galleries and albums
     for (const gallery of galleries) {

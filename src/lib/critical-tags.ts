@@ -21,12 +21,28 @@ export type CriticalTagAudit = {
   albumsBelowMedian: CriticalTagAlbum[];
 }
 
-type LocalConfig = {
-  'critical-tags'?: unknown;
-}
-
 function normalizeTag(tag: string) {
   return tag.trim().toLowerCase()
+}
+
+function getCriticalTagsFromConfig(config: unknown): string[] {
+  if (typeof config !== 'object' || config === null || !('critical-tags' in config)) {
+    return []
+  }
+
+  const criticalTags = config['critical-tags']
+  if (!Array.isArray(criticalTags)) {
+    return []
+  }
+
+  return [...new Set(criticalTags.filter((tag): tag is string => typeof tag === 'string').map(tag => tag.trim()).filter(Boolean))]
+}
+
+function isErrorWithCode(error: unknown): error is { code: string } {
+  return typeof error === 'object'
+    && error !== null
+    && 'code' in error
+    && typeof error.code === 'string'
 }
 
 export function parseSearchTags(search: Item['search']): string[] {
@@ -99,13 +115,10 @@ export function auditCriticalTags(
 export async function getConfiguredCriticalTags(): Promise<string[]> {
   try {
     const content = await fs.readFile('config.local.json', 'utf8')
-    const config = JSON.parse(content) as LocalConfig
-
-    return Array.isArray(config['critical-tags'])
-      ? [...new Set(config['critical-tags'].filter((tag): tag is string => typeof tag === 'string').map(tag => tag.trim()).filter(Boolean))]
-      : []
+    const config: unknown = JSON.parse(content)
+    return getCriticalTagsFromConfig(config)
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+    if (isErrorWithCode(error) && error.code === 'ENOENT') {
       return []
     }
     throw error
