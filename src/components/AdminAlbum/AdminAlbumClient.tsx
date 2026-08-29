@@ -268,6 +268,7 @@ export default function AdminAlbumClient(
         if (selectedAlbum) {
           setAlbum(selectedAlbum)
           setCurrentIndex(firstResult.index)
+          setSelectedIndices(new Set([firstResult.index]))
         }
       } else {
         alert('No matching files found')
