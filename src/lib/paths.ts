@@ -1,5 +1,8 @@
 import type { Gallery, Item, XmlItem } from '../types/common'
 
+export type RasterAssetKind = 'original' | 'photo' | 'thumb'
+export const rasterAssetKinds: readonly RasterAssetKind[] = ['original', 'photo', 'thumb']
+
 const filenameAsJpg = (filename: Item['filename'][0]) => {
   const lastDot = filename.lastIndexOf('.')
   if (lastDot === -1) return `${filename}.jpg`
@@ -21,7 +24,7 @@ function getMediaDirectory(filename: string) {
  * @param {string} rasterType photo|thumb
  * @returns {string} path
  */
-export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: 'original' | 'photo' | 'thumb') => {
+export const rasterPath = (filename: XmlItem['filename'], gallery: Gallery, rasterType: RasterAssetKind) => {
   const imageFilename = filenameAsJpg(Array.isArray(filename) ? filename[0] : filename)
   const year = getMediaDirectory(imageFilename)
 

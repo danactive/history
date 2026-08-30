@@ -1,0 +1,88 @@
+.page {
+  max-width: none;
+  margin: 0;
+  padding: 24px 0 48px;
+}
+
+.stripList {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 0 0 16px;
+  scroll-snap-type: x proximity;
+}
+
+.stripTrack {
+  position: relative;
+  min-height: calc(288dvh + 240px);
+}
+
+.strip {
+  position: absolute;
+  top: 0;
+  box-sizing: border-box;
+  border-left: 1px solid #545454;
+  padding-left: 12px;
+  scroll-margin-inline-start: 16px;
+  scroll-snap-align: start;
+  outline: none;
+}
+
+.strip:focus-visible,
+.active {
+  border-color: var(--map-marker-active, #8fb8ff);
+  border-left-width: 3px;
+  padding-left: 10px;
+}
+
+.filename {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  overflow-wrap: anywhere;
+}
+
+.filename span {
+  color: #aaa;
+  font-size: 0.8em;
+  font-weight: normal;
+}
+
+.assetStack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.asset {
+  margin: 0;
+}
+
+.asset figcaption {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: #d0d0d0;
+}
+
+.asset figcaption span {
+  color: #aaa;
+}
+
+.media {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 72dvh;
+  background: #202020;
+  object-fit: contain;
+}
+
+.unavailable {
+  display: grid;
+  min-height: 72px;
+  place-items: center;
+  border: 1px dashed #666;
+  color: #aaa;
+}

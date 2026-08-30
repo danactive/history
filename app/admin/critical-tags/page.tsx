@@ -89,7 +89,8 @@ async function CriticalTagsContent() {
       <section aria-labelledby="all-albums-heading">
         <h2 id="all-albums-heading">All albums</h2>
         <p>
-          A media item counts once when it has one or more configured critical tags. “Below median” compares covered albums only; missing albums are listed separately above.
+          A media item counts once when it has one or more configured critical tags. “Below median” compares
+          covered albums only; missing albums are listed separately above.
         </p>
         <div className={styles.tableScroller}>
           <table>
