@@ -1,0 +1,39 @@
+schema: spec-driven
+
+context: |
+  History is a local-first photo and video gallery. Original media remains on the
+  owner's filesystem; album metadata is XML. It provides gallery, album, map,
+  search, people, and storytelling views plus a dark administration workflow.
+
+  The main application is TypeScript with Next.js 16 and React 19. An optional
+  local FastAPI service provides offline photo classification, and the app also
+  exposes MCP storytelling and media tools. Project-specific constraints in
+  AGENTS.md and any relevant skill instructions are authoritative.
+
+  Preserve local-first behavior and backward compatibility for XML metadata,
+  media paths, and shared URL/query contracts. Photo-classifier suggestions are
+  review-only and must never mutate album XML automatically. Do not treat
+  generated media as a replacement for original files.
+
+  Validate changes proportionately with the existing scripts: npm run lint:ci,
+  npm run test:ci, npm run typecheck, and npm run build. For Next.js work, read
+  the installed version-specific documentation required by AGENTS.md before
+  making implementation decisions.
+
+rules:
+  proposal:
+    - State impacts on XML metadata, filesystem media, MCP, and the optional classifier when relevant.
+    - Include explicit non-goals for cross-cutting changes.
+  specs:
+    - Express observable behavior as concrete scenarios and preserve existing compatible behavior unless the change says otherwise.
+  tasks:
+    - Include focused automated coverage and the relevant verification commands.
+
+operations:
+  apply:
+    guidance:
+      - Keep original media intact; write or regenerate derivatives only when the approved change requires it.
+      - Preserve the review boundary for classifier suggestions.
+  archive:
+    guidance:
+      - Record the verification results and any intentionally deferred follow-up work.
