@@ -58,7 +58,7 @@ export type AllItemsPageData = ServerPageDataBase<ServerSideAllItem> & {
 } & PersonFilterScopeData
 
 export type PhotoPageData<TItem> = ServerPageDataBase<TItem> & {
-  album?: NonNullable<AlbumMeta['albumName']>;
+  album?: AlbumName;
   monthDay?: string;
   meta?: object;
 }

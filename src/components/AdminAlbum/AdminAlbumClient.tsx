@@ -379,6 +379,8 @@ export default function AdminAlbumClient(
               }}
             >
               <Fields
+                gallery={currentGallery}
+                album={album?.name ?? ''}
                 xmlAlbum={data}
                 item={getItemWithEdits(item)}
                 onItemUpdate={handleItemUpdateWrapper}

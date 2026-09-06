@@ -1,6 +1,13 @@
-import { describe, expect, test } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import React from 'react'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 
-import { parseDMS, parseLatInput } from '../Fields'
+vi.mock('swr', () => ({
+  default: () => ({ data: { keywords: [] } }),
+}))
+
+import Fields, { parseDMS, parseLatInput } from '../Fields'
+import type { RawXmlAlbum, RawXmlItem } from '../../../types/common'
 
 const toDecimal = (degrees: number, minutes: number, seconds: number) => (
   degrees + (minutes / 60) + (seconds / 3600)
@@ -62,5 +69,91 @@ describe('parseLatInput', () => {
       lon: (-(111 + (29 / 60) + (6 / 3600))).toString(),
       accuracy: '',
     })
+  })
+})
+
+const item: RawXmlItem = {
+  $: { id: '1' },
+  filename: '2024-07-12-lake.jpg',
+  photo_date: '2024-07-12',
+  photo_city: 'Vancouver',
+  thumb_caption: 'Lake',
+}
+
+const xmlAlbum: RawXmlAlbum = {
+  album: {
+    meta: { gallery: 'demo', albumName: 'sample' },
+    item,
+  },
+}
+
+function renderFields() {
+  render(
+    React.createElement(
+      Fields,
+      {
+        gallery: 'demo',
+        album: 'sample',
+        xmlAlbum,
+        item,
+        onItemUpdate: vi.fn(),
+        onXmlGenerated: vi.fn(),
+        applyEditsToItems: (items) => items,
+        children: React.createElement('div', null, 'Preview'),
+      },
+    ),
+  )
+}
+
+describe('XML export and persistence', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  test('generates an exportable XML snapshot without saving it', () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    renderFields()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate XML' }))
+
+    const output = screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Generated XML' })
+    expect(output.value).toContain('<album>')
+    expect(output).toHaveAttribute('readonly')
+    expect(screen.getByRole('button', { name: 'Save XML' })).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  test('saves exactly the generated XML only after an explicit save action', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ saved: true }) })
+    vi.stubGlobal('fetch', fetchMock)
+    renderFields()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate XML' }))
+    const output = screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Generated XML' })
+    fireEvent.click(screen.getByRole('button', { name: 'Save XML' }))
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1))
+    expect(fetchMock).toHaveBeenCalledWith('/api/admin/xml/demo/sample', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ xml: output.value }),
+    })
+    expect(screen.getByRole('status')).toHaveTextContent('XML saved')
+  })
+
+  test('keeps the export visible when saving fails', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: 'XML must be well formed' }),
+    }))
+    renderFields()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate XML' }))
+    const output = screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Generated XML' })
+    fireEvent.click(screen.getByRole('button', { name: 'Save XML' }))
+
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('XML must be well formed'))
+    expect(output.value).toContain('<album>')
   })
 })

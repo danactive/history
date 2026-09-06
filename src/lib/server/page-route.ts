@@ -1,12 +1,12 @@
 import type { ClusteredMarkers } from '../generate-clusters'
 import { generateClusters } from '../generate-clusters'
 import getGalleries from '../galleries'
-import type { AlbumMeta, Gallery, Item } from '../../types/common'
+import type { AlbumName, Gallery, Item } from '../../types/common'
 
 export type GalleryParams = { gallery: Gallery }
 
 export type AlbumRouteParams = GalleryParams & {
-  album: NonNullable<AlbumMeta['albumName']>
+  album: AlbumName
 }
 
 export type RouteProps<TParams, TSearchParams> = {

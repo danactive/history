@@ -8,13 +8,13 @@ import Stack from '@mui/joy/Stack'
 import Textarea from '@mui/joy/Textarea'
 import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
-import xml2js from 'xml2js'
-import type { IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
+import type { AlbumName, Gallery, IndexedKeywords, ItemReferenceSource, RawXmlAlbum, RawXmlItem } from '../../types/common'
 import { getPrimaryFilename } from '../../utils'
 import { transformReference } from '../../utils/reference'
 import ComboBox from '../ComboBox'
 import { type XmlItemState } from './AdminAlbumClient'
 import type { EditCountPillHook } from './useEditCountPill'
+import { useAlbumXmlPersistence } from './useAlbumXmlPersistence'
 import { useGeoCopy } from './useGeoCopy'
 
 const fetcher = (url: string) => fetch(url).then(r => r.json())
@@ -95,8 +95,10 @@ export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXm
 }
 
 export default function Fields(
-  { xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems }:
+  { gallery, album, xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems }:
   {
+    gallery: Gallery,
+    album: AlbumName,
     xmlAlbum: RawXmlAlbum | undefined,
     item: XmlItemState,
     children: React.ReactElement,
@@ -106,10 +108,17 @@ export default function Fields(
   },
 ) {
   const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
-  const [xmlOutput, setXmlOutput] = useState<string>('')
   const [autocompleteValue, setAutocompleteValue] = useState<string>('')
   const updatePendingRef = useRef(false)
   const GeoCopyButton = useGeoCopy(editedItem)
+  const {
+    xmlOutput,
+    saveStatus,
+    saveError,
+    generateXml,
+    saveXml,
+    resetXmlOutput,
+  } = useAlbumXmlPersistence({ gallery, album, xmlAlbum, applyEditsToItems, onXmlGenerated })
 
   // Fetch all available keywords from all albums
   const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
@@ -118,9 +127,9 @@ export default function Fields(
   useEffect(() => {
     if (updatePendingRef.current) return
     setEditedItem(item)
-    setXmlOutput('')
+    resetXmlOutput()
     setAutocompleteValue('')
-  }, [item])
+  }, [item, resetXmlOutput])
 
   // Notify parent after editedItem updates (after render)
   useEffect(() => {
@@ -134,35 +143,6 @@ export default function Fields(
   const updateItem = (updater: (prev: RawXmlItem | null) => RawXmlItem | null) => {
     updatePendingRef.current = true
     setEditedItem(updater)
-  }
-
-  const generateXml = () => {
-    if (!xmlAlbum) return
-
-    // Get all items from XML
-    const items = xmlAlbum.album.item ? (Array.isArray(xmlAlbum.album.item) ? xmlAlbum.album.item : [xmlAlbum.album.item]) : []
-
-    // Apply all edits from editedItems state and maintain proper field ordering
-    const updatedItems = applyEditsToItems(items)
-
-    // Build XML album structure
-    const albumXml = {
-      meta: xmlAlbum.album.meta,
-      item: updatedItems.length === 1 ? updatedItems[0] : updatedItems,
-    }
-
-    // Convert to XML
-    const builder = new xml2js.Builder({
-      rootName: 'album',
-      renderOpts: { pretty: true, indent: '\t' },
-      xmldec: { version: '1.0', encoding: 'UTF-8' },
-    })
-
-    const xml = builder.buildObject(albumXml)
-    setXmlOutput(xml)
-
-    // Reset the counter of edits since generation
-    onXmlGenerated()
   }
 
   const rawFilename = editedItem?.filename ? getPrimaryFilename(editedItem.filename) : ''
@@ -365,18 +345,30 @@ export default function Fields(
             📋
           </IconButton>
         </Stack>
-        <Button onClick={generateXml} variant="solid" color="primary">
-          Generate XML
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button onClick={generateXml} variant="solid" color="primary">
+            Generate XML
+          </Button>
+          {xmlOutput && (
+            <Button onClick={saveXml} variant="solid" color="success" loading={saveStatus === 'saving'}>
+              Save XML
+            </Button>
+          )}
+        </Stack>
         {children}
         {xmlOutput && (
-          <Textarea
-            value={xmlOutput}
-            readOnly
-            minRows={10}
-            maxRows={20}
-            placeholder="Generated XML will appear here"
-          />
+          <>
+            <Textarea
+              aria-label="Generated XML"
+              value={xmlOutput}
+              readOnly
+              minRows={10}
+              maxRows={20}
+              placeholder="Generated XML will appear here"
+            />
+            {saveStatus === 'saved' && <div role="status">XML saved</div>}
+            {saveStatus === 'error' && <div role="alert">{saveError}</div>}
+          </>
         )}
       </Stack>
     </>

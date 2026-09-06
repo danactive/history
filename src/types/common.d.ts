@@ -13,6 +13,8 @@ type AlbumMeta = {
   clusterMaxZoom?: string,
 }
 
+type AlbumName = NonNullable<AlbumMeta['albumName']>
+
 type XmlMeta = {
   gallery?: Gallery,
   albumName?: string,
@@ -152,13 +154,13 @@ interface ServerSidePhotoItem extends Item {
 }
 
 interface ServerSideTodayItem extends Item {
-  album?: NonNullable<AlbumMeta['albumName']>;
+  album?: AlbumName;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
 }
 
 interface ServerSideAllItem extends Item {
-  album?: NonNullable<AlbumMeta['albumName']>;
+  album?: AlbumName;
   gallery: Gallery;
   corpus: string;
   coordinateAccuracy: NonNullable<AlbumMeta['geo']>['zoom'];
@@ -200,6 +202,7 @@ type RawXmlAlbum = XmlCaseAlbum<false>
 export type {
   Gallery,
   AlbumMeta,
+  AlbumName,
   XmlMeta,
   Album,
   AlbumsBody,
