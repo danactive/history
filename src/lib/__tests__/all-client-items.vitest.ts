@@ -35,11 +35,21 @@ describe('all page client item transport', () => {
     expect(compact).not.toHaveProperty('corpus')
     expect(compact).not.toHaveProperty('gallery')
     expect(compact).not.toHaveProperty('mediaPath')
-    expect(compact).not.toHaveProperty('photoPath')
-    expect(compact).not.toHaveProperty('thumbPath')
+    expect(compact).toHaveProperty('photoPath', videoItem.photoPath)
+    expect(compact).toHaveProperty('thumbPath', videoItem.thumbPath)
     expect(compact).not.toHaveProperty('title')
     expect(compact).not.toHaveProperty('videoPaths')
 
     expect(expandAllPageItem(compact, 'demo')).toEqual(videoItem)
+  })
+
+  it('preserves server-resolved private display URLs through the client boundary', () => {
+    const privateDisplayItem: ServerSideAllItem = {
+      ...videoItem,
+      thumbPath: '/media/8a2RgRY6H1QvlIlB3x9O4Q?v=thumb-version',
+      photoPath: '/media/3lzOf3VIHxZNUDAcWbQb2Q?v=photo-version',
+    }
+
+    expect(expandAllPageItem(compactAllPageItem(privateDisplayItem), 'demo')).toEqual(privateDisplayItem)
   })
 })

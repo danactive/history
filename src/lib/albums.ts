@@ -8,7 +8,7 @@ import type {
 } from '../types/common'
 import { handleLibraryError, isValidStringArray } from './errors'
 import getGalleries from './galleries'
-import utilsFactory from './utils'
+import { resolveThumbPath } from './media-resolver'
 import { readGallery } from './xml'
 
 type ErrorOptionalMessage = { albums: object[]; error?: { message: string } }
@@ -17,8 +17,6 @@ const errorSchema = (message: string): ErrorOptionalMessage => {
   if (!message) return out
   return { ...out, error: { message } }
 }
-
-const utils = utilsFactory()
 
 export type GalleryAlbumsBody = Record<Gallery, AlbumsBody>
 
@@ -42,7 +40,7 @@ function transformJsonSchema(dirty: XmlGallery = { gallery: { album: [] } }, gal
     h1: album.albumH1,
     h2: album.albumH2,
     version: album.albumVersion,
-    thumbPath: utils.thumbPath(album.filename, gallery),
+    thumbPath: resolveThumbPath(album.filename, gallery),
     year: album.year,
     search: album.search || null,
   })

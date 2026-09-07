@@ -11,6 +11,7 @@ function Img({
   height = config.resizeDimensions.thumb.height,
   title,
   ref,
+  unoptimized,
   ...NextProps
 }: ImageProps & {
   className?: string;
@@ -28,6 +29,7 @@ function Img({
     title={title}
     {...NextProps}
     ref={ref}
+    unoptimized={unoptimized ?? (typeof src === 'string' && src.startsWith('/media/'))}
   />
 }
 

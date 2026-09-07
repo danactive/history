@@ -36,6 +36,11 @@ describe('<Img />', () => {
     expect(image).toHaveClass(className)
   })
 
+  test('bypasses the Next image optimizer for authenticated media paths', () => {
+    render(<Img src="/media/opaque-media-id?v=version" alt="Authenticated image" />)
+    expect(screen.getByAltText('Authenticated image')).toHaveAttribute('src', '/media/opaque-media-id?v=version')
+  })
+
   // Next.js uses srcset
   // test('should not adopt a srcset attribute', () => {
   //   const srcset = 'test-HD.png 2x'

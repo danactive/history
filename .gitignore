@@ -45,3 +45,6 @@ public/resized
 
 # Personal settings
 config.local.json
+
+# Private media deployment state (contains opaque object inventory and usage ledger)
+.history/

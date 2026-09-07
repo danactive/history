@@ -1,13 +1,11 @@
 import { getItemYearFromFilename } from './domains/years'
-import { getVideoPaths, photoPath, thumbPath } from './paths'
+import { getVideoPaths } from './paths'
 import type { Gallery, ServerSideAllItem } from '../types/common'
 
 type DerivedAllItemField = keyof Pick<ServerSideAllItem,
   | 'corpus'
   | 'gallery'
   | 'mediaPath'
-  | 'photoPath'
-  | 'thumbPath'
   | 'title'
   | 'videoPaths'
 >
@@ -22,7 +20,7 @@ export function compactAllPageItem(item: ServerSideAllItem): CompactAllPageItem 
     gallery: _gallery,
     mediaPath,
     photoPath: itemPhotoPath,
-    thumbPath: _thumbPath,
+    thumbPath: itemThumbPath,
     title: _title,
     videoPaths: _videoPaths,
     ...compactItem
@@ -30,6 +28,8 @@ export function compactAllPageItem(item: ServerSideAllItem): CompactAllPageItem 
 
   return {
     ...compactItem,
+    photoPath: itemPhotoPath,
+    thumbPath: itemThumbPath,
     isVideo: mediaPath !== itemPhotoPath,
   }
 }
@@ -47,7 +47,7 @@ export function expandAllPageItem(
   item: CompactAllPageItem,
   gallery: Gallery,
 ): ServerSideAllItem {
-  const itemPhotoPath = photoPath(item.filename, gallery)
+  const itemPhotoPath = item.photoPath
   const itemVideoPaths = getVideoPaths(item.filename, gallery)
   const corpus = [
     item.description ?? '',
@@ -65,7 +65,7 @@ export function expandAllPageItem(
     gallery,
     mediaPath: isVideo ? itemVideoPaths[0] : itemPhotoPath,
     photoPath: itemPhotoPath,
-    thumbPath: thumbPath(item.filename, gallery),
+    thumbPath: item.thumbPath,
     title: getItemTitle(item),
     videoPaths: itemVideoPaths,
   }

@@ -1,4 +1,5 @@
-import utilsFactory from '../lib/utils'
+import { resolvePhotoPath, resolveThumbPath } from '../lib/media-resolver'
+import { getVideoPaths } from '../lib/paths'
 import type {
   Album,
   AlbumMeta,
@@ -19,8 +20,6 @@ export const errorSchema = (message: string): ErrorOptionalMessage => {
   if (!message) return out
   return { ...out, error: { message } }
 }
-
-const utils = utilsFactory()
 
 function title(item: XmlItem): string {
   const photoCity = item.photoCity ?? ''
@@ -130,9 +129,9 @@ const transformJsonSchema = (dirty: unknown, persons: Person[]): Album => {
     const longitude = item?.geo?.lon ? parseFloat(item.geo.lon) : null
     const accuracy = item?.geo?.accuracy ? Number(item.geo.accuracy) : null
 
-    const thumbPath = utils.thumbPath(filename, gallery)
-    const photoPath = utils.photoPath(filename, gallery)
-    const videoPaths = utils.getVideoPaths(filename, gallery)
+    const thumbPath = resolveThumbPath(filename, gallery)
+    const photoPath = resolvePhotoPath(filename, gallery)
+    const videoPaths = getVideoPaths(filename, gallery)
 
     const out: Item = {
       id,

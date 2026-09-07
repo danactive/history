@@ -1,0 +1,12 @@
+{
+  "name": "history-private-media",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-05",
+  "workers_dev": false,
+  "r2_buckets": [
+    {
+      "binding": "HISTORY_MEDIA",
+      "bucket_name": "REPLACE_WITH_PRIVATE_HISTORY_R2_BUCKET"
+    }
+  ]
+}
