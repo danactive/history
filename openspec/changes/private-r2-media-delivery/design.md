@@ -55,6 +55,15 @@ build and media delivery service. It runs before a production build when local
 derivatives are available; a normal local `next build` does not require R2
 credentials or an upload.
 
+Before its first R2 request, preparation atomically writes a private local
+resume manifest. If a connection failure interrupts the run, that journal
+retains the generated opaque IDs and object keys without replacing the active
+deployment manifest. The next run reuses them and checks existing remote
+objects before uploading. It clears the journal only after the verified
+deployment manifest and operation ledger are written. This preserves retry
+idempotency even during an initial migration, when no active manifest yet
+exists.
+
 This satisfies build-time mapping without coupling user-facing Walk actions to
 cloud state. Integrating preparation into Walk was rejected because Walk must
 remain a local filesystem tool. Uploading all objects from each application

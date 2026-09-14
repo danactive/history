@@ -33,6 +33,22 @@ SHALL not create entries for original-media variants.
 - **THEN** the next media preparation records a new content version for that
   variant without changing its XML filename
 
+#### Scenario: Resuming an interrupted preparation
+
+- **WHEN** preparation is interrupted after it has started R2 operations but
+  before it publishes the deployment manifest
+- **THEN** it retains a private local resume mapping and the next preparation
+  reuses the same opaque identifiers and object keys, verifying any already
+  uploaded objects rather than creating a second object namespace
+
+#### Scenario: Reading private preparation configuration locally
+
+- **WHEN** an operator runs media preparation with a private repository-root
+  `.env` file
+- **THEN** it reads the R2 configuration from that file without requiring
+  secrets in the shell command, while preserving explicitly exported shell
+  values
+
 ### Requirement: Authenticated display-media delivery
 
 The system SHALL deliver a mapped display photo or thumbnail only through a

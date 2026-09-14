@@ -73,34 +73,52 @@ credential is deliberately separate from the Worker's R2 binding.
 
 ### First preparation run
 
-Run this on the machine that has the local History gallery tree. Replace only
-the `...` placeholders with the values above:
+On the machine that has the local History gallery tree, create an untracked
+`.env` file in the repository root:
 
-```sh
-HISTORY_R2_STORAGE_CLASS=Standard \
-HISTORY_R2_ACCOUNT_ID=... \
-HISTORY_R2_ACCESS_KEY_ID=... \
-HISTORY_R2_SECRET_ACCESS_KEY=... \
-HISTORY_R2_BUCKET=... \
-npm run prepare-media
+```dotenv
+HISTORY_R2_STORAGE_CLASS=Standard
+HISTORY_R2_ACCOUNT_ID=...
+HISTORY_R2_ACCESS_KEY_ID=...
+HISTORY_R2_SECRET_ACCESS_KEY=...
+HISTORY_R2_BUCKET=...
 ```
 
-The command constructs the S3 endpoint from `HISTORY_R2_ACCOUNT_ID`. If the
-Dashboard gives you a non-default endpoint, add
-`HISTORY_R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com` to the
-same command. Do not use the public `r2.dev` endpoint.
+Run `npm run prepare-media`. The command loads `.env` automatically; variables
+already exported by the calling shell take precedence. The command constructs
+the S3 endpoint from `HISTORY_R2_ACCOUNT_ID`. If the Dashboard gives you a
+non-default endpoint, add
+`HISTORY_R2_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com` to `.env`.
+Do not use the public `r2.dev` endpoint.
 
 Use `npm run prepare-media -- --dry-run` to scan local XML-listed display
 derivatives and report the projected storage and operation budget without
 requiring credentials or mutating R2.
 
+Use `npm run prepare-media -- --audit` to perform a read-only listing of the
+private `media/` objects in R2. It reports content hashes stored under more
+than one opaque ID, which identifies retry-created duplicate candidates. An
+identical local derivative intentionally used by multiple gallery items will
+also appear as a candidate; the audit never deletes an object or changes the
+manifest.
+
 Preparation writes the deployment manifest to
 `src/generated/private-media-manifest.json` and its private operation ledger to
-`.history/private-media-operation-ledger.json`. The latter is gitignored.
-The manifest is an implementation artifact: it contains opaque IDs and private
-object keys, and must be available to both the Next build and the Worker build.
-Run preparation again after a local thumbnail edit; it uploads and verifies the
-new derivative before replacing the manifest. Local sources are never deleted.
+`.history/private-media-operation-ledger.json`. Before making the first R2
+request, it also writes a private retry journal at
+`.history/private-media-resume-manifest.json`. The `.history` artifacts are
+gitignored.
+
+If preparation is interrupted, leave the retry journal in place and run the
+same command again. History will reuse the same opaque IDs and R2 object keys,
+verify any objects that already uploaded, and continue without publishing a
+partial deployment manifest. It removes the journal only after the verified
+manifest and operation ledger are written. `--dry-run` does not create or alter
+the journal. The deployment manifest is an implementation artifact: it contains
+opaque IDs and private object keys, and must be available to both the Next build
+and the Worker build. Run preparation again after a local thumbnail edit; it
+uploads and verifies the new derivative before replacing the manifest. Local
+sources are never deleted.
 
 ## Free-tier guardrails
 

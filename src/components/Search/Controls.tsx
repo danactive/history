@@ -1,4 +1,4 @@
-import { Button, Chip, Stack } from '@mui/joy'
+import { Button, Stack } from '@mui/joy'
 
 import AutoComplete from '../ComboBox'
 import { filterChipSx, markerActionButtonSx, pillActionButtonSx } from './control-styles'
@@ -34,6 +34,7 @@ type Props = {
   onSelectedOptionChange: (value: IndexedKeywords | null) => void
   onInputValueChange: (value: string) => void
   onRemoveKeywordToken: (tokenIndex: number) => void
+  onToggleQueryMode?: () => void
   onClear: () => void
   onClearMapFilter?: (coordinates?: [number, number] | null) => void
   extraFilterChips?: React.ReactNode
@@ -86,6 +87,7 @@ export default function Controls({
   onSelectedOptionChange,
   onInputValueChange,
   onRemoveKeywordToken,
+  onToggleQueryMode,
   onClear,
   onClearMapFilter,
   extraFilterChips,
@@ -117,10 +119,19 @@ export default function Controls({
             <div className={styles.chipsRow}>
               {keyword && (
                 <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                  {parsedKeyword.mode && (
-                    <Chip size="sm" color="primary" variant="outlined" sx={filterChipSx}>
+                  {parsedKeyword.mode && onToggleQueryMode && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      color="primary"
+                      variant="outlined"
+                      onClick={onToggleQueryMode}
+                      aria-label={`Filter match mode: ${parsedKeyword.mode}. Switch to ${parsedKeyword.mode === 'AND' ? 'OR' : 'AND'}`}
+                      title={parsedKeyword.mode === 'AND' ? 'Match any filter (OR)' : 'Match all filters (AND)'}
+                      sx={{ ...filterChipSx, '&:focus-visible': { outline: '2px solid currentColor', outlineOffset: '2px' } }}
+                    >
                       {parsedKeyword.mode}
-                    </Chip>
+                    </Button>
                   )}
                   {parsedKeyword.isAdvanced ? (
                     <RemovableFilterChip

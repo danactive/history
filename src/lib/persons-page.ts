@@ -81,6 +81,7 @@ export async function getPersonsPageData({
   return {
     gallery,
     items: visibleItems,
+    unboundedTotalCount: personsData.items.length,
     totalItemCount: mapBounds
       ? filterItemsByMapBounds(personsData.items, true, mapBounds).length
       : personsData.items.length,
@@ -89,7 +90,7 @@ export async function getPersonsPageData({
     tagOptions,
     initialAgeSummary,
     initialBaseScopeItems: selectedAge !== null || selectedPerson !== null || mapBounds
-      ? menuScopeItems
+      ? menuBaseItems
       : undefined,
     activeFacetCounts,
   }

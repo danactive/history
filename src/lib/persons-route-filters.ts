@@ -65,9 +65,13 @@ export function buildPersonsRouteSearchParams(
   )
   ;['keyword', 'tag', 'year', 'person', 'age', 'visitedCountry', 'visitedRegion'].forEach((key) => params.delete(key))
 
-  const query = replaceConjunctiveFilterTerms(filters.query ?? '', {
-    person: filters.selectedPerson,
-    age: filters.selectedAge === null ? null : String(filters.selectedAge),
+  const currentQuery = filters.query ?? ''
+  const ownedTerms = getConjunctiveFilterTerms(currentQuery)
+  const query = replaceConjunctiveFilterTerms(currentQuery, {
+    ...(ownedTerms.has('person') || filters.selectedPerson !== null
+      ? { person: filters.selectedPerson } : {}),
+    ...(ownedTerms.has('age') || filters.selectedAge !== null
+      ? { age: filters.selectedAge === null ? null : String(filters.selectedAge) } : {}),
   })
   if (query) params.set('query', query)
   else params.delete('query')

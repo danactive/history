@@ -48,6 +48,15 @@ export type PrivateMediaPreparationResult = {
   staleObjectKeys: string[];
 }
 
+export type PrivateMediaPreparationProgress = {
+  phase: 'checking' | 'uploading' | 'verifying' | 'up-to-date';
+  current: number;
+  total: number;
+  gallery: Gallery;
+  filename: string;
+  variant: PreparedPrivateMediaAsset['variant'];
+}
+
 function currentBillingPeriod(now: Date): string {
   return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
 }
@@ -64,9 +73,11 @@ function currentLedger(ledger: PrivateMediaOperationLedger | null | undefined, n
 function toDesiredEntries(
   assets: PreparedPrivateMediaAsset[],
   previousManifest: PrivateMediaManifest,
+  resumeManifest: PrivateMediaManifest,
   idFactory: () => string,
 ) {
   const previousByIdentity = new Map(previousManifest.entries.map(entry => [privateMediaIdentityKey(entry), entry]))
+  const resumeByIdentity = new Map(resumeManifest.entries.map(entry => [privateMediaIdentityKey(entry), entry]))
   const desiredByIdentity = new Map<string, { entry: PrivateMediaEntry; asset: PreparedPrivateMediaAsset }>()
 
   for (const asset of assets) {
@@ -75,8 +86,9 @@ function toDesiredEntries(
     const identity = createPrivateMediaIdentity(asset.gallery, asset.filename, asset.variant)
     const identityKey = privateMediaIdentityKey(identity)
     const previous = previousByIdentity.get(identityKey)
+    const resumed = resumeByIdentity.get(identityKey)
     const entry = createPrivateMediaEntry(identity, {
-      id: previous?.id ?? idFactory(),
+      id: previous?.id ?? resumed?.id ?? idFactory(),
       version: asset.sha256,
       sha256: asset.sha256,
       bytes: asset.bytes,
@@ -141,16 +153,21 @@ async function getVerifiedAssetContent(asset: PreparedPrivateMediaAsset) {
 export async function preparePrivateMedia(input: {
   assets: PreparedPrivateMediaAsset[];
   previousManifest?: PrivateMediaManifest | null;
+  resumeManifest?: PrivateMediaManifest | null;
   ledger?: PrivateMediaOperationLedger | null;
   store: PrivateMediaObjectStore;
   idFactory: () => string;
   now?: Date;
   dryRun?: boolean;
+  onProgress?: (progress: PrivateMediaPreparationProgress) => void;
+  /** Persists a resume-only manifest before the first R2 request. */
+  onPlan?: (manifest: PrivateMediaManifest) => void | Promise<void>;
 }): Promise<PrivateMediaPreparationResult> {
   const now = input.now ?? new Date()
   const previousManifest = input.previousManifest ? parsePrivateMediaManifest(input.previousManifest) : emptyPrivateMediaManifest
+  const resumeManifest = input.resumeManifest ? parsePrivateMediaManifest(input.resumeManifest) : emptyPrivateMediaManifest
   const ledger = currentLedger(input.ledger, now)
-  const desired = toDesiredEntries(input.assets, previousManifest, input.idFactory)
+  const desired = toDesiredEntries(input.assets, previousManifest, resumeManifest, input.idFactory)
   const projectedPeak = projectedPeakBytes(previousManifest, desired)
 
   // Each object may need a HEAD, PUT, and verification HEAD. Reserve the
@@ -172,6 +189,10 @@ export async function preparePrivateMedia(input: {
     entries,
   }
 
+  // The caller persists this outside the active deployment manifest. Retaining
+  // it after an interruption makes a retry check the same opaque object keys.
+  if (!input.dryRun) await input.onPlan?.(manifest)
+
   if (input.dryRun) {
     return {
       manifest,
@@ -190,20 +211,34 @@ export async function preparePrivateMedia(input: {
   let classA = 0
   let classB = 0
   const uploadedObjectKeys: string[] = []
-  for (const { entry, asset } of desired) {
+  for (const [index, { entry, asset }] of desired.entries()) {
+    const progress = (phase: PrivateMediaPreparationProgress['phase']) => input.onProgress?.({
+      phase,
+      current: index + 1,
+      total: desired.length,
+      gallery: asset.gallery,
+      filename: asset.filename,
+      variant: asset.variant,
+    })
+
+    progress('checking')
     const existing = await input.store.head(entry.objectKey)
     classB++
     const matches = existing?.bytes === entry.bytes && existing.sha256 === entry.sha256
     if (!matches) {
       const content = await getVerifiedAssetContent(asset)
+      progress('uploading')
       await input.store.put({ key: entry.objectKey, content, sha256: entry.sha256 })
       classA++
+      progress('verifying')
       const verified = await input.store.head(entry.objectKey)
       classB++
       if (verified?.bytes !== entry.bytes || verified.sha256 !== entry.sha256) {
         throw new Error(`Private media object verification failed: ${entry.objectKey}`)
       }
       uploadedObjectKeys.push(entry.objectKey)
+    } else {
+      progress('up-to-date')
     }
   }
 

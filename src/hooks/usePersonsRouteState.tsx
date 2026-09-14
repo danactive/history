@@ -72,6 +72,13 @@ export default function usePersonsRouteState({
     syncUrlImmediately(selectedAge, value)
   }, [selectedAge, selectedPerson, syncUrlImmediately])
 
+  const resetPersonAgeFilters = useCallback(() => {
+    shouldSyncUrlRef.current = true
+    setSelectedAgeState(null)
+    setSelectedPersonState(null)
+    syncUrlImmediately(null, null)
+  }, [syncUrlImmediately])
+
   useEffect(() => {
     if (shouldSyncUrlRef.current) {
       return
@@ -124,5 +131,6 @@ export default function usePersonsRouteState({
     selectedPerson,
     setSelectedAge,
     setSelectedPerson,
+    resetPersonAgeFilters,
   }
 }

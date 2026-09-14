@@ -39,6 +39,16 @@ vi.mock('../persons', () => ({
 }))
 
 describe('persons page data', () => {
+  test('retains an unbounded baseline and total so clearing map bounds can restore excluded photos', async () => {
+    const result = await getPersonsPageData({
+      gallery: 'demo', selectedAge: null, selectedPerson: null,
+      mapBounds: [[0, 0], [20, 20]],
+    })
+    expect(result.totalItemCount).toBe(0)
+    expect(result.unboundedTotalCount).toBe(1)
+    expect(result.initialBaseScopeItems).toHaveLength(1)
+    expect(result.initialAgeSummary?.totalPhotoCount).toBe(0)
+  })
   test('uses only non-person predicates as the menu baseline', () => {
     expect(getPersonsMenuBaseQuery(
       'country:Canada && tag:best^ && person:"Alice Example" && age:21',

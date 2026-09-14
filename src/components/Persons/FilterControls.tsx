@@ -91,6 +91,17 @@ export default function FilterControls({
     ? `${selectedPerson} (${selectedPersonCount} ${selectedPersonCount === 1 ? 'photo' : 'photos'})`
     : allPersonsLabel
 
+  // Keep selected zero-result values registered with Select so it does not
+  // silently clear the user's filters when the available options change.
+  const ageOptions = selectedAge !== null && !agesWithCounts.some(({ age }) => age === selectedAge)
+    ? [...agesWithCounts, { age: selectedAge, count: 0 }].sort((left, right) => (
+      left.age === 'unknown' ? -1 : right.age === 'unknown' ? 1 : left.age - right.age
+    ))
+    : agesWithCounts
+  const personOptions = selectedPerson && !peopleWithCounts.some(({ name }) => name === selectedPerson)
+    ? [...peopleWithCounts, { name: selectedPerson, count: 0 }]
+    : peopleWithCounts
+
   return (
     <div className={styles.root}>
       <div className={styles.selectRow}>
@@ -119,7 +130,7 @@ export default function FilterControls({
             <Option value="" sx={darkOptionSx}>
               All ages ({totalPhotoCount} {totalPhotoCount === 1 ? 'photo' : 'photos'})
             </Option>
-            {agesWithCounts.map(({ age, count }) => (
+            {ageOptions.map(({ age, count }) => (
               <Option key={String(age)} value={String(age)} sx={darkOptionSx}>
                 {age === 'unknown' ? 'Unknown age' : age} ({count} {count === 1 ? 'photo' : 'photos'})
               </Option>
@@ -127,8 +138,7 @@ export default function FilterControls({
           </Select>
         </div>
 
-        {people.length > 0 && (
-          <div className={styles.selectWrap}>
+        <div className={styles.selectWrap}>
             <Select
               value={selectedPerson ?? ''}
               renderValue={() => personButtonLabel}
@@ -148,14 +158,13 @@ export default function FilterControls({
               <Option value="" sx={darkOptionSx}>
                 {allPersonsLabel}
               </Option>
-              {peopleWithCounts.map(({ name, count }) => (
+              {personOptions.map(({ name, count }) => (
                 <Option key={name} value={name} sx={darkOptionSx}>
                   {name} ({count} {count === 1 ? 'photo' : 'photos'})
                 </Option>
               ))}
             </Select>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

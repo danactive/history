@@ -31,23 +31,36 @@ export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {
   const keyword = rawKeyword.trim()
   if (!keyword) return { mode: null, tokens: [], isAdvanced: false }
 
-  const hasAnd = keyword.includes('&&')
-  const hasOr = keyword.includes('||')
-  const hasGrouping = keyword.includes('(') || keyword.includes(')')
+  const operators = keyword.replace(/"(?:\\.|[^"\\])*"/g, value => ' '.repeat(value.length))
+  const hasAnd = operators.includes('&&')
+  const hasOr = operators.includes('||')
+  const hasGrouping = operators.includes('(') || operators.includes(')')
+  const splitTerms = (separator: string) => {
+    const tokens: string[] = []
+    let start = 0
+    let end = operators.indexOf(separator)
+    while (end !== -1) {
+      tokens.push(keyword.slice(start, end).trim())
+      start = end + separator.length
+      end = operators.indexOf(separator, start)
+    }
+    tokens.push(keyword.slice(start).trim())
+    return tokens.filter(Boolean)
+  }
 
   if (hasGrouping || (hasAnd && hasOr)) {
     return { mode: null, tokens: [keyword], isAdvanced: true }
   }
 
   if (hasAnd) {
-    const tokens = keyword.split('&&').map(t => t.trim()).filter(Boolean)
+    const tokens = splitTerms('&&')
     return tokens.length > 0
       ? { mode: 'AND', tokens, isAdvanced: false }
       : { mode: null, tokens: [keyword], isAdvanced: true }
   }
 
   if (hasOr) {
-    const tokens = keyword.split('||').map(t => t.trim()).filter(Boolean)
+    const tokens = splitTerms('||')
     return tokens.length > 0
       ? { mode: 'OR', tokens, isAdvanced: false }
       : { mode: null, tokens: [keyword], isAdvanced: true }

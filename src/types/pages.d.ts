@@ -27,6 +27,7 @@ export type SearchMetadata = Pick<ServerPageDataBase<never>, 'indexedKeywords' |
 export type SearchUiConfig = {
   summaryLabel?: string;
   totalCount?: number;
+  unboundedTotalCount?: number;
   personDetailsName?: string | null;
   extraFilterChips?: React.ReactNode;
   extraFiltersActive?: boolean;
@@ -47,6 +48,7 @@ export type AgeSummary = {
 }
 
 export type PersonFilterScopeData = {
+  unboundedTotalCount?: number;
   initialAgeSummary?: AgeSummary;
   initialBaseScopeItems?: ServerSideAllItem[];
   initialSelectedAge?: number | 'unknown' | null;

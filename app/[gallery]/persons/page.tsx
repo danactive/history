@@ -70,6 +70,7 @@ async function PersonsServerContent({
     initialAgeSummary,
     initialBaseScopeItems,
     totalItemCount,
+    unboundedTotalCount,
     clusteredMarkers,
   } = buildClusteredPageData(await getPersonsPageData({
     gallery,
@@ -84,6 +85,7 @@ async function PersonsServerContent({
       gallery={gallery}
       items={items}
       totalItemCount={totalItemCount}
+      unboundedTotalCount={unboundedTotalCount}
       indexedKeywords={indexedKeywords}
       personOptions={personOptions}
       tagOptions={tagOptions}

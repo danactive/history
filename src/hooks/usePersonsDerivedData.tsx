@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
+import { filterItemsByMapBounds, type Bounds } from '../lib/map-filtering'
 
 import { derivePersonsAgeSummary } from '../lib/persons-age-summary'
 import type { PersonAgeFilterValue } from '../lib/persons'
@@ -19,8 +20,8 @@ export default function usePersonsDerivedData({
   initialSelectedPerson,
   isServerScopeCurrent,
   mapFilterEnabled,
+  mapBounds,
   initialAgeSummary,
-  setSelectedAge,
 }: {
   itemsToShow: ServerSideAllItem[]
   selectedAge: PersonAgeFilterValue
@@ -29,11 +30,16 @@ export default function usePersonsDerivedData({
   initialSelectedPerson: string | null
   isServerScopeCurrent: boolean
   mapFilterEnabled: boolean
+  mapBounds?: Bounds | null
   initialAgeSummary?: { ages: { age: AgeSummaryValue; count: number }[]; totalPhotoCount?: number }
-  setSelectedAge: (value: PersonAgeFilterValue) => void
 }) {
-  const scopedItems = initialBaseScopeItems ?? itemsToShow
+  const baseItems = initialBaseScopeItems ?? itemsToShow
+  const scopedItems = useMemo(
+    () => filterItemsByMapBounds(baseItems, mapFilterEnabled, mapBounds ?? null),
+    [baseItems, mapFilterEnabled, mapBounds],
+  )
   const canReuseServerSummary = initialAgeSummary !== undefined
+    && initialBaseScopeItems === undefined
     && isServerScopeCurrent
     && !mapFilterEnabled
     && effectiveSelectedPerson === initialSelectedPerson
@@ -55,8 +61,6 @@ export default function usePersonsDerivedData({
 
   const {
     agesWithCounts,
-    hasUnknown,
-    numericAges,
     totalPhotoCount,
   } = useMemo(() => derivePersonsAgeSummary({
     ageSummaryItems,
@@ -64,20 +68,6 @@ export default function usePersonsDerivedData({
     canReuseServerSummary,
     initialAgeSummary,
   }), [ageSummaryItems, effectiveSelectedPerson, canReuseServerSummary, initialAgeSummary])
-
-  useEffect(() => {
-    if (!isServerScopeCurrent) {
-      return
-    }
-
-    const selectedMissing = selectedAge === 'unknown'
-      ? !hasUnknown
-      : selectedAge !== null && !numericAges.includes(selectedAge)
-
-    if (selectedMissing) {
-      setSelectedAge(null)
-    }
-  }, [hasUnknown, isServerScopeCurrent, numericAges, selectedAge, setSelectedAge])
 
   const { people, peopleWithCounts } = useMemo(
     () => derivePeople(scopedItems, selectedAge),

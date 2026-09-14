@@ -13,7 +13,7 @@ import { buildFilterMetadataFromLocations } from '../lib/filter-metadata-core'
 import {
   parseKeywordQuery,
 } from '../lib/search-filtering'
-import { filterItemsByQuery, getConjunctiveFilterTerms, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
+import { filterItemsByQuery, formatFilterQuery, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
 import { filterItemsByMapBounds, type Bounds } from '../lib/map-filtering'
 import { areMapBoundsEqual, mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
 import { Gallery, VisitedPlace } from '../types/common'
@@ -62,6 +62,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   items,
   summaryLabel,
   totalCount,
+  unboundedTotalCount,
   memoryIndex,
   setMemoryIndex,
   indexedKeywords = [],
@@ -194,10 +195,26 @@ export default function useSearch<ItemType extends SearchableItem>({
   } = useVisibleSearchState(visibleItems, visibleItemsRef)
 
   const parsedKeyword = useMemo(() => parseKeywordQuery(keyword), [keyword])
-  const selectedQueryPerson = useMemo(
-    () => getConjunctiveFilterTerms(keyword, queryContext).get('person') ?? null,
-    [keyword, queryContext],
-  )
+  const modeQuery = useMemo(() => parseFilterQuery(keyword, queryContext), [keyword, queryContext])
+  const canToggleQueryMode = !parsedKeyword.isAdvanced
+    && (modeQuery?.type === 'and' || modeQuery?.type === 'or')
+    && modeQuery.children.length > 1
+    && modeQuery.children.every(child => child.type === 'term')
+  const handleToggleQueryMode = useCallback(() => {
+    if (!canToggleQueryMode) return
+    applyKeywordToUrl(formatFilterQuery({
+      ...modeQuery,
+      type: modeQuery.type === 'and' ? 'or' : 'and',
+    }))
+  }, [applyKeywordToUrl, canToggleQueryMode, modeQuery])
+  const selectedQueryPerson = useMemo(() => {
+    const terms = modeQuery?.type === 'term' ? [modeQuery] : modeQuery?.children ?? []
+    if (terms.some(term => term.type !== 'term')) return null
+    // Details identify a person mentioned in the query, independently of whether
+    // every result must match that person (AND) or may match another term (OR).
+    const people = new Set(terms.flatMap(term => term.type === 'term' && term.kind === 'person' ? [term.value] : []))
+    return people.size === 1 ? [...people][0] : null
+  }, [modeQuery])
   const { detailActions } = useSearchDetailActions({
     gallery,
     items,
@@ -248,7 +265,9 @@ export default function useSearch<ItemType extends SearchableItem>({
   )
   const visibleTotalCount = mapFilterEnabled && !isUrlMapScope
     ? mapScopedItems.length
-    : totalCount ?? items.length
+    : !mapFilterEnabled && unboundedTotalCount !== undefined
+      ? unboundedTotalCount
+      : totalCount ?? items.length
   const localActiveFacetCounts = useMemo(
     () => getActiveFacetCounts({
       items: mapScopedItems,
@@ -283,6 +302,7 @@ export default function useSearch<ItemType extends SearchableItem>({
       onSelectedOptionChange={handleSelectedOptionChange}
       onInputValueChange={handleInputValueChange}
       onRemoveKeywordToken={handleRemoveKeywordToken}
+      onToggleQueryMode={canToggleQueryMode ? handleToggleQueryMode : undefined}
       onClear={handleClear}
       onClearMapFilter={onClearMapFilter}
       extraFilterChips={extraFilterChips}

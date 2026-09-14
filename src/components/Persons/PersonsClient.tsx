@@ -18,6 +18,7 @@ export default function PersonsClient({
   gallery,
   items,
   totalItemCount,
+  unboundedTotalCount,
   indexedKeywords,
   personOptions,
   tagOptions,
@@ -49,12 +50,12 @@ export default function PersonsClient({
     memoryHtml,
     selectedAge,
     selectedPerson,
-    setSelectedAge,
-    setSelectedPerson,
+    resetPersonAgeFilters,
   } = usePersonsFilter({
     gallery,
     items,
     totalItemCount,
+    unboundedTotalCount,
     indexedKeywords,
     personOptions,
     tagOptions,
@@ -96,10 +97,7 @@ export default function PersonsClient({
                 <Button
                   size="sm"
                   variant="outlined"
-                  onClick={() => {
-                    setSelectedAge(null)
-                    setSelectedPerson(null)
-                  }}
+                  onClick={resetPersonAgeFilters}
                 >
                   Reset age/person filters
                 </Button>

@@ -10,6 +10,21 @@ import {
 } from '../persons-route-filters'
 
 describe('persons route filters', () => {
+  test('preserves compound expressions when no independent control owns their terms', () => {
+    const query = '(person:Alice || person:Bob) && age:21'
+    const filters = parsePersonsRouteFilters({ query })
+    const params = buildPersonsRouteSearchParams('bbox=0%2C0%2C30%2C30&select=example.jpg', filters)
+    expect(params.get('query')).toBe(query)
+    expect(params.get('bbox')).toBe('0,0,30,30')
+    expect(params.get('select')).toBe('example.jpg')
+  })
+
+  test.each(['-1', 'invalid'])('normalizes invalid age %s while retaining a valid person and bounds', (age) => {
+    const filters = parsePersonsRouteFilters({ query: `person:Alice && age:${age}` })
+    const params = buildPersonsRouteSearchParams('bbox=0%2C0%2C30%2C30', filters)
+    expect(params.get('query')).toBe('person:Alice')
+    expect(params.get('bbox')).toBe('0,0,30,30')
+  })
   test('parses person and age from a canonical conjunctive query', () => {
     expect(parsePersonsRouteFilters({
       query: 'country:Canada && region:BC && person:"Alice Example" && age:21',

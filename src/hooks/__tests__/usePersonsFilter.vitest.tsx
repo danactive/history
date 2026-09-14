@@ -48,6 +48,7 @@ const useMapFilter = vi.hoisted(() => vi.fn(({
   handleToggleMapFilter: vi.fn(),
   handleBoundsChange: vi.fn(),
   itemsToShow: items,
+  visibleItems: items,
   isClearing: false,
   clearCoordinates: vi.fn(),
 })))
@@ -187,6 +188,94 @@ describe('usePersonsFilter URL sync', () => {
     renderHook(() => usePersonsFilter({ gallery: 'demo', items, indexedKeywords: [] }))
 
     expect(replace).not.toHaveBeenCalled()
+  })
+
+  test('keeps an empty age/person combination until an atomic reset preserves the remaining query and bounds', () => {
+    query = new URLSearchParams({ query: 'country:Canada && person:Alice && age:42', bbox: '0,0,30,30' })
+    const items = [makeItem('1', 'Alice', '2000-01-01', '2021-02-01')]
+    const { result } = renderHook(() => usePersonsFilter({
+      gallery: 'demo', items: [], indexedKeywords: [], initialBaseScopeItems: items,
+      initialSelectedPerson: 'Alice', initialSelectedAge: 42,
+    }))
+    expect(result.current.selectedAge).toBe(42)
+    expect(result.current.ageFiltered).toEqual([])
+    render(<FilterControls {...result.current.filterControlsProps} />)
+    expect(replace).not.toHaveBeenCalled()
+    act(() => result.current.resetPersonAgeFilters())
+    expect(result.current.selectedAge).toBeNull()
+    expect(result.current.selectedPerson).toBeNull()
+    expect(result.current.ageFiltered).toEqual(items)
+    expect(replace).toHaveBeenCalledTimes(1)
+    expect(query.get('query')).toBe('country:Canada')
+    expect(query.get('bbox')).toBe('0,0,30,30')
+  })
+
+  test('applies live map bounds to the broader server baseline and restores it when map filtering is disabled', () => {
+    query = new URLSearchParams({ query: 'person:Alice' })
+    const items = [
+      { ...makeItem('1', 'Alice', '2000-01-01', '2021-02-01'), coordinates: [10, 10] as [number, number] },
+      { ...makeItem('2', 'Bob', '2000-01-01', '2021-02-01'), coordinates: [20, 20] as [number, number] },
+    ]
+    const implementation = useMapFilter.getMockImplementation()!
+    let enabled = true
+    let bounds: [[number, number], [number, number]] = [[5, 5], [15, 15]]
+    useMapFilter.mockImplementation(options => ({ ...implementation(options), mapFilterEnabled: enabled, mapBounds: bounds }))
+    try {
+      const { result, rerender } = renderHook(() => usePersonsFilter({
+        gallery: 'demo', items, indexedKeywords: [], initialBaseScopeItems: items, initialSelectedPerson: 'Alice',
+      }))
+      expect(result.current.filterControlsProps.people).toEqual(['Alice'])
+      act(() => result.current.setSelectedPerson(null))
+      bounds = [[15, 15], [25, 25]]
+      rerender()
+      expect(result.current.filterControlsProps.people).toEqual(['Bob'])
+      expect(result.current.ageFiltered).toEqual([items[1]])
+      enabled = false
+      rerender()
+      expect(result.current.filterControlsProps.people).toEqual(['Alice', 'Bob'])
+      expect(result.current.ageFiltered).toEqual(items)
+    } finally {
+      useMapFilter.mockImplementation(implementation)
+    }
+  })
+
+  test('restores all people when search clear leaves the previous displayed selection cached', () => {
+    const items = [
+      makeItem('1', 'Casey Example', '2000-01-01', '2021-02-01'),
+      makeItem('2', 'Bob', '1990-01-01', '2021-02-01'),
+    ]
+    const implementation = useMapFilter.getMockImplementation()!
+    useMapFilter.mockImplementation((options) => ({
+      ...implementation(options),
+      // The shared viewer still holds the previous result until the persons
+      // hook publishes the newly derived list through setDisplayedItems.
+      itemsToShow: [items[0]],
+    }))
+
+    try {
+      query = new URLSearchParams('query=person%3A%22Casey+Example%22')
+      const { result, rerender } = renderHook(
+        ({ selected }: { selected: boolean }) => usePersonsFilter({
+          gallery: 'demo',
+          items: selected ? [items[0]] : items,
+          indexedKeywords: [],
+          initialSelectedPerson: selected ? 'Casey Example' : null,
+          initialBaseScopeItems: selected ? items : undefined,
+        }),
+        { initialProps: { selected: true } },
+      )
+      expect(result.current.ageFiltered).toEqual([items[0]])
+
+      query = new URLSearchParams()
+      rerender({ selected: false })
+
+      expect(result.current.selectedPerson).toBeNull()
+      expect(result.current.filterControlsProps.people).toEqual(['Bob', 'Casey Example'])
+      expect(result.current.ageFiltered).toEqual(items)
+      expect(setDisplayedItemsMock).toHaveBeenLastCalledWith(items)
+    } finally {
+      useMapFilter.mockImplementation(implementation)
+    }
   })
 
   test('coalesces duplicate URL replacements before route state catches up', () => {

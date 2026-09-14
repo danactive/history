@@ -33,6 +33,23 @@ function makeItem(id: string, people: Array<{ full: string; dob: string | null }
 }
 
 describe('persons filter scopes', () => {
+  test('keeps unnamed photos in the unfiltered scope and orders people by frequency then name', () => {
+    const items = [
+      makeItem('1', [{ full: 'Casey Example', dob: null }, { full: 'Alice Example', dob: null }], '2021-02-01'),
+      makeItem('2', [{ full: 'Casey Example', dob: null }, { full: 'Bob Example', dob: null }], '2021-02-01'),
+      makeItem('3', [], '2021-02-01'),
+    ]
+    expect(derivePersonsScopes({ items, selectedAge: null, effectiveSelectedPerson: null }).ageFiltered).toEqual(items)
+    expect(derivePeople(items).peopleWithCounts).toEqual([
+      { name: 'Casey Example', count: 2 }, { name: 'Alice Example', count: 1 }, { name: 'Bob Example', count: 1 },
+    ])
+    expect(derivePersonsScopes({ items, selectedAge: 'unknown', effectiveSelectedPerson: 'Casey Example' }).ageFiltered).toEqual(items.slice(0, 2))
+  })
+
+  test('does not match another person’s age in the same photo', () => {
+    const item = makeItem('1', [{ full: 'Alice Example', dob: '2000-01-01' }, { full: 'Bob Example', dob: '1979-01-01' }], '2021-02-01')
+    expect(derivePersonsScopes({ items: [item], selectedAge: 42, effectiveSelectedPerson: 'Alice Example' }).ageFiltered).toEqual([])
+  })
   test('combines age and person only for the visible photos', () => {
     const items = [
       makeItem('1', [{ full: 'Alice', dob: '2000-01-01' }], '2021-02-01'),

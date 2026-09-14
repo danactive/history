@@ -104,6 +104,90 @@ beforeEach(() => {
 })
 
 const mockItem = { filename: 'test.jpg' }
+describe('Shared active-filter mode toggle', () => {
+  it.each(['/demo', '/demo/all', '/demo/persons', '/demo/sample', '/demo/today'])(
+    'keeps person details through an AND/OR round trip on %s', (pathname) => {
+      mockNavigation({ pathname, params: { query: 'person:"Casey Example" && keyword:apple' } })
+      const items = [
+        { ...mockItem, corpus: 'portrait apple', search: 'apple', persons: [{ full: 'Casey Example' }] },
+        { ...mockItem, corpus: 'apple', search: 'apple', persons: [{ full: 'Robin Example' }] },
+      ]
+      function Search() {
+        return useSearch({ gallery: 'demo', items, indexedKeywords: [] }).searchBox
+      }
+      const view = render(<Search />)
+      const expectDetails = () => expect(view.getByRole('link', { name: 'Person details' }))
+        .toHaveAttribute('href', '/demo/persons/details?person=Casey+Example')
+      expectDetails()
+      fireEvent.click(view.getByRole('button', { name: 'Filter match mode: AND. Switch to OR' }))
+      expectDetails()
+      expect(view.getByRole('heading', { level: 3 })).toHaveTextContent('2 of 2')
+      fireEvent.click(view.getByRole('button', { name: 'Filter match mode: OR. Switch to AND' }))
+      expectDetails()
+      expect(view.getByRole('heading', { level: 3 })).toHaveTextContent('1 of 2')
+    },
+  )
+
+  it.each([
+    ['person:"Casey Example" || keyword:apple', true],
+    ['person:"Casey Example" || person:"Robin Example"', false],
+  ])('resolves details from a directly loaded OR query: %s', (query, hasDetails) => {
+    mockNavigation({ params: { query } })
+    function Search() {
+      return useSearch({ gallery: 'demo', items: [], indexedKeywords: [] }).searchBox
+    }
+    const view = render(<Search />)
+    expect(Boolean(view.queryByRole('link', { name: 'Person details' }))).toBe(hasDetails)
+  })
+
+  it.each(['/demo', '/demo/all', '/demo/persons', '/demo/sample', '/demo/today'])(
+    'toggles AND and OR on %s while preserving terms, bounds, and unrelated parameters', (pathname) => {
+      const { replace } = mockNavigation({ pathname, params: {
+        query: 'keyword:apple && keyword:banana', bbox: '0,0,30,30', foo: 'bar',
+      } })
+      const items = [{ ...mockItem, corpus: 'apple banana', search: 'apple, banana' }, { ...mockItem, corpus: 'apple', search: 'apple' }]
+      function Search() {
+        return useSearch({ gallery: 'demo', items, indexedKeywords: [] }).searchBox
+      }
+      const view = render(<Search />)
+      const toggle = view.getByRole('button', { name: 'Filter match mode: AND. Switch to OR' })
+      expect(toggle).toHaveAttribute('type', 'button')
+      fireEvent.click(toggle)
+      let params = new URLSearchParams(replace.mock.lastCall![0].split('?')[1])
+      expect(params.get('query')).toBe('keyword:apple || keyword:banana')
+      expect(params.get('bbox')).toBe('0,0,30,30')
+      expect(params.get('foo')).toBe('bar')
+      expect(view.getByRole('heading', { level: 3 })).toHaveTextContent('2 of 2')
+      fireEvent.click(view.getByRole('button', { name: 'Filter match mode: OR. Switch to AND' }))
+      params = new URLSearchParams(replace.mock.lastCall![0].split('?')[1])
+      expect(params.get('query')).toBe('keyword:apple && keyword:banana')
+      expect(view.getByRole('heading', { level: 3 })).toHaveTextContent('1 of 2')
+    },
+  )
+
+  it('preserves literal operators inside quoted terms', () => {
+    const { replace } = mockNavigation({ params: { query: 'keyword:"rock && roll" && keyword:music' } })
+    function Search() {
+      return useSearch({ gallery: 'demo', items: [{ ...mockItem, corpus: 'rock && roll music' }], indexedKeywords: [] }).searchBox
+    }
+    const view = render(<Search />)
+    fireEvent.click(view.getByRole('button', { name: 'Filter match mode: AND. Switch to OR' }))
+    expect(new URLSearchParams(replace.mock.lastCall![0].split('?')[1]).get('query')).toBe('keyword:"rock && roll" || keyword:music')
+    fireEvent.click(view.getByRole('button', { name: 'Filter match mode: OR. Switch to AND' }))
+    expect(new URLSearchParams(replace.mock.lastCall![0].split('?')[1]).get('query')).toBe('keyword:"rock && roll" && keyword:music')
+  })
+
+  it.each(['keyword:apple', '(keyword:apple || keyword:banana) && keyword:music'])(
+    'does not offer a misleading global toggle for %s', (query) => {
+      mockNavigation({ params: { query } })
+      function Search() {
+        return useSearch({ gallery: 'demo', items: [], indexedKeywords: [] }).searchBox
+      }
+      const view = render(<Search />)
+      expect(view.queryByRole('button', { name: /Filter match mode/ })).not.toBeInTheDocument()
+    },
+  )
+})
 describe('Query string', () => {
   describe('Router not ready', () => {
     it('Blank', () => {
