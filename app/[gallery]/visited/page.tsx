@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from '../../../src/components/Link'
+import VisitedMapLayout from '../../../src/components/VisitedMap'
 import {
   formatFilterQuery,
   type FilterQueryNode,
@@ -57,41 +58,43 @@ async function VisitedServerContent(props: RouteParamsProps<GalleryParams>) {
 
   return (
     <main className={styles.page}>
-      <h1>Countries</h1>
-      <ol className={styles.countries}>
-        {countries.map(country => (
-          <li key={country.country} className={styles.country}>
-            <span className={styles.countryLine}>
-              <span>{country.country}{formatYears(country.years)}</span>
-              {' '}
-              <span className={styles.count}>
-                (
-                <Link className={styles.countLink} href={buildVisitedHref(gallery, country.filter)}>
-                  {country.count}
-                </Link>
-                )
+      <VisitedMapLayout countries={countries}>
+        <h1>Countries</h1>
+        <ol className={styles.countries}>
+          {countries.map(country => (
+            <li key={country.country} className={styles.country}>
+              <span className={styles.countryLine} data-visited-country={country.country}>
+                <span>{country.country}{formatYears(country.years)}</span>
+                {' '}
+                <span className={styles.count}>
+                  (
+                  <Link className={styles.countLink} href={buildVisitedHref(gallery, country.filter)}>
+                    {country.count}
+                  </Link>
+                  )
+                </span>
               </span>
-            </span>
-            {country.regions.length > 0 && (
-              <ol className={styles.regions}>
-                {country.regions.map((region: RegionVisit) => (
-                  <li key={region.region}>
-                    <span>{region.region}{formatYears(region.years)}</span>
-                    {' '}
-                    <span className={styles.count}>
-                      (
-                      <Link className={styles.countLink} href={buildVisitedHref(gallery, region.filter)}>
-                        {region.count}
-                      </Link>
-                      )
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </li>
-        ))}
-      </ol>
+              {country.regions.length > 0 && (
+                <ol className={styles.regions}>
+                  {country.regions.map((region: RegionVisit) => (
+                    <li key={region.region}>
+                      <span>{region.region}{formatYears(region.years)}</span>
+                      {' '}
+                      <span className={styles.count}>
+                        (
+                        <Link className={styles.countLink} href={buildVisitedHref(gallery, region.filter)}>
+                          {region.count}
+                        </Link>
+                        )
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </li>
+          ))}
+        </ol>
+      </VisitedMapLayout>
     </main>
   )
 }

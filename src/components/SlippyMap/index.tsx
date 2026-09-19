@@ -35,8 +35,7 @@ import {
 } from './options'
 import { isTransientMapboxNetworkError } from './map-errors'
 import styles from './styles.module.css'
-
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuYWN0aXZlIiwiYSI6ImNreHhqdXkwdjcyZnEzMHBmNzhiOWZsc3QifQ.gCRigL866hVF6GNHoGoyRg'
+import { MAPBOX_TOKEN } from './token'
 
 type SlippyMapProps = {
   clusteredMarkers: ClusteredMarkers;
