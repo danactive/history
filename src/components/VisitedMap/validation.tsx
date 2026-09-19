@@ -11,7 +11,7 @@ export default function ValidationWarnings({ countries, loaded }: { countries: C
   return (
     <section className={styles.validation} aria-labelledby="visit-validation-title">
       <h2 id="visit-validation-title">Location validation</h2>
-      <p>Checks map names for Japan, USA, Canada, and Mexico, plus duplicate names throughout the list.
+      <p>Checks map names for {Object.keys(mapCountries).join(', ')}, plus duplicate names throughout the list.
         Other countries are not considered errors. Suggestions never change your metadata.</p>
       {pending.length > 0 && <p role="status">Checking region names…</p>}
       {failed.length > 0 && <p role="status">Region validation unavailable for {failed.join(', ')}.</p>}

@@ -46,3 +46,12 @@ Added a validation section below the visit list with a top-of-list jump link. It
 Boundary loading is shared between validation and the map; galleries with no supported countries do not fetch geometry just to validate country names. Unsupported countries are not errors; validation explicitly describes its scope and reports loading/failures separately.
 
 34 focused tests pass across six files, including typo suggestions, alias duplicates, country alias merging, no inferred highlighting, and unavailable validation. Lint, typecheck, and production build pass (existing HEIF warning remains). Browser review confirmed the section displays two current gallery warnings for Costa Maya and Cozumel with country context and preserves the sticky map. Strict OpenSpec and diff checks pass.
+
+
+## Italy and Türkiye follow-up
+
+Added 20 Italian regions from ready-made ISTAT GeoJSON (geojson-italy release 2026.1) and 81 Turkish provinces from Natural Earth 5.1.2. Source geometries are preserved; the standard-library import script adapts properties only. No geometry libraries or application dependencies were installed. Both countries use the existing source/layer, label, offline, scrolling, and validation paths.
+
+Tests now verify all 244 administrative divisions, unique IDs/abbreviations, closed rings, interior label anchors, Italian/English aliases, Turkish accents and province suffixes, country aliases, duplicate prevention, and six independent cached requests. All 36 focused tests pass; lint, typecheck, build, strict OpenSpec validation, and diff checks pass. The build has the existing unrelated HEIF warning.
+
+Browser review of the current gallery shows Italy at 6/20 visited and Türkiye at 15/81 visited. Province aliases Trabzon/Trabzon province count once; Aegean region remains unmapped. Both sets of labels/vectors persist with Basemap off, alongside existing countries. ISTAT and Natural Earth attribution remains visible in vector-only mode. No tasks deferred.

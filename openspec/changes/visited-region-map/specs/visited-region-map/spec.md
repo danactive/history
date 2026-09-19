@@ -1,6 +1,6 @@
 ## Purpose
 
-Give the visited country list geographic context through a persistent map that follows the reader and identifies visited administrative regions in Japan, USA, Canada, and Mexico.
+Give the visited country list geographic context through a persistent map that follows the reader and identifies visited administrative regions in Japan, USA, Canada, Mexico, Italy, and Türkiye.
 
 ## ADDED Requirements
 
@@ -13,7 +13,7 @@ The visited page SHALL display a Mapbox panel to the right of the scrolling list
 - **THEN** the map remains visible at the right while list content moves
 
 #### Scenario: No supported countries
-- **WHEN** no visits to Japan, USA, Canada, or Mexico exist in the gallery
+- **WHEN** no visits to Japan, USA, Canada, Mexico, Italy, or Türkiye exist in the gallery
 - **THEN** the page displays its list without an empty map panel
 
 ### Requirement: Country selection follows the reading position
@@ -22,7 +22,7 @@ The map SHALL select the latest supported country heading at or above a reading 
 
 #### Scenario: Heading reaches the reading line
 - **WHEN** USA reaches the reading line after Canada
-- **THEN** the map pans to USA and updates its title and summary while retaining all four countries' overlays and the current zoom
+- **THEN** the map pans to USA and updates its title and summary while retaining all six countries' overlays and the current zoom
 
 #### Scenario: Reverse scrolling
 - **WHEN** USA moves below the reading line while scrolling back toward Canada
@@ -38,7 +38,7 @@ The map SHALL select the latest supported country heading at or above a reading 
 
 ### Requirement: Visited administrative coverage
 
-The map SHALL distinguish visited regions with visible vector outlines and subtle fills, show their distinct count, and leave unvisited divisions visually neutral. Coverage SHALL include all 47 Japanese prefectures, 50 US states and DC, 13 Canadian provinces and territories, and 31 Mexican states plus Mexico City. All four countries' vector overlays SHALL remain present independently of the active country once their resources load; features on the visible hemisphere within the viewport SHALL remain visible during and after panning. The active country SHALL determine the displayed summary without filtering overlay visibility. Highlighting SHALL use the gallery's existing region visits regardless of photo-count search thresholds.
+The map SHALL distinguish visited regions with visible vector outlines and subtle fills, show their distinct count, and leave unvisited divisions visually neutral. Coverage SHALL include all 47 Japanese prefectures, 50 US states and DC, 13 Canadian provinces and territories, and 31 Mexican states plus Mexico City. All six countries' vector overlays SHALL remain present independently of the active country once their resources load; features on the visible hemisphere within the viewport SHALL remain visible during and after panning. The active country SHALL determine the displayed summary without filtering overlay visibility. Highlighting SHALL use the gallery's existing region visits regardless of photo-count search thresholds.
 
 #### Scenario: Japan coverage
 - **WHEN** the gallery contains visits to Kyoto and Osaka and Japan is selected
@@ -106,7 +106,7 @@ The map SHALL explicitly select Mapbox Globe in both online and vector-only mode
 
 ### Requirement: Independent overlay loading and graceful failure
 
-The map SHALL load boundaries for all four supported countries independently of scroll selection. Loading or failure SHALL preserve existing visit list content and links. A failed country load SHALL be identified without removing successfully loaded overlays or attributing their counts to the active country.
+The map SHALL load boundaries for all six supported countries independently of scroll selection. Loading or failure SHALL preserve existing visit list content and links. A failed country load SHALL be identified without removing successfully loaded overlays or attributing their counts to the active country.
 
 #### Scenario: Slow response after switching
 - **WHEN** boundaries for Canada arrive after the user has selected Japan
@@ -245,3 +245,20 @@ The visited page SHALL provide a discoverable validation section with country co
 #### Scenario: Duplicate country entries
 - **WHEN** Mexico and México occur as separate country entries
 - **THEN** validation flags the duplicate names and map coverage combines both entries' regional visits without changing the original list or filters
+
+
+### Requirement: Italy and Türkiye administrative coverage
+
+Italy SHALL include 20 regions and Türkiye SHALL include 81 provinces, with the same persistent source lifecycle, visited highlights, centered labels, validation, coverage summaries, offline display, and pan-only country selection as the other supported countries. Country aliases Italia/Italy and Turkey/Turkiye/Türkiye SHALL resolve consistently. Localized region/province names, common English names, province suffixes, and ISO codes SHALL match without duplicate counting. Unknown cities and macroregions SHALL not be inferred as administrative visits.
+
+#### Scenario: Italian regional aliases
+- **WHEN** visits contain Tuscany and Toscana, or Sicily and Sicilia
+- **THEN** each pair maps to one region and counts once out of 20
+
+#### Scenario: Turkish province names
+- **WHEN** visits contain Istanbul, İstanbul province, İzmir province, and Trabzon province
+- **THEN** three provinces are highlighted and counted out of 81
+
+#### Scenario: Persistent European vectors
+- **WHEN** Italy or Türkiye is active and Basemap is off
+- **THEN** its local vectors, labels, and attribution remain visible and previously loaded countries stay mounted

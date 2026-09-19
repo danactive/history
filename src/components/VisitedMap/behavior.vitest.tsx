@@ -36,7 +36,7 @@ it('retains independent late boundaries, reports one failure, caches successes a
   })
   vi.stubGlobal('fetch', fetcher)
   const first = renderHook(useBoundaries)
-  expect(fetcher).toHaveBeenCalledTimes(4)
+  expect(fetcher).toHaveBeenCalledTimes(6)
   const respond = (name: string, ok = true) => pending.get(`/maps/visited/${name}.geojson`)?.({
     ok, json: async () => ({ type: 'FeatureCollection', features: [], name }),
   } as Response)
@@ -44,15 +44,15 @@ it('retains independent late boundaries, reports one failure, caches successes a
   expect(first.result.current.Canada?.data).toBeDefined()
   expect(first.result.current.USA?.error).toBe(true)
   expect(first.result.current.Japan).toBeUndefined()
-  await act(async () => { respond('japan'); respond('mexico') })
+  await act(async () => { respond('japan'); respond('mexico'); respond('italy'); respond('turkiye') })
   expect(first.result.current.Canada?.data).toBeDefined()
   expect(first.result.current.Japan?.data).toBeDefined()
   first.rerender()
-  expect(fetcher).toHaveBeenCalledTimes(4)
+  expect(fetcher).toHaveBeenCalledTimes(6)
   first.unmount()
   expect(signals.every(signal => signal.aborted)).toBe(true)
   const second = renderHook(useBoundaries)
-  expect(fetcher).toHaveBeenCalledTimes(5) // Only the previously failed country retries.
+  expect(fetcher).toHaveBeenCalledTimes(7) // Only the previously failed country retries.
   expect(second.result.current.Canada?.data).toBeDefined()
 })
 

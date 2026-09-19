@@ -1,6 +1,8 @@
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson'
 
 export const mapCountries = {
+  Italy: { file: 'italy', center: [12.5, 42], total: 20, regions: 'regions' },
+  Türkiye: { file: 'turkiye', center: [35, 39], total: 81, regions: 'provinces' },
   Japan: { file: 'japan', center: [138, 37], total: 47, regions: 'prefectures' },
   USA: { file: 'usa', center: [-110, 42], total: 51, regions: 'states / DC' },
   Mexico: { file: 'mexico', center: [-102, 24], total: 32, regions: 'states / Mexico City' },
@@ -23,8 +25,11 @@ export function isMapCountry(country: string): country is MapCountry {
 }
 
 export function resolveMapCountry(country: string): MapCountry | null {
-  const name = country.trim().normalize('NFD').replace(/\p{M}/gu, '')
-  return (Object.keys(mapCountries) as MapCountry[]).find(key => key.toLowerCase() === name.toLowerCase()) ?? null
+  const normalize = (value: string) => value.trim().normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
+  const name = normalize(country)
+  if (name === 'turkey') return 'Türkiye'
+  if (name === 'italia') return 'Italy'
+  return (Object.keys(mapCountries) as MapCountry[]).find(key => normalize(key) === name) ?? null
 }
 
 export function coverageSummary(country: MapCountry, count: number) {
@@ -33,8 +38,8 @@ export function coverageSummary(country: MapCountry, count: number) {
 }
 
 function normalizeRegion(name: string) {
-  return name.trim().normalize('NFD').replace(/\p{M}/gu, '').toLowerCase()
-    .replace(/(?:\s+prefecture|[-\s]+(?:ken|fu|to))$/u, '')
+  return name.trim().normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/ı/g, 'i')
+    .replace(/(?:\s+(?:prefecture|province|region)|[-\s]+(?:ken|fu|to))$/u, '')
     .replace(/[都府県]$/u, '').replace(/[^\p{L}\p{N}]/gu, '')
 }
 

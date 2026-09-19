@@ -98,7 +98,10 @@ export default function CountryMap({ country, countries, loaded }: {
         >
           <NavigationControl showCompass={false} />
           {overlays.map(overlay => (
-            <Source key={overlay.country} id={`regions-${overlay.country}`} type="geojson" data={overlay.data} attribution="Natural Earth">
+            <Source
+              key={overlay.country} id={`regions-${overlay.country}`} type="geojson" data={overlay.data}
+              attribution={overlay.country === 'Italy' ? '© ISTAT (CC BY)' : 'Natural Earth'}
+            >
               <Layer
                 id={`fill-${overlay.country}`} type="fill" filter={['==', ['get', 'visited'], true]}
                 paint={{ 'fill-color': '#ffbd69', 'fill-opacity': 0.22 }}

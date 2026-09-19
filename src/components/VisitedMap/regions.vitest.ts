@@ -19,8 +19,8 @@ describe('visited boundary matching', () => {
       return inside
     }
     const all = (Object.keys(mapCountries) as MapCountry[]).flatMap(country => boundaries(country).features)
-    expect(new Set(all.map(feature => feature.properties.id)).size).toBe(143)
-    expect(new Set(all.map(feature => feature.properties.abbreviation)).size).toBe(143)
+    expect(new Set(all.map(feature => feature.properties.id)).size).toBe(244)
+    expect(new Set(all.map(feature => feature.properties.abbreviation)).size).toBe(244)
     for (const feature of all) {
       const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates
       const contained = polygons.some(polygon => insideRing(feature.properties.label, polygon[0])
@@ -64,7 +64,7 @@ describe('visited boundary matching', () => {
   })
 
   it('ships complete administrative divisions with closed polygon rings', () => {
-    for (const [country, count] of [['Japan', 47], ['USA', 51], ['Canada', 13], ['Mexico', 32]] as const) {
+    for (const [country, count] of [['Japan', 47], ['USA', 51], ['Canada', 13], ['Mexico', 32], ['Italy', 20], ['Türkiye', 81]] as const) {
       const data = boundaries(country)
       expect(data.features).toHaveLength(count)
       expect(new Set(data.features.map(feature => feature.properties.id)).size).toBe(count)
@@ -100,4 +100,28 @@ it('matches Mexican states and Mexico City without inferring states from cities'
   expect(result.count).toBe(6)
   expect(result.unmatched).toEqual(['Cozumel', 'Costa Maya'])
   expect(coverageSummary('Mexico', 6)).toBe('6 of 32 states / Mexico City visited')
+})
+
+
+it('matches Türkiye names, province suffixes, and ISO codes without inventing regional visits', () => {
+  expect(resolveMapCountry('Turkey')).toBe('Türkiye')
+  expect(resolveMapCountry('Türkiye')).toBe('Türkiye')
+  expect(resolveMapCountry('Turkiye')).toBe('Türkiye')
+  const result = markVisitedRegions(boundaries('Türkiye'), [
+    'Istanbul', 'İstanbul province', 'İzmir province', 'Aydın province', 'Gümüşhane province',
+    'TR-61', 'Trabzon', 'Trabzon province', 'Aegean region',
+  ])
+  expect(result.count).toBe(5)
+  expect(result.unmatched).toEqual(['Aegean region'])
+  expect(coverageSummary('Türkiye', 5)).toBe('5 of 81 provinces visited')
+})
+
+it('matches Italy regional names in English and Italian and counts aliases once', () => {
+  expect(resolveMapCountry('Italia')).toBe('Italy')
+  const result = markVisitedRegions(boundaries('Italy'), [
+    'Tuscany', 'Toscana', 'Sicily', 'Sicilia', 'Sardegna', 'Puglia', 'Lombardia', 'Emilia-Romagna', 'Rome',
+  ])
+  expect(result.count).toBe(6)
+  expect(result.unmatched).toEqual(['Rome'])
+  expect(coverageSummary('Italy', 6)).toBe('6 of 20 regions visited')
 })

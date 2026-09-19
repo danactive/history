@@ -51,7 +51,7 @@ function anchor(polygon) {
   return { label: [best.x / scale, best.y], labelRadius: best.d / scale }
 }
 
-for (const country of ['japan', 'usa', 'canada', 'mexico']) {
+for (const country of ['japan', 'usa', 'canada', 'mexico', 'italy', 'turkiye']) {
   const path = `public/maps/visited/${country}.geojson`
   const data = JSON.parse(readFileSync(path, 'utf8'))
   for (const feature of data.features) {
@@ -60,7 +60,7 @@ for (const country of ['japan', 'usa', 'canada', 'mexico']) {
     // Hokkaido, Honshu prefectures, and main islands rather than offshore fragments.
     const main = [...polygons].sort((a, b) => area(b[0]) - area(a[0]))[0]
     const p = feature.properties
-    Object.assign(p, anchor(main), { abbreviation: country === 'japan' ? p.id : p.id.split('-')[1] })
+    Object.assign(p, anchor(main), { abbreviation: ['japan', 'italy', 'turkiye'].includes(country) ? p.id : p.id.split('-')[1] })
   }
   writeFileSync(path, JSON.stringify(data) + '\n')
   console.log(`${country}: ${data.features.length} interior label anchors`)

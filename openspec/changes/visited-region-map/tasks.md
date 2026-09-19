@@ -46,3 +46,9 @@ The candidate has been reconciled with this change. Acceptance evidence and comm
 - [x] 6.1 Add review-only warnings for country typos, duplicate country/region names, ambiguous matches, and unmapped supported regions, with loading/failure states.
 - [x] 6.2 Combine map visits across canonical country aliases while preserving original list/filter data; test suggestions never paint guessed matches and duplicates count once.
 - [x] 6.3 Run focused tests, lint, typecheck/build, browser review, and strict OpenSpec validation.
+
+
+## 7. Italy and Türkiye
+
+- [x] 7.1 Add ready-made Italy regions and Türkiye provinces to the existing local vector pipeline, with aliases, interior labels, attribution, coverage, validation, and offline behavior.
+- [x] 7.2 Verify complete datasets (20/81), matching and deduplication, browser selection/rendering, focused tests, lint, typecheck/build, and strict OpenSpec validation.
