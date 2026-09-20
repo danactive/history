@@ -51,3 +51,33 @@ To reproduce these two assets, download the pinned sources and run
 then `node scripts/generate-visited-labels.mjs`. Both scripts use only built-in
 libraries. Italy and Türkiye abbreviations use full ISO IDs to avoid ambiguous
 numeric labels alongside Japan. All six datasets share the same runtime pipeline.
+
+
+## Spain
+
+Spain uses the same Natural Earth 5.1.2 source filtered to `adm0_a3=ESP`:
+50 provinces plus Ceuta and Melilla (52 features). Geometry is unchanged, including
+the Balearic Islands and both Canary Island provinces. Source `type_en` values
+are not used to determine matching or coverage. The source `postal` field is
+excluded: it frequently denotes autonomous communities and incorrectly repeats
+CE for Melilla. Province ISO IDs/suffixes and localized names provide aliases;
+full ISO IDs provide unambiguous label abbreviations. Madrid is the canonical
+label for the source's Community of Madrid feature. City/island names such as
+Palma and Mallorca are not inferred as province visits.
+
+The prepared asset is `spain.geojson`. Interior label anchors are generated with
+the existing `node scripts/generate-visited-labels.mjs` command. No additional dependencies.
+
+
+## Dominican Republic
+
+`dominican-republic.geojson` preserves the Natural Earth 5.1.2 source geometry
+filtered to `adm0_a3=DOM`: 31 provinces plus Distrito Nacional (32 features).
+Names and ISO subdivision codes supply aliases; full ISO IDs provide compact labels.
+Distrito Nacional is distinct from Santo Domingo province. Elías Piña replaces
+the source label La Estrelleta, retained as an alias. Province/district names are
+cross-checked against [ONE's province codes](https://anda.one.gob.do/index.php/catalog/122/datafile/F3/V92).
+Source alternate-name strings are excluded because they include historical,
+malformed, or municipality names. Punta Cana, Nagua, and Santo Domingo Este
+remain unmapped. The existing label generator produces interior anchors.
+No one-time preparation helper or new dependency is retained in the repository.

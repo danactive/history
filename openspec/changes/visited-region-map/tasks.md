@@ -52,3 +52,15 @@ The candidate has been reconciled with this change. Acceptance evidence and comm
 
 - [x] 7.1 Add ready-made Italy regions and Türkiye provinces to the existing local vector pipeline, with aliases, interior labels, attribution, coverage, validation, and offline behavior.
 - [x] 7.2 Verify complete datasets (20/81), matching and deduplication, browser selection/rendering, focused tests, lint, typecheck/build, and strict OpenSpec validation.
+
+
+## 8. Spain provinces
+
+- [x] 8.1 Add Spain's 50 provinces and two autonomous cities through the existing local vector/label/validation pipeline, including localized aliases and explicit coverage wording.
+- [x] 8.2 Verify all boundaries/anchors, matching and duplicates, island/city coverage, independent loading, browser rendering, focused tests, lint, typecheck/build, and strict OpenSpec validation.
+
+
+## 9. Dominican Republic
+
+- [x] 9.1 Add 31 provinces plus Distrito Nacional through the existing local vector pipeline, with aliases, interior labels, explicit coverage, validation, and offline behavior; retain no one-time importer.
+- [x] 9.2 Verify boundaries/anchors, aliases and district distinction, independent loading, browser rendering, focused tests, lint, typecheck/build, and strict OpenSpec validation.

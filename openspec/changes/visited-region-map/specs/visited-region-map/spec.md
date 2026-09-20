@@ -1,6 +1,6 @@
 ## Purpose
 
-Give the visited country list geographic context through a persistent map that follows the reader and identifies visited administrative regions in Japan, USA, Canada, Mexico, Italy, and Türkiye.
+Give the visited country list geographic context through a persistent map that follows the reader and identifies visited administrative regions in Japan, USA, Canada, Mexico, Italy, Türkiye, Spain, and the Dominican Republic.
 
 ## ADDED Requirements
 
@@ -13,7 +13,7 @@ The visited page SHALL display a Mapbox panel to the right of the scrolling list
 - **THEN** the map remains visible at the right while list content moves
 
 #### Scenario: No supported countries
-- **WHEN** no visits to Japan, USA, Canada, Mexico, Italy, or Türkiye exist in the gallery
+- **WHEN** no visits to Japan, USA, Canada, Mexico, Italy, Türkiye, or Spain exist in the gallery
 - **THEN** the page displays its list without an empty map panel
 
 ### Requirement: Country selection follows the reading position
@@ -22,7 +22,7 @@ The map SHALL select the latest supported country heading at or above a reading 
 
 #### Scenario: Heading reaches the reading line
 - **WHEN** USA reaches the reading line after Canada
-- **THEN** the map pans to USA and updates its title and summary while retaining all six countries' overlays and the current zoom
+- **THEN** the map pans to USA and updates its title and summary while retaining all eight countries' overlays and the current zoom
 
 #### Scenario: Reverse scrolling
 - **WHEN** USA moves below the reading line while scrolling back toward Canada
@@ -38,7 +38,7 @@ The map SHALL select the latest supported country heading at or above a reading 
 
 ### Requirement: Visited administrative coverage
 
-The map SHALL distinguish visited regions with visible vector outlines and subtle fills, show their distinct count, and leave unvisited divisions visually neutral. Coverage SHALL include all 47 Japanese prefectures, 50 US states and DC, 13 Canadian provinces and territories, and 31 Mexican states plus Mexico City. All six countries' vector overlays SHALL remain present independently of the active country once their resources load; features on the visible hemisphere within the viewport SHALL remain visible during and after panning. The active country SHALL determine the displayed summary without filtering overlay visibility. Highlighting SHALL use the gallery's existing region visits regardless of photo-count search thresholds.
+The map SHALL distinguish visited regions with visible vector outlines and subtle fills, show their distinct count, and leave unvisited divisions visually neutral. Coverage SHALL include all 47 Japanese prefectures, 50 US states and DC, 13 Canadian provinces and territories, and 31 Mexican states plus Mexico City. All seven countries' vector overlays SHALL remain present independently of the active country once their resources load; features on the visible hemisphere within the viewport SHALL remain visible during and after panning. The active country SHALL determine the displayed summary without filtering overlay visibility. Highlighting SHALL use the gallery's existing region visits regardless of photo-count search thresholds.
 
 #### Scenario: Japan coverage
 - **WHEN** the gallery contains visits to Kyoto and Osaka and Japan is selected
@@ -106,7 +106,7 @@ The map SHALL explicitly select Mapbox Globe in both online and vector-only mode
 
 ### Requirement: Independent overlay loading and graceful failure
 
-The map SHALL load boundaries for all six supported countries independently of scroll selection. Loading or failure SHALL preserve existing visit list content and links. A failed country load SHALL be identified without removing successfully loaded overlays or attributing their counts to the active country.
+The map SHALL load boundaries for all eight supported countries independently of scroll selection. Loading or failure SHALL preserve existing visit list content and links. A failed country load SHALL be identified without removing successfully loaded overlays or attributing their counts to the active country.
 
 #### Scenario: Slow response after switching
 - **WHEN** boundaries for Canada arrive after the user has selected Japan
@@ -262,3 +262,37 @@ Italy SHALL include 20 regions and Türkiye SHALL include 81 provinces, with the
 #### Scenario: Persistent European vectors
 - **WHEN** Italy or Türkiye is active and Basemap is off
 - **THEN** its local vectors, labels, and attribution remain visible and previously loaded countries stay mounted
+
+
+### Requirement: Spain province coverage
+
+Spain SHALL include its 50 provinces plus the autonomous cities Ceuta and Melilla, using the existing persistent local vectors, labels, validation, visited styling, pan-only selection, and offline display. The summary SHALL make the inclusion of autonomous cities explicit in its denominator of 52. Spain/España country names, localized province names, and ISO subdivision codes SHALL resolve consistently. Autonomous-community codes SHALL NOT be treated as province codes; ambiguous cities and islands SHALL remain unmapped.
+
+#### Scenario: Spanish provincial aliases
+- **WHEN** visits contain Barcelona and ES-B, or Sevilla and Seville
+- **THEN** each pair counts once toward province coverage
+
+#### Scenario: Autonomous cities and islands
+- **WHEN** Ceuta, Melilla, Las Palmas, or Santa Cruz de Tenerife is visited
+- **THEN** each receives distinct visited treatment and an interior label, with both Canary Island provinces included
+
+#### Scenario: No city inference
+- **WHEN** a region entry is Mallorca or Palma
+- **THEN** no province is guessed and the entry appears in validation warnings
+
+
+### Requirement: Dominican Republic province coverage
+
+The Dominican Republic SHALL include 31 provinces plus Distrito Nacional through the existing persistent local vectors, labels, visited styling, validation, pan-only selection, manual zoom, and offline behavior. The denominator of 32 SHALL explicitly include the National District. Dominican Republic and República Dominicana SHALL select the same country. Province names with or without accents and ISO codes SHALL resolve without duplicate counting.
+
+#### Scenario: Distinct capital divisions
+- **WHEN** visits include Distrito Nacional, National District, and Santo Domingo
+- **THEN** the national district counts once and Santo Domingo province counts separately, totaling two divisions
+
+#### Scenario: Province aliases
+- **WHEN** visits include Samaná, Samana province, and DO-20
+- **THEN** one province is highlighted and counted
+
+#### Scenario: Municipality names
+- **WHEN** a region entry is Punta Cana, Nagua, or Santo Domingo Este
+- **THEN** it remains unmapped and appears in validation warnings rather than guessing its province

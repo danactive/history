@@ -55,3 +55,21 @@ Added 20 Italian regions from ready-made ISTAT GeoJSON (geojson-italy release 20
 Tests now verify all 244 administrative divisions, unique IDs/abbreviations, closed rings, interior label anchors, Italian/English aliases, Turkish accents and province suffixes, country aliases, duplicate prevention, and six independent cached requests. All 36 focused tests pass; lint, typecheck, build, strict OpenSpec validation, and diff checks pass. The build has the existing unrelated HEIF warning.
 
 Browser review of the current gallery shows Italy at 6/20 visited and Türkiye at 15/81 visited. Province aliases Trabzon/Trabzon province count once; Aegean region remains unmapped. Both sets of labels/vectors persist with Basemap off, alongside existing countries. ISTAT and Natural Earth attribution remains visible in vector-only mode. No tasks deferred.
+
+
+## Spain provinces follow-up
+
+Added 50 provinces plus Ceuta and Melilla using the existing Natural Earth 5.1.2 source and local vector pipeline. Geometry is preserved, including the Balearic and Canary Islands. The prepared GeoJSON uses province ISO codes instead of the source's autonomous-community postal codes, and includes localized aliases. The one-time preparation helper is not retained in the repository. No dependencies were added.
+
+All 38 focused tests pass across six files. Coverage checks now verify 296 divisions, unique IDs and abbreviations, closed rings, interior anchors, localized matching, alias deduplication, separate Ceuta/Melilla codes, island provinces, and seven independently loaded country files. Lint, typecheck, production build, strict OpenSpec validation, and whitespace checks pass. The build retains its existing unrelated HEIF dependency warning.
+
+Browser review shows Spain at 6 of 52 provinces / autonomous cities visited. The eight existing city/island entries remain explicit validation warnings. Spanish vectors and labels render with Basemap off; mouse zoom enlarges the map without scrolling the list, and the island labels remain available. No browser console errors were recorded. Existing country geometry files remain unchanged. All 27 OpenSpec tasks are complete; no work deferred.
+
+
+## Dominican Republic follow-up
+
+Added 31 provinces plus Distrito Nacional from the existing Natural Earth 5.1.2 dataset, preserving all geometry. The prepared local asset uses full ISO label abbreviations, interior anchors, accented and unaccented matching, República Dominicana country matching, and separate Distrito Nacional/Santo Domingo identities. Elías Piña is the display name for source La Estrelleta. No one-time helper, dependency, XML edit, or original-media change is included. Existing country geometry files remain unchanged.
+
+All 40 focused tests pass across six files, checking 328 divisions, unique IDs/abbreviations, closed rings, interior anchors, province aliases and deduplication, district distinction, no municipality inference, and eight independent boundary requests. Lint, typecheck, production build, strict OpenSpec validation, and diff checks pass. The build retains the existing unrelated HEIF dependency warning.
+
+Browser review confirms scroll selection of Dominican Republic, 4 of 32 provinces / National District visited, seven unmapped city/resort entries, and visible local vectors and labels with Basemap off after mouse zoom. No browser console errors were recorded. All 29 tasks are complete; no work deferred.

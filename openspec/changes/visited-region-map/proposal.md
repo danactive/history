@@ -1,12 +1,12 @@
 ## Why
 
-The visited page lists countries and regions but needs geographic context to show travel coverage. A map that follows the reader through Japan, USA, Canada, Mexico, Italy, and Türkiye makes visited prefectures, states, and provinces visible alongside the existing history.
+The visited page lists countries and regions but needs geographic context to show travel coverage. A map that follows the reader through Japan, USA, Canada, Mexico, Italy, Türkiye, Spain, and the Dominican Republic makes visited prefectures, states, and provinces visible alongside the existing history.
 
 ## What Changes
 
 - Add a Mapbox panel anchored to the right on desktop while the country list scrolls.
 - Pan to a supported country when its heading approaches the top of the reading area; keep zoom, bearing, and pitch unchanged in either scroll direction.
-- Keep vector outlines and visited fills for Japan, USA, Canada, Mexico, Italy, and Türkiye present together throughout navigation. The active heading changes the camera center and country summary, not overlay visibility.
+- Keep vector outlines and visited fills for Japan, USA, Canada, Mexico, Italy, Türkiye, Spain, and the Dominican Republic present together throughout navigation. The active heading changes the camera center and country summary, not overlay visibility.
 - Use Mapbox Globe, matching the album maps, with a shared initial overview zoom. Keep automatic movement pan-only while allowing deliberate manual zoom for inspecting smaller regions; disable rotation.
 - In offline mode, omit Mapbox basemap tiles and render local vectors and labels on a plain background; preserve automatic pan-only navigation and manual zoom.
 - Label every prefecture, state, province, and territory at its visual center where possible; use abbreviations and then short leader lines to resolve collisions.

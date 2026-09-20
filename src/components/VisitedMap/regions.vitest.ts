@@ -19,8 +19,8 @@ describe('visited boundary matching', () => {
       return inside
     }
     const all = (Object.keys(mapCountries) as MapCountry[]).flatMap(country => boundaries(country).features)
-    expect(new Set(all.map(feature => feature.properties.id)).size).toBe(244)
-    expect(new Set(all.map(feature => feature.properties.abbreviation)).size).toBe(244)
+    expect(new Set(all.map(feature => feature.properties.id)).size).toBe(328)
+    expect(new Set(all.map(feature => feature.properties.abbreviation)).size).toBe(328)
     for (const feature of all) {
       const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates
       const contained = polygons.some(polygon => insideRing(feature.properties.label, polygon[0])
@@ -64,7 +64,9 @@ describe('visited boundary matching', () => {
   })
 
   it('ships complete administrative divisions with closed polygon rings', () => {
-    for (const [country, count] of [['Japan', 47], ['USA', 51], ['Canada', 13], ['Mexico', 32], ['Italy', 20], ['Türkiye', 81]] as const) {
+    for (const [country, count] of [
+      ['Japan', 47], ['USA', 51], ['Canada', 13], ['Mexico', 32], ['Italy', 20], ['Türkiye', 81], ['Spain', 52], ['Dominican Republic', 32],
+    ] as const) {
       const data = boundaries(country)
       expect(data.features).toHaveLength(count)
       expect(new Set(data.features.map(feature => feature.properties.id)).size).toBe(count)
@@ -124,4 +126,49 @@ it('matches Italy regional names in English and Italian and counts aliases once'
   expect(result.count).toBe(6)
   expect(result.unmatched).toEqual(['Rome'])
   expect(coverageSummary('Italy', 6)).toBe('6 of 20 regions visited')
+})
+
+
+it('matches Spanish province aliases without mixing community codes, cities, or islands', () => {
+  expect(resolveMapCountry('España')).toBe('Spain')
+  expect(resolveMapCountry('Spain')).toBe('Spain')
+  const result = markVisitedRegions(boundaries('Spain'), [
+    'Barcelona', 'ES-B', 'Madrid', 'València', 'Sevilla', 'Seville', 'Illes Balears', 'Baleares',
+    'Guipúzcoa', 'Gipuzkoa', 'Álava', 'Araba', 'CT', 'PV', 'Mallorca', 'Palma',
+  ])
+  expect(result.count).toBe(7)
+  expect(result.unmatched).toEqual(['CT', 'PV', 'Mallorca', 'Palma'])
+  expect(coverageSummary('Spain', 7)).toBe('7 of 52 provinces / autonomous cities visited')
+})
+
+it('keeps Ceuta and Melilla distinct and includes both Canary Island provinces', () => {
+  const result = markVisitedRegions(boundaries('Spain'), ['CE', 'Melilla', 'ML', 'Las Palmas', 'Santa Cruz de Tenerife'])
+  expect(result.count).toBe(4)
+  expect(result.unmatched).toEqual([])
+  const data = boundaries('Spain')
+  expect(data.features.find(feature => feature.properties.id === 'ES-PM')!.properties.label[0]).toBeGreaterThan(2)
+  expect(data.features.find(feature => feature.properties.id === 'ES-GC')!.properties.label[0]).toBeLessThan(-13)
+  expect(data.features.find(feature => feature.properties.id === 'ES-TF')!.properties.label[0]).toBeLessThan(-16)
+})
+
+
+it('matches Dominican province aliases and keeps the National District separate', () => {
+  expect(resolveMapCountry('República Dominicana')).toBe('Dominican Republic')
+  expect(resolveMapCountry('Dominican Republic')).toBe('Dominican Republic')
+  const result = markVisitedRegions(boundaries('Dominican Republic'), [
+    'Samaná', 'Samana province', 'DO-20', 'Distrito Nacional', 'National District', 'DO-01',
+    'Santo Domingo', 'DO-32', 'Elias Pina', 'La Estrelleta', 'Bahoruco', 'Baoruco',
+  ])
+  expect(result.count).toBe(5)
+  expect(result.unmatched).toEqual([])
+  expect(result.data.features.filter(feature => feature.properties.visited).map(feature => feature.properties.id).sort())
+    .toEqual(['DO-01', 'DO-03', 'DO-07', 'DO-20', 'DO-32'])
+  expect(coverageSummary('Dominican Republic', 5)).toBe('5 of 32 provinces / National District visited')
+})
+
+it('does not infer Dominican provinces from resort or municipality names', () => {
+  const names = ['Punta Cana', 'Higuey', 'Nagua', 'Santo Domingo Este', 'Las Terrenas', 'El Limon']
+  const result = markVisitedRegions(boundaries('Dominican Republic'), names)
+  expect(result.count).toBe(0)
+  expect(result.unmatched).toEqual(names)
 })

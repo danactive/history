@@ -1,6 +1,8 @@
 import type { FeatureCollection, MultiPolygon, Polygon } from 'geojson'
 
 export const mapCountries = {
+  'Dominican Republic': { file: 'dominican-republic', center: [-70.5, 19], total: 32, regions: 'provinces / National District' },
+  Spain: { file: 'spain', center: [-3.5, 40], total: 52, regions: 'provinces / autonomous cities' },
   Italy: { file: 'italy', center: [12.5, 42], total: 20, regions: 'regions' },
   Türkiye: { file: 'turkiye', center: [35, 39], total: 81, regions: 'provinces' },
   Japan: { file: 'japan', center: [138, 37], total: 47, regions: 'prefectures' },
@@ -29,6 +31,8 @@ export function resolveMapCountry(country: string): MapCountry | null {
   const name = normalize(country)
   if (name === 'turkey') return 'Türkiye'
   if (name === 'italia') return 'Italy'
+  if (name === 'republica dominicana') return 'Dominican Republic'
+  if (name === 'espana') return 'Spain'
   return (Object.keys(mapCountries) as MapCountry[]).find(key => normalize(key) === name) ?? null
 }
 
