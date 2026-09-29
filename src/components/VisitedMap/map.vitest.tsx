@@ -78,3 +78,28 @@ it('combines regional visits across duplicate country names', () => {
   render(<CountryMap country="Mexico" countries={visits} loaded={{ Mexico: { data: mexico } }} />)
   expect(screen.getByText('2 of 32 states / Mexico City visited')).toBeTruthy()
 })
+
+
+it('shows polygon hover names independently of zoom and hidden centered labels, including vector-only mode', () => {
+  vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  render(<CountryMap country="USA" countries={countries} loaded={loaded} />)
+  expect(mock.props.interactiveLayerIds).toEqual(['fill-Japan', 'fill-USA', 'fill-Mexico'])
+  const move = (name?: string) => act(() => (mock.props.onMouseMove as (event: unknown) => void)({
+    point: { x: 300, y: 200 }, features: name ? [{ properties: { name, visited: false } }] : [],
+  }))
+  move('Rhode Island')
+  expect(screen.getByRole('tooltip').textContent).toBe('Rhode Island')
+  act(() => (mock.props.onMoveStart as () => void)())
+  expect(screen.queryByRole('tooltip')).toBeNull()
+  move('Massachusetts')
+  expect(screen.getByRole('tooltip').textContent).toBe('Massachusetts')
+  fireEvent.click(screen.getByRole('switch', { name: 'Basemap' }))
+  expect(screen.queryByRole('tooltip')).toBeNull()
+  move('Rhode Island')
+  expect(screen.getByRole('tooltip').textContent).toBe('Rhode Island')
+  move()
+  expect(screen.queryByRole('tooltip')).toBeNull()
+  move('Rhode Island')
+  act(() => (mock.props.onMouseLeave as () => void)())
+  expect(screen.queryByRole('tooltip')).toBeNull()
+})

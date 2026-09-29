@@ -36,24 +36,13 @@ export function layoutLabels(candidates: LabelCandidate[], width: number, height
     const full = candidate.name.replace(/ Prefecture$/, '')
     let text = full
     let w = measure(text) + 8
-    let x = candidate.x, y = candidate.y
+    const x = candidate.x, y = candidate.y
     if (w > candidate.room || !fits(x, y, w)) {
       text = measure(candidate.abbreviation) < measure(full) ? candidate.abbreviation : full
       w = measure(text) + 8
     }
-    if (!fits(x, y, w)) {
-      let found = false
-      // Search outward, keeping the leader as short as available space permits.
-      for (let radius = 12; radius < Math.max(width, height) && !found; radius += 12) {
-        const steps = Math.max(8, Math.ceil(2 * Math.PI * radius / 16))
-        for (let step = 0; step < steps; step++) {
-          const angle = step * 2 * Math.PI / steps
-          const nx = candidate.x + Math.cos(angle) * radius
-          const ny = candidate.y + Math.sin(angle) * radius
-          if (fits(nx, ny, w)) { x = nx; y = ny; found = true; break }
-        }
-      }
-    }
+    // Crowded labels stay hidden until the map provides room at their anchors.
+    if (w > candidate.room || !fits(x, y, w)) continue
     placed.push({ ...candidate, text, left: x, top: y, width: w })
   }
   return placed

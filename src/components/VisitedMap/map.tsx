@@ -24,6 +24,7 @@ export default function CountryMap({ country, countries, loaded }: {
 }) {
   const map = useRef<MapRef>(null)
   const [readyMap, setReadyMap] = useState<MapRef | null>(null)
+  const [hover, setHover] = useState<{ name: string, x: number, y: number } | null>(null)
   const [mapError, setMapError] = useState(false)
   const basemap = useBasemap()
   const config = mapCountries[country]
@@ -51,6 +52,8 @@ export default function CountryMap({ country, countries, loaded }: {
     const regions = countries.filter(visit => resolveMapCountry(visit.country) === name).flatMap(visit => visit.regions.map(region => region.region))
     return [{ country: name, ...markVisitedRegions(data, regions) }]
   }), [loaded, countries])
+  const interactiveLayerIds = useMemo(() => overlays.map(overlay => `fill-${overlay.country}`), [overlays])
+  useEffect(() => { setHover(null) }, [country, style, loaded])
   const features = useMemo(() => overlays.flatMap(overlay => overlay.data.features), [overlays])
   const active = overlays.find(overlay => overlay.country === country)
   const failed = COUNTRY_NAMES.filter(name => loaded[name]?.error)
@@ -89,6 +92,13 @@ export default function CountryMap({ country, countries, loaded }: {
           doubleClickZoom
           boxZoom={false}
           keyboard={false}
+          interactiveLayerIds={interactiveLayerIds}
+          onMouseMove={event => {
+            const name = event.features?.[0]?.properties?.name
+            setHover(typeof name === 'string' ? { name, x: event.point.x, y: event.point.y } : null)
+          }}
+          onMouseLeave={() => setHover(null)}
+          onMoveStart={() => setHover(null)}
           onLoad={() => { setReadyMap(map.current); panCountry() }}
           onError={event => {
             if ('sourceId' in event && String(event.sourceId).startsWith('regions-')) return
@@ -103,8 +113,8 @@ export default function CountryMap({ country, countries, loaded }: {
               attribution={overlay.country === 'Italy' ? '© ISTAT (CC BY)' : 'Natural Earth'}
             >
               <Layer
-                id={`fill-${overlay.country}`} type="fill" filter={['==', ['get', 'visited'], true]}
-                paint={{ 'fill-color': '#ffbd69', 'fill-opacity': 0.22 }}
+                id={`fill-${overlay.country}`} type="fill"
+                paint={{ 'fill-color': '#ffbd69', 'fill-opacity': ['case', ['==', ['get', 'visited'], true], 0.22, 0] }}
               />
               <Layer
                 id={`boundaries-${overlay.country}`} type="line"
@@ -118,6 +128,12 @@ export default function CountryMap({ country, countries, loaded }: {
           ))}
         </MapboxMap>
         <RegionLabels map={readyMap} features={features} />
+        {hover && (
+          <div
+            role="tooltip" className={styles.vectorTooltip}
+            style={{ left: `clamp(8px, ${hover.x + 12}px, calc(100% - 228px))`, top: Math.max(48, hover.y - 12) }}
+          >{hover.name}</div>
+        )}
       </div>
       {mapError && <p className={styles.notice} role="status">The map could not render. Visit details remain available in the list.</p>}
       {failed.length > 0 && <p className={styles.notice} role="status">Boundaries unavailable: {failed.join(', ')}.</p>}

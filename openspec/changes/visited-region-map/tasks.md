@@ -64,3 +64,15 @@ The candidate has been reconciled with this change. Acceptance evidence and comm
 
 - [x] 9.1 Add 31 provinces plus Distrito Nacional through the existing local vector pipeline, with aliases, interior labels, explicit coverage, validation, and offline behavior; retain no one-time importer.
 - [x] 9.2 Verify boundaries/anchors, aliases and district distinction, independent loading, browser rendering, focused tests, lint, typecheck/build, and strict OpenSpec validation.
+
+
+## 10. Reduce label density (supersedes leader-line requirements in 3.6)
+
+- [x] 10.1 Remove displaced labels and connecting lines; hide labels that cannot fit at their anchors, with the same density rule online/offline and no focus targets for hidden labels.
+- [x] 10.2 Verify deterministic suppression, restoration with zoom, persistent vectors, browser appearance, focused tests, lint, typecheck/build, and strict OpenSpec validation.
+
+
+## 11. Polygon hover labels
+
+- [x] 11.1 Keep full-name polygon hover labels at every zoom independently of label density, visited state, and basemap visibility; clear stale hover state.
+- [x] 11.2 Verify hover behavior, focused tests, lint, typecheck/build, and strict OpenSpec validation.

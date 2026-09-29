@@ -9,7 +9,7 @@ The visited page lists countries and regions but needs geographic context to sho
 - Keep vector outlines and visited fills for Japan, USA, Canada, Mexico, Italy, Türkiye, Spain, and the Dominican Republic present together throughout navigation. The active heading changes the camera center and country summary, not overlay visibility.
 - Use Mapbox Globe, matching the album maps, with a shared initial overview zoom. Keep automatic movement pan-only while allowing deliberate manual zoom for inspecting smaller regions; disable rotation.
 - In offline mode, omit Mapbox basemap tiles and render local vectors and labels on a plain background; preserve automatic pan-only navigation and manual zoom.
-- Label every prefecture, state, province, and territory at its visual center where possible; use abbreviations and then short leader lines to resolve collisions.
+- Label every prefecture, state, province, and territory at its visual center where possible; use abbreviations where they fit and hide crowded labels, leaving online context to the basemap.
 - Show visited coverage totals (for example, “30 of 47 prefectures visited”) and unmapped names for the active country; distinguish visited coverage by both fill and outline.
 - Indicate the active country in the scrolling list with a subtle visual marker.
 - Add a Basemap toggle so users can select vector-only display online; automatic offline fallback still takes priority.

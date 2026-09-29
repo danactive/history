@@ -73,3 +73,17 @@ Added 31 provinces plus Distrito Nacional from the existing Natural Earth 5.1.2 
 All 40 focused tests pass across six files, checking 328 divisions, unique IDs/abbreviations, closed rings, interior anchors, province aliases and deduplication, district distinction, no municipality inference, and eight independent boundary requests. Lint, typecheck, production build, strict OpenSpec validation, and diff checks pass. The build retains the existing unrelated HEIF dependency warning.
 
 Browser review confirms scroll selection of Dominican Republic, 4 of 32 provinces / National District visited, seven unmapped city/resort entries, and visible local vectors and labels with Basemap off after mouse zoom. No browser console errors were recorded. All 29 tasks are complete; no work deferred.
+
+
+## Label density refinement
+
+Supersedes the earlier leader-line acceptance requirements: removed label displacement and connecting-line rendering/CSS. Full names or shorter abbreviations remain centered only when they fit the region's available width and avoid other local labels, controls, and viewport edges. Hidden labels expose no focus target or tooltip and are reconsidered on every map render. Both online and vector-only modes use this rule; all boundary geometry and visited fills remain mounted.
+
+All 40 focused tests pass, including deterministic suppression, hidden focus-target removal, restoration as anchor spacing grows, horizon visibility, and mouse zoom forwarding. Lint, typecheck, production build, strict OpenSpec validation, and whitespace checks pass. The build retains its existing unrelated HEIF warning. Browser review confirmed a sparse overview with basemap context, persistent visited outlines, and no connecting lines in online/vector-only modes. No tasks deferred.
+
+
+## Hover names at every zoom
+
+Full region names now appear when hovering polygon interiors independently of centered-label density. Every loaded country's fill layer participates in hit testing; unvisited fills stay transparent. Hover names have no zoom restriction, do not intercept pointer input, and clear on empty space, pointer exit, camera movement, or country/style changes. Existing centered-label hover/focus remains available.
+
+All 41 focused tests pass. Lint, typecheck, build, strict OpenSpec validation, and whitespace checks pass (existing unrelated HEIF build warning remains). Browser checks at overview zoom confirmed the hidden, unvisited South Dakota label appears on polygon hover with Basemap both on and off; no console errors. This extends the prior density refinement: hidden centered labels have no focus target, while their polygons retain hover names.

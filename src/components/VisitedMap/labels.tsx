@@ -69,11 +69,6 @@ export default function RegionLabels({ map, features }: { map: MapRef | null, fe
 
   return (
     <div ref={overlay} className={styles.labels} aria-label="Administrative region labels">
-      <svg className={styles.leaders} aria-hidden="true">
-        {labels.filter(label => Math.hypot(label.left - label.x, label.top - label.y) > 2).map(label => (
-          <line key={label.id} x1={label.x} y1={label.y} x2={label.left} y2={label.top} />
-        ))}
-      </svg>
       {labels.map(label => (
         <span
           key={label.id} className={styles.regionLabel} data-visited={label.visited}

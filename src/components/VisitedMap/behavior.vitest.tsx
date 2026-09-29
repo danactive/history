@@ -96,17 +96,23 @@ describe('desktop reading line', () => {
   })
 })
 
-it('lays out dense labels deterministically with abbreviations and non-overlapping boxes', () => {
+it('hides dense labels deterministically and restores centered labels when room permits', () => {
   const candidates = Array.from({ length: 47 }, (_, i) => ({
-    id: `JP-${i}`, name: `Prefecture ${i}`, abbreviation: `JP-${i}`, x: 300, y: 200, room: 10, visited: false,
+    id: `JP-${i}`, name: `Prefecture ${i}`, abbreviation: `JP-${i}`, x: 300, y: 200, room: 45, visited: false,
   }))
   const result = layoutLabels(candidates, 700, 550, text => text.length * 6)
   expect(result).toEqual(layoutLabels([...candidates].reverse(), 700, 550, text => text.length * 6))
+  expect(result).toHaveLength(1)
   expect(result.every(label => label.text === label.abbreviation)).toBe(true)
   for (const [i, a] of result.entries()) for (const b of result.slice(i + 1)) {
     expect(Math.abs(a.left - b.left) >= (a.width + b.width) / 2 + 3 || Math.abs(a.top - b.top) >= 20).toBe(true)
   }
-  expect(result.some(label => label.left !== label.x || label.top !== label.y)).toBe(true)
+  expect(result.every(label => label.left === label.x && label.top === label.y)).toBe(true)
+  expect(layoutLabels(candidates.map(c => ({ ...c, room: 5 })), 700, 550, text => text.length * 6)).toEqual([])
+  const spaced = candidates.slice(0, 2).map((c, i) => ({ ...c, x: 150 + i * 250, room: 200 }))
+  const expanded = layoutLabels(spaced, 700, 550, text => text.length * 6)
+  expect(expanded).toHaveLength(2)
+  expect(expanded.every(label => label.text === label.name && label.left === label.x && label.top === label.y)).toBe(true)
 })
 
 it('rejects horizon-occluded locations while handling wrapped dateline coordinates', () => {

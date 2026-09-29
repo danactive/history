@@ -86,7 +86,7 @@ The map SHALL explicitly select Mapbox Globe in both online and vector-only mode
 
 #### Scenario: Globe horizon visibility
 - **WHEN** a region moves behind the globe during a pan
-- **THEN** its geometry remains loaded but its label and leader line are not visible or keyboard-focusable through the globe, and they return when its anchor becomes visible again
+- **THEN** its geometry remains loaded but its label is not visible or keyboard-focusable through the globe, and may return when its anchor becomes visible with enough room
 
 #### Scenario: Manual zoom persists
 - **WHEN** the user zooms in with a zoom control and subsequently scrolls to another supported country
@@ -158,7 +158,7 @@ The map SHALL provide an accessible Basemap toggle. Turning it off SHALL render 
 
 ### Requirement: Centered administrative labels
 
-Each prefecture, state, province, territory, and DC SHALL have one label, preferentially centered horizontally and vertically on a visual-center anchor within its main polygon. When centered full names collide, the map SHALL use abbreviations first, then nearby text with short leader lines back to the interior anchors if collisions remain. Labels SHALL be present for visited and unvisited divisions whenever their anchors are in the viewport and on the visible globe surface, independent of the active country. Full names SHALL be used when space permits, with recognizable abbreviations or unambiguous subdivision codes where necessary. The full name SHALL remain available on hover and keyboard focus. Labels SHALL render offline and SHALL NOT be silently omitted through collision suppression.
+Each administrative division SHALL have an interior visual-center label anchor. The map SHALL try centered full names and then shorter abbreviations. Labels SHALL be hidden if they exceed the available region width or still collide with another label, viewport edges, or map controls. Labels SHALL NOT be displaced and connecting lines SHALL NOT be drawn. Visible labels SHALL remain centered at their anchors and expose full names on hover and keyboard focus; hidden centered labels SHALL have no focus target. Hovering a region polygon SHALL show its full name at every zoom level, including unvisited regions and vector-only mode, independently of centered-label suppression. Stale hover names SHALL clear when the pointer leaves the region/map or the camera, country, or style changes. Placement SHALL be recalculated on pan, zoom, and resize, independent of active country and basemap visibility. Local vectors and visited fills SHALL remain visible regardless of label suppression. Online basemap labels provide additional context; vector-only mode SHALL apply the same local density rule without remote fonts.
 
 #### Scenario: Centered label
 - **WHEN** a region is in view and its full label fits without collision
@@ -166,15 +166,15 @@ Each prefecture, state, province, territory, and DC SHALL have one label, prefer
 
 #### Scenario: Small region
 - **WHEN** a full name is too wide for the displayed region
-- **THEN** a compact abbreviation or subdivision code is tried at the same anchor and the full name is available on hover and focus
+- **THEN** a compact abbreviation or subdivision code is tried at the same anchor; if it still does not fit, the label is hidden
 
 #### Scenario: Abbreviations still collide
 - **WHEN** abbreviated labels overlap in a dense group of prefectures or states
-- **THEN** text is moved into nearby available space with short leader lines connecting it to each region's interior anchor, rather than silently hiding labels
+- **THEN** the crowded label is hidden without a connecting line or keyboard focus target
 
 #### Scenario: Label layout follows manual zoom
 - **WHEN** the user changes zoom or resizes the map
-- **THEN** label placement is recomputed, using centered full names where space now permits without changing the camera automatically
+- **THEN** label placement is recomputed, restoring hidden labels and centered full names where space now permits without changing the camera automatically
 
 #### Scenario: Concave or island region
 - **WHEN** a region has a centroid outside its boundary or comprises multiple islands
@@ -182,7 +182,7 @@ Each prefecture, state, province, territory, and DC SHALL have one label, prefer
 
 #### Scenario: Offline labels persist
 - **WHEN** the map switches between online and offline display or pans to another country
-- **THEN** labels for all in-view divisions remain available without remote font requests
+- **THEN** labels that fit without collisions remain available without remote font requests; dense labels remain suppressed
 
 ### Requirement: Active country indicator
 
@@ -296,3 +296,8 @@ The Dominican Republic SHALL include 31 provinces plus Distrito Nacional through
 #### Scenario: Municipality names
 - **WHEN** a region entry is Punta Cana, Nagua, or Santo Domingo Este
 - **THEN** it remains unmapped and appears in validation warnings rather than guessing its province
+
+
+#### Scenario: Hover names despite density suppression
+- **WHEN** a centered region label is hidden because of density and the pointer hovers its polygon at any zoom level
+- **THEN** its full name appears without a connecting line, with the same behavior for visited/unvisited regions and Basemap on/off
