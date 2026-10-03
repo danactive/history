@@ -46,9 +46,10 @@ interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {
   memoryIndex?: number;
   setMemoryIndex?: Dispatch<SetStateAction<number>>;
   refImageGallery?: React.RefObject<any>;
+  onBeforeNavigate?: () => void;
   mapFilterEnabled?: boolean;
   mapBounds?: Bounds | null;
-  onClearMapFilter?: (coordinates?: [number, number] | null) => void;
+  onClearMapFilter?: (coordinates?: [number, number] | null, options?: { navigate?: boolean }) => URLSearchParams | void;
   selectById?: (id: string, isClear?: boolean) => void;
   trailingAction?: React.ReactNode;
 }
@@ -73,6 +74,7 @@ export default function useSearch<ItemType extends SearchableItem>({
   mapFilterEnabled,
   mapBounds,
   onClearMapFilter,
+  onBeforeNavigate,
   personDetailsName,
   selectById,
   trailingAction,
@@ -158,6 +160,7 @@ export default function useSearch<ItemType extends SearchableItem>({
     selectById,
     mapFilterEnabled,
     onClearMapFilter,
+    onBeforeNavigate,
     onClearExtraFilters,
     extraQueryParamsToClear: ownedPersonFilter
       ? ['person', ...extraQueryParamsToClear.filter((key) => key !== 'person')]

@@ -45,6 +45,7 @@ function AlbumClient({
     memoryHtml,
     viewedList,
     searchBox,
+    mapQuery,
     mapFilterEnabled,
     mapBounds,
     handleToggleMapFilter,
@@ -108,6 +109,7 @@ function AlbumClient({
             refImageGallery={refImageGallery}
             memoryIndex={memoryIndex}
             mapVisible={isMapVisible}
+            mapQuery={mapQuery}
             mapFilterEnabled={mapFilterEnabled}
             mapBounds={mapBounds}
             isClearing={isClearing}

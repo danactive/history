@@ -5,6 +5,7 @@ import type { ImageGalleryRef } from 'react-image-gallery'
 import { buildSelectableItemIndex, resolveSelectedItemIndex } from '../lib/map-filtering'
 import { mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
 import type { All, SearchMetadata, SearchUiConfig } from '../types/pages'
+import useMapQuery from './useMapQuery'
 import useMapFilterMemory from './useMapFilterMemory'
 import useMemory from './useMemory'
 import useMapFilterState from './useMapFilterState'
@@ -32,6 +33,7 @@ export default function useMapFilter({
   onStructuredOptionSubmit,
   ownedPersonFilter = false,
 }: UseMapFilterProps) {
+  const mapQuery = useMapQuery()
   const searchParams = useSearchParams()
   const mapBoundsParam = searchParams.get(mapBoundsSearchParam)
   const initialMapBounds = useMemo(
@@ -63,9 +65,10 @@ export default function useMapFilter({
     setMapBounds(bounds)
   }, [setMapBounds])
 
-  const handleClearMapFilter = useCallback((coordinates?: [number, number] | null) => {
+  const handleClearMapFilter = useCallback((coordinates?: [number, number] | null, options?: { navigate?: boolean }) => {
     clearMapFilter(coordinates)
-  }, [clearMapFilter])
+    return mapQuery.setFilter(false, options?.navigate)
+  }, [clearMapFilter, mapQuery.setFilter])
 
   const {
     filtered,
@@ -90,6 +93,7 @@ export default function useMapFilter({
     mapFilterEnabled,
     mapBounds,
     onClearMapFilter: handleClearMapFilter,
+    onBeforeNavigate: mapQuery.cancel,
     personDetailsName,
     selectById,
     trailingAction,
@@ -159,6 +163,7 @@ export default function useMapFilter({
   }, [itemsToShow.length, itemsToShowMap, filteredMap, selectedId, selectionCoordinator, setMemoryIndex])
 
   return {
+    mapQuery,
     refImageGallery,
     memoryIndex,
     setMemoryIndex,

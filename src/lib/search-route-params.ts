@@ -62,7 +62,7 @@ export function buildClearedSearchRoutePath({
 }) {
   const params = createSearchRouteParams(baseSearchParams)
   params.delete('query')
-  params.delete(mapBoundsSearchParam)
+  for (const key of [mapBoundsSearchParam, 'longitude', 'latitude', 'zoom']) params.delete(key)
   retiredFilterKeys.forEach((key) => params.delete(key))
   extraQueryParamsToClear.forEach((key) => params.delete(key))
 

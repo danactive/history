@@ -33,6 +33,7 @@ export default function AllClient({
     memoryHtml,
     viewedList,
     searchBox,
+    mapQuery,
     mapFilterEnabled,
     mapBounds,
     handleToggleMapFilter,
@@ -76,6 +77,7 @@ export default function AllClient({
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           mapVisible={isMapVisible}
+          mapQuery={mapQuery}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}

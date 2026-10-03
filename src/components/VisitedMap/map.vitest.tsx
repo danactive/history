@@ -4,11 +4,16 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
 import type { CountryVisit } from '../../lib/visited-core'
 
-const mock = vi.hoisted(() => ({ panTo: vi.fn(), props: {} as Record<string, unknown>, reduced: false }))
+const mock = vi.hoisted(() => ({
+  panTo: vi.fn(), jumpTo: vi.fn(), params: new URLSearchParams(), props: {} as Record<string, unknown>, reduced: false,
+}))
 vi.mock('react-map-gl/mapbox', () => ({
   default: ({ ref, children, ...props }: { ref: React.Ref<unknown>, children: ReactNode }) => {
     mock.props = props
-    useImperativeHandle(ref, () => ({ panTo: mock.panTo, isStyleLoaded: () => true }))
+    useImperativeHandle(ref, () => ({
+      panTo: mock.panTo, jumpTo: mock.jumpTo, stop: vi.fn(), isStyleLoaded: () => true,
+      getCenter: () => ({ lng: 138, lat: 37 }), getZoom: () => 5,
+    }))
     return <div>{children}</div>
   },
   NavigationControl: () => <button>Zoom in</button>,
@@ -23,7 +28,11 @@ const loaded: import('./use-boundaries').BoundaryState = {
   Mexico: { data: { type: 'FeatureCollection', features: [] } },
 }
 import CountryMap, { VECTOR_STYLE } from './map'
-afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); mock.panTo.mockClear() })
+afterEach(() => {
+  cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers()
+  mock.panTo.mockClear(); mock.jumpTo.mockClear(); mock.params = new URLSearchParams()
+  window.history.replaceState({}, '', '/')
+})
 const countries = [{ country: 'USA', regions: [], years: [], count: 0, filter: { country: 'USA', region: '' } }] as CountryVisit[]
 
 it('keeps all loaded sources through pan-only country changes, manual basemap switching, and network failure', () => {
@@ -102,4 +111,23 @@ it('shows polygon hover names independently of zoom and hidden centered labels, 
   move('Rhode Island')
   act(() => (mock.props.onMouseLeave as () => void)())
   expect(screen.queryByRole('tooltip')).toBeNull()
+})
+
+it('ignores geographic query parameters and never synchronizes the visited map URL', () => {
+  vi.useFakeTimers()
+  vi.stubGlobal('matchMedia', () => ({ matches: false }))
+  const href = '/demo/visited?longitude=0&latitude=0&zoom=5&bbox=1,2,3,4'
+  window.history.replaceState({}, '', href)
+  const replace = vi.spyOn(window.history, 'replaceState')
+  const { rerender } = render(<CountryMap country="USA" countries={countries} loaded={loaded} />)
+  expect(mock.props.initialViewState).toMatchObject({ longitude: -110, latitude: 42, zoom: 1.5 })
+  act(() => (mock.props.onLoad as () => void)())
+  expect(mock.panTo).toHaveBeenLastCalledWith([-110, 42], { duration: 900 })
+  rerender(<CountryMap country="Japan" countries={countries} loaded={loaded} />)
+  expect(mock.panTo).toHaveBeenLastCalledWith([138, 37], { duration: 900 })
+  act(() => { (mock.props.onMoveStart as () => void)(); vi.advanceTimersByTime(1000) })
+  expect(mock.props.onMoveEnd).toBeUndefined()
+  expect(mock.jumpTo).not.toHaveBeenCalled()
+  expect(replace).not.toHaveBeenCalled()
+  expect(window.location.pathname + window.location.search).toBe(href)
 })

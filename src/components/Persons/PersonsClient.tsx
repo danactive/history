@@ -36,6 +36,7 @@ export default function PersonsClient({
     setMemoryIndex,
     setViewed,
     searchBox,
+    mapQuery,
     mapFilterEnabled,
     mapBounds,
     handleToggleMapFilter,
@@ -112,6 +113,7 @@ export default function PersonsClient({
           refImageGallery={refImageGallery}
           memoryIndex={memoryIndex}
           mapVisible={isMapVisible}
+          mapQuery={mapQuery}
           mapFilterEnabled={mapFilterEnabled}
           mapBounds={mapBounds}
           isClearing={isClearing}

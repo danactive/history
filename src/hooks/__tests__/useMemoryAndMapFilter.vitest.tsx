@@ -205,7 +205,7 @@ describe('Viewed persistence across map/keyword filtering', () => {
     expect(result.current.mapFilterEnabled).toBe(false)
     expect(result.current.clearCoordinates).toEqual([123, 45])
     expect(result.current.isClearing).toBe(true)
-    expect(navigationMock.replace).not.toHaveBeenCalled()
+    expect(navigationMock.replace).toHaveBeenCalledWith('/demo/all?query=tag%3Abest%5E', { scroll: false })
 
     await waitFor(() => {
       expect(result.current.isClearing).toBe(false)

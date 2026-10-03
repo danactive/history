@@ -78,7 +78,9 @@ export default function CountryMap({ country, countries, loaded }: {
       <div className={styles.map}>
         <MapboxMap
           ref={map}
-          initialViewState={{ longitude: config.center[0], latitude: config.center[1], zoom: INITIAL_ZOOM, bearing: 0, pitch: 0 }}
+          initialViewState={{
+            longitude: config.center[0], latitude: config.center[1], zoom: INITIAL_ZOOM, bearing: 0, pitch: 0,
+          }}
           mapboxAccessToken={MAPBOX_TOKEN}
           mapStyle={style}
           styleDiffing={false}

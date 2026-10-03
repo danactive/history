@@ -1,6 +1,6 @@
 'use client'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { FilterControlsProps } from '../components/Persons/FilterControls'
 import type { Persons } from '../types/pages'
 import type { PersonAgeFilterValue } from '../lib/persons'
@@ -29,6 +29,11 @@ export default function usePersonsFilter({
   initialSelectedAge?: PersonAgeFilterValue
 }) {
   const router = useRouter()
+  const cancelMapNavigation = useRef<(() => void) | undefined>(undefined)
+  const replace = useCallback((url: string, options?: { scroll?: boolean }) => {
+    cancelMapNavigation.current?.()
+    router.replace(url, options)
+  }, [router])
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const searchParamsSnapshot = searchParams.toString()
@@ -50,7 +55,7 @@ export default function usePersonsFilter({
     initialSelectedAge: resolvedInitialAge,
     initialSelectedPerson: resolvedInitialPerson,
     pathname,
-    replace: router.replace,
+    replace,
     routeFilters,
     searchParamsSnapshot,
   })
@@ -75,6 +80,7 @@ export default function usePersonsFilter({
     keyword,
     searchBox,
     setDisplayedItems,
+    mapQuery,
     mapFilterEnabled,
     mapBounds,
     handleToggleMapFilter,
@@ -96,6 +102,8 @@ export default function usePersonsFilter({
     onStructuredOptionSubmit: handleStructuredOptionSubmit,
     ownedPersonFilter: true,
   })
+
+  cancelMapNavigation.current = mapQuery?.cancel
 
   const {
     ageFiltered,
@@ -159,6 +167,7 @@ export default function usePersonsFilter({
     viewedList,
     keyword,
     searchBox,
+    mapQuery,
     mapFilterEnabled,
     mapBounds,
     handleToggleMapFilter,

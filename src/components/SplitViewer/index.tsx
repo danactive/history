@@ -16,6 +16,7 @@ import ImageGallery, { type GalleryItem, type ImageGalleryProps, type ImageGalle
 import 'react-image-gallery/styles/image-gallery.css'
 import type { MapRef } from 'react-map-gl/mapbox'
 import config from '../../../src/models/config'
+import type { MapQuery } from '../../hooks/useMapQuery'
 import type { SelectionCoordinator, SelectionSnapshot } from '../../hooks/useSelectionCoordinator'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import type { Bounds } from '../../lib/map-filtering'
@@ -103,6 +104,7 @@ function SplitViewer({
   memoryIndex,
   selectionCoordinator,
   mapFilterEnabled,
+  mapQuery,
   mapBounds,
   isClearing,
   clearCoordinates,
@@ -115,6 +117,7 @@ function SplitViewer({
   refImageGallery: Ref<ImageGalleryRef> | null;
   memoryIndex: number;
   selectionCoordinator: SelectionCoordinator;
+  mapQuery?: MapQuery;
   mapFilterEnabled?: boolean;
   mapBounds?: Bounds | null;
   isClearing?: boolean;
@@ -408,7 +411,8 @@ function SplitViewer({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [activeGalleryWindow.start, carouselItems.length, items.length, selectionCoordinator])
 
-  const handleMapReady = useCallback(() => {
+  const handleMapReady = useCallback((restored = false) => {
+    if (restored) return
     syncMapToSelection(selectionCoordinator.getSnapshot())
   }, [selectionCoordinator, syncMapToSelection])
 
@@ -569,6 +573,7 @@ function SplitViewer({
         <section className={styles.right} key="splitRight" ref={refMapBox}>
           <SlippyMap
             mapRef={mapRef}
+            mapQuery={mapQuery}
             clusteredMarkers={clusteredMarkers}
             items={items}
             centroid={effectiveCentroid}

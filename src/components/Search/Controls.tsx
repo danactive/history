@@ -36,7 +36,7 @@ type Props = {
   onRemoveKeywordToken: (tokenIndex: number) => void
   onToggleQueryMode?: () => void
   onClear: () => void
-  onClearMapFilter?: (coordinates?: [number, number] | null) => void
+  onClearMapFilter?: (coordinates?: [number, number] | null, options?: { navigate?: boolean }) => URLSearchParams | void
   extraFilterChips?: React.ReactNode
   extraFiltersActive?: boolean
   onClearAll?: () => void

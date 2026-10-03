@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import {
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,6 +15,7 @@ import Map, {
   type MapMouseEvent,
   type MapRef, type ViewStateChangeEvent,
 } from 'react-map-gl/mapbox'
+import type { MapQuery } from '../../hooks/useMapQuery'
 import config from '../../../src/models/config'
 import type { ClusteredMarkers } from '../../lib/generate-clusters'
 import { areMapBoundsEqual } from '../../lib/map-filter-query'
@@ -44,7 +46,8 @@ type SlippyMapProps = {
   mapRef?: RefObject<MapRef | null> | null;
   mapFilterEnabled?: boolean;
   filterBounds?: Bounds | null;
-  onMapReady?: () => void;
+  mapQuery?: MapQuery;
+  onMapReady?: (restored?: boolean) => void;
   onToggleMapFilter?: () => void;
   onBoundsChange?: (bounds: [[number, number], [number, number]]) => void;
 }
@@ -84,6 +87,7 @@ export default function SlippyMap({
   mapRef,
   mapFilterEnabled = false,
   filterBounds = null,
+  mapQuery,
   onMapReady,
   onToggleMapFilter,
   onBoundsChange,
@@ -96,8 +100,8 @@ export default function SlippyMap({
   const coordinates: [number, number] = activeCentroid?.coordinates ?? [0, 0]
   const zoom = activeCentroid?.coordinateAccuracy ?? metaZoom
   const initialViewport = useMemo(
-    () => transformMapOptions({ coordinates, zoom }),
-    [coordinates, zoom],
+    () => mapQuery?.initialCamera(zoom) ?? transformMapOptions({ coordinates, zoom }),
+    [coordinates, zoom, mapQuery],
   )
 
   const currentResolutionRef = useRef(getResolutionForZoom(zoom))
@@ -185,10 +189,18 @@ export default function SlippyMap({
     setCurrentResolution(nextResolution)
   }, [filterBounds, mapFilterEnabled, mapRef, readBounds])
 
+  useEffect(() => () => mapQuery?.detach(), [mapQuery?.detach])
+
   const handleMapLoad = useCallback(() => {
-    applyFilterBounds()
-    onMapReady?.()
-  }, [applyFilterBounds, onMapReady])
+    const map = mapRef?.current
+    if (map && mapQuery) {
+      const restored = mapQuery.attach(map, zoom)
+      onMapReady?.(restored)
+    } else {
+      applyFilterBounds()
+      onMapReady?.()
+    }
+  }, [applyFilterBounds, coordinates, mapQuery, mapRef, onMapReady, zoom])
 
   const handleMapError = useCallback((event: MapErrorEvent) => {
     if (isTransientMapboxNetworkError(event.error)) return
@@ -198,9 +210,10 @@ export default function SlippyMap({
   // Wrap toggle so enabling the filter captures bounds instantly (no move needed)
   const handleToggleClick = () => {
     const nextEnabled = !mapFilterEnabled
+    mapQuery?.setFilter(nextEnabled)
     onToggleMapFilter?.()
     if (nextEnabled && onBoundsChange) {
-      const b = readBounds()
+      const b = mapQuery?.readBounds() ?? readBounds()
       if (b) onBoundsChange(b)
     }
     // When disabling, onToggleMapFilter clears bounds already
@@ -215,6 +228,11 @@ export default function SlippyMap({
   }, [])
 
   const handleMoveEnd = useCallback(() => {
+    if (mapQuery) {
+      const bounds = mapQuery.onMoveEnd()
+      if (bounds && mapFilterEnabled) onBoundsChange?.(bounds)
+      return
+    }
     if (!mapFilterEnabled || !onBoundsChange) return
 
     // Fitting a bookmarked bbox fires map move events. It must not replace the
@@ -230,7 +248,7 @@ export default function SlippyMap({
 
     const bounds = readBounds()
     if (bounds) onBoundsChange(bounds)
-  }, [mapFilterEnabled, onBoundsChange, readBounds])
+  }, [mapQuery, mapFilterEnabled, onBoundsChange, readBounds])
 
   return (
     <>
@@ -257,6 +275,8 @@ export default function SlippyMap({
           onMouseDown={() => { userMovedMapRef.current = true }}
           onTouchStart={() => { userMovedMapRef.current = true }}
           onWheel={() => { userMovedMapRef.current = true }}
+          onResize={mapQuery?.cancel}
+          onMoveStart={mapQuery?.onMoveStart}
           onMove={handleMove}
           onMoveEnd={handleMoveEnd}
         >

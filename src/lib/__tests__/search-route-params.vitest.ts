@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 
 import {
   buildClearedSearchRoutePath,
@@ -44,3 +44,21 @@ describe('search route params', () => {
     expect(path).toBe('/demo/persons?foo=bar&select=alice.jpg')
   })
 })
+
+it.each(['/demo', '/demo/all', '/demo/sample', '/demo/persons', '/demo/today'])(
+  'preserves active camera values during editing and removes them on clear on %s', pathname => {
+    const baseSearchParams = new URLSearchParams('longitude=0&latitude=10&zoom=8&bbox=1,2,3,4')
+    const edited = buildSearchRoutePath({ pathname, baseSearchParams, query: 'keyword:bird || keyword:tree' })
+    const cleared = buildClearedSearchRoutePath({ pathname, baseSearchParams })
+    for (const path of [edited]) {
+      const url = new URL(path, 'https://example.test')
+      expect(url.pathname).toBe(pathname)
+      expect(url.searchParams.get('longitude')).toBe('0')
+      expect(url.searchParams.get('latitude')).toBe('10')
+      expect(url.searchParams.get('zoom')).toBe('8')
+    }
+    for (const key of ['bbox', 'longitude', 'latitude', 'zoom']) {
+      expect(new URL(cleared, 'https://example.test').searchParams.has(key)).toBe(false)
+    }
+  },
+)

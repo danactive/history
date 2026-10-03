@@ -64,6 +64,7 @@ export default function useSearchController<ItemType>({
   selectById,
   mapFilterEnabled,
   onClearMapFilter,
+  onBeforeNavigate,
   onClearExtraFilters,
   extraQueryParamsToClear = [],
   onStructuredOptionSubmit,
@@ -77,8 +78,9 @@ export default function useSearchController<ItemType>({
   refImageGallery?: React.RefObject<any>
   setMemoryIndex?: React.Dispatch<React.SetStateAction<number>>
   selectById?: (id: string, isClear?: boolean) => void
+  onBeforeNavigate?: () => void
   mapFilterEnabled?: boolean
-  onClearMapFilter?: (coordinates?: [number, number] | null) => void
+  onClearMapFilter?: (coordinates?: [number, number] | null, options?: { navigate?: boolean }) => URLSearchParams | void
   knownPeople?: string[]
   knownTags?: string[]
 }) {
@@ -100,9 +102,10 @@ export default function useSearchController<ItemType>({
     tags: knownTags,
   }), [knownPeople, knownTags, searchOptions])
 
-  const getNextPath = useCallback((nextQuery: string, select?: string | null) => (
-    buildSearchRoutePath({ pathname, baseSearchParams: searchParams, query: nextQuery, select })
-  ), [pathname, searchParams])
+  const getNextPath = useCallback((nextQuery: string, select?: string | null) => {
+    onBeforeNavigate?.()
+    return buildSearchRoutePath({ pathname, baseSearchParams: searchParams, query: nextQuery, select })
+  }, [onBeforeNavigate, pathname, searchParams])
 
   const handleSelectedOptionChange = useCallback((nextOption: IndexedKeywords | null) => {
     const option = nextOption?.value ? nextOption : null
@@ -132,6 +135,7 @@ export default function useSearchController<ItemType>({
 
   const handleSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    onBeforeNavigate?.()
     const intent = resolveSearchSubmitIntent({ selectedOption, inputValue, knownPeople, knownTags })
     const selection = formatSelectionQuery(intent)
 
@@ -171,6 +175,7 @@ export default function useSearchController<ItemType>({
     knownPeople,
     knownTags,
     onStructuredOptionSubmit,
+    onBeforeNavigate,
     ownedPersonFilter,
     query,
     queryContext,
@@ -199,19 +204,23 @@ export default function useSearchController<ItemType>({
   }, [applyQuery])
 
   const handleClearAll = useCallback(() => {
+    onBeforeNavigate?.()
     const identifier = getSelectedIdentifier()
     setQuery('')
     setSelectedOption(null)
     setInputValue('')
-    if (mapFilterEnabled) onClearMapFilter?.()
+    const mapParams = mapFilterEnabled ? onClearMapFilter?.(undefined, { navigate: false }) : undefined
     onClearExtraFilters?.()
     router.replace(buildClearedSearchRoutePath({
       pathname,
-      baseSearchParams: searchParams,
+      baseSearchParams: mapParams ?? searchParams,
       select: identifier,
       extraQueryParamsToClear,
     }))
-  }, [extraQueryParamsToClear, getSelectedIdentifier, mapFilterEnabled, onClearExtraFilters, onClearMapFilter, pathname, router, searchParams])
+  }, [
+    extraQueryParamsToClear, getSelectedIdentifier, mapFilterEnabled, onClearExtraFilters,
+    onClearMapFilter, onBeforeNavigate, pathname, router, searchParams,
+  ])
 
   useEffect(() => {
     const nextQuery = searchParams?.get('query') ?? ''
