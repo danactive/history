@@ -21,6 +21,7 @@ export type CalendarDay = {
   day: number
   monthDay: string
   hasPhotos: boolean
+  photoCount: number
 }
 
 export type CalendarMonth = {
@@ -32,7 +33,7 @@ export type CalendarMonth = {
  * Returns a calendar for every possible date, treating January 1 as a Monday.
  * February 29 is included so leap-day photos are reachable.
  */
-export function buildCalendarMonths(availableMonthDays: ReadonlySet<string>): CalendarMonth[] {
+export function buildCalendarMonths(counts: Readonly<Record<string, number>>): CalendarMonth[] {
   let weekday = 0
 
   return months.map(({ name, days }, monthIndex) => {
@@ -41,7 +42,8 @@ export function buildCalendarMonths(availableMonthDays: ReadonlySet<string>): Ca
 
     for (let day = 1; day <= days; day += 1) {
       const monthDay = `${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-      week[weekday] = { day, monthDay, hasPhotos: availableMonthDays.has(monthDay) }
+      const photoCount = counts[monthDay] ?? 0
+      week[weekday] = { day, monthDay, photoCount, hasPhotos: photoCount > 0 }
       weekday = (weekday + 1) % 7
 
       if (weekday === 0) {
@@ -56,11 +58,18 @@ export function buildCalendarMonths(availableMonthDays: ReadonlySet<string>): Ca
   })
 }
 
-export async function getCalendarMonthDays(gallery: Gallery): Promise<string[]> {
+export async function getCalendarPhotoCounts(gallery: Gallery): Promise<Record<string, number>> {
   'use cache'
 
   applyGalleryItemsCachePolicy(gallery)
 
   const albums = await getOrderedAlbumItems(gallery)
-  return [...new Set(albums.flatMap(({ items }) => items.map(getItemMonthDay)))]
+  const counts: Record<string, number> = {}
+  for (const { items } of albums) {
+    for (const item of items) {
+      const monthDay = getItemMonthDay(item)
+      counts[monthDay] = (counts[monthDay] ?? 0) + 1
+    }
+  }
+  return counts
 }

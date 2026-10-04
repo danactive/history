@@ -11,7 +11,7 @@
 .months {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
 }
 
 .month h2 {
@@ -40,9 +40,10 @@
   text-align: center;
 }
 
-.dayLink {
+.page .dayLink,
+.emptyDay {
   align-items: center;
-  border-radius: 999px;
+  border-radius: 0.2rem;
   display: inline-flex;
   font-weight: 700;
   height: 1.8rem;
@@ -51,8 +52,64 @@
   width: 1.8rem;
 }
 
-.dayLink:hover,
-.dayLink:focus-visible {
-  background: color-mix(in srgb, currentColor 18%, transparent);
+.page .dayLink,
+.page .dayLink:visited,
+.page .dayLink:hover,
+.page .dayLink:focus-visible {
+  position: static;
+  background: var(--date-background);
+  color: var(--date-foreground);
+}
+
+.page .dayLink:hover,
+.page .dayLink:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
   text-decoration: underline;
+}
+
+.month {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.countLabel {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--joy-palette-text-primary, #222);
+}
+
+.dayLink:hover .countLabel,
+.dayLink:focus-visible .countLabel {
+  display: block;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.15rem;
+  border: 1px solid currentColor;
+  background: var(--date-background, transparent);
 }
