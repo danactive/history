@@ -6,15 +6,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatFilterQuery, parseFilterQuery, type FilterQueryContext, type FilterQueryNode } from '../lib/filter-query'
 import { buildClearedSearchRoutePath, buildSearchRoutePath } from '../lib/search-route-params'
 import { resolveSearchSubmitIntent } from '../lib/search-submit-intent'
-import type { IndexedKeywords } from '../types/common'
+import type { IndexedKeywords, Item } from '../types/common'
 import type { SearchControllerConfig } from '../types/pages'
 import { getPrimaryFilename } from '../utils'
 
 type SearchableItem = {
-  filename?: string | string[]
+  filename?: Item['filename'];
 }
 
-function hasFilename(item: SearchableItem): item is SearchableItem & { filename: string | string[] } {
+function hasFilename(item: SearchableItem): item is SearchableItem & { filename: Item['filename']; } {
   return 'filename' in item && Boolean(item.filename)
 }
 

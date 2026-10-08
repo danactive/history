@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 
 import { type Item } from '../../../types/common'
 import {
@@ -43,6 +43,18 @@ describe('Options - <SlippyMap />', () => {
       videoPaths: './',
       reference: null,
     }
+
+    test('cluster output is independent of rendering time', () => {
+      const items: Item[] = [{ ...mockItem, coordinates: [-123.1, 49.3] }]
+      vi.useFakeTimers()
+      try {
+        vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+        const first = generateClusters(items)
+        vi.setSystemTime(new Date('2026-07-01T00:00:00Z'))
+        expect(generateClusters(items)).toEqual(first)
+        expect(Object.keys(first.labels)).toHaveLength(1)
+      } finally { vi.useRealTimers() }
+    })
 
     test('All Valid coordinates', () => {
       const items: Item[] = [

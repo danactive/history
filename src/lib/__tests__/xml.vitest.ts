@@ -12,8 +12,10 @@ vi.mock('node:fs/promises', () => ({
   __esModule: true,
   default: mocks,
 }))
+vi.mock('../curation/lock', () => ({ acquireLock: vi.fn(async () => async () => {}) }))
 
-import { InvalidAlbumXmlError, writeAlbum } from '../xml'
+import { AlbumRevisionConflict, InvalidAlbumXmlError, writeAlbum } from '../xml'
+import { digest } from '../curation/files'
 
 const validXml = '<?xml version="1.0" encoding="UTF-8"?><album><item id="1" /></album>'
 
@@ -67,5 +69,18 @@ describe('writeAlbum', () => {
     await expect(writeAlbum('demo', 'sample', validXml)).rejects.toThrow('disk full')
 
     expect(mocks.rm).toHaveBeenCalledWith(mocks.writeFile.mock.calls[0][0], { force: true })
+  })
+
+  test('rejects an outdated source revision without replacing newer XML', async () => {
+    mocks.readFile.mockResolvedValue('<album><item id="newer" /></album>')
+    await expect(writeAlbum('demo', 'sample', validXml, digest(validXml))).rejects.toThrow(AlbumRevisionConflict)
+    expect(mocks.rename).not.toHaveBeenCalled()
+    expect(mocks.rm).toHaveBeenCalled()
+  })
+
+  test('saves when the revision matches the current file', async () => {
+    mocks.readFile.mockResolvedValue(validXml)
+    await writeAlbum('demo', 'sample', '<album />', digest(validXml))
+    expect(mocks.rename).toHaveBeenCalled()
   })
 })

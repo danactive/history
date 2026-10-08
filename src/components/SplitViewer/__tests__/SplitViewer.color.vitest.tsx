@@ -44,7 +44,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 0,
     }
     const selectionCoordinator: SelectionCoordinator = {
@@ -74,7 +73,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 1,
     }
     const selectionCoordinator: SelectionCoordinator = {
@@ -104,7 +102,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 1,
     }
     const selectionCoordinator: SelectionCoordinator = {
@@ -188,7 +185,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 1,
     }
     const selectionCoordinator: SelectionCoordinator = {
@@ -219,7 +215,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 1,
     }
     const selectionCoordinator: SelectionCoordinator = {
@@ -315,7 +310,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: 0,
     }
     const onToggleMapFilterMock = vi.fn()
@@ -356,7 +350,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: items.length,
     }
 
@@ -395,7 +388,6 @@ describe('SplitViewer rendering', () => {
     const clustered: ClusteredMarkers = {
       labels: {},
       itemFrequency: {},
-      generatedAt: new Date().toISOString(),
       itemCount: items.length,
     }
 

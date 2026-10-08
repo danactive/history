@@ -20,6 +20,10 @@ type AdminAlbumPageProps = {
   searchParams: Promise<{
     album?: GalleryAlbum['name'];
     gallery?: Gallery;
+    itemId?: string;
+    filename?: string;
+    finding?: string;
+    returnTo?: string;
   }>;
 }
 
@@ -49,6 +53,9 @@ async function AdminAlbumContent({ searchParams }: AdminAlbumPageProps) {
       gallery={selectedGallery}
       galleryAlbum={galleryAlbum}
       initialAlbum={initialAlbum}
+      review={requested.finding ? {
+        finding: requested.finding, returnTo: requested.returnTo, itemId: requested.itemId, filename: requested.filename,
+      } : undefined}
     />
   )
 }

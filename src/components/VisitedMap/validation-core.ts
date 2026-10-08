@@ -2,7 +2,10 @@ import type { CountryVisit } from '../../lib/visited-core'
 import { mapCountries, regionCandidates, resolveMapCountry } from './regions'
 import type { BoundaryState } from './use-boundaries'
 
-export type ValidationWarning = { kind: string, country: string, message: string }
+export type ValidationWarning = {
+  kind: string, country: string, message: string,
+  names?: string[], candidates?: string[], field?: 'country' | 'region',
+}
 const normalize = (name: string) => name.trim().normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
 const quoted = (names: string[]) => names.map(name => `“${name}”`).join(', ')
 
@@ -36,6 +39,7 @@ export function validateVisits(countries: CountryVisit[], loaded: BoundaryState)
     if (!resolveMapCountry(country.country)) {
       const candidates = suggestions(country.country, Object.keys(mapCountries).map(name => ({ name, aliases: [] })))
       if (candidates.length) warnings.push({ kind: 'Possible country typo', country: country.country,
+        names: [country.country], candidates, field: 'country',
         message: `${quoted([country.country])}: did you mean ${quoted(candidates)}? This entry is not mapped.` })
     }
   }
@@ -44,6 +48,7 @@ export function validateVisits(countries: CountryVisit[], loaded: BoundaryState)
     const supported = resolveMapCountry(country)
     const data = supported ? loaded[supported]?.data : undefined
     if (visits.length > 1) warnings.push({ kind: 'Duplicate country names', country,
+      names: visits.map(visit => visit.country), field: 'country',
       message: `${quoted(visits.map(visit => visit.country))} identify the same country.`
         + (supported ? ' Map coverage combines their regions.' : '') })
     const regionGroups = new Map<string, { names: string[], name: string, mapped: boolean }>()
@@ -59,12 +64,14 @@ export function validateVisits(countries: CountryVisit[], loaded: BoundaryState)
         const candidates = matches.length ? matches.map(match => match.properties.name)
           : suggestions(region.region, data.features.map(feature => feature.properties))
         warnings.push({ kind: matches.length ? 'Ambiguous region' : 'Unmapped region', country,
+          names: [region.region], candidates, field: 'region',
           message: `${quoted([region.region])} is not highlighted.${candidates.length ? ` Possible match: ${quoted(candidates)}.`
             : ' It may be a city, a typo, or a name outside the administrative dataset.'}` })
       }
     }
     for (const group of regionGroups.values()) if (group.names.length > 1) {
       warnings.push({ kind: 'Duplicate region names', country,
+        names: group.names, candidates: group.mapped ? [group.name] : [], field: 'region',
         message: `${quoted(group.names)} identify ${group.name}. `
           + (group.mapped ? 'Matched map coverage counts this division once.' : 'Review these duplicate spellings.') })
     }

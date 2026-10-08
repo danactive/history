@@ -16,7 +16,7 @@ import {
 import { filterItemsByQuery, formatFilterQuery, parseFilterQuery, type FilterQueryContext } from '../lib/filter-query'
 import { filterItemsByMapBounds, type Bounds } from '../lib/map-filtering'
 import { areMapBoundsEqual, mapBoundsSearchParam, parseMapBounds } from '../lib/map-filter-query'
-import { Gallery, VisitedPlace } from '../types/common'
+import { Gallery, Item, VisitedPlace } from '../types/common'
 import type { SearchMetadata, SearchUiConfig } from '../types/pages'
 import useBookmark from './useBookmark'
 import useSearchController from './useSearchController'
@@ -37,7 +37,7 @@ interface SearchableItem {
 }
 
 export type FilenameItem = SearchableItem & {
-  filename: string | string[];
+  filename: Item['filename'];
 }
 
 interface UseSearchProps<ItemType> extends SearchMetadata, SearchUiConfig {

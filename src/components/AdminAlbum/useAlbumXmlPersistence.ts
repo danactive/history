@@ -12,6 +12,9 @@ type UseAlbumXmlPersistenceOptions = {
   xmlAlbum: RawXmlAlbum | undefined
   applyEditsToItems: EditCountPillHook['applyEditsToItems']
   onXmlGenerated: EditCountPillHook['handleXmlGenerated']
+  curationRevision?: string
+  curationReview?: boolean
+  onRevisionSaved?: (revision: string) => void
 }
 
 function useAlbumXmlPersistence({
@@ -20,6 +23,9 @@ function useAlbumXmlPersistence({
   xmlAlbum,
   applyEditsToItems,
   onXmlGenerated,
+  curationRevision,
+  curationReview,
+  onRevisionSaved,
 }: UseAlbumXmlPersistenceOptions) {
   const [xmlOutput, setXmlOutput] = useState('')
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
@@ -55,7 +61,7 @@ function useAlbumXmlPersistence({
       const response = await fetch(`/api/admin/xml/${encodeURIComponent(gallery)}/${encodeURIComponent(album)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ xml: xmlOutput }),
+        body: JSON.stringify({ xml: xmlOutput, ...(curationReview ? { expectedRevision: curationRevision, curationReview: true } : {}) }),
       })
 
       if (!response.ok) {
@@ -66,12 +72,17 @@ function useAlbumXmlPersistence({
         throw new Error(message)
       }
 
+      if (curationReview) {
+        const result = await response.json()
+        if (result.revision) onRevisionSaved?.(result.revision)
+        if (result.verificationError) setSaveError(result.verificationError)
+      }
       setSaveStatus('saved')
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : 'Failed to save XML')
       setSaveStatus('error')
     }
-  }, [album, gallery, xmlOutput])
+  }, [album, gallery, xmlOutput, curationReview, curationRevision, onRevisionSaved])
 
   return {
     xmlOutput,

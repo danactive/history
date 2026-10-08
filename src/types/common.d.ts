@@ -77,7 +77,7 @@ type XmlCaseItem<TCamelCase extends boolean = true> = {
   },
   type?: 'video' | 'photo',
   size?: { w: string, h: string },
-  filename: string | string[],
+  filename: Item['filename'];
   search?: string,
   geo?: {
     lat: string,

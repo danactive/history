@@ -5,7 +5,6 @@ import type { ResolutionKey } from '../components/SlippyMap/options'
 export type ClusteredMarkers = {
   labels: Record<string, Partial<Record<ResolutionKey, string>>>
   itemFrequency: Record<string, number>
-  generatedAt: string
   itemCount: number
 }
 
@@ -125,7 +124,6 @@ export function generateClusters(items: Item[]): ClusteredMarkers {
   return {
     labels,
     itemFrequency,
-    generatedAt: new Date().toISOString(),
     itemCount: items.length,
   }
 }

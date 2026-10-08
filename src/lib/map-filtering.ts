@@ -1,3 +1,4 @@
+import { Item } from '../types/common'
 import { getPrimaryFilename } from '../utils'
 
 export type Bounds = [[number, number], [number, number]]
@@ -8,7 +9,7 @@ type CoordinateItem = {
 
 type SelectableItem = {
   id?: string | null
-  filename?: string | string[] | null
+  filename?: Item['filename'] | null
 }
 
 export function filterItemsByMapBounds<ItemType extends CoordinateItem>(

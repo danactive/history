@@ -1,15 +1,15 @@
-import type { IndexedKeywords } from '../../../types/common'
+import type { IndexedKeywords, Item } from '../../../types/common'
 import { buildVisitedKeywordOptions } from '../../visited-core'
 
 type SearchOptionItem = {
   city?: string
-  filename?: string | string[]
+  filename?: Item['filename'];
   photoDate?: string | null
 }
 
 type VisitedSearchOptionItem = SearchOptionItem & {
   city: string
-  filename: string | string[]
+  filename: Item['filename'];
   photoDate: string | null
 }
 

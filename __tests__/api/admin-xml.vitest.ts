@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => {
 })
 
 vi.mock('../../src/lib/xml', () => ({
+  AlbumRevisionConflict: class AlbumRevisionConflict extends Error {},
   __esModule: true,
   InvalidAlbumXmlError: mocks.InvalidAlbumXmlError,
   rawParseOptions: {},

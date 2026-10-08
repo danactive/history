@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import AlbumPageComponent from '../../../src/components/Album/AlbumClient'
 import { parseMapBoundsParam } from '../../../src/lib/map-filter-query'
@@ -45,6 +46,8 @@ async function TodayServerContent({
     searchParams: resolvedSearchParams,
   } = await resolveRouteInputs(params,
     searchParams)
+  // The default day must reflect this request, not the prerender's clock.
+  await connection()
   const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   const query = getQueryFromSearchParams(resolvedSearchParams)
   const mapBounds = parseMapBoundsParam(resolvedSearchParams.bbox)

@@ -5,7 +5,7 @@ import { getItemYearFromFilename, isYearToken } from '../../../../../src/lib/dom
 import { getAgeFromSearchParams, getPersonFromSearchParams, getPersonsPageData } from '../../../../../src/lib/persons-page'
 import { buildFilterMetadata } from '../../../../../src/lib/server/filter-metadata'
 import { getTodayItems } from '../../../../../src/lib/today'
-import type { Gallery, IndexedKeywords } from '../../../../../src/types/common'
+import type { Gallery, IndexedKeywords, Item } from '../../../../../src/types/common'
 import { matchCorpus, normalizeSearchValue } from '../../../../../src/utils/search'
 
 type DomainsView = 'all' | 'album' | 'persons' | 'today'
@@ -15,14 +15,14 @@ type InspectableItem = {
   search?: string | null
   year?: string | null
   photoDate?: string | null
-  filename?: string | string[]
+  filename?: Item['filename'];
 }
 
 function errorBody(message: string) {
   return { error: { message } }
 }
 
-function hasFilename(item: InspectableItem): item is InspectableItem & { filename: string | string[] } {
+function hasFilename(item: InspectableItem): item is InspectableItem & { filename: Item['filename']; } {
   return 'filename' in item && Boolean(item.filename)
 }
 

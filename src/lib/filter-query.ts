@@ -1,8 +1,8 @@
-import { getItemYearFromFilename, isYearToken } from './domains/years'
-import { buildVisitedRegionCountryIndex, getVisitedPlace } from './visited-core'
+import type { IndexedKeywords, Item, VisitedPlace } from '../types/common'
 import { calcAgeAtDate, resolvePhotoDate } from '../utils/person-age'
 import { matchCorpus, normalizeSearchValue } from '../utils/search'
-import type { IndexedKeywords, VisitedPlace } from '../types/common'
+import { getItemYearFromFilename, isYearToken } from './domains/years'
+import { buildVisitedRegionCountryIndex, getVisitedPlace } from './visited-core'
 
 export type FilterQueryTermKind = 'text' | 'keyword' | 'country' | 'region' | 'person' | 'tag' | 'year' | 'age'
 
@@ -28,7 +28,7 @@ export type FilterQueryContext = {
 export type FilterQueryItem = {
   corpus: string
   city?: string
-  filename?: string | string[]
+  filename?: Item['filename'];
   photoDate?: string | null
   persons?: { full: string, dob?: string | null }[] | null
   search?: string | null

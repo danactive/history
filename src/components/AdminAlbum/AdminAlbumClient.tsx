@@ -18,6 +18,8 @@ import Photo from './Photo'
 import Thumbs from './Thumbs'
 import { thumbTrackWidth } from '../ThumbImg'
 import { useEditCountPill } from './useEditCountPill'
+import CurationReview from '../Curation/Review'
+import { exactItem } from '../../lib/curation/review'
 
 export type XmlItemState = RawXmlItem | null
 
@@ -26,12 +28,18 @@ type AdminAlbumClientProps = {
   galleryAlbum: GalleryAlbumsBody;
   gallery: Gallery;
   initialAlbum?: GalleryAlbum['name'];
+  review?: { finding: string, returnTo?: string, itemId?: string, filename?: string };
 }
 
-const fetcher = (url: string) => fetch(url).then(r => r.json())
+const fetcher = async (url: string) => {
+  const response = await fetch(url, { cache: 'no-store' })
+  if (!response.ok) throw new Error('Unable to load album')
+  const data = await response.json()
+  return { ...data, revision: response.headers.get('X-Album-Revision') ?? undefined }
+}
 
 export default function AdminAlbumClient(
-  { galleries, galleryAlbum, gallery, initialAlbum }: AdminAlbumClientProps,
+  { galleries, galleryAlbum, gallery, initialAlbum, review }: AdminAlbumClientProps,
 ) {
   const selectedInitialAlbum = galleryAlbum[gallery]?.albums.find(candidate => candidate.name === initialAlbum) ?? null
   const [currentGallery, setCurrentGallery] = useState<Gallery>(gallery)
@@ -50,7 +58,14 @@ export default function AdminAlbumClient(
     clearEdits,
     applyEditsToItems,
   } = useEditCountPill()
-  const { data, error } = useSWR<RawXmlAlbum>(album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}` : null, fetcher)
+  const { data, error } = useSWR<RawXmlAlbum & { revision?: string }>(
+    album?.name ? `/api/admin/xml/${currentGallery}/${album?.name}${review ? '?curation=1' : ''}` : null,
+    fetcher, review ? { revalidateOnFocus: false, revalidateOnReconnect: false } : undefined,
+  )
+  const [revision, setRevision] = useState<string>()
+  const [reviewNotice, setReviewNotice] = useState('')
+  const selectedReviewRef = useRef('')
+  useEffect(() => { setRevision(data?.revision) }, [data])
 
   useEffect(() => {
     setCurrentGallery(gallery)
@@ -63,6 +78,21 @@ export default function AdminAlbumClient(
   const items = data?.album?.item
     ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item])
     : []
+
+  useEffect(() => {
+    if (!review || !data || currentGallery !== gallery || album?.name !== initialAlbum) return
+    const key = `${review.finding}/${data.revision}`
+    if (selectedReviewRef.current === key) return
+    selectedReviewRef.current = key
+    setSelectedIndices(new Set())
+    if (!review.itemId && !review.filename) return
+    const values = data.album.item ? (Array.isArray(data.album.item) ? data.album.item : [data.album.item]) : []
+    const target = exactItem(values, review.itemId, review.filename)
+    setCurrentIndex(target?.index ?? -1)
+    setItem(target?.item ?? null)
+    setSelectedIndices(new Set(target ? [target.index] : []))
+    setReviewNotice(target ? '' : 'The requested photo is missing or ambiguous. No replacement photo was selected.')
+  }, [review, data, currentGallery, gallery, album?.name, initialAlbum])
 
   const countFields = (item: RawXmlItem | null) => {
     if (!item) return 0
@@ -297,6 +327,14 @@ export default function AdminAlbumClient(
 
   return (
     <form>
+      {review && <CurationReview finding={review.finding} returnTo={review.returnTo} gallery={currentGallery}
+        album={album?.name ?? ''} items={items} revision={revision} getEdited={getItemWithEdits}
+        onAccept={updated => {
+          handleItemUpdateOriginal(updated)
+          const target = exactItem(items, updated.$.id, Array.isArray(updated.filename) ? updated.filename[0] : updated.filename)
+          if (target) { setCurrentIndex(target.index); setItem(items[target.index]); setSelectedIndices(new Set([target.index])) }
+        }} />}
+      {reviewNotice && <p role="alert">{reviewNotice}</p>}
       <EditCountPill />
       <Stack
         direction="row"
@@ -386,6 +424,9 @@ export default function AdminAlbumClient(
                 onItemUpdate={handleItemUpdateWrapper}
                 onXmlGenerated={handleXmlGenerated}
                 applyEditsToItems={applyEditsToItems}
+                curationReview={Boolean(review)}
+                curationRevision={revision}
+                onRevisionSaved={setRevision}
               >
                 <Photo
                   item={getItemWithEdits(item) ?? item}

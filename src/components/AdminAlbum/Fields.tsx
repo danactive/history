@@ -95,7 +95,8 @@ export function parseLatInput(value: string, prevGeo?: RawXmlItem['geo']): RawXm
 }
 
 export default function Fields(
-  { gallery, album, xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems }:
+  { gallery, album, xmlAlbum, item, children, onItemUpdate, onXmlGenerated, applyEditsToItems,
+    curationRevision, curationReview, onRevisionSaved }:
   {
     gallery: Gallery,
     album: AlbumName,
@@ -105,6 +106,9 @@ export default function Fields(
     onItemUpdate: EditCountPillHook['handleItemUpdate'],
     onXmlGenerated: EditCountPillHook['handleXmlGenerated'],
     applyEditsToItems: EditCountPillHook['applyEditsToItems']
+    curationRevision?: string
+    curationReview?: boolean
+    onRevisionSaved?: (revision: string) => void
   },
 ) {
   const [editedItem, setEditedItem] = useState<RawXmlItem | null>(item)
@@ -118,7 +122,9 @@ export default function Fields(
     generateXml,
     saveXml,
     resetXmlOutput,
-  } = useAlbumXmlPersistence({ gallery, album, xmlAlbum, applyEditsToItems, onXmlGenerated })
+  } = useAlbumXmlPersistence({
+    gallery, album, xmlAlbum, applyEditsToItems, onXmlGenerated, curationRevision, curationReview, onRevisionSaved,
+  })
 
   // Fetch all available keywords from all albums
   const { data: keywordsData } = useSWR<{ keywords: IndexedKeywords[] }>('/api/admin/keywords', fetcher)
@@ -367,7 +373,7 @@ export default function Fields(
               placeholder="Generated XML will appear here"
             />
             {saveStatus === 'saved' && <div role="status">XML saved</div>}
-            {saveStatus === 'error' && <div role="alert">{saveError}</div>}
+            {saveError && <div role={saveStatus === 'error' ? 'alert' : 'status'}>{saveError}</div>}
           </>
         )}
       </Stack>

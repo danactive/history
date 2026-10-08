@@ -1,0 +1,20 @@
+.page { max-width: 1200px; margin: 0 auto; padding: 2rem; color: #e6e8ec; }
+.page h1 { margin-bottom: .4rem; }
+.page p { line-height: 1.5; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin: 1rem 0; }
+.toolbar label { display: flex; flex-direction: column; gap: .4rem; font-size: .9rem; }
+.toolbar input, .toolbar select, .toolbar button { border: 1px solid #566071; border-radius: 6px; padding: .65rem; }
+.toolbar input, .toolbar select { background: #171c25; color: #e6e8ec; }
+.toolbar input { min-width: 20rem; }
+.toolbar button { background: #263950; color: #fff; cursor: pointer; }
+.toolbar button:disabled { opacity: .5; cursor: default; }
+.toolbar :focus-visible { outline: 2px solid #9fcef9; outline-offset: 3px; }
+.status, .card { padding: 1.25rem; margin: 1rem 0; border: 1px solid #3a4350; border-radius: 10px; background: #171c25; }
+.status { border-left: 4px solid #82a6cf; }
+.card h2 { font-size: 1.1rem; color: #acd5ff; }
+.card h3 { margin: 0; }
+.heading { display: flex; align-items: center; gap: 1.25rem; }
+.heading p { margin: .5rem 0; color: #b5bfcc; }
+.placeholder { display: grid; place-items: center; width: 185px; height: 45px; background: #2a3341; }
+.finding { margin: 1rem 0; border-left: 2px solid #53677f; padding-left: 1rem; }
+.finding p { margin: .4rem 0; }

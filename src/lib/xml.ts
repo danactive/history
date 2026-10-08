@@ -9,6 +9,8 @@ import type {
   AlbumName, Gallery, RawXmlAlbum, XmlAlbum, XmlGallery, XmlPersons,
 } from '../types/common'
 import { generatedGallerySchema } from '../types/generated'
+import { digest } from './curation/files'
+import { acquireLock } from './curation/lock'
 
 const parseOptions: ParserOptions = { explicitArray: false, normalizeTags: true, tagNameProcessors: [(name) => camelCase(name)] }
 const parser = new xml2js.Parser(parseOptions)
@@ -17,6 +19,12 @@ const rawParseOptions: ParserOptions = { explicitArray: false }
 const rawParser = new xml2js.Parser(rawParseOptions)
 
 export class InvalidAlbumXmlError extends Error {}
+export class AlbumRevisionConflict extends Error {}
+
+export async function readAlbumVersion(gallery: Gallery, album: AlbumName) {
+  const xml = await fs.readFile(albumFilePath(gallery, album), 'utf8')
+  return { data: await new xml2js.Parser(rawParseOptions).parseStringPromise(xml) as RawXmlAlbum, revision: digest(xml) }
+}
 
 function albumFilePath(gallery: Gallery, album: AlbumName) {
   const validGallery = generatedGallerySchema.safeParse(gallery)
@@ -51,18 +59,25 @@ async function readAlbum(gallery: Gallery, album: AlbumName, options?: ParserOpt
   return selectedParser.parseStringPromise(fileBuffer)
 }
 
-async function writeAlbum(gallery: Gallery, album: AlbumName, xml: string) {
+async function writeAlbum(gallery: Gallery, album: AlbumName, xml: string, expectedRevision?: string) {
   const destinationPath = albumFilePath(gallery, album)
   await parseAlbumXml(xml)
   await fs.access(destinationPath, constants.F_OK)
 
+  const release = await acquireLock(join('.history', 'xml-locks', `${gallery}-${album}.lock`))
+  if (!release) throw new AlbumRevisionConflict('Album is being saved. Retry after reviewing current metadata.')
   const temporaryPath = join(dirname(destinationPath), `.${basename(destinationPath)}.${randomUUID()}.tmp`)
   try {
     await fs.writeFile(temporaryPath, xml, 'utf8')
+    if (expectedRevision && digest(await fs.readFile(destinationPath, 'utf8')) !== expectedRevision) {
+      throw new AlbumRevisionConflict('Album changed since it was loaded. Reload and review your edits before saving.')
+    }
     await fs.rename(temporaryPath, destinationPath)
   } catch (error) {
     await fs.rm(temporaryPath, { force: true })
     throw error
+  } finally {
+    await release()
   }
 }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import {
   resolveRouteInputs,
@@ -13,6 +14,7 @@ export async function generateMetadata(
   { searchParams }: RouteSearchParamsProps<TodaySearchParams>,
 ): Promise<Metadata> {
   const resolvedSearchParams = await resolveSearchParams(searchParams)
+  await connection()
   const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   return { title: `Date details ${monthDay} - History App` }
 }
@@ -33,6 +35,7 @@ async function TodayDetailsContent({
     params: { gallery },
     searchParams: resolvedSearchParams,
   } = await resolveRouteInputs(params, searchParams)
+  await connection()
   const { monthDay } = parseTodayRouteSearchParams(resolvedSearchParams)
   const text = await buildDateDetailsText(gallery, monthDay, 8)
 

@@ -2,12 +2,12 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef } from 'react'
-
+import { Item } from '../types/common'
 import { getPrimaryFilename } from '../utils'
 import type { SelectionCoordinator } from './useSelectionCoordinator'
 
 type SelectableGalleryItem = {
-  filename?: string | string[] | null
+  filename?: Item['filename'] | null
 }
 
 export default function useSelectGalleryItemFromUrl<ItemType extends SelectableGalleryItem>({

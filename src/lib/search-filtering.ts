@@ -4,7 +4,7 @@ import {
   getVisitedPlace,
   matchesVisitedPlace,
 } from './visited-core'
-import type { IndexedKeywords, VisitedPlace } from '../types/common'
+import type { IndexedKeywords, Item, VisitedPlace } from '../types/common'
 import { matchCorpus, normalizeSearchValue } from '../utils/search'
 
 export type QueryMode = 'AND' | 'OR' | null
@@ -24,7 +24,7 @@ type SearchableItem = {
 }
 
 type FilenameItem = SearchableItem & {
-  filename: string | string[]
+  filename: Item['filename'];
 }
 
 export function parseKeywordQuery(rawKeyword: string): ParsedKeywordQuery {

@@ -1,10 +1,14 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import { connection } from 'next/server'
 import TodayServer from '../app/[gallery]/today/page'
 import type { Today } from '../src/types/pages'
 import { getPrimaryFilename } from '../src/utils'
 
 type AlbumClientMockProps = Pick<Today.ComponentProps, 'items' | 'gallery' | 'monthDay' | 'totalItemCount'>
+
+vi.mock('next/server', () => ({ connection: vi.fn(async () => {}) }))
+afterEach(() => vi.useRealTimers())
 
 vi.mock('../src/components/Album/AlbumClient', () => ({
   __esModule: true,
@@ -103,6 +107,21 @@ async function resolveTodayServer(props: Parameters<typeof TodayServer>[0]) {
 }
 
 describe('Today page', () => {
+  test('resolves the default day after the request arrives', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2025, 6, 11, 12))
+    vi.mocked(connection).mockImplementationOnce(async () => {
+      vi.setSystemTime(new Date(2025, 6, 12, 12))
+    })
+    const component = await resolveTodayServer({
+      params: Promise.resolve({ gallery: 'demo' }),
+      searchParams: Promise.resolve({}),
+    })
+    render(component)
+    expect(screen.getByText('/demo/today/details?day=07-12')).toBeInTheDocument()
+    expect(screen.getByText('2025-07-12-01.jpg')).toBeInTheDocument()
+  })
+
   test('uses the day query string to filter items', async () => {
     const component = await resolveTodayServer({
       params: Promise.resolve({ gallery: 'demo' }),

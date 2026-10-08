@@ -30,7 +30,7 @@ function Harness({ enabled = true }: { enabled?: boolean }) {
   const mapQuery = useMapQuery()
   return <SlippyMap
     mapRef={mapRef} mapQuery={mapQuery} mapFilterEnabled={enabled}
-    clusteredMarkers={{ labels: {}, itemFrequency: {}, generatedAt: '', itemCount: 0 }}
+    clusteredMarkers={{ labels: {}, itemFrequency: {}, itemCount: 0 }}
     onMapReady={mock.ready} onBoundsChange={mock.bounds} onToggleMapFilter={mock.toggle}
   />
 }
