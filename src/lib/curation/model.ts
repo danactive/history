@@ -17,6 +17,7 @@ export const findingSchema = z.object({
 export const rowSchema = z.object({
   id: digestSchema, source: sourceSchema, scope: z.enum(['photo', 'video', 'album']),
   title: z.string(), places: z.array(z.string()), findings: z.array(findingSchema), checkedAt: z.string(),
+  monthDay: z.string().regex(/^\d{2}-\d{2}$/).optional(),
 })
 export type Finding = z.infer<typeof findingSchema>
 export type CurationRow = z.infer<typeof rowSchema>
@@ -55,6 +56,7 @@ export type InboxResult = {
   albums: string[]
   places: string[]
   awaiting: string[]
+  today?: { monthDay: string, photos: number, findings: number }
 }
 
 export const normalizePlace = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim()

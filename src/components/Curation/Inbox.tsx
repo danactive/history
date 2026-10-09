@@ -76,7 +76,7 @@ export default function CurationInbox() {
   }
 
   return <main className={styles.page}>
-    <header><h1>Curation Inbox</h1><p>Find a place, review its metadata, and choose your next edit.</p></header>
+    <header><h1>Curation Inbox</h1><p>Start with gaps in today’s photos, or find a place to review.</p></header>
     <section className={styles.toolbar} aria-label="Scan controls">
       <label>Scan mode <select value={mode} onChange={event => setMode(event.target.value as typeof mode)}>
         <option value="incremental">Changed metadata</option><option value="full">Full library</option>
@@ -95,6 +95,9 @@ export default function CurationInbox() {
         {data.snapshot && !data.snapshot.tagsConfigured && <p>Critical-tag checks are unconfigured.</p>}
       </section>
       <form className={styles.toolbar} onSubmit={event => { event.preventDefault(); update('place', place) }}>
+        <label>Photo priority <select value={search.get('focus') ?? ''} onChange={event => update('focus', event.target.value)}>
+          <option value="">Today first · all findings</option><option value="today">Today only</option>
+        </select></label>
         <label>Place or neighbourhood <input value={place} onChange={event => setPlace(event.target.value)} list="curation-places" /></label>
         <datalist id="curation-places">{data.places.map(label => <option key={label} value={label} />)}</datalist>
         <button type="submit">Find place</button>
@@ -111,11 +114,16 @@ export default function CurationInbox() {
         <Link href="/admin/curation">Clear filters</Link>
       </form>
       {data.snapshot && <p>{data.counts.findings} findings · {data.counts.photos} affected photos · {data.counts.albums} affected albums</p>}
+      {data.snapshot && data.today && <p>
+        Today ({data.today.monthDay}): {data.today.findings} gaps in {data.today.photos} photos matching your filters.
+        {' '}Photos from this month and day in any year come first.
+      </p>}
       {data.snapshot && !data.rows.length && <p>
         {data.status.state === 'complete' ? 'No findings match this view.'
           : 'No matching findings in the last successful results; current coverage is incomplete.'}
       </p>}
       {data.rows.map((row, index) => <section key={row.id} id={row.id} className={styles.card} data-curation-place={row.places[0]}>
+        {row.scope === 'photo' && row.monthDay === data.today?.monthDay && row.monthDay && <strong>Today’s photo</strong>}
         {(index === 0 || data.rows[index - 1].places[0] !== row.places[0]) && <h2>{row.places[0]}</h2>}
         <div className={styles.heading}><Thumbnail row={row} /><div><h3>{row.title}</h3>
           <p>{row.source.gallery} / {row.source.album} · {row.scope === 'album' ? 'Whole album' : row.source.filename}</p>

@@ -4,6 +4,21 @@ Help the owner curate metadata across their local photo library by finding place
 
 ## ADDED Requirements
 
+### Requirement: Today-first gap review
+
+The inbox SHALL prioritize photo findings matching the local server's current month and day across all years, before pagination. Date matching SHALL follow the Today viewer's recorded photo date with filename fallback. A Today-only filter SHALL combine with existing filters, exclude videos and whole-album findings, and preserve URL navigation state. Results SHALL show today's affected-photo and finding counts. Day rollover SHALL update priority when results are read without requiring another scan or writing source metadata. Photos with no tags or no recorded city/location text SHALL receive manual-review opportunities, independently of critical-tag configuration.
+
+#### Scenario: Today's gaps across galleries
+- **WHEN** today's photos have missing descriptions, no tags, no recorded city/location text, or location naming warnings
+- **THEN** their grouped rows appear ahead of other dates across all selected galleries
+- **AND** photos without findings do not become findings solely because they match today
+
+#### Scenario: Date precedence and rollover
+- **WHEN** a recorded photo date disagrees with its filename date
+- **THEN** its recorded date controls Today matching
+- **WHEN** the local day changes
+- **THEN** the next inbox read prioritizes the new day's indexed findings without rescanning
+
 ### Requirement: Cross-gallery place discovery
 
 The inbox SHALL include every configured local gallery by default without requiring a gallery selection. It SHALL offer place search, category filters, optional gallery/album filters, and grouping by available country, region, city, and recorded location labels. It SHALL preserve ambiguous raw labels as unclassified places and provide Unknown location for items without usable place text. It SHALL NOT present recorded location labels as verified neighbourhood boundaries.
@@ -28,7 +43,8 @@ The inbox SHALL report missing or whitespace-only photo descriptions, album crit
 
 #### Scenario: Tag configuration and coverage
 - **WHEN** no critical tags are configured
-- **THEN** the tag detector is shown as unconfigured and creates no tag findings
+- **THEN** the critical-tag detector is shown as unconfigured and creates no album coverage findings
+- **AND** photos with no tags can still receive a missing-tags opportunity
 - **WHEN** configured tags yield album coverage counts of zero, one, and three
 - **THEN** the zero-coverage album and the below-median one-coverage album receive distinct album-level opportunities
 - **AND** narrowing a place filter does not change that baseline

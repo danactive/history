@@ -4,6 +4,8 @@ The local Curation Inbox searches all configured galleries by place, with option
 
 ## Run locally
 
+Photos from today's month and day in any year appear first, matching the Today viewer: recorded photo date takes precedence over filename date. The local server's current day is checked when results are read, so priority changes without another scan. Choose **Today only** to focus on these photos while retaining place, category, and gallery filters. Gaps include missing descriptions, missing tags, missing city/location information, and location warnings. Whole-album tag opportunities remain separate and are excluded from Today only. No values are filled in automatically.
+
 Use the project's Node/npm versions and installed dependencies. Enable the local admin inbox when starting History:
 
 ```sh

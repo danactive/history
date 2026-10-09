@@ -59,3 +59,20 @@ test('renders whole-album scope, grouped findings, exact links, and awaiting ver
   expect(href).toContain('itemId=42')
   expect(href).toContain('filename=photo.jpg')
 })
+
+test('shows today gap counts, badges, and preserves the today filter in the URL', () => {
+  const value = result()
+  value.snapshot = { version: 1, generation: 'x', completedAt: '2026-10-07T12:00:00Z', tagsConfigured: true, shards: [] }
+  value.today = { monthDay: '10-07', photos: 1, findings: 2 }
+  value.rows = [{
+    id: 'today-row', scope: 'photo', source: { gallery: 'demo', album: 'sample', revision: 'a'.repeat(64) },
+    title: 'Today photo', checkedAt: '2026-10-07T12:00:00Z', places: ['Unknown location'], monthDay: '10-07',
+    findings: [{ id: 'place', category: 'location', reason: 'Missing place', evidence: 'No city or location.', candidates: [] }],
+  }]
+  mock.data = value
+  render(<Inbox />)
+  expect(screen.getByText('Today’s photo')).toBeTruthy()
+  expect(screen.getByText(/Today \(10-07\): 2 gaps in 1 photos/)).toBeTruthy()
+  fireEvent.change(screen.getByLabelText('Photo priority'), { target: { value: 'today' } })
+  expect(mock.push).toHaveBeenCalledWith('/admin/curation?focus=today')
+})

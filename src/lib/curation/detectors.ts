@@ -6,8 +6,9 @@ import type { Gallery, RawXmlItem } from '../../types/common'
 import type { Inventory, SourceAlbum } from './sources'
 import { digest } from './files'
 import { primaryFilename, type CurationRow, type Finding } from './model'
+import { resolvePhotoDate } from '../../utils/person-age'
 
-export const detectorVersion = 2
+export const detectorVersion = 3
 export const albumKey = (album: Pick<SourceAlbum, 'gallery' | 'album'>) => `${album.gallery}/${album.album}`
 
 export function analyze(data: Inventory, checkedAt: string, onlyAlbums?: Set<string>) {
@@ -63,6 +64,13 @@ export function analyze(data: Inventory, checkedAt: string, onlyAlbums?: Set<str
         if (!video && !item.photo_desc?.trim()) {
           add({ category: 'description', reason: 'Description opportunity', evidence: 'This photo has no description.', candidates: [] })
         }
+        if (!video && !item.photo_city.trim() && !item.photo_loc?.trim()) {
+          add({ category: 'location', reason: 'Missing place', evidence: 'This photo has no city or location recorded.', candidates: [] })
+        }
+        if (!video && !(item.search ?? '').split(',').some(tag => tag.trim())) {
+          add({ category: 'tags', reason: 'Missing tags',
+            evidence: 'This photo has no tags. Review which tags would help you find it.', candidates: [] })
+        }
         for (const warning of warnings) {
           if (!place) continue
           const sameCountry = warning.country === place.country
@@ -80,9 +88,11 @@ export function analyze(data: Inventory, checkedAt: string, onlyAlbums?: Set<str
           }
           add(finding)
         }
+        const monthDay = resolvePhotoDate({ filename: item.filename, photoDate: item.photo_date }).substring(5, 10)
         if (findings.length) found.push({
           id, source, scope: video ? 'video' : 'photo', title: item.thumb_caption || source.filename,
           places: [label], findings, checkedAt,
+          ...(/^\d{2}-\d{2}$/.test(monthDay) ? { monthDay } : {}),
         })
       }
       const coverage = audit.albums.find(value => value.gallery === gallery && value.album.name === album.album)

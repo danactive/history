@@ -31,8 +31,8 @@ test('provenance, place search, missing descriptions, coverage, and exact-field 
   expect(analyzed.errors).toEqual([])
   const rows = [...analyzed.rows.values()].flat()
   const photo = rows.find(row => row.source.gallery === 'demo' && row.source.album === 'first' && row.scope === 'photo')!
-  expect(photo.findings.map(finding => finding.category)).toEqual(['description', 'location'])
-  expect(photo.findings[1].suggestion?.proposed).toBe('Toronto, Ontario, Canada')
+  expect(photo.findings.map(finding => finding.category)).toEqual(['description', 'tags', 'location'])
+  expect(photo.findings.find(finding => finding.category === 'location')?.suggestion?.proposed).toBe('Toronto, Ontario, Canada')
   expect(rows.find(row => row.scope === 'album' && row.source.album === 'second')?.findings[0].reason).toContain('Below-median')
   expect(new Set(rows.map(row => row.id)).size).toBe(rows.length)
   await runScan(root, 'full', { galleries: ['demo', 'other'] })
@@ -55,7 +55,8 @@ test('unknown places, videos, unsupported countries, unavailable boundaries, and
   const rows = [...analyze(data, 'now').rows.values()].flat()
   expect(rows.some(row => row.scope === 'video')).toBe(false)
   expect(rows.find(row => row.source.itemId === '2')?.places).toEqual(['Unknown location'])
-  expect(rows.flatMap(row => row.findings).some(finding => finding.category === 'location')).toBe(false)
+  expect(rows.find(row => row.source.itemId === '3')?.findings.some(finding => finding.category === 'location')).toBe(false)
+  expect(rows.find(row => row.source.itemId === '2')?.findings.some(finding => finding.reason === 'Missing place')).toBe(true)
   await fixtureGallery(root, 'demo', { first: fixtureItem('1') })
   await fs.unlink(join(root, 'public/maps/visited/canada.geojson'))
   expect(analyze(await inventory(root, ['demo']), 'now').errors.join()).toContain('unavailable for Canada')
@@ -188,9 +189,39 @@ test('incremental scans invalidate tag and boundary dependencies', async () => {
   await fs.writeFile(boundariesPath, JSON.stringify(boundaries))
   await runScan(root, 'incremental', { galleries: ['demo'] })
   const incremental = await getInbox(root, query())
-  expect(incremental.counts.findings).toBe(1)
+  expect(incremental.counts.findings).toBe(2)
   expect(incremental.snapshot?.tagsConfigured).toBe(false)
   await runScan(root, 'full', { galleries: ['demo'] })
   const full = await getInbox(root, query())
   expect(incremental.rows.map(({ checkedAt: _, ...row }) => row)).toEqual(full.rows.map(({ checkedAt: _, ...row }) => row))
+})
+
+test('prioritizes today across galleries before pagination and changes day without rescanning', async () => {
+  const root = await fixture()
+  const dated = (id: string, date: string, extra = '') => fixtureItem(id, 'Toronto, Ontario, Canada',
+    `<photo_date>${date}</photo_date>${extra}`)
+  await fixtureGallery(root, 'demo', {
+    older: Array.from({ length: 35 }, (_, id) => dated(String(id), '2020-01-01')).join(''),
+    today: dated('today', '1999-10-07'),
+    tomorrow: dated('tomorrow', '2020-10-08'),
+    clean: dated('clean', '2020-10-07', '<photo_desc>Complete description</photo_desc><search>best^</search>'),
+    fallback: fixtureItem('fallback', 'Toronto, Ontario, Canada').replace('2020-photo-fallback.jpg', '2005-10-07-01.jpg'),
+    override: dated('override', '2020-01-01').replace('2020-photo-override.jpg', '2005-10-07-01.jpg'),
+    video: dated('video', '2020-10-07', '<type>video</type>'),
+  })
+  await fixtureGallery(root, 'other', { today: dated('today', '2010-10-07') })
+  await runScan(root, 'full', { galleries: ['demo', 'other'] })
+  const snapshot = await currentSnapshot(root)
+  const now = new Date(2026, 9, 7, 12)
+  const all = await getInbox(root, query(), now)
+  expect(all.rows.slice(0, 3).map(row => row.monthDay)).toEqual(['10-07', '10-07', '10-07'])
+  expect(all.today).toEqual({ monthDay: '10-07', photos: 3, findings: 6 })
+  const today = await getInbox(root, query({ focus: 'today' }), now)
+  expect(today.rows).toHaveLength(3)
+  expect(today.counts.photos).toBe(3)
+  expect(today.rows.every(row => row.scope === 'photo')).toBe(true)
+  expect((await getInbox(root, query({ focus: 'today', gallery: 'other', category: 'tags' }), now)).today?.findings).toBe(1)
+  const nextDay = await getInbox(root, query({ focus: 'today' }), new Date(2026, 9, 8, 12))
+  expect(nextDay.rows.map(row => row.source.itemId)).toEqual(['tomorrow'])
+  expect(await currentSnapshot(root)).toEqual(snapshot)
 })

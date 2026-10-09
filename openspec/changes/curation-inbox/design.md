@@ -1,5 +1,7 @@
 ## Context
 
+Today-first refinement: persist a photo's month/day from its recorded date, falling back to the primary filename, with each finding row. At query time, rank matching photos ahead of other rows before pagination and offer `focus=today`. Calculate the local current day only at request time; scans remain date-independent, so rollover needs no new scan. Include missing photo tags and absent city/location text as manual-review gaps. Preserve whole-album critical-tag scope and all existing filters.
+
 See proposal.md for motivation and release scope. The existing admin index links Walk, Album Editor, Assets, and Critical-tag coverage. `auditCriticalTags` counts matching media once and computes a median among covered albums. Visited validation detects spelling candidates, ambiguous/unmapped regions, and duplicate aliases using local boundary files. Its current output is aggregated display text, not a record of editable XML sources.
 
 Album XML contains `photo_city`, optional `photo_loc`, `photo_desc`, and `search`; there is no neighbourhood field. Visited place parsing uses library context and heuristics, so a parsed place is not necessarily independently verified. The Album Editor supports album deep links, bulk selection, generated XML, and explicit saving, but not an initial exact-item selection or conditional writes. `writeAlbum` already replaces XML via a temporary file and rename.

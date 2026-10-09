@@ -4,6 +4,8 @@ History already detects important-tag gaps and location naming problems, but fix
 
 ## What Changes
 
+- Prioritize photos matching today's month/day across years, offer a Today-only view, and expose missing photo tags and missing place text as review opportunities.
+
 - Add `/admin/curation` with all locally configured galleries included by default, place search and grouping, optional gallery/album filters, and an Unknown location group.
 - Surface missing descriptions, existing critical-tag coverage opportunities, and location naming findings with evidence and suggested corrections where supported.
 - Reuse existing city/location labels for neighbourhood discovery; distinguish recorded location text from verified administrative geography.

@@ -46,3 +46,9 @@
 - [x] 6.5 Document local setup, initial full scan, configurable scheduling, review/save semantics, raw neighbourhood-label limitations, concurrent external-edit limitations, and rollback; verify documentation matches actual commands and run `rtk openspec validate curation-inbox --strict`.
 
 Verification results and the outstanding live scheduler check are recorded in [verification.md](verification.md).
+
+## 7. Today-first refinement
+
+- [x] 7.1 Index each photo finding's recorded month/day with filename fallback and add manual-review gaps for missing tags and missing place text; invalidate existing detector checkpoints.
+- [x] 7.2 Prioritize today's photos before pagination, add a Today-only URL filter and counts/badges, and preserve existing place/category/gallery filters and separate album scope.
+- [x] 7.3 Verify cross-gallery priority, date precedence, clean-photo/video exclusion, midnight rollover without rescanning, and component filter navigation. Refresh the local index and run repository checks.

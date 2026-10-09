@@ -1,5 +1,13 @@
 # Curation Inbox verification — 2026-10-07
 
+## Today-first refinement — 2026-10-08
+
+- All 748 tests in 112 files pass; lint, typecheck, production build, and strict OpenSpec validation pass. The existing libheif build warning remains.
+- Added coverage for prioritization before pagination across galleries, recorded-date precedence and filename fallback, clean-photo/video exclusion, filter composition, and day rollover without changing the snapshot.
+- Refreshed the local derived index. Live `/api/admin/curation?focus=today` returned HTTP 200 with 32 findings on 22 photos for October 8, across two albums. Every returned row was a photo matching `10-08`. No source XML or media was edited.
+
+## Initial implementation
+
 - Repository checks: lint and TypeScript passed; Vitest passed 744 tests in 112 files; production build passed. The existing libheif dynamic-require warning remains.
 - The production preview was inspected at `/admin/curation`: all-gallery place search, exact-photo editor selection after loading, and return to the filtered inbox with row position restored. No owner-library XML was saved during preview checks.
 - `npm run curation:verify`: 10,002 photos, 102 albums, two galleries; full scan 274 ms; result query 66 ms; 30-row response 25,860 bytes; peak process RSS 227 MiB; complete fixture workflow 1,192 ms. These are local synthetic measurements, not production performance guarantees.
